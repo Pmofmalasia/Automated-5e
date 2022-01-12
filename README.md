@@ -1,3 +1,5 @@
 # Automated-5e
 
-There is no code here currently, only being used for tracking changes/bugs/projects/etc.
+A framework written for MapTool to automate the rules of Dungeons & Dragons 5th Edition.
+
+Currently the project is not yet ready for full gameplay, but you can follow updates here!

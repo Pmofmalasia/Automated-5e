@@ -1,1 +1,0 @@
-{"SRD":1,"MM":1,"VGTM":1,"MTOF":1,"Theros":1,"Eberron":1,"Verum":1}

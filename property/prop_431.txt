@@ -1,1 +1,0 @@
-Default,Century Gothic,Comic Sans MS,Courier New,Georgia,Lucida Bright,Papyrus,Tahoma,Times New Roman,Trebuchet MS,Verdana,Custom

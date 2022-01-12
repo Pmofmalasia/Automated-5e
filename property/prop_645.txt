@@ -1,1 +1,0 @@
-{"Standard":1,"Exotic":1,"Monstrous":0,"Secret":0}

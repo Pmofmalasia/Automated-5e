@@ -1,1 +1,0 @@
-Green,Red,White,Orange,Yellow,Blue,Purple,Black

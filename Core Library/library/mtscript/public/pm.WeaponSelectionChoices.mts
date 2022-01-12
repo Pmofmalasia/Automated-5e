@@ -1,0 +1,1 @@
+[h:macro.return = pm.WeaponSelectionInput(json.append(""," sk.SkillChoiceNum | 0,1,2,3,4,5,6,7,8 | Number of choices allowed | LIST | SELECT=1 "," sk.SkillChoiceText |  | Type the rules for choices to make "),json.append("","sk.SkillChoiceNum","sk.SkillChoiceText"),json.append("","ChoiceNum","ChoiceText")))]

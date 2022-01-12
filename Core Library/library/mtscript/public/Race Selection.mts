@@ -1,0 +1,15 @@
+[h:RaceData = macro.args]
+[h:RaceSelection = json.get(RaceData,"Name")]
+[h:SubraceArray = pm.GetSubraces(RaceSelection)]
+[h,if(json.type(SubraceArray)=="ARRAY"): SubraceOptions = json.toList(json.path.read(SubraceArray,"[*].DisplayName")); SubraceOptions = ""]
+[h:SubraceSelection = ""]
+[h:disSubrace = if(SubraceOptions=="","","SubraceSelection|"+SubraceOptions+"|Choose "+RaceSelection+" Subrace | LIST ")]
+
+[h:abort(input(disSubrace))]
+
+[h:lu.NewAbilities = json.append("",json.get(RaceData,"Traits"))]
+[h,if(SubraceSelection!=""): lu.NewAbilities = json.append(lu.NewAbilities,json.get(json.get(SubraceArray,SubraceSelection),"Traits"))]
+[h:setSize(json.get(RaceData,"Size"))]
+[h:CreatureType = json.get(RaceData,"CreatureType")]
+[h,if(SubraceSelection==""): Subrace = ""; Subrace = json.get(json.get(SubraceArray,SubraceSelection),"DisplayName")]
+[h:macro.return = lu.NewAbilities]

@@ -1,0 +1,5 @@
+[h: pm.PlayerInput = arg(0)]
+[h: pm.EncodedInput = encode(pm.PlayerInput)]
+[h: pm.EncodedInput = replace(pm.EncodedInput, "%E2%80%99", "%27")]
+[h: pm.EncodedInput = replace(pm.EncodedInput, "%E2%80%93", "-")]
+[h: macro.return = decode(pm.EncodedInput)]

@@ -1,0 +1,5 @@
+[h:pm.MaxSpellLevel = 0]
+[h:pm.BoxSize = ceiling(sqrt(pm.MaxSpellLevel))]
+
+[r:if(or(LSpellSlots>0,json.get(LClass,"LWlk")>0),if(json.get(MaxSpellSlots,"1")>0,"1st: "+json.get(SpellSlots,"1"),"")+if(json.get(MaxSpellSlots,"2")>0," | 2nd: "+json.get(SpellSlots,"2"),"")+if(json.get(MaxSpellSlots,"3")>0," | 3rd: "+json.get(SpellSlots,"3"),"")+if(json.get(MaxSpellSlots,"4")>0," | 4th: "+json.get(SpellSlots,"4"),"")+if(json.get(MaxSpellSlots,"5")>0,"| 5th: "+json.get(SpellSlots,"5"),"")+if(json.get(MaxSpellSlots,"6")>0," | 6th: "+json.get(SpellSlots,"6"),"")+if(json.get(MaxSpellSlots,"7")>0," | 7th: "+json.get(SpellSlots,"7"),"")+if(json.get(MaxSpellSlots,"8")>0," | 8th: "+json.get(SpellSlots,"8"),"")+if(json.get(MaxSpellSlots,"9")>0," | 9th: "+json.get(SpellSlots,"9"),"")+if(and(json.get(MaxSpellSlots,"1")>0,json.get(MaxSpellSlots,"W")>0),"
+","")+if(json.get(MaxSpellSlots,"W")>0,"W: "+json.get(SpellSlots,"W"),""),"")]

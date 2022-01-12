@@ -1,0 +1,2 @@
+[h,if(argCount()>2): pm.Conditions = arg(2); pm.Conditions = ""]
+[h:macro.return = json.get(json.path.read(allAbilities,"[?(@.Name=='"+json.get(arg(0),"Name")+"' && @.Class=='"+json.get(arg(0),"Class")+"' && @.Subclass=='"+json.get(arg(0),"Subclass")+"' "+if(pm.Conditions=="","","&& @.IsActive>0")+")]['"+arg(1)+"']"),0)]

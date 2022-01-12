@@ -1,0 +1,1 @@
+[h:macro.return = pm.SaveSelectionInput(json.append(""," sk.SaveChoiceNum | 0,1,2,3,4,5,6,7,8 | Number of choices allowed | LIST | SELECT=1 "," sk.SaveChoiceText |  | Type the rules for choices to make "),json.append("","sk.SaveChoiceNum","sk.SaveChoiceText"),json.append("","ChoiceNum","ChoiceText"))]

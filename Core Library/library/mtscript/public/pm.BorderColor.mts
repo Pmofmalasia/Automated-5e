@@ -1,0 +1,1 @@
+[h:macro.return = if(json.get(ClassBorderColors,arg(0))=="",if(json.get(getLibProperty("ClassBorderColors","Lib:pm.a5e.Core"),arg(0))=="","#FFFFFF",json.get(getLibProperty("ClassBorderColors","Lib:pm.a5e.Core"),arg(0))),json.get(ClassBorderColors,arg(0)))]

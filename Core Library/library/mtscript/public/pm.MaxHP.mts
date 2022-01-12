@@ -1,0 +1,2 @@
+[h:baseMaxHP = RolledMaxHP+(json.get(AtrMods,"Constitution")*Level)-HPDrain]
+[h:macro.return = if(json.get(MagicItemStats,"soMaxHP")==-1,max(baseMaxHP+json.get(MagicItemStats,"bMaxHP"),json.get(MagicItemStats,"sMaxHP")),min(json.get(MagicItemStats,"soMaxHP"),max(baseMaxHP+json.get(MagicItemStats,"bMaxHP"),json.get(MagicItemStats,"sMaxHP"))))]

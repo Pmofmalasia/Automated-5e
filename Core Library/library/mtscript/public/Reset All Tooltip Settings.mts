@@ -1,0 +1,41 @@
+[h:resetAll=input(
+	"junkVar | Are you sure you want to reset all players' tooltip settings? |  | LABEL | SPAN=TRUE ",
+	"resetChoice | No,Yes | They will need to reset them on their own | LIST"
+	)]
+	[h:abort(resetAll)]
+	[h:abort(resetChoice)]
+
+[h:choice.TitleFont=""]
+[h:choice.BodyFont=""]
+
+	[h:choice.Mouseover=json.get(getLibProperty("TooltipMouseover","Lib:pm.a5e.Core"),"Default")]
+	[h:choice.Frame=json.get(getLibProperty("TooltipFrame","Lib:pm.a5e.Core"),"Default")]
+	[h:choice.DisplaySize=json.get(getLibProperty("TooltipDisplaySize","Lib:pm.a5e.Core"),"Default")]
+	[h:choice.DisplayType=json.get(getLibProperty("TooltipDisplayType","Lib:pm.a5e.Core"),"Default")]
+	[h:choice.DarkMode=json.get(getLibProperty("TooltipDarkMode","Lib:pm.a5e.Core"),"Default")]
+	[h:choice.DarkBackground=json.get(getLibProperty("TooltipDarkBackground","Lib:pm.a5e.Core"),"Default")]
+	[h:choice.DarkText=json.get(getLibProperty("TooltipDarkText","Lib:pm.a5e.Core"),"Default")]
+	[h:choice.DarkAccent=json.get(getLibProperty("TooltipDarkAccent","Lib:pm.a5e.Core"),"Default")]
+	[h:choice.DarkAccentText=json.get(getLibProperty("TooltipDarkAccentText","Lib:pm.a5e.Core"),"Default")]
+    [h:choice.LightBackground=json.get(getLibProperty("TooltipLightBackground","Lib:pm.a5e.Core"),"Default")]
+    [h:choice.LightText=json.get(getLibProperty("TooltipLightText","Lib:pm.a5e.Core"),"Default")]
+    [h:choice.LightAccent=json.get(getLibProperty("TooltipLightAccent","Lib:pm.a5e.Core"),"Default")]
+    [h:choice.LightAccentText=json.get(getLibProperty("TooltipLightAccentText","Lib:pm.a5e.Core"),"Default")]
+
+[h:setLibProperty("TooltipMouseover",json.set("","Default",choice.Mouseover),"Lib:pm.a5e.Core")]
+[h:setLibProperty("TooltipFrame",json.set("","Default",choice.Frame),"Lib:pm.a5e.Core")]
+[h:setLibProperty("TooltipDisplaySize",json.set("","Default",choice.DisplaySize),"Lib:pm.a5e.Core")]
+[h:setLibProperty("TooltipDisplayType",json.set("","Default",choice.DisplayType),"Lib:pm.a5e.Core")]
+[h:setLibProperty("TooltipDarkMode",json.set("","Default",choice.DarkMode),"Lib:pm.a5e.Core")]
+[h:setLibProperty("TooltipDarkBackground",json.set("","Default",choice.DarkBackground),"Lib:pm.a5e.Core")]
+[h:setLibProperty("TooltipDarkText",json.set("","Default",choice.DarkText),"Lib:pm.a5e.Core")]
+[h:setLibProperty("TooltipDarkAccent",json.set("","Default",choice.DarkAccent),"Lib:pm.a5e.Core")]
+[h:setLibProperty("TooltipDarkAccentText",json.set("","Default",choice.DarkAccentText),"Lib:pm.a5e.Core")]
+[h:setLibProperty("TooltipLightBackground",json.set("","Default",choice.LightBackground),"Lib:pm.a5e.Core")]
+[h:setLibProperty("TooltipLightText",json.set("","Default",choice.LightText),"Lib:pm.a5e.Core")]
+[h:setLibProperty("TooltipLightAccent",json.set("","Default",choice.LightAccent),"Lib:pm.a5e.Core")]
+[h:setLibProperty("TooltipLightAccentText",json.set("","Default",choice.LightAccentText),"Lib:pm.a5e.Core")]
+[h:setLibProperty("TooltipTitleFont",json.set("","Default",choice.TitleFont),"Lib:pm.a5e.Core")]
+[h:setLibProperty("TooltipBodyFont",json.set("","Default",choice.BodyFont),"Lib:pm.a5e.Core")]
+
+[r:"<br>Tooltip Settings Reset."]

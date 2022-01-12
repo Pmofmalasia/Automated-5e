@@ -1,0 +1,1 @@
+{"editMode":0,"reSort":0,"cleanComment":0,"saveLast":0,"loadLastOnStart":0,"formWidth":130,"formHeight":12,"openDialog":0,"reLoad":0,"saveTA":0,"notepadFormat":1,"macroSelect":0,"stdButtons":0}

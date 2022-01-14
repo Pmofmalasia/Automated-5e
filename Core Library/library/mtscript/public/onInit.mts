@@ -39,7 +39,7 @@
 [h:defineFunction("ability.json.get","ability.json.get@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.AbilityAddSpell","pm.AbilityAddSpell@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.AbilityAddSpellInput","pm.AbilityAddSpellInput@Lib:pm.a5e.Core",0,0)]
-[h:defineFunction("pm.AbilityConditionToggle","pm.AbilityConditionToggle@Lib:pm.a5e.Core")]
+[h:defineFunction("pm.AbilityCondition","pm.AbilityCondition@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.AbilityDamage","pm.AbilityDamage@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.AbilityDieSize","pm.AbilityDieSize@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.AbilityDuration","pm.AbilityDuration@Lib:pm.a5e.Core")]

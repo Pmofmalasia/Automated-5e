@@ -36,7 +36,19 @@
 
 [h:"<!-- Put eventual Magic Item buff to aura range, etc. here. Need to decide whether to include duration or have it be separated into its own function. -->"]
 
-[h:pm.ConditionID = eval("1d1000000000")]
+[h:pm.ConditionIDTest = json.path.read(allAbilities,"[*][?(@.Name == '"+pm.Ability+"' && @.Class == '"+pm.Class+"' && @.Subclass == '"+pm.Subclass+"' && @.ConditionID != null)]['ConditionID']","DEFAULT_PATH_LEAF_TO_NULL")]
+[h,if(json.isEmpty(pm.ConditionIDTest)),CODE:{
+	[h:UniqueIDTest = 1]
+	[h,while(UniqueIDTest),CODE:{
+		[h:pm.ConditionID = eval("1d1000000000")]
+		[h:UniqueIDTest = !json.isEmpty(json.path.read(allAbilities,"[*][?(@.ConditionID == "+pm.ConditionID+")]"))]
+		[h,if(roll.count>0): broadcast("You've hit a one in a billion chance! Well, less, actually. You win nothing, I just wanted to know if it would ever happen.")]
+	}]	
+	[h:allAbilities = json.path.put(allAbilities,"[*][?(@.Name == '"+pm.Ability+"' && @.Class == '"+pm.Class+"' && @.Subclass == '"+pm.Subclass+"')]","ConditionID",pm.ConditionID)]
+};{
+	[h:pm.ConditionID = json.get(pm.ConditionIDTest,0)]
+}]
+
 [h:pm.ConditionsFinal = json.path.put(pm.ConditionsFinal,"[*]","Duration",json.set("",pm.DurationUnits,pm.Duration))]
 [h:pm.ConditionsFinal = json.path.put(pm.ConditionsFinal,"[*]","SetBy",currentToken())]
 [h:pm.ConditionsFinal = json.path.put(pm.ConditionsFinal,"[*]","ConditionID",pm.ConditionID)]

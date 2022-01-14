@@ -26,8 +26,7 @@
 		};
 		case "01":{
 			[h:pm.ConditionInfo = pm.GetAbilityConditions(arg(0),arg(1),arg(2))]
-			[h:ConditionList = json.merge(ConditionList,json.get(pm.ConditionInfo,"Conditions"))]
-			[h:ConditionGroups = json.set(ConditionGroups,json.get(pm.ConditionInfo,"ConditionID"),json.set("","Names",json.path.read(ConditionList,"[*]['Name']"),"EndCondition",pm.ConditionEndInfo))]
+         [h,MACRO("ApplyCondition@Lib:pm.a5e.Core"): json.set("","Conditions",json.get(pm.ConditionInfo,"Conditions"),"Group",json.get(pm.ConditionInfo,"ConditionID"))]
 			[h:macro.return = json.set("","Table",json.set("","ShowIfCondensed",1,"Header","Condition"+if(pm.ConditionNum>1,"s","")+" Activated","FalseHeader","","FullContents","","RulesContents",json.toList(json.path.read(pm.ConditionInfo,"['Conditions'][*]['DisplayName']")),"RollContents","","DisplayOrder","['Rules','Roll','Full']"),"Toggle",1,"IsActive",1)]
 		};
 		case "00":{
@@ -45,5 +44,5 @@
 };{
 	[h:pm.ConditionInfo = pm.GetAbilityConditions(arg(0),arg(1),arg(2))]
 	[h:pm.ConditionNames = json.toList(json.path.read(ConditionList,"[?(@.ConditionID=="+pm.CurrentID+")]['DisplayName']"))]
-	[h:macro.return = json.set("","Table",json.set("","ShowIfCondensed",0,"Header","Conditions Applied","FalseHeader","","FullContents","","RulesContents",pm.ConditionNames,"RollContents","","DisplayOrder","['Rules','Roll','Full']"),"Conditions",json.get(pm.ConditionInfo,"Conditions"))]
+	[h:macro.return = json.set("","Table",json.set("","ShowIfCondensed",0,"Header","Conditions Applied","FalseHeader","","FullContents","","RulesContents",pm.ConditionNames,"RollContents","","DisplayOrder","['Rules','Roll','Full']"),"Conditions",json.get(pm.ConditionInfo,"Conditions"),"EndCondition",pm.ConditionEndInfo)]
 }]

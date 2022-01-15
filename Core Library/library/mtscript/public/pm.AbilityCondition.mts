@@ -14,24 +14,24 @@
 [h:pm.ConditionEndInfo = arg(3)]
 
 [h:pm.ConditionIDTest = json.path.read(allAbilities,"[*][?(@.Name == '"+pm.Ability+"' && @.Class == '"+pm.Class+"' && @.Subclass == '"+pm.Subclass+"' && @.ConditionID != null)]['ConditionID']","DEFAULT_PATH_LEAF_TO_NULL")]
-[h,if(json.isEmpty(pm.ConditionIDTest)): pm.ActiveConditionTest = 0; pm.ActiveConditionTest = !json.isEmpty(json.path.read(ConditionList,"[*][?(@.ConditionID == "+json.get(ConditionIDTest,0)+")]","DEFAULT_PATH_LEAF_TO_NULL"))]
+[h,if(json.isEmpty(pm.ConditionIDTest)): pm.ActiveConditionTest = 0; pm.ActiveConditionTest = !json.isEmpty(json.path.read(ConditionList,"[*][?(@.ConditionID == '"+json.get(pm.ConditionIDTest,0)+"')]","DEFAULT_PATH_LEAF_TO_NULL"))]
 
 [h,if(pm.IsToggle),CODE:{
 	[h,SWITCH(pm.Tooltip+""+pm.ActiveConditionTest),CODE:
-		case "11":{
+		case "10":{
 			[h:macro.return = json.set("","Table",json.set("","ShowIfCondensed",1,"Header","Active?","FalseHeader","","FullContents","","RulesContents","No","RollContents","","DisplayOrder","['Rules','Roll','Full']"),"Toggle",1,"IsActive",1)]
 		};
-		case "10":{
+		case "11":{
 			[h:macro.return = json.set("","Table",json.set("","ShowIfCondensed",1,"Header","Active?","FalseHeader","","FullContents","","RulesContents","Yes","RollContents","","DisplayOrder","['Rules','Roll','Full']"),"Toggle",1,"IsActive",0)]
 		};
-		case "01":{
+		case "00":{
 			[h:pm.ConditionInfo = pm.GetAbilityConditions(arg(0),arg(1),arg(2))]
-         [h,MACRO("ApplyCondition@Lib:pm.a5e.Core"): json.set("","Conditions",json.get(pm.ConditionInfo,"Conditions"),"Group",json.get(pm.ConditionInfo,"ConditionID"))]
+			[h,MACRO("ApplyCondition@Lib:pm.a5e.Core"): json.set("","Conditions",json.get(pm.ConditionInfo,"Conditions"),"Group",json.get(pm.ConditionInfo,"ConditionID"))]
 			[h:macro.return = json.set("","Table",json.set("","ShowIfCondensed",1,"Header","Condition"+if(pm.ConditionNum>1,"s","")+" Activated","FalseHeader","","FullContents","","RulesContents",json.toList(json.path.read(pm.ConditionInfo,"['Conditions'][*]['DisplayName']")),"RollContents","","DisplayOrder","['Rules','Roll','Full']"),"Toggle",1,"IsActive",1)]
 		};
-		case "00":{
-			[h:pm.CurrentID = json.get(ConditionIDTest,0)]
-			[h:pm.ConditionsDeactivated = json.toList(json.path.read(ConditionList,"[?(@.ConditionID=="+pm.CurrentID+")]['DisplayName']"))]
+		case "01":{
+			[h:pm.CurrentID = json.get(pm.ConditionIDTest,0)]
+			[h:pm.ConditionsDeactivated = json.toList(json.path.read(ConditionList,"[?(@.ConditionID=='"+pm.CurrentID+"')]['DisplayName']"))]
 			[h,if(listCount(pm.ConditionsDeactivated)>1): listInsert(pm.ConditionsDeactivated,listCount(pm.ConditionsDeactivated)-1,"and")]
 			[h,MACRO("EndCondition@Lib:pm.a5e.Core"): pm.CurrentID]
 			[h:abilityTable = json.append("[]",json.set("","ShowIfCondensed",1,"Header","Condition"+if(pm.ConditionNum>1,"s","")+" Deactivated","FalseHeader","","FullContents","","RulesContents",pm.ConditionsDeactivated,"RollContents","","DisplayOrder","['Rules','Roll','Full']"))]
@@ -43,6 +43,11 @@
 	]
 };{
 	[h:pm.ConditionInfo = pm.GetAbilityConditions(arg(0),arg(1),arg(2))]
-	[h:pm.ConditionNames = json.toList(json.path.read(ConditionList,"[?(@.ConditionID=="+pm.CurrentID+")]['DisplayName']"))]
-	[h:macro.return = json.set("","Table",json.set("","ShowIfCondensed",0,"Header","Conditions Applied","FalseHeader","","FullContents","","RulesContents",pm.ConditionNames,"RollContents","","DisplayOrder","['Rules','Roll','Full']"),"Conditions",json.get(pm.ConditionInfo,"Conditions"),"EndCondition",pm.ConditionEndInfo)]
+	[h:pm.ConditionNames = json.toList(json.path.read(json.get(pm.ConditionInfo,"Conditions"),"[*]['DisplayName']"))]
+	[h,if(pm.Tooltip),CODE:{
+		[h:macro.return = json.set("","Table",json.set("","ShowIfCondensed",1,"Header","Conditions Applied","FalseHeader","","FullContents","","RulesContents",pm.ConditionNames,"RollContents","","DisplayOrder","['Rules','Roll','Full']"),"Conditions",json.get(pm.ConditionInfo,"Conditions"),"EndCondition",pm.ConditionEndInfo,"Toggle",0)]
+	};{
+		[h:ApplyConditionLink = macroLinkText("ApplyCondition@Lib:pm.a5e.Core","all",json.set("","Conditions",json.get(pm.ConditionInfo,"Conditions"),"Group",json.get(pm.ConditionInfo,"ConditionID")),"selected")]
+		[h:macro.return = json.set("","Table",json.set("","ShowIfCondensed",1,"Header","Conditions Applied","FalseHeader","","FullContents","","RulesContents",pm.ConditionNames+": <a href='"+ApplyConditionLink+"'><span style='color:"+pm.LinkColor()+"'>Select the Target and Click to Apply</span></a>","RollContents","","DisplayOrder","['Rules','Roll','Full']"),"Conditions",json.get(pm.ConditionInfo,"Conditions"),"EndCondition",pm.ConditionEndInfo,"Toggle",0)]
+	}]		
 }]

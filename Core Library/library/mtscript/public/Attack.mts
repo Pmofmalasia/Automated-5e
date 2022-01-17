@@ -1,10 +1,17 @@
 [h:wa.Data = macro.args]
+[h:a5e.GatherAbilities()]
+
 [h:Flavor=json.get(wa.Data,"Flavor")]
 [h:ParentToken=json.get(wa.Data,"ParentToken")]
 [h:Hand=json.get(wa.Data,"Hand")]
 [h:OtherHand=if(Hand==0,1,0)]
-[h:SingleAttack=json.get(wa.Data,"Single Attack")]
-[h:ThrowingWeapon=json.get(wa.Data,"Throwing Weapon")]
+[h:AttackNum=json.get(wa.Data,"AttackNum")]
+[h:ThrowingWeapon=json.get(wa.Data,"Throw Weapon")]
+[h:DMOnly=json.get(wa.Data,"DMOnly")]
+[h:DMOnly=0]
+[h:ShowFullRules=1]
+[h:wa.WeaponUsed = json.get(wa.Data,"WeaponData")]
+
 [h:BorderColorOverride=json.get(wa.Data,"BorderColorOverride")]
 [h:TitleFontColorOverride=json.get(wa.Data,"TitleFontColorOverride")]
 [h:AccentBackgroundOverride=json.get(wa.Data,"AccentBackgroundOverride")]
@@ -13,11 +20,6 @@
 [h:BodyFont=json.get(wa.Data,"BodyFont")]
 [h:CritMessage=json.get(wa.Data,"CritMessage")]
 [h:CritFailMessage=json.get(wa.Data,"CritFailMessage")]
-[h:DMOnly=json.get(wa.Data,"DMOnly")]
-[h:DMOnly=0]
-[h:ShowFullRules=1]
-
-[h:wa.WeaponUsed = json.get(Weapon,json.get(Weapon,Hand))]
 
 [h:wa.Name=json.get(wa.WeaponUsed,"Name")]
 [h:wa.MagicBonus=json.get(wa.WeaponUsed,"MagicBonus")]
@@ -65,8 +67,7 @@
 [h:wa.DmgDieNum = number(substring(wa.DmgDie,0,indexOf(wa.DmgDie,"d"))))]
 [h:wa.DmgDie2Num = number(substring(wa.DmgDie2,0,1))]
 
-[h:AttackCount=1]
-[h:AttackCount=if(SingleAttack,1,AttackCount)]
+[h,if(AttackNum==-1): AttackCount = 1; AttackCount = AttackNum)]
 
 [h:CritTest=0]
 [h:AllAttacksToHit="[]"]
@@ -103,25 +104,6 @@
 }]
 [h:WhichAttack=0]
 
-[h:ClassFeatureData = json.set("",
-	"Flavor",Flavor,
-	"ParentToken",ParentToken,
-	"DMOnly",0,
-	"BorderColorOverride",json.get(wa.Data,"BorderColorOverride"),
-	"TitleFontColorOverride",json.get(wa.Data,"TitleFontColorOverride"),
-	"AccentBackgroundOverride",json.get(wa.Data,"AccentBackgroundOverride"),
-	"AccentTextOverride",json.get(wa.Data,"AccentTextOverride"),
-	"TitleFont",json.get(wa.Data,"TitleFont"),
-	"BodyFont",json.get(wa.Data,"BodyFont"),
-	"Class","zzWeaponAttack",
-	"Name",wa.Name+" Attack",
-	"FalseName","Weapon Attack",
-	"OnlyRules",0
-	)]
-
-[h:FormattingData = pm.MacroFormat(ClassFeatureData)]
-[h:output.PC = json.get(json.get(FormattingData,"Output"),"Player")]
-[h:output.GM = json.get(json.get(FormattingData,"Output"),"GM")]
 [h:DamageColor = pm.DamageColor()]
 [h:HealingColor = pm.HealingColor()]
 [h:CritColor = pm.CritColor()]
@@ -142,7 +124,7 @@
 	[h:thisAttackCritDmg2 = json.get(json.get(AllAttacksDmg2,roll.count),"Dmg2Crit")]
 	[h:thisAttackCritDmg2Str = json.get(json.get(AllAttacksDmg2,roll.count),"Dmg2CritStr")]
 
-	[h:wa.RerollLink = macroLinkText("Attack@Lib:pm.a5e.Core","all",wa.Data,ParentToken)]
+	[h:wa.RerollLink = macroLinkText("AttackReroll@Lib:pm.a5e.Core","all",wa.Data,ParentToken)]
 			
 	[h:abilityTable = json.append(abilityTable,json.set("",
 		"ShowIfCondensed",1,
@@ -193,8 +175,22 @@
 
 [h:pm.PassiveFunction("AfterAttack")]
 
-[h:output.Temp = pm.AbilityTableProcessing(abilityTable,FormattingData,1)]
-[h:output.PC = output.PC + json.get(output.Temp,"Player")+"</div></div>"]
-[h:output.GM = output.GM + json.get(output.Temp,"GM")+"</div></div>"]
-[h:broadcastAsToken(output.GM,"gm")]
-[h:broadcastAsToken(output.PC,"not-gm")]
+[h:pm.RemovedConditions = "[]"]
+[h,foreach(group,json.path.read(ConditionGroups,"[*][?(@.AfterAttack != null)]","DEFAULT_PATH_LEAF_TO_NULL")),CODE:{
+	[h,macro("EndCondition@Lib:pm.a5e.Core"): json.get(group,"GroupID")]
+	[h:pm.RemovedConditions = json.merge(pm.RemovedConditions,macro.return)]
+}]
+
+[h,if(!json.isEmpty(pm.RemovedConditions)): 
+	abilityTable = json.append(abilityTable,json.set("",
+		"ShowIfCondensed",1,
+		"Header","Conditions Removed",
+		"FalseHeader","",
+		"FullContents","",
+		"RulesContents",json.toList(json.path.read(pm.RemovedConditions,"[*]['DisplayName']"),", "),
+		"RollContents","",
+		"DisplayOrder","['Rules','Roll','Full']")
+	)
+]
+
+[h:macro.return = abilityTable]

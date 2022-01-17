@@ -57,6 +57,8 @@
 [h:defineFunction("pm.AbilityStdVars","pm.AbilityStdVars@Lib:pm.a5e.Core",0,0)]
 [h:defineFunction("pm.AbilityText","pm.AbilityText@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.AbilityUseTime","pm.AbilityUseTime@Lib:pm.a5e.Core")]
+[h:defineFunction("pm.AbilityWeaponAttack","pm.AbilityWeaponAttack@Lib:pm.a5e.Core")]
+[h:defineFunction("pm.AbilityWeaponAttackProcessing","pm.AbilityWeaponAttackProcessing@Lib:pm.a5e.Core",0,0)]
 [h:defineFunction("pm.AddAbility","pm.AddAbility@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.AuraToggle","pm.AuraToggle@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.GetAbilityConditions","pm.GetAbilityConditions@Lib:pm.a5e.Core")]
@@ -65,6 +67,7 @@
 [h:defineFunction("pm.GetPrimeStat","pm.GetPrimeStat@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.PassiveStdVars","pm.PassiveStdVars@Lib:pm.a5e.Core",0,0)]
 [h:defineFunction("pm.PassiveFunction","pm.PassiveFunction@Lib:pm.a5e.Core",0,0)]
+[h:defineFunction("a5e.GatherAbilities","a5e.GatherAbilities@Lib:pm.a5e.Core",0,0)]
 [h:defineFunction("pm.Summons","pm.Summons@Lib:pm.a5e.Core")]
 
 [h:"<!-- Functions for general use -->"]

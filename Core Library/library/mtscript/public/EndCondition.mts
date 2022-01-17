@@ -7,7 +7,7 @@
 
 
 [h:ConditionList = json.path.delete(ConditionList,"[?(@.ConditionID=='"+ConditionID+"')]")]
-[h:ConditionGroups = json.remove(ConditionGroups,ConditionID)]
+[h:ConditionGroups = json.path.delete(ConditionGroups,"[?(@.GroupID=='"+ConditionID+"')]")]
 
 [h,foreach(condition,RemovedConditions),CODE:{
 	[h:StateExistsTest = !json.isEmpty(json.path.read(getInfo("campaign"),"states.*.[?(@.name=='"+json.get(condition,"Name")+"')]"))]

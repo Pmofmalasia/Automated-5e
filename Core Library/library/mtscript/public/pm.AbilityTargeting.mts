@@ -14,7 +14,7 @@
 
 [h:pm.TargetOrigin = json.get(arg(2),"Origin")]
 [h:pm.RangeNum = json.get(json.get(arg(2),"Range"),"Value")]
-[h:pm.RangeUnits = json.get(json.get(arg(2),"Range"),"Units")]
+[h:pm.RangeUnits = pm.StandardRange(json.get(json.get(arg(2),"Range"),"Units"))]
 [h:pm.RangeNumFinal = if(pm.RangeUnits=="Other","",(if(pm.RangeUnits=="Miles",pm.RangeNum*5280,pm.RangeNum)/5))]
 [h:pm.AoEInfo = json.get(arg(2),"AoE")]
 [h:pm.MultiTargetRange = json.get(arg(2),"MultiTargetRange")]

@@ -165,7 +165,7 @@
 			"Value",if(thisAttackCrit,(thisAttackDmg2+thisAttackCritDmg2),thisAttackDmg2)
 	)))]
 	
-	[h,foreach(ability,json.path.read(allAbilities,"[?(@.IsActive>0 && @.CallAfterEachAttack==1)]")): "[h:pm."+json.get(ability,"Name")+json.get(ability,"Class")+json.get(ability,"Subclass")+"('AfterEachAttack')]"]
+	[h:pm.PassiveFunction("AfterEachAttack")]
 
 	[h:WhichAttack=WhichAttack+1]
 }]

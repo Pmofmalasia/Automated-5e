@@ -24,27 +24,29 @@
 [h,MACRO("Start of Turn Effects@Lib:pm.a5e.Core"): tokenStartingTurn]
 [h:abilityTable = json.merge(abilityTable,macro.return)]
 
-[h:ClassFeatureData = json.set("",
-	"Flavor","",
-	"ParentToken",tokenEndingTurn,
-	"DMOnly",0,
-	"Class","zzInitiative",
-	"Name","Advance Initiative: "+getName(tokenEndingTurn)+" to "+getName(tokenStartingTurn),
-	"FalseName","Advance Initiative",
-	"OnlyRules",(json.length(abilityTable) == 2)
-	)]
+[h,if(json.length(abilityTable)>2),CODE:{
+	[h:ClassFeatureData = json.set("",
+		"Flavor","",
+		"ParentToken",tokenEndingTurn,
+		"DMOnly",0,
+		"Class","zzInitiative",
+		"Name","Advance Initiative: "+getName(tokenEndingTurn)+" to "+getName(tokenStartingTurn),
+		"FalseName","Advance Initiative",
+		"OnlyRules",0
+		)]
 
-[h:FormattingData = pm.MacroFormat(ClassFeatureData)]
-[h:output.PC = json.get(json.get(FormattingData,"Output"),"Player")]
-[h:output.GM = json.get(json.get(FormattingData,"Output"),"GM")]
-
-[h:output.Temp = pm.AbilityTableProcessing(abilityTable,FormattingData,1)]
-[h:output.PC = output.PC + json.get(output.Temp,"Player")+"</div></div>"]
-[h:output.GM = output.GM + json.get(output.Temp,"GM")+"</div></div>"]
-
-[h:broadcastAsToken(output.GM,"gm")]
-[h:broadcastAsToken(output.PC,"not-gm")]
-
+	[h:FormattingData = pm.MacroFormat(ClassFeatureData)]
+	[h:output.PC = json.get(json.get(FormattingData,"Output"),"Player")]
+	[h:output.GM = json.get(json.get(FormattingData,"Output"),"GM")]
+	
+	[h:output.Temp = pm.AbilityTableProcessing(abilityTable,FormattingData,1)]
+	[h:output.PC = output.PC + json.get(output.Temp,"Player")+"</div></div>"]
+	[h:output.GM = output.GM + json.get(output.Temp,"GM")+"</div></div>"]
+	
+	[h:broadcastAsToken(output.GM,"gm")]
+	[h:broadcastAsToken(output.PC,"not-gm")]
+	
+};{}]
 [h:selectTokens(tokenStartingTurn, 0)]
 [h:nextInitiative()]
 }]

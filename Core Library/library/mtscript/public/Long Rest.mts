@@ -1,6 +1,7 @@
 [h:lr.Data = macro.args]
 [h:Flavor=json.get(lr.Data,"Flavor")]
 [h:ParentToken=json.get(lr.Data,"ParentToken")]
+[h:a5e.GatherAbilities()]
 [h:abilityTable = ""]
 
 [h:setAllStates(0)]
@@ -112,7 +113,9 @@
 	}]
 	[h:allAbilities = json.path.set(allAbilities,"[?(@.Name=='"+json.get(Ability,"Name")+"' && @.Class=='"+json.get(Ability,"Class")+"' && @.Subclass=='"+json.get(Ability,"Subclass")+"')]['Resource']",ResourceRestoredFinal)]
 }]
-			
+
+[h:pm.PassiveFunction("LongRest")]
+
 [h:ArcaneWard=if(json.get(Subclasses,"Wizard")=="Abjuration",json.set(ArcaneWard,"HP",0,"Active",0,"Use",1),ArcaneWard)]
 
 [h:state.Dying=if(HP <= 0, 1, 0)]

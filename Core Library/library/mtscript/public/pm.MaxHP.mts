@@ -1,2 +1,19 @@
+[h:a5e.GatherAbilities()]
+
 [h:baseMaxHP = RolledMaxHP+(json.get(AtrMods,"Constitution")*Level)-HPDrain]
-[h:macro.return = if(json.get(MagicItemStats,"soMaxHP")==-1,max(baseMaxHP+json.get(MagicItemStats,"bMaxHP"),json.get(MagicItemStats,"sMaxHP")),min(json.get(MagicItemStats,"soMaxHP"),max(baseMaxHP+json.get(MagicItemStats,"bMaxHP"),json.get(MagicItemStats,"sMaxHP"))))]
+[h:bonusMaxHP = 0]
+[h:setMaxHP = 0]
+[h:setOverrideMaxHP = -1]
+
+[h:"<!-- Temporary magic item calculation for current, old magic items -->"]
+[h:setMaxHP = json.get(MagicItemStats,"sMaxHP"))]
+[h:setOverrideMaxHP = json.get(MagicItemStats,"soMaxHP")]
+[h:bonusMaxHP = json.get(MagicItemStats,"bMaxHP")]
+
+[h:pm.PassiveFunction("MaxHP")]
+
+[h:maxHPFinal = baseMaxHP + bonusMaxHP]
+[h:maxHPFinal = max(setMaxHP,maxHPFinal)]
+[h,if(setOverrideMaxHP!=-1): maxHPFinal = setOverrideMaxHP]
+
+[h:macro.return = maxHPFinal]

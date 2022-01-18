@@ -28,6 +28,8 @@
 [h:defineFunction("pm.HitDieDisplay","pm.HitDieDisplay@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.Languages","pm.Languages@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.MaxHP","pm.MaxHP@Lib:pm.a5e.Core")]
+[h:defineFunction("a5e.AC","a5e.AC@Lib:pm.a5e.Core")]
+[h:defineFunction("a5e.Speed","a5e.Speed@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.ModifierCalc","pm.ModifierCalc@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.SaveProficiency","pm.SaveProficiency@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.SpellSlots","pm.SpellSlots@Lib:pm.a5e.Core")]

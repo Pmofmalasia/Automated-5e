@@ -1,6 +1,7 @@
 [h:sr.Data = macro.args]
 [h:Flavor=json.get(sr.Data,"Flavor")]
 [h:ParentToken=json.get(sr.Data,"ParentToken")]
+[h:a5e.GatherAbilities()]
 [h:abilityTable = ""]
 
 [h:abilityTable = json.append(abilityTable,json.set("",
@@ -78,6 +79,8 @@
 	}]
 	[h:allAbilities = json.path.set(allAbilities,"[?(@.Name=='"+json.get(Ability,"Name")+"' && @.Class=='"+json.get(Ability,"Class")+"' && @.Subclass=='"+json.get(Ability,"Subclass")+"')]['Resource']",ResourceRestoredFinal)]
 }]
+
+[h:pm.PassiveFunction("ShortRest")]
 
 [h:state.Dying=if(HP <= 0, 1, 0)]
 [h:state.Bloodied=if(HP/MaxHP <= 0.5, 1, 0)]

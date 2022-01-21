@@ -8,7 +8,7 @@
 
 [{"Name":"AlchemistsSupplies","DisplayName":"Alchemist's Supplies","Attribute":"Intelligence"}]
 
-[h:tch.SkillList = pm.GetTools("json")]
+[h:tch.SkillList = pm.GetTools()]
 [h:tch.SkillOptions = ""]
 [h:tch.SkillDisplay = ""]
 [h,foreach(TempSkill,tch.SkillList),CODE:{

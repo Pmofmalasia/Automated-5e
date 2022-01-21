@@ -6,8 +6,8 @@
 [h:disResistance=if(dResistance=="","","junkVar|"+dResistance+"|Resistances|LABEL")]
 [h:disImmunity=if(dImmunity=="","","junkVar|"+dImmunity+"|Immunities|LABEL")]
 [h:disAbsorb=if(dAbsorption=="","","junkVar|"+dAbsorption+"|Absorption|LABEL")]
-[h:listDmgTypes="None - Modify Manually,"+pm.GetDamageTypes()]
-[h:listSpellSchools="Not Relevant,"+pm.GetSpellSchools()]
+[h:listDmgTypes="None - Modify Manually,"+pm.GetDamageTypes("DisplayName")]
+[h:listSpellSchools="Not Relevant,"+pm.GetSpellSchools("DisplayName")]
 
 [h:abort(input(
 	"junkVar|-------------------------------------- Damage or Healing Done --------------------------------------| |LABEL|SPAN=TRUE",

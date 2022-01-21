@@ -4,7 +4,7 @@
 [h:hp.ChangeType = json.get(hp.Data,"ChangeType")]
 [h:hp.DamageDealt = json.get(hp.Data,"DamageDealt")]
 
-[h:hp.TypesDealt = json.intersection(json.append(pm.GetDamageTypes("json"),"None - Modify Manually"),json.fields(hp.DamageDealt,"json"))]
+[h:hp.TypesDealt = json.intersection(json.append(pm.GetDamageTypes("Name","json"),"None - Modify Manually"),json.fields(hp.DamageDealt,"json"))]
 
 [h:"<!-- Needs rework of how magic/silvered/adamantine/etc. sources are tracked (likely via object instead of 'X number means Y'). Could also use the shift to bake vuln vs. resist vs. invuln etc. into the same object -->"]
 

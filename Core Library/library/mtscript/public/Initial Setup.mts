@@ -6,9 +6,9 @@
 [h:RaceArray = pm.GetRaces()]
 [h:RaceOptions = json.toList(json.path.read(RaceArray,"[*].DisplayName"))]
 
-[h:AttributeList = pm.GetAttributes("json")]
+[h:AttributeList = pm.GetAttributes()]
 [h:AttributeInput = ""]
-[h,foreach(TempAttribute,AttributeList): AttributeInput = listAppend(AttributeInput," "+TempAttribute+"Choice | "+StatList+" | "+TempAttribute+" | LIST | VALUE=STRING SELECT=8 ","##")]
+[h,foreach(TempAttribute,AttributeList): AttributeInput = listAppend(AttributeInput," "+json.get(TempAttribute,"Name")+"Choice | "+StatList+" | "+json.get(TempAttribute,"DisplayName")+" | LIST | VALUE=STRING SELECT=8 ","##")]
 
 [h:BasicInfo=input(
 	"junkVar | "+getTokenImage()+" | New Character | LABEL | ICON=TRUE ",
@@ -25,7 +25,7 @@
 [h:abort(BasicInfo)]
 
 [h:setName(CharName)]
-[h,foreach(TempAttribute,AttributeList): baseAttributes = json.set(baseAttributes,TempAttribute,eval(TempAttribute+"Choice"))]
+[h,foreach(TempAttribute,AttributeList): baseAttributes = json.set(baseAttributes,json.get(TempAttribute,"Name"),eval(json.get(TempAttribute,"Name")+"Choice"))]
 [h:Race=json.get(json.get(RaceArray,RaceSelection),"DisplayName")]
 [h:Deity=DeitySelection]
 [h:Alignment=json.set("","Morality",MoralitySelection,"Order",OrderSelection)]

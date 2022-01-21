@@ -1,7 +1,7 @@
 [h:abilityTable = ""]
 [h:tooltipData = macro.args]
 
-[h,foreach(TempSkill,pm.GetSkills("json")): abilityTable = json.append(abilityTable,json.set("",
+[h,foreach(TempSkill,pm.GetSkills()): abilityTable = json.append(abilityTable,json.set("",
 	"ShowIfCondensed",1,
 	"Header",json.get(TempSkill,"DisplayName")+" ("+substring(json.get(TempSkill,"Attribute"),0,3)+")",
 	"FalseHeader","",
@@ -14,12 +14,12 @@
 	"Value",""
 ))]
 
-[h,foreach(TempAttribute,pm.GetAttributes("json")): abilityTable = json.append(abilityTable,json.set("",
+[h,foreach(TempAttribute,pm.GetAttributes()): abilityTable = json.append(abilityTable,json.set("",
 	"ShowIfCondensed",1,
-	"Header",TempAttribute,
+	"Header",json.get(TempAttribute,"DisplayName"),
 	"FalseHeader","",
 	"FullContents","",
-	"RulesContents",pm.PlusMinus(json.get(AtrMods,TempAttribute),1),
+	"RulesContents",pm.PlusMinus(json.get(AtrMods,json.get(TempAttribute,"Name")),1),
 	"RollContents","",
 	"DisplayOrder","['Rules','Roll','Full']",
 	"LinkText","",

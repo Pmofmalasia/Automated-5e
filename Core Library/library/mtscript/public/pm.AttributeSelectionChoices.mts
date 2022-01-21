@@ -1,7 +1,7 @@
 [h:ab.LoopExit = 0]
 [h:ab.Input = ""]
 [h:ab.AtrChoices = ""]
-[h,foreach(TempAtr,pm.GetAttributes("json")): ab.Input = listAppend(ab.Input," ab."+TempAtr+"Choice |  | "+TempAtr+" | CHECK ","##")]
+[h,foreach(TempAtr,pm.GetAttributes()): ab.Input = listAppend(ab.Input," ab."+json.get(TempAtr,"Name")+"Choice |  | "+json.get(TempAtr,"DisplayName")+" | CHECK ","##")]
 [h,while(ab.LoopExit==0),CODE:{
 	[h:abort(input(
 		" junkVar | --------- Create Points to Allocate to Select Ability Scores --------- |  | LABEL | SPAN=TRUE ",
@@ -14,9 +14,14 @@
 	[h,if(ab.Inclusive==2),CODE:{
 		[h:ab.ThisPoint = json.set(ab.ThisPoint,"AllAttributes",1)]
 	};{
-		[h,foreach(TempAtr,pm.GetAttributes("json")): ab.ThisPoint = if(eval("ab."+TempAtr+"Choice")==0,ab.ThisPoint,json.set(ab.ThisPoint,TempAtr,eval("ab."+TempAtr+"Choice")))]
+		[h,foreach(TempAtr,pm.GetAttributes("Name","json")): ab.ThisPoint = if(eval("ab."+TempAtr+"Choice")==0,ab.ThisPoint,json.set(ab.ThisPoint,TempAtr,eval("ab."+TempAtr+"Choice")))]
 		[h:ab.ThisPoint = if(ab.Inclusive==0,json.set(ab.ThisPoint,"Inclusive",1),ab.ThisPoint)]
 	}]
 	[h:ab.AtrChoices = json.append(ab.AtrChoices,ab.ThisPoint)]
 }]
+
+[h:"<!-- Note: Above setting of 'Inclusive' to '' for the 'Exclude Choices' option is on purpose. -->"]
+[h:"<!-- In processing the check is if, in this object, 'Inclusive'=='AttributeName', then it is a valid option.-->"]
+[h:"<!-- For exclusion, using '' as the value for exclusion allows attributes created after the ability to also have '' as their value, since their key cannot be present. -->"]
+
 [h:macro.return = ab.AtrChoices]

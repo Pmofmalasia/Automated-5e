@@ -1,6 +1,6 @@
 [h,if(argCount()>0): sv.ExtraInput = json.toList(arg(0),"##") ; sv.ExtraInput = ""]
 [h:sv.Input = ""]
-[h,foreach(TempSave,pm.GetAttributes("json")): sv.Input = listAppend(sv.Input," sv."+TempSave+"Choice |  | "+TempSave+" Proficiency | CHECK ","##")]
+[h,foreach(TempSave,pm.GetAttributes()): sv.Input = listAppend(sv.Input," sv."+json.get(TempSave,"Name")+"Choice |  | "+json.get(TempSave,"DisplayName")+" Proficiency | CHECK ","##")]
 
 [h:abort(input(
 	" junkVar | ---------------------- Save Proficiency Choice Info ---------------------- |  | LABEL | SPAN=TRUE ",
@@ -9,7 +9,7 @@
 ))]
 
 [h:sv.SaveProfChoices = ""]
-[h,foreach(TempSave,pm.GetAttributes("json")): sv.SaveProfChoices = if(eval("sv."+TempSave+"Choice")==0,sv.SaveProfChoices,json.set(sv.SaveProfChoices,TempSave,eval("sv."+TempSave+"Choice")))]
+[h,foreach(TempSave,pm.GetAttributes("Name","json")): sv.SaveProfChoices = if(eval("sv."+TempSave+"Choice")==0,sv.SaveProfChoices,json.set(sv.SaveProfChoices,TempSave,eval("sv."+TempSave+"Choice")))]
 		
 [h,if(argCount()>0): sv.ExtraKeys = arg(2); sv.ExtraKeys = ""]
 [h,foreach(key,sv.ExtraKeys),CODE:{

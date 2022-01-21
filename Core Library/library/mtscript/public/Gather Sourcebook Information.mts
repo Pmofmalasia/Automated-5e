@@ -7,7 +7,7 @@
 [h:pm.Abilities = ""]
 [h:pm.Conditions = ""]
 [h:pm.AbilityUpdates = ""]
-[h:pm.Subclasses = "{}"]
+[h:pm.Subclasses = ""]
 [h:pm.Subraces = ""]
 [h:pm.CreatureTypes = ""]
 [h:pm.Languages = ""]
@@ -21,6 +21,7 @@
 [h,foreach(book,pm.SourcebookLibs),CODE:{
 	[h,if(getLibProperty("sb.Attributes","Lib:"+book)!=""): pm.Attributes = if(or(json.get(getLibProperty("AttributeSourcebooks","Lib:pm.a5e.Core"),book)==1,json.get(getLibProperty("AttributeSourcebooks","Lib:pm.a5e.Core"),book)==""),json.merge(pm.Attributes,getLibProperty("sb.Attributes","Lib:"+book)),pm.Attributes)]
 	[h,if(getLibProperty("sb.Classes","Lib:"+book)!=""): pm.Classes = json.merge(pm.Classes,getLibProperty("sb.Classes","Lib:"+book))]
+	[h,if(getLibProperty("sb.Subclasses","Lib:"+book)!=""): pm.Subclasses = json.merge(pm.Subclasses,getLibProperty("sb.Subclasses","Lib:"+book))]
 	[h,if(getLibProperty("sb.Feats","Lib:"+book)!=""): pm.Feats = json.merge(pm.Feats,getLibProperty("sb.Feats","Lib:"+book))]
 	[h,if(getLibProperty("sb.Backgrounds","Lib:"+book)!=""): pm.Backgrounds = json.merge(pm.Backgrounds,getLibProperty("sb.Backgrounds","Lib:"+book))]
 	[h,if(getLibProperty("sb.Races","Lib:"+book)!=""): pm.Races = json.merge(pm.Races,getLibProperty("sb.Races","Lib:"+book))]
@@ -37,21 +38,15 @@
 	[h,if(getLibProperty("sb.SpellSchools","Lib:"+book)!=""): pm.SpellSchools = json.merge(pm.SpellSchools,getLibProperty("sb.SpellSchools","Lib:"+book))]
 }]
 
-[h,foreach(book,pm.SourcebookLibs),CODE:{
-	[h,foreach(TempClass,pm.Classes),CODE:{
-		[h,if(getLibProperty("sb.Subclasses","Lib:"+book)!=""): pm.Subclasses = if(json.get(getLibProperty("sb.Subclasses","Lib:"+book),json.get(TempClass,"Name"))=="",pm.Subclasses,json.set(pm.Subclasses,json.get(TempClass,"Name"),json.merge(json.get(pm.Subclasses,json.get(TempClass,"Name")),json.get(getLibProperty("sb.Subclasses","Lib:"+book),json.get(TempClass,"Name")))))]
-	}]
-}]
-
 [h:setLibProperty("sb.Attributes",pm.Attributes,"Lib:pm.a5e.Core")]
 [h:setLibProperty("sb.Classes",json.sort(pm.Classes,"a","DisplayName"),"Lib:pm.a5e.Core")]
-[h:setLibProperty("sb.Feats",pm.Feats,"Lib:pm.a5e.Core")]
+[h:setLibProperty("sb.Feats",json.sort(pm.Feats,"a","DisplayName"),"Lib:pm.a5e.Core")]
 [h:setLibProperty("sb.Backgrounds",json.sort(pm.Backgrounds,"a","DisplayName"),"Lib:pm.a5e.Core")]
 [h:setLibProperty("sb.Races",json.sort(pm.Races,"a","DisplayName"),"Lib:pm.a5e.Core")]
 [h:setLibProperty("sb.Languages",json.sort(pm.Languages,"a","DisplayName"),"Lib:pm.a5e.Core")]
 [h:setLibProperty("sb.Skills",json.sort(pm.Skills,"a","DisplayName"),"Lib:pm.a5e.Core")]
 [h:setLibProperty("sb.Tools",json.sort(pm.Tools,"a","DisplayName"),"Lib:pm.a5e.Core")]
-[h:setLibProperty("sb.Subclasses",pm.Subclasses,"Lib:pm.a5e.Core")]
+[h:setLibProperty("sb.Subclasses",json.sort(pm.Subclasses,"a","DisplayName"),"Lib:pm.a5e.Core")]
 [h:setLibProperty("sb.Subraces",json.sort(pm.Subraces,"a","Race","DisplayName"),"Lib:pm.a5e.Core")]
 [h:setLibProperty("sb.CreatureTypes",json.sort(pm.CreatureTypes,"a","DisplayName"),"Lib:pm.a5e.Core")]
 [h:setLibProperty("sb.Conditions",json.sort(pm.Conditions,"a","Class","Subclass","Level","DisplayName"),"Lib:pm.a5e.Core")]
@@ -59,5 +54,5 @@
 [h:setLibProperty("sb.AbilityUpdates",json.sort(pm.AbilityUpdates,"a","Class","Subclass","Level","DisplayName"),"Lib:pm.a5e.Core")]
 [h:setLibProperty("sb.DamageTypes",pm.DamageTypes,"Lib:pm.a5e.Core")]
 [h:setLibProperty("sb.CastingAbilities",pm.CastingAbilities,"Lib:pm.a5e.Core")]
-[h:setLibProperty("sb.SpellSchools",json.sort(pm.SpellSchools,"a"),"Lib:pm.a5e.Core")]
+[h:setLibProperty("sb.SpellSchools",json.sort(pm.SpellSchools,"a","DisplayName"),"Lib:pm.a5e.Core")]
 [h:broadcast("Sourcebook Data has been moved to the core library.")]

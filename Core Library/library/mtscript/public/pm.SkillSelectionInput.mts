@@ -1,13 +1,13 @@
 [h,if(argCount()>0): sk.ExtraInput = json.toList(arg(0),"##") ; sk.ExtraInput = ""]
 
 [h:sk.SkillInput = ""]
-[h:sk.SkillList = pm.GetSkills("json")]
+[h:sk.SkillList = pm.GetSkills()]
 [h,foreach(TempSkill,sk.SkillList),CODE:{
 	[h:sk.SkillInput = listAppend(sk.SkillInput,"sk."+json.get(TempSkill,"Name")+" | No,Proficiency,Expertise,Expertise if Proficient | "+json.get(TempSkill,"DisplayName")+" | LIST ","##")]
 }]
 
 [h:sk.ToolInput = ""]
-[h:sk.ToolList = pm.GetTools("json")]
+[h:sk.ToolList = pm.GetTools()]
 [h,foreach(TempTool,sk.ToolList),CODE:{
 	[h:sk.ToolInput = listAppend(sk.ToolInput,"sk."+json.get(TempTool,"Name")+" | No,Proficiency,Expertise,Expertise if Proficient | "+json.get(TempTool,"DisplayName")+" | LIST ","##")]
 }]

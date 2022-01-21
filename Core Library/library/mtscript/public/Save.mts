@@ -1,4 +1,5 @@
 [h:sv.Data = macro.args]
+[h:a5e.GatherAbilities()]
 [h:roll1=1d20]
 [h:roll2=1d20]
 
@@ -12,13 +13,13 @@
 [h:output.PC = json.get(json.get(sv.Data,"Output"),"Player")]
 [h:output.GM = json.get(json.get(sv.Data,"Output"),"GM")]
 
-[h:baseBonus = json.get(AtrMods,json.get(sv.Data,"Name"))]
-[h:profBonus = Proficiency * json.get(Saves,json.get(sv.Data,"Name"))]
+[h:baseBonus = json.get(AtrMods,pm.RemoveSpecial(json.get(sv.Data,"Name")))]
+[h:profBonus = Proficiency * json.get(Saves,pm.RemoveSpecial(json.get(sv.Data,"Name")))]
 [h:sv.TotalBonus = baseBonus + profBonus]
 
 [h:sv.Adv = 0]
 [h:sv.Dis = 0]
-[h,foreach(ability,json.path.read(ConditionList,"[?(@.CallSaveAdv==1)]")): evalMacro("[h:pm."+json.get(ability,"Name")+json.get(ability,"Class")+json.get(ability,"Subclass")+"Condition('SaveAdv')]")]
+[h:pm.PassiveFunction("SaveAdv")]
 
 [h:abilityTable = json.append("",json.set("",
 	"ShowIfCondensed",1,

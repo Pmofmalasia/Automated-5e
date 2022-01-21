@@ -1,8 +1,13 @@
-[h:pm.Attributes = getLibProperty("sb.Attributes","Lib:pm.a5e.Core")]
-
-[h,if(argCount() > 0): pm.Delim = arg(0); pm.Delim = ","]
-[h,if(pm.Delim == "json"),CODE:{
-	[h:macro.return = pm.Attributes]
+[h,if(argCount()>0): pm.KeyChoice = arg(0); pm.KeyChoice = ""]
+[h,if(pm.KeyChoice==""),CODE:{
+	[h:pm.Attributes = getLibProperty("sb.Attributes","Lib:pm.a5e.Core")]
 };{
-	[h:macro.return = json.toList(pm.Attributes,pm.Delim)]
+	[h:pm.Attributes = json.path.read(getLibProperty("sb.Attributes","Lib:pm.a5e.Core"),"."+pm.KeyChoice)]
+}]
+
+[h,if(argCount()>1): pm.Delim = arg(1) ; pm.Delim = if(pm.KeyChoice=="","json",",")]
+[h,if(pm.Delim == "json"),CODE:{
+	[h,if(pm.KeyChoice!=""): macro.return = json.sort(pm.Attributes,"a"); macro.return = json.sort(pm.Attributes,"a","DisplayName")]
+};{
+	[h:macro.return = listSort(json.toList(pm.Attributes),"A+")]
 }]

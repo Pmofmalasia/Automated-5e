@@ -3,7 +3,7 @@
 	" junkVar | ---------------------- Spellcasting Info ---------------------- |  | LABEL | SPAN=TRUE ",
 	" sp.LevelGained | 0,1,2,3,4,5 | Level Spellcasting is Gained | LIST | SELECT=1 ",
 	" sp.HalfFull | Full Caster,Half Caster,Third Caster | Caster Type | LIST ",
-	" sp.Stat | "+pm.GetAttributes()+" | Primary Casting Stat | LIST | VALUE=STRING ",
+	" sp.Stat | "+pm.GetAttributes("DisplayName")+" | Primary Casting Stat | LIST | VALUE=STRING ",
 	" sp.Ritual |  | Can Ritual Cast | CHECK ",
 	" sp.MagicSource | Arcane,Divinity | Source of Magic | LIST | VALUE=STRING ",
 	" sp.Prepared | Known,Prepared | Knows or Prepares Spells | LIST ",
@@ -14,7 +14,7 @@
 	"Name","Spellcasting",
 	"DisplayName","Spellcasting",
 	"Level",sp.LevelGained,
-	"PrimeStat",sp.Stat,
+	"PrimeStat",pm.RemoveSpecial(sp.Stat),
 	"CasterType",if(sp.HalfFull==0,1,if(sp.HalfFull==1,(1/2),(1/3))),
 	"Ritual",sp.Ritual,
 	"MagicSource",sp.MagicSource,
@@ -25,7 +25,7 @@
 
 [h,if(sp.OtherList),CODE:{
 	[h:pm.SchoolInput = ""]
-	[h,foreach(school,pm.GetSpellSchools("json")): pm.SchoolInput = listAppend(pm.SchoolInput,"sp."+school+" |  | "+school+" | CHECK ","##")]
+	[h,foreach(school,pm.GetSpellSchools()): pm.SchoolInput = listAppend(pm.SchoolInput,"sp."+json.get(school,"Name")+" |  | "+json.get(school,"DisplayName")+" | CHECK ","##")]
 	
 	[h:abort(input(
 		" sp.ClassList | "+pm.GetClasses("DisplayName")+" | Other class list to use | LIST | VALUE=STRING",
@@ -34,7 +34,7 @@
 	))]
 
 	[h:pm.ValidSchools = ""]
-	[h,foreach(school,pm.GetSpellSchools("json")): pm.ValidSchools = if(eval("sp."+school),json.append(pm.ValidSchools,school),pm.ValidSchools)]
+	[h,foreach(school,pm.GetSpellSchools()): pm.ValidSchools = if(eval("sp."+json.get(school,"Name")),json.append(pm.ValidSchools,school),pm.ValidSchools)]
 	[h:sp.SpellcastingAbility = json.set(sp.SpellcastingAbility,
 		"ClassList",pm.RemoveSpecial(sp.ClassList),
 		"ValidSchools",pm.ValidSchools

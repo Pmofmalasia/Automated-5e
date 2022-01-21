@@ -40,7 +40,7 @@
 [h:setLibProperty("sb.Tools",'[]',"Lib:pm.a5e.Core")]
 [h:setLibProperty("sb.Backgrounds",'[]',"Lib:pm.a5e.Core")]
 [h:setLibProperty("sb.Classes",'[]',"Lib:pm.a5e.Core")]
-[h:setLibProperty("sb.Subclasses",'{}',"Lib:pm.a5e.Core")]
+[h:setLibProperty("sb.Subclasses",'[]',"Lib:pm.a5e.Core")]
 [h:setLibProperty("sb.Races",'[]',"Lib:pm.a5e.Core")]
 [h:setLibProperty("sb.Subraces",'[]',"Lib:pm.a5e.Core")]
 [h:setLibProperty("sb.CreatureTypes",'[]',"Lib:pm.a5e.Core")]

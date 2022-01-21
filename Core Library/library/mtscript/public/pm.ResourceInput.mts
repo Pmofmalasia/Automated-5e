@@ -36,7 +36,7 @@
 	[h,switch(ab.ResourceType),CODE:
 		case "1": {[h:ab.SecondResourceDisplay = ""]};
 		case "Other Flat Number": {[h:ab.SecondResourceDisplay = " ab.ResourceChoice | 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20 | Amount of Resource | LIST | VALUE=STRING"]};
-		case "Attribute Based": {[h:ab.SecondResourceDisplay = " ab.ResourceChoice | "+pm.GetAttributes()+" | Choose Attribute | LIST | VALUE=STRING ## ab.MultiplierChoice | 1/4,1/3,1/2,1,2,3,4,5,6,7,8,9,10 | Resource = Attribute x | LIST | VALUE=STRING SELECT=3"]};
+		case "Attribute Based": {[h:ab.SecondResourceDisplay = " ab.ResourceChoice | "+pm.GetAttributes("DisplayName")+" | Choose Attribute | LIST | VALUE=STRING ## ab.MultiplierChoice | 1/4,1/3,1/2,1,2,3,4,5,6,7,8,9,10 | Resource = Attribute x | LIST | VALUE=STRING SELECT=3"]};
 		case "Linearly Class Level Based": {[h:ab.SecondResourceDisplay = " ab.ResourceChoice | 1/4,1/3,1/2,1,2,3,4,5,6,7,8,9,10 | Resource = Class Level x | LIST | VALUE=STRING SELECT=3"]};
 		case "Non-Linearly Class Level Based": {
 				[h:ab.SecondResourceDisplay = " junkVar | <html><span title='e.g. Rage has 2 per long rest at level 1 and 2, and 3 at level 3. 2 is input at level 1, 0 for level 2, and 1 for level 3.'>Input the amount of maximum resource <i>gained</i> at each level</span></html> | | LABEL | SPAN=TRUE "]
@@ -50,7 +50,7 @@
 
 	[h,switch(ab.ResourceType),CODE:
 		case "1": {[h:tempResource = 1]};
-		case "Attribute Based": {[h:tempResource = "max(1,json.get(AtrMods,'"+ab.ResourceChoice+"')"+if(ab.MultiplierChoice=="1","","*"+ab.MultiplierChoice)+")"]};
+		case "Attribute Based": {[h:tempResource = "max(1,json.get(AtrMods,'"+pm.RemoveSpecial(ab.ResourceChoice)+"')"+if(ab.MultiplierChoice=="1","","*"+ab.MultiplierChoice)+")"]};
 		case "Other Flat Number": {[h:tempResource = ab.ResourceChoice]};
 		case "Linearly Class Level Based": {[h:tempResource = "floor(pm.GetAbilityLevel(json.set('','Name','"+json.get(ab.ResourceInfo,"Name")+"','Class','"+json.get(ab.ResourceInfo,"Class")+"','Subclass','"+json.get(ab.ResourceInfo,"Subclass")+"'))*"+ab.ResourceChoice+")"]};
 		case "Non-Linearly Class Level Based":{[h:tempResource = eval("tempResource"+ab.Level)]};

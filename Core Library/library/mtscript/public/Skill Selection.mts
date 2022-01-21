@@ -5,22 +5,22 @@
 [h:"<!-- sk.TrainingOptions removes invalid options from being chosen, preventing from choosing a level of proficiency not available or choosing a proficiency below what they already have. -->"]
 
 [h:sk.SaveInput = ""]
-[h:sk.SaveList = pm.GetAttributes("json")]
+[h:sk.SaveList = pm.GetAttributes()]
 [h,foreach(TempSave,sk.SaveList),CODE:{
-	[h:sk.TempProficiency = if(json.get(Saves,TempSave)=="",0,json.get(Saves,TempSave))]
-	[h:sk.TempIsOption = if(json.get(sk.ValidSkills,TempSave)=="",0,json.get(sk.ValidSkills,TempSave))]
+	[h:sk.TempProficiency = if(json.get(Saves,json.get(TempSave,"Name"))=="",0,json.get(Saves,json.get(TempSave,"Name")))]
+	[h:sk.TempIsOption = if(json.get(sk.ValidSkills,json.get(TempSave,"Name"))=="",0,json.get(sk.ValidSkills,json.get(TempSave,"Name")))]
 	[h:sk.TrainingOptions = json.toList(json.get(listTraining,sk.TempProficiency,min(2,if(sk.TempIsOption==3,sk.TempProficiency+1,sk.TempIsOption))))]
 	[h:sk.TempValidTest = if(and(sk.TempIsOption>sk.TempProficiency,sk.TempProficiency!=2),1,0)]
 	[h,if(sk.TempValidTest),CODE:{
-		[h:sk.SaveInput = listAppend(sk.SaveInput,"sk."+TempSave+"Prof | "+sk.TrainingOptions+" | "+TempSave+" Saves | LIST | ","##")]
+		[h:sk.SaveInput = listAppend(sk.SaveInput,"sk."+json.get(TempSave,"Name")+"Prof | "+sk.TrainingOptions+" | "+json.get(TempSave,"DisplayName")+" Saves | LIST | ","##")]
 	};{
-		[h:set("sk."+TempSave+"Prof",0)]
+		[h:set("sk."+json.get(TempSave,"Name")+"Prof",0)]
 	}]
 }]
 [h:sk.SaveInput = if(sk.SaveInput=="","",listAppend(" junkVar | ----------------- Save Proficiencies ----------------- | | LABEL | SPAN=TRUE ",sk.SaveInput,"##"))]
 
 [h:sk.SkillInput = ""]
-[h:sk.SkillList = pm.GetSkills("json")]
+[h:sk.SkillList = pm.GetSkills()]
 [h,foreach(TempSkill,sk.SkillList),CODE:{
 	[h:sk.TempProficiency = if(json.get(Skills,json.get(TempSkill,"Name"))=="",0,json.get(Skills,json.get(TempSkill,"Name")))]
 	[h:sk.TempIsOption = if(json.get(sk.ValidSkills,json.get(TempSkill,"Name"))=="",0,json.get(sk.ValidSkills,json.get(TempSkill,"Name")))]
@@ -35,7 +35,7 @@
 [h:sk.SkillInput = if(sk.SkillInput=="","",listAppend(" junkVar | ----------------- Skill Proficiencies ----------------- | | LABEL | SPAN=TRUE ",sk.SkillInput,"##"))]
 
 [h:sk.ToolInput = ""]
-[h:sk.ToolList = pm.GetTools("json")]
+[h:sk.ToolList = pm.GetTools()]
 [h,foreach(TempTool,sk.ToolList),CODE:{
 	[h:sk.TempProficiency = if(json.get(Tools,json.get(TempTool,"Name"))=="",0,json.get(Tools,json.get(TempTool,"Name")))]
 	[h:sk.TempIsOption = if(json.get(sk.ValidSkills,json.get(TempTool,"Name"))=="",0,json.get(sk.ValidSkills,json.get(TempTool,"Name")))]

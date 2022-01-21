@@ -1,11 +1,12 @@
 [h:ch.Data = macro.args]
+[h:a5e.GatherAbilities()]
 [h:roll1=1d20]
 [h:roll2=1d20]
 [h:SkillBonus=0]
 
 [h:ch.Adv = 0]
 [h:ch.Dis = 0]
-[h,foreach(ability,json.path.read(ConditionList,"[?(@.CallCheckAdv==1)]")): evalMacro("[h:pm."+json.get(ability,"Name")+json.get(ability,"Class")+json.get(ability,"Subclass")+"Condition('CheckAdv')]")]
+[h:pm.PassiveFunction("CheckAdv")]
 
 [h:"<!-- Note: I dont think alternate numerical bonuses calculate correctly with magic items but i cant be bothered to fix it right now. when i am bothered to fix it subtract the original magic bonus from skillbonus and add the new one -->"]
 [h,switch(json.get(ch.Data,"Alternate")),code:

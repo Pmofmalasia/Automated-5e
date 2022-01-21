@@ -2,23 +2,43 @@
 [h:ValidAbilities=""]
 [h:AbilityChoices = ""]
 [h:FeatConditions = macro.args]
-[h,foreach(TempAbilityScore,pm.GetAttributes("json")),CODE:{
-	[h,if(json.get(Attributes,TempAbilityScore)!=""),CODE:{
-		[h:AbilityList = if(json.get(Attributes,TempAbilityScore)<20,listAppend(AbilityList,TempAbilityScore+" ("+json.get(Attributes,TempAbilityScore)+")"),AbilityList)]
-		[h:ValidAbilities = if(json.get(Attributes,TempAbilityScore)<20,json.append(ValidAbilities,TempAbilityScore),ValidAbilities)]
-		[h:AbilityChoices = json.set(AbilityChoices,TempAbilityScore,0)]
+
+[h:a5e.GatherAbilities()]
+[h:as.MaxStatScores = ""]
+[h,foreach(TempAbilityScore,pm.GetAttributes("Name")): json.set(as.MaxStatScores,TempAbilityScore,20)]
+[h:pm.PassiveFunction("AbilityScoreMax")]
+
+[h,foreach(TempAbilityScore,pm.GetAttributes()),CODE:{
+	[h:HasAttributeTest = (json.get(Attributes,json.get(TempAbilityScore,"Name"))!="")]
+	[h,if(HasAttributeTest),CODE:{
+		[h:AbilityList = if(json.get(Attributes,json.get(TempAbilityScore,"Name"))<json.get(as.MaxStatScores,json.get(TempAbilityScore,"Name")),listAppend(AbilityList,json.get(TempAbilityScore,"DisplayName")+" ("+json.get(Attributes,json.get(TempAbilityScore,"Name"))+")"),AbilityList)]
+		
+		[h:ValidAbilities = if(json.get(Attributes,json.get(TempAbilityScore,"Name"))<json.get(as.MaxStatScores,json.get(TempAbilityScore,"Name")),json.append(ValidAbilities,json.get(TempAbilityScore,"Name")),ValidAbilities)]
+		
+		[h:AbilityChoices = json.set(AbilityChoices,json.get(TempAbilityScore,"Name"),0)]
 	};{}]
 }]
-[h:"<!-- Will need to eventually replace the '20' above with a calculation of the maximum possible (e.g. Barbarian capstone) -->"]
 
-[h:abort(input(
-	"FeatInstead|No,Yes|Choose a Feat instead?|LIST",
-	"junkVar|Ability Score Increase|Level Up|LABEL",
-	"junkVar|2 Abilities (May be the same)|Choose|LABEL",
-	"AbilityOne|"+AbilityList+"|Choose One|Radio",
-	"AbilityTwo|"+AbilityList+"|Choose One|Radio"
-))]
+[h:AbilityOverMaxTest = 1]
+[h:AbilityOne = 0]
 
+[h,while(AbilityOverMaxTest == 1),CODE:{
+	[h:abort(input(
+		"FeatInstead|No,Yes|Choose a Feat instead?|LIST",
+		"junkVar|Ability Score Increase|Level Up|LABEL",
+		if(roll.count>0,"maxOverride |  | Note: Previous selection brought "+json.get(ValidAbilities,AbilityOne)+" over its maximum value of "+json.get(as.MaxStatScores,json.get(ValidAbilities,AbilityOne))+". Override? | CHECK ",""),
+		"junkVar|2 Abilities (May be the same)|Choose|LABEL",
+		"AbilityOne|"+AbilityList+"|Choose One|Radio",
+		"AbilityTwo|"+AbilityList+"|Choose One|Radio"
+	))]
+	
+	[h,if(FeatInstead),CODE:{
+		[h:AbilityOverMaxTest = 0]
+	};{
+		[h,if(AbilityOne!=AbilityTwo): AbilityOverMaxTest = 0; AbilityOverMaxTest = (json.get(Attributes,json.get(ValidAbilities,AbilityOne))+2 > json.get(as.MaxStatScores,json.get(ValidAbilities,AbilityOne)))]
+		[h,if(roll.count>0 && AbilityOverMaxTest): AbilityOverMaxTest = !maxOverride]
+	}]
+}]
 [h,if(FeatInstead==0),code:{
 	[h:AbilityChoices = json.set(AbilityChoices,json.get(ValidAbilities,AbilityOne),1)]
 	[h:AbilityChoices = json.set(AbilityChoices,json.get(ValidAbilities,AbilityTwo),json.get(AbilityChoices,json.get(ValidAbilities,AbilityTwo))+1)]

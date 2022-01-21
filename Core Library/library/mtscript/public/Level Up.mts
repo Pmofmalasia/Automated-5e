@@ -5,7 +5,7 @@
 [h:lu.NewAbilities = macro.args]
 [h:lu.SourcebookLibs = pm.GetBookInfo("Library","json")] 
 
-[h:lu.AttrPrereqList = pm.GetAttributes("json")]
+[h:lu.AttrPrereqList = pm.GetAttributes("Name","json")]
 [h,foreach(ClassTemp,lu.ClassArray),CODE:{
 [h:lu.ClassPrereqNum = 0]
 	[h,foreach(PrereqTemp,lu.AttrPrereqList),CODE:{

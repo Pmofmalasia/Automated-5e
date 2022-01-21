@@ -1,14 +1,13 @@
-[h:pm.SourcebookLibs = pm.GetBookInfo("Library","json")]
-
-[h:pm.Feats="[]"]
-[h,foreach(book,pm.SourcebookLibs),CODE:{
-	[h,if(getLibProperty("sb.Feats","Lib:"+book)!=""): pm.Feats = json.merge(pm.Feats,getLibProperty("sb.Feats","Lib:"+book))]
+[h,if(argCount()>0): pm.KeyChoice = arg(0); pm.KeyChoice = ""]
+[h,if(pm.KeyChoice==""),CODE:{
+	[h:pm.Feats = getLibProperty("sb.Feats","Lib:pm.a5e.Core")]
+};{
+	[h:pm.Feats = json.path.read(getLibProperty("sb.Feats","Lib:pm.a5e.Core"),"."+pm.KeyChoice)]
 }]
 
-[h,if(argCount() > 0): pm.Delim = arg(0) ; pm.Delim = ","]
+[h,if(argCount()>1): pm.Delim = arg(1) ; pm.Delim = if(pm.KeyChoice=="","json",",")]
 [h,if(pm.Delim == "json"),CODE:{
-	[h:macro.return = json.sort(pm.Feats,"a")]
+	[h,if(pm.KeyChoice!=""): macro.return = json.sort(pm.Feats,"a"); macro.return = json.sort(pm.Feats,"a","DisplayName")]
 };{
-	[h:pm.Feats=listSort(json.toList(pm.Feats,pm.Delim),"A+",pm.Delim)]
-	[h:macro.return = pm.Feats]
+	[h:macro.return = listSort(json.toList(pm.Feats),"A+")]
 }]

@@ -63,10 +63,10 @@
 			))]
 		
 		[h: choice.CapSubclass = ""]
-		[h,if(choice.CapType>0): subclassInput = ""; subclassInput = if(choice.HasSubclass," choice.CapSubclass | "+pm.GetSubclasses("DisplayName",",")+" | Choose associated subclass | LIST | VALUE=STRING ","")]
+		[h,if(choice.CapType>0): subclassInput = ""; subclassInput = if(choice.HasSubclass," choice.CapSubclass | "+pm.GetSubclasses(pm.RemoveSpecial(choice.CapClass),"DisplayName")+" | Choose associated subclass | LIST | VALUE=STRING ","")]
 		[h:abort(input(subclassInput))]
 
-		[h,if(choice.CapType>0): SpellOptions = json.set(SpellOptions,"LevelCap",1,"LevelCapClass",if(choice.CapType==1,"Combined_Max","Use_Filter")); SpellOptions = json.set(SpellOptions,"LevelCap",1,"LevelCapClass",choice.CapClass,"LevelCapSubclass",choice.CapSubclass)]
+		[h,if(choice.CapType>0): SpellOptions = json.set(SpellOptions,"LevelCap",1,"LevelCapClass",if(choice.CapType==1,"Combined_Max","Use_Filter")); SpellOptions = json.set(SpellOptions,"LevelCap",1,"LevelCapClass",pm.RemoveSpecial(choice.CapClass),"LevelCapSubclass",pm.RemoveSpecial(choice.CapSubclass))]
 	};{
 		[h:SpellOptions = json.set(SpellOptions,"LevelCap",0)]
 	}]

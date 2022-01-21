@@ -2,7 +2,7 @@
 [h:Flavor=json.get(SaveData,"Flavor")]
 [h:ParentToken=json.get(SaveData,"ParentToken")]
 
-[h:sv.AttributeList = pm.GetAttributes("json")]
+[h:sv.AttributeList = pm.GetAttributes("DisplayName","json")]
 [h:sv.Options = ""]
 [h,foreach(TempAttribute,sv.AttributeList): sv.Options = json.append(sv.Options,TempAttribute+" Save")]
 

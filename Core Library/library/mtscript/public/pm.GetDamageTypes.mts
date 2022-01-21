@@ -1,8 +1,13 @@
-[h:pm.DamageTypes = getLibProperty("sb.DamageTypes","Lib:pm.a5e.Core")]
-
-[h,if(argCount() > 0): pm.Delim = arg(0); pm.Delim = ","]
-[h,if(pm.Delim == "json"),CODE:{
-	[h:macro.return = pm.DamageTypes]
+[h,if(argCount()>0): pm.KeyChoice = arg(0); pm.KeyChoice = ""]
+[h,if(pm.KeyChoice==""),CODE:{
+	[h:pm.DamageTypes = getLibProperty("sb.DamageTypes","Lib:pm.a5e.Core")]
 };{
-	[h:macro.return = json.toList(pm.DamageTypes,pm.Delim)]
+	[h:pm.DamageTypes = json.path.read(getLibProperty("sb.DamageTypes","Lib:pm.a5e.Core"),"."+pm.KeyChoice)]
+}]
+
+[h,if(argCount()>1): pm.Delim = arg(1) ; pm.Delim = if(pm.KeyChoice=="","json",",")]
+[h,if(pm.Delim == "json"),CODE:{
+	[h,if(pm.KeyChoice!=""): macro.return = json.sort(pm.DamageTypes,"a"); macro.return = json.sort(pm.DamageTypes,"a","DisplayName")]
+};{
+	[h:macro.return = listSort(json.toList(pm.DamageTypes),"A+")]
 }]

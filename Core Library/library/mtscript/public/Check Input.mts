@@ -6,15 +6,15 @@
 
 [h:"<!-- Magic Item bonuses arent swapping though and that probably does need fixing. -->"]
 
-[h:ch.AttributeList = pm.GetAttributes("json")]
+[h:ch.AttributeList = pm.GetAttributes()]
 [h:ch.AttributeOptions = ""]
 [h:ch.AttributeDisplay = ""]
 [h,foreach(TempAttribute,ch.AttributeList),CODE:{
-	[h:tempBonus = json.get(AtrMods,TempAttribute)]
+	[h:tempBonus = json.get(AtrMods,json.get(TempAttribute,"Name"))]
 	[h:ch.AttributeOptions = json.append(ch.AttributeOptions,json.set("",
-		"Name",TempAttribute,
-		"DisplayName",TempAttribute,
-		"Attribute",TempAttribute,
+		"Name",json.get(TempAttribute,"Name"),
+		"DisplayName",json.get(TempAttribute,"DisplayName"),
+		"Attribute",json.get(TempAttribute,"Name"),
 		"Bonus",tempBonus,
 		"BonusFromAttribute",tempBonus,
 		"BonusDisplay",pm.PlusMinus(tempBonus,1)))
@@ -22,7 +22,7 @@
 	[h:ch.AttributeDisplay = json.append(ch.AttributeDisplay,"<html>"+pm.PlusMinus(tempBonus,1,0)+" - "+TempAttribute+" Check</html>")]
 }]
 
-[h:ch.SkillList = pm.GetSkills("json")]
+[h:ch.SkillList = pm.GetSkills()]
 [h:ch.SkillOptions = ""]
 [h:ch.SkillDisplay = ""]
 [h,foreach(TempSkill,ch.SkillList),CODE:{
@@ -54,7 +54,7 @@
 [h:abort(input(
 	"SkillDesc|--Description Here--|Description||WIDTH=40",
 	"iSkills|"+json.toList(listSkills)+"|Skills|LIST",
-	"Alternate|-NO-,"+json.toList(ch.AttributeList)+"|Use Alternate Ability|LIST|VALUE=STRING",
+	"Alternate|-NO-,"+pm.GetAttributes("DisplayName")+"|Use Alternate Ability|LIST|VALUE=STRING",
 	"sBonus||Bonus||WIDTH=20",
 	"outputOptions|"+if(isGM(),"Everyone,DM Only","Everyone,You and DM,DM Only")+"|Who sees the result?|RADIO"
 ))]
@@ -94,7 +94,7 @@
 [h:output.PC = json.get(json.get(FormattingData,"Output"),"Player")]
 [h:output.GM = json.get(json.get(FormattingData,"Output"),"GM")]
 
-[h,MACRO("Check@Lib:pm.a5e.Core"): json.set(ch.Choice,"ParentToken",ParentToken,"Alternate",Alternate,"Formatting",FormattingData,"Output",json.set("","Player",output.PC,"GM",output.GM),"OutputTargets",outputTargets)]
+[h,MACRO("Check@Lib:pm.a5e.Core"): json.set(ch.Choice,"ParentToken",ParentToken,"Alternate",pm.RemoveSpecial(Alternate),"Formatting",FormattingData,"Output",json.set("","Player",output.PC,"GM",output.GM),"OutputTargets",outputTargets)]
 
 [h:output.PC = json.get(macro.return,"Player")+"</div></div>"]
 [h:output.GM = json.get(macro.return,"GM")+"</div></div>"]

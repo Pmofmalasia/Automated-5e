@@ -51,7 +51,7 @@
 	[h:tempCountVar = 0]
 	[h,foreach(SetofPoints,json.get(ability,"AttributeOptions")),CODE:{
 		[h:lu.AttributeOptions = ""]
-		[h,foreach(attribute,pm.GetAttributes("json")): lu.AttributeOptions = if(or(json.get(SetofPoints,attribute)==json.get(SetofPoints,"Inclusive"),json.get(SetofPoints,"AllAttributes")==1),listAppend(lu.AttributeOptions,attribute),lu.AttributeOptions)]
+		[h,foreach(attribute,pm.GetAttributes("DisplayName","json")): lu.AttributeOptions = if(or(json.get(SetofPoints,pm.RemoveSpecial(attribute))==json.get(SetofPoints,"Inclusive"),json.get(SetofPoints,"AllAttributes")==1),listAppend(lu.AttributeOptions,attribute),lu.AttributeOptions)]
 		[h:lu.AttrChoiceInput = listAppend(lu.AttrChoiceInput," lu.AttrSelection"+tempCountVar+" | "+lu.AttributeOptions+" | Allocate "+json.get(SetofPoints,"Points")+" Point"+if(json.get(SetofPoints,"Points")==1,"","s")+" to | RADIO | VALUE=STRING ","##")]
 		[h:tempCountVar = tempCountVar+1]
 	}]
@@ -61,10 +61,10 @@
 	[h:tempCountVar = 0]
 	[h:lu.FinalAttributeChoices = if(json.get(ability,"Attributes")=="","{}",json.get(ability,"Attributes"))]
 	[h,foreach(SetofPoints,json.get(ability,"AttributeOptions")),CODE:{
-		[h:lu.PresetPoints = json.get(lu.FinalAttributeChoices,eval("lu.AttrSelection"+tempCountVar))]
+		[h:lu.PresetPoints = json.get(lu.FinalAttributeChoices,pm.RemoveSpecial(eval("lu.AttrSelection"+tempCountVar)))]
 		[h,if(lu.PresetPoints==""):
-			lu.FinalAttributeChoices = json.set(lu.FinalAttributeChoices,eval("lu.AttrSelection"+tempCountVar),json.get(SetofPoints,"Points"));
-			lu.FinalAttributeChoices = json.set(lu.FinalAttributeChoices,eval("lu.AttrSelection"+tempCountVar),json.get(lu.FinalAttributeChoices,eval("lu.AttrSelection"+tempCountVar))+json.get(SetofPoints,"Points"))]
+			lu.FinalAttributeChoices = json.set(lu.FinalAttributeChoices,pm.RemoveSpecial(eval("lu.AttrSelection"+tempCountVar)),json.get(SetofPoints,"Points"));
+			lu.FinalAttributeChoices = json.set(lu.FinalAttributeChoices,pm.RemoveSpecial(eval("lu.AttrSelection"+tempCountVar)),json.get(lu.FinalAttributeChoices,pm.RemoveSpecial(eval("lu.AttrSelection"+tempCountVar)))+json.get(SetofPoints,"Points"))]
 		[h:tempCountVar = tempCountVar+1]
 	}]
 [h:"<!-- Note: PrimeStat Change -->"]
@@ -127,11 +127,11 @@
 	[h:lu.ProftoExpTest = json.get(json.get(ability,"SkillOptions"),"ProftoExp")]
 	[h:lu.ValidSkills = ""]
 	[h,if(lu.ProftoExpTest==1),CODE:{
-		[h,foreach(skill,pm.GetSkills("json","Name")): lu.ValidSkills = if(json.get(Skills,skill)==1,json.set(lu.ValidSkills,skill,2),lu.ValidSkills)]
+		[h,foreach(skill,pm.GetSkills("Name","json")): lu.ValidSkills = if(json.get(Skills,skill)==1,json.set(lu.ValidSkills,skill,2),lu.ValidSkills)]
 		[h:lu.ValidSkills = json.set(lu.ValidSkills,"ChoiceText",json.get(ability,"DisplayName")+": "+json.get(json.get(ability,"SkillOptions"),"ChoiceText"),"ChoiceNum",json.get(json.get(ability,"SkillOptions"),"ChoiceNum"))]
 	};{
 		[h:lu.AllSkillsTest = json.get(json.get(ability,"SkillOptions"),"AllSkills")]
-		[h,if(lu.AllSkillsTest==1): lu.ValidSkills = json.merge(json.fromStrProp(pm.GetSkills("=1;","Name")+"=1"),json.get(ability,"SkillOptions")); lu.ValidSkills = json.get(ability,"SkillOptions")]
+		[h,if(lu.AllSkillsTest==1): lu.ValidSkills = json.merge(json.fromStrProp(pm.GetSkills("Name","=1;")+"=1"),json.get(ability,"SkillOptions")); lu.ValidSkills = json.get(ability,"SkillOptions")]
 	}]
 	[h,MACRO("Skill Selection@Lib:pm.a5e.Core"): lu.ValidSkills]
 	[h,if(json.get(ability,"Skills")!=""): lu.NewAbilities = 
@@ -143,7 +143,7 @@
 [h,if(json.isEmpty(lu.NewAbilities)): lu.SaveChoiceAbilities = ""; lu.SaveChoiceAbilities = json.path.read(lu.NewAbilities,"[*][?(@.SaveOptions != null)]","DEFAULT_PATH_LEAF_TO_NULL")]
 [h,foreach(ability,lu.SaveChoiceAbilities),CODE:{
 	[h:lu.AllSavesTest = json.get(json.get(ability,"SaveOptions"),"AllSaves")]
-	[h,if(lu.AllSavesTest==1): lu.ValidSaves = json.merge(json.fromStrProp(pm.GetAttributes("=1;","Name")+"=1"),json.get(ability,"SaveOptions")); lu.ValidSaves = json.get(ability,"SaveOptions")]
+	[h,if(lu.AllSavesTest==1): lu.ValidSaves = json.merge(json.fromStrProp(pm.GetAttributes("Name","=1;")+"=1"),json.get(ability,"SaveOptions")); lu.ValidSaves = json.get(ability,"SaveOptions")]
 	[h,MACRO("Skill Selection@Lib:pm.a5e.Core"): lu.ValidSaves]
 	[h,if(json.get(ability,"Saves")!=""): lu.NewAbilities = 
 	json.path.set(lu.NewAbilities,"[?(@.Name == '"+json.get(ability,"Name")+"' && @.Class == '"+json.get(ability,"Class")+"' && @.Subclass == '"+json.get(ability,"Subclass")+"')]['Saves']",json.merge(json.get(ability,"Saves"),json.get(macro.return,"Saves")));
@@ -156,9 +156,9 @@
 [h,foreach(ability,lu.PrimeStatAbilities),CODE:{
 	[h:abort(input(
 		" junkVar | ---------- Primary Stat Selection ---------- |  | LABEL | SPAN=TRUE ",
-		" lu.StatChoice | "+json.fields(json.intersection(json.get(ability,"PrimeStatOptions"),json.fromStrProp(pm.GetAttributes("=1;","Name")+"=1")))+" | Stat Choice for "+json.get(ability,"DisplayName")+" | LIST | VALUE=STRING "
+		" lu.StatChoice | "+json.fields(json.intersection(json.get(ability,"PrimeStatOptions"),json.fromStrProp(pm.GetAttributes("Name","=1;")+"=1")))+" | Stat Choice for "+json.get(ability,"DisplayName")+" | LIST | VALUE=STRING "
 		))]
-	[h:lu.NewAbilities = json.path.put(lu.NewAbilities,"[?(@.Name == '"+json.get(ability,"Name")+"' && @.Class == '"+json.get(ability,"Class")+"' && @.Subclass == '"+json.get(ability,"Subclass")+"')]","PrimeStat",lu.StatChoice)))]
+	[h:lu.NewAbilities = json.path.put(lu.NewAbilities,"[?(@.Name == '"+json.get(ability,"Name")+"' && @.Class == '"+json.get(ability,"Class")+"' && @.Subclass == '"+json.get(ability,"Subclass")+"')]","PrimeStat",pm.RemoveSpecial(lu.StatChoice))))]
 }]
 
 [h:"<!-- Choose Languages -->"]
@@ -173,19 +173,21 @@
 [h,if(json.isEmpty(lu.NewAbilities)): lu.DamageChoiceAbilities = ""; lu.DamageChoiceAbilities = json.path.read(lu.NewAbilities,"[*][?(@.DamageOptions != null)]","DEFAULT_PATH_LEAF_TO_NULL")]
 [h,foreach(ability,lu.DamageChoiceAbilities),CODE:{
 	[h:DmgAllTest = json.contains(json.get(json.get(ability,"DamageOptions"),"DamageTypes"),"All_Types")]
-	[h:DamageTypeArray = pm.GetDamageTypes("json")]
+	[h:DamageTypeArray = pm.GetDamageTypes()]
 	[h,if(DmgAllTest),CODE:{
-		[h:lu.DamageOptions = json.toList(DamageTypeArray)]
+		[h:lu.DamageOptions = DamageTypeArray]
+		[h:lu.DamageOptionsList = json.toList(json.path.read(lu.DamageOptions,"['DisplayName']"))]
 	};{
-		[h:lu.DamageOptions = json.toList(if(json.get(json.get(ability,"DamageOptions"),"Inclusive"),json.intersection(json.get(json.get(ability,"DamageOptions"),"DamageTypes"),DamageTypeArray),json.difference(json.get(json.get(ability,"DamageOptions"),"DamageTypes"),DamageTypeArray)))]
+		[h:lu.DamageOptions = if(json.get(json.get(ability,"DamageOptions"),"Inclusive"),json.intersection(json.get(json.get(ability,"DamageOptions"),"DamageTypes"),DamageTypeArray),json.difference(json.get(json.get(ability,"DamageOptions"),"DamageTypes"),DamageTypeArray))]
+		[h:lu.DamageOptionsList = json.toList(json.path.read(lu.DamageOptions,"['DisplayName']"))]
 	}]
 	
 	[h:abort(input(
 		"junkVar | ---------------------------- "+json.get(ability,"DisplayName")+": Damage Type ---------------------------- | | LABEL | SPAN=TRUE",
-		" lu.DamageChoice | "+lu.DamageOptions+" | Choose a damage type | RADIO | VALUE=STRING "
+		" lu.DamageChoice | "+lu.DamageOptionsList+" | Choose a damage type | RADIO | VALUE=STRING"
 		))]
 	
-	[h:lu.NewAbilities = json.path.put(lu.NewAbilities,"[?(@.Name == '"+json.get(ability,"Name")+"' && @.Class == '"+json.get(ability,"Class")+"' && @.Subclass == '"+json.get(ability,"Subclass")+"')]","DamageType",lu.DamageChoice)]
+	[h:lu.NewAbilities = json.path.put(lu.NewAbilities,"[?(@.Name == '"+json.get(ability,"Name")+"' && @.Class == '"+json.get(ability,"Class")+"' && @.Subclass == '"+json.get(ability,"Subclass")+"')]","DamageType",json.get(json.path.read(lu.DamageOptions,"[?(@.Name=='"+pm.RemoveSpecial(lu.DamageChoice)+"')]['Name']"),0))]
 }]
 
 [h:"<!-- Choose Spells -->"]

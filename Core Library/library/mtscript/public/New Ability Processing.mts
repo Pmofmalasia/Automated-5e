@@ -156,7 +156,7 @@
 [h,foreach(ability,lu.PrimeStatAbilities),CODE:{
 	[h:abort(input(
 		" junkVar | ---------- Primary Stat Selection ---------- |  | LABEL | SPAN=TRUE ",
-		" lu.StatChoice | "+json.fields(json.intersection(json.get(ability,"PrimeStatOptions"),json.fromStrProp(pm.GetAttributes("Name","=1;")+"=1")))+" | Stat Choice for "+json.get(ability,"DisplayName")+" | LIST | VALUE=STRING "
+		" lu.StatChoice | "+json.fields(json.intersection(json.get(ability,"PrimeStatOptions"),json.fromStrProp(pm.GetAttributes("DisplayName","=1;")+"=1")))+" | Stat Choice for "+json.get(ability,"DisplayName")+" | LIST | VALUE=STRING "
 		))]
 	[h:lu.NewAbilities = json.path.put(lu.NewAbilities,"[?(@.Name == '"+json.get(ability,"Name")+"' && @.Class == '"+json.get(ability,"Class")+"' && @.Subclass == '"+json.get(ability,"Subclass")+"')]","PrimeStat",pm.RemoveSpecial(lu.StatChoice))))]
 }]

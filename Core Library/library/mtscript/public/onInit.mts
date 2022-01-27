@@ -25,6 +25,7 @@
 [h:defineFunction("character.Distances","character.Distances@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.AttributeCalc","pm.AttributeCalc@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.CastingLevel","pm.CastingLevel@Lib:pm.a5e.Core")]
+[h:defineFunction("pm.DamageMod","pm.DamageMod@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.HitDieDisplay","pm.HitDieDisplay@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.Languages","pm.Languages@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.MaxHP","pm.MaxHP@Lib:pm.a5e.Core")]

@@ -41,7 +41,7 @@
 [h,foreach(target,pm.TargetsInRange),CODE:{
 	[h,switch(pm.TargetAllyFoe):
 		case 0: pm.AllyFoeTest = if(getProperty("whichTeam") == getProperty("whichTeam",target),1,0);
-		case 1: pm.AllyFoeTest = if(getProperty("whichTeam")==getProperty("whichTeam",target),0,1);
+		case 1: pm.AllyFoeTest = if(getProperty("whichTeam") == getProperty("whichTeam",target),0,1);
 		case 2: pm.AllyFoeTest = 1;
 		default: pm.AllyFoeTest = 1
 	]

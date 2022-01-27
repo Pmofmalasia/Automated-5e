@@ -38,6 +38,8 @@
 [h:wa.Magical=json.get(wa.WeaponUsed,"MagicItem")]
 [h:wa.ProfTest=if(or(json.get(WeaponProficiencies,wa.WeaponType)==1,json.get(MagicItemStats,wa.WeaponType+"Prof")==1),1,0)]
 
+[h:pm.PassiveFunction("AttackProps")]
+
 [h:VersatileTest=if(json.get(wa.Props,"Versatile")>0,if(json.get(Weapon,OtherHand)==2,if(json.get(Shield,0)==1,1,0),0),0)]
 
 [h,if(VersatileTest==1),code:{
@@ -67,7 +69,18 @@
 [h:wa.DmgDieNum = number(substring(wa.DmgDie,0,indexOf(wa.DmgDie,"d"))))]
 [h:wa.DmgDie2Num = number(substring(wa.DmgDie2,0,1))]
 
-[h,if(AttackNum==-1): AttackCount = 1; AttackCount = AttackNum)]
+[h,if(AttackNum==-1),CODE:{
+	[h:AttackCount = 1]
+};{
+	[h:AttackCount = AttackNum]
+	[h:pm.PassiveFunction("AttackNum")]
+}]
+
+[h:wa.Adv = 0]
+[h:wa.Dis = 0]
+[h:pm.PassiveFunction("AttackAdv")]
+[h:wa.AdvDis = if(or(and(wa.Dis == 0,wa.Adv == 0),and(wa.Dis !=0,wa.Adv != 0)),0,if(wa.Dis == 0,1,-1))]
+[h:wa.AdvDis = 1]
 
 [h:CritTest=0]
 [h:AllAttacksToHit="[]"]
@@ -102,6 +115,8 @@
 	
 	[h:AllAttacksDmg2=json.append(AllAttacksDmg2,json.set("","Dmg",wa.Dmg2,"DmgStr",wa.Dmg2String,"DmgCrit",wa.CritDmg2,"DmgCritStr",wa.CritDmg2String))]
 }]
+[h:pm.PassiveFunction("AttackRoll")]
+
 [h:WhichAttack=0]
 
 [h:DamageColor = pm.DamageColor()]
@@ -110,6 +125,7 @@
 [h:CritFailColor = pm.CritFailColor()]
 [h:LinkColor = pm.LinkColor()]
 
+[h:"<!-- Perhaps set up separate loops for attack and damage rolls with different tables, which are assembled separately depending on the condensed vs. expanded approach -->"]
 [h:abilityTable = ""]
 [h,count(AttackCount,""),code:{
 	[h:roll1 = json.get(json.get(AllAttacksToHit,roll.count),"Roll1")]
@@ -124,22 +140,40 @@
 	[h:thisAttackCritDmg2 = json.get(json.get(AllAttacksDmg2,roll.count),"Dmg2Crit")]
 	[h:thisAttackCritDmg2Str = json.get(json.get(AllAttacksDmg2,roll.count),"Dmg2CritStr")]
 
-	[h:wa.RerollLink = macroLinkText("AttackReroll@Lib:pm.a5e.Core","all",wa.Data,ParentToken)]
-			
-	[h:abilityTable = json.append(abilityTable,json.set("",
-		"ShowIfCondensed",1,
-		"Header","Attack Roll",
-		"FalseHeader","",
-		"FullContents","<span style='"+if(roll1>=wa.FinalCritRange,"font-size:2em; color:"+CritColor,if(roll1==1,"font-size:2em; color:"+CritFailColor,"font-size:1.5em"))+"'>"+(roll1+wa.PrimeStatBonus+if(wa.ProfTest,Proficiency,0))+"</span>",
-		"RulesContents","1d20 + "+substring(PrimeStat,0,3)+if(wa.ProfTest," + "+Proficiency,"")+pm.PlusMinus(wa.MagicBonus,0)+" = ",
-		"RollContents",roll1+pm.PlusMinus(wa.PrimeStatBonus,0)+if(wa.ProfTest,pm.PlusMinus(Proficiency,0),"")+pm.PlusMinus(wa.MagicBonus,0)+" = ",
-		"DisplayOrder","['Rules','Roll','Full']",
-		"BonusSectionNum",1,
-		"BonusSectionType1","Rules",
-		"BonusBody1","Reroll: <a href = '"+wa.RerollLink+"'><span style = 'color:"+LinkColor+"'>Adv.</span></a> / <a href = '"+wa.RerollLink+"'><span style = 'color:"+LinkColor+"'>Dis.</span></a>",
-		"BonusSectionStyling1","text-align:right",
-		"Value",(roll1+wa.PrimeStatBonus+if(wa.ProfTest,Proficiency,0)+wa.MagicBonus)
-		))]
+	[h:wa.RerollLink = macroLinkText("AttackReroll@Lib:pm.a5e.Core","self-gm",wa.Data,ParentToken)]
+	
+	[h,if(wa.AdvDis == 0),CODE:{
+		[h:abilityTable = json.append(abilityTable,json.set("",
+			"ShowIfCondensed",1,
+			"Header","Attack Roll",
+			"FalseHeader","",
+			"FullContents","<span style='"+if(roll1>=wa.FinalCritRange,"font-size:2em; color:"+CritColor,if(roll1==1,"font-size:2em; color:"+CritFailColor,"font-size:1.5em"))+"'>"+(roll1+wa.PrimeStatBonus+if(wa.ProfTest,Proficiency,0))+"</span>",
+			"RulesContents","1d20 + "+substring(PrimeStat,0,3)+if(wa.ProfTest," + "+Proficiency,"")+pm.PlusMinus(wa.MagicBonus,0)+" = ",
+			"RollContents",roll1+pm.PlusMinus(wa.PrimeStatBonus,0)+if(wa.ProfTest,pm.PlusMinus(Proficiency,0),"")+pm.PlusMinus(wa.MagicBonus,0)+" = ",
+			"DisplayOrder","['Rules','Roll','Full']",
+			"BonusSectionNum",1,
+			"BonusSectionType1","Rules",
+			"BonusBody1","Reroll: <a href = '"+wa.RerollLink+"'><span style = 'color:"+LinkColor+"'>Adv.</span></a> / <a href = '"+wa.RerollLink+"'><span style = 'color:"+LinkColor+"'>Dis.</span></a>",
+			"BonusSectionStyling1","text-align:right",
+			"Value",(roll1+wa.PrimeStatBonus+if(wa.ProfTest,Proficiency,0)+wa.MagicBonus)
+			))]
+	};{
+		[h:FinalRoll = if(wa.AdvDis == 1,max(roll1,roll2),min(roll1,roll2))]
+		[h:abilityTable = json.append(abilityTable,json.set("",
+			"ShowIfCondensed",1,
+			"Header","Attack Roll",
+			"FalseHeader","",
+			"FullContents","<span style='"+if(FinalRoll>=wa.FinalCritRange,"font-size:2em; color:"+CritColor,if(FinalRoll==1,"font-size:2em; color:"+CritFailColor,"font-size:1.5em"))+"'>"+(FinalRoll+wa.PrimeStatBonus+if(wa.ProfTest,Proficiency,0))+"</span>",
+			"RulesContents","1d20 with "+if(wa.AdvDis==1,"Adv","Dis")+" + "+substring(PrimeStat,0,3)+if(wa.ProfTest," + "+Proficiency,"")+pm.PlusMinus(wa.MagicBonus,0)+" = ",
+			"RollContents",FinalRoll+pm.PlusMinus(wa.PrimeStatBonus,0)+if(wa.ProfTest,pm.PlusMinus(Proficiency,0),"")+pm.PlusMinus(wa.MagicBonus,0)+" = ",
+			"DisplayOrder","['Rules','Roll','Full']",
+			"BonusSectionNum",1,
+			"BonusSectionType1","Rules",
+			"BonusBody1","(Roll 1: "+(roll1+wa.PrimeStatBonus+if(wa.ProfTest,Proficiency,0))+" / Roll 2: "+(roll2+wa.PrimeStatBonus+if(wa.ProfTest,Proficiency,0))+")",
+			"BonusSectionStyling1","text-align:center",
+			"Value",(FinalRoll+wa.PrimeStatBonus+if(wa.ProfTest,Proficiency,0)+wa.MagicBonus)
+			))]
+	}]
 	
 	[h:abilityTable = json.append(abilityTable,json.set("",
 		"ShowIfCondensed",1,

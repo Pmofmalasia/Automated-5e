@@ -7,7 +7,7 @@
 
 [h,if(argCount()>1): pm.Delim = arg(1) ; pm.Delim = if(pm.KeyChoice=="","json",",")]
 [h,if(pm.Delim == "json"),CODE:{
-	[h,if(pm.KeyChoice!=""): macro.return = json.sort(pm.DamageTypes,"a"); macro.return = json.sort(pm.DamageTypes,"a","DisplayName")]
+	[h:macro.return = pm.DamageTypes]
 };{
-	[h:macro.return = listSort(json.toList(pm.DamageTypes),"A+")]
+	[h:macro.return = json.toList(pm.DamageTypes,pm.Delim)]
 }]

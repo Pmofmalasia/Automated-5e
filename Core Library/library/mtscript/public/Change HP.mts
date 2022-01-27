@@ -3,9 +3,6 @@
 [h:ParentName=getName(ParentToken)]
 [h:hp.Output = ""]
 
-[h:HAMNote=if(json.get(Feats,"HeavyArmorMaster")==1,"junkVar| reduced by 3|Non-magical weapon damage|LABEL","")]
-[h:WCNote=if(json.get(Feats,"WarCaster")==1,"junkVar|Advantage on Concentration Checks|War Caster|LABEL","")]
-
 [h:disVulnerability=if(dVulnerability=="","","junkVar|"+dVulnerability+"|Vulnerabilities|LABEL")]
 [h:disResistance=if(dResistance=="","","junkVar|"+dResistance+"|Resistances|LABEL")]
 [h:disImmunity=if(dImmunity=="","","junkVar|"+dImmunity+"|Immunities|LABEL")]
@@ -30,12 +27,10 @@
 	""+disResistance+"",
 	""+disImmunity+"",
 	""+disAbsorb+"",
-	""+HAMNote+"",
 	"junkVar|------------------------------------------- For Concentration -------------------------------------------| |LABEL|SPAN=TRUE",
 	"ConSaveBypass|  |Bypass Save|CHECK",
 	"ConSaveBonus|0|Conditional Bonus",
-	"ConSaveAdvantage|None,Advantage,Disadvantage|(Dis)Advantage?|LIST|SELECT=0",
-	""+WCNote+""
+	"ConSaveAdvantage|None,Advantage,Disadvantage|(Dis)Advantage?|LIST|SELECT=0"
 )]
 [h:abort(status)]
 
@@ -50,20 +45,26 @@
 }]
 
 [h:"<!--- Damage Type Modification --->"]
+[h:dmg.ModInfo = pm.DamageMod()]
+[h:dmg.Vuln = json.get(dmg.ModInfo,"Vulnerability")]
+[h:dmg.Res = json.get(dmg.ModInfo,"Resistance")]
+[h:dmg.Immun = json.get(dmg.ModInfo,"Immunity")]
+[h:dmg.Absorb = json.get(dmg.ModInfo,"Absorption")]
+[h:dmg.DR = json.get(dmg.ModInfo,"DR")]
 
 [h:DamageType1.DRcall=if(DamageType1Magic,"Magical "+DamageType1,"Physical "+DamageType1)]
-[h:dmgModTest1=if(or(DamageType1=="None - Modify Manually",and(json.get(Vulnerability,DamageType1)==json.get(Resistance,DamageType1),json.get(Immunity,DamageType1)==0,json.get(Absorption,DamageType1)==0,json.get(charDR,DamageType1)==0,json.get(charDR,DamageType1.DRcall)==0)),0,1)]
+[h:dmgModTest1=if(or(DamageType1=="None - Modify Manually",and(json.get(dmg.Vuln,DamageType1)==json.get(dmg.Res,DamageType1),json.get(dmg.Immun,DamageType1)==0,json.get(dmg.Absorb,DamageType1)==0,json.get(dmg.DR,DamageType1)==0,json.get(dmg.DR,DamageType1.DRcall)==0)),0,1)]
 
 [h:HPChangeTotal=0]
 
 [h,if(HPChangeType<=1 && dmgModTest1==1),CODE:{
 	[h:dmgModTarget=if(DamageType1Magic==0,1,2)]
-	[h:json.get(Vulnerability,DamageType1)]
-	[h:dmgModVuln=if(or(json.get(Vulnerability,DamageType1)==dmgModTarget,json.get(Vulnerability,DamageType1)==3),1,0)]
-	[h:dmgModRes=if(or(json.get(Resistance,DamageType1)==dmgModTarget,json.get(Resistance,DamageType1)==3),1,0)]
-	[h:dmgModImmun=if(or(json.get(Immunity,DamageType1)==dmgModTarget,json.get(Immunity,DamageType1)==3),1,0)]
-	[h:dmgModAbs=if(or(json.get(Absorption,DamageType1)==dmgModTarget,json.get(Absorption,DamageType1)==3),1,0)]
-	[h:dmgModDR=(json.get(charDR,DamageType1)+json.get(charDR,DamageType1.DRcall))]
+	[h:json.get(dmg.Vuln,DamageType1)]
+	[h:dmgModVuln=if(or(json.get(dmg.Vuln,DamageType1)==dmgModTarget,json.get(dmg.Vuln,DamageType1)==3),1,0)]
+	[h:dmgModRes=if(or(json.get(dmg.Res,DamageType1)==dmgModTarget,json.get(dmg.Res,DamageType1)==3),1,0)]
+	[h:dmgModImmun=if(or(json.get(dmg.Immun,DamageType1)==dmgModTarget,json.get(dmg.Immun,DamageType1)==3),1,0)]
+	[h:dmgModAbs=if(or(json.get(dmg.Absorb,DamageType1)==dmgModTarget,json.get(dmg.Absorb,DamageType1)==3),1,0)]
+	[h:dmgModDR=(json.get(dmg.DR,DamageType1)+json.get(dmg.DR,DamageType1.DRcall))]
 	[h,foreach(DmgInstance,hpChange1),CODE:{
 		[h:dmg.adjusted=DmgInstance-dmgModDR]
 		[h:dmg.adjusted=if(dmgModAbs,(0-dmg.adjusted),if(dmgModImmun,0,if(and(dmgModVuln,dmgModRes),dmg.adjusted,if(dmgModVuln,(dmg.adjusted*2),if(dmgModRes,floor(dmg.adjusted/2),dmg.adjusted)))))]
@@ -78,16 +79,16 @@
 
 [h:DamageType2.DRcall=if(DamageType2Magic,"Magical "+DamageType2,"Physical "+DamageType2)]
 
-[h:dmgModTest2=if(or(DamageType2=="None - Modify Manually",and(json.get(Vulnerability,DamageType2)==json.get(Resistance,DamageType2),json.get(Immunity,DamageType2)==0,json.get(Absorption,DamageType2)==0,json.get(charDR,DamageType2)==0,json.get(charDR,DamageType2.DRcall)==0)),0,1)]
+[h:dmgModTest2=if(or(DamageType2=="None - Modify Manually",and(json.get(dmg.Vuln,DamageType2)==json.get(dmg.Res,DamageType2),json.get(dmg.Immun,DamageType2)==0,json.get(dmg.Absorb,DamageType2)==0,json.get(dmg.DR,DamageType2)==0,json.get(dmg.DR,DamageType2.DRcall)==0)),0,1)]
 
 [h,if(HPChangeType<=1 && dmgModTest2==1),CODE:{
     [h:dmgModTarget=if(DamageType2Magic==0,1,2)]
-    [h:json.get(Vulnerability,DamageType2)]
-    [h:dmgModVuln=if(or(json.get(Vulnerability,DamageType2)==dmgModTarget,json.get(Vulnerability,DamageType2)==3),1,0)]
-    [h:dmgModRes=if(or(json.get(Resistance,DamageType2)==dmgModTarget,json.get(Resistance,DamageType2)==3),1,0)]
-    [h:dmgModImmun=if(or(json.get(Immunity,DamageType2)==dmgModTarget,json.get(Immunity,DamageType2)==3),1,0)]
-    [h:dmgModAbs=if(or(json.get(Absorption,DamageType2)==dmgModTarget,json.get(Absorption,DamageType2)==3),1,0)]
-    [h:dmgModDR=(json.get(charDR,DamageType2)+json.get(charDR,DamageType2.DRcall))]
+    [h:json.get(dmg.Vuln,DamageType2)]
+    [h:dmgModVuln=if(or(json.get(dmg.Vuln,DamageType2)==dmgModTarget,json.get(dmg.Vuln,DamageType2)==3),1,0)]
+    [h:dmgModRes=if(or(json.get(dmg.Res,DamageType2)==dmgModTarget,json.get(dmg.Res,DamageType2)==3),1,0)]
+    [h:dmgModImmun=if(or(json.get(dmg.Immun,DamageType2)==dmgModTarget,json.get(dmg.Immun,DamageType2)==3),1,0)]
+    [h:dmgModAbs=if(or(json.get(dmg.Absorb,DamageType2)==dmgModTarget,json.get(dmg.Absorb,DamageType2)==3),1,0)]
+    [h:dmgModDR=(json.get(dmg.DR,DamageType2)+json.get(dmg.DR,DamageType2.DRcall))]
     [h,foreach(DmgInstance,hpChange2),CODE:{
         [h:dmg2.adjusted=DmgInstance-dmgModDR]
         [h:dmg2.adjusted=if(dmgModAbs,(0-dmg2.adjusted),if(dmgModImmun,0,if(and(dmgModVuln,dmgModRes),dmg2.adjusted,if(dmgModVuln,(dmg2.adjusted*2),if(dmgModRes,floor(dmg2.adjusted/2),dmg2.adjusted)))))]
@@ -262,8 +263,6 @@
 	[h:hp.Output = hp.Output + token.name+" is healed and gains <span style='color:#22AA22;font-size:1.5em'>"+min(diff,HPChangeTotal)+"</span> hit points."]
 	[h:HPDrainTest=HPDrain]
 	[h:DeathSaves=if(HP>-1,json.set("{ }", "Successes",0,"Failures",0),DeathSaves)]
-	[h:"<!--- [h:HPDrain=0] --->"]
-	[h:"<!--- {if(HPDrainTest>0,"<br>"+token.name+" has been healed of HP Drain and now has a maximum HP of "+MaxHP,"")} --->"]
 };{}]
 
 [h:"<!--- Healing --->"]

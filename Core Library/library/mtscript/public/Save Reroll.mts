@@ -1,6 +1,7 @@
 [h:SaveData = macro.args]
 [h:Flavor=json.get(SaveData,"Flavor")]
 [h:ParentToken=json.get(SaveData,"ParentToken")]
+[h:outputTargets = json.get(SaveData,"PCOutput")]
 
 [h:"<!-- Note: If changes are made to outputTargets, a new method may need to be used to determine if it is GM only or not. Also may need a different method anyway for passive skills. -->"]
 [h:ClassFeatureData = json.set("",
@@ -23,9 +24,13 @@
 [h:output.PC = json.get(json.get(FormattingData,"Output"),"Player")]
 [h:output.GM = json.get(json.get(FormattingData,"Output"),"GM")]
 
-[h,MACRO("Save@Lib:pm.a5e.Core"): json.set(SaveData,"ParentToken",ParentToken,"Formatting",FormattingData,"Output",json.set("","Player",output.PC,"GM",output.GM))]
+[h,MACRO("Save@Lib:pm.a5e.Core"): SaveData]
+[h:SaveData = macro.return]
+[h:abilityTable = json.get(SaveData,"Table")]
 
-[h:output.PC = json.get(macro.return,"Player")+"</div></div>"]
-[h:output.GM = json.get(macro.return,"GM")+"</div></div>"]
+[h:output.Temp = pm.AbilityTableProcessing(abilityTable,FormattingData,1)]
+
+[h:output.PC = output.PC + json.get(macro.return,"Player")+"</div></div>"]
+[h:output.GM = output.GM + json.get(macro.return,"GM")+"</div></div>"]
 [h:broadcastAsToken(output.GM,"gm")]
-[h:broadcastAsToken(output.PC,json.get(SaveData,"OutputTargets"))]
+[h:broadcastAsToken(output.PC,outputTargets)]

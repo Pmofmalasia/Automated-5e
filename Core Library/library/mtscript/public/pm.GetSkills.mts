@@ -4,6 +4,5 @@
 [h,if(pm.Delim == "json"),CODE:{
 	[h,if(argCount()>0): macro.return = json.sort(pm.Skills,"a") ; macro.return = json.sort(pm.Skills,"a","DisplayName")]
 };{
-	[h:pm.Skills=listSort(json.toList(pm.Skills,pm.Delim),"A+",pm.Delim)]
-	[h:macro.return = pm.Skills]
+	[h:macro.return =listSort(json.toList(pm.Skills,pm.Delim),"A+",pm.Delim)]
 }]

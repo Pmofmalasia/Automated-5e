@@ -3,15 +3,16 @@
 [h:ParentToken=json.get(SaveData,"ParentToken")]
 
 [h:sv.AttributeList = pm.GetAttributes("DisplayName","json")]
-[h:sv.Options = ""]
-[h,foreach(TempAttribute,sv.AttributeList): sv.Options = json.append(sv.Options,TempAttribute+" Save")]
+[h:sv.Options = json.toList(sv.AttributeList," Save,")+" Save"]
 
 [h:abort(input(
 	"SkillDesc|--Description Here--|Description||WIDTH=40",
-	"iSaves|"+json.toList(sv.Options)+"|Saves|LIST",
-	"sBonus|0|Bonus||WIDTH=20",
+	"iSaves|"+sv.Options+"|Saves|LIST",
+	"sBonus|0|Situational Bonus||WIDTH=20",
+	"svAdv|Forced Disadvantage,Situational Disadvantage,Normal Roll,Situational Advantage,Forced Advantage|Use Alternate Ability|RADIO|SELECT=2",
 	"outputOptions|"+if(isGM(),"Everyone,DM Only","Everyone,You and DM,DM Only")+"|Who sees the result?|RADIO"
 ))]
+[h:AddedBonus=eval(sBonus+"+1d1-1")]
 
 [h:"<!-- Note: outputTargets does not include the GM since their output is constructed separately from the players' -->"]
 [h,switch(outputOptions),CODE:
@@ -42,9 +43,13 @@
 [h:output.PC = json.get(json.get(FormattingData,"Output"),"Player")]
 [h:output.GM = json.get(json.get(FormattingData,"Output"),"GM")]
 
-[h,MACRO("Save@Lib:pm.a5e.Core"): json.set("","Name",sv.Choice,"ParentToken",ParentToken,"Formatting",FormattingData,"Output",json.set("","Player",output.PC,"GM",output.GM),"OutputTargets",outputTargets)]
+[h,MACRO("Save@Lib:pm.a5e.Core"): json.set("","Save",sv.Choice,"Type","Save","ParentToken",ParentToken,"Bonus",AddedBonus,"Advantage",svAdv - 2,"PCOutput",outputTargets)]
+[h:SaveData = macro.return]
+[h:abilityTable = json.get(SaveData,"Table")]
 
-[h:output.PC = json.get(macro.return,"Player")+"</div></div>"]
-[h:output.GM = json.get(macro.return,"GM")+"</div></div>"]
+[h:output.Temp = pm.AbilityTableProcessing(abilityTable,FormattingData,1)]
+
+[h:output.PC = output.PC + json.get(macro.return,"Player")+"</div></div>"]
+[h:output.GM = output.GM + json.get(macro.return,"GM")+"</div></div>"]
 [h:broadcastAsToken(output.GM,"gm")]
 [h:broadcastAsToken(output.PC,outputTargets)]

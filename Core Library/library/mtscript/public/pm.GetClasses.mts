@@ -9,5 +9,5 @@
 [h,if(pm.Delim == "json"),CODE:{
 	[h,if(pm.KeyChoice!=""): macro.return = json.sort(pm.Classes,"a"); macro.return = json.sort(pm.Classes,"a","DisplayName")]
 };{
-	[h:macro.return = listSort(json.toList(pm.Classes),"A+")]
+	[h:macro.return = listSort(json.toList(pm.Classes,pm.Delim),"A+",pm.Delim)]
 }]

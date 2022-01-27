@@ -6,7 +6,7 @@
 	"Header",json.get(TempAttribute,"DisplayName"),
 	"FalseHeader","",
 	"FullContents","",
-	"RulesContents",pm.PlusMinus(json.get(AtrMods,json.get(TempAttribute,"Name"))+(json.get(Saves,json.get(TempAttribute,"Name")*Proficiency),1),
+	"RulesContents",pm.PlusMinus(json.get(AtrMods,json.get(TempAttribute,"Name"))+(json.get(Saves,json.get(TempAttribute,"Name"))*Proficiency),1),
 	"RollContents","",
 	"DisplayOrder","['Rules','Roll','Full']",
 	"LinkText","",

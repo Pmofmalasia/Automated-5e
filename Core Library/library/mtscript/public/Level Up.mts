@@ -45,7 +45,7 @@
 [h:lu.SubclassTest = if(json.get(json.path.read(lu.ClassArray,"[?(@.Name=='"+lu.Class+"')]['SubclassLevel']"),0)==lu.NewLevel,1,0)]
 [h,if(lu.SubclassTest),CODE:{
 	[h:abort(input(
-		" lu.SubclassChoice | "+pm.GetSubclasses(lu.Class)+" | Choose a subclass | RADIO | VALUE=STRING "
+		" lu.SubclassChoice | "+pm.GetSubclasses(lu.Class,"DisplayName")+" | Choose a subclass | RADIO | VALUE=STRING "
 		))]
 	[h:Subclasses = json.set(Subclasses,lu.Class,lu.SubclassChoice)]
 };{}]

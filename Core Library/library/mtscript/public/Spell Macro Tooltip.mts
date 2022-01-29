@@ -51,10 +51,11 @@
 [h:OuterBorderTooltip=json.get(macro.args,"OuterBorderTooltip")]
 [h:BorderColor="#000000"]
 [h:TextColor="#FFFFFF"]
+[h:a5e.GatherAbilities()]
 
 [h,if(ForcedClass==""),CODE:{
 	[h:ClassOptionsObj = "{}"]
-	[h,foreach(ability,json.path.read(allAbilities,"[?(@.IsActive>0 && @.CallSpellClass==1)]")): evalMacro("[r:pm."+json.get(ability,"Name")+json.get(ability,"Class")+"('SpellClass')]")]
+	[h:pm.PassiveFunction("SpellClass")]
 
 	[h:ClassOptions=json.fields(ClassOptionsObj,"json")]
 	

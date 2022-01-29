@@ -176,10 +176,10 @@
 	[h:DamageTypeArray = pm.GetDamageTypes()]
 	[h,if(DmgAllTest),CODE:{
 		[h:lu.DamageOptions = DamageTypeArray]
-		[h:lu.DamageOptionsList = json.toList(json.path.read(lu.DamageOptions,"['DisplayName']"))]
+		[h:lu.DamageOptionsList = json.toList(json.path.read(lu.DamageOptions,".DisplayName"))]
 	};{
 		[h:lu.DamageOptions = if(json.get(json.get(ability,"DamageOptions"),"Inclusive"),json.intersection(json.get(json.get(ability,"DamageOptions"),"DamageTypes"),DamageTypeArray),json.difference(json.get(json.get(ability,"DamageOptions"),"DamageTypes"),DamageTypeArray))]
-		[h:lu.DamageOptionsList = json.toList(json.path.read(lu.DamageOptions,"['DisplayName']"))]
+		[h:lu.DamageOptionsList = json.toList(json.path.read(lu.DamageOptions,".DisplayName"))]
 	}]
 	
 	[h:abort(input(

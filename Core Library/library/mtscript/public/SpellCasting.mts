@@ -1,4 +1,5 @@
 [h:SpellData = macro.args]
+[h:a5e.GatherAbilities()]
 [h:ForcedClass=json.get(json.get(SpellData,0),"ForcedClass")]
 [h:ForcedLevel=json.get(json.get(SpellData,0),"ForcedLevel")]
 [h:FreeCasting=json.get(json.get(SpellData,0),"FreeCasting")]
@@ -43,7 +44,7 @@
 [h,if(ForcedClass=="" && InnateCast==0),CODE:{
 
 	[h:ClassOptionsObj = "{}"]
-	[h,foreach(ability,json.path.read(allAbilities,"[?(@.IsActive>0 && @.CallSpellClass==1)]")): evalMacro("[r:pm."+json.get(ability,"Name")+json.get(ability,"Class")+"('SpellClass')]")]
+	[h:pm.PassiveFunction("SpellClass")]
 
 	[h:ClassOptions=json.fields(ClassOptionsObj)]
 	[h:ClassOptions=listAppend(ClassOptions,"None",",")]

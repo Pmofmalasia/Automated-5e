@@ -5,7 +5,7 @@
 
 [h:a5e.GatherAbilities()]
 [h:as.MaxStatScores = ""]
-[h,foreach(TempAbilityScore,pm.GetAttributes("Name")): json.set(as.MaxStatScores,TempAbilityScore,20)]
+[h,foreach(TempAbilityScore,pm.GetAttributes("Name")): as.MaxStatScores = json.set(as.MaxStatScores,TempAbilityScore,20)]
 [h:pm.PassiveFunction("AbilityScoreMax")]
 
 [h,foreach(TempAbilityScore,pm.GetAttributes()),CODE:{

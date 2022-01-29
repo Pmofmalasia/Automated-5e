@@ -15,6 +15,8 @@
 	[h:pm.DRInfo = json.set(pm.DRInfo,dmgType+"Mag",0)]
 }]
 
+[h:"<!-- Current calculation for passive abilities: damage type key = if(oldValue==newValue,old,new+old) -->"]
+
 [h:pm.PassiveFunction("DamageMod")]
 
 [h:macro.return = json.set("","Vulnerability",pm.VulnInfo,"Resistance",pm.ResInfo,"Immunity",pm.ImmunInfo,"Absorption",pm.AbsorbInfo,"DR",pm.DRInfo)]

@@ -7,5 +7,3 @@
 	[h:pm.Tools=listSort(json.toList(pm.Tools,pm.Delim),"A+",pm.Delim)]
 	[h:macro.return = pm.Tools]
 }]
-
-[h:pm.SourcebookLibs = pm.GetBookInfo("Library","json")]

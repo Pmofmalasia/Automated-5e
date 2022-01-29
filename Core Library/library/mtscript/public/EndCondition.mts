@@ -1,4 +1,5 @@
 [h:ConditionID = macro.args]
+[h:a5e.GatherAbilities()]
 
 [h:RemovedConditions = json.path.read(ConditionList,"[?(@.ConditionID=='"+ConditionID+"')]")]
 
@@ -19,4 +20,7 @@
 		[h,if(RemoveBackupTest): setState(json.get(condition,"BackupState"),0)]
 	}]
 }]
+
+[h:pm.PassiveFunction("ConditionEnd")]
+	
 [h:macro.return = RemovedConditions]

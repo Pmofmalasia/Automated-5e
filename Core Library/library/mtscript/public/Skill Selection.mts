@@ -64,7 +64,7 @@
 
 [h:sk.FinalSaves = ""]
 [h,foreach(TempSave,sk.SaveList),CODE:{
-	[h:sk.FinalSaves = if(eval("sk."+TempSave+"Prof")==0,sk.FinalSaves,json.set(sk.FinalSkills,TempSave,eval("sk."+TempSave+"Prof")))]
+	[h:sk.FinalSaves = if(eval("sk."+json.get(TempSave,"Name")+"Prof")==0,sk.FinalSaves,json.set(sk.FinalSkills,json.get(TempSave,"Name"),eval("sk."+json.get(TempSave,"Name")+"Prof")))]
 }]
 
 [h:macro.return = json.set("","Saves",sk.FinalSaves,"Skills",sk.FinalSkills)]

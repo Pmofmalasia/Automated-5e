@@ -80,7 +80,6 @@
 [h:wa.Dis = 0]
 [h:pm.PassiveFunction("AttackAdv")]
 [h:wa.AdvDis = if(or(and(wa.Dis == 0,wa.Adv == 0),and(wa.Dis !=0,wa.Adv != 0)),0,if(wa.Dis == 0,1,-1))]
-[h:wa.AdvDis = 1]
 
 [h:CritTest=0]
 [h:AllAttacksToHit="[]"]
@@ -154,7 +153,7 @@
 			"BonusSectionNum",1,
 			"BonusSectionType1","Rules",
 			"BonusBody1","Reroll: <a href = '"+wa.RerollLink+"'><span style = 'color:"+LinkColor+"'>Adv.</span></a> / <a href = '"+wa.RerollLink+"'><span style = 'color:"+LinkColor+"'>Dis.</span></a>",
-			"BonusSectionStyling1","text-align:right",
+			"BonusSectionStyling1","text-align:center",
 			"Value",(roll1+wa.PrimeStatBonus+if(wa.ProfTest,Proficiency,0)+wa.MagicBonus)
 			))]
 	};{

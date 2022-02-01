@@ -56,6 +56,14 @@
 	[h:lu.NewAbilities = json.append(lu.NewAbilities,macro.return)]
 };{}]
 
+[h:lu.FightingStyleTest = if(json.contains(json.get(json.get(lu.FinalClassArray,lu.ClassChoice),"FightingStyleLevels"),lu.NewLevel),1,0)]
+[h,if(lu.FightingStyleTest),CODE:{
+	[h:needsMacroTest = !json.contains(getMacros("json"),"Manage Fighting Styles")]
+	[h,if(needsMacroTest): createMacro(json.set("","Label","Manage Fighting Styles","Command",'[MACRO("Manage Fighting Styles@Lib:pm.a5e.Core"): ""]',"color","DUNNO YET","fontColor","DUNNO YET","applyToSelected",1,"playerEditable",0,"minWidth":89,
+	[MACRO("Manage Fighting Styles@Lib:pm.a5e.Core"): json.set("","LevelUp",1,"Restrictions",if(Level==0,0,1))]
+	[h:lu.NewAbilities = json.append(lu.NewAbilities,macro.return)]
+};{}]
+
 [h:"<!-- Adds abilities based on class and race that are gained on level up, separately since race goes off of total level -->"]
 [h:lu.NewAbilities = json.merge(lu.NewAbilities,json.path.read(getLibProperty("sb.Abilities","Lib:pm.a5e.Core"),"[?((@.Class=='"+pm.RemoveSpecial(Race)+"' || @.Class=='') && (@.Subclass=='"+pm.RemoveSpecial(Subrace)+"' || @.Subclass=='') && @.Level=="+lu.NewLevel+" && @.GainOnLevel==1)]"))]
 

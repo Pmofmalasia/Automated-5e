@@ -1,4 +1,4 @@
-[h:abilityClass = if(json.get(arg(0),"Class")==pm.RemoveSpecial(Race),"Innate",json.get(arg(0),"Class"))]
+[h:abilityClass = json.get(arg(0),"Class")]
 [h:abilityName = json.get(arg(0),"Name")]
 [h:abilityDisplayName = if(json.get(arg(0),"DisplayName")=="",abilityName,json.get(arg(0),"DisplayName"))]
 [h:Flavor = json.get(arg(0),"Flavor")]

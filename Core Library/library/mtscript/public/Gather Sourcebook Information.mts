@@ -5,6 +5,7 @@
 [h:pm.Skills = ""]
 [h:pm.Tools = ""]
 [h:pm.Abilities = ""]
+[h:pm.AbilitiesToMerge = ""]
 [h:pm.Conditions = ""]
 [h:pm.AbilityUpdates = ""]
 [h:pm.Subclasses = ""]
@@ -31,11 +32,17 @@
 	[h,if(getLibProperty("sb.Skills","Lib:"+book)!=""): pm.Skills = json.merge(pm.Skills,getLibProperty("sb.Skills","Lib:"+book))]
 	[h,if(getLibProperty("sb.Tools","Lib:"+book)!=""): pm.Tools = json.merge(pm.Tools,getLibProperty("sb.Tools","Lib:"+book))]
 	[h,if(getLibProperty("sb.Conditions","Lib:"+book)!=""): pm.Conditions = json.merge(pm.Conditions,getLibProperty("sb.Conditions","Lib:"+book))]
-	[h,if(getLibProperty("sb.Abilities","Lib:"+book)!=""): pm.Abilities = json.merge(pm.Abilities,getLibProperty("sb.Abilities","Lib:"+book))]
+	[h,if(getLibProperty("sb.Abilities","Lib:"+book)!=""): pm.Abilities = json.merge(pm.Abilities,json.path.read(getLibProperty("sb.Abilities","Lib:"+book),"[*][?(@.CreatedForMerging!=1)]"))]
+	[h,if(getLibProperty("sb.Abilities","Lib:"+book)!=""): pm.AbilitiesToMerge = json.merge(pm.AbilitiesToMerge,json.path.read(getLibProperty("sb.Abilities","Lib:"+book),"[*][?(@.CreatedForMerging==1)]"))]
 	[h,if(getLibProperty("sb.AbilityUpdates","Lib:"+book)!=""): pm.AbilityUpdates = json.merge(pm.AbilityUpdates,getLibProperty("sb.AbilityUpdates","Lib:"+book))]
 	[h,if(getLibProperty("sb.DamageTypes","Lib:"+book)!=""): pm.DamageTypes = json.merge(pm.DamageTypes,getLibProperty("sb.DamageTypes","Lib:"+book))]
 	[h,if(getLibProperty("sb.CastingAbilities","Lib:"+book)!=""): pm.CastingAbilities = json.merge(pm.CastingAbilities,getLibProperty("sb.CastingAbilities","Lib:"+book))]
 	[h,if(getLibProperty("sb.SpellSchools","Lib:"+book)!=""): pm.SpellSchools = json.merge(pm.SpellSchools,getLibProperty("sb.SpellSchools","Lib:"+book))]
+}]
+
+[h,foreach(ability,pm.AbilitiesToMerge),CODE:{
+	[h:BaseAbility = json.get(json.path.read(pm.Abilities,"[*][?(@.Name=='"+json.get(ability,"Name")+"' && @.Class=='"+json.get(ability,"Class")+"' && @.Subclass=='"+json.get(ability,"Subclass")+"')]"),0)]
+	[h,if(json.get(ability,"FightingStyleList")!=""): pm.Abilities = json.path.set(pm.Abilities,"[*][?(@.Name=='"+json.get(ability,"Name")+"' && @.Class=='"+json.get(ability,"Class")+"' && @.Subclass=='"+json.get(ability,"Subclass")+"')]['FightingStyleList']",json.merge(json.get(BaseAbility,"FightingStyleList"),json.get(ability,"FightingStyleList")))]
 }]
 
 [h:setLibProperty("sb.Attributes",pm.Attributes,"Lib:pm.a5e.Core")]

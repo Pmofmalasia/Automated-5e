@@ -1,1 +1,2 @@
-[h:macro.return = if(json.get(ClassTitleColors,arg(0))=="",if(json.get(getLibProperty("ClassTitleColors","Lib:pm.a5e.Core"),arg(0))=="","#000000",json.get(getLibProperty("ClassTitleColors","Lib:pm.a5e.Core"),arg(0))),json.get(ClassTitleColors,arg(0)))]
+[h,if(currentToken()!=""): TitleKey = if(arg(0)==pm.RemoveSpecial(getProperty("Race")),"Innate",arg(0)); TitleKey = arg(0)]
+[h:macro.return = if(json.get(ClassTitleColors,TitleKey)=="",if(json.get(getLibProperty("ClassTitleColors","Lib:pm.a5e.Core"),TitleKey)=="","#000000",json.get(getLibProperty("ClassTitleColors","Lib:pm.a5e.Core"),TitleKey)),json.get(ClassTitleColors,TitleKey))]

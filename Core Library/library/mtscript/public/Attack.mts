@@ -76,10 +76,34 @@
 	[h:pm.PassiveFunction("AttackNum")]
 }]
 
-[h:wa.Adv = 0]
-[h:wa.Dis = 0]
-[h:pm.PassiveFunction("AttackAdv")]
-[h:wa.AdvDis = if(or(and(wa.Dis == 0,wa.Adv == 0),and(wa.Dis !=0,wa.Adv != 0)),0,if(wa.Dis == 0,1,-1))]
+[h,SWITCH(json.get(wa.Data,"Advantage")),CODE:
+	case -2: {[h:wa.AdvDis = -1]};
+	case -1: {
+		[h:wa.Adv = 0]
+		[h:wa.Dis = 1]
+		[h:pm.PassiveFunction("AttackAdv")]
+		[h:wa.AdvDis = if(or(and(wa.Dis == 0,wa.Adv == 0),and(wa.Dis !=0,wa.Adv != 0)),0,if(wa.Dis == 0,1,-1))]
+	};
+	case 0: {
+		[h:wa.Adv = 0]
+		[h:wa.Dis = 0]
+		[h:pm.PassiveFunction("AttackAdv")]
+		[h:wa.AdvDis = if(or(and(wa.Dis == 0,wa.Adv == 0),and(wa.Dis !=0,wa.Adv != 0)),0,if(wa.Dis == 0,1,-1))]
+	};
+	case 1: {
+		[h:wa.Adv = 1]
+		[h:wa.Dis = 0]
+		[h:pm.PassiveFunction("AttackAdv")]
+		[h:wa.AdvDis = if(or(and(wa.Dis == 0,wa.Adv == 0),and(wa.Dis !=0,wa.Adv != 0)),0,if(wa.Dis == 0,1,-1))]
+	};
+	case 2: {[h:wa.AdvDis = 1]};
+	default: {
+		[h:wa.Adv = 0]
+		[h:wa.Dis = 0]
+		[h:pm.PassiveFunction("AttackAdv")]
+		[h:wa.AdvDis = if(or(and(wa.Dis == 0,wa.Adv == 0),and(wa.Dis !=0,wa.Adv != 0)),0,if(wa.Dis == 0,1,-1))]
+	}
+]
 
 [h:CritTest=0]
 [h:AllAttacksToHit="[]"]
@@ -139,7 +163,8 @@
 	[h:thisAttackCritDmg2 = json.get(json.get(AllAttacksDmg2,roll.count),"Dmg2Crit")]
 	[h:thisAttackCritDmg2Str = json.get(json.get(AllAttacksDmg2,roll.count),"Dmg2CritStr")]
 
-	[h:wa.RerollLink = macroLinkText("AttackReroll@Lib:pm.a5e.Core","self-gm",wa.Data,ParentToken)]
+	[h:wa.AdvRerollLink = macroLinkText("AttackReroll@Lib:pm.a5e.Core","self-gm",json.set(wa.Data,"Advantage",2),ParentToken)]
+	[h:wa.DisRerollLink = macroLinkText("AttackReroll@Lib:pm.a5e.Core","self-gm",json.set(wa.Data,"Advantage",-2),ParentToken)]
 	
 	[h,if(wa.AdvDis == 0),CODE:{
 		[h:abilityTable = json.append(abilityTable,json.set("",
@@ -152,7 +177,7 @@
 			"DisplayOrder","['Rules','Roll','Full']",
 			"BonusSectionNum",1,
 			"BonusSectionType1","Rules",
-			"BonusBody1","Reroll: <a href = '"+wa.RerollLink+"'><span style = 'color:"+LinkColor+"'>Adv.</span></a> / <a href = '"+wa.RerollLink+"'><span style = 'color:"+LinkColor+"'>Dis.</span></a>",
+			"BonusBody1","Reroll: <a href = '"+wa.AdvRerollLink+"'><span style = 'color:"+LinkColor+"'>Adv.</span></a> / <a href = '"+wa.DisRerollLink+"'><span style = 'color:"+LinkColor+"'>Dis.</span></a>",
 			"BonusSectionStyling1","text-align:center",
 			"Value",(roll1+wa.PrimeStatBonus+if(wa.ProfTest,Proficiency,0)+wa.MagicBonus)
 			))]
@@ -163,7 +188,7 @@
 			"Header","Attack Roll",
 			"FalseHeader","",
 			"FullContents","<span style='"+if(FinalRoll>=wa.FinalCritRange,"font-size:2em; color:"+CritColor,if(FinalRoll==1,"font-size:2em; color:"+CritFailColor,"font-size:1.5em"))+"'>"+(FinalRoll+wa.PrimeStatBonus+if(wa.ProfTest,Proficiency,0))+"</span>",
-			"RulesContents","1d20 with "+if(wa.AdvDis==1,"Adv","Dis")+" + "+substring(PrimeStat,0,3)+if(wa.ProfTest," + "+Proficiency,"")+pm.PlusMinus(wa.MagicBonus,0)+" = ",
+			"RulesContents","1d20 <span style='color:"+if(wa.AdvDis==1,HealingColor+"'>with Adv",DamageColor+"'>with Dis")+"</span> + "+substring(PrimeStat,0,3)+if(wa.ProfTest," + "+Proficiency,"")+pm.PlusMinus(wa.MagicBonus,0)+" = ",
 			"RollContents",FinalRoll+pm.PlusMinus(wa.PrimeStatBonus,0)+if(wa.ProfTest,pm.PlusMinus(Proficiency,0),"")+pm.PlusMinus(wa.MagicBonus,0)+" = ",
 			"DisplayOrder","['Rules','Roll','Full']",
 			"BonusSectionNum",1,

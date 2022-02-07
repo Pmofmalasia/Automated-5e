@@ -2,6 +2,7 @@
 [h:pm.Class=json.get(arg(0),"Class")]
 [h:pm.Subclass=json.get(arg(0),"Subclass")]
 [h:pm.Tooltip=json.get(arg(0),"Tooltip")]
+[h:ParentToken=json.get(arg(0),"ParentToken")]
 
 [h:pm.ChoiceMethod = json.get(arg(1),"ChoiceMethod")]
 [h:pm.ThrowWeapon = json.get(arg(1),"ThrowWeapon")]
@@ -62,7 +63,8 @@
 	
 	[h:AttackData = json.set(AttackData,
 		"Throw Weapon",pm.ThrowWeapon,
-		"AttackNum",pm.AttackNum
+		"AttackNum",pm.AttackNum,
+		"ParentToken",ParentToken
 	)]
 	
 	[h,macro("Attack@Lib:pm.a5e.Core"): AttackData]

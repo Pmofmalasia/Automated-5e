@@ -89,6 +89,7 @@
 [h:defineFunction("pm.GetBookInfo","pm.GetBookInfo@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.GetClasses","pm.GetClasses@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.GetDamageTypes","pm.GetDamageTypes@Lib:pm.a5e.Core")]
+[h:defineFunction("pm.GetDisplayName","pm.GetDisplayName@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.GetFeats","pm.GetFeats@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.GetRaces","pm.GetRaces@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.GetSkills","pm.GetSkills@Lib:pm.a5e.Core")]

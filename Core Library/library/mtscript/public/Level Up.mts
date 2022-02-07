@@ -50,16 +50,22 @@
 	[h:Subclasses = json.set(Subclasses,lu.Class,lu.SubclassChoice)]
 };{}]
 
-[h:lu.ASITest = if(json.contains(json.get(json.get(lu.FinalClassArray,lu.ClassChoice),"ASILevels"),lu.NewLevel),1,0)]
+[h:lu.ASITest = json.contains(json.get(json.get(lu.FinalClassArray,lu.ClassChoice),"ASILevels"),lu.NewLevel)]
 [h,if(lu.ASITest),CODE:{
 	[MACRO("Ability Score Increase@Lib:pm.a5e.Core"): json.set("","LevelUp",1,"Restrictions",if(Level==0,0,1))]
 	[h:lu.NewAbilities = json.append(lu.NewAbilities,macro.return)]
 };{}]
 
 [h:"<!-- Adds abilities based on class and race that are gained on level up, separately since race goes off of total level -->"]
-[h:lu.NewAbilities = json.merge(lu.NewAbilities,json.path.read(getLibProperty("sb.Abilities","Lib:pm.a5e.Core"),"[?((@.Class=='"+pm.RemoveSpecial(Race)+"' || @.Class=='') && (@.Subclass=='"+pm.RemoveSpecial(Subrace)+"' || @.Subclass=='') && @.Level=="+lu.NewLevel+" && @.GainOnLevel==1)]"))]
+[h:lu.NewAbilities = json.merge(lu.NewAbilities,json.path.read(getLibProperty("sb.Abilities","Lib:pm.a5e.Core"),"[*][?((@.Class=='"+pm.RemoveSpecial(Race)+"' || @.Class=='') && (@.Subclass=='"+pm.RemoveSpecial(Subrace)+"' || @.Subclass=='') && @.Level=="+lu.NewLevel+" && @.GainOnLevel==1)]"))]
 
-[h:lu.NewAbilities = json.merge(lu.NewAbilities,json.path.read(getLibProperty("sb.Abilities","Lib:pm.a5e.Core"),"[?((@.Class=='"+lu.Class+"' || @.Class=='') && (@.Subclass=='"+pm.RemoveSpecial(json.get(Subclasses,lu.Class))+"' || @.Subclass=='') && @.Level=="+lu.NewLevel+" && @.GainOnLevel==1)]"))]
+[h:lu.NewAbilities = json.merge(lu.NewAbilities,json.path.read(getLibProperty("sb.Abilities","Lib:pm.a5e.Core"),"[*][?((@.Class=='"+lu.Class+"' || @.Class=='') && (@.Subclass=='"+pm.RemoveSpecial(json.get(Subclasses,lu.Class))+"' || @.Subclass=='') && @.Level=="+lu.NewLevel+" && @.GainOnLevel==1)]"))]
+
+[h:lu.FightingStyleTest = !json.isEmpty(json.path.read(lu.NewAbilities,"[*][?(@.FightingStyleList!=null)]","DEFAULT_PATH_LEAF_TO_NULL"))]
+[h,if(lu.FightingStyleTest),CODE:{
+	[h:needsMacroTest = !json.contains(getMacros("json"),"Manage Fighting Styles")]
+	[h,if(needsMacroTest): createMacro(json.set("","label","Manage Fighting Styles","command",'[MACRO("Manage Fighting Styles@Lib:pm.a5e.Core"): json.set("","LevelUp",0,"Class","'+lu.Class+'")]',"group"," New Macros","color",pm.BorderColor("FightingStyle"),"fontColor",pm.TitleColor("FightingStyle"),"applyToSelected",1,"playerEditable",0,"minWidth",89))]
+};{}]
 
 [h,MACRO("New Ability Processing@Lib:pm.a5e.Core"): json.set("","Abilities",lu.NewAbilities)]
 [h:lu.NewAbilities = json.get(macro.return,"Abilities")]

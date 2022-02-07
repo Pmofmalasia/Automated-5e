@@ -1,1 +1,2 @@
-[h:macro.return = if(json.get(ClassBorderColors,arg(0))=="",if(json.get(getLibProperty("ClassBorderColors","Lib:pm.a5e.Core"),arg(0))=="","#FFFFFF",json.get(getLibProperty("ClassBorderColors","Lib:pm.a5e.Core"),arg(0))),json.get(ClassBorderColors,arg(0)))]
+[h,if(currentToken()!=""): BorderKey = if(arg(0)==pm.RemoveSpecial(getProperty("Race")),"Innate",arg(0)); BorderKey = arg(0)]
+[h:macro.return = if(json.get(ClassBorderColors,BorderKey)=="",if(json.get(getLibProperty("ClassBorderColors","Lib:pm.a5e.Core"),BorderKey)=="","#FFFFFF",json.get(getLibProperty("ClassBorderColors","Lib:pm.a5e.Core"),BorderKey)),json.get(ClassBorderColors,BorderKey))]

@@ -29,11 +29,10 @@
 [h,if(pm.Tooltip),CODE:{
 	[h:pm.AbilitiesChosenStr = json.toList(json.path.read(allAbilities,"[?(@.Master.Name=='"+pm.Ability+"' && @.Master.Class=='"+pm.Class+"' && @.Master.Subclass=='"+pm.Subclass+"' && @.IsActive > 0)]['DisplayName']"),if(json.get(getLibProperty("TooltipVertical","Lib:pm.a5e.Core"),getPlayerName())=="",if(json.get(getLibProperty("TooltipVertical","Lib:pm.a5e.Core"),"Default")==1,"<br>",", "),if(json.get(getLibProperty("TooltipVertical","Lib:pm.a5e.Core"),getPlayerName())==1,"<br>",", ")))]
 };{
-	[h:pm.AbilitiesChosenStr = json.toList(json.path.read(allAbilities,"[?(@.Master.Name=='"+pm.Ability+"' && @.Master.Class=='"+pm.Class+"' && @.Master.Subclass=='"+pm.Subclass+"' && @.IsActive > 0)]['DisplayName']"),if(getLibProperty("VerticalDisplay","Lib:pm.a5e.Core")==1,"<br>",", "))]
 	[h:pm.SelectionInput = "junkVar | Choose "+pm.OptionsNum+" of the following "+pm.AbilityDisplay+" abilities |  | LABEL | SPAN=TRUE "]
 	[h,foreach(ability,pm.AbilitiesList),CODE:{
 		[h:set("pm.Choose"+json.get(ability,"Name"),if(json.isEmpty(json.path.read(allAbilities,"[?(@.Name=='"+json.get(ability,"Name")+"' && @.Master.Name=='"+pm.Ability+"' && @.Master.Class=='"+pm.Class+"' && @.Master.Subclass=='"+pm.Subclass+"' && @.Class=='"+json.get(ability,"Class")+"' && @.Subclass=='"+json.get(ability,"Subclass")+"' && @.IsActive > 0)]")),0,1))]
-		[h:pm.SelectionInput = if(pm.Tooltip,"",listAppend(pm.SelectionInput," pm.Choose"+json.get(ability,"Name")+" | "+eval("pm.Choose"+json.get(ability,"Name"))+" | "+json.get(ability,"DisplayName")+" | CHECK ","##"))]
+		[h:pm.SelectionInput = listAppend(pm.SelectionInput," pm.Choose"+json.get(ability,"Name")+" | "+eval("pm.Choose"+json.get(ability,"Name"))+" | "+json.get(ability,"DisplayName")+" | CHECK ","##")]
 	}]
 	
 	[h:abort(input(pm.SelectionInput))]
@@ -45,7 +44,7 @@
 	}]
 	
 	[h:pm.NewAbilities = json.difference(pm.ChosenAbilities,pm.CurrentAbilities)]
-	[h:pm.RemovedAbilities = json.difference(pm.AbilitiesList,pm.ChosenAbilities)]
+	[h:pm.RemovedAbilities = json.difference(pm.CurrentAbilities,pm.ChosenAbilities)]
 	[h,MACRO("New Ability Processing@Lib:pm.a5e.Core"): json.set("","Abilities",pm.NewAbilities)]
 	[h,MACRO("New Ability Addition@Lib:pm.a5e.Core"): macro.return]
 	[h,MACRO("Ability Removal@Lib:pm.a5e.Core"): pm.RemovedAbilities]

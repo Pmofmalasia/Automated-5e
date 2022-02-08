@@ -85,6 +85,7 @@
 [h:defineFunction("pm.SubclassSelection","pm.SubclassSelection@Lib:pm.a5e.Core")]
 
 [h:"<!-- Functions for Getting Data from Sourcebook Library Tokens -->"]
+[h:defineFunction("pm.AbilityFilter","pm.AbilityFilter@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.GetAttributes","pm.GetAttributes@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.GetBookInfo","pm.GetBookInfo@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.GetClasses","pm.GetClasses@Lib:pm.a5e.Core")]

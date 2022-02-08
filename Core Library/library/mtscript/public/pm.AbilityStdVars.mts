@@ -53,3 +53,5 @@
 	"Portrait",ForcedSummonPortrait,
 	"Handout",ForcedSummonHandout
 	)]
+
+[h:a5e.GatherAbilities()]

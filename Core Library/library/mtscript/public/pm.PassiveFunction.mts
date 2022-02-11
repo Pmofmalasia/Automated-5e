@@ -8,6 +8,7 @@
 	[h:pm.ValidFunction = isFunctionDefined(a5efunctionName)]
 	[h:pm.SpecificAbilityTest = json.type(json.get(ability,"Call"+arg(0)))]
 	[h,if(pm.SpecificAbilityTest=="UNKNOWN"),CODE:{
+		[h,if(argCount()>1 && pm.ValidFunction): pm.ValidFunction = json.get(ability,"Call"+arg(0)) == arg(1)]
 		[h,if(pm.ValidFunction): evalMacro("[h:"+a5efunctionName+"('"+arg(0)+"')]")]
 	};{
 		[h:pm.ThisAbilityTest = json.contains(json.get(ability,"Call"+arg(0)),json.set("","Name",json.get(abilityInfo,"Name"),"DisplayName",json.get(abilityInfo,"DisplayName"),"Class",json.get(abilityInfo,"Class"),"Subclass",json.get(abilityInfo,"Subclass")))]

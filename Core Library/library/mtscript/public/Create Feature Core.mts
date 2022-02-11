@@ -17,13 +17,18 @@
 [h:ab.NoUpdatesTest = ab.Updates]
 
 [h:abort(input(
-	" junkVar | ---------------------- Miscellaneous Choices on Gaining Feature ---------------------- |  | LABEL | SPAN=TRUE ",	" ab.IsClassOptions |  | <html><span title='Mostly for feats, e.g. Magic Initiate'>Choose an associated class?</span></html> | CHECK ",
-	" ab.PrimeAttribute | None,"+ab.AtrList+",Variable | <html><span title='Variable option is mostly for feats that have you choose a stat. NOTE: This selection will not also grant the +1 or whatever bonus to that stat, that must be done separately later.'>Primary stat for feature</span></html> | LIST | VALUE=STRING ",
+	" junkVar | --------------------- Miscellaneous Choices on Gaining Feature --------------------- |  | LABEL | SPAN=TRUE ",
 	" ab.IsSpellList | None,Preset Spells,Chosen When Gained,Mix of Both | <html><span title='Note: This ONLY applies for abilities that grant the spell for use with spell slots or as a cantrip (e.g. would NOT apply for tiefling innate spells, but would for cleric domain spells)'>Feature adds known spells</span></html> | LIST ",
 	" ab.IsFightingStyles | 0 | Feature grants access to fighting styles | CHECK ",
+	" junkVar | ------------------------------------------------------------------------------------------------------- |  | LABEL | SPAN=TRUE ",
+	" ab.PrimeAttribute | None,"+ab.AtrList+",Variable | <html><span title='Variable option is mostly for feats that have you choose a stat. NOTE: This selection will not also grant the +1 or whatever bonus to that stat, that must be done separately later.'>Primary stat for feature</span></html> | LIST | VALUE=STRING ",
 	" ab.DamageType | No,Chosen When Gained,Chosen Through Button | Has an associated damage type | LIST ",
-	" ab.StoredValue | None,Chosen When Gained,Chosen through button | <html><span title='For abilities that may require a choice to be made that modify how it functions (e.g. Transmutation Wizard - Transmuters Stone)'>Feature stores a miscellaneous value</span></html> | LIST",
-	" ab.ChooseSubabilities | None,Chosen on Level Up,Chosen through button | <html><span title='For the main feature ONLY, e.g. Battle Master Fighter - Combat Superiority BUT not each individual maneuver. No mechanical difference between chosen through button/level up, but may want to choose via button for things subject to change.'>Feature has subfeatures</span></html> | LIST",	" ab.Resource |  | <html><span title='Does NOT apply for abilities that use resources of another feature, e.g. Lore Bard - Cutting Words/Bardic Inspiration, Battle Master Fighter - Superiority Dice'>Has its own associated resource</span></html> | CHECK "
+	" ab.StoredValue | None,Chosen When Gained,Chosen through button | <html><span title='For abilities that may require a choice to be made that modify how it functions (e.g. Transmutation Wizard - Transmuters Stone)'>Feature stores a miscellaneous value</span></html> | LIST ",
+	" junkVar | ------------------------------------------------------------------------------------------------------- |  | LABEL | SPAN=TRUE ",
+	" ab.ChooseSubabilities | None,Chosen on Level Up,Chosen through button | <html><span title='For the main feature ONLY, e.g. Battle Master Fighter - Combat Superiority BUT not each individual maneuver. No mechanical difference between chosen through button/level up, but may want to choose via button for things subject to change.'>Feature has subfeatures to choose from</span></html> | LIST ",
+	" ab.DieSize |  | <html><span title='e.g. Bardic Inspiration, Combat Superiority, etc.'>Feature has a die used by other features</span></html> | CHECK ",
+	" ab.Resource |  | <html><span title='Does NOT apply for abilities that use resources of another feature, e.g. Lore Bard - Cutting Words/Bardic Inspiration, Battle Master Fighter - Superiority Dice'>Feature tracks its own associated resource</span></html> | CHECK ",
+	" ab.IsClassOptions |  | <html><span title='Mostly for feats, e.g. Magic Initiate'>Choose an associated class?</span></html> | CHECK "
 	))]
 
 [h,if(ab.ChooseSubabilities==1),CODE:{
@@ -339,6 +344,12 @@
 	[h:ab.Final = json.set(ab.Final,"Prereqs",ab.PrereqsFinal)]
 };{}]
 
+[h,if(ab.DieSize==1),CODE:{
+	[h:" junkVar | ---------------------- Shared Die Size Info ---------------------- |  | LABEL | SPAN=TRUE "]
+	
+	[h:ab.Final = json.set(ab.Final,"CallDieSize",json.get(ab.Final,"Name")+json.get(ab.Final,"Class")+json.get(ab.Final,"Subclass"))]
+};{}]
+
 [h,if(ab.Resource == 1),CODE:{
 	[h:abort(input(
 		" ab.ResourceType | 1,Other Flat Number,Attribute Based,Linearly Class Level Based,Non-Linearly Class Level Based,Proficiency Based,Multiple Resources,Custom | Amount of Resource | LIST | VALUE=STRING ",
@@ -355,15 +366,16 @@
 };{}]
 
 [h:abort(input(
-	" junkVar | Choose general instances that the feature affects | 0 | LABEL | SPAN=TRUE ",	" junkVar | ---------------------------------------------------------------------- | 0 | LABEL | SPAN=TRUE ",
+	" junkVar | Choose general instances that the feature affects | 0 | LABEL | SPAN=TRUE ",
+	" junkVar | --------------------------------------------------------------------------------------------------------------------- | 0 | LABEL | SPAN=TRUE ",
 	" ab.Attributes | No,By Choice,Preset,Some of Both | Affects ability scores | LIST ",
 	" ab.SkillProficiencies | No,By Choice,Preset,Some of Both | Affects skill proficiencies | LIST ",
 	" ab.SaveProficiencies | No,By Choice,Preset,Some of Both | Affects save proficiencies | LIST ",
 	" ab.WeaponProficiencies | No,By Choice,Preset,Some of Both | Affects weapon proficiencies | LIST ",
 	" ab.ArmorProficiencies | No,By Choice,Preset,Some of Both | Affects armor proficiencies | LIST ",
 	" ab.MiscProficiencies | 0 | <html><span title='Non-Permanent Proficiency or Effects not granting Expertise/Proficiency (e.g. Jack of All Trades)'>Affects Proficiencies in Some Other Way</span></html> | CHECK ",
-	" ab.PassiveScore | 0 | Affects passive skills | LIST ",
-	" junkVar | ---------------------------------------------------------------------- | 0 | LABEL | SPAN=TRUE ",
+	" ab.PassiveScore | 0 | Affects passive skills | CHECK ",
+	" junkVar | --------------------------------------------------------------------------------------------------------------------- | 0 | LABEL | SPAN=TRUE ",
 	" ab.AtrOther | 0 | <html><span title='For things that set a score to a certain value, raise the stat cap, or give a bonus conditionally'>Affects Ability Scores - Not Flat Bonuses</span></html> | CHECK ",
 	" ab.AC | 0 | Affects AC | CHECK ",
 	" ab.HP | 0 | Affects Max HP | CHECK ",
@@ -372,17 +384,17 @@
 	" ab.Speed | 0 | Affects movement speed | CHECK ",
 	" ab.Languages | 0 | Affects languages known | CHECK ",
 	" ab.Senses | 0 | Affects senses | CHECK ",
-	" junkVar | ---------------------------------------------------------------------- | 0 | LABEL | SPAN=TRUE ",
+	" junkVar | --------------------------------------------------------------------------------------------------------------------- | 0 | LABEL | SPAN=TRUE ",
 	" ab.Check | 0 | Affects checks | CHECK ",
 	" ab.Save | 0 | Affects saves | CHECK ",
 	" ab.Init | 0 | Affects initiative | CHECK ",
 	" ab.Conc | 0 | Affects concentration | CHECK ",
 	" ab.Death | 0 | Affects death saves | CHECK ",
-	" junkVar | ---------------------------------------------------------------------- | 0 | LABEL | SPAN=TRUE ",
+	" junkVar | --------------------------------------------------------------------------------------------------------------------- | 0 | LABEL | SPAN=TRUE ",
 	" ab.Attacks | 0 | Affects weapon attacks | CHECK ",
 	" ab.Spells | 0 | Affects spells | CHECK ",
 	" ab.OtherAbilities | 0 | Affects other features | CHECK ",
-	" junkVar | ---------------------------------------------------------------------- | 0 | LABEL | SPAN=TRUE ",
+	" junkVar | --------------------------------------------------------------------------------------------------------------------- | 0 | LABEL | SPAN=TRUE ",
 	" ab.Damaged | 0 | Effect triggers when damaged | CHECK ",
 	" ab.CondGain | 0 | Effect triggers when gaining a condition | CHECK ",
 	" ab.CondEnd | 0 | Effect triggers when ending a condition | CHECK ",
@@ -390,9 +402,9 @@
 	" ab.HitDie | 0 | Effect triggers after spending Hit Dice | CHECK ",
 	" ab.StartTurn | 0 | Effect triggers on start of turn | CHECK ",
 	" ab.EndTurn | 0 | Effect triggers on end of turn | CHECK ",
-	" junkVar | ---------------------------------------------------------------------- | 0 | LABEL | SPAN=TRUE ",
+	" junkVar | --------------------------------------------------------------------------------------------------------------------- | 0 | LABEL | SPAN=TRUE ",
 	" ab.Button | 0 | <html><span title='Things that have their own action/reaction like granting Bardic Inspiration, going into a rage, etc. Can also be used for passive abilities that do not have a mechanical trigger that is feasible to program, like the Fighter Maneuver - Evasive Footwork'>Feature can be used independently of the above</span></html> | CHECK ",
-	" junkVar | ---------------------------------------------------------------------- | 0 | LABEL | SPAN=TRUE ",
+	" junkVar | --------------------------------------------------------------------------------------------------------------------- | 0 | LABEL | SPAN=TRUE ",
 	" ab.HasUpdates |  | <html><span title='Do not check if it has already been accounted for, e.g. resources. This is mostly for things that change unpredictably or inconsistently across all levels.'>Feature has any change not already accounted for as you level up</span></html> | CHECK "
 	))]
 
@@ -478,7 +490,7 @@
 		" ab.ConcMisc | 0 | Affects Concentration Save Proficiency | CHECK ",
 		" ab.WeaponMisc | 0 | Affects Weapon Proficiencies | CHECK ",
 		" ab.ArmorMisc | 0 | Affects Armor Proficiencies | CHECK "
-		)]
+		))]
 		[h:ab.Final = json.set(ab.Final,
 		"CallSaveProf",ab.SaveMisc,
 		"CallCheckProf",ab.CheckMisc,

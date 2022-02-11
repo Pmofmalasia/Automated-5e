@@ -64,6 +64,7 @@
 [h:defineFunction("pm.AbilityWeaponAttackProcessing","pm.AbilityWeaponAttackProcessing@Lib:pm.a5e.Core",0,0)]
 [h:defineFunction("pm.AddAbility","pm.AddAbility@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.AuraToggle","pm.AuraToggle@Lib:pm.a5e.Core")]
+[h:defineFunction("pm.ConditionStdVars","pm.ConditionStdVars@Lib:pm.a5e.Core",0,0)]
 [h:defineFunction("pm.GetAbilityConditions","pm.GetAbilityConditions@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.GetAbilityLevel","pm.GetAbilityLevel@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.GetAbilityMacro","pm.GetAbilityMacro@Lib:pm.a5e.Core")]
@@ -133,10 +134,6 @@
 
 [h:"<!-- Functions for Trusted Bypass -->"]
 [h:defineFunction("pm.SwitchToken","pm.SwitchToken@Lib:pm.a5e.Core",0,0)]
-
-[h,foreach(book,pm.GetBookInfo("Library","json")),CODE:{
-	[h,macro("Functions to Define@Lib:"+book):""]
-}]
 
 [h,MACRO("Gather Sourcebook Information@Lib:pm.a5e.Core"):""]
 [h:broadcast("Startup Initialization Complete.")]

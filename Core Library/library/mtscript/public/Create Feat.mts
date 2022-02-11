@@ -1,20 +1,18 @@
 [h:ab.Sourcebooks = pm.GetBookInfo("DisplayName",",")]
 [h:ab.ClassList = pm.GetClasses("DisplayName",",")]
 [h:ab.RaceList = pm.GetRaces("DisplayName",",")]
-[h:ab.AtrList = pm.GetAttributes()]
 [h:ab.LevelList = "None,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20"]
-[h:ab.Class = "Background"]
+[h:ab.Class = "Feat"]
 
 [h:abort(input(
-	" junkVar | -------------------------------------------- Basic Background Info -------------------------------------------- |  | LABEL | SPAN=TRUE ",
-	" ab.Name | -- Name Here -- | Enter Background Name ",
+	" junkVar | -------------------------------------------- Basic Feat Info -------------------------------------------- |  | LABEL | SPAN=TRUE ",
+	" ab.Name | -- Name Here -- | Enter Feat Name ",
 	" ab.Level | "+ab.LevelList+" | Level Gained | LIST ",
 	" ab.Source | "+ab.Sourcebooks+" | Associated Sourcebook | LIST | VALUE=STRING ",
 	" junkVar | -------------------------------------------------------------------------------------------------------------- |  | LABEL | SPAN=TRUE ",
-	" ab.HasMaster | No,Yes,Yes - Not Created Yet | <html><span title='Features with multiple named options, e.g. Battle Master Fighter - Combat Superiority Maneuvers, Totem Barbarian, Hunter Ranger'>Has an associated main feature</span></html> | LIST ",
+	" ab.HasMaster | No,Yes,Yes - Not Created Yet | <html><span title='Abilities with multiple named options, e.g. Battle Master Fighter - Combat Superiority Maneuvers, Totem Barbarian, Hunter Ranger'>Has an associated main feature</span></html> | LIST ",
 	" ab.OnLevel | 0 | <html><span title='Uncheck for abilities that must be chosen to be gained, e.g. Eldritch Invocations or Hunter Ranger features'>Gained Automatically on Level Up</span></html> | CHECK ",
-	" ab.Optional | 0 | <html><span title='For sourcebooks that add optional additional rules'>Optional Feature</span></html> | CHECK ",	" ab.Replace | No,Yes,Yes - Not Created Yet | <html><span title='For sourcebooks that optionally remove old features and replace them with new ones.'>Replaces another Feature if Gained</span></html> | LIST ",
-	" junkVar | -------------------------------------------------------------------------------------------------------------- |  | LABEL | SPAN=TRUE ",	"ab.Prereqs |  | <html><span title='Mostly for features not gained automatically on level up, like Invocations or Feats. Ignore if level/class/subclass are the only prerequisites.'>Feature has prerequisites for being gained</span></html> | CHECK ",	"ab.MultiAbility |  | <html><span title='Pretty much just for Elemental Adept at this point. Can be used for anything similar.'>Feature can be gained multiple times</span></html> | CHECK "
+	" ab.Optional | 0 | <html><span title='For sourcebooks that add optional additional rules'>Optional Ability</span></html> | CHECK ",	" ab.Replace | No,Yes,Yes - Not Created Yet | <html><span title='For sourcebooks that optionally remove old abilities and replace them with new ones.'>Replaces another Feature if Gained</span></html> | LIST ",	" junkVar | -------------------------------------------------------------------------------------------------------------- |  | LABEL | SPAN=TRUE ",	"ab.Prereqs |  | <html><span title='Mostly for features not gained automatically on level up, like Invocations or Feats. Ignore if level/class/subclass are the only prerequisites.'>Feature has prerequisites for being gained</span></html> | CHECK ",	"ab.MultiAbility |  | <html><span title='Pretty much just for Elemental Adept at this point. Can be used for anything similar.'>Feature can be gained multiple times</span></html> | CHECK "
 	))]
 
 [h:ab.UpdateLevelOptions = string(ab.Level)]
@@ -26,6 +24,7 @@
 [h:ab.Final = json.set("",
 	"Name",ab.Name,
 	"DisplayName",ab.DisplayName,
+	"Type","Feat",
 	"Class",pm.RemoveSpecial(ab.Class),
 	"Level",ab.Level,
 	"GainOnLevel",ab.OnLevel,
@@ -94,8 +93,8 @@
 	[h:ab.Final = json.set(ab.Final,"Master","")]
 }]
 
-[h,if(ab.Replaced>0),CODE:{
-	[h,if(ab.Replaced>1),CODE:{
+[h,if(ab.Replace>0),CODE:{
+	[h,if(ab.Replace>1),CODE:{
 		[h:ab.ReplaceInput=""]
 		[h,SWITCH(ab.ReplaceType):
 			case "Class": ab.ReplaceInput=" ab.ReplaceClass | "+ab.ClassList+" | Class associated with Replaced Feature | LIST | VALUE=STRING ## junkVar | Next Screen | Subclass Selection | LABEL";
@@ -142,15 +141,13 @@
 	}]
 	
 	[h:ab.Final = json.set(ab.Final,"Replace",ab.ReplaceFeature)]
-};{
-	[h:ab.Final = json.set(ab.Final,"Replace","")]
-}]
+};{}]
 
-[h,macro("Create Feature Core@Lib:pm.a5e.CreationTools"): json.set("","Feature",ab.Final,"PrereqsTest",ab.Prereqs,"FeatureType","Race")]
+[h,macro("Create Feature Core@Lib:pm.a5e.Core"): json.set("","Feature",ab.Final,"PrereqsTest",ab.Prereqs)]
 
 [h:ab.Final = json.get(macro.return,"Ability")]
 
-[h:setLibProperty("sb.Backgrounds",json.append(getLibProperty("sb.Backgrounds","Lib:"+ab.SourceLib),ab.Final),"Lib:"+ab.SourceLib)]
+[h:setLibProperty("sb.Feats",json.sort(json.append(getLibProperty("sb.Feats","Lib:"+ab.SourceLib),ab.Final),"a","Class","Subclass","Level","DisplayName"),"Lib:"+ab.SourceLib)]
 
-[r:ab.DisplayName+" background from the sourcebook "+ab.Source+" created."]
+[r:ab.DisplayName+" feat from the sourcebook "+ab.Source+" created."]
 [h,MACRO("Gather Sourcebook Information@Lib:pm.a5e.Core"):""]

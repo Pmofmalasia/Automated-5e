@@ -52,7 +52,7 @@
 [h:cn.Subclass = if(cn.Subclass == "None","",pm.RemoveSpecial(cn.Subclass))]
 [h:cn.Final = json.set(cn.Final,"Subclass",cn.Subclass)]
 
-[h,macro("Create Feature Core@Lib:pm.a5e.CreationTools"): json.set("","Feature",cn.Final,"PrereqsTest",0)]
+[h,macro("Create Feature Core@Lib:pm.a5e.Core"): json.set("","Feature",cn.Final,"PrereqsTest",0)]
 
 [h:cn.Final = json.get(macro.return,"Ability")]
 

@@ -17,13 +17,13 @@
 [h:ab.NoUpdatesTest = ab.Updates]
 
 [h:abort(input(
-	" junkVar | ---------------------- Miscellaneous Choices on Gaining Ability ---------------------- |  | LABEL | SPAN=TRUE ",	" ab.IsClassOptions |  | <html><span title='Mostly for feats, e.g. Magic Initiate'>Choose an associated class?</span></html> | CHECK ",
-	" ab.PrimeAttribute | None,"+ab.AtrList+",Variable | <html><span title='Variable option is mostly for feats that have you choose a stat. NOTE: This selection will not also grant the +1 or whatever bonus to that stat, that must be done separately later.'>Primary stat for ability</span></html> | LIST | VALUE=STRING ",
-	" ab.IsSpellList | None,Preset Spells,Chosen When Gained,Mix of Both | <html><span title='Note: This ONLY applies for abilities that grant the spell for use with spell slots or as a cantrip (e.g. would NOT apply for tiefling innate spells, but would for cleric domain spells)'>Ability adds known spells</span></html> | LIST ",
-	" ab.IsFightingStyles | 0 | Ability grants access to fighting styles | CHECK ",
+	" junkVar | ---------------------- Miscellaneous Choices on Gaining Feature ---------------------- |  | LABEL | SPAN=TRUE ",	" ab.IsClassOptions |  | <html><span title='Mostly for feats, e.g. Magic Initiate'>Choose an associated class?</span></html> | CHECK ",
+	" ab.PrimeAttribute | None,"+ab.AtrList+",Variable | <html><span title='Variable option is mostly for feats that have you choose a stat. NOTE: This selection will not also grant the +1 or whatever bonus to that stat, that must be done separately later.'>Primary stat for feature</span></html> | LIST | VALUE=STRING ",
+	" ab.IsSpellList | None,Preset Spells,Chosen When Gained,Mix of Both | <html><span title='Note: This ONLY applies for abilities that grant the spell for use with spell slots or as a cantrip (e.g. would NOT apply for tiefling innate spells, but would for cleric domain spells)'>Feature adds known spells</span></html> | LIST ",
+	" ab.IsFightingStyles | 0 | Feature grants access to fighting styles | CHECK ",
 	" ab.DamageType | No,Chosen When Gained,Chosen Through Button | Has an associated damage type | LIST ",
-	" ab.StoredValue | None,Chosen When Gained,Chosen through button | <html><span title='For abilities that may require a choice to be made that modify how it functions (e.g. Transmutation Wizard - Transmuters Stone)'>Ability stores a miscellaneous value</span></html> | LIST",
-	" ab.ChooseSubabilities | None,Chosen on Level Up,Chosen through button | <html><span title='For the main ability ONLY, e.g. Battle Master Fighter - Combat Superiority BUT not each individual maneuver. No mechanical difference between chosen through button/level up, but may want to choose via button for things subject to change.'>Ability has subabilities</span></html> | LIST",	" ab.Resource |  | <html><span title='Does NOT apply for abilities that use resources of another ability, e.g. Lore Bard - Cutting Words/Bardic Inspiration, Battle Master Fighter - Superiority Dice'>Has its own associated resource</span></html> | CHECK "
+	" ab.StoredValue | None,Chosen When Gained,Chosen through button | <html><span title='For abilities that may require a choice to be made that modify how it functions (e.g. Transmutation Wizard - Transmuters Stone)'>Feature stores a miscellaneous value</span></html> | LIST",
+	" ab.ChooseSubabilities | None,Chosen on Level Up,Chosen through button | <html><span title='For the main feature ONLY, e.g. Battle Master Fighter - Combat Superiority BUT not each individual maneuver. No mechanical difference between chosen through button/level up, but may want to choose via button for things subject to change.'>Feature has subfeatures</span></html> | LIST",	" ab.Resource |  | <html><span title='Does NOT apply for abilities that use resources of another feature, e.g. Lore Bard - Cutting Words/Bardic Inspiration, Battle Master Fighter - Superiority Dice'>Has its own associated resource</span></html> | CHECK "
 	))]
 
 [h,if(ab.ChooseSubabilities==1),CODE:{
@@ -48,7 +48,7 @@
 };{}]
 
 [h,if(ab.PrimeAttribute=="Variable"),CODE:{
-	[h:ab.AttributeOptions = " junkVar | Choose which of the following can be selected as the primary stat for the ability |  | LABEL | SPAN=TRUE ## ab.AttrDescMethod | Choice,Chosen Attribute,Chosen Class Casting Stat,Maximum,Minimum | <html><span title='Choice vs. Chosen Attribute: Choice is for decisions made by the player independent of any other. Chosen attribute is for things like feats where the player chooses a stat to add points to, and then the prime stat becomes that stat. Chosen attribute and chosen class will ignore your selections of possible stats.'>Method of choosing among the options</span></html> | LIST | VALUE=STRING "]
+	[h:ab.AttributeOptions = " junkVar | Choose which of the following can be selected as the primary stat for the feature |  | LABEL | SPAN=TRUE ## ab.AttrDescMethod | Choice,Chosen Attribute,Chosen Class Casting Stat,Maximum,Minimum | <html><span title='Choice vs. Chosen Attribute: Choice is for decisions made by the player independent of any other. Chosen attribute is for things like feats where the player chooses a stat to add points to, and then the prime stat becomes that stat. Chosen attribute and chosen class will ignore your selections of possible stats.'>Method of choosing among the options</span></html> | LIST | VALUE=STRING "]
 	[h,foreach(TempAtr,ab.AtrList): ab.AttributeOptions = listAppend(ab.AttributeOptions,"ab."+pm.RemoveSpecial(TempAtr)+"Option |  | "+TempAtr+" | CHECK ","##")]
 
 	[h:abort(input(ab.AttributeOptions))]
@@ -239,11 +239,11 @@
 [h,if(ab.Prereqs),CODE:{
 	[h:ab.PrereqsFinal = ""]
 	[h:abort(input(
-	" junkVar | ---------------------- Ability Prerequisite Info ---------------------- |  | LABEL | SPAN=TRUE ",
+	" junkVar | ---------------------- Feature Prerequisite Info ---------------------- |  | LABEL | SPAN=TRUE ",
 		" ab.ClassPrereq | None,One,Multiple | Has required classes | LIST ",
 		" ab.SubclassPrereq | None,One,Multiple | Has required subclasses | LIST ",
 		" ab.LevelPrereq | "+ab.LevelList+" | Has total level requirement | LIST | ",
-		" ab.AbilityPrereq | -- Ignore/Blank for None -- | Has required ability ",
+		" ab.AbilityPrereq | -- Ignore/Blank for None -- | Has required feature ",
 		" ab.RacePrereq | None,One,Multiple | Has required races | LIST ",
 		" ab.SubracePrereq | None,One,Multiple | Has required subraces | LIST ",
 		" ab.AttrPrereq |  | Has base attribute requirements | CHECK ",
@@ -355,7 +355,7 @@
 };{}]
 
 [h:abort(input(
-	" junkVar | Choose general instances that the ability affects | 0 | LABEL | SPAN=TRUE ",	" junkVar | ---------------------------------------------------------------------- | 0 | LABEL | SPAN=TRUE ",
+	" junkVar | Choose general instances that the feature affects | 0 | LABEL | SPAN=TRUE ",	" junkVar | ---------------------------------------------------------------------- | 0 | LABEL | SPAN=TRUE ",
 	" ab.Attributes | No,By Choice,Preset,Some of Both | Affects ability scores | LIST ",
 	" ab.SkillProficiencies | No,By Choice,Preset,Some of Both | Affects skill proficiencies | LIST ",
 	" ab.SaveProficiencies | No,By Choice,Preset,Some of Both | Affects save proficiencies | LIST ",
@@ -393,7 +393,7 @@
 	" junkVar | ---------------------------------------------------------------------- | 0 | LABEL | SPAN=TRUE ",
 	" ab.Button | 0 | <html><span title='Things that have their own action/reaction like granting Bardic Inspiration, going into a rage, etc. Can also be used for passive abilities that do not have a mechanical trigger that is feasible to program, like the Fighter Maneuver - Evasive Footwork'>Feature can be used independently of the above</span></html> | CHECK ",
 	" junkVar | ---------------------------------------------------------------------- | 0 | LABEL | SPAN=TRUE ",
-	" ab.HasUpdates |  | <html><span title='Do not check if it has already been accounted for, e.g. a resource that increases linearly each level. This is mostly for things that change unpredictably, such as the amount of rages barbarians have at each level, or inconsistently across all levels, such as domain spells adding every other level, but only from levels 1-9.'>Feature has any change not already accounted for as you level up</span></html> | CHECK "
+	" ab.HasUpdates |  | <html><span title='Do not check if it has already been accounted for, e.g. resources. This is mostly for things that change unpredictably or inconsistently across all levels.'>Feature has any change not already accounted for as you level up</span></html> | CHECK "
 	))]
 
 [h,if(ab.Attributes==1 || ab.Attributes==3),CODE:{

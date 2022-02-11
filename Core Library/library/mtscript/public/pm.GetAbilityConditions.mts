@@ -52,4 +52,5 @@
 [h:pm.ConditionsFinal = json.path.put(pm.ConditionsFinal,"[*]","Duration",json.set("",pm.DurationUnits,pm.Duration))]
 [h:pm.ConditionsFinal = json.path.put(pm.ConditionsFinal,"[*]","SetBy",currentToken())]
 [h:pm.ConditionsFinal = json.path.put(pm.ConditionsFinal,"[*]","ConditionID",pm.ConditionID)]
+[h:pm.ConditionsFinal = json.path.put(pm.ConditionsFinal,"[*]","IsActive",1)]
 [h:macro.return = json.set("","Conditions",pm.ConditionsFinal,"ConditionID",pm.ConditionID)]

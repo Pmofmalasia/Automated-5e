@@ -1,6 +1,7 @@
 [h:a5e.Conditions = json.get(macro.args,"Conditions")]
 [h:a5e.Group = json.get(macro.args,"Group")]
 [h:a5e.EndConditionInfo = json.get(macro.args,"EndInfo")]
+[h:a5e.GatherAbilities()]
 
 [h,foreach(condition,a5e.Conditions),CODE:{
 	[h:StateExistsTest = !json.isEmpty(json.path.read(getInfo("campaign"),"states.*.[?(@.name=='"+json.get(condition,"Name")+"')]"))]
@@ -13,3 +14,5 @@
 
 [h:ConditionList = json.merge(ConditionList,a5e.Conditions)]
 [h:ConditionGroups = json.append(ConditionGroups,json.set(a5e.EndConditionInfo,"Names",json.path.read(a5e.Conditions,"[*]['Name']"),"GroupID",a5e.Group))]
+
+[h:pm.PassiveFunction("CondGain")]

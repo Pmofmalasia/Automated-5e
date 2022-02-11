@@ -69,8 +69,8 @@
 [h:wa.DmgDieNum = number(substring(wa.DmgDie,0,indexOf(wa.DmgDie,"d"))))]
 [h:wa.DmgDie2Num = number(substring(wa.DmgDie2,0,1))]
 
-[h,if(AttackNum==-1),CODE:{
-	[h:AttackCount = 1]
+[h,if(AttackNum<0),CODE:{
+	[h:AttackCount = abs(AttackNum)]
 };{
 	[h:AttackCount = AttackNum]
 	[h:pm.PassiveFunction("AttackNum")]
@@ -120,22 +120,24 @@
 	[h:getNewRolls()]
 	[h:wa.Dmg = eval(wa.DmgDieNum+"d"+wa.DmgDieSize)]
 	[h:wa.DmgArray = getNewRolls()]
-	[h:wa.DmgString = json.toList(wa.DmgArray," + ")]
 	
 	[h:wa.CritDmg = eval(wa.DmgDieNum+"d"+wa.DmgDieSize)]
 	[h:wa.CritDmgArray = getNewRolls()]
-	[h:wa.CritDmgString = json.toList(wa.CritDmgArray," + ")]
-
-	[h:AllAttacksDmg=json.append(AllAttacksDmg,json.set("","Dmg",wa.Dmg,"DmgStr",wa.DmgString,"DmgCrit",wa.CritDmg,"DmgCritStr",wa.CritDmgString))]
 
 	[h:wa.Dmg2 = eval(wa.DmgDie2Num+"d"+wa.DmgDie2Size)]
 	[h:wa.Dmg2Array = getNewRolls()]
-	[h:wa.Dmg2String = json.toList(wa.Dmg2Array," + ")]
 	
 	[h:wa.CritDmg2 = eval(wa.DmgDie2Num+"d"+wa.DmgDie2Size)]
 	[h:wa.CritDmg2Array = getNewRolls()]
-	[h:wa.CritDmg2String = json.toList(wa.CritDmg2Array," + ")]
 	
+	[h:pm.PassiveFunction("AttackDamage")]
+	
+	[h:wa.DmgString = json.toList(wa.DmgArray," + ")]
+	[h:wa.CritDmgString = json.toList(wa.CritDmgArray," + ")]
+	[h:AllAttacksDmg=json.append(AllAttacksDmg,json.set("","Dmg",wa.Dmg,"DmgStr",wa.DmgString,"DmgCrit",wa.CritDmg,"DmgCritStr",wa.CritDmgString))]
+	
+	[h:wa.Dmg2String = json.toList(wa.Dmg2Array," + ")]
+	[h:wa.CritDmg2String = json.toList(wa.CritDmg2Array," + ")]
 	[h:AllAttacksDmg2=json.append(AllAttacksDmg2,json.set("","Dmg",wa.Dmg2,"DmgStr",wa.Dmg2String,"DmgCrit",wa.CritDmg2,"DmgCritStr",wa.CritDmg2String))]
 }]
 [h:pm.PassiveFunction("AttackRoll")]

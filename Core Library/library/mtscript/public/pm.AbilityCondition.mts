@@ -27,16 +27,14 @@
 		case "00":{
 			[h:pm.ConditionInfo = pm.GetAbilityConditions(arg(0),arg(1),arg(2))]
 			[h,MACRO("ApplyCondition@Lib:pm.a5e.Core"): json.set("","Conditions",json.get(pm.ConditionInfo,"Conditions"),"Group",json.get(pm.ConditionInfo,"ConditionID"),"EndInfo",pm.ConditionEndInfo)]
-			[h:macro.return = json.set("","Table",json.set("","ShowIfCondensed",1,"Header","Condition"+if(pm.ConditionNum>1,"s","")+" Activated","FalseHeader","","FullContents","","RulesContents",json.toList(json.path.read(pm.ConditionInfo,"['Conditions'][*]['DisplayName']")),"RollContents","","DisplayOrder","['Rules','Roll','Full']"),"Toggle",1,"IsActive",1)]
+			[h:macro.return = json.set("","Table",json.set("","ShowIfCondensed",1,"Header","Condition"+if(pm.ConditionNum>1,"s","")+" Activated","FalseHeader","","FullContents","","RulesContents",json.toList(json.path.read(pm.ConditionInfo,"['Conditions'][*]['DisplayName']"),", "),"RollContents","","DisplayOrder","['Rules','Roll','Full']"),"Toggle",1,"IsActive",1)]
 		};
 		case "01":{
 			[h:pm.CurrentID = json.get(pm.ConditionIDTest,0)]
-			[h:pm.ConditionsDeactivated = json.toList(json.path.read(ConditionList,"[?(@.ConditionID=='"+pm.CurrentID+"')]['DisplayName']"))]
-			[h,if(listCount(pm.ConditionsDeactivated)>1): listInsert(pm.ConditionsDeactivated,listCount(pm.ConditionsDeactivated)-1,"and")]
 			[h,MACRO("EndCondition@Lib:pm.a5e.Core"): pm.CurrentID]
-			[h:abilityTable = json.append("[]",json.set("","ShowIfCondensed",1,"Header","Condition"+if(pm.ConditionNum>1,"s","")+" Deactivated","FalseHeader","","FullContents","","RulesContents",pm.ConditionsDeactivated,"RollContents","","DisplayOrder","['Rules','Roll','Full']"))]
-			[h:abilityTable = "[]"]
-			[h:abilityEffect=pm.ConditionsDeactivated+" deactivated."]
+			[h:pm.CondRemovedList = json.toList(json.path.read(json.get(macro.return,"Removed"),"[*]['DisplayName']"),", ")]
+			[h:abilityTable = json.append(json.get(macro.return,"Table"),json.set("","ShowIfCondensed",1,"Header","Condition"+if(pm.ConditionNum>1,"s","")+" Deactivated","FalseHeader","","FullContents","","RulesContents",pm.CondRemovedList,"RollContents","","DisplayOrder","['Rules','Roll','Full']"))]
+			[h:abilityEffect=pm.CondRemovedList+" deactivated."]
 			[h:pm.AbilityFormatCall()]
 			[h:abort(0)]
 		}

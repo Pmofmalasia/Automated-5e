@@ -57,7 +57,7 @@
 };{}]
 
 [h:"<!-- Adds abilities based on class and race that are gained on level up, separately since race goes off of total level -->"]
-[h:lu.NewAbilities = json.merge(lu.NewAbilities,json.path.read(getLibProperty("sb.Abilities","Lib:pm.a5e.Core"),"[*][?((@.Class=='"+pm.RemoveSpecial(Race)+"' || @.Class=='') && (@.Subclass=='"+pm.RemoveSpecial(Subrace)+"' || @.Subclass=='') && @.Level=="+lu.NewLevel+" && @.GainOnLevel==1)]"))]
+[h:lu.NewAbilities = json.merge(lu.NewAbilities,json.path.read(getLibProperty("sb.Abilities","Lib:pm.a5e.Core"),"[*][?((@.Class=='"+pm.RemoveSpecial(Race)+"' || @.Class=='') && (@.Subclass=='"+pm.RemoveSpecial(Subrace)+"' || @.Subclass=='') && @.Level=="+(Level+1)+" && @.GainOnLevel==1)]"))]
 
 [h:lu.NewAbilities = json.merge(lu.NewAbilities,json.path.read(getLibProperty("sb.Abilities","Lib:pm.a5e.Core"),"[*][?((@.Class=='"+lu.Class+"' || @.Class=='') && (@.Subclass=='"+pm.RemoveSpecial(json.get(Subclasses,lu.Class))+"' || @.Subclass=='') && @.Level=="+lu.NewLevel+" && @.GainOnLevel==1)]"))]
 
@@ -173,11 +173,16 @@
 		default: {[h:TempSpellClass = "Wiz"]}
 		]
 	[h:TempSpellClass = json.get(lu.NewSpellClass,"Class")]
+	
 	[h:lu.NewSpellFilter = if(
-		or(lu.HasSpellcastingTest==0,ceiling(json.get(lu.NewSpellClass,"Level")*(1/2)*(1/json.get(lu.NewSpellClass,"CasterType")))!=ceiling((json.get(lu.NewSpellClass,"Level")-1)*(1/2)*(1/json.get(lu.NewSpellClass,"CasterType")))),
-		json.set("","Class",json.append("",TempSpellClass),"Level",json.append("",ceiling(json.get(lu.NewSpellClass,"Level")*(1/2)*(1/json.get(lu.NewSpellClass,"CasterType"))))),
+		or(lu.HasSpellcastingTest==0,ceiling(json.get(lu.NewSpellClass,"Level")*(1/2)*json.get(lu.NewSpellClass,"CasterType"))!=ceiling((json.get(lu.NewSpellClass,"Level")-1)*(1/2)*json.get(lu.NewSpellClass,"CasterType"))),
+		json.set("","Class",json.append("",TempSpellClass),"Level",json.append("",ceiling(json.get(lu.NewSpellClass,"Level")*(1/2)*json.get(lu.NewSpellClass,"CasterType")))),
 		"")]
-	[h,if(lu.NewSpellFilter==""): lu.NewSpellFilter = if(lu.HasSpellcastingTest,lu.NewSpellFilter,json.set("","Class",json.append("",TempSpellClass),"Level",json.append("",0))); lu.NewSpellFilter = if(lu.HasSpellcastingTest,lu.NewSpellFilter,json.set(lu.NewSpellFilter,"Class",json.append(json.get(lu.NewSpellFilter,"Class"),TempSpellClass),"Level",json.append(json.get(lu.NewSpellFilter,"Level"),0)))]
+		
+	[h,if(lu.NewSpellFilter==""): 
+		lu.NewSpellFilter = if(lu.HasSpellcastingTest,lu.NewSpellFilter,json.set("","Class",json.append("",TempSpellClass),"Level",json.append("",0)));
+		lu.NewSpellFilter = if(lu.HasSpellcastingTest,lu.NewSpellFilter,json.set(lu.NewSpellFilter,"Class",json.append(json.get(lu.NewSpellFilter,"Class"),TempSpellClass),"Level",json.append(json.get(lu.NewSpellFilter,"Level"),0)))
+	]
 	
 	[h,if(lu.NewSpellFilter!=""),CODE:{
 		[h,MACRO("Create Player Spell Macro@Lib:pm.a5e.Core"): json.get(pm.SpellFilter(lu.NewSpellFilter),"Spells")]

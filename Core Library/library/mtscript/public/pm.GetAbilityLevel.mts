@@ -1,1 +1,1 @@
-[h:macro.return = json.get(json.path.read(allAbilities,"[?(@.Name=='"+json.get(arg(0),"Name")+"' && @.Class=='"+json.get(arg(0),"Class")+"' && @.Subclass=='"+json.get(arg(0),"Subclass")+"' && @.IsActive>0)]['Level']"),0)]
+[h:macro.return = json.get(json.path.read(allAbilities,"[*][?(@.Name=='"+json.get(arg(0),"Name")+"' && @.Class=='"+json.get(arg(0),"Class")+"' && @.Subclass=='"+json.get(arg(0),"Subclass")+"' && @.IsActive>0)]['Level']"),0)]

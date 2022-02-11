@@ -1,11 +1,12 @@
 [h:ConditionID = macro.args]
 [h:a5e.GatherAbilities()]
+[h:abilityTable = "[]"]
 
 [h:RemovedConditions = json.path.read(ConditionList,"[?(@.ConditionID=='"+ConditionID+"')]")]
 
 
 [h:"<!-- Will need stuff here for calling passive effects that trigger on end of condition. Located here in case they prevent it. -->"]
-
+[h:"<!-- Will need separate instances for passive effects that prevent a condition ending and effects that trigger when a condition ends, for purposes of order -->"]
 
 [h:ConditionList = json.path.delete(ConditionList,"[?(@.ConditionID=='"+ConditionID+"')]")]
 [h:ConditionGroups = json.path.delete(ConditionGroups,"[?(@.GroupID=='"+ConditionID+"')]")]
@@ -21,6 +22,6 @@
 	}]
 }]
 
-[h:pm.PassiveFunction("ConditionEnd")]
+[h:pm.PassiveFunction("CondEnd")]
 	
-[h:macro.return = RemovedConditions]
+[h:macro.return = json.set("","Table",abilityTable,"Removed",RemovedConditions)]

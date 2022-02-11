@@ -175,7 +175,7 @@
 	]
 }]
 
-[h,macro("Create Feature Core@Lib:pm.a5e.CreationTools"): json.set("","Feature",ab.Final,"PrereqsTest",ab.Prereqs)]
+[h,macro("Create Feature Core@Lib:pm.a5e.Core"): json.set("","Feature",ab.Final,"PrereqsTest",ab.Prereqs)]
 
 [h:ab.Final = json.get(macro.return,"Ability")]
 

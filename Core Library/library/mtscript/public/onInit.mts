@@ -77,6 +77,7 @@
 [h:"<!-- Functions for general use -->"]
 [h:defineFunction("pm.DieRoller","pm.DieRoller@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.DieDisplay","pm.DieDisplay@Lib:pm.a5e.Core")]
+[h:defineFunction("pm.DurationDisplay","pm.DurationDisplay@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.EvilChars","pm.EvilChars@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.PlusMinus","pm.PlusMinus@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.RemoveSpecial","pm.RemoveSpecial@Lib:pm.a5e.Core")]

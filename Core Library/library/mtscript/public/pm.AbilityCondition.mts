@@ -22,7 +22,8 @@
 			[h:macro.return = json.set("","Table",json.set("","ShowIfCondensed",1,"Header","Active?","FalseHeader","","FullContents","","RulesContents","No","RollContents","","DisplayOrder","['Rules','Roll','Full']"),"Toggle",1,"IsActive",1)]
 		};
 		case "11":{
-			[h:macro.return = json.set("","Table",json.set("","ShowIfCondensed",1,"Header","Active?","FalseHeader","","FullContents","","RulesContents","Yes","RollContents","","DisplayOrder","['Rules','Roll','Full']"),"Toggle",1,"IsActive",0)]
+         [h:pm.CurrentDuration = pm.DurationDisplay(json.get(json.path.read(ConditionList,"[*][?(@.ConditionID=="+json.get(pm.ConditionIDTest,0)+")]['Duration']"),0))]
+			[h:macro.return = json.set("","Table",json.set("","ShowIfCondensed",1,"Header","Active?","FalseHeader","","FullContents","","RulesContents","Yes, "+pm.CurrentDuration+" remaining.","RollContents","","DisplayOrder","['Rules','Roll','Full']"),"Toggle",1,"IsActive",0)]
 		};
 		case "00":{
 			[h:pm.ConditionInfo = pm.GetAbilityConditions(arg(0),arg(1),arg(2))]

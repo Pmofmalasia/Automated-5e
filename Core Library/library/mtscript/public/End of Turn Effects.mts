@@ -13,7 +13,14 @@
 		
 [h:pm.PassiveFunction("EndTurn")]
 
-[h:"<!-- Insert function for management of time here, removing .5 of a turn. Note: abilities that last until end of the same turn should have a duration of .5, until start of next turn duration 1, end of next turn duration 1.5 -->"]
+[h:validAbilities = json.path.read(a5e.UnifiedAbilities,"[*][?(@.Duration.AdvancePoint=='EndofTurn')]")]
+[h,MACRO("AdvanceTime@Lib:pm.a5e.Core"): json.set("","Abilities",validAbilities,"Time",1,"TimeUnits","round")]
+
+[h:pm.ConditionsExpired = json.unique(json.path.read(ConditionList,"[*][?(@.Duration.Expired==1)]['ConditionID']"))]
+[h,foreach(ExpiredGroup,pm.ConditionsExpired),CODE:{
+   [h,MACRO("EndCondition@Lib:pm.a5e.Core"): ExpiredGroup]
+   [h:abilityTable = json.merge(abilityTable,json.get(macro.return,"Table"))]
+}]
 
 [h:setState("Initiative", 0)]
 [h:macro.return = abilityTable]

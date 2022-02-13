@@ -6,6 +6,7 @@
 [h:pm.ChoiceMethod = if(json.get(arg(1),"Choice")=="","All",json.get(arg(1),"Choice"))]
 [h:pm.Duration=json.get(arg(2),"Duration")]
 [h:pm.DurationUnits=json.get(arg(2),"DurationUnits")]
+[h:pm.AdvancePoint=json.get(arg(2),"AdvancePoint")]
 [h:pm.AuraRange=if(json.get(arg(2),"AuraRange")=="",0,json.get(arg(2),"AuraRange"))]
 [h:pm.AuraUnits=json.get(arg(2),"AuraUnits")]
 
@@ -49,7 +50,8 @@
 	[h:pm.ConditionID = json.get(pm.ConditionIDTest,0)]
 }]
 
-[h:pm.ConditionsFinal = json.path.put(pm.ConditionsFinal,"[*]","Duration",json.set("",pm.DurationUnits,pm.Duration))]
+[h:DurationBase = json.set("","year",0,"day",0,"hour",0,"minute",0,"round",0)]
+[h:pm.ConditionsFinal = json.path.put(pm.ConditionsFinal,"[*]","Duration",json.set(DurationBase,pm.DurationUnits,pm.Duration,"AdvancePoint",pm.AdvancePoint))]
 [h:pm.ConditionsFinal = json.path.put(pm.ConditionsFinal,"[*]","SetBy",currentToken())]
 [h:pm.ConditionsFinal = json.path.put(pm.ConditionsFinal,"[*]","ConditionID",pm.ConditionID)]
 [h:pm.ConditionsFinal = json.path.put(pm.ConditionsFinal,"[*]","IsActive",1)]

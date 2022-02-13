@@ -13,8 +13,7 @@
 			"BonusSectionType"+(roll.count+1),json.get(arg((roll.count+3)),"Type"),
 			"BonusBody"+(roll.count+1),json.get(arg((roll.count+3)),"Body"),
 			"BonusSectionStyling"+(roll.count+1),json.get(arg((roll.count+3)),"Styling")
-			)]
-		[h:broadcast(ReturnMessage)]
+		)]
 	}]
 }]
 [h:macro.return = ReturnMessage]

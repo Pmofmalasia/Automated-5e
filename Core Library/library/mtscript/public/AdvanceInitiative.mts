@@ -1,5 +1,5 @@
 [h,if(initiativeSize() < 1): assert(0, "There are no tokens in initiative at this time.", 0)]
-[if(getInitiativeRound() == -1 && initiativeSize() > 0),CODE:
+[h,if(getInitiativeRound() == -1 && initiativeSize() > 0),CODE:
 {
     [h:nextInitiative()]
     [h:setState("Initiative", 1, getInitiativeToken())]

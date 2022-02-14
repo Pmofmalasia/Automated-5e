@@ -1,4 +1,5 @@
 [h:sv.Data = macro.args]
+[h:IsTooltip = 0]
 [h:a5e.GatherAbilities()]
 [h:sv.Type = json.get(sv.Data,"Type")]
 [h:roll1=if(json.get(sv.Data,"PreviousRoll")=="",1d20,json.get(sv.Data,"PreviousRoll"))]
@@ -36,26 +37,36 @@
 [h:TotalBonus = MiscBonus + ProfBonus + AtrBonus]
 
 [h,SWITCH(json.get(sv.Data,"Advantage")),CODE:
-	case -2: {[h:sv.AdvDis = -1]};
 	case -1: {
-		[h:sv.Adv = 0]
-		[h:sv.Dis = 1]
-		[h:pm.PassiveFunction("SaveAdv")]
-		[h:sv.AdvDis = if(or(and(sv.Dis == 0,sv.Adv == 0),and(sv.Dis !=0,sv.Adv != 0)),0,if(sv.Dis == 0,1,-1))]
+		[h,if(json.get(sv.Data,"ForcedAdvantage")),CODE:{
+			[h:sv.AdvDis = -1]
+		};{
+			[h:sv.Adv = 0]
+			[h:sv.Dis = 1]
+			[h:pm.PassiveFunction("SaveAdv")]
+			[h:sv.AdvDis = if(or(and(sv.Dis == 0,sv.Adv == 0),and(sv.Dis !=0,sv.Adv != 0)),0,if(sv.Dis == 0,1,-1))]
+		}]
 	};
 	case 0: {
-		[h:sv.Adv = 0]
-		[h:sv.Dis = 0]
-		[h:pm.PassiveFunction("SaveAdv")]
-		[h:sv.AdvDis = if(or(and(sv.Dis == 0,sv.Adv == 0),and(sv.Dis !=0,sv.Adv != 0)),0,if(sv.Dis == 0,1,-1))]
+		[h,if(json.get(sv.Data,"ForcedAdvantage")),CODE:{
+			[h:sv.AdvDis = 0]
+		};{
+			[h:sv.Adv = 0]
+			[h:sv.Dis = 0]
+			[h:pm.PassiveFunction("SaveAdv")]
+			[h:sv.AdvDis = if(or(and(sv.Dis == 0,sv.Adv == 0),and(sv.Dis !=0,sv.Adv != 0)),0,if(sv.Dis == 0,1,-1))]
+		}]
 	};
 	case 1: {
-		[h:sv.Adv = 1]
-		[h:sv.Dis = 0]
-		[h:pm.PassiveFunction("SaveAdv")]
-		[h:sv.AdvDis = if(or(and(sv.Dis == 0,sv.Adv == 0),and(sv.Dis !=0,sv.Adv != 0)),0,if(sv.Dis == 0,1,-1))]
+		[h,if(json.get(sv.Data,"ForcedAdvantage")),CODE:{
+			[h:sv.AdvDis = 1]
+		};{
+			[h:sv.Adv = 1]
+			[h:sv.Dis = 0]
+			[h:pm.PassiveFunction("SaveAdv")]
+			[h:sv.AdvDis = if(or(and(sv.Dis == 0,sv.Adv == 0),and(sv.Dis !=0,sv.Adv != 0)),0,if(sv.Dis == 0,1,-1))]
+		}]
 	};
-	case 2: {[h:sv.AdvDis = 1]};
 	default: {
 		[h:sv.Adv = 0]
 		[h:sv.Dis = 0]
@@ -74,12 +85,12 @@
 
 	[h,SWITCH(sv.Type),CODE:
 		case "Death":{
-			[h:sv.AdvRerollLink = macroLinkText("Death Save@Lib:pm.a5e.Core","self-gm",json.set(sv.Data,"PreviousRoll",roll1,"Advantage",2),json.get(sv.Data,"ParentToken"))]
-			[h:sv.DisRerollLink = macroLinkText("Death Save@Lib:pm.a5e.Core","self-gm",json.set(sv.Data,"PreviousRoll",roll1,"Advantage",-2),json.get(sv.Data,"ParentToken"))]
+			[h:sv.AdvRerollLink = macroLinkText("Death Save@Lib:pm.a5e.Core","self-gm",json.set(sv.Data,"PreviousRoll",roll1,"Advantage",1,"ForcedAdvantage",1),json.get(sv.Data,"ParentToken"))]
+			[h:sv.DisRerollLink = macroLinkText("Death Save@Lib:pm.a5e.Core","self-gm",json.set(sv.Data,"PreviousRoll",roll1,"Advantage",-1,"ForcedAdvantage",1),json.get(sv.Data,"ParentToken"))]
 		};
 		default:{
-			[h:sv.AdvRerollLink = macroLinkText("Save Reroll@Lib:pm.a5e.Core","self-gm",json.set(sv.Data,"PreviousRoll",roll1,"Advantage",2),json.get(sv.Data,"ParentToken"))]
-			[h:sv.DisRerollLink = macroLinkText("Save Reroll@Lib:pm.a5e.Core","self-gm",json.set(sv.Data,"PreviousRoll",roll1,"Advantage",-2),json.get(sv.Data,"ParentToken"))]
+			[h:sv.AdvRerollLink = macroLinkText("Save Reroll@Lib:pm.a5e.Core","self-gm",json.set(sv.Data,"PreviousRoll",roll1,"Advantage",1,"ForcedAdvantage",1),json.get(sv.Data,"ParentToken"))]
+			[h:sv.DisRerollLink = macroLinkText("Save Reroll@Lib:pm.a5e.Core","self-gm",json.set(sv.Data,"PreviousRoll",roll1,"Advantage",-1,"ForcedAdvantage",1),json.get(sv.Data,"ParentToken"))]
 		}
 	]
 	

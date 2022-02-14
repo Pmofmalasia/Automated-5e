@@ -1,5 +1,6 @@
 [h:timeAdvanced = json.get(macro.args,"Time")]
 [h:timeAdvancedUnits = json.get(macro.args,"TimeUnits")]
+[h,if(json.get(macro.args,"ParentToken")!=""): switchToken(json.get(macro.args,"ParentToken"))]
 
 [h,foreach(ability,json.get(macro.args,"Abilities")),CODE:{
    [h:currentDuration = json.get(ability,"Duration")]

@@ -32,7 +32,7 @@
 		};
 		case "01":{
 			[h:pm.CurrentID = json.get(pm.ConditionIDTest,0)]
-			[h,MACRO("EndCondition@Lib:pm.a5e.Core"): pm.CurrentID]
+			[h,MACRO("EndCondition@Lib:pm.a5e.Core"): json.set("","ConditionID",pm.CurrentID,"ParentToken",json.get(abilityInfo,"ParentToken"))]
 			[h:pm.CondRemovedList = json.toList(json.path.read(json.get(macro.return,"Removed"),"[*]['DisplayName']"),", ")]
 			[h:abilityTable = json.append(json.get(macro.return,"Table"),json.set("","ShowIfCondensed",1,"Header","Condition"+if(pm.ConditionNum>1,"s","")+" Deactivated","FalseHeader","","FullContents","","RulesContents",pm.CondRemovedList,"RollContents","","DisplayOrder","['Rules','Roll','Full']"))]
 			[h:abilityEffect=pm.CondRemovedList+" deactivated."]

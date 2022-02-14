@@ -782,9 +782,23 @@
 			pm.AbilityFilter(" junkVar | -------------- Choose Features Affected by the New Feature -------------- |  | LABEL | SPAN=TRUE ");
 			pm.AbilityFilter(" junkVar | -------------- Choose Features Affected by the New Feature -------------- |  | LABEL | SPAN=TRUE ",json.get(lastFilter,"Type"),json.get(lastFilter,"Class"),json.get(lastFilter,"Subclass"))
 		]
-		[h:AbilitiesAffected = json.append(AbilitiesAffected,macro.return)]
+		[h:abort(input(
+			" junkVar | -------------- Parts of "+json.get(macro.return,"DisplayName")+" Affected -------------- |  | LABEL | SPAN=TRUE ",
+			" ab.FeatureChoiceNum |  | Changes number of subfeatures allowed to be chosen | CHECK",
+			" ab.AfterFeature |  | Other effect after the feature is used | CHECK"
+		))]
+		
+		[h:AbilitiesAffected = json.append(AbilitiesAffected,json.set(macro.return,"AfterFeature",ab.AfterFeature,"FeatureChoiceNum",ab.FeatureChoiceNum))]
 	};{
-		[h:ab.Final = json.set(ab.Final,"CallAfterAbility",json.path.delete(AbilitiesAffected,"[*]['Type']"))]
+		[h:ab.AfterFeatureOptions = json.path.read(AbilitiesAffected,"[*][?(@.AfterFeature==1)]")]
+		[h:ab.AfterFeatureOptions = json.path.delete(ab.AfterFeatureOptions,"[*]['AfterFeature']")]
+		[h:ab.AfterFeatureOptions = json.path.delete(ab.AfterFeatureOptions,"[*]['FeatureChoiceNum']")]
+		[h:ab.FeatureChoiceNumOptions = json.path.read(AbilitiesAffected,"[*][?(@.FeatureChoiceNum==1)]")]
+		[h:ab.FeatureChoiceNumOptions = json.path.delete(ab.FeatureChoiceNumOptions,"[*]['AfterFeature']")]
+		[h:ab.FeatureChoiceNumOptions = json.path.delete(ab.FeatureChoiceNumOptions,"[*]['FeatureChoiceNum']")]
+		
+		[h,if(!json.isEmpty(ab.AfterFeatureOptions)): ab.Final = json.set(ab.Final,"CallAfterAbility",json.path.delete(ab.AfterFeatureOptions,"[*]['Type']"))]
+		[h,if(!json.isEmpty(ab.FeatureChoiceNumOptions)): ab.Final = json.set(ab.Final,"CallFeatureChoiceNum",json.path.delete(ab.FeatureChoiceNumOptions,"[*]['Type']"))]
 	}]
 }]
 

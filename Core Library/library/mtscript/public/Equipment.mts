@@ -238,8 +238,6 @@
 	[MACRO("Magic Item Stats@Lib:pm.a5e.Core"):miStatChangeArray]
 }]
 
-[h:DualWieldMessage=if(NonLightCount>0,if(json.get(Feats,"DualWielder")==1,"","You must equip two Light weapons in order to make an off-hand attack as a <b>Bonus Action</b> without the <b>Dual Wielder</b> feat."),"")]
-
 <div style="background-color: #f7ae27; color: #000000; padding-top:2px; padding-bottom:5px; padding-left:8px; padding-right:8px;width:400px">
 	<b>Equipment Selection</b>
 	<div style="background-color:#FFFFFF; color: #000000; padding:2px;">
@@ -250,7 +248,6 @@
 			<tr><td>[r:token.name] has equipped: </td><td>[r:listGet(ArmorList,ArmorSelection)]</td></tr>
 			<tr><td></td><td>[r:listGet(MainHandList,MainHandSelection)]</td></tr>
 			<tr><td></td><td>[r:listGet(OffHandList,OffHandSelection)]</td></tr>
-			[r:if(NonLightCount>0,if(json.get(Feats,"DualWielder")==1,"","<tr><td><b><span style='color:#AA2222;'>Warning:</span></b></td><td><span style='color:#AA2222;'>"+DualWieldMessage+"</span></td></tr>"),"")]
 		</table>
 	</div>
 </div>

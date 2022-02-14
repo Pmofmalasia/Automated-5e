@@ -1,4 +1,5 @@
 [h:a5e.GatherAbilities()]
+[h:IsTooltip = 0]
 
 [h:"<!-- Note to self: should just do all movement types here, so that calculations for one movement type based on another do not need to be done multiple times on the character sheet -->"]
 
@@ -80,7 +81,7 @@
 [h,if(burrowSetOverride!=-1),CODE:{
 	[h:BurrowFinal = burrowSetOverride]
 };{
-	[h:BurrowFinal = max(burrowBase,if(burrowEqualsWalking,SpeedFinal,0))]
+	[h:BurrowFinal = max(burrowBase,(burrowEqualsWalking*SpeedFinal))]
 	[h:BurrowFinal = (BurrowFinal + burrowBonus) * burrowMultiplier]
 	[h:BurrowFinal = max(burrowSet,BurrowFinal)]
 }]
@@ -88,7 +89,7 @@
 [h,if(climbSetOverride!=-1),CODE:{
 	[h:ClimbFinal = climbSetOverride]
 };{
-	[h:ClimbFinal = max(climbBase,if(climbEqualsWalking,SpeedFinal,0))]
+	[h:ClimbFinal = max(climbBase,(climbEqualsWalking*SpeedFinal))]
 	[h:ClimbFinal = (ClimbFinal + climbBonus) * climbMultiplier]
 	[h:ClimbFinal = max(climbSet,ClimbFinal)]
 }]
@@ -96,7 +97,7 @@
 [h,if(flySetOverride!=-1),CODE:{
 	[h:FlyFinal = flySetOverride]
 };{
-	[h:FlyFinal = max(flyBase,if(flyEqualsWalking,SpeedFinal,0))]
+	[h:FlyFinal = max(flyBase,(flyEqualsWalking*SpeedFinal))]
 	[h:FlyFinal = (FlyFinal + flyBonus) * flyMultiplier]
 	[h:FlyFinal = max(flySet,FlyFinal)]
 }]
@@ -104,7 +105,7 @@
 [h,if(swimSetOverride!=-1),CODE:{
 	[h:SwimFinal = swimSetOverride]
 };{
-	[h:SwimFinal = max(swimBase,if(swimEqualsWalking,SpeedFinal,0))]
+	[h:SwimFinal = max(swimBase,(swimEqualsWalking*SpeedFinal))]
 	[h:SwimFinal = (SwimFinal + swimBonus) * swimMultiplier]
 	[h:SwimFinal = max(swimSet,SwimFinal)]
 }]

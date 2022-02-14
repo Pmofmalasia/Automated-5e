@@ -8,7 +8,6 @@
 	[h:pass.DisplayObject = json.get(DisplayArray,0)]
 }]
 
-[h,if(arg(0)!="AfterAbility"): IsTooltip=0]
 [h:pass.Flavor=json.get(pass.DisplayObject,"Flavor")]
 [h:pass.DMOnly=if(json.get(pass.DisplayObject,"DMOnly")=="",if(PC.Ally.Enemy==2,min(number(getLibProperty("HideEnemyMacros","Lib:pm.a5e.Core")),1),if(PC.Ally.Enemy==1,min(number(getLibProperty("HideAllyMacros","Lib:pm.a5e.Core")),1),0)),json.get(pass.DisplayObject,"DMOnly"))]
 [h:pass.BorderColorOverride=json.get(pass.DisplayObject,"BorderColorOverride")]

@@ -1,4 +1,5 @@
 [h:ch.Data = macro.args]
+[h:IsTooltip = 0]
 [h:a5e.GatherAbilities()]
 [h:ch.Type = json.get(ch.Data,"Type")]
 [h:roll1=if(json.get(ch.Data,"PreviousRoll")=="",1d20,json.get(ch.Data,"PreviousRoll"))]
@@ -26,10 +27,11 @@
 		case "Initiative": ProfType = 0;
 		default: ProfType = 0
 	]
+	[h:roundingMethod = "floor"]
 	
 	[h:pm.PassiveFunction("CheckProf")]
 	
-	[h:ProfBonus = ProfType*Proficiency]
+	[h:ProfBonus = eval(roundingMethod+"("+(ProfType*Proficiency)+")")]
 	[h,SWITCH(ProfType+""):
 		case "0.5": ProfTypeStr = "Half Prof";
 		case "1": ProfTypeStr = "Prof";
@@ -45,26 +47,36 @@
 [h:TotalBonus = MiscBonus + ProfBonus + AtrBonus]
 
 [h,SWITCH(json.get(ch.Data,"Advantage")),CODE:
-	case -2: {[h:ch.AdvDis = -1]};
 	case -1: {
-		[h:ch.Adv = 0]
-		[h:ch.Dis = 1]
-		[h:pm.PassiveFunction("CheckAdv")]
-		[h:ch.AdvDis = if(or(and(ch.Dis == 0,ch.Adv == 0),and(ch.Dis !=0,ch.Adv != 0)),0,if(ch.Dis == 0,1,-1))]
+		[h,if(json.get(ch.Data,"ForcedAdvantage")),CODE:{
+			[h:ch.AdvDis = -1]
+		};{
+			[h:ch.Adv = 0]
+			[h:ch.Dis = 1]
+			[h:pm.PassiveFunction("CheckAdv")]
+			[h:ch.AdvDis = if(or(and(ch.Dis == 0,ch.Adv == 0),and(ch.Dis !=0,ch.Adv != 0)),0,if(ch.Dis == 0,1,-1))]
+		}]
 	};
 	case 0: {
-		[h:ch.Adv = 0]
-		[h:ch.Dis = 0]
-		[h:pm.PassiveFunction("CheckAdv")]
-		[h:ch.AdvDis = if(or(and(ch.Dis == 0,ch.Adv == 0),and(ch.Dis !=0,ch.Adv != 0)),0,if(ch.Dis == 0,1,-1))]
+		[h,if(json.get(ch.Data,"ForcedAdvantage")),CODE:{
+			[h:ch.AdvDis = 0]
+		};{
+			[h:ch.Adv = 0]
+			[h:ch.Dis = 0]
+			[h:pm.PassiveFunction("CheckAdv")]
+			[h:ch.AdvDis = if(or(and(ch.Dis == 0,ch.Adv == 0),and(ch.Dis !=0,ch.Adv != 0)),0,if(ch.Dis == 0,1,-1))]
+		}]
 	};
 	case 1: {
-		[h:ch.Adv = 1]
-		[h:ch.Dis = 0]
-		[h:pm.PassiveFunction("CheckAdv")]
-		[h:ch.AdvDis = if(or(and(ch.Dis == 0,ch.Adv == 0),and(ch.Dis !=0,ch.Adv != 0)),0,if(ch.Dis == 0,1,-1))]
+		[h,if(json.get(ch.Data,"ForcedAdvantage")),CODE:{
+			[h:ch.AdvDis = 1]
+		};{
+			[h:ch.Adv = 1]
+			[h:ch.Dis = 0]
+			[h:pm.PassiveFunction("CheckAdv")]
+			[h:ch.AdvDis = if(or(and(ch.Dis == 0,ch.Adv == 0),and(ch.Dis !=0,ch.Adv != 0)),0,if(ch.Dis == 0,1,-1))]
+		}]
 	};
-	case 2: {[h:ch.AdvDis = 1]};
 	default: {
 		[h:ch.Adv = 0]
 		[h:ch.Dis = 0]
@@ -83,12 +95,12 @@
 
 	[h,SWITCH(ch.Type),CODE:
 		case "Initiative":{
-			[h:ch.AdvRerollLink = macroLinkText("Initiative@Lib:pm.a5e.Core","self-gm",json.set(ch.Data,"PreviousRoll",roll1,"Advantage",2),json.get(ch.Data,"ParentToken"))]
-			[h:ch.DisRerollLink = macroLinkText("Initiative@Lib:pm.a5e.Core","self-gm",json.set(ch.Data,"PreviousRoll",roll1,"Advantage",-2),json.get(ch.Data,"ParentToken"))]
+			[h:ch.AdvRerollLink = macroLinkText("Initiative@Lib:pm.a5e.Core","self-gm",json.set(ch.Data,"PreviousRoll",roll1,"Advantage",1,"ForcedAdvantage",1),json.get(ch.Data,"ParentToken"))]
+			[h:ch.DisRerollLink = macroLinkText("Initiative@Lib:pm.a5e.Core","self-gm",json.set(ch.Data,"PreviousRoll",roll1,"Advantage",-1,"ForcedAdvantage",1),json.get(ch.Data,"ParentToken"))]
 		};
 		default:{
-			[h:ch.AdvRerollLink = macroLinkText("Check Reroll@Lib:pm.a5e.Core","self-gm",json.set(ch.Data,"PreviousRoll",roll1,"Advantage",2),json.get(ch.Data,"ParentToken"))]
-			[h:ch.DisRerollLink = macroLinkText("Check Reroll@Lib:pm.a5e.Core","self-gm",json.set(ch.Data,"PreviousRoll",roll1,"Advantage",-2),json.get(ch.Data,"ParentToken"))]
+			[h:ch.AdvRerollLink = macroLinkText("Check Reroll@Lib:pm.a5e.Core","self-gm",json.set(ch.Data,"PreviousRoll",roll1,"Advantage",1,"ForcedAdvantage",1),json.get(ch.Data,"ParentToken"))]
+			[h:ch.DisRerollLink = macroLinkText("Check Reroll@Lib:pm.a5e.Core","self-gm",json.set(ch.Data,"PreviousRoll",roll1,"Advantage",-1,"ForcedAdvantage",1),json.get(ch.Data,"ParentToken"))]
 		}
 	]
 	

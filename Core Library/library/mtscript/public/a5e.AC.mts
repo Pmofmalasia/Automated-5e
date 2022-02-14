@@ -1,4 +1,5 @@
 [h:a5e.GatherAbilities()]
+[h:IsTooltip = 0]
 
 [h:baseAC = json.get(json.get(Armor,json.get(Armor,0)),"BaseAC")+json.get(json.get(Armor,json.get(Armor,0)),"MagicBonus")]
 [h:dexMax = json.get(json.get(Armor,json.get(Armor,0)),"DexMax")]

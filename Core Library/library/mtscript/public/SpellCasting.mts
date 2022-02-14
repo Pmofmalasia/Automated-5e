@@ -1,4 +1,5 @@
 [h:SpellData = macro.args]
+[h:IsTooltip = 0]
 [h:a5e.GatherAbilities()]
 [h:ForcedClass=json.get(json.get(SpellData,0),"ForcedClass")]
 [h:ForcedLevel=json.get(json.get(SpellData,0),"ForcedLevel")]

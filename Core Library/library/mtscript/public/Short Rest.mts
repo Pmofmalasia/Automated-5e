@@ -2,6 +2,7 @@
 [h:Flavor=json.get(sr.Data,"Flavor")]
 [h:ParentToken=json.get(sr.Data,"ParentToken")]
 [h:a5e.GatherAbilities()]
+[h:IsTooltip = 0]
 [h:abilityTable = ""]
 
 [h:abilityTable = json.append(abilityTable,json.set("",

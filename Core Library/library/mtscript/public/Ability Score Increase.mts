@@ -2,6 +2,7 @@
 [h:ValidAbilities=""]
 [h:AbilityChoices = ""]
 [h:FeatConditions = macro.args]
+[h:IsTooltip = 0]
 
 [h:a5e.GatherAbilities()]
 [h:as.MaxStatScores = ""]
@@ -21,10 +22,11 @@
 
 [h:AbilityOverMaxTest = 1]
 [h:AbilityOne = 0]
+[h:FeatInstead = 0]
 
 [h,while(AbilityOverMaxTest == 1),CODE:{
 	[h:abort(input(
-		"FeatInstead|No,Yes|Choose a Feat instead?|LIST",
+		if(json.isEmpty(pm.GetFeats()),"","FeatInstead|No,Yes|Choose a Feat instead?|LIST"),
 		"junkVar|Ability Score Increase|Level Up|LABEL",
 		if(roll.count>0,"maxOverride |  | Note: Previous selection brought "+json.get(ValidAbilities,AbilityOne)+" over its maximum value of "+json.get(as.MaxStatScores,json.get(ValidAbilities,AbilityOne))+". Override? | CHECK ",""),
 		"junkVar|2 Abilities (May be the same)|Choose|LABEL",

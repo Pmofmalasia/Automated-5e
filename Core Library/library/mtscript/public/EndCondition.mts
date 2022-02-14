@@ -1,15 +1,21 @@
-[h:ConditionID = macro.args]
+[h,if(json.get(macro.args,"ParentToken")!=""): switchToken(json.get(macro.args,"ParentToken"))]
+[h:MultiConditionTest = json.type(json.get(macro.args,"ConditionID"))]
+[h,if(MultiConditionTest=="UNKNOWN"): ConditionID = json.append("",json.get(macro.args,"ConditionID")); ConditionID = json.get(macro.args,"ConditionID")]
+[h:ConditionFilters = ""]
+[h:GroupFilters = ""]
+[h,foreach(UniqueID,json.unique(ConditionID)): ConditionFilters = listAppend(ConditionFilters,"@.ConditionID=='"+UniqueID+"'"," || ")]
+[h,foreach(UniqueID,json.unique(ConditionID)): GroupFilters = listAppend(GroupFilters,"@.GroupID=='"+UniqueID+"'"," || ")]
 [h:a5e.GatherAbilities()]
+[h:IsTooltip = 0]
 [h:abilityTable = "[]"]
 
-[h:RemovedConditions = json.path.read(ConditionList,"[?(@.ConditionID=='"+ConditionID+"')]")]
-
+[h:RemovedConditions = json.path.read(ConditionList,"[?("+ConditionFilters+")]")]
 
 [h:"<!-- Will need stuff here for calling passive effects that trigger on end of condition. Located here in case they prevent it. -->"]
 [h:"<!-- Will need separate instances for passive effects that prevent a condition ending and effects that trigger when a condition ends, for purposes of order -->"]
 
-[h:ConditionList = json.path.delete(ConditionList,"[?(@.ConditionID=='"+ConditionID+"')]")]
-[h:ConditionGroups = json.path.delete(ConditionGroups,"[?(@.GroupID=='"+ConditionID+"')]")]
+[h:ConditionList = json.path.delete(ConditionList,"[?("+ConditionFilters+")]")]
+[h:ConditionGroups = json.path.delete(ConditionGroups,"[?("+GroupFilters+")]")]
 
 [h,foreach(condition,RemovedConditions),CODE:{
 	[h:StateExistsTest = !json.isEmpty(json.path.read(getInfo("campaign"),"states.*.[?(@.name=='"+json.get(condition,"Name")+"')]"))]

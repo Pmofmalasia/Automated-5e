@@ -1,4 +1,5 @@
 [h:wa.Data = macro.args]
+[h:IsTooltip = 0]
 [h:a5e.GatherAbilities()]
 
 [h:Flavor=json.get(wa.Data,"Flavor")]
@@ -59,6 +60,8 @@
 
 [h:wa.DmgDieSize=number(substring(wa.DmgDie,indexOf(wa.DmgDie,"d")+1))]
 [h:wa.DmgDie2Size=number(substring(wa.DmgDie2,indexOf(wa.DmgDie2,"d")+1))]
+
+[h:pm.PassiveFunction("AttackCritThresh")]
 
 [h:wa.FinalCritRange = 20 - wa.CritRange]
 [h:wa.FinalCritMultiplier=CritMultiplier+wa.CritMultiplier]

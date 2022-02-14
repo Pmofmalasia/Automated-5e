@@ -1,4 +1,5 @@
 [h:a5e.GatherAbilities()]
+[h:IsTooltip = 0]
 
 [h:pm.VulnInfo = ""]
 [h:pm.ResInfo = ""]

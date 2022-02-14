@@ -1,5 +1,6 @@
 [h:Flavor=json.get(macro.args,"Flavor")]
 [h:ParentToken=json.get(macro.args,"ParentToken")]
+[h:IsTooltip = 0]
 [h:ParentName=getName(ParentToken)]
 [h:hp.Output = ""]
 

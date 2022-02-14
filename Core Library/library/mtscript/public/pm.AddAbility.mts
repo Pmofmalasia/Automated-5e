@@ -3,9 +3,11 @@
 [h:pm.Subclass=json.get(arg(0),"Subclass")]
 [h:pm.Tooltip=json.get(arg(0),"Tooltip")]
 [h:pm.AbilityDisplay=json.get(arg(0),"DisplayName")]
-[h:pm.OptionsNum = json.get(arg(1),"Number")]
+[h:pm.ChoiceNum = json.get(arg(1),"Number")]
 [h:pm.ActivateNew = json.get(arg(1),"Active")]
 [h:pm.FromCharacter = json.get(arg(1),"Character")]
+
+[h:pm.PassiveFunction("FeatureChoiceNum")]
 
 [h:pm.LevelPrereq = pm.GetAbilityLevel(arg(0))]
 [h:pm.CurrentAbilitiesTemp = json.path.read(allAbilities,"[?(@.Master.Name=='"+pm.Ability+"' && @.Master.Class=='"+pm.Class+"' && @.Master.Subclass=='"+pm.Subclass+"' && @.IsActive > 0)]")]

@@ -4,16 +4,21 @@
 [h:fs.GroupNum = json.length(fs.Groups)]
 
 [h:fs.Input = ""]
+[h:IsTooltip = 0]
 [h:"<!-- Note: Need to add a mechanism for determining the allowed number of fighting styles; actually get the display name for the class/subclass for the group header -->"]
 [h:fs.AllowedChoices = ""]
 [h:fs.Current = "{}"]
 [h:fs.AllOptions = "{}"]
 [h,foreach(TempGroup,fs.Groups),CODE:{
+	[h:abilityInfo = TempGroup]
 	[h:TempGroupName = json.get(TempGroup,"Class")+json.get(TempGroup,"Subclass")]
-	[h:fs.ChoiceNum = 1]
-	[h:fs.AllowedChoices = json.set(fs.AllowedChoices,TempGroupName,fs.ChoiceNum)]
+	[h:pm.ChoiceNum = 1]
+	
+	[h:pm.PassiveFunction("FeatureChoiceNum")]
 
-	[h:fs.Input = if(fs.GroupNum==1," junkVar | ------------------ Select "+fs.ChoiceNum+" Fighting Style"+if(fs.ChoiceNum>1,"s","")+" ------------------ |  | LABEL | SPAN=TRUE ",listAppend(fs.Input," junkVar | ------------------ Select "+fs.ChoiceNum+" "+pm.GetDisplayName(json.get(TempGroup,"Class"),"sb.Classes")+" Fighting Style"+if(fs.ChoiceNum>1,"s","")+" ------------------ |  | LABEL | SPAN=TRUE ","##"))]
+	[h:fs.AllowedChoices = json.set(fs.AllowedChoices,TempGroupName,pm.ChoiceNum)]
+
+	[h:fs.Input = if(fs.GroupNum==1," junkVar | ------------------ Select "+pm.ChoiceNum+" Fighting Style"+if(pm.ChoiceNum>1,"s","")+" ------------------ |  | LABEL | SPAN=TRUE ",listAppend(fs.Input," junkVar | ------------------ Select "+pm.ChoiceNum+" "+pm.GetDisplayName(json.get(TempGroup,"Class"),"sb.Classes")+" Fighting Style"+if(pm.ChoiceNum>1,"s","")+" ------------------ |  | LABEL | SPAN=TRUE ","##"))]
 	
 	[h:thisGroupFSOptions = json.sort(json.path.read(getLibProperty("sb.Abilities","Lib:pm.a5e.Core"),"[*][?(@.Class == 'FightingStyle' && @.Name in "+json.get(TempGroup,"FightingStyleList")+")]"),"a","Name")]
 	[h:fs.AllOptions = json.set(fs.AllOptions,TempGroupName,thisGroupFSOptions)]

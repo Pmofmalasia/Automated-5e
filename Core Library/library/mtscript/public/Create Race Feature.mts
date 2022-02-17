@@ -13,7 +13,9 @@
 	" junkVar | -------------------------------------------------------------------------------------------------------------- |  | LABEL | SPAN=TRUE ",
 	" ab.HasMaster |  | <html><span title='Features with multiple named options, e.g. Battle Master Fighter - Combat Superiority Maneuvers, Totem Barbarian, Hunter Ranger'>Has an associated main feature</span></html> | CHECK ",
 	" ab.OnLevel | 1 | <html><span title='Uncheck for features that must be chosen to be gained, e.g. Eldritch Invocations or Hunter Ranger features'>Gained Automatically on Level Up</span></html> | CHECK ",
-	" ab.Optional | 0 | <html><span title='For sourcebooks that add optional additional rules'>Optional Feature</span></html> | CHECK ",	" ab.Replace | 0 | <html><span title='For sourcebooks that optionally remove old features and replace them with new ones. Type the name of the replaced feature.'>Replaces another Feature if Gained</span></html> | CHECK ",		" junkVar | -------------------------------------------------------------------------------------------------------------- |  | LABEL | SPAN=TRUE ",	"ab.Prereqs |  | <html><span title='Mostly for features not gained automatically on level up, like Invocations or Feats. Ignore if level/race/subrace are the only prerequisites.'>Feature has prerequisites for being gained</span></html> | CHECK ",	"ab.MultiAbility |  | <html><span title='Pretty much just for Elemental Adept at this point.'>Feature can be gained multiple times</span></html> | CHECK "
+	" ab.Optional | 0 | <html><span title='For sourcebooks that add optional additional rules'>Optional Feature</span></html> | CHECK ",
+	" ab.Replace | 0 | <html><span title='For sourcebooks that optionally remove old features and replace them with new ones. Type the name of the replaced feature.'>Replaces another Feature if Gained</span></html> | CHECK ",		" junkVar | -------------------------------------------------------------------------------------------------------------- |  | LABEL | SPAN=TRUE ",
+	"ab.Prereqs |  | <html><span title='Mostly for features not gained automatically on level up, like Invocations or Feats. Ignore if level/race/subrace are the only prerequisites.'>Feature has prerequisites for being gained</span></html> | CHECK ",	"ab.MultiAbility |  | <html><span title='Pretty much just for Elemental Adept at this point.'>Feature can be gained multiple times</span></html> | CHECK "
 	))]
 
 [h:ab.UpdateLevelOptions = string(ab.Level)]
@@ -101,7 +103,7 @@
 		[h:abort(input(
 			" ab.ReplaceName | -- Name Here -- | Enter replaced feature name ",
 			" ab.ReplaceClass | "+ab.RaceList+" | Choose an associated race | LIST | VALUE=STRING ",
-		" junkVar | Next Screen | Subclass Selection | LABEL "
+		" junkVar | Next Screen | Subrace Selection | LABEL "
 		))]
 			
 		[h:ab.ReplaceSubclass="None"]

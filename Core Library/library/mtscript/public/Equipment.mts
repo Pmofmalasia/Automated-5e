@@ -101,7 +101,7 @@
 	[assert(if(OffHandSelection==MainHandSelection,0,1),"You cannot equip the same weapon twice!",0)]
 }]
 
-[h:TwoHandedWeaponTest=if(json.get(json.get(json.get(Weapon,MainHandSelection+2),"Props"),"Two-handed")==1,1,0)]
+[h:TwoHandedWeaponTest=if(json.get(json.get(json.get(Weapon,MainHandSelection+2),"Props"),"Two-Handed")==1,1,0)]
 
 [h,if(TwoHandedWeaponTest==1),code:{
 	[assert(if(OffHandSelection>0,0,1),"You cannot equip anything in your off hand while wielding a two-handed weapon!",0)]

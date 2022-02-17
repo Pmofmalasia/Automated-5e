@@ -1,7 +1,7 @@
 [h:sr.Data = macro.args]
 [h:Flavor=json.get(sr.Data,"Flavor")]
 [h:ParentToken=json.get(sr.Data,"ParentToken")]
-[h:a5e.GatherAbilities()]
+[h:a5e.UnifiedAbilities = a5e.GatherAbilities()]
 [h:IsTooltip = 0]
 [h:abilityTable = ""]
 

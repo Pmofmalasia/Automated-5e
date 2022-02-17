@@ -1,7 +1,8 @@
 [h:a5e.Conditions = json.get(macro.args,"Conditions")]
 [h:a5e.Group = json.get(macro.args,"Group")]
 [h:a5e.EndConditionInfo = json.get(macro.args,"EndInfo")]
-[h:a5e.GatherAbilities()]
+[h:a5e.UnifiedAbilities = a5e.GatherAbilities()]
+[h:ParentToken = currentToken()]
 
 [h,foreach(condition,a5e.Conditions),CODE:{
 	[h:StateExistsTest = !json.isEmpty(json.path.read(getInfo("campaign"),"states.*.[?(@.name=='"+json.get(condition,"Name")+"')]"))]

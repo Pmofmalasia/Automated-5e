@@ -1,4 +1,5 @@
-[h:a5e.GatherAbilities()]
+[h:a5e.UnifiedAbilities = a5e.GatherAbilities()]
+[h:ParentToken = currentToken()]
 [h:IsTooltip = 0]
 
 [h:"<!-- Note to self: should just do all movement types here, so that calculations for one movement type based on another do not need to be done multiple times on the character sheet -->"]

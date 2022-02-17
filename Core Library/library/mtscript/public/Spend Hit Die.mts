@@ -24,8 +24,6 @@
 	case 3:{[HitDie=6][HDSelect=Six][roll=1d6][heal=if(Six>0,roll+json.get(AtrMods, "Constitution")+HealBonus,0)][HitDice=json.set(HitDice,"1d6",max(Six-1,0))]}
 ]
 
-[h:heal=if(json.get(Feats,"Durable")==1,max(heal,json.get(AtrMods, "Constitution")+json.get(AtrMods, "Constitution")),heal)]
-
 <div style="background-color: #22AA22; color: #FFFFFF; padding-top:2px; padding-bottom:5px; padding-left:8px; padding-right:8px;">
 	<b>Spend Hit Die</b>
 	<div style="background-color:#FFFFFF; color: #000000; padding:2px;">

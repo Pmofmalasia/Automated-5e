@@ -3,8 +3,9 @@
 [h:AbilityChoices = ""]
 [h:FeatConditions = macro.args]
 [h:IsTooltip = 0]
+[h:ParentToken = currentToken()]
+[h:a5e.UnifiedAbilities = a5e.GatherAbilities()]
 
-[h:a5e.GatherAbilities()]
 [h:as.MaxStatScores = ""]
 [h,foreach(TempAbilityScore,pm.GetAttributes("Name")): as.MaxStatScores = json.set(as.MaxStatScores,TempAbilityScore,20)]
 [h:pm.PassiveFunction("AbilityScoreMax")]

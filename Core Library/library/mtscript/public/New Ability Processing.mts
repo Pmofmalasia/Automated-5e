@@ -132,6 +132,7 @@
 	};{
 		[h:lu.AllSkillsTest = json.get(json.get(ability,"SkillOptions"),"AllSkills")]
 		[h,if(lu.AllSkillsTest==1): lu.ValidSkills = json.merge(json.fromStrProp(pm.GetSkills("Name","=1;")+"=1"),json.get(ability,"SkillOptions")); lu.ValidSkills = json.get(ability,"SkillOptions")]
+		[h:lu.ValidSkills = json.set(lu.ValidSkills,"ChoiceText",json.get(ability,"DisplayName")+": "+json.get(json.get(ability,"SkillOptions"),"ChoiceText"),"ChoiceNum",json.get(json.get(ability,"SkillOptions"),"ChoiceNum"))]
 	}]
 	[h,MACRO("Skill Selection@Lib:pm.a5e.Core"): lu.ValidSkills]
 	[h,if(json.get(ability,"Skills")!=""): lu.NewAbilities = 
@@ -144,6 +145,7 @@
 [h,foreach(ability,lu.SaveChoiceAbilities),CODE:{
 	[h:lu.AllSavesTest = json.get(json.get(ability,"SaveOptions"),"AllSaves")]
 	[h,if(lu.AllSavesTest==1): lu.ValidSaves = json.merge(json.fromStrProp(pm.GetAttributes("Name","=1;")+"=1"),json.get(ability,"SaveOptions")); lu.ValidSaves = json.get(ability,"SaveOptions")]
+	[h:lu.ValidSaves = json.set(lu.ValidSaves,"ChoiceText",json.get(ability,"DisplayName")+": "+json.get(json.get(ability,"SkillOptions"),"ChoiceText"),"ChoiceNum",json.get(json.get(ability,"SkillOptions"),"ChoiceNum"))]
 	[h,MACRO("Skill Selection@Lib:pm.a5e.Core"): lu.ValidSaves]
 	[h,if(json.get(ability,"Saves")!=""): lu.NewAbilities = 
 	json.path.set(lu.NewAbilities,"[?(@.Name == '"+json.get(ability,"Name")+"' && @.Class == '"+json.get(ability,"Class")+"' && @.Subclass == '"+json.get(ability,"Subclass")+"')]['Saves']",json.merge(json.get(ability,"Saves"),json.get(macro.return,"Saves")));

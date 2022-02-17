@@ -56,8 +56,10 @@
 	[h:lu.NewAbilities = json.append(lu.NewAbilities,macro.return)]
 };{}]
 
-[h:"<!-- Adds abilities based on class and race that are gained on level up, separately since race goes off of total level -->"]
+[h:"<!-- Adds abilities based on class, race, and background that are gained on level up, separately since race and background go off of total level -->"]
 [h:lu.NewAbilities = json.merge(lu.NewAbilities,json.path.read(getLibProperty("sb.Abilities","Lib:pm.a5e.Core"),"[*][?((@.Class=='"+pm.RemoveSpecial(Race)+"' || @.Class=='') && (@.Subclass=='"+pm.RemoveSpecial(Subrace)+"' || @.Subclass=='') && @.Level=="+(Level+1)+" && @.GainOnLevel==1)]"))]
+
+[h:lu.NewAbilities = json.merge(lu.NewAbilities,json.path.read(getLibProperty("sb.Abilities","Lib:pm.a5e.Core"),"[*][?(@.Class=='Background' && @.Subclass=='"+pm.RemoveSpecial(Background)+"' && @.Level=="+(Level+1)+" && @.GainOnLevel==1)]"))]
 
 [h:lu.NewAbilities = json.merge(lu.NewAbilities,json.path.read(getLibProperty("sb.Abilities","Lib:pm.a5e.Core"),"[*][?((@.Class=='"+lu.Class+"' || @.Class=='') && (@.Subclass=='"+pm.RemoveSpecial(json.get(Subclasses,lu.Class))+"' || @.Subclass=='') && @.Level=="+lu.NewLevel+" && @.GainOnLevel==1)]"))]
 
@@ -83,7 +85,7 @@
 [h,if(json.isEmpty(allAbilities)): lu.HasSpellcastingTest = 0; lu.HasSpellcastingTest = !json.isEmpty(json.path.read(allAbilities,"[*][?((@.Name == 'Spellcasting' || @.Name == 'PactMagic') && @.Class=='"+lu.Class+"' && (@.Subclass=='"+json.get(Subclasses,lu.Class)+"' || @.Subclass == ''))]","DEFAULT_PATH_LEAF_TO_NULL"))]
 
 [h:"<!-- Searches AbilityUpdates for any updates to the leveled class, plus subclass combo. The object keys of any updates found replace the current corresponding object keys for that ability. -->"]
-[h:lu.AbilityUpdates = json.path.read(getLibProperty("sb.AbilityUpdates","Lib:pm.a5e.Core"),"[*][?(@.Class == '"+lu.Class+"' && (@.Subclass == null || @.Subclass == '' || @.Subclass == '"+json.get(Subclasses,lu.Class)+"') && @."+lu.NewLevel+" != null)]","DEFAULT_PATH_LEAF_TO_NULL")]
+[h:lu.AbilityUpdates = json.path.read(getLibProperty("sb.AbilityUpdates","Lib:pm.a5e.Core"),"[*][?(@.Class == '"+lu.Class+"' && (@.Subclass == null || @.Subclass == '' || @.Subclass == '"+pm.RemoveSpecial(json.get(Subclasses,lu.Class))+"') && @."+lu.NewLevel+" != null)]","DEFAULT_PATH_LEAF_TO_NULL")]
 [h,foreach(ability,lu.AbilityUpdates),CODE:{
 	[h:lu.TempUpdates = json.fields(json.get(ability,lu.NewLevel),"json")]
 	[h,foreach(updateKey,lu.TempUpdates),CODE:{

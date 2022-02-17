@@ -5,17 +5,18 @@
 [h:pm.UsageTimeNum=arg(1)]
 [h:pm.UsageTimeUnits=arg(2)]
 
-[h,if(argCount()==4),CODE:{
+[h,if(argCount()>3),CODE:{
 	[h:pm.ReactCondition=", "+arg(3)]
 };{
 	[h:pm.ReactCondition=""]
 }]
 
+[h:ReturnData = json.set("","ShowIfCondensed",0,"Header","Usage Time","FalseHeader","","FullContents","","RulesContents",pm.UsageTimeNum+" "+pm.UsageTimeUnits+pm.ReactCondition,"RollContents","","DisplayOrder","['Rules','Roll','Full']","Value",pm.UsageTimeNum,"Units",pm.UsageTimeUnits)]
+
 [h,if(getState("ReactionUsed") && pm.UsageTimeUnits=="Reaction"),CODE:{
-	[h:pm.ReactAlert = " Note: You have already used your reaction!"]
+	[h:ReturnData = json.set(ReturnData,"Error","You have already used your reaction!")]
 };{
-	[h:pm.ReactAlert = ""]
 	[h,if(pm.Tooltip==0 && pm.UsageTimeUnits=="Reaction"): setState("ReactionUsed",1)]
 }]
 
-[h:macro.return = json.set("","ShowIfCondensed",0,"Header","Usage Time","FalseHeader","","FullContents","","RulesContents",pm.UsageTimeNum+" "+pm.UsageTimeUnits+pm.ReactCondition+pm.ReactAlert,"RollContents","","DisplayOrder","['Rules','Roll','Full']","Value",pm.UsageTimeNum,"Units",pm.UsageTimeUnits)]
+[h:macro.return = ReturnData]

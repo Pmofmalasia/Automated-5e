@@ -1,4 +1,5 @@
-[h:a5e.GatherAbilities()]
+[h:a5e.UnifiedAbilities = a5e.GatherAbilities()]
+[h:ParentToken = currentToken()]
 [h:IsTooltip = 0]
 
 [h:pm.VulnInfo = ""]

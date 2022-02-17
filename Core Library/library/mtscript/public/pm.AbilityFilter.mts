@@ -43,6 +43,11 @@
 			ab.InputTitle,
 			" ab.FeatureSubclass | None,"+pm.GetSubraces(ab.FeatureClass,"DisplayName")+" | Choose Feature Subrace | RADIO | VALUE=STRING "
 			));
+		case "Background":
+			abort(input(
+			ab.InputTitle,
+			" ab.FeatureSubclass | "+pm.GetBackgrounds(ab.FeatureClass,"DisplayName")+" | Choose Associated Background | RADIO | VALUE=STRING "
+			));
 		default: ab.FeatureSubclass = ""
 	]
 	[h:ab.FeatureSubclass = if(ab.FeatureSubclass=="None","",pm.RemoveSpecial(ab.FeatureSubclass))]

@@ -13,12 +13,12 @@
 [h:roll2=1d20]
 [h:SkillBonus=0]
 
-[h:bsStr=json.get(AtrMods, "Strength")+Proficiency*sStr][h:lsStr=if(bsStr>-1,"+","")][h:lsStr=lsStr+bsStr+" - Strength Save"]
-[h:bsDex=json.get(AtrMods, "Dexterity")+Proficiency*sDex][h:lsDex=if(bsDex>-1,"+","")][h:lsDex=lsDex+bsDex+" - Dexterity Save"]
-[h:bsCon=json.get(AtrMods, "Constitution")+Proficiency*sCon][h:lsCon=if(bsCon>-1,"+","")][h:lsCon=lsCon+bsCon+" - Constitution Save"]
-[h:bsInt=json.get(AtrMods, "Intelligence")+Proficiency*sInt][h:lsInt=if(bsInt>-1,"+","")][h:lsInt=lsInt+bsInt+" - Intelligence Save"]
-[h:bsWis=json.get(AtrMods, "Wisdom")+Proficiency*sWis][h:lsWis=if(bsWis>-1,"+","")][h:lsWis=lsWis+bsWis+" - Wisdom Save"]
-[h:bsCha=json.get(AtrMods, "Charisma")+Proficiency*sCha][h:lsCha=if(bsCha>-1,"+","")][h:lsCha=lsCha+bsCha+" - Charisma Save"]
+[h:bsStr=Str+Proficiency*sStr][h:lsStr=if(bsStr>-1,"+","")][h:lsStr=lsStr+bsStr+" - Strength Save"]
+[h:bsDex=Dex+Proficiency*sDex][h:lsDex=if(bsDex>-1,"+","")][h:lsDex=lsDex+bsDex+" - Dexterity Save"]
+[h:bsCon=Con+Proficiency*sCon][h:lsCon=if(bsCon>-1,"+","")][h:lsCon=lsCon+bsCon+" - Constitution Save"]
+[h:bsInt=Int+Proficiency*sInt][h:lsInt=if(bsInt>-1,"+","")][h:lsInt=lsInt+bsInt+" - Intelligence Save"]
+[h:bsWis=Wis+Proficiency*sWis][h:lsWis=if(bsWis>-1,"+","")][h:lsWis=lsWis+bsWis+" - Wisdom Save"]
+[h:bsCha=Cha+Proficiency*sCha][h:lsCha=if(bsCha>-1,"+","")][h:lsCha=lsCha+bsCha+" - Charisma Save"]
 
 [h:AddedBonus=0]
 [h:sBonus="0"]
@@ -87,13 +87,6 @@
 		[r:if(and(getState("Petrified"),or(SkillTitle==lsDex,SkillTitle==lsStr)),"<br><b>Petrified:</b> <span style='color:#AA2222;'>You automatically fail your saving throw.</span>","")]
 		[r:if(and(getState("Paralyzed"),or(SkillTitle==lsDex,SkillTitle==lsStr)),"<br><b>Paralyzed:</b> <span style='color:#AA2222;'>You automatically fail your saving throw.</span>","")]
 		[r:if(Exhaustion>=3,"<br><b>Exhausted:</b> You have disadvantage on all saving throws.","")]
-
-		[r:if(or(Race=="Hill Dwarf",Race=="Mountain Dwarf"),"<br>&#8226; <b>Dwarven Resilience:</b> Advantage on saving throws against poison.","")]
-		[r:if(or(Race=="High Elf",Race=="Wood Elf",Race=="Drow",Race=="Half-Elf",Race=="Eladrin"),"<br>&#8226; <b>Fey Ancestry:</b> Advantage on saving throws against being charmed. Magic cannot put you to sleep.","")]
-		[r:if(and(or(Race=="Lightfoot Halfling",Race=="Stout Halfling"),or(roll1==1,roll2==1)),"<br>&#8226; <b>Halfling Luck</b>: You can reroll the 1 on your saving throw, and must use the new roll.","")]
-		[r:if(or(Race=="Lightfoot Halfling",Race=="Stout Halfling"),"<br>&#8226; <b>Brave:</b> Advantage on saving throws against being frightened.","")]
-		[r:if(Race=="Stout Halfling","<br>&#8226; <b>Stout Resilience:</b> Advantage on saving throws against poison.","")]
-		[r:if(and(or(Race=="Forest Gnome",Race=="Rock Gnome"),or(SkillTitle==lsInt,SkillTitle==lsWis,SkillTitle==lsCha)),"<br>&#8226; <b>Gnome Cunning:</b> Advantage on all Intelligence, Wisdom, and Charisma saving throws against magic.","")]
 
 	</div>
 </div>

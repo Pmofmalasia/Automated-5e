@@ -46,12 +46,17 @@
 		"FalseName",abilityFalseName
 		)]
 		
-[h:abilityLevel=pm.GetAbilityLevel(abilityInfo)]
+[h:abilityLevel = pm.GetAbilityLevel(abilityInfo)]
+[h:abilityInfo = json.set(abilityInfo,
+	"Level",abilityLevel,
+	"Library",ability.json.get(abilityInfo,"Library")
+	)]
+
 [h:SummonCustomization = json.set("",
 	"Name",ForcedSummonName,
 	"Image",ForcedSummonImage,
 	"Portrait",ForcedSummonPortrait,
 	"Handout",ForcedSummonHandout
 	)]
-
-[h:a5e.GatherAbilities()]
+	
+[h:a5e.UnifiedAbilities = a5e.GatherAbilities()]

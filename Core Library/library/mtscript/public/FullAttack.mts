@@ -4,7 +4,7 @@
 [h:FlavorData = json.set("",
 	"Throw Weapon",0,
 	"Hand",0,
-	"AttackNum",-1,
+	"AttackNum",1,
 	"DMOnly",0,
 	"ParentToken",ParentToken
 )]

@@ -692,7 +692,7 @@
 	" ab.AttackCritThresh | 0 | Affects Critical Hit Threshhold | CHECK ",
 	" junkVar | ------------------------------------------------------------ | 0 | LABEL | SPAN=TRUE ",
 	" ab.AttackNumber | 0 | <html><span title='Specifically for effects like Extra Attack - Does not apply to effects that let you make an attack as a bonus action, etc.'>Increases number of attacks granted by the Attack action</span></html> | CHECK ",
-	" ab.AttackProps | 0 | <html><span title='Making weapons count as magical, count as monk weapons, etc.'>Modifies properties of weapons</span></html> | CHECK ",	" ab.AttackOptions | 0 | <html><span title='e.g. Feat - Great Weapons Master'>Has an optional effect which must be chosen when cast</span></html>| CHECK ",
+	" ab.AttackProps | 0 | <html><span title='Making weapons count as magical, count as monk weapons, etc.'>Modifies properties of weapons</span></html> | CHECK ",	" ab.AttackOptions | 0 | <html><span title='e.g. Feat - Great Weapons Master'>Has an optional effect which must be chosen before attacking</span></html>| CHECK ",
 	" ab.AttackRange | 0 | Affects range or reach of the attack | CHECK ",
 	" junkVar | ------------------------------------------------------------ | 0 | LABEL | SPAN=TRUE ",
 	" ab.AttackDamage | 0 | <html><span title='Use for effects that grant a damage type based on the weapon used. For effects that grant damage independent of the weapons damage type, use effect after attack or after each attack (whichever is appropriate)'>Grants Flat Bonus to Weapon Damage</span></html> | CHECK ",
@@ -724,7 +724,9 @@
 	" junkVar | Choose aspects of spells affected | 0 | LABEL | SPAN=TRUE ",
 	" junkVar | ------------------------------------------------------------ | 0 | LABEL | SPAN=TRUE ",
 
-	" ab.SpellClass | No,Chosen on Level Up,Chosen through Button | <html><span title='Intended for abilities like Domain spells or Arcane Trickster. Effects that use their own resources and cannot use spell slots are intended to operate through a separate mechanism (e.g. NOT for Monk - Way of the Four Elements)'>Allows hardcast use of spells from outside of the regular class list</span></html> | CHECK ",	" ab.SpellParams | 0 | <html><span title='e.g. Duration, range, components, but can also extend to things like if a spell deals half damage on a successful save (Evocation Wizard - Potent Cantrip)'>Affects general parameters of the spell </span></html>| CHECK ",	" ab.SpellOptions | 0 | <html><span title='e.g. Evocation Wizard - Overchannel, Sorcerer - Metamagic'>Has an optional effect which must be chosen when cast</span></html>| CHECK ",
+	" ab.SpellClass | No,Chosen on Level Up,Chosen through Button | <html><span title='Intended for abilities like Domain spells or Arcane Trickster. Effects that use their own resources and cannot use spell slots are intended to operate through a separate mechanism (e.g. NOT for Monk - Way of the Four Elements)'>Allows hardcast use of spells from outside of the regular class list</span></html> | LIST ",
+	" ab.SpellParams | 0 | <html><span title='e.g. Duration, range, components, but can also extend to things like if a spell deals half damage on a successful save (Evocation Wizard - Potent Cantrip)'>Affects general parameters of the spell </span></html>| CHECK ",
+	" ab.SpellOptions | 0 | <html><span title='e.g. Evocation Wizard - Overchannel, Sorcerer - Metamagic'>Has an optional effect which must be chosen when cast</span></html>| CHECK ",
 	" ab.SpellStat | 0 | Modifies Spell Primary Stat | CHECK ",
 	" junkVar | ------------------------------------------------------------ | 0 | LABEL | SPAN=TRUE ",
 	" ab.SpellAdv | 0 | Grants (Dis)Advantage on Spell Attacks | CHECK ",
@@ -735,7 +737,7 @@
 	" ab.SpellDamage | 0 | <html><span title='Use for effects that grant a damage bonus based on the damage of the spell. (e.g. Cleric - Disciple of Life, Potent Spellcasting) For effects that grant damage independent of the spell&#39;s damage type, use effect after attack or after each attack (whichever is appropriate)'>Grants Flat Bonus to Spell Damage or Healing</span></html> | CHECK ",
 	" ab.SpellRoll | 0 | <html><span title='Effects that change the value of the die, adding dice to the roll, using max damage, etc. (e.g. Elemental Adept feat setting 1s to 2s, Life Cleric - Supreme Healing)'>Modifies dice rolled for weapon damage</span></html> | CHECK ",
 	" junkVar | ------------------------------------------------------------ | 0 | LABEL | SPAN=TRUE ",
-	" ab.AfterSpell | 0 | <html><span title='Catch-all for effects that operate independently of the spell itself. Can deal damage, force saving throws, force a condition upon an enemy, just display a message, and more. Can still have conditions for types of spells they are triggered by. (e.g. Cleric - Divine Strike, Enchantment Wizard - Alter Memories, Cant find a PHB example, and Eldritch Knight - War Magic, respectively)'>Effect occurs after attacks</span></html> | CHECK "
+	" ab.AfterSpell | 0 | <html><span title='Catch-all for effects that operate independently of the spell itself. Can deal damage, force saving throws, force a condition upon an enemy, just display a message, and more. Can still have conditions for types of spells they are triggered by. (e.g. Cleric - Divine Strike, Enchantment Wizard - Alter Memories, Cant find a PHB example, and Eldritch Knight - War Magic, respectively)'>Effect occurs after spell is cast</span></html> | CHECK "
 ))]
 [h:ab.Final = json.set(ab.Final,
 	"CallSpellParams",ab.SpellParams,
@@ -869,7 +871,7 @@
 			))]
 		[h:abort(input(if(ab.CastTime=="Custom"," ab.CastTime |  | Enter custom casting time ","")))]
 		[h:ab.Marker = if(ab.Marker=="-- Ignore/Blank for None --","",ab.Marker)]
-		[h:ab.NewButtons = json.append(ab.NewButtons,json.set("","CastTime",if(ab.CastTime=="None","",ab.CastTime),"Marker",ab.Marker,"Class",json.get(ab.Final,"Class"),"Subclass",json.get(ab.Final,"Subclass"),"Name",pm.RemoveSpecial(ab.ButtonName),"DisplayName",ab.ButtonName,"Library",json.get(ab.Final,"Library")))]
+		[h:ab.NewButtons = json.append(ab.NewButtons,json.set("","CastTime",if(ab.CastTime=="None","",ab.CastTime),"Marker",ab.Marker,"Class",json.get(ab.Final,"Class"),"Subclass",if(ab.Type=="Background",json.get(ab.Final,"Name"),json.get(ab.Final,"Subclass")),"Name",pm.RemoveSpecial(ab.ButtonName),"DisplayName",ab.ButtonName,"Library",json.get(ab.Final,"Library")))]
 	}]
 	[h:ab.Final = json.set(ab.Final,"ButtonInfo",ab.NewButtons)]
 };{}]

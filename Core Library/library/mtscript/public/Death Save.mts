@@ -1,50 +1,27 @@
 [h:DeathData = macro.args]
 [h:Flavor=json.get(DeathData,"Flavor")]
 [h:ParentToken=json.get(DeathData,"ParentToken")]
-[h:outputTargets = if(PC.Ally.Enemy == 2,"none","not-gm")]
+
+[h:DamageColor = pm.DamageColor()]
+[h:HealingColor = pm.HealingColor()]
+[h:LinkColor = pm.LinkColor()]
 
 [h,if(json.get(DeathData,"PriorDeath")==""),CODE:{};{
-	[h,if(HP>0),CODE:{
-		[h:HP=0]
-		[h:setBar("Health",HP/MaxHP)]
-	};{}]
+	[h:HP=json.get(DeathData,"PriorHP")]
+	[h:setBar("Health",HP/MaxHP)]
 	[h:setState("Dying",1)]
 	[h:setState("Unconscious",1)]
 	[h:setState("Dead",0)]
 	[h:DeathSaves = json.get(DeathData,"PriorDeath")]
 }]
 
-[h:ClassFeatureData = json.set("",
-	"Flavor",Flavor,
-	"ParentToken",ParentToken,
-	"DMOnly",0,
-	"BorderColorOverride",json.get(DeathData,"BorderColorOverride"),
-	"TitleFontColorOverride",json.get(DeathData,"TitleFontColorOverride"),
-	"AccentBackgroundOverride",json.get(DeathData,"AccentBackgroundOverride"),
-	"AccentTextOverride",json.get(DeathData,"AccentTextOverride"),
-	"TitleFont",json.get(DeathData,"TitleFont"),
-	"BodyFont",json.get(DeathData,"BodyFont"),
-	"Class","zzDeath",
-	"Name","Death Saving Throw",
-	"FalseName","",
-	"OnlyRules",0
-	)]
-
-[h:FormattingData = pm.MacroFormat(ClassFeatureData)]
-[h:DamageColor = pm.DamageColor()]
-[h:HealingColor = pm.HealingColor()]
-[h:LinkColor = pm.LinkColor()]
-
-[h:output.PC = json.get(json.get(FormattingData,"Output"),"Player")]
-[h:output.GM = json.get(json.get(FormattingData,"Output"),"GM")]
-
 [h,MACRO("Save@Lib:pm.a5e.Core"): 
 	json.set(DeathData,
 	"Save","Death Save",
 	"Type","Death",
 	"ParentToken",ParentToken,
-	"PCOutput",outputTargets,
 	"PriorDeath",DeathSaves
+	"PriorHP",HP
 )]
 
 [h:ReturnData = macro.return]
@@ -53,7 +30,7 @@
 	[h:DeathSaves = json.set("","Successes",0,"Failures",0)]
 	[h:setState("Dying",0)]
 	[h:setState("Unconscious",0)]
-	[h:HP = 1]
+	[h:HP = max(1,HP)]
 	[h:setBar("Health",HP/MaxHP)]
 	
 	[h:abilityTable = json.append(abilityTable,json.set("",
@@ -98,9 +75,4 @@
 	))]
 }]
 
-[h:output.Temp = pm.AbilityTableProcessing(abilityTable,FormattingData,1)]
-
-[h:output.PC = output.PC + json.get(macro.return,"Player")+"</div></div>"]
-[h:output.GM = output.GM + json.get(macro.return,"GM")+"</div></div>"]
-[h:broadcastAsToken(output.GM,"gm")]
-[h:broadcastAsToken(output.PC,outputTargets)]
+[h:macro.return = json.set(ReturnData,"Table",abilityTable)]

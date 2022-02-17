@@ -24,6 +24,7 @@
 	"InnateCast",InnateCast,
 	"MonsterCast",MonsterCast,
 	"IsTooltip",IsTooltip,
+	"NeedsBorder",NeedsBorder,
 	"ForcedCrit",ForcedCrit,
 	"ForcedAtkMod",ForcedAtkMod,
 	"ForcedDC",ForcedDC,

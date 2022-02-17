@@ -23,8 +23,23 @@
 [h:pass.ForcedSummonPortrait=json.get(pass.DisplayObject,"ForcedSummonPortrait")]
 [h:pass.ForcedSummonHandout=json.get(pass.DisplayObject,"ForcedSummonHandout")]
 [h:pass.ShowFullRules=if(IsTooltip,1,if(pass.ShowFullRulesOverride=="",if(number(getLibProperty("ChatIndividual","Lib:pm.a5e.Core")),FullAbilityRules,getLibProperty("FullAbilityRules","Lib:pm.a5e.Core")),pass.ShowFullRulesOverride))]
-[h:pass.abilityInfo=json.set("","Name",pass.abilityName,"Class",pass.abilityClass,"Subclass",pass.abilitySubclass,"DisplayName",pass.abilityDisplayName,"Tooltip",0)]
-[h:pass.abilityLevel=pm.GetAbilityLevel(pass.abilityInfo)]
+
+[h:pass.abilityInfo=json.set("",
+	"Name",pass.abilityName,
+	"Class",pass.abilityClass,
+	"Subclass",pass.abilitySubclass,
+	"DisplayName",pass.abilityDisplayName,
+	"Tooltip",IsTooltip,
+	"ParentToken",ParentToken,
+	"FullRules",pass.ShowFullRules
+)]
+
+[h:pass.abilityLevel = pm.GetAbilityLevel(pass.abilityInfo)]
+[h:pass.abilityInfo=json.set(pass.abilityInfo,
+	"Level",pass.abilityLevel,
+	"Library",ability.json.get(pass.abilityInfo,"Library")
+	)]
+
 [h:pass.SummonCustomization = json.set("",
 	"Name",pass.ForcedSummonName,
 	"Image",pass.ForcedSummonImage,

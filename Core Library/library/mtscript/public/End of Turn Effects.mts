@@ -1,7 +1,7 @@
 [h:ParentToken = macro.args]
 [h:switchToken(ParentToken)]
 [h:IsTooltip = 0]
-[h:a5e.GatherAbilities()]
+[h:a5e.UnifiedAbilities = a5e.GatherAbilities()]
 
 [h:abilityTable = json.append("",json.set("",
 	"ShowIfCondensed",1,

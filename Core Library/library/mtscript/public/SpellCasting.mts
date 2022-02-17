@@ -1,6 +1,7 @@
 [h:SpellData = macro.args]
 [h:IsTooltip = 0]
-[h:a5e.GatherAbilities()]
+[h:a5e.UnifiedAbilities = a5e.GatherAbilities()]
+[h:ParentToken=json.get(json.get(SpellData,0),"ParentToken")]
 [h:ForcedClass=json.get(json.get(SpellData,0),"ForcedClass")]
 [h:ForcedLevel=json.get(json.get(SpellData,0),"ForcedLevel")]
 [h:FreeCasting=json.get(json.get(SpellData,0),"FreeCasting")]
@@ -17,6 +18,7 @@
 [h:sConcentrationLost=json.get(json.get(SpellData,0),"sConcentrationLost")]
 [h:InnateCast=json.get(json.get(SpellData,0),"InnateCast")]
 [h:MonsterCast=json.get(json.get(SpellData,0),"MonsterCast")]
+[h:NeedsBorder = if(json.get(json.get(SpellData,0),"NeedsBorder")=="",1,json.get(json.get(SpellData,0),"NeedsBorder"))]
 
 [h:sSpellChoice=0]
 [h:MultiEffectChoiceTest=0]
@@ -287,10 +289,11 @@
 	case "Free": {[eLevel=sLevel]}
 ]
 
+}]
+
 [h:DefaultDisplayData = pm.SpellColors(json.set("","Level",string(eLevel),"Source",sSource))]
 [h:BorderColor = json.get(DefaultDisplayData,"Border")]
 [h:TextColor = json.get(DefaultDisplayData,"Title")]
-}]
 
 [h:"<!--- Cancel Old Spell Notice --->"]
 [h,if(getState("Concentrating") && sConcentration==1 && eLevel<sConcentrationLost),CODE:{
@@ -392,25 +395,6 @@
 [h:abilityFalseName = "Spellcasting"]
 [h:abilityOnlyRules = 0]
 
-[h:ClassFeatureData = json.set("",
-	"Flavor",Flavor,
-	"ParentToken",ParentToken,
-	"DMOnly",DMOnly,
-	"BorderColorOverride",if(BorderColorOverride=="",BorderColor,BorderColorOverride),
-	"TitleFontColorOverride",if(TitleFontColorOverride=="",TextColor,TitleFontColorOverride),
-	"AccentBackgroundOverride",AccentBackgroundOverride,
-	"AccentTextOverride",AccentTextOverride,
-	"TitleFont",TitleFont,
-	"BodyFont",BodyFont,
-	"Class","zzSpell",
-	"Name",abilityName,
-	"FalseName",abilityFalseName,
-	"OnlyRules",abilityOnlyRules
-	)]
-
-[h:FormattingData = pm.MacroFormat(ClassFeatureData)]
-[h:output.PC = json.get(json.get(FormattingData,"Output"),"Player")]
-[h:output.GM = json.get(json.get(FormattingData,"Output"),"GM")]
 [h:DamageColor = pm.DamageColor()]
 [h:HealingColor = pm.HealingColor()]
 [h:CritColor = pm.CritColor()]
@@ -705,19 +689,6 @@
 	[h:MissileNum = MissileNum + 1]
 }]
 
-[h:output.Temp = pm.AbilityTableProcessing(abilityTable,FormattingData,sRulesShow)]
-[h:output.PC = output.PC + json.get(output.Temp,"Player")]
-[h:output.GM = output.GM + json.get(output.Temp,"GM")]
-
-[h:sDescriptionLink = macroLinkText("spellDescription@Lib:pm.a5e.Core",if(DMOnly,"gm","all"),RerollSpellData,ParentToken)]
-[h:output.Temp = if(sRulesShow==0,"<a style='color:"+LinkColor+";' href='"+sDescriptionLink+"'>Click to show full spell text</a>",sDescription)]
-
-[h:output.PC = output.PC + if(DMOnly,"",output.Temp)+"</div></div>"]
-[h:output.GM = output.GM + output.Temp+"</div></div>"]
-
-[h:broadcastAsToken(output.GM,"gm")]
-[h:broadcastAsToken(output.PC,"not-gm")]
-
 [h,if(IsBuff=="Self" || IsBuff=="Both"),CODE:{
 	[h,if(BuffsList==""),CODE:{
 		[h:setState(SpellName,1)]
@@ -763,5 +734,43 @@
 	[h:pm.Summons(json.set("","Name",SpellName,"Class",sClassSelect),SummonData,SummonCustomization)]
 }]
 
-[h:ReturnData = json.set("{}","Slot",sLevelSelect,"Class",sClassSelect,"DmgType",DmgType,"DmgType2",DmgType2)]
-[h:macro.return=ReturnData]
+[h,if(NeedsBorder),CODE:{
+	[h:ClassFeatureData = json.set("",
+		"Flavor",Flavor,
+		"ParentToken",ParentToken,
+		"DMOnly",DMOnly,
+		"BorderColorOverride",if(BorderColorOverride=="",BorderColor,BorderColorOverride),
+		"TitleFontColorOverride",if(TitleFontColorOverride=="",TextColor,TitleFontColorOverride),
+		"AccentBackgroundOverride",AccentBackgroundOverride,
+		"AccentTextOverride",AccentTextOverride,
+		"TitleFont",TitleFont,
+		"BodyFont",BodyFont,
+		"Class","zzSpell",
+		"Name",abilityName,
+		"FalseName",abilityFalseName,
+		"OnlyRules",abilityOnlyRules
+		)]
+
+	[h:FormattingData = pm.MacroFormat(ClassFeatureData)]
+	[h:output.PC = json.get(json.get(FormattingData,"Output"),"Player")]
+	[h:output.GM = json.get(json.get(FormattingData,"Output"),"GM")]
+
+	[h:output.Temp = pm.AbilityTableProcessing(abilityTable,FormattingData,sRulesShow)]
+	[h:output.PC = output.PC + json.get(output.Temp,"Player")]
+	[h:output.GM = output.GM + json.get(output.Temp,"GM")]
+
+	[h:sDescriptionLink = macroLinkText("spellDescription@Lib:pm.a5e.Core",if(DMOnly,"gm","all"),RerollSpellData,ParentToken)]
+	[h:SpellDescriptionFinal = if(sRulesShow==0,"<a style='color:"+LinkColor+";' href='"+sDescriptionLink+"'>Click to show full spell text</a>",sDescription)]
+
+	[h:output.PC = output.PC + if(DMOnly,"",SpellDescriptionFinal)+"</div></div>"]
+	[h:output.GM = output.GM + SpellDescriptionFinal+"</div></div>"]
+
+	[h:broadcastAsToken(output.GM,"gm")]
+	[h:broadcastAsToken(output.PC,"not-gm")]
+};{
+	[h:sDescriptionLink = macroLinkText("spellDescription@Lib:pm.a5e.Core",if(DMOnly,"gm","all"),RerollSpellData,ParentToken)]
+	[h:SpellDescriptionFinal = if(sRulesShow==0,"<a style='color:"+LinkColor+";' href='"+sDescriptionLink+"'>Click to show full spell text</a>",sDescription)]
+}]
+
+[h:ReturnData = json.set("{}","Slot",sLevelSelect,"Class",sClassSelect,"DmgType",DmgType,"DmgType2",DmgType2,"Table",abilityTable,"Effect",SpellDescriptionFinal)]
+[h:macro.return = ReturnData]

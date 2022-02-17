@@ -1,6 +1,6 @@
 [h:wa.Data = macro.args]
 [h:IsTooltip = 0]
-[h:a5e.GatherAbilities()]
+[h:a5e.UnifiedAbilities = a5e.GatherAbilities()]
 
 [h:Flavor=json.get(wa.Data,"Flavor")]
 [h:ParentToken=json.get(wa.Data,"ParentToken")]
@@ -38,6 +38,7 @@
 [h:wa.Props=json.get(wa.WeaponUsed,"Props")]
 [h:wa.Magical=json.get(wa.WeaponUsed,"MagicItem")]
 [h:wa.ProfTest=if(or(json.get(WeaponProficiencies,wa.WeaponType)==1,json.get(MagicItemStats,wa.WeaponType+"Prof")==1),1,0)]
+[h:wa.ProfTest=1]
 
 [h:pm.PassiveFunction("AttackProps")]
 
@@ -52,6 +53,8 @@
 [h:PrimeStat=if(json.get(wa.Props,"IntMod")>0,"Intelligence",PrimeStat)]
 [h:PrimeStat=if(json.get(wa.Props,"WisMod")>0,"Wisdom",PrimeStat)]
 [h:PrimeStat=if(json.get(wa.Props,"ChaMod")>0,"Charisma",PrimeStat)]
+
+[h:pm.PassiveFunction("AttackStat")]
 
 [h:wa.PrimeStatBonus = json.get(AtrMods,PrimeStat)]
 
@@ -79,35 +82,6 @@
 	[h:pm.PassiveFunction("AttackNum")]
 }]
 
-[h,SWITCH(json.get(wa.Data,"Advantage")),CODE:
-	case -2: {[h:wa.AdvDis = -1]};
-	case -1: {
-		[h:wa.Adv = 0]
-		[h:wa.Dis = 1]
-		[h:pm.PassiveFunction("AttackAdv")]
-		[h:wa.AdvDis = if(or(and(wa.Dis == 0,wa.Adv == 0),and(wa.Dis !=0,wa.Adv != 0)),0,if(wa.Dis == 0,1,-1))]
-	};
-	case 0: {
-		[h:wa.Adv = 0]
-		[h:wa.Dis = 0]
-		[h:pm.PassiveFunction("AttackAdv")]
-		[h:wa.AdvDis = if(or(and(wa.Dis == 0,wa.Adv == 0),and(wa.Dis !=0,wa.Adv != 0)),0,if(wa.Dis == 0,1,-1))]
-	};
-	case 1: {
-		[h:wa.Adv = 1]
-		[h:wa.Dis = 0]
-		[h:pm.PassiveFunction("AttackAdv")]
-		[h:wa.AdvDis = if(or(and(wa.Dis == 0,wa.Adv == 0),and(wa.Dis !=0,wa.Adv != 0)),0,if(wa.Dis == 0,1,-1))]
-	};
-	case 2: {[h:wa.AdvDis = 1]};
-	default: {
-		[h:wa.Adv = 0]
-		[h:wa.Dis = 0]
-		[h:pm.PassiveFunction("AttackAdv")]
-		[h:wa.AdvDis = if(or(and(wa.Dis == 0,wa.Adv == 0),and(wa.Dis !=0,wa.Adv != 0)),0,if(wa.Dis == 0,1,-1))]
-	}
-]
-
 [h:CritTest=0]
 [h:AllAttacksToHit="[]"]
 [h:AllAttacksDmg="[]"]
@@ -120,9 +94,45 @@
 [h:LinkColor = pm.LinkColor()]
 
 [h,count(AttackCount),code:{
-	[h:roll1=1d20]
+	[h:roll1=if(json.get(wa.Data,"PreviousRoll")=="",1d20,json.get(wa.Data,"PreviousRoll"))]
 	[h:roll2=1d20]
-	
+		
+	[h,SWITCH(json.get(wa.Data,"Advantage")+""+json.get(wa.Data,"ForcedAdvantage")),CODE:
+		case "-11": {
+			[h:wa.AdvDis = -1]
+			};
+		case "-10": {
+			[h:wa.Adv = 0]
+			[h:wa.Dis = 1]
+			[h:pm.PassiveFunction("AttackAdv")]
+			[h:wa.AdvDis = if(or(and(wa.Dis == 0,wa.Adv == 0),and(wa.Dis !=0,wa.Adv != 0)),0,if(wa.Dis == 0,1,-1))]
+			};
+		case "01": {
+			[h:wa.AdvDis = 0]
+			};
+		case "00": {
+			[h:wa.Adv = 0]
+			[h:wa.Dis = 0]
+			[h:pm.PassiveFunction("AttackAdv")]
+			[h:wa.AdvDis = if(or(and(wa.Dis == 0,wa.Adv == 0),and(wa.Dis !=0,wa.Adv != 0)),0,if(wa.Dis == 0,1,-1))]
+			};
+		case "11": {
+			[h:wa.AdvDis = 1]
+			};
+		case "10": {
+			[h:wa.Adv = 1]
+			[h:wa.Dis = 0]
+			[h:pm.PassiveFunction("AttackAdv")]
+			[h:wa.AdvDis = if(or(and(wa.Dis == 0,wa.Adv == 0),and(wa.Dis !=0,wa.Adv != 0)),0,if(wa.Dis == 0,1,-1))]
+			};
+		default: {
+			[h:wa.Adv = 0]
+			[h:wa.Dis = 0]
+			[h:pm.PassiveFunction("AttackAdv")]
+			[h:wa.AdvDis = if(or(and(wa.Dis == 0,wa.Adv == 0),and(wa.Dis !=0,wa.Adv != 0)),0,if(wa.Dis == 0,1,-1))]
+		}
+	]
+
 	[h,switch(wa.AdvDis),CODE:
 		case -1:{
 			[h:effectiveRoll = min(roll1,roll2)]
@@ -152,26 +162,38 @@
 
 	[h:getNewRolls()]
 	[h:wa.Dmg = eval(wa.DmgDieNum+"d"+wa.DmgDieSize)]
+	[h:wa.DmgRulesStr = wa.DmgDieNum+"d"+wa.DmgDieSize]
 	[h:wa.DmgArray = getNewRolls()]
 	
 	[h:wa.CritDmg = eval(wa.DmgDieNum+"d"+wa.DmgDieSize)]
+	[h:wa.CritDmgRulesStr = wa.DmgDieNum+"d"+wa.DmgDieSize]
 	[h:wa.CritDmgArray = getNewRolls()]
 
 	[h:wa.Dmg2 = eval(wa.DmgDie2Num+"d"+wa.DmgDie2Size)]
+	[h:wa.Dmg2RulesStr = wa.DmgDie2Num+"d"+wa.DmgDie2Size]
 	[h:wa.Dmg2Array = getNewRolls()]
 	
 	[h:wa.CritDmg2 = eval(wa.DmgDie2Num+"d"+wa.DmgDie2Size)]
+	[h:wa.CritDmg2RulesStr = wa.DmgDie2Num+"d"+wa.DmgDie2Size]
 	[h:wa.CritDmg2Array = getNewRolls()]
 	
 	[h:pm.PassiveFunction("AttackDamage")]
 	
-	[h:wa.DmgString = json.toList(wa.DmgArray," + ")]
-	[h:wa.CritDmgString = json.toList(wa.CritDmgArray," + ")]
-	[h:AllAttacksDmg=json.append(AllAttacksDmg,json.set("","Dmg",wa.Dmg,"DmgStr",wa.DmgString,"DmgCrit",wa.CritDmg,"DmgCritStr",wa.CritDmgString))]
+	[h:wa.Dmg = wa.Dmg + wa.PrimeStatBonus + wa.MagicBonus]
+	[h:wa.CritDmg = wa.Dmg + wa.CritDmg]
+	[h:wa.DmgRulesStr = wa.DmgRulesStr+" + "+substring(PrimeStat,0,3)+pm.PlusMinus(wa.MagicBonus,0)]
+	[h:wa.CritDmgRulesStr = wa.CritDmgRulesStr+" + "+wa.DmgRulesStr]
+	[h:wa.DmgString = json.toList(wa.DmgArray," + ")+pm.PlusMinus(wa.PrimeStatBonus,0)+pm.PlusMinus(wa.MagicBonus,0)]
+	[h:wa.CritDmgString = json.toList(wa.CritDmgArray," + ")+wa.DmgString]
+	[h:AllAttacksDmg=json.append(AllAttacksDmg,json.set("","Dmg",wa.Dmg,"DmgStr",wa.DmgString,"DmgCrit",wa.CritDmg,"DmgCritStr",wa.CritDmgString,"DmgRules",wa.DmgRulesStr,"CritDmgRules",wa.CritDmgRulesStr))]
 	
+	[h:wa.Dmg2 = wa.Dmg2]
+	[h:wa.CritDmg2 = wa.Dmg2 + wa.CritDmg2]
+	[h:wa.Dmg2RulesStr = wa.Dmg2RulesStr]
+	[h:wa.CritDmg2RulesStr = wa.CritDmg2RulesStr+" + "+wa.Dmg2RulesStr]
 	[h:wa.Dmg2String = json.toList(wa.Dmg2Array," + ")]
-	[h:wa.CritDmg2String = json.toList(wa.CritDmg2Array," + ")]
-	[h:AllAttacksDmg2=json.append(AllAttacksDmg2,json.set("","Dmg",wa.Dmg2,"DmgStr",wa.Dmg2String,"DmgCrit",wa.CritDmg2,"DmgCritStr",wa.CritDmg2String))]
+	[h:wa.CritDmg2String = json.toList(wa.CritDmg2Array," + ")+" + "+wa.Dmg2String]
+	[h:AllAttacksDmg2=json.append(AllAttacksDmg2,json.set("","Dmg",wa.Dmg2,"DmgStr",wa.Dmg2String,"DmgCrit",wa.CritDmg2,"DmgCritStr",wa.CritDmg2String,"DmgRules",wa.Dmg2RulesStr,"CritDmgRules",wa.CritDmg2RulesStr))]
 }]
 [h:pm.PassiveFunction("AttackRoll")]
 
@@ -190,16 +212,20 @@
 	
 	[h:thisAttackDmg = json.get(json.get(AllAttacksDmg,roll.count),"Dmg")]
 	[h:thisAttackDmgStr = json.get(json.get(AllAttacksDmg,roll.count),"DmgStr")]
+	[h:thisAttackDmgRules = json.get(json.get(AllAttacksDmg,roll.count),"DmgRules")]
 	[h:thisAttackCritDmg = json.get(json.get(AllAttacksDmg,roll.count),"DmgCrit")]
 	[h:thisAttackCritDmgStr = json.get(json.get(AllAttacksDmg,roll.count),"DmgCritStr")]
+	[h:thisAttackCritDmgRules = json.get(json.get(AllAttacksDmg,roll.count),"CritDmgRules")]
 	
 	[h:thisAttackDmg2 = json.get(json.get(AllAttacksDmg2,roll.count),"Dmg2")]
 	[h:thisAttackDmg2Str = json.get(json.get(AllAttacksDmg2,roll.count),"Dmg2Str")]
+	[h:thisAttackDmg2Rules = json.get(json.get(AllAttacksDmg,roll.count),"Dmg2Rules")]
 	[h:thisAttackCritDmg2 = json.get(json.get(AllAttacksDmg2,roll.count),"Dmg2Crit")]
 	[h:thisAttackCritDmg2Str = json.get(json.get(AllAttacksDmg2,roll.count),"Dmg2CritStr")]
+	[h:thisAttackCritDmg2Rules = json.get(json.get(AllAttacksDmg,roll.count),"CritDmg2Rules")]
 
-	[h:wa.AdvRerollLink = macroLinkText("AttackReroll@Lib:pm.a5e.Core","self-gm",json.set(wa.Data,"Advantage",2),ParentToken)]
-	[h:wa.DisRerollLink = macroLinkText("AttackReroll@Lib:pm.a5e.Core","self-gm",json.set(wa.Data,"Advantage",-2),ParentToken)]
+	[h:wa.AdvRerollLink = macroLinkText("AttackReroll@Lib:pm.a5e.Core","self-gm",json.set(wa.Data,"Advantage",1,"ForcedAdvantage",1,"PreviousRoll",roll1,"AttackNum",-1),ParentToken)]
+	[h:wa.DisRerollLink = macroLinkText("AttackReroll@Lib:pm.a5e.Core","self-gm",json.set(wa.Data,"Advantage",-1,"ForcedAdvantage",1,"PreviousRoll",roll1,"AttackNum",-1),ParentToken)]
 	
 	[h:ToHitTableLine = json.set("",
 		"ShowIfCondensed",1,
@@ -221,7 +247,7 @@
 		)]
 	};{
 		[h:ToHitTableLine = json.set(ToHitTableLine,
-			"BonusBody1","(Roll 1: "+(roll1+thisAttackToHit-if(wa.AdvDis==1,max(roll1,roll2),min(roll1,roll2)))+" / Roll 2: "+(roll2+thisAttackToHit-if(wa.AdvDis==1,max(roll1,roll2),min(roll1,roll2)))+")"
+			"BonusBody1","(Roll #1: "+(roll1+thisAttackToHit-if(wa.AdvDis==1,max(roll1,roll2),min(roll1,roll2)))+" / Roll #2: "+(roll2+thisAttackToHit-if(wa.AdvDis==1,max(roll1,roll2),min(roll1,roll2)))+")"
 		)]
 	}]
 	
@@ -231,11 +257,11 @@
 		"ShowIfCondensed",1,
 		"Header",wa.DmgType+" Damage",
 		"FalseHeader","",
-		"FullContents","<span style='"+if(thisAttackCrit,"font-size:2em; color:"+CritColor,"font-size:1.5em")+"'>"+(if(thisAttackCrit,(thisAttackDmg+wa.CritDmg),thisAttackDmg)+wa.PrimeStatBonus+wa.MagicBonus)+"</span>",
-		"RulesContents",wa.DmgDieNum+"d"+wa.DmgDieSize+if(thisAttackCrit," + "+wa.DmgDieNum+"d"+wa.DmgDieSize,"")+" + "+substring(PrimeStat,0,3)+pm.PlusMinus(wa.MagicBonus,0)+" = ",
-		"RollContents",thisAttackDmgStr+if(thisAttackCrit," + "+thisAttackCritDmgStr,"")+pm.PlusMinus(wa.PrimeStatBonus,0)+pm.PlusMinus(wa.MagicBonus,0)+" = ",
+		"FullContents","<span style='"+if(thisAttackCrit,"font-size:2em; color:"+CritColor,"font-size:1.5em")+"'>"+if(thisAttackCrit,thisAttackCritDmg,thisAttackDmg)+"</span>",
+		"RulesContents",if(thisAttackCrit,thisAttackCritDmgRules,thisAttackDmgRules)+" = ",
+		"RollContents",if(thisAttackCrit,thisAttackCritDmgStr,thisAttackDmgStr)+" = ",
 		"DisplayOrder","['Rules','Roll','Full']",
-		"Value",(if(thisAttackCrit,(thisAttackDmg+thisAttackCritDmg),thisAttackDmg)+wa.PrimeStatBonus+wa.MagicBonus)
+		"Value",if(thisAttackCrit,thisAttackCritDmg,thisAttackDmg)
 		))]
 
 	[h:abilityTable = if(wa.DmgDie2 == "0",
@@ -244,11 +270,11 @@
 			"ShowIfCondensed",1,
 			"Header",wa.DmgType2+" Damage",
 			"FalseHeader","",
-			"FullContents","<span style='"+if(thisAttackCrit,"font-size:2em; color:"+CritColor,"font-size:1.5em")+"'>"+if(thisAttackCrit,(thisAttackDmg2+thisAttackCritDmg2),thisAttackDmg2)+"</span>",
-			"RulesContents",wa.DmgDie2Num+"d"+wa.DmgDie2Size+if(thisAttackCrit," + "+wa.DmgDie2Num+"d"+wa.DmgDie2Size,"")+" = ",
-			"RollContents",thisAttackDmg2Str+if(thisAttackCrit," + "+thisAttackCritDmg2Str,"")+" = ",
+			"FullContents","<span style='"+if(thisAttackCrit,"font-size:2em; color:"+CritColor,"font-size:1.5em")+"'>"+if(thisAttackCrit,thisAttackCritDmg2,thisAttackDmg2)+"</span>",
+			"RulesContents",if(thisAttackCrit,thisAttackCritDmg2Rules,thisAttackDmg2Rules)+" = ",
+			"RollContents",if(thisAttackCrit,thisAttackCritDmg2Str,thisAttackDmg2Str)+" = ",
 			"DisplayOrder","['Rules','Roll','Full']",
-			"Value",if(thisAttackCrit,(thisAttackDmg2+thisAttackCritDmg2),thisAttackDmg2)
+			"Value",if(thisAttackCrit,thisAttackCritDmg2,thisAttackDmg2)
 	)))]
 	
 	[h:pm.PassiveFunction("AfterEachAttack")]

@@ -1,15 +1,18 @@
-[h:pm.Ability=json.get(arg(0),"Name")]
-[h:pm.Class=json.get(arg(0),"Class")]
-[h:pm.Subclass=json.get(arg(0),"Subclass")]
-[h:pm.Tooltip=json.get(arg(0),"Tooltip")]
-[h:pm.AbilityDisplay=json.get(arg(0),"DisplayName")]
+[h:pm.AddAbilityData = arg(0)]
+[h:pm.Ability=json.get(pm.AddAbilityData,"Name")]
+[h:pm.Class=json.get(pm.AddAbilityData,"Class")]
+[h:pm.Subclass=json.get(pm.AddAbilityData,"Subclass")]
+[h:IsTooltip=json.get(pm.AddAbilityData,"Tooltip")]
+[h:ParentToken=json.get(pm.AddAbilityData,"ParentToken")]
+[h:pm.AbilityDisplay=json.get(pm.AddAbilityData,"DisplayName")]
 [h:pm.ChoiceNum = json.get(arg(1),"Number")]
 [h:pm.ActivateNew = json.get(arg(1),"Active")]
 [h:pm.FromCharacter = json.get(arg(1),"Character")]
+[h:a5e.UnifiedAbilities = a5e.GatherAbilities()]
 
 [h:pm.PassiveFunction("FeatureChoiceNum")]
 
-[h:pm.LevelPrereq = pm.GetAbilityLevel(arg(0))]
+[h:pm.LevelPrereq = pm.GetAbilityLevel(pm.AddAbilityData)]
 [h:pm.CurrentAbilitiesTemp = json.path.read(allAbilities,"[?(@.Master.Name=='"+pm.Ability+"' && @.Master.Class=='"+pm.Class+"' && @.Master.Subclass=='"+pm.Subclass+"' && @.IsActive > 0)]")]
 [h:"<!-- Must grab the Library versions of each ability - since ability objects go through processing before put on the token, they will not be considered 'equal' for comparison later. -->"]
 [h:pm.CurrentAbilities = "[]"]
@@ -28,10 +31,10 @@
 
 [h:pm.AbilitiesList = json.sort(pm.AbilitiesList,"a","Name")]
 
-[h,if(pm.Tooltip),CODE:{
+[h,if(IsTooltip),CODE:{
 	[h:pm.AbilitiesChosenStr = json.toList(json.path.read(allAbilities,"[?(@.Master.Name=='"+pm.Ability+"' && @.Master.Class=='"+pm.Class+"' && @.Master.Subclass=='"+pm.Subclass+"' && @.IsActive > 0)]['DisplayName']"),if(json.get(getLibProperty("TooltipVertical","Lib:pm.a5e.Core"),getPlayerName())=="",if(json.get(getLibProperty("TooltipVertical","Lib:pm.a5e.Core"),"Default")==1,"<br>",", "),if(json.get(getLibProperty("TooltipVertical","Lib:pm.a5e.Core"),getPlayerName())==1,"<br>",", ")))]
 };{
-	[h:pm.SelectionInput = "junkVar | Choose "+pm.OptionsNum+" of the following "+pm.AbilityDisplay+" abilities |  | LABEL | SPAN=TRUE "]
+	[h:pm.SelectionInput = "junkVar | Choose "+pm.ChoiceNum+" of the following "+pm.AbilityDisplay+" abilities |  | LABEL | SPAN=TRUE "]
 	[h,foreach(ability,pm.AbilitiesList),CODE:{
 		[h:set("pm.Choose"+json.get(ability,"Name"),if(json.isEmpty(json.path.read(allAbilities,"[?(@.Name=='"+json.get(ability,"Name")+"' && @.Master.Name=='"+pm.Ability+"' && @.Master.Class=='"+pm.Class+"' && @.Master.Subclass=='"+pm.Subclass+"' && @.Class=='"+json.get(ability,"Class")+"' && @.Subclass=='"+json.get(ability,"Subclass")+"' && @.IsActive > 0)]")),0,1))]
 		[h:pm.SelectionInput = listAppend(pm.SelectionInput," pm.Choose"+json.get(ability,"Name")+" | "+eval("pm.Choose"+json.get(ability,"Name"))+" | "+json.get(ability,"DisplayName")+" | CHECK ","##")]

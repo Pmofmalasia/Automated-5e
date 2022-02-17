@@ -2,8 +2,8 @@
 [h:IsTooltip = 0]
 [h:Flavor=json.get(lr.Data,"Flavor")]
 [h:ParentToken=json.get(lr.Data,"ParentToken")]
-[h:a5e.GatherAbilities()]
 [h:abilityTable = ""]
+[h:a5e.UnifiedAbilities = a5e.GatherAbilities()]
 
 [h:setAllStates(0)]
 

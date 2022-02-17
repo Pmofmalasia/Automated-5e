@@ -1,6 +1,7 @@
 [h:sv.Data = macro.args]
 [h:IsTooltip = 0]
-[h:a5e.GatherAbilities()]
+[h:a5e.UnifiedAbilities = a5e.GatherAbilities()]
+[h:ParentToken=json.get(sv.Data,"ParentToken")]
 [h:sv.Type = json.get(sv.Data,"Type")]
 [h:roll1=if(json.get(sv.Data,"PreviousRoll")=="",1d20,json.get(sv.Data,"PreviousRoll"))]
 [h:roll2=1d20]
@@ -85,12 +86,12 @@
 
 	[h,SWITCH(sv.Type),CODE:
 		case "Death":{
-			[h:sv.AdvRerollLink = macroLinkText("Death Save@Lib:pm.a5e.Core","self-gm",json.set(sv.Data,"PreviousRoll",roll1,"Advantage",1,"ForcedAdvantage",1),json.get(sv.Data,"ParentToken"))]
-			[h:sv.DisRerollLink = macroLinkText("Death Save@Lib:pm.a5e.Core","self-gm",json.set(sv.Data,"PreviousRoll",roll1,"Advantage",-1,"ForcedAdvantage",1),json.get(sv.Data,"ParentToken"))]
+			[h:sv.AdvRerollLink = macroLinkText("Death Save Border@Lib:pm.a5e.Core","self-gm",json.set(sv.Data,"PreviousRoll",roll1,"Advantage",1,"ForcedAdvantage",1),ParentToken)]
+			[h:sv.DisRerollLink = macroLinkText("Death Save Border@Lib:pm.a5e.Core","self-gm",json.set(sv.Data,"PreviousRoll",roll1,"Advantage",-1,"ForcedAdvantage",1),ParentToken)]
 		};
 		default:{
-			[h:sv.AdvRerollLink = macroLinkText("Save Reroll@Lib:pm.a5e.Core","self-gm",json.set(sv.Data,"PreviousRoll",roll1,"Advantage",1,"ForcedAdvantage",1),json.get(sv.Data,"ParentToken"))]
-			[h:sv.DisRerollLink = macroLinkText("Save Reroll@Lib:pm.a5e.Core","self-gm",json.set(sv.Data,"PreviousRoll",roll1,"Advantage",-1,"ForcedAdvantage",1),json.get(sv.Data,"ParentToken"))]
+			[h:sv.AdvRerollLink = macroLinkText("Save Reroll@Lib:pm.a5e.Core","self-gm",json.set(sv.Data,"PreviousRoll",roll1,"Advantage",1,"ForcedAdvantage",1),ParentToken)]
+			[h:sv.DisRerollLink = macroLinkText("Save Reroll@Lib:pm.a5e.Core","self-gm",json.set(sv.Data,"PreviousRoll",roll1,"Advantage",-1,"ForcedAdvantage",1),ParentToken)]
 		}
 	]
 	
@@ -120,7 +121,7 @@
 		"DisplayOrder","['Rules','Roll','Full']",
 		"BonusSectionNum",1,
 		"BonusSectionType1","Rules",
-		"BonusBody1","(Roll 1: <span style='font-size:1.25em'><b>"+(roll1+TotalBonus)+"</b></span> / Roll 2: <span style='font-size:1.25em'><b>"+(roll2+TotalBonus)+"</b></span>)",
+		"BonusBody1","(Roll #1: <span style='font-size:1.25em'><b>"+(roll1+TotalBonus)+"</b></span> / Roll #2: <span style='font-size:1.25em'><b>"+(roll2+TotalBonus)+"</b></span>)",
 		"BonusSectionStyling1","text-align:center"
 		))]
 }]

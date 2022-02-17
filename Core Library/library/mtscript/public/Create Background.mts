@@ -3,7 +3,7 @@
 [h:ab.RaceList = pm.GetRaces("DisplayName",",")]
 [h:ab.AtrList = pm.GetAttributes()]
 [h:ab.LevelList = "None,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20"]
-[h:ab.Class = "Feat"]
+[h:ab.Class = "Background"]
 
 [h:abort(input(
 	" junkVar | -------------------------------------------- Basic Background Info -------------------------------------------- |  | LABEL | SPAN=TRUE ",
@@ -25,7 +25,8 @@
 [h:ab.Final = json.set("",
 	"Name",ab.Name,
 	"DisplayName",ab.DisplayName,
-	"Class",pm.RemoveSpecial(ab.Class),
+	"Subclass",pm.RemoveSpecial(ab.Class),
+	"Name",ab.Name,
 	"Level",ab.Level,
 	"GainOnLevel",ab.OnLevel,
 	"Optional",ab.Optional,
@@ -33,13 +34,9 @@
 	"Library",ab.SourceLib
 )]
 
-[h:ab.Subclass="None"]
 [h:abort(input(if(ab.HasMaster," ab.MasterType | Class,Race,Feat,Background | Master Feature Type | RADIO | VALUE=STRING ",""),
 	if(ab.Replace," ab.ReplaceType | Class,Race,Feat,Background | Replaced Feature Type | RADIO | VALUE=STRING ","")
 ))]
-
-[h:ab.Subclass = if(ab.Subclass == "None","",pm.RemoveSpecial(ab.Subclass))]
-[h:ab.Final = json.set(ab.Final,"Subclass",ab.Subclass)]
 
 [h,if(ab.HasMaster>0),CODE:{
 	[h,if(ab.HasMaster>1),CODE:{
@@ -147,7 +144,7 @@
 
 [h:ab.Final = json.get(macro.return,"Ability")]
 
-[h:setLibProperty("sb.Backgrounds",json.append(json.sort(json.append(getLibProperty("sb.Backgrounds","Lib:"+ab.SourceLib),ab.Final),"a","Class","Subclass","Level","DisplayName"),"Lib:"+ab.SourceLib)]
+[h:setLibProperty("sb.Backgrounds",json.sort(json.append(getLibProperty("sb.Backgrounds","Lib:"+ab.SourceLib),ab.Final),"a","Class","Subclass","Level","DisplayName"),"Lib:"+ab.SourceLib)]
 
 [r:ab.DisplayName+" background from the sourcebook "+ab.Source+" created."]
 [h,MACRO("Gather Sourcebook Information@Lib:pm.a5e.Core"):""]

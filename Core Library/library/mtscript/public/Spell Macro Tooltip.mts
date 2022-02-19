@@ -246,7 +246,7 @@
 	"Value",""
 	))]
 
-[h:abilityTable = json.append(abilityTable,json.set("",
+[h,if(mCompConsumed!="" && mCompConsumed!="0" && mCompConsumed!=0): abilityTable = json.append(abilityTable,json.set("",
 	"ShowIfCondensed",1,
 	"Header","Components Consumed",
 	"FalseHeader","",

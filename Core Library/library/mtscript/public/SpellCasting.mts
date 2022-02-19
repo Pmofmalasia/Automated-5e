@@ -45,7 +45,6 @@
 [h:sLevelSelect=""]
 
 [h,if(ForcedClass=="" && InnateCast==0),CODE:{
-
 	[h:ClassOptionsObj = "{}"]
 	[h:pm.PassiveFunction("SpellClass")]
 
@@ -59,7 +58,7 @@
 
 [h,if(ForcedLevel==""),CODE:{
 
-[h:LevelOptions=
+[h:LevelOptions = 
 	if(Ritual==1,"Ritual,","")
 	+if(and(sLevel<=1,json.get(SpellSlots,"1")>0),"1,","")
 	+if(and(sLevel<=2,json.get(SpellSlots,"2")>0),"2,","")
@@ -85,25 +84,35 @@
 [h:disIsBlinded=if(or(getState("Blinded")==0,IsSight==0),"","junkVar|<html><span style='font-size:1.2em';><span style='color:#AA2222'><i><b>NOTE: You are currently blinded and this spell requires sight!</b></i></span></span></html>| |LABEL|SPAN=TRUE")]
 [h:disCompConsumed=if(or(mCompConsumed=="0",mCompConsumed==""),"","junkVar|"+mCompConsumed+"|Consumed Components|LABEL")]
 [h:disSpellEffectChoices=if(MultiEffectChoiceTest==1,"sSpellChoice | "+SpellEffectOptions+" | Choose an Effect | RADIO | ","")]
+[h:disPassiveChoices = ""]
+
+[h:pm.PassiveFunction("SpellChoices")]
+
+[h:disPassiveBars = if(disPassiveChoices=="","","junkvar | ----------------------------------------------------------- |  | LABEL | SPAN=TRUE ")]
 
 [h,if(and(ForcedClass=="",InnateCast==0)||ForcedLevel==""||MultiEffectChoiceTest==1),CODE:{
-[h:SpellOptions=input(
-	"junk|<-- Link to Compendium|<html>"+CompendiumLink+"</html>|LABEL",
-	""+dissConcentration+"",
-	""+disIsSilenced+"",
-	""+disIsBlinded+"",
-	"junkVar|"+SpellName+" ("+sLevel+") "+sSchool+"|Spell|LABEL",
-	"sClassSelect|"+ClassOptions+"|Choose Class to cast|LIST| VALUE=STRING",
-	"sLevelSelect|"+LevelOptions+"|Choose Spell Slot|LIST| VALUE=STRING",
-	"sRulesShow| "+(getLibProperty("FullSpellRules","Lib:pm.a5e.Core"))+" |Show Full Spell Rules|CHECK|",
-	""+disCompConsumed+"",
-	""+disSpellEffectChoices+""
-)]
-[h:abort(SpellOptions)]
+	[h:abort(input(
+		"junk|<-- Link to Compendium|<html>"+CompendiumLink+"</html>|LABEL",
+		dissConcentration,
+		disIsSilenced,
+		disIsBlinded,
+		"junkVar|"+SpellName+" ("+sLevel+") "+sSchool+"|Spell|LABEL",
+		"sClassSelect|"+ClassOptions+"|Choose Class to cast|LIST| VALUE=STRING",
+		"sLevelSelect|"+LevelOptions+"|Choose Spell Slot|LIST| VALUE=STRING",
+		"sRulesShow| "+(getLibProperty("FullSpellRules","Lib:pm.a5e.Core"))+" |Show Full Spell Rules|CHECK|",
+		disCompConsumed,
+		disSpellEffectChoices,
+		disPassiveBars,
+		disPassiveChoices
+	))]
 };{
 	[h:sClassSelect=if(ForcedClass!="",ForcedClass,if(InnateCast,Race,""))]
 	[h:sLevelSelect=ForcedLevel]
-	[h:sRulesShow=0]
+	[h:sRulesShow=getLibProperty("FullSpellRules","Lib:pm.a5e.Core")]
+	[h:abort(input(
+		disPassiveBars,
+		disPassiveChoices
+	))]
 }]
 
 [h:FinalSpellData=json.get(SpellData,sSpellChoice)]
@@ -246,7 +255,7 @@
 [h:CastTime=if(CastTime=="Action","Action",CastTime)]
 [h:CastTime=if(CastTime=="BONUS","Bonus Action",CastTime)]
 [h:CastTime=if(CastTime=="REACTION","Reaction",CastTime)]
-[h:CastTime=if(CastTime=="1 MIN","1 minute",CastTime)]
+[h:CastTime=if(CastTime=="1 MIN","1 Minute",CastTime)]
 [h:CastTime=if(CastTime=="10 MIN","10 Minutes",CastTime)]
 [h:CastTime=if(CastTime=="1 HOUR","1 Hour",CastTime)]
 [h:CastTime=if(CastTime=="8 HOURS","8 Hours",CastTime)]
@@ -274,8 +283,9 @@
 		]
 };{
 
+[h:RitualTest = 0]
 [h,switch(sLevelSelect),code:
-	case "Ritual": {[eLevel=0]};
+	case "Ritual": {[eLevel=sLevel][h:RitualTest = 1]};
 	case "1": {[eLevel=1][SpellSlots=json.set(SpellSlots,"1",json.get(SpellSlots,"1")-1)]};
 	case "2": {[eLevel=2][SpellSlots=json.set(SpellSlots,"2",json.get(SpellSlots,"2")-1)]};
 	case "3": {[eLevel=3][SpellSlots=json.set(SpellSlots,"3",json.get(SpellSlots,"3")-1)]};
@@ -297,7 +307,7 @@
 
 [h:"<!--- Cancel Old Spell Notice --->"]
 [h,if(getState("Concentrating") && sConcentration==1 && eLevel<sConcentrationLost),CODE:{
-	
+
 	[h:FlavorData = json.set("",
 		"Flavor",Flavor,
 		"ParentToken",ParentToken)]
@@ -349,9 +359,9 @@
 [h:CastTime=if(sLevelSelect=="Ritual",CastTime+" + 10 minutes (ritual)",CastTime)]
 [h:AHL=eLevel-sLevel]
 
-[h:PrimeStat=if(sClassSelect=="Barbarian",json.get(AtrMods, "Constitution"),0)+if(or(sClassSelect=="Bard",sClassSelect=="Paladin",sClassSelect=="Sorcerer",sClassSelect=="Warlock",sClassSelect=="Tiefling"),json.get(AtrMods, "Charisma"),0)+if(or(sClassSelect=="Cleric",sClassSelect=="Druid",sClassSelect=="Monk",sClassSelect=="Ranger"),json.get(AtrMods, "Wisdom"),0)+if(or(sClassSelect=="Fighter",sClassSelect=="Rogue",sClassSelect=="Wizard",sClassSelect=="Artificer"),json.get(AtrMods, "Intelligence"),0)]
-
-[h:PrimeStatStr=if(sClassSelect=="Barbarian","Con","")+if(or(sClassSelect=="Bard",sClassSelect=="Paladin",sClassSelect=="Sorcerer",sClassSelect=="Warlock",sClassSelect=="Tiefling"),"Cha","")+if(or(sClassSelect=="Cleric",sClassSelect=="Druid",sClassSelect=="Monk",sClassSelect=="Ranger"),"Wis","")+if(or(sClassSelect=="Fighter",sClassSelect=="Rogue",sClassSelect=="Wizard",sClassSelect=="Artificer"),"Int","")]
+[h:PrimeStat = json.get(getLibProperty("sb.CastingAbilities","Lib:pm.a5e.Core"),sClassSelect)]
+[h:PrimeStat = if(PrimeStat=="","None",PrimeStat)]
+[h,if(PrimeStat == "None"): PrimeStatMod = 0; PrimeStatMod = json.get(AtrMods,PrimeStat)]
 
 [h:MissileCount=sBaseMissiles+(AHL*sAHLMissiles)]
 
@@ -362,8 +372,8 @@
 
 [h:"<!--Note: need a better way to apply brutal crit effects, currently only applies to dmgtype1 (secBrutalCrit does nothing atm) but should be able to choose which one. Same for dmg MOD. Could go into untyped category I guess. -->"]
 
-[h:SaveDC = 8+Proficiency+PrimeStat]
-[h:AttackMod = Proficiency+PrimeStat]
+[h:SaveDC = 8+Proficiency+PrimeStatMod]
+[h:AttackMod = Proficiency+PrimeStatMod]
 [h:minCrit = 20]
 [h:BrutalCrit = 0]
 [h:secBrutalCrit = if(DmgDie2Num==0,0,BrutalCrit)]
@@ -407,7 +417,7 @@
 	"Header","Spell Class and Level",
 	"FalseHeader","",
 	"FullContents","",
-	"RulesContents",if(eLevel>0,"Level ","")+if(eLevel<=0,if(eLevel==0,"Ritual","FREE "),eLevel)+" "+sClassSelect+" Spell",
+	"RulesContents","Level "+eLevel+if(RitualTest," Ritual","")+" "+sClassSelect+" Spell",
 	"RollContents","",
 	"DisplayOrder","['Rules','Roll','Full']",
 	"LinkText","",
@@ -557,7 +567,7 @@
 	
 		[h:"<!-- Add info for flat numbers that aren't rolled -->"]
 		[h:flatBonus = number(DmgDieFlatBonus) + number(AHLFlatBonus)*DamageScaling]
-		[h:ModDamageBonus = if(DmgDieMODBonus,PrimeStat,0)]
+		[h:ModDamageBonus = if(DmgDieMODBonus,PrimeStatMod,0)]
 		[h:flatDmgTotal = ModDamageBonus+flatBonus]
 			
 		[h:"<!-- Build all strings and damage totals last, so that passive abilities only need to trigger once. -->"]
@@ -607,7 +617,7 @@
 
 		[h:"<!-- Flat Bonuses 2 -->"]
 		[h:flatBonus2 = number(DmgDie2FlatBonus) + number(AHL2FlatBonus)*DamageScaling]
-		[h:ModDamageBonus2 = if(DmgDie2MODBonus,PrimeStat,0)]
+		[h:ModDamageBonus2 = if(DmgDie2MODBonus,PrimeStatMod,0)]
 		[h:flatDmg2Total = ModDamageBonus2+flatBonus2]
 		
 		[h:"<!-- String Building -->"]
@@ -648,7 +658,7 @@
 			"Header","Attack Roll",
 			"FalseHeader","",
 			"FullContents","<span style='"+if(json.get(json.get(sp.AllMissileData,MissileNum),"CritTest"),"font-size:2em; color:"+CritColor,if(roll1==1,"font-size:2em; color:"+CritFailColor,"font-size:1.5em"))+"'>"+(json.get(json.get(sp.AllMissileData,MissileNum),"Roll1")+AttackMod)+"</span>",
-			"RulesContents","1d20 + "+substring(PrimeStat,0,3)+" + "+Proficiency+" = ",
+			"RulesContents","1d20 + "+substring(PrimeStatMod,0,3)+" + "+Proficiency+" = ",
 			"RollContents",json.get(json.get(sp.AllMissileData,MissileNum),"Roll1")+pm.PlusMinus(AttackMod,0)+" = ",
 			"DisplayOrder","['Rules','Roll','Full']",
 			"LinkText","Reroll",

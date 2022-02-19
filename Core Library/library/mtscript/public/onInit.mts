@@ -28,6 +28,7 @@
 [h:defineFunction("a5e.DamageModDisplay","a5e.DamageModDisplay@Lib:pm.a5e.Core")]
 [h:defineFunction("a5e.HitDieDisplay","a5e.HitDieDisplay@Lib:pm.a5e.Core")]
 [h:defineFunction("a5e.Languages","a5e.Languages@Lib:pm.a5e.Core")]
+[h:defineFunction("a5e.LanguageDisplay","a5e.LanguageDisplay@Lib:pm.a5e.Core")]
 [h:defineFunction("a5e.MaxHP","a5e.MaxHP@Lib:pm.a5e.Core")]
 [h:defineFunction("a5e.SaveProficiency","a5e.SaveProficiency@Lib:pm.a5e.Core")]
 [h:defineFunction("a5e.SkillProficiency","a5e.SkillProficiency@Lib:pm.a5e.Core")]

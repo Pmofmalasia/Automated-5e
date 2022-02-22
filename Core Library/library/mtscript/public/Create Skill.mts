@@ -15,8 +15,11 @@
 };{}]
 
 [h,if(sk.SkillType == "Tool"),CODE:{
+   [h:abort(input(
+      " sk.ToolType | None,Artisan's Tool,Instrument,Vehicle | Type of Tool | RADIO | VALUE=STRING "
+   ))]
 	[h:setLibProperty("sb.Tools",
-			json.append(getLibProperty("sb.Tools","Lib:"+sk.SourcebookLib),json.set("","Name",pm.RemoveSpecial(sk.Name),"DisplayName",sk.Name,"Attribute",pm.RemoveSpecial(sk.Attribute))),
+			json.append(getLibProperty("sb.Tools","Lib:"+sk.SourcebookLib),json.set("","Name",pm.RemoveSpecial(sk.Name),"DisplayName",sk.Name,"Attribute",pm.RemoveSpecial(sk.Attribute),"ToolType",if(sk.ToolType=="None","",sk.ToolType))),
 			"Lib:"+sk.SourcebookLib
 		)]
 };{}]

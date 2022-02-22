@@ -34,7 +34,7 @@
 			[h:pm.CurrentID = json.get(pm.ConditionIDTest,0)]
 			[h,MACRO("EndCondition@Lib:pm.a5e.Core"): json.set("","ConditionID",pm.CurrentID,"ParentToken",json.get(abilityInfo,"ParentToken"))]
 			[h:pm.CondRemovedList = json.toList(json.path.read(json.get(macro.return,"Removed"),"[*]['DisplayName']"),", ")]
-			[h:abilityTable = json.append(json.get(macro.return,"Table"),json.set("","ShowIfCondensed",1,"Header","Condition"+if(pm.ConditionNum>1,"s","")+" Deactivated","FalseHeader","","FullContents","","RulesContents",pm.CondRemovedList,"RollContents","","DisplayOrder","['Rules','Roll','Full']"))]
+			[h:abilityTable = json.append(json.get(macro.return,"Table"),json.set("","ShowIfCondensed",1,"Header","Condition"+if(pm.ConditionNum>1,"s","")+" Deactivated","FalseHeader","","FullContents","","RulesContents",pm.CondRemovedList,"RollContents","","DisplayOrder","['Rules','Roll','Full']"),"Toggle",1,"IsActive",1))]
 			[h:abilityEffect=pm.CondRemovedList+" deactivated."]
 			[h:pm.AbilityFormatCall()]
 			[h:abort(0)]
@@ -47,6 +47,6 @@
 		[h:macro.return = json.set("","Table",json.set("","ShowIfCondensed",1,"Header","Conditions Applied","FalseHeader","","FullContents","","RulesContents",pm.ConditionNames,"RollContents","","DisplayOrder","['Rules','Roll','Full']"),"Conditions",json.get(pm.ConditionInfo,"Conditions"),"EndCondition",pm.ConditionEndInfo,"Toggle",0)]
 	};{
 		[h:ApplyConditionLink = macroLinkText("ApplyCondition@Lib:pm.a5e.Core","all",json.set("","Conditions",json.get(pm.ConditionInfo,"Conditions"),"Group",json.get(pm.ConditionInfo,"ConditionID"),"EndInfo",pm.ConditionEndInfo),"selected")]
-		[h:macro.return = json.set("","Table",json.set("","ShowIfCondensed",1,"Header","Conditions Applied","FalseHeader","","FullContents","","RulesContents",pm.ConditionNames+": <a href='"+ApplyConditionLink+"'><span style='color:"+pm.LinkColor()+"'>Select the Target and Click to Apply</span></a>","RollContents","","DisplayOrder","['Rules','Roll','Full']"),"Conditions",json.get(pm.ConditionInfo,"Conditions"),"EndCondition",pm.ConditionEndInfo,"Toggle",0)]
+		[h:macro.return = json.set("","Table",json.set("","ShowIfCondensed",1,"Header","Conditions Applied","FalseHeader","","FullContents","","RulesContents",pm.ConditionNames+": <a href='"+ApplyConditionLink+"'><span style='color:"+pm.LinkColor()+"'>Select Target(s) and Click to Apply</span></a>","RollContents","","DisplayOrder","['Rules','Roll','Full']"),"Conditions",json.get(pm.ConditionInfo,"Conditions"),"EndCondition",pm.ConditionEndInfo,"Toggle",0)]
 	}]		
 }]

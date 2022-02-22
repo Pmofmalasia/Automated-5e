@@ -18,6 +18,7 @@
 [h:sConcentrationLost=json.get(json.get(SpellData,0),"sConcentrationLost")]
 [h:InnateCast=json.get(json.get(SpellData,0),"InnateCast")]
 [h:MonsterCast=json.get(json.get(SpellData,0),"MonsterCast")]
+[h:IsCantrip = if(sLevel==0,1,0)]
 [h:NeedsBorder = if(json.get(json.get(SpellData,0),"NeedsBorder")=="",1,json.get(json.get(SpellData,0),"NeedsBorder"))]
 
 [h:sSpellChoice=0]
@@ -57,29 +58,32 @@
 }]
 
 [h,if(ForcedLevel==""),CODE:{
-
-[h:LevelOptions = 
-	if(Ritual==1,"Ritual,","")
-	+if(and(sLevel<=1,json.get(SpellSlots,"1")>0),"1,","")
-	+if(and(sLevel<=2,json.get(SpellSlots,"2")>0),"2,","")
-	+if(and(sLevel<=3,json.get(SpellSlots,"3")>0),"3,","")
-	+if(and(sLevel<=4,json.get(SpellSlots,"4")>0),"4,","")
-	+if(and(sLevel<=5,json.get(SpellSlots,"5")>0),"5,","")
-	+if(and(sLevel<=6,json.get(SpellSlots,"6")>0),"6,","")
-	+if(and(sLevel<=7,json.get(SpellSlots,"7")>0),"7,","")
-	+if(and(sLevel<=8,json.get(SpellSlots,"8")>0),"8,","")
-	+if(and(sLevel<=9,json.get(SpellSlots,"9")>0),"9,","")
-	+if(and(json.get(SpellSlots,"W")>0,WSpellLevel>=sLevel),"W,","")
-	+"Free"
-]
-[h:ForcedLevelTest=1]
+   [h:LevelOptions = 
+      if(Ritual==1,"Ritual,","")
+      +if(and(sLevel<=1,json.get(SpellSlots,"1")>0),"1st Level,","")
+      +if(and(sLevel<=2,json.get(SpellSlots,"2")>0),"2nd Level,","")
+      +if(and(sLevel<=3,json.get(SpellSlots,"3")>0),"3rd Level,","")
+      +if(and(sLevel<=4,json.get(SpellSlots,"4")>0),"4th Level,","")
+      +if(and(sLevel<=5,json.get(SpellSlots,"5")>0),"5th Level,","")
+      +if(and(sLevel<=6,json.get(SpellSlots,"6")>0),"6th Level,","")
+      +if(and(sLevel<=7,json.get(SpellSlots,"7")>0),"7th Level,","")
+      +if(and(sLevel<=8,json.get(SpellSlots,"8")>0),"8th Level,","")
+      +if(and(sLevel<=9,json.get(SpellSlots,"9")>0),"9th Level,","")
+      +if(and(json.get(SpellSlots,"W")>0,WSpellLevel>=sLevel),"W,","")
+      +"Free"
+   ]
+   [h,if(IsCantrip): LevelOptions = "Cantrip"]
+   [h:pm.PassiveFunction("SpellResources")]
+   [h:ForcedLevelTest=1]
 };{
-	[h:ForcedLevelTest=if(or(json.get(SpellSlots,""+ForcedLevel+"")>0,FreeCasting==1),1,0)]
-	[h:eLevel.Forced = if(ForcedLevel=="W",WSpellLevel,ForcedLevel)]
-	[h:assert(if(eLevel.Forced>=sLevel,1,0),"<br>Your chosen spell level is lower than the base level of the spell!",0)]
-	[h:LevelOptions=ForcedLevel]
+   [h:ForcedLevelTest=if(or(json.get(SpellSlots,""+ForcedLevel+"")>0,FreeCasting==1),1,0)]
+   [h:eLevel.Forced = if(ForcedLevel=="W",WSpellLevel,ForcedLevel)]
+   [h:assert(if(eLevel.Forced>=sLevel,1,0),"<br>Your chosen spell level is lower than the base level of the spell!",0)]
+   [h:LevelOptions=ForcedLevel]
+   [h,if(IsCantrip): LevelOptions = "Cantrip"]
 }]
-[h:dissConcentration=if(or(sConcentration==0,sLevel>=sConcentrationLost),"",if(Concentration=="","","junkVar|<html><span style='font-size:1.2em';>Casting <span style='color:#2222AA'><i>"+SpellName+"</i></span> will cancel concentration on <span style='color:#AA2222'><i>"+Concentration+".</i></span></span></html>|<html><span style='color:#AA2222; font-size:1.2em'><b>WARNING</b></span></html>|LABEL"))]
+
+[h:dissConcentration=if(or(sConcentration==0,sLevel>=sConcentrationLost),"",if(Concentration=="","","junkVar|<html><span style='font-size:1.2em';>Casting <span style='color:#2222AA'><i>"+SpellName+"</i></span> will cancel concentration on <span style='color:#AA2222'><i>"+Concentration+".</i></span></span></html>|<html><span style='color:#AA2222; font-size:1.2em'><b>sp.NING</b></span></html>|LABEL"))]
 [h:disIsSilenced=if(or(getState("Silence")==0,vComp==0),"","junkVar|<html><span style='font-size:1.2em';><span style='color:#AA2222'><i><b>NOTE: You are currently silenced and attempting to cast a spell with verbal components!</b></i></span></span></html>| |LABEL|SPAN=TRUE")]
 [h:disIsBlinded=if(or(getState("Blinded")==0,IsSight==0),"","junkVar|<html><span style='font-size:1.2em';><span style='color:#AA2222'><i><b>NOTE: You are currently blinded and this spell requires sight!</b></i></span></span></html>| |LABEL|SPAN=TRUE")]
 [h:disCompConsumed=if(or(mCompConsumed=="0",mCompConsumed==""),"","junkVar|"+mCompConsumed+"|Consumed Components|LABEL")]
@@ -98,16 +102,18 @@
 		disIsBlinded,
 		"junkVar|"+SpellName+" ("+sLevel+") "+sSchool+"|Spell|LABEL",
 		"sClassSelect|"+ClassOptions+"|Choose Class to cast|LIST| VALUE=STRING",
-		"sLevelSelect|"+LevelOptions+"|Choose Spell Slot|LIST| VALUE=STRING",
+		"sLevelSelect|"+LevelOptions+"|Choose Spell Slot| "+if(sLevel==0,"LABEL","LIST")+if(sLevel==0,"","| VALUE=STRING"),
 		"sRulesShow| "+(getLibProperty("FullSpellRules","Lib:pm.a5e.Core"))+" |Show Full Spell Rules|CHECK|",
 		disCompConsumed,
 		disSpellEffectChoices,
 		disPassiveBars,
 		disPassiveChoices
 	))]
+   [h,if(IsCantrip): sLevelSelect = "Cantrip"]
 };{
 	[h:sClassSelect=if(ForcedClass!="",ForcedClass,if(InnateCast,Race,""))]
 	[h:sLevelSelect=ForcedLevel]
+   [h,if(IsCantrip): sLevelSelect = "Cantrip"]
 	[h:sRulesShow=getLibProperty("FullSpellRules","Lib:pm.a5e.Core")]
 	[h:abort(input(
 		disPassiveBars,
@@ -262,46 +268,50 @@
 [h:CastTime=if(CastTime=="12 HOURS","12 Hours",CastTime)]
 [h:CastTime=if(CastTime=="24 HOURS","12 Hours",CastTime)]
 
-[h:"<!-- Temporarily setting the type of spell to Arcane always since it has yet to be implemented (will probably happen in full spell rework) -->"]
+[h:"<!-- Temporarily setting the type of spell to Arcane alsp.s since it has yet to be implemented (will probably happen in full spell rework) -->"]
 [h:sSource = "Arcane"]
 
 [h,if(FreeCasting==1),CODE:{
 	[h,switch(sLevelSelect),code:
 		case "Ritual": {[eLevel=0]};
-		case "1": {[eLevel=1]};
-		case "2": {[eLevel=2]};
-		case "3": {[eLevel=3]};
-		case "4": {[eLevel=4]};
-		case "5": {[eLevel=5]};
-		case "6": {[eLevel=6]};
-		case "7": {[eLevel=7]};
-		case "8": {[eLevel=8]};
-		case "9": {[eLevel=9]};
+		case "1st Level": {[eLevel=1]};
+		case "2nd Level": {[eLevel=2]};
+		case "3rd Level": {[eLevel=3]};
+		case "4th Level": {[eLevel=4]};
+		case "5th Level": {[eLevel=5]};
+		case "6th Level": {[eLevel=6]};
+		case "7th Level": {[eLevel=7]};
+		case "8th Level": {[eLevel=8]};
+		case "9th Level": {[eLevel=9]};
 		case "W": {[eLevel=WSpellLevel]};
 		case "MA": {[eLevel=sLevel]};
-		case "Free": {[eLevel=sLevel]}
+		case "Free": {[eLevel=sLevel]};
+      case "Cantrip": {[eLevel=0+if(Level>=5,1,0)+if(Level>=11,1,0)+if(Level>=17,1,0)]};
+      default: {[h:pm.PassiveFunction("SpellResources")]}
 		]
 };{
 
 [h:RitualTest = 0]
 [h,switch(sLevelSelect),code:
 	case "Ritual": {[eLevel=sLevel][h:RitualTest = 1]};
-	case "1": {[eLevel=1][SpellSlots=json.set(SpellSlots,"1",json.get(SpellSlots,"1")-1)]};
-	case "2": {[eLevel=2][SpellSlots=json.set(SpellSlots,"2",json.get(SpellSlots,"2")-1)]};
-	case "3": {[eLevel=3][SpellSlots=json.set(SpellSlots,"3",json.get(SpellSlots,"3")-1)]};
-	case "4": {[eLevel=4][SpellSlots=json.set(SpellSlots,"4",json.get(SpellSlots,"4")-1)]};
-	case "5": {[eLevel=5][SpellSlots=json.set(SpellSlots,"5",json.get(SpellSlots,"5")-1)]};
-	case "6": {[eLevel=6][SpellSlots=json.set(SpellSlots,"6",json.get(SpellSlots,"6")-1)]};
-	case "7": {[eLevel=7][SpellSlots=json.set(SpellSlots,"7",json.get(SpellSlots,"7")-1)]};
-	case "8": {[eLevel=8][SpellSlots=json.set(SpellSlots,"8",json.get(SpellSlots,"8")-1)]};
-	case "9": {[eLevel=9][SpellSlots=json.set(SpellSlots,"9",json.get(SpellSlots,"9")-1)]};
+	case "1st Level": {[eLevel=1][SpellSlots=json.set(SpellSlots,"1",json.get(SpellSlots,"1")-1)]};
+	case "2nd Level": {[eLevel=2][SpellSlots=json.set(SpellSlots,"2",json.get(SpellSlots,"2")-1)]};
+	case "3rd Level": {[eLevel=3][SpellSlots=json.set(SpellSlots,"3",json.get(SpellSlots,"3")-1)]};
+	case "4th Level": {[eLevel=4][SpellSlots=json.set(SpellSlots,"4",json.get(SpellSlots,"4")-1)]};
+	case "5th Level": {[eLevel=5][SpellSlots=json.set(SpellSlots,"5",json.get(SpellSlots,"5")-1)]};
+	case "6th Level": {[eLevel=6][SpellSlots=json.set(SpellSlots,"6",json.get(SpellSlots,"6")-1)]};
+	case "7th Level": {[eLevel=7][SpellSlots=json.set(SpellSlots,"7",json.get(SpellSlots,"7")-1)]};
+	case "8th Level": {[eLevel=8][SpellSlots=json.set(SpellSlots,"8",json.get(SpellSlots,"8")-1)]};
+	case "9th Level": {[eLevel=9][SpellSlots=json.set(SpellSlots,"9",json.get(SpellSlots,"9")-1)]};
 	case "W": {[eLevel=WSpellLevel][SpellSlots=json.set(SpellSlots,"W",json.get(SpellSlots,"W")-1)]};
-	case "Free": {[eLevel=sLevel]}
+	case "Free": {[eLevel=sLevel]};
+   case "Cantrip": {[eLevel=0+if(Level>=5,1,0)+if(Level>=11,1,0)+if(Level>=17,1,0)]};
+   default: {[h:pm.PassiveFunction("SpellResourceChoice")]}
 ]
 
 }]
 
-[h:DefaultDisplayData = pm.SpellColors(json.set("","Level",string(eLevel),"Source",sSource))]
+[h:DefaultDisplayData = pm.SpellColors(json.set("","Level",if(IsCantrip,"0",string(eLevel)),"Source",sSource))]
 [h:BorderColor = json.get(DefaultDisplayData,"Border")]
 [h:TextColor = json.get(DefaultDisplayData,"Title")]
 
@@ -343,7 +353,7 @@
 	[h:SelectDamageTypes=0]
 	[h:DamageCancelCheck=0]
 	[h,while(SelectDamageTypes==0),CODE:{
-		[h:disCancelCheck=if(DamageCancelCheck,"junkVar | You need to make a choice or else errors will occur! | Warning | LABEL ","")]
+		[h:disCancelCheck=if(DamageCancelCheck,"junkVar | You need to make a choice or else errors will occur! | sp.ning | LABEL ","")]
 		[h:SelectDamageTypes=input(
 			""+disCancelCheck+"",
 			""+disDmgTypeOptions+"",
@@ -361,7 +371,8 @@
 
 [h:PrimeStat = json.get(getLibProperty("sb.CastingAbilities","Lib:pm.a5e.Core"),sClassSelect)]
 [h:PrimeStat = if(PrimeStat=="","None",PrimeStat)]
-[h,if(PrimeStat == "None"): PrimeStatMod = 0; PrimeStatMod = json.get(AtrMods,PrimeStat)]
+[h,if(PrimeStat == "None"): PrimeStatMod = 0; PrimeStatMod = json.get(AtrMods,PrimeStat)];
+[h:pm.PassiveFunction("SpellStat")]
 
 [h:MissileCount=sBaseMissiles+(AHL*sAHLMissiles)]
 
@@ -370,17 +381,19 @@
 
 [h:CompendiumLink=concat('<a style="color:'+TextColor+';" href=',BaseLink,replace(SpellName,' ','-'),'>',SpellName,'</a>')]
 
-[h:"<!--Note: need a better way to apply brutal crit effects, currently only applies to dmgtype1 (secBrutalCrit does nothing atm) but should be able to choose which one. Same for dmg MOD. Could go into untyped category I guess. -->"]
+[h:"<!--Note: need a better sp. to apply brutal crit effects, currently only applies to dmgtype1 (secBrutalCrit does nothing atm) but should be able to choose which one. Same for dmg MOD. Could go into untyped category I guess. -->"]
 
 [h:SaveDC = 8+Proficiency+PrimeStatMod]
 [h:AttackMod = Proficiency+PrimeStatMod]
-[h:minCrit = 20]
+[h:sp.CritRange = 0]
 [h:BrutalCrit = 0]
 [h:secBrutalCrit = if(DmgDie2Num==0,0,BrutalCrit)]
 [h:CritTest=0]
 [h:AllAttacksToHit="[]"]
 [h:AllAttacksDmg="[]"]
 [h:AllAttacksSecDmg="[]"]
+
+[h:sp.FinalCritRange = 20 - sp.CritRange]
 
 [h:dDuration = if(and(AHL2Duration!="",eLevel==2),AHL2Duration+" (increased by upcasting)",Duration)]
 [h:dDuration = if(and(AHL3Duration!="",eLevel==3),AHL3Duration+" (increased by upcasting)",dDuration)]
@@ -398,10 +411,10 @@
 [h:DamageScaling=if(AHLScaling=="Every Level",AHL,if(AHLScaling=="Every Other Level",floor(AHL/2),if(AHLScaling=="Every Three Levels",floor(AHL/3),0)))]
 
 [h:RerollSpellData=json.append("",json.set(FinalSpellData,"ForcedClass",sClassSelect,"ForcedLevel",sLevelSelect,"FreeCasting",1))]
-[h:sRerollLink=macroLinkText("SpellCasting@Lib:pm.a5e.Core","all",RerollSpellData,ParentToken)]
+[h:sRerollLink=macroLinkText("SpellCasting@Lib:pm.a5e.Core","gm-self",RerollSpellData,ParentToken)]
 
 [h:abilityClass = sClassSelect]
-[h:abilityName = "<b>"+CompendiumLink+"</b> ("+sLevel+") <i>"+if(sLevelSelect=="Ritual"," (ritual)","")+"</i>"]
+[h:abilityDisplayName = "<b>"+CompendiumLink+"</b> ("+sLevel+") <i>"+if(sLevelSelect=="Ritual"," (ritual)","")+"</i>"]
 [h:abilityFalseName = "Spellcasting"]
 [h:abilityOnlyRules = 0]
 
@@ -417,7 +430,7 @@
 	"Header","Spell Class and Level",
 	"FalseHeader","",
 	"FullContents","",
-	"RulesContents","Level "+eLevel+if(RitualTest," Ritual","")+" "+sClassSelect+" Spell",
+	"RulesContents",if(IsCantrip,sClassSelect+" Cantrip","Level "+eLevel+if(RitualTest," Ritual","")+" "+sClassSelect+" Spell"),
 	"RollContents","",
 	"DisplayOrder","['Rules','Roll','Full']",
 	"LinkText","",
@@ -457,19 +470,6 @@
 	"FalseHeader","",
 	"FullContents","",
 	"RulesContents",if(RangeType=="Ranged","Range "+(Range+dRangeAHL)+" "+sRangeUnits,RangeType)+if(AoEShape=="None","",", "+(AoESize+dAoESizeAHL)+" "+AoEShape),
-	"RollContents","",
-	"DisplayOrder","['Rules','Roll','Full']",
-	"LinkText","",
-	"Link","",
-	"Value",""
-	))]
-
-[h:abilityTable = json.append(abilityTable,json.set("",
-	"ShowIfCondensed",0,
-	"Header","Casting Time",
-	"FalseHeader","",
-	"FullContents","",
-	"RulesContents",CastTime,
 	"RollContents","",
 	"DisplayOrder","['Rules','Roll','Full']",
 	"LinkText","",
@@ -531,15 +531,80 @@
 	"Value",""
 	))]
 
-[h:"<!-- Note: This loop is nearing its limit in terms of stack overflow. If more features are added the damage rolls can be separated out similar to how it was done in the attack macro. -->"]
+[h:"<!-- Note: This loop is nearing its limit in terms of stack overflow. If more features are added the damage rolls can be separated out similar to how it sp. done in the attack macro. -->"]
 [h:CurrentMissile=0]
 [h:sp.AllMissileData = ""]
 [h,count(MissileCount),code:{
 	[h:sp.ThisMissileData = ""]
+   
+   [h,SWITCH(sSpellAttack+""+json.get(sp.Data,"Advantage")+json.get(sp.Data,"ForcedAdvantage")),CODE:
+      case "1-11": {
+			[h:sp.AdvDis = -1]
+			};
+		case "1-10": {
+			[h:sp.Adv = 0]
+			[h:sp.Dis = 1]
+			[h:pm.PassiveFunction("SpellAdv")]
+			[h:sp.AdvDis = if(or(and(sp.Dis == 0,sp.Adv == 0),and(sp.Dis !=0,sp.Adv != 0)),0,if(sp.Dis == 0,1,-1))]
+			};
+		case "101": {
+			[h:sp.AdvDis = 0]
+			};
+		case "100": {
+			[h:sp.Adv = 0]
+			[h:sp.Dis = 0]
+			[h:pm.PassiveFunction("SpellAdv")]
+			[h:sp.AdvDis = if(or(and(sp.Dis == 0,sp.Adv == 0),and(sp.Dis !=0,sp.Adv != 0)),0,if(sp.Dis == 0,1,-1))]
+			};
+		case "111": {
+			[h:sp.AdvDis = 1]
+			};
+		case "110": {
+			[h:sp.Adv = 1]
+			[h:sp.Dis = 0]
+			[h:pm.PassiveFunction("SpellAdv")]
+			[h:sp.AdvDis = if(or(and(sp.Dis == 0,sp.Adv == 0),and(sp.Dis !=0,sp.Adv != 0)),0,if(sp.Dis == 0,1,-1))]
+			};
+		default: {[h:sp.AdvDis=0]}
+	]
+   
+	[h:"<!-- Attack Roll Info -->"]
+	[h,if(sSpellAttack == 1),CODE:{
+		[h:roll1=1d20]
+		[h:roll2=1d20]
+      
+      [h,switch(sp.AdvDis):
+         case -1: effectiveRoll = min(roll1,roll2);
+         case 0: effectiveRoll = roll1;
+         case 1: effectiveRoll = max(roll1,roll2)
+      ]
+      
+      [h,switch(sp.AdvDis):
+         case -1: sp.ToHitRulesStr = "1d20 <span style='color:"+DamageColor+"'>with Dis</span>";
+         case 0: sp.ToHitRulesStr = "1d20";
+         case 1: sp.ToHitRulesStr = "1d20 <span style='color:"+HealingColor+"'>with Adv</span>"
+      ]
+      
+		[h:CritTest=if(effectiveRoll>=sp.FinalCritRange,CritTest+1,CritTest)]
+      [h:CritTestEach=if(effectiveRoll>=sp.FinalCritRange,1,0)]
+      [h:CritFailTest=if(effectiveRoll==1,1,0)]
+         
+      [h:sp.ToHit = effectiveRoll+PrimeStatMod+Proficiency]
+      [h:sp.ToHitStr = effectiveRoll+" + "+PrimeStatMod+" + "+Proficiency]
+      [h:sp.ToHitRulesStr = sp.ToHitRulesStr+" + "+substring(PrimeStat,0,3)+" + Prof"]
+      
+      [h:pm.PassiveFunction("SpellBonus")]
+      
+		[h:sp.ThisMissileData = json.set(sp.ThisMissileData,"Roll1",roll1,"Roll2",roll2,"ToHit",wa.ToHit,"ToHitStr",wa.ToHitStr,"RulesStr",wa.ToHitRulesStr,"CritTest",CritTestEach,"CritFailTest",CritFailTest)]
+	};{
+		[h:sp.ThisMissileData = json.set(sp.ThisMissileData,"CritTest",0)]
+	}]
+   
 	[h:"<!-- Rolling First Damage Type Dice -->"]
 	[h,if(DmgDieNum == 0),CODE:{};{
-		[h:junkVar=getNewRolls()]
-		[h:sp.Dmg=eval(DmgDieNum+"d"+DmgDieSize)]
+		[h:junkVar = getNewRolls()]
+		[h:sp.Dmg = eval(DmgDieNum+"d"+DmgDieSize)]
+      [h:sp.DmgRulesStr = DmgDieNum+"d"+DmgDieSize]
 		[h:sp.DmgArray = getNewRolls()]
 		[h:sp.DmgMax = DmgDieSize*DmgDieNum]
 		
@@ -548,6 +613,7 @@
 		[h:AHLNumDie = (DamageScaling*AHLDamageNumber)]
 		[h:junkVar=getNewRolls()]
 		[h:sp.AHLDmg=eval(AHLNumDie+"d"+AHLDmgDieSize)]
+      [h:sp.AHLDmgRulesStr = AHLNumDie+"d"+AHLDmgDieSize]
 		[h:sp.DmgArray = json.merge(sp.DmgArray,getNewRolls())]
 		[h:sp.AHLDmgMax = AHLDmgDieSize*AHLNumDie]
 		
@@ -555,6 +621,7 @@
 		
 		[h:junkVar=getNewRolls()]
 		[h:sp.CritDmg=eval((DmgDieNum+BrutalCrit)+"d"+DmgDieSize)]
+      [h:sp.CritDmgRulesStr = (DmgDieNum+BrutalCrit)+"d"+DmgDieSize]
 		[h:sp.CritDmgArray = json.merge(sp.DmgArray,getNewRolls())]
 		[h:sp.CritDmgMax = DmgDieSize*(DmgDieNum+BrutalCrit)]
 		
@@ -562,34 +629,25 @@
 		
 		[h:junkVar=getNewRolls()]
 		[h:sp.CritAHLDmg=eval(AHLNumDie+"d"+AHLDmgDieSize)]
+      [h:sp.CritAHLDmgRulesStr = AHLNumDie+"d"+AHLDmgDieSize]
 		[h:sp.CritDmgArray = json.merge(sp.CritDmgArray,getNewRolls())]
 		[h:sp.CritAHLDmgMax = AHLDmgDieSize*AHLNumDie]
 	
 		[h:"<!-- Add info for flat numbers that aren't rolled -->"]
 		[h:flatBonus = number(DmgDieFlatBonus) + number(AHLFlatBonus)*DamageScaling]
 		[h:ModDamageBonus = if(DmgDieMODBonus,PrimeStatMod,0)]
+      [h:flatBonusRules = if(number(DmgDieFlatBonus)==0,"",flatBonus)]
+      [h:flatBonusRules = if(DmgDieMODBonus,listAppend(flatBonusRules,substring(PrimeStat,0,3)," + "),flatBonusRules)]
 		[h:flatDmgTotal = ModDamageBonus+flatBonus]
 			
-		[h:"<!-- Build all strings and damage totals last, so that passive abilities only need to trigger once. -->"]
-		
-		[h:sp.DmgFormula = DmgDieNum+"d"+DmgDieSize+if(AHLNumDie>0," + "+AHLNumDie+"d"+AHLDmgDieSize,"")+pm.PlusMinus(flatBonus,0)+pm.PlusMinus(ModDamageBonus,0)]
-		[h:sp.DmgStrFinal = json.toList(sp.DmgArray," + ")+pm.PlusMinus(flatBonus,0)+pm.PlusMinus(ModDamageBonus,0)]
-		
-		[h:sp.CritDmgFormula = DmgDieNum+"d"+DmgDieSize+" + "+(DmgDieNum+BrutalCrit)+"d"+DmgDieSize+if(AHLNumDie>0," + "+AHLNumDie+"d"+AHLDmgDieSize+" + "+AHLNumDie+"d"+AHLDmgDieSize,"")+pm.PlusMinus(flatBonus,0)+pm.PlusMinus(ModDamageBonus,0)]
-		[h:sp.CritDmgStrFinal = json.toList(sp.CritDmgArray," + ")+pm.PlusMinus(flatBonus,0)+pm.PlusMinus(ModDamageBonus,0)]
-		
-		[h:sp.DmgFinal = math.arraySum(sp.DmgArray)+flatDmgTotal]
-		[h:sp.CritDmgFinal = math.arraySum(sp.CritDmgArray)+flatDmgTotal]
-		[h:sp.DmgMaxFinal = sp.DmgMax+sp.AHLDmgMax+flatDmgTotal]
-		[h:sp.CritDmgMaxFinal = sp.DmgMax+sp.AHLDmgMax+sp.CritDmgMax+sp.CritAHLDmgMax+flatDmgTotal]
-
-		[h:sp.ThisMissileData = json.set(sp.ThisMissileData,"DmgFormula",sp.DmgFormula,"DmgStr",sp.DmgStrFinal,"Dmg",sp.DmgFinal,"DmgMax",sp.DmgMaxFinal,"CritDmgFormula",sp.CritDmgFormula,"CritDmgStr",sp.CritDmgStrFinal,"CritDmg",sp.CritDmgFinal,"CritDmgMax",sp.CritDmgMaxFinal)]
+		[h:"<!-- Build all strings and damage totals later, so that passive abilities only need to trigger once. -->"]
 	}]
 	
 	[h:"<!-- Repeat all for 2nd damage type -->"]
 	[h,if(DmgDie2Num == 0),CODE:{};{		
 		[h:junkVar=getNewRolls()]
 		[h:sp.Dmg2=eval(DmgDie2Num+"d"+DmgDie2Size)]
+      [h:sp.Dmg2RulesStr = DmgDie2Num+"d"+DmgDie2Size]
 		[h:sp.Dmg2Array = getNewRolls()]
 		[h:sp.Dmg2Max = DmgDie2Size*DmgDie2Num]
 
@@ -598,6 +656,7 @@
 		[h:AHLNumDie2 = (DamageScaling*AHLDmgDie2Num)]
 		[h:junkVar=getNewRolls()]
 		[h:sp.AHLDmg2=eval(AHLNumDie2+"d"+AHLDmgDie2Size)]
+      [h:sp.AHLDmg2RulesStr = AHLNumDie2+"d"+AHLDmgDie2Size]
 		[h:sp.Dmg2Array = json.merge(sp.Dmg2Array,getNewRolls())]
 		[h:sp.AHLDmg2Max = AHLDmgDie2Size*AHLNumDie2]
 		
@@ -605,6 +664,7 @@
 		
 		[h:junkVar=getNewRolls()]
 		[h:sp.CritDmg2 = eval(DmgDie2Num+"d"+DmgDie2Size)]
+      [h:sp.CritDmg2RulesStr = DmgDie2Num+"d"+DmgDie2Size]
 		[h:sp.CritDmg2Array = getNewRolls()]
 		[h:sp.CritDmg2Max = DmgDie2Size*(DmgDie2Num+BrutalCrit)]
 		
@@ -612,6 +672,7 @@
 		
 		[h:junkVar=getNewRolls()]
 		[h:sp.CritAHLDmg2=eval(AHLNumDie2+"d"+AHLDmgDie2Size)]
+      [h:sp.CritAHLDmg2RulesStr = AHLNumDie2+"d"+AHLDmgDie2Size]
 		[h:sp.CritDmg2Array = json.merge(sp.CritDmg2Array,getNewRolls())]
 		[h:sp.CritAHLDmg2Max = AHLDmgDie2Size*AHLNumDie2]
 
@@ -620,7 +681,29 @@
 		[h:ModDamageBonus2 = if(DmgDie2MODBonus,PrimeStatMod,0)]
 		[h:flatDmg2Total = ModDamageBonus2+flatBonus2]
 		
-		[h:"<!-- String Building -->"]
+	}]
+   
+   [h,if(and(DmgDie2Num==0,DmgDieNum==0)),CODE:{};{
+      [h:pm.PassiveFunction("SpellDamage")]
+   }]
+   
+   [h:"<!-- String Building -->"]
+   [h,if(DmgDieNum==0),CODE:{};{
+		[h:sp.DmgFormula = sp.DmgRulesStr+if(AHLNumDie>0," + "+sp.AHLDmgRulesStr,"")+flatBonusRules]
+		[h:sp.DmgStrFinal = json.toList(sp.DmgArray," + ")+pm.PlusMinus(flatBonus,0)+pm.PlusMinus(ModDamageBonus,0)]
+		
+		[h:sp.CritDmgFormula = DmgDieNum+"d"+DmgDieSize+" + "+sp.CritDmgRulesStr+if(AHLNumDie>0," + "+sp.AHLDmgRulesStr+" + "+sp.CritAHLDmgRulesStr,"")+flatBonusRules]
+		[h:sp.CritDmgStrFinal = json.toList(sp.CritDmgArray," + ")+pm.PlusMinus(flatBonus,0)+pm.PlusMinus(ModDamageBonus,0)]
+		
+		[h:sp.DmgFinal = math.arraySum(sp.DmgArray)+flatDmgTotal]
+		[h:sp.CritDmgFinal = math.arraySum(sp.CritDmgArray)+flatDmgTotal]
+		[h:sp.DmgMaxFinal = sp.DmgMax+sp.AHLDmgMax+flatDmgTotal]
+		[h:sp.CritDmgMaxFinal = sp.DmgMax+sp.AHLDmgMax+sp.CritDmgMax+sp.CritAHLDmgMax+flatDmgTotal]
+
+		[h:sp.ThisMissileData = json.set(sp.ThisMissileData,"DmgRules",sp.DmgFormula,"DmgStr",sp.DmgStrFinal,"Dmg",sp.DmgFinal,"DmgMax",sp.DmgMaxFinal,"CritDmgFormula",sp.CritDmgFormula,"CritDmgStr",sp.CritDmgStrFinal,"CritDmg",sp.CritDmgFinal,"CritDmgMax",sp.CritDmgMaxFinal)]
+   }]
+   
+   [h,if(DmgDie2Num==0),CODE:{};{
 	
 		[h:sp.Dmg2Formula = DmgDie2Num+"d"+DmgDie2Size+if(AHLNumDie2>0," + "+AHLNumDie2+"d"+AHLDmgDie2Size,"")+pm.PlusMinus(flatBonus,0)+pm.PlusMinus(ModDamageBonus2,0)]
 		[h:sp.Dmg2StrFinal = json.toList(sp.Dmg2Array," + ")+pm.PlusMinus(flatBonus,0)+pm.PlusMinus(ModDamageBonus2,0)]
@@ -634,18 +717,8 @@
 		[h:sp.CritDmg2MaxFinal = sp.Dmg2Max+sp.AHLDmg2Max+sp.CritDmg2Max+sp.CritAHLDmg2Max+flatDmg2Total]
 
 		[h:sp.ThisMissileData = json.set(sp.ThisMissileData,"Dmg2Formula",sp.Dmg2Formula,"Dmg2Str",sp.Dmg2StrFinal,"Dmg2",sp.Dmg2Final,"Dmg2Max",sp.Dmg2MaxFinal,"CritDmg2Formula",sp.CritDmg2Formula,"CritDmg2Str",sp.CritDmg2StrFinal,"CritDmg2",sp.CritDmg2Final,"CritDmg2Max",sp.CritDmg2MaxFinal)]
-	}]
+   }]
 	
-	[h:"<!-- Attack Roll Info -->"]
-	[h,if(sSpellAttack == 1),CODE:{
-		[h:roll1=1d20]
-		[h:roll2=1d20]
-		[h:CritTest=if(or(and(getLibProperty("AlwaysAdvDis","Lib:pm.a5e.Core"),max(roll1,roll2)>=minCrit),and(getLibProperty("AlwaysAdvDis","Lib:pm.a5e.Core")==0,roll1>=minCrit)),CritTest+1,CritTest)]
-		
-		[h:sp.ThisMissileData = json.set(sp.ThisMissileData,"Roll1",roll1,"Roll2",roll2,"CritTest",CritTest)]
-	};{
-		[h:sp.ThisMissileData = json.set(sp.ThisMissileData,"CritTest",0)]
-	}]
 	[h:sp.AllMissileData = json.append(sp.AllMissileData,sp.ThisMissileData)]
 }]
 
@@ -662,7 +735,7 @@
 			"RollContents",json.get(json.get(sp.AllMissileData,MissileNum),"Roll1")+pm.PlusMinus(AttackMod,0)+" = ",
 			"DisplayOrder","['Rules','Roll','Full']",
 			"LinkText","Reroll",
-			"Link",macroLinkText("SpellCasting@Lib:pm.a5e.Core","all",sp.Data,ParentToken),
+			"Link",macroLinkText("SpellCasting@Lib:pm.a5e.Core","self-gm",sp.Data,ParentToken),
 			"Value",(json.get(json.get(sp.AllMissileData,MissileNum),"Roll1")+AttackMod)
 			))]
 	};{}]
@@ -756,7 +829,7 @@
 		"TitleFont",TitleFont,
 		"BodyFont",BodyFont,
 		"Class","zzSpell",
-		"Name",abilityName,
+		"Name",abilityDisplayName,
 		"FalseName",abilityFalseName,
 		"OnlyRules",abilityOnlyRules
 		)]

@@ -66,6 +66,7 @@
 
 [h:pm.PassiveFunction("AttackCritThresh")]
 
+[h:wa.BrutalCrit = 0]
 [h:wa.FinalCritRange = 20 - wa.CritRange]
 [h:wa.FinalCritMultiplier=CritMultiplier+wa.CritMultiplier]
 [h:CritDmgDie=(wa.FinalCritMultiplier*number(substring(wa.DmgDie,0,indexOf(wa.DmgDie,"d"))))+substring(wa.DmgDie,indexOf(wa.DmgDie,"d"))]
@@ -163,18 +164,26 @@
 	[h:getNewRolls()]
 	[h:wa.Dmg = eval(wa.DmgDieNum+"d"+wa.DmgDieSize)]
 	[h:wa.DmgRulesStr = wa.DmgDieNum+"d"+wa.DmgDieSize]
+   [h:wa.DmgRollSizeArray = ""]
+   [h,count(wa.DmgDieNum): wa.DmgRollSizeArray = json.append(wa.DmgRollSizeArray,wa.DmgDieSize)]
 	[h:wa.DmgArray = getNewRolls()]
 	
-	[h:wa.CritDmg = eval(wa.DmgDieNum+"d"+wa.DmgDieSize)]
-	[h:wa.CritDmgRulesStr = wa.DmgDieNum+"d"+wa.DmgDieSize]
+	[h:wa.CritDmg = eval((wa.DmgDieNum+wa.BrutalCrit)+"d"+wa.DmgDieSize)]
+	[h:wa.CritDmgRulesStr = (wa.DmgDieNum+wa.BrutalCrit)+"d"+wa.DmgDieSize]
+   [h:wa.CritDmgRollSizeArray = ""]
+   [h,count((wa.DmgDieNum+wa.BrutalCrit)): wa.CritDmgRollSizeArray = json.append(wa.DmgRollSizeArray,wa.DmgDieSize)]
 	[h:wa.CritDmgArray = getNewRolls()]
 
 	[h:wa.Dmg2 = eval(wa.DmgDie2Num+"d"+wa.DmgDie2Size)]
 	[h:wa.Dmg2RulesStr = wa.DmgDie2Num+"d"+wa.DmgDie2Size]
+   [h:wa.Dmg2RollSizeArray = ""]
+   [h,count(wa.DmgDie2Num): wa.Dmg2RollSizeArray = json.append(wa.Dmg2RollSizeArray,wa.DmgDie2Size)]
 	[h:wa.Dmg2Array = getNewRolls()]
 	
 	[h:wa.CritDmg2 = eval(wa.DmgDie2Num+"d"+wa.DmgDie2Size)]
 	[h:wa.CritDmg2RulesStr = wa.DmgDie2Num+"d"+wa.DmgDie2Size]
+   [h:wa.CritDmg2RollSizeArray = ""]
+   [h,count(wa.DmgDie2Num): wa.CritDmg2RollSizeArray = json.append(wa.CritDmg2RollSizeArray,wa.DmgDie2Size)]
 	[h:wa.CritDmg2Array = getNewRolls()]
 	
 	[h:pm.PassiveFunction("AttackDamage")]
@@ -185,7 +194,7 @@
 	[h:wa.CritDmgRulesStr = wa.CritDmgRulesStr+" + "+wa.DmgRulesStr]
 	[h:wa.DmgString = json.toList(wa.DmgArray," + ")+pm.PlusMinus(wa.PrimeStatBonus,0)+pm.PlusMinus(wa.MagicBonus,0)]
 	[h:wa.CritDmgString = json.toList(wa.CritDmgArray," + ")+wa.DmgString]
-	[h:AllAttacksDmg=json.append(AllAttacksDmg,json.set("","Dmg",wa.Dmg,"DmgStr",wa.DmgString,"DmgCrit",wa.CritDmg,"DmgCritStr",wa.CritDmgString,"DmgRules",wa.DmgRulesStr,"CritDmgRules",wa.CritDmgRulesStr))]
+	[h:AllAttacksDmg=json.append(AllAttacksDmg,json.set("","Dmg",wa.Dmg,"DmgStr",wa.DmgString,"DmgRules",wa.DmgRulesStr,"DmgArray",wa.DmgArray,"DmgDieArray",wa.DmgRollSizeArray,"DmgCrit",wa.CritDmg,"DmgCritStr",wa.CritDmgString,"CritDmgRules",wa.CritDmgRulesStr,"CritDmgArray",wa.CritDmgArray,"CritDmgDieArray",wa.CritDmgRollSizeArray))]
 	
 	[h:wa.Dmg2 = wa.Dmg2]
 	[h:wa.CritDmg2 = wa.Dmg2 + wa.CritDmg2]
@@ -193,7 +202,7 @@
 	[h:wa.CritDmg2RulesStr = wa.CritDmg2RulesStr+" + "+wa.Dmg2RulesStr]
 	[h:wa.Dmg2String = json.toList(wa.Dmg2Array," + ")]
 	[h:wa.CritDmg2String = json.toList(wa.CritDmg2Array," + ")+" + "+wa.Dmg2String]
-	[h:AllAttacksDmg2=json.append(AllAttacksDmg2,json.set("","Dmg",wa.Dmg2,"DmgStr",wa.Dmg2String,"DmgCrit",wa.CritDmg2,"DmgCritStr",wa.CritDmg2String,"DmgRules",wa.Dmg2RulesStr,"CritDmgRules",wa.CritDmg2RulesStr))]
+	[h:AllAttacksDmg2=json.append(AllAttacksDmg2,json.set("","Dmg",wa.Dmg2,"DmgStr",wa.Dmg2String,"DmgRules",wa.Dmg2RulesStr,"Dmg2Array",wa.Dmg2Array,"DmgDie2Array",wa.Dmg2RollSizeArray,"DmgCrit",wa.CritDmg2,"DmgCritStr",wa.CritDmg2String,"CritDmgRules",wa.CritDmg2RulesStr,"CritDmg2Array",wa.CritDmg2Array,"CritDmgDie2Array",wa.CritDmg2RollSizeArray))]
 }]
 [h:pm.PassiveFunction("AttackRoll")]
 
@@ -237,7 +246,7 @@
 		"DisplayOrder","['Rules','Roll','Full']",
 		"BonusSectionNum",1,
 		"BonusSectionType1","Rules",
-		"BonusSectionStyling1","text-align:center",
+		"BonusSectionStyling1","",
 		"Value",thisAttackToHit
 	)]
 	

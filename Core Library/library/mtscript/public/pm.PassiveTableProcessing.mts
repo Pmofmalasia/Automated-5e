@@ -4,12 +4,15 @@
 
 [h:VerticalFormat=if(
 getLibProperty("VerticalDisplay","Lib:pm.a5e.Core")==1,"</th></tr><tr style='text-align:center;'><td style='","</th><td style='padding-left:4px; valign:middle;")]
+[h:VerticalFormatFinalBonus=if(
+getLibProperty("VerticalDisplay","Lib:pm.a5e.Core")==1,"</td></tr><tr style='text-align:center;'><td style='","</td><td style='padding-left:4px; valign:middle; text-align:right")]
 
 [h:pm.MaxColNumTemp = json.path.read(pm.AbilityTable,"[*][?(@.BonusSectionNum!=null)]['BonusSectionNum']","DEFAULT_PATH_LEAF_TO_NULL")]
 [h,if(json.isEmpty(pm.MaxColNumTemp)): pm.MaxColNum = 2; pm.MaxColNum = math.arrayMax(pm.MaxColNumTemp)+2]
 
 [h,foreach(tableline,pm.AbilityTable,""),CODE:{
 	[h:pm.BonusSections = if(json.get(tableline,"BonusSectionNum")=="",0,json.get(tableline,"BonusSectionNum"))]
+   [h:pm.BigHeaderTest = and(json.get(tableline,"RollContents")=="",json.get(tableline,"RulesContents")=="",json.get(tableline,"FullContents")=="")]
 	
 	[h:showPCsLineTest = if(or(outputTest.NoFullMacro,and(outputTest.NoRules,json.get(tableline,"FullContents")=="",json.get(tableline,"RollContents")==""),and(outputTest.NoRolls,json.get(tableline,"FullContents")=="")),0,1)]
 	[h:showLineTest = if(or(json.get(tableline,"ShowIfCondensed")==1,ShowFullRules==1),1,0)]
@@ -46,7 +49,7 @@ getLibProperty("VerticalDisplay","Lib:pm.a5e.Core")==1,""," colspan='"+(pm.MaxCo
 		[h:output.PC = if(and(showPCsLineTest,showLineTest),if(outputTest.NoBonusSection,output.PC,output.PC+output.Temp),output.PC)]
 		[h:output.GM = if(showLineTest,output.GM + output.Temp,output.GM)]
 		
-		[h,if(json.get(tableline,"BonusBody"+pm.BonusCount)==""): output.Temp == ""; output.Temp = VerticalFormat+json.get(tableline,"BonusSectionStyling"+pm.BonusCount)+"'>"+json.get(tableline,"BonusBody"+pm.BonusCount)]
+		[h,if(json.get(tableline,"BonusBody"+pm.BonusCount)==""): output.Temp == ""; output.Temp = if(pm.BonusCount==pm.BonusSections,VerticalFormatFinalBonus,VerticalFormat)+json.get(tableline,"BonusSectionStyling"+pm.BonusCount)+"'>"+json.get(tableline,"BonusBody"+pm.BonusCount)]
 		[h:output.PC = if(and(showPCsLineTest,showLineTest),if(outputTest.NoBonusSection,output.PC,output.PC+output.Temp),output.PC)]
 		[h:output.GM = if(showLineTest,output.GM + output.Temp,output.GM)]
 

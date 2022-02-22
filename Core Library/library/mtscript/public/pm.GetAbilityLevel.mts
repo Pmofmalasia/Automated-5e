@@ -1,1 +1,2 @@
-[h:macro.return = json.get(json.path.read(allAbilities,"[*][?(@.Name=='"+json.get(arg(0),"Name")+"' && @.Class=='"+json.get(arg(0),"Class")+"' && @.Subclass=='"+json.get(arg(0),"Subclass")+"' && @.IsActive>0)]['Level']"),0)]
+[h:pm.a5e.Level = json.path.read(allAbilities,"[*][?(@.Name=='"+json.get(arg(0),"Name")+"' && @.Class=='"+json.get(arg(0),"Class")+"' && @.Subclass=='"+json.get(arg(0),"Subclass")+"' && @.IsActive>0)]['Level']")]
+[h,if(json.isEmpty(pm.a5e.Level)): macro.return = 0; macro.return = math.arrayMax(pm.a5e.Level)]

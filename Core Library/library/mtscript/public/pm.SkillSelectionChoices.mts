@@ -1,5 +1,6 @@
 [h:abort(input(
-	"junkVar | --------------- Skill Selection Options --------------- |  | LABEL | SPAN=TRUE",	" ab.HowChooseSkills | Specified List,All Skills + Some Tools,All Skills,Expertise to Proficient | <html><span title='Specified list is for when you can only choose x, y, or z skill. The other options allow for any skill, and should be used if you ever want to add more skills than the base ones. All Skills + Some Tools allows you to choose tools like the specified list option while keeping the flexibility of the all skills option for skills.'>How are eligible skills chosen</span></html> | LIST "
+	"junkVar | --------------- Skill Selection Options --------------- |  | LABEL | SPAN=TRUE",
+	" ab.HowChooseSkills | Specified List,All Skills + Some Tools,All Skills,Expertise if Proficient | <html><span title='Specified list is for when you can only choose x, y, or z skill. The other options allow for any skill, and should be used if you ever want to add more skills than the base ones. All Skills + Some Tools allows you to choose tools like the specified list option while keeping the flexibility of the all skills option for skills.'>How are eligible skills chosen</span></html> | LIST "
 		))]
 		
 [r,if(ab.HowChooseSkills<2),CODE:{

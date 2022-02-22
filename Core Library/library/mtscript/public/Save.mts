@@ -107,7 +107,7 @@
 		"BonusSectionNum",1,
 		"BonusSectionType1","Rules",
 		"BonusBody1","Reroll: <a href = '"+sv.AdvRerollLink+"'><span style = 'color:"+LinkColor+"'>Adv.</span></a> / <a href = '"+sv.DisRerollLink+"'><span style = 'color:"+LinkColor+"'>Dis.</span></a>",
-		"BonusSectionStyling1","text-align:center"
+		"BonusSectionStyling1",""
 		))]
 };{
 	[h:FinalRoll = if(sv.AdvDis == 1,max(roll1,roll2),min(roll1,roll2))]
@@ -122,7 +122,7 @@
 		"BonusSectionNum",1,
 		"BonusSectionType1","Rules",
 		"BonusBody1","(Roll #1: <span style='font-size:1.25em'><b>"+(roll1+TotalBonus)+"</b></span> / Roll #2: <span style='font-size:1.25em'><b>"+(roll2+TotalBonus)+"</b></span>)",
-		"BonusSectionStyling1","text-align:center"
+		"BonusSectionStyling1",""
 		))]
 }]
 

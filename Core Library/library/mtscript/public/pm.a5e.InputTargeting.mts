@@ -4,12 +4,12 @@
 [h,if(pm.SingleTarget),CODE:{
    [h:pm.TargetOptions = ""]
    [h,foreach(target,pm.ValidTargets),CODE:{
-      [h:pm.TargetOptions = json.append(pm.TargetOptions,getTokenImage("",target)+" "+getName(target))]
+      [h:pm.TargetOptions = json.append(pm.TargetOptions,getName(target)+" "+getTokenImage("",target))]
    }]
-   [h:tInput = " pm.TargetChoice | "+pm.TargetOptions+" | Choose a Target | LIST | ICON=TRUE ICONSIZE=50 "]
+   [h:tInput = " pm.TargetChoice | "+pm.TargetOptions+" | Choose a Target | LIST | ICON=TRUE ICONSIZE=50 DELIMITER=JSON "]
 };{
-   [h:tInput = " junkVar | ---------------------- Choose Your Targets ---------------------- |  | LABEL | SPAN=TRUE "]
-   [h,foreach(target,pm.ValidTargets): tInput = listAppend(tInput," choice"+target+" |  | "+getTokenImage("",target)+" "+getName(target)+" | CHECK ","##")]
+   [h:tInput = " junkVar | ----------- Choose Your Targets ----------- |  | LABEL | SPAN=TRUE "]
+   [h,foreach(target,pm.ValidTargets): tInput = listAppend(tInput," choice"+target+" |  | "+getName(target)+" | CHECK ","##")]
 }]
 
 [h:abort(input(tInput))]

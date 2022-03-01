@@ -45,7 +45,9 @@
 [h:defineFunction("pm.AbilityCondition","pm.AbilityCondition@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.AbilityConditionProcessing","pm.AbilityConditionProcessing@Lib:pm.a5e.Core",0,0))]
 [h:defineFunction("pm.AbilityDamage","pm.AbilityDamage@Lib:pm.a5e.Core")]
+
 [h:defineFunction("pm.AbilityDieSize","pm.AbilityDieSize@Lib:pm.a5e.Core")]
+
 [h:defineFunction("pm.AbilityDuration","pm.AbilityDuration@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.AbilityLink","pm.AbilityLink@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.AbilityMagItemMsg","pm.AbilityMagItemMsg@Lib:pm.a5e.Core")]
@@ -74,6 +76,8 @@
 [h:defineFunction("pm.PassiveFunction","pm.PassiveFunction@Lib:pm.a5e.Core",0,0)]
 [h:defineFunction("a5e.GatherAbilities","a5e.GatherAbilities@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.Summons","pm.Summons@Lib:pm.a5e.Core")]
+[h:defineFunction("pm.TargetFiltering","pm.TargetFiltering@Lib:pm.a5e.Core")]
+[h:defineFunction("pm.a5e.InputTargeting","pm.a5e.InputTargeting@Lib:pm.a5e.Core")]
 
 [h:"<!-- Functions for general use -->"]
 [h:defineFunction("pm.DieRoller","pm.DieRoller@Lib:pm.a5e.Core")]
@@ -102,6 +106,7 @@
 [h:defineFunction("pm.GetSubclasses","pm.GetSubclasses@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.GetSubraces","pm.GetSubraces@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.GetTools","pm.GetTools@Lib:pm.a5e.Core")]
+[h:defineFunction("pm.GetToolTypes","pm.GetToolTypes@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.GetLanguages","pm.GetLanguages@Lib:pm.a5e.Core")]
 
 [h:"<!-- Functions for Formatting -->"]

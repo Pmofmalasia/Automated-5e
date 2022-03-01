@@ -268,7 +268,7 @@
 [h:CastTime=if(CastTime=="12 HOURS","12 Hours",CastTime)]
 [h:CastTime=if(CastTime=="24 HOURS","12 Hours",CastTime)]
 
-[h:"<!-- Temporarily setting the type of spell to Arcane alsp.s since it has yet to be implemented (will probably happen in full spell rework) -->"]
+[h:"<!-- Temporarily setting the type of spell to Arcane always since it has yet to be implemented (will probably happen in full spell rework) -->"]
 [h:sSource = "Arcane"]
 
 [h,if(FreeCasting==1),CODE:{
@@ -286,8 +286,8 @@
 		case "W": {[eLevel=WSpellLevel]};
 		case "MA": {[eLevel=sLevel]};
 		case "Free": {[eLevel=sLevel]};
-      case "Cantrip": {[eLevel=0+if(Level>=5,1,0)+if(Level>=11,1,0)+if(Level>=17,1,0)]};
-      default: {[h:pm.PassiveFunction("SpellResources")]}
+		case "Cantrip": {[eLevel=0+if(Level>=5,1,0)+if(Level>=11,1,0)+if(Level>=17,1,0)]};
+		default: {[h:pm.PassiveFunction("SpellResources")]}
 		]
 };{
 
@@ -353,7 +353,7 @@
 	[h:SelectDamageTypes=0]
 	[h:DamageCancelCheck=0]
 	[h,while(SelectDamageTypes==0),CODE:{
-		[h:disCancelCheck=if(DamageCancelCheck,"junkVar | You need to make a choice or else errors will occur! | sp.ning | LABEL ","")]
+		[h:disCancelCheck=if(DamageCancelCheck,"junkVar | You need to make a choice or else errors will occur! | Warning | LABEL ","")]
 		[h:SelectDamageTypes=input(
 			""+disCancelCheck+"",
 			""+disDmgTypeOptions+"",
@@ -371,7 +371,7 @@
 
 [h:PrimeStat = json.get(getLibProperty("sb.CastingAbilities","Lib:pm.a5e.Core"),sClassSelect)]
 [h:PrimeStat = if(PrimeStat=="","None",PrimeStat)]
-[h,if(PrimeStat == "None"): PrimeStatMod = 0; PrimeStatMod = json.get(AtrMods,PrimeStat)];
+[h,if(PrimeStat == "None"): PrimeStatMod = 0; PrimeStatMod = json.get(AtrMods,PrimeStat)]
 [h:pm.PassiveFunction("SpellStat")]
 
 [h:MissileCount=sBaseMissiles+(AHL*sAHLMissiles)]
@@ -381,13 +381,13 @@
 
 [h:CompendiumLink=concat('<a style="color:'+TextColor+';" href=',BaseLink,replace(SpellName,' ','-'),'>',SpellName,'</a>')]
 
-[h:"<!--Note: need a better sp. to apply brutal crit effects, currently only applies to dmgtype1 (secBrutalCrit does nothing atm) but should be able to choose which one. Same for dmg MOD. Could go into untyped category I guess. -->"]
+[h:"<!--Note: need a better way to apply brutal crit effects, currently only applies to dmgtype1 (secBrutalCrit does nothing atm) but should be able to choose which one. Same for dmg MOD. Could go into untyped category I guess. -->"]
 
 [h:SaveDC = 8+Proficiency+PrimeStatMod]
 [h:AttackMod = Proficiency+PrimeStatMod]
 [h:sp.CritRange = 0]
 [h:BrutalCrit = 0]
-[h:secBrutalCrit = if(DmgDie2Num==0,0,BrutalCrit)]
+[h:BrutalCrit2 = if(DmgDie2Num==0,0,BrutalCrit)]
 [h:CritTest=0]
 [h:AllAttacksToHit="[]"]
 [h:AllAttacksDmg="[]"]
@@ -535,10 +535,10 @@
 [h:CurrentMissile=0]
 [h:sp.AllMissileData = ""]
 [h,count(MissileCount),code:{
-	[h:sp.ThisMissileData = ""]
+	[h:sp.ThisMissileData = "{}"]
    
-   [h,SWITCH(sSpellAttack+""+json.get(sp.Data,"Advantage")+json.get(sp.Data,"ForcedAdvantage")),CODE:
-      case "1-11": {
+	[h,SWITCH(sSpellAttack+""+json.get(FinalSpellData,"Advantage")+json.get(FinalSpellData,"ForcedAdvantage")),CODE:
+		case "1-11": {
 			[h:sp.AdvDis = -1]
 			};
 		case "1-10": {
@@ -573,171 +573,199 @@
 		[h:roll1=1d20]
 		[h:roll2=1d20]
       
-      [h,switch(sp.AdvDis):
-         case -1: effectiveRoll = min(roll1,roll2);
-         case 0: effectiveRoll = roll1;
-         case 1: effectiveRoll = max(roll1,roll2)
-      ]
+		[h,switch(sp.AdvDis):
+			case -1: effectiveRoll = min(roll1,roll2);
+			case 0: effectiveRoll = roll1;
+			case 1: effectiveRoll = max(roll1,roll2)
+		]
       
-      [h,switch(sp.AdvDis):
-         case -1: sp.ToHitRulesStr = "1d20 <span style='color:"+DamageColor+"'>with Dis</span>";
-         case 0: sp.ToHitRulesStr = "1d20";
-         case 1: sp.ToHitRulesStr = "1d20 <span style='color:"+HealingColor+"'>with Adv</span>"
-      ]
+		[h,switch(sp.AdvDis):
+			case -1: sp.ToHitRulesStr = "1d20 <span style='color:"+DamageColor+"'>with Dis</span>";
+			case 0: sp.ToHitRulesStr = "1d20";
+			case 1: sp.ToHitRulesStr = "1d20 <span style='color:"+HealingColor+"'>with Adv</span>"
+		]
       
 		[h:CritTest=if(effectiveRoll>=sp.FinalCritRange,CritTest+1,CritTest)]
-      [h:CritTestEach=if(effectiveRoll>=sp.FinalCritRange,1,0)]
-      [h:CritFailTest=if(effectiveRoll==1,1,0)]
+		[h:CritTestEach=if(effectiveRoll>=sp.FinalCritRange,1,0)]
+		[h:CritFailTest=if(effectiveRoll==1,1,0)]
          
-      [h:sp.ToHit = effectiveRoll+PrimeStatMod+Proficiency]
-      [h:sp.ToHitStr = effectiveRoll+" + "+PrimeStatMod+" + "+Proficiency]
-      [h:sp.ToHitRulesStr = sp.ToHitRulesStr+" + "+substring(PrimeStat,0,3)+" + Prof"]
+		[h:sp.ToHit = effectiveRoll+PrimeStatMod+Proficiency]
+		[h:sp.ToHitStr = effectiveRoll+" + "+PrimeStatMod+" + "+Proficiency]
+		[h:sp.ToHitRulesStr = sp.ToHitRulesStr+" + "+substring(PrimeStat,0,3)+" + Prof"]
       
-      [h:pm.PassiveFunction("SpellBonus")]
+		[h:pm.PassiveFunction("SpellBonus")]
       
-		[h:sp.ThisMissileData = json.set(sp.ThisMissileData,"Roll1",roll1,"Roll2",roll2,"ToHit",wa.ToHit,"ToHitStr",wa.ToHitStr,"RulesStr",wa.ToHitRulesStr,"CritTest",CritTestEach,"CritFailTest",CritFailTest)]
+		[h:sp.ThisMissileData = json.set(sp.ThisMissileData,"Roll1",roll1,"Roll2",roll2,"Advantage",sp.AdvDis,"ToHit",sp.ToHit,"ToHitStr",sp.ToHitStr,"RulesStr",sp.ToHitRulesStr,"CritTest",CritTestEach,"CritFailTest",CritFailTest)]
 	};{
 		[h:sp.ThisMissileData = json.set(sp.ThisMissileData,"CritTest",0)]
 	}]
    
-	[h:"<!-- Rolling First Damage Type Dice -->"]
-	[h,if(DmgDieNum == 0),CODE:{};{
-		[h:junkVar = getNewRolls()]
-		[h:sp.Dmg = eval(DmgDieNum+"d"+DmgDieSize)]
-      [h:sp.DmgRulesStr = DmgDieNum+"d"+DmgDieSize]
-		[h:sp.DmgArray = getNewRolls()]
-		[h:sp.DmgMax = DmgDieSize*DmgDieNum]
-		
-		[h:"<!--- Same as above but for AHL dice. These are separate in case of instances where the damage type or die size AHL is different than the base type. (e.g. Chaos Bolt) --->"]
-		
-		[h:AHLNumDie = (DamageScaling*AHLDamageNumber)]
-		[h:junkVar=getNewRolls()]
-		[h:sp.AHLDmg=eval(AHLNumDie+"d"+AHLDmgDieSize)]
-      [h:sp.AHLDmgRulesStr = AHLNumDie+"d"+AHLDmgDieSize]
-		[h:sp.DmgArray = json.merge(sp.DmgArray,getNewRolls())]
-		[h:sp.AHLDmgMax = AHLDmgDieSize*AHLNumDie]
-		
-		[h:"<!-- Same again but for crit dice -->"]
-		
-		[h:junkVar=getNewRolls()]
-		[h:sp.CritDmg=eval((DmgDieNum+BrutalCrit)+"d"+DmgDieSize)]
-      [h:sp.CritDmgRulesStr = (DmgDieNum+BrutalCrit)+"d"+DmgDieSize]
-		[h:sp.CritDmgArray = json.merge(sp.DmgArray,getNewRolls())]
-		[h:sp.CritDmgMax = DmgDieSize*(DmgDieNum+BrutalCrit)]
-		
-		[h:"<!-- Still same but AHL damage crits -->"]
-		
-		[h:junkVar=getNewRolls()]
-		[h:sp.CritAHLDmg=eval(AHLNumDie+"d"+AHLDmgDieSize)]
-      [h:sp.CritAHLDmgRulesStr = AHLNumDie+"d"+AHLDmgDieSize]
-		[h:sp.CritDmgArray = json.merge(sp.CritDmgArray,getNewRolls())]
-		[h:sp.CritAHLDmgMax = AHLDmgDieSize*AHLNumDie]
+	[h:"<!-- An array is created with the size of the dice for regular damage and AHL damage, crits for each, and flat damage. Variables are created for passive functions to use. -->"]
+	[h:"<!-- The array is created so that later passive functions that reroll dice have a reference for the original die size - since added dice may be of a different size. -->"]
+	[h:"<!-- AHL damage and regular damage are calculated separately for similar reasons - AHL dice may be of a different size than the base dice (e.g. Chaos Bolt) -->"]
 	
-		[h:"<!-- Add info for flat numbers that aren't rolled -->"]
+	[h,if(DmgDieNum == 0),CODE:{};{
+		[h:sp.AllDmgDice = "[]"]
+		[h,count(DmgDieNum): sp.AllDmgDice = json.append(sp.AllDmgDice,DmgDieSize)]
+		[h:sp.DmgRules = DmgDieNum+"d"+DmgDieSize]
+	
+		[h:sp.AllCritDmgDice = "[]"]
+		[h,count((DmgDieNum+BrutalCrit)): sp.AllCritDmgDice = json.append(sp.AllCritDmgDice,DmgDieSize)]
+		[h:sp.CritDmgRules = (DmgDieNum+BrutalCrit)+"d"+DmgDieSize]
+		
+		[h:sp.AllAHLDmgDice = "[]"]
+		[h:AHLNumDie = (DamageScaling*AHLDamageNumber)]
+		[h,count(AHLNumDie): sp.AllAHLDmgDice = json.append(sp.AllAHLDmgDice,AHLDmgDieSize)]
+		[h:sp.AHLDmgRules = AHLNumDie+"d"+AHLDmgDieSize]
+		
+		[h:sp.AllCritAHLDmgDice = "[]"]
+		[h,count(AHLNumDie): sp.AllCritAHLDmgDice = json.append(sp.AllCritAHLDmgDice,AHLDmgDieSize)]
+		[h:sp.CritAHLDmgRules = AHLNumDie+"d"+AHLDmgDieSize]
+		
 		[h:flatBonus = number(DmgDieFlatBonus) + number(AHLFlatBonus)*DamageScaling]
 		[h:ModDamageBonus = if(DmgDieMODBonus,PrimeStatMod,0)]
-      [h:flatBonusRules = if(number(DmgDieFlatBonus)==0,"",flatBonus)]
-      [h:flatBonusRules = if(DmgDieMODBonus,listAppend(flatBonusRules,substring(PrimeStat,0,3)," + "),flatBonusRules)]
+		[h:flatBonusRules = if(number(DmgDieFlatBonus)==0,"",flatBonus)]
+		[h:flatBonusRules = if(DmgDieMODBonus,listAppend(flatBonusRules,substring(PrimeStat,0,3)," + "),flatBonusRules)]
 		[h:flatDmgTotal = ModDamageBonus+flatBonus]
-			
-		[h:"<!-- Build all strings and damage totals later, so that passive abilities only need to trigger once. -->"]
+		
+		[h:sp.AddedRolledDamageRules = ""]
+		[h:sp.AddedFlatDamageRules = ""]
+		[h:sp.AddedRolledDamageDice = "[]"]
+		[h:sp.AddedFlatDamage = "[]"]
 	}]
 	
 	[h:"<!-- Repeat all for 2nd damage type -->"]
-	[h,if(DmgDie2Num == 0),CODE:{};{		
-		[h:junkVar=getNewRolls()]
-		[h:sp.Dmg2=eval(DmgDie2Num+"d"+DmgDie2Size)]
-      [h:sp.Dmg2RulesStr = DmgDie2Num+"d"+DmgDie2Size]
-		[h:sp.Dmg2Array = getNewRolls()]
-		[h:sp.Dmg2Max = DmgDie2Size*DmgDie2Num]
-
-		[h:"<!-- AHL 2 -->"]
+	[h,if(DmgDie2Num == 0),CODE:{};{
+		[h:sp.AllDmgDice2 = "[]"]
+		[h,count(DmgDie2Num): sp.AllDmgDice2 = json.append(sp.AllDmgDice2,DmgDie2Size)]
+		[h:sp.DmgRules2 = DmgDie2Num+"d"+DmgDie2Size]
+	
+		[h:sp.AllCritDmgDice2 = "[]"]
+		[h,count((DmgDie2Num+BrutalCrit2)): sp.AllCritDmgDice2 = json.append(sp.AllCritDmgDice2,DmgDie2Size)]
+		[h:sp.CritDmgRules2 = (DmgDie2Num+BrutalCrit)+"d"+DmgDie2Size]
 		
+		[h:sp.AllAHLDmgDice2 = "[]"]
 		[h:AHLNumDie2 = (DamageScaling*AHLDmgDie2Num)]
-		[h:junkVar=getNewRolls()]
-		[h:sp.AHLDmg2=eval(AHLNumDie2+"d"+AHLDmgDie2Size)]
-      [h:sp.AHLDmg2RulesStr = AHLNumDie2+"d"+AHLDmgDie2Size]
-		[h:sp.Dmg2Array = json.merge(sp.Dmg2Array,getNewRolls())]
-		[h:sp.AHLDmg2Max = AHLDmgDie2Size*AHLNumDie2]
+		[h,count(AHLNumDie2): sp.AllAHLDmgDice2 = json.append(sp.AllAHLDmgDice2,AHLDmgDie2Size)]
+		[h:sp.AHLDmgRules2 = AHLNumDie2+"d"+AHLDmgDie2Size]
 		
-		[h:"<!-- Crit 2 -->"]
+		[h:sp.AllCritAHLDmgDice2 = "[]"]
+		[h,count(AHLNumDie2): sp.AllCritAHLDmgDice2 = json.append(sp.AllCritAHLDmgDice2,AHLDmgDie2Size)]
+		[h:sp.CritAHLDmgRules2 = AHLNumDie2+"d"+AHLDmgDie2Size]
 		
-		[h:junkVar=getNewRolls()]
-		[h:sp.CritDmg2 = eval(DmgDie2Num+"d"+DmgDie2Size)]
-      [h:sp.CritDmg2RulesStr = DmgDie2Num+"d"+DmgDie2Size]
-		[h:sp.CritDmg2Array = getNewRolls()]
-		[h:sp.CritDmg2Max = DmgDie2Size*(DmgDie2Num+BrutalCrit)]
-		
-		[h:"<!-- Crit AHL 2 -->"]
-		
-		[h:junkVar=getNewRolls()]
-		[h:sp.CritAHLDmg2=eval(AHLNumDie2+"d"+AHLDmgDie2Size)]
-      [h:sp.CritAHLDmg2RulesStr = AHLNumDie2+"d"+AHLDmgDie2Size]
-		[h:sp.CritDmg2Array = json.merge(sp.CritDmg2Array,getNewRolls())]
-		[h:sp.CritAHLDmg2Max = AHLDmgDie2Size*AHLNumDie2]
-
-		[h:"<!-- Flat Bonuses 2 -->"]
 		[h:flatBonus2 = number(DmgDie2FlatBonus) + number(AHL2FlatBonus)*DamageScaling]
 		[h:ModDamageBonus2 = if(DmgDie2MODBonus,PrimeStatMod,0)]
+		[h:flatBonusRules2 = if(number(DmgDie2FlatBonus)==0,"",flatBonus2)]
+		[h:flatBonusRules2 = if(DmgDie2MODBonus,listAppend(flatBonusRules2,substring(PrimeStat,0,3)," + "),flatBonusRules2)]
 		[h:flatDmg2Total = ModDamageBonus2+flatBonus2]
 		
+		[h:sp.AddedRolledDamageRules2 = ""]
+		[h:sp.AddedFlatDamageRules2 = ""]
+		[h:sp.AddedRolledDamageDice2 = "[]"]
+		[h:sp.AddedFlatDamage2 = "[]"]		
 	}]
    
-   [h,if(and(DmgDie2Num==0,DmgDieNum==0)),CODE:{};{
-      [h:pm.PassiveFunction("SpellDamage")]
-   }]
+	[h,if(and(DmgDie2Num==0,DmgDieNum==0)),CODE:{};{
+		[h:pm.PassiveFunction("SpellDamage")]
+	}]
    
-   [h:"<!-- String Building -->"]
-   [h,if(DmgDieNum==0),CODE:{};{
-		[h:sp.DmgFormula = sp.DmgRulesStr+if(AHLNumDie>0," + "+sp.AHLDmgRulesStr,"")+flatBonusRules]
-		[h:sp.DmgStrFinal = json.toList(sp.DmgArray," + ")+pm.PlusMinus(flatBonus,0)+pm.PlusMinus(ModDamageBonus,0)]
+	[h:"<!-- Merge all of the arrays of dice into one, then roll them into a new array of rolled dice. -->"]
+	[h:"<!-- New array is summed for total damage, and put into a list for display. -->"]
+	[h:"<!-- Array of dice is summed for max possible damage. -->"]
+	[h,if(DmgDieNum==0),CODE:{};{
+		[h:sp.DmgRulesFinal = sp.DmgRules+if(AHLNumDie>0," + "+sp.AHLDmgRules,"")+if(sp.AddedRolledDamageRules=="",""," + "+sp.AddedRolledDamageRules)+if(flatBonusRules=="",""," + "+flatBonusRules)]
+		[h:sp.CritDmgRulesFinal = sp.DmgRules+" + "+sp.CritDmgRules+if(AHLNumDie>0," + "+sp.AHLDmgRules+" + "+sp.CritAHLDmgRules,"")+if(sp.AddedRolledDamageRules=="",""," + "+sp.AddedRolledDamageRules+" + "+sp.AddedRolledDamageRules)+if(flatBonusRules=="",""," + "+flatBonusRules)+if(sp.AddedFlatDamageRules=="",""," + "+sp.AddedFlatDamageRules)]
 		
-		[h:sp.CritDmgFormula = DmgDieNum+"d"+DmgDieSize+" + "+sp.CritDmgRulesStr+if(AHLNumDie>0," + "+sp.AHLDmgRulesStr+" + "+sp.CritAHLDmgRulesStr,"")+flatBonusRules]
-		[h:sp.CritDmgStrFinal = json.toList(sp.CritDmgArray," + ")+pm.PlusMinus(flatBonus,0)+pm.PlusMinus(ModDamageBonus,0)]
+		[h:sp.FinalDamageDice = json.merge(sp.AllDmgDice,sp.AllAHLDmgDice,sp.AddedRolledDamageDice)]
+		[h:sp.DmgArray = "[]"]
+		[h,foreach(die,sp.FinalDamageDice): sp.DmgArray = json.append(sp.DmgArray,eval("1d"+die))]
+		[h:sp.TotalAddedFlatDamage = 0]
+		[h,foreach(addedDamage,sp.AddedFlatDamage): sp.TotalAddedFlatDamage = sp.TotalAddedFlatDamage + addedDamage]
+		[h:sp.Dmg = math.arraySum(sp.DmgArray) + flatDmgTotal + sp.TotalAddedFlatDamage]
+		[h:sp.DmgRolls = json.toList(sp.DmgArray," + ")+pm.PlusMinus(flatBonus,0)+pm.PlusMinus(ModDamageBonus,0)+if(json.isEmpty(sp.AddedFlatDamage),""," + "+json.toList(sp.AddedFlatDamage," + "))]
+		[h:sp.DmgMax = math.arraySum(sp.FinalDamageDice) + flatDmgTotal + sp.TotalAddedFlatDamage]
 		
-		[h:sp.DmgFinal = math.arraySum(sp.DmgArray)+flatDmgTotal]
-		[h:sp.CritDmgFinal = math.arraySum(sp.CritDmgArray)+flatDmgTotal]
-		[h:sp.DmgMaxFinal = sp.DmgMax+sp.AHLDmgMax+flatDmgTotal]
-		[h:sp.CritDmgMaxFinal = sp.DmgMax+sp.AHLDmgMax+sp.CritDmgMax+sp.CritAHLDmgMax+flatDmgTotal]
+		[h:sp.FinalCritDamageDice = json.merge(sp.AllDmgDice,sp.AllCritDmgDice,sp.AllAHLDmgDice,sp.AllCritAHLDmgDice,sp.AddedRolledDamageDice,sp.AddedRolledDamageDice)]
+		[h:sp.CritDmgArray = "[]"]
+		[h,foreach(die,sp.FinalCritDamageDice): sp.CritDmgArray = json.append(sp.CritDmgArray,eval("1d"+die))]
+		[h:sp.CritDmg = math.arraySum(sp.CritDmgArray) + flatDmgTotal + sp.TotalAddedFlatDamage]
+		[h:sp.CritDmgRolls = json.toList(sp.CritDmgArray," + ")+pm.PlusMinus(flatBonus,0)+pm.PlusMinus(ModDamageBonus,0)+if(json.isEmpty(sp.AddedFlatDamage),""," + "+json.toList(sp.AddedFlatDamage," + "))]
+		[h:sp.CritDmgMax = math.arraySum(sp.FinalCritDamageDice) + flatDmgTotal + sp.TotalAddedFlatDamage]
 
-		[h:sp.ThisMissileData = json.set(sp.ThisMissileData,"DmgRules",sp.DmgFormula,"DmgStr",sp.DmgStrFinal,"Dmg",sp.DmgFinal,"DmgMax",sp.DmgMaxFinal,"CritDmgFormula",sp.CritDmgFormula,"CritDmgStr",sp.CritDmgStrFinal,"CritDmg",sp.CritDmgFinal,"CritDmgMax",sp.CritDmgMaxFinal)]
-   }]
+		[h:sp.ThisMissileData = json.set(sp.ThisMissileData,"DmgRules",sp.DmgRulesFinal,"DamageDice",sp.FinalDamageDice,"DmgArray",sp.DmgArray,"DmgRolls",sp.DmgRolls,"Dmg",sp.Dmg,"DmgMax",sp.DmgMax,"CritDmgRules",sp.CritDmgRulesFinal,"CritDamageDice",sp.FinalCritDamageDice,"CritDmgArray",sp.CritDmgArray,"CritDmgRolls",sp.CritDmgRolls,"CritDmg",sp.CritDmg,"CritDmgMax",sp.CritDmgMax)]
+	}]
    
-   [h,if(DmgDie2Num==0),CODE:{};{
-	
-		[h:sp.Dmg2Formula = DmgDie2Num+"d"+DmgDie2Size+if(AHLNumDie2>0," + "+AHLNumDie2+"d"+AHLDmgDie2Size,"")+pm.PlusMinus(flatBonus,0)+pm.PlusMinus(ModDamageBonus2,0)]
-		[h:sp.Dmg2StrFinal = json.toList(sp.Dmg2Array," + ")+pm.PlusMinus(flatBonus,0)+pm.PlusMinus(ModDamageBonus2,0)]
+	[h,if(DmgDie2Num==0),CODE:{};{
+		[h:sp.DmgRulesFinal2 = sp.DmgRules2+if(AHLNumDie2>0," + "+sp.AHLDmgRules2,"")+if(sp.AddedRolledDamageRules2=="",""," + "+sp.AddedRolledDamageRules2)+if(flatBonusRules2=="",""," + "+flatBonusRules2)]
+		[h:sp.CritDmgRulesFinal2 = sp.DmgRules2+" + "+sp.CritDmgRules2+if(AHLNumDie2>0," + "+sp.AHLDmgRules2+" + "+sp.CritAHLDmgRules2,"")+if(sp.AddedRolledDamageRules2=="",""," + "+sp.AddedRolledDamageRules2+" + "+sp.AddedRolledDamageRules2)+if(flatBonusRules2=="",""," + "+flatBonusRules2)+if(sp.AddedFlatDamageRules2=="",""," + "+sp.AddedFlatDamageRules2)]
 		
-		[h:sp.CritDmg2Formula = DmgDie2Num+"d"+DmgDie2Size+" + "+DmgDie2Num+"d"+DmgDie2Size+if(AHLNumDie2>0," + "+AHLNumDie2+"d"+AHLDmgDie2Size+" + "+AHLNumDie2+"d"+AHLDmgDie2Size,"")+pm.PlusMinus(flatBonus,0)+pm.PlusMinus(ModDamageBonus2,0)]
-		[h:sp.CritDmg2StrFinal = json.toList(sp.CritDmg2Array," + ")+pm.PlusMinus(flatBonus,0)+pm.PlusMinus(ModDamageBonus2,0)]
+		[h:sp.FinalDamageDice2 = json.merge(sp.AllDmgDice2,sp.AllAHLDmgDice2,sp.AddedRolledDamageDice2)]
+		[h:sp.DmgArray2 = "[]"]
+		[h,foreach(die,sp.FinalDamageDice2): sp.DmgArray2 = json.append(sp.DmgArray2,eval("1d"+die))]
+		[h:sp.TotalAddedFlatDamage2 = 0]
+		[h,foreach(addedDamage,sp.AddedFlatDamage2): sp.TotalAddedFlatDamage2 = sp.TotalAddedFlatDamage2 + addedDamage]
+		[h:sp.Dmg2 = math.arraySum(sp.DmgArray2) + flatDmg2Total + sp.TotalAddedFlatDamage2]
+		[h:sp.DmgRolls2 = json.toList(sp.DmgArray2," + ")+pm.PlusMinus(flatBonus2,0)+pm.PlusMinus(ModDamageBonus2,0)+if(json.isEmpty(sp.AddedFlatDamage2),""," + "+json.toList(sp.AddedFlatDamage2," + "))]
+		[h:sp.DmgMax2 = math.arraySum(sp.FinalDamageDice2) + flatDmg2Total + sp.TotalAddedFlatDamage2]
 		
-		[h:sp.Dmg2Final = math.arraySum(sp.Dmg2Array)+flatDmg2Total]
-		[h:sp.CritDmg2Final = math.arraySum(sp.Crit2DmgArray)+flatDmg2Total]
-		[h:sp.Dmg2MaxFinal = sp.Dmg2Max+sp.AHLDmg2Max+flatDmg2Total]
-		[h:sp.CritDmg2MaxFinal = sp.Dmg2Max+sp.AHLDmg2Max+sp.CritDmg2Max+sp.CritAHLDmg2Max+flatDmg2Total]
+		[h:sp.FinalCritDamageDice2 = json.merge(sp.AllDmgDice2,sp.AllCritDmgDice2,sp.AllAHLDmgDice2,sp.AllCritAHLDmgDice2,sp.AddedRolledDamageDice2,sp.AddedRolledDamageDice2)]
+		[h:sp.CritDmgArray2 = "[]"]
+		[h,foreach(die,sp.FinalCritDamageDice2): sp.CritDmgArray2 = json.append(sp.CritDmgArray2,eval("1d"+die))]
+		[h:sp.CritDmg2 = math.arraySum(sp.CritDmgArray2) + flatDmg2Total + sp.TotalAddedFlatDamage2]
+		[h:sp.CritDmgRolls2 = json.toList(sp.CritDmgArray2," + ")+pm.PlusMinus(flatBonus2,0)+pm.PlusMinus(ModDamageBonus2,0)+if(json.isEmpty(sp.AddedFlatDamage2),""," + "+json.toList(sp.AddedFlatDamage2," + "))]
+		[h:sp.CritDmgMax2 = math.arraySum(sp.FinalCritDamageDice2) + flatDmg2Total + sp.TotalAddedFlatDamage2]
 
-		[h:sp.ThisMissileData = json.set(sp.ThisMissileData,"Dmg2Formula",sp.Dmg2Formula,"Dmg2Str",sp.Dmg2StrFinal,"Dmg2",sp.Dmg2Final,"Dmg2Max",sp.Dmg2MaxFinal,"CritDmg2Formula",sp.CritDmg2Formula,"CritDmg2Str",sp.CritDmg2StrFinal,"CritDmg2",sp.CritDmg2Final,"CritDmg2Max",sp.CritDmg2MaxFinal)]
-   }]
+		[h:sp.ThisMissileData = json.set(sp.ThisMissileData,"DmgRules2",sp.DmgRulesFinal2,"DamageDice2",sp.FinalDamageDice2,"DmgArray2",sp.DmgArray2,"DmgRolls2",sp.DmgRolls2,"Dmg2",sp.Dmg2,"DmgMax2",sp.DmgMax2,"CritDmgRules2",sp.CritDmgRulesFinal2,"CritDamageDice2",sp.FinalCritDamageDice2,"CritDmgArray2",sp.CritDmgArray2,"CritDmgRolls2",sp.CritDmgRolls2,"CritDmg2",sp.CritDmg2,"CritDmgMax2",sp.CritDmgMax2)]
+	}]
 	
 	[h:sp.AllMissileData = json.append(sp.AllMissileData,sp.ThisMissileData)]
 }]
 
 [h:MissileNum = 0]
 [h,count(MissileCount),code:{
+	[h:roll1 = json.get(json.get(sp.AllMissileData,roll.count),"Roll1")]
+	[h:roll2 = json.get(json.get(sp.AllMissileData,roll.count),"Roll2")]
+	[h:thisAttackAdvDis = json.get(json.get(sp.AllMissileData,roll.count),"Advantage")]
+	[h:thisAttackToHit = json.get(json.get(sp.AllMissileData,roll.count),"ToHit")]
+	[h:thisAttackToHitStr = json.get(json.get(sp.AllMissileData,roll.count),"ToHitStr")]
+	[h:thisAttackToHitRules = json.get(json.get(sp.AllMissileData,roll.count),"RulesStr")]
+	[h:thisAttackCrit = if(sSpellAttack==0,0,json.get(json.get(sp.AllMissileData,roll.count),"CritTest"))]
+	[h:thisAttackCritFail = if(sSpellAttack==0,0,json.get(json.get(sp.AllMissileData,roll.count),"CritFailTest"))]
+	
+	[h:thisAttackDmg = json.get(json.get(sp.AllMissileData,roll.count),"Dmg")]
+	[h:thisAttackDmgStr = json.get(json.get(sp.AllMissileData,roll.count),"DmgRolls")]
+	[h:thisAttackDmgRules = json.get(json.get(sp.AllMissileData,roll.count),"DmgRules")]
+	[h:thisAttackCritDmg = json.get(json.get(sp.AllMissileData,roll.count),"CritDmg")]
+	[h:thisAttackCritDmgStr = json.get(json.get(sp.AllMissileData,roll.count),"CritDmgRolls")]
+	[h:thisAttackCritDmgRules = json.get(json.get(sp.AllMissileData,roll.count),"CritDmgRules")]
+	
+	[h:thisAttackDmg2 = json.get(json.get(sp.AllMissileData,roll.count),"Dmg2")]
+	[h:thisAttackDmg2Str = json.get(json.get(sp.AllMissileData,roll.count),"DmgRolls2")]
+	[h:thisAttackDmg2Rules = json.get(json.get(sp.AllMissileData,roll.count),"DmgRules2")]
+	[h:thisAttackCritDmg2 = json.get(json.get(sp.AllMissileData,roll.count),"CritDmg2")]
+	[h:thisAttackCritDmg2Str = json.get(json.get(sp.AllMissileData,roll.count),"CritDmgRolls2")]
+	[h:thisAttackCritDmg2Rules = json.get(json.get(sp.AllMissileData,roll.count),"CritDmgRules2")]
 
+	[h:sp.AdvRerollLink = macroLinkText("AttackReroll@Lib:pm.a5e.Core","self-gm",json.set(FinalSpellData,"Advantage",1,"ForcedAdvantage",1,"PreviousRoll",roll1),ParentToken)]
+	[h:sp.DisRerollLink = macroLinkText("AttackReroll@Lib:pm.a5e.Core","self-gm",json.set(FinalSpellData,"Advantage",-1,"ForcedAdvantage",1,"PreviousRoll",roll1),ParentToken)]
+	
 	[h,if(sSpellAttack == 1),CODE:{
-		[h:abilityTable = json.append(abilityTable,json.set("",
+		[h:ToHitTableLine = json.set("",
 			"ShowIfCondensed",1,
 			"Header","Attack Roll",
 			"FalseHeader","",
-			"FullContents","<span style='"+if(json.get(json.get(sp.AllMissileData,MissileNum),"CritTest"),"font-size:2em; color:"+CritColor,if(roll1==1,"font-size:2em; color:"+CritFailColor,"font-size:1.5em"))+"'>"+(json.get(json.get(sp.AllMissileData,MissileNum),"Roll1")+AttackMod)+"</span>",
-			"RulesContents","1d20 + "+substring(PrimeStatMod,0,3)+" + "+Proficiency+" = ",
-			"RollContents",json.get(json.get(sp.AllMissileData,MissileNum),"Roll1")+pm.PlusMinus(AttackMod,0)+" = ",
-			"DisplayOrder","['Rules','Roll','Full']",
-			"LinkText","Reroll",
-			"Link",macroLinkText("SpellCasting@Lib:pm.a5e.Core","self-gm",sp.Data,ParentToken),
-			"Value",(json.get(json.get(sp.AllMissileData,MissileNum),"Roll1")+AttackMod)
-			))]
+			"FullContents","<span style='"+if(thisAttackCrit,"font-size:2em; color:"+CritColor,if(thisAttackCritFail,"font-size:2em; color:"+CritFailColor,"font-size:1.5em"))+"'>"+thisAttackToHit+"</span>",
+			"RulesContents",thisAttackToHitRules+" = ",
+			"RollContents",thisAttackToHitStr+" = ",
+			"DisplayOrder","['Rules','Roll','Full']"
+		)]
+		
+		[h,if(thisAttackAdvDis==0):
+			ToHitTableLine = json.set(ToHitTableLine,"BonusBody1","Reroll: <a href = '"+sp.AdvRerollLink+"'><span style = 'color:"+LinkColor+"'>Adv.</span></a> / <a href = '"+sp.DisRerollLink+"'><span style = 'color:"+LinkColor+"'>Dis.</span></a>");
+			ToHitTableLine = json.set(ToHitTableLine,"BonusBody1","(Roll #1: "+(roll1+thisAttackToHit-if(thisAttackAdvDis==1,max(roll1,roll2),min(roll1,roll2)))+" / Roll #2: "+(roll2+thisAttackToHit-if(thisAttackAdvDis==1,max(roll1,roll2),min(roll1,roll2)))+")")
+		]
+		
+		[h:abilityTable = json.append(abilityTable,ToHitTableLine)]			
 	};{}]
 	
 	[h,if(DmgDieNum == 0),CODE:{};{
@@ -745,13 +773,10 @@
 			"ShowIfCondensed",1,
 			"Header",DmgType+if(or(DmgType=="Healing",DmgType=="Temp HP",DmgType=="Special"),""," Damage"),
 			"FalseHeader","",
-			"FullContents","<span style='color:"+if(or(DmgType=="Healing",DmgType=="Temp HP"),HealingColor,DamageColor)+"; font-size:1.5em'>"+if(json.get(json.get(sp.AllMissileData,MissileNum),"CritTest"),json.get(json.get(sp.AllMissileData,MissileNum),"CritDmg"),json.get(json.get(sp.AllMissileData,MissileNum),"Dmg"))+"</span>"+if(DmgHalved==1," (If halved:<b> "+floor(if(json.get(json.get(sp.AllMissileData,MissileNum),"CritTest"),json.get(json.get(sp.AllMissileData,MissileNum),"CritDmg"),json.get(json.get(sp.AllMissileData,MissileNum),"Dmg"))/2)+"</b>)",""),
-			"RulesContents",if(json.get(json.get(sp.AllMissileData,MissileNum),"CritTest"),json.get(json.get(sp.AllMissileData,MissileNum),"CritDmgFormula"),json.get(json.get(sp.AllMissileData,MissileNum),"DmgFormula"))+" = ",
-			"RollContents",if(json.get(json.get(sp.AllMissileData,MissileNum),"CritTest"),json.get(json.get(sp.AllMissileData,MissileNum),"CritDmgStr"),json.get(json.get(sp.AllMissileData,MissileNum),"DmgStr"))+" = ",
-			"DisplayOrder","['Rules','Roll','Full']",
-			"LinkText","",
-			"Link","",
-			"Value",if(json.get(json.get(sp.AllMissileData,MissileNum),"CritTest"),json.get(json.get(sp.AllMissileData,MissileNum),"CritDmg"),json.get(json.get(sp.AllMissileData,MissileNum),"Dmg"))
+			"FullContents","<span style='color:"+if(or(DmgType=="Healing",DmgType=="Temp HP"),HealingColor,DamageColor)+"; font-size:1.5em'>"+if(thisAttackCrit,thisAttackCritDmg,thisAttackDmg)+"</span>"+if(DmgHalved==1," (If halved:<b> "+floor(if(thisAttackCrit,thisAttackCritDmg,thisAttackDmg)/2)+"</b>)",""),
+			"RulesContents",if(thisAttackCrit,thisAttackCritDmgRules,thisAttackDmgRules)+" = ",
+			"RollContents",if(thisAttackCrit,thisAttackCritDmgStr,thisAttackDmgStr)+" = ",
+			"DisplayOrder","['Rules','Roll','Full']"
 			))]
 	}]
 		
@@ -760,14 +785,11 @@
 			"ShowIfCondensed",1,
 			"Header",DmgType2+if(or(DmgType2=="Healing",DmgType2=="Temp HP",DmgType2=="Special"),""," Damage"),
 			"FalseHeader","",
-			"FullContents","<span style='color:"+if(or(DmgType2=="Healing",DmgType2=="Temp HP"),HealingColor,DamageColor)+"; font-size:1.5em'>"+if(json.get(json.get(sp.AllMissileData,MissileNum),"CritTest"),json.get(json.get(sp.AllMissileData,MissileNum),"CritDmg2"),json.get(json.get(sp.AllMissileData,MissileNum),"Dmg2"))+"</span>"+if(DmgHalved==1," (If halved:<b> "+floor(if(json.get(json.get(sp.AllMissileData,MissileNum),"CritTest"),json.get(json.get(sp.AllMissileData,MissileNum),"CritDmg2"),json.get(json.get(sp.AllMissileData,MissileNum),"Dmg2"))/2)+"</b>)",""),
-			"RulesContents",if(json.get(json.get(sp.AllMissileData,MissileNum),"CritTest"),json.get(json.get(sp.AllMissileData,MissileNum),"CritDmg2Formula"),json.get(json.get(sp.AllMissileData,MissileNum),"Dmg2Formula"))+" = ",
-			"RollContents",if(json.get(json.get(sp.AllMissileData,MissileNum),"CritTest"),json.get(json.get(sp.AllMissileData,MissileNum),"CritDmg2Str"),json.get(json.get(sp.AllMissileData,MissileNum),"Dmg2Str"))+" = ",
-			"DisplayOrder","['Rules','Roll','Full']",
-			"LinkText","",
-			"Link","",
-			"Value",if(json.get(json.get(sp.AllMissileData,MissileNum),"CritTest"),json.get(json.get(sp.AllMissileData,MissileNum),"CritDmg2"),json.get(json.get(sp.AllMissileData,MissileNum),"Dmg2"))
-			))]
+			"FullContents","<span style='color:"+if(or(DmgType2=="Healing",DmgType2=="Temp HP"),HealingColor,DamageColor)+"; font-size:1.5em'>"+if(thisAttackCrit,thisAttackCritDmg2,thisAttackDmg2)+"</span>"+if(DmgHalved==1," (If halved:<b> "+floor(if(thisAttackCrit,thisAttackCritDmg2,thisAttackDmg2)/2)+"</b>)",""),
+			"RulesContents",if(thisAttackCrit,thisAttackCritDmg2Rules,thisAttackDmg2Rules)+" = ",
+			"RollContents",if(thisAttackCrit,thisAttackCritDmg2Str,thisAttackDmg2Str)+" = ",
+			"DisplayOrder","['Rules','Roll','Full']"
+		))]
 	}]
 	[h:MissileNum = MissileNum + 1]
 }]

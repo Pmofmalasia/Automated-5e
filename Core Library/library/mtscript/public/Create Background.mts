@@ -13,7 +13,11 @@
 	" junkVar | -------------------------------------------------------------------------------------------------------------- |  | LABEL | SPAN=TRUE ",
 	" ab.HasMaster | No,Yes,Yes - Not Created Yet | <html><span title='Features with multiple named options, e.g. Battle Master Fighter - Combat Superiority Maneuvers, Totem Barbarian, Hunter Ranger'>Has an associated main feature</span></html> | LIST ",
 	" ab.OnLevel | 0 | <html><span title='Uncheck for abilities that must be chosen to be gained, e.g. Eldritch Invocations or Hunter Ranger features'>Gained Automatically on Level Up</span></html> | CHECK ",
-	" ab.Optional | 0 | <html><span title='For sourcebooks that add optional additional rules'>Optional Feature</span></html> | CHECK ",	" ab.Replace | No,Yes,Yes - Not Created Yet | <html><span title='For sourcebooks that optionally remove old features and replace them with new ones.'>Replaces another Feature if Gained</span></html> | LIST ",		" junkVar | -------------------------------------------------------------------------------------------------------------- |  | LABEL | SPAN=TRUE ",	"ab.Prereqs |  | <html><span title='Mostly for features not gained automatically on level up, like Invocations or Feats. Ignore if level/class/subclass are the only prerequisites.'>Feature has prerequisites for being gained</span></html> | CHECK ",	"ab.MultiAbility |  | <html><span title='Pretty much just for Elemental Adept at this point. Can be used for anything similar.'>Feature can be gained multiple times</span></html> | CHECK "
+	" ab.Optional | 0 | <html><span title='For sourcebooks that add optional additional rules'>Optional Feature</span></html> | CHECK ",
+	" ab.Replace | No,Yes,Yes - Not Created Yet | <html><span title='For sourcebooks that optionally remove old features and replace them with new ones.'>Replaces another Feature if Gained</span></html> | LIST ",
+	" junkVar | -------------------------------------------------------------------------------------------------------------- |  | LABEL | SPAN=TRUE ",
+	"ab.Prereqs |  | <html><span title='Mostly for features not gained automatically on level up, like Invocations or Feats. Ignore if level/class/subclass are the only prerequisites.'>Feature has prerequisites for being gained</span></html> | CHECK ",
+	"ab.MultiAbility |  | <html><span title='Pretty much just for Elemental Adept at this point. Can be used for anything similar.'>Feature can be gained multiple times</span></html> | CHECK "
 	))]
 
 [h:ab.UpdateLevelOptions = string(ab.Level)]
@@ -25,8 +29,8 @@
 [h:ab.Final = json.set("",
 	"Name",ab.Name,
 	"DisplayName",ab.DisplayName,
-	"Subclass",pm.RemoveSpecial(ab.Class),
-	"Name",ab.Name,
+	"Class","Background",
+	"Subclass",ab.Name,
 	"Level",ab.Level,
 	"GainOnLevel",ab.OnLevel,
 	"Optional",ab.Optional,

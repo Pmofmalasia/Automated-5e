@@ -4,7 +4,7 @@
 [h:pm.TargetOrigin = json.get(arg(0),"Origin")]
 [h:pm.RangeNum = json.get(json.get(arg(0),"Range"),"Value")]
 [h:pm.RangeUnits = pm.StandardRange(json.get(json.get(arg(0),"Range"),"Units"))]
-[h:pm.RangeNumFinal = if(pm.RangeUnits=="Other","",(if(pm.RangeUnits=="Miles",pm.RangeNum*5280,pm.RangeNum)/5))]
+[h:pm.RangeNumFinal = if(pm.RangeUnits=="Other","",if(pm.RangeUnits=="Miles",pm.RangeNum*5280,pm.RangeNum))]
 [h:pm.AoEInfo = json.get(arg(0),"AoE")]
 [h:pm.MultiTargetRange = json.get(arg(0),"MultiTargetRange")]
 
@@ -35,7 +35,7 @@
 [h:pm.TargetIntMin = if(json.get(arg(1),"IntMin")=="",0,json.get(arg(1),"IntMin"))]
 [h:pm.TargetIntMax = if(json.get(arg(1),"IntMax")=="",999999,json.get(arg(1),"IntMax"))]
 
-[h:pm.TargetsInRange = getTokens("json","range",json.set("","token",pm.TargetOrigin,"upto",pm.RangeNumFinal))]
+[h:pm.TargetsInRange = getTokens("json",json.set("","range",json.set("","token",pm.TargetOrigin,"upto",pm.RangeNumFinal,"distancePerCell",1)))]
 [h:pm.ValidTargets = "[]"]
 
 [h,foreach(target,pm.TargetsInRange),CODE:{
@@ -43,55 +43,58 @@
 		case "Ally": pm.AllyFoeTest = (getProperty("whichTeam") == getProperty("whichTeam",target));
 		case "Foe": pm.AllyFoeTest = (getProperty("whichTeam") != getProperty("whichTeam",target));
 		case "AllyorFoe": pm.AllyFoeTest = 1;
-      case "Self": pm.AllyFoeTest = (target == ParentToken);
+		case "Self": pm.AllyFoeTest = (target == ParentToken);
 		default: pm.AllyFoeTest = 1
 	]
    
-   [h,switch(pm.TargetCategory),CODE:
-      case "Creature":{
-         [h,if(json.type(pm.TargetSize) == "UNKNOWN"):
-            pm.SizeTest = if(or(pm.TargetSize=="",pm.TargetSize==getSize(target)),1,0);
-            pm.SizeTest = json.contains(pm.SizeTest,getSize(target))
-         ]
-         [h,if(json.type(pm.TargetTypeInclusive) == "UNKNOWN"):
-            pm.TypeTest = if(or(pm.TargetTypeInclusive==getProperty("CreatureType",target),pm.TargetTypeInclusive=="Any",pm.TargetTypeInclusive==""),1,0);
-            pm.TypeTest = if(json.contains(pm.TargetTypeInclusive,getProperty("CreatureType",target)),1,0)
-         ]
-         [h,if(json.type(pm.TargetSubtypeInclusive) == "UNKNOWN"):
-            pm.SubtypeTest = if(or(pm.TargetSubtypeInclusive==getProperty("Race",target),pm.TargetSubtypeInclusive=="Any",pm.TargetSubtypeInclusive==""),1,0);
-            pm.SubtypeTest = if(json.contains(pm.TargetSubtypeInclusive,pm.RemoveSpecial(getProperty("Race",target))),1,0)
-         ]
+	[h,switch(pm.TargetCategory),CODE:
+		case "Creature":{
+			[h,if(json.type(pm.TargetSize) == "UNKNOWN"):
+				pm.SizeTest = if(or(pm.TargetSize=="",pm.TargetSize==getSize(target)),1,0);
+				pm.SizeTest = json.contains(pm.SizeTest,getSize(target))
+			]
+			
+			[h,if(json.type(pm.TargetTypeInclusive) == "UNKNOWN"):
+				pm.TypeTest = if(or(pm.TargetTypeInclusive==getProperty("CreatureType",target),pm.TargetTypeInclusive=="Any",pm.TargetTypeInclusive==""),1,0);
+				pm.TypeTest = if(json.contains(pm.TargetTypeInclusive,getProperty("CreatureType",target)),1,0)
+			]
+			
+			[h,if(json.type(pm.TargetSubtypeInclusive) == "UNKNOWN"):
+				pm.SubtypeTest = if(or(pm.TargetSubtypeInclusive==getProperty("Race",target),pm.TargetSubtypeInclusive=="Any",pm.TargetSubtypeInclusive==""),1,0);
+				pm.SubtypeTest = if(json.contains(pm.TargetSubtypeInclusive,pm.RemoveSpecial(getProperty("Race",target))),1,0)
+			]
+			 
+			[h,if(json.type(pm.TargetTypeExclusive) == "UNKNOWN"):
+				pm.TypeTest = if(or(pm.TargetTypeExclusive!=getProperty("CreatureType",target),pm.TargetTypeExclusive==""),pm.TypeTest,0);
+				pm.TypeTest = if(json.contains(pm.TargetTypeExclusive,getProperty("CreatureType",target)),0,pm.TypeTest)
+			]
+			
+			[h,if(json.type(pm.TargetSubtypeExclusive) == "UNKNOWN"):
+				pm.SubtypeTest = if(or(pm.TargetSubtypeExclusive!=getProperty("Race",target),pm.TargetSubtypeExclusive==""),pm.SubtypeTest,0);
+				pm.SubtypeTest = if(json.contains(pm.TargetSubtypeExclusive,pm.RemoveSpecial(getProperty("Race",target))),0,pm.SubtypeTest)
+			]
+			 
+			[h:pm.IntTest = if(and(json.get(getProperty("Attributes",target),"Intelligence")>pm.TargetIntMin,json.get(getProperty("Attributes",target),"Intelligence")<pm.TargetIntMax),1,0)]
+		};
+		case "Item":{
          
-         [h,if(json.type(pm.TargetTypeExclusive) == "UNKNOWN"):
-            pm.TypeTest = if(or(pm.TargetTypeExclusive!=getProperty("CreatureType",target),pm.TargetTypeExclusive==""),pm.TypeTest,0);
-            pm.TypeTest = if(json.contains(pm.TargetTypeExclusive,getProperty("CreatureType",target)),0,pm.TypeTest)
-         ]
-         [h,if(json.type(pm.TargetSubtypeExclusive) == "UNKNOWN"):
-            pm.SubtypeTest = if(or(pm.TargetSubtypeExclusive!=getProperty("Race",target),pm.TargetSubtypeExclusive==""),pm.SubtypeTest,0);
-            pm.SubtypeTest = if(json.contains(pm.TargetSubtypeExclusive,pm.RemoveSpecial(getProperty("Race",target))),0,pm.SubtypeTest)
-         ]
-         
-         [h:pm.IntTest = if(and(getProperty("Intelligence",target)>pm.TargetIntMin,getProperty("Intelligence",target)<pm.TargetIntMax),1,0)]
-      };
-      case "Item":{
-         
-      };
-      case "Object":{
-      
-      };
-      case "Effect":{
-      
-      };
-      case "Condition"{
-      
-      };
-      case "Hand":{
-      
-      };
-      case "Point":{
-      
-      }
-   ]
+		};
+		case "Object":{
+	  
+		};
+		case "Effect":{
+	  
+		};
+		case "Condition":{
+	  
+		};
+		case "Hand":{
+	  
+		};
+		case "Point":{
+	  
+		}
+    ]
    
 	[h:pm.ValidTargets = if(and(pm.AllyFoeTest,pm.TypeTest,pm.SubtypeTest,pm.IntTest),json.append(pm.ValidTargets,target),pm.ValidTargets)]
 }]
@@ -115,7 +118,7 @@
    case "Effect":{
    
    };
-   case "Condition"{
+   case "Condition":{
    
    };
    case "Hand":{

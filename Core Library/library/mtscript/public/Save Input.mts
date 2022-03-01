@@ -9,7 +9,7 @@
 	"SkillDesc|--Description Here--|Description||WIDTH=40",
 	"iSaves|"+sv.Options+"|Saves|LIST",
 	"sBonus|0|Situational Bonus||WIDTH=20",
-	"svAdv|Forced Disadvantage,Situational Disadvantage,Normal Roll,Situational Advantage,Forced Advantage|Use Alternate Ability|RADIO|SELECT=2",
+	"svAdv|Forced Disadvantage,Situational Disadvantage,Normal Roll,Situational Advantage,Forced Advantage|Advantage Type|RADIO|SELECT=2",
 	"outputOptions|"+if(isGM(),"Everyone,DM Only","Everyone,You and DM,DM Only")+"|Who sees the result?|RADIO"
 ))]
 [h:AddedBonus=eval(sBonus+"+1d1-1")]

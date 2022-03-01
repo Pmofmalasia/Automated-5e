@@ -7,8 +7,8 @@
 }]
 
 [h:sk.ToolCategoryInput = ""]
-[h:sk.ToolCategoryList = json.unique(pm.GetTools("ToolType","json"))]
-[h,foreach(TempToolType,sk.ToolCategoryList): sk.ToolCategoryInput = if(TempToolType=="",sk.ToolCategoryInput,listAppend(sk.ToolCategoryInput," sk."+TempToolType+"Choice | No,Proficiency,Expertise,Expertise if Proficient | LIST ","##"))]
+[h:sk.ToolCategoryList = pm.GetToolTypes())]
+[h,foreach(TempToolType,sk.ToolCategoryList): sk.ToolCategoryInput = listAppend(sk.ToolCategoryInput," sk."+json.get(TempToolType,"Name")+"Choice | No,Proficiency,Expertise,Expertise if Proficient | All "+json.get(TempToolType,"DisplayName")+"s | LIST ","##")]
 
 [h:sk.ToolInput = ""]
 [h:sk.ToolList = pm.GetTools()]
@@ -28,6 +28,9 @@
 
 [h:sk.SkillProfChoices = ""]
 [h,foreach(TempSkill,sk.SkillList): sk.SkillProfChoices = if(eval("sk."+json.get(TempSkill,"Name"))==0,sk.SkillProfChoices,json.set(sk.SkillProfChoices,json.get(TempSkill,"Name"),eval("sk."+json.get(TempSkill,"Name"))))]
+
+[h:sk.ToolTypeProfChoices = ""]
+[h,foreach(TempToolType,sk.ToolCategoryList): sk.SkillProfChoices = if(eval("sk."+json.get(TempToolType,"Name")+"Choice")==0,sk.SkillProfChoices,json.set(sk.SkillProfChoices,json.get(TempToolType,"Name"),eval("sk."+json.get(TempToolType,"Name")+"Choice")))]
 
 [h:sk.ToolProfChoices = ""]
 [h,foreach(TempTool,sk.ToolList): sk.SkillProfChoices = if(eval("sk."+json.get(TempTool,"Name"))==0,sk.SkillProfChoices,json.set(sk.SkillProfChoices,json.get(TempTool,"Name"),eval("sk."+json.get(TempTool,"Name"))))]

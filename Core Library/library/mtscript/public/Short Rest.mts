@@ -10,7 +10,7 @@
 	"Header","Hit Dice Available",
 	"FalseHeader","",
 	"FullContents","",
-	"RulesContents",pm.HitDieDisplay(),
+	"RulesContents",a5e.HitDieDisplay(),
 	"RollContents","",
 	"DisplayOrder","['Rules','Roll','Full']",
 	"Value",""

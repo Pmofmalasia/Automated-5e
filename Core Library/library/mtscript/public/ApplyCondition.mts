@@ -14,6 +14,6 @@
 }]
 
 [h:ConditionList = json.merge(ConditionList,a5e.Conditions)]
-[h:ConditionGroups = json.append(ConditionGroups,json.set(a5e.EndConditionInfo,"Names",json.path.read(a5e.Conditions,"[*]['Name']"),"GroupID",a5e.Group))]
+[h:ConditionGroups = json.append(ConditionGroups,json.set("","EndInfo",a5e.EndConditionInfo,"Names",json.path.read(a5e.Conditions,"[*]['Name']"),"GroupID",a5e.Group))]
 
 [h:pm.PassiveFunction("CondGain")]

@@ -30,17 +30,18 @@
 	[h,if(sk.TempValidTest),CODE:{
 		[h:sk.SkillInput = listAppend(sk.SkillInput,"sk."+json.get(TempSkill,"Name")+"Prof | "+sk.TrainingOptions+" | "+json.get(TempSkill,"DisplayName")+" | LIST ","##")]
 	};{
-		[h,if(sk.TempIsOption): sk.SkillInput = listAppend(sk.SkillInput,"junkVar | "+sk.TrainingOptions+" | "+json.get(TempSkill,"DisplayName")+" | LABEL ","##")]
+		[h,if(sk.TempIsOption): sk.SkillInput = listAppend(sk.SkillInput,"junkVar | - "+sk.TrainingOptions+" - | "+json.get(TempSkill,"DisplayName")+" | LABEL ","##")]
 		[h:set("sk."+json.get(TempSkill,"Name")+"Prof",0)]
 	}]
 }]
 [h:sk.SkillInput = if(sk.SkillInput=="","",listAppend(" junkVar | ----------------- Skill Proficiencies ----------------- | | LABEL | SPAN=TRUE ",sk.SkillInput,"##"))]
 
+
 [h:sk.ToolInput = ""]
 [h:sk.ToolList = pm.GetTools()]
 [h,foreach(TempTool,sk.ToolList),CODE:{
 	[h:sk.TempProficiency = if(json.get(json.merge(Tools,sk.GainedProf),json.get(TempTool,"Name"))=="",0,json.get(json.merge(Tools,sk.GainedProf),json.get(TempTool,"Name")))]
-	[h:sk.TempIsOption = if(json.get(sk.ValidSkills,json.get(TempTool,"Name"))=="",0,json.get(sk.ValidSkills,json.get(TempTool,"Name")))]
+	[h:sk.TempIsOption = if(json.get(sk.ValidSkills,json.get(TempTool,"Name"))=="",if(json.get(sk.ValidSkills,json.get(TempTool,"ToolType"))=="",0,json.get(sk.ValidSkills,json.get(TempTool,"ToolType"))),json.get(sk.ValidSkills,json.get(TempTool,"Name")))]
 	[h:sk.TrainingOptions = json.toList(json.get(listTraining,sk.TempProficiency,min(2,if(sk.TempIsOption==3,sk.TempProficiency+1,sk.TempIsOption))))]
 	[h:sk.TempValidTest = if(and(sk.TempIsOption>sk.TempProficiency,sk.TempProficiency!=2),1,0)]
 	[h,if(sk.TempValidTest),CODE:{

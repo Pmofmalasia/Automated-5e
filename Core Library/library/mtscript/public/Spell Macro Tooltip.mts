@@ -348,7 +348,7 @@
 		"BodyFont",BodyFont,
 		"Class","zzSpell",
 		"Name",pm.RemoveSpecial(SpellName),
-		"DisplayName","<b>"+SpellName+"</b>: Level "+sLevel+" "+sSchool+" Spell",
+		"DisplayName","<b>"+SpellName+"</b>: Level "+sLevel+" "+upper(sSchool,1)+" Spell",
 		"Effect",abilityEffect,
 		"abilityTable",abilityTable
 		)]

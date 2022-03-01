@@ -12,7 +12,7 @@
 			"DisplayName",lg.Name,
 			"Script",lg.Script,
 			"Rarity",lg.Rarity,
-			"Library",lg.Source
+			"Library",lg.SourcebookLib
 			)]
 
 [h:setLibProperty("sb.Languages",json.append(getLibProperty("sb.Languages","Lib:"+lg.SourcebookLib),lg.Data),"Lib:"+lg.SourcebookLib)]

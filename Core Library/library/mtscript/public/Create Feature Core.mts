@@ -32,9 +32,9 @@
 	))]
 
 [h,if(ab.ChooseSubabilities==1),CODE:{
-[h:ab.Final = json.set(ab.Final,
-	"ChooseSubabilities",1
-)]
+	[h:ab.Final = json.set(ab.Final,
+		"ChooseSubabilities",1
+	)]
 };{}]
 
 [h,if(ab.IsClassOptions),CODE:{
@@ -491,15 +491,14 @@
 		" ab.WeaponMisc | 0 | Affects Weapon Proficiencies | CHECK ",
 		" ab.ArmorMisc | 0 | Affects Armor Proficiencies | CHECK "
 		))]
-		[h:ab.Final = json.set(ab.Final,
-		"CallSaveProf",ab.SaveMisc,
-		"CallCheckProf",ab.CheckMisc,
-		"CallDeathProf",ab.DeathMisc,
-		"CallInitProf",ab.InitMisc,
-		"CallConcProf",ab.ConcMisc,
-		"CallWeaponProf",ab.WeaponMisc,
-		"CallArmorProf",ab.ArmorMisc
-		)]
+		
+	[h,if(ab.SaveMisc): ab.Final = json.set(ab.Final,"CallSaveProf",ab.SaveMisc)]
+	[h,if(ab.CheckMisc): ab.Final = json.set(ab.Final,"CallCheckProf",ab.CheckMisc)]
+	[h,if(ab.DeathMisc): ab.Final = json.set(ab.Final,"CallSaveProf",ab.DeathMisc)]
+	[h,if(ab.InitMisc): ab.Final = json.set(ab.Final,"CallCheckProf",ab.InitMisc)]
+	[h,if(ab.ConcMisc): ab.Final = json.set(ab.Final,"CallSaveProf",ab.ConcMisc)]
+	[h,if(ab.WeaponMisc): ab.Final = json.set(ab.Final,"CallWeaponProf",ab.WeaponMisc)]
+	[h,if(ab.ArmorMisc): ab.Final = json.set(ab.Final,"CallArmorProf",ab.ArmorMisc)]\
 };{}]
 
 [h,if(ab.PassiveScore),CODE:{
@@ -510,6 +509,9 @@
 	" ab.PassInv | 0 | Gives Passive Investigation Bonus | CHECK ",
 	" ab.PassPcp | 0 | Gives Passive Perception Bonus | CHECK "
 ))]
+	[h,if(ab.PassIns): ab.Final = json.set(ab.Final,"CallPassiveIns",ab.PassIns)]
+	[h,if(ab.PassInv): ab.Final = json.set(ab.Final,"CallPassiveInv",ab.PassInv)]
+	[h,if(ab.PassPcp): ab.Final = json.set(ab.Final,"CallPassivePcp",ab.PassPcp)]
 
 [h:ab.Final = json.set(ab.Final,
 	"CallPassiveIns",ab.PassIns,
@@ -559,9 +561,9 @@
 };{}]
 
 [h,if(ab.CondImmun),CODE:{
-[h:ab.Final = json.set(ab.Final,
-	"CallCondImmun",1
-)]
+	[h:ab.Final = json.set(ab.Final,
+		"CallCondImmun",1
+	)]
 };{}]
 
 [h,if(ab.Speed),CODE:{
@@ -592,60 +594,54 @@
 };{}]
 
 [h,if(ab.Senses),CODE:{
-[h:ab.Final = json.set(ab.Final,
-	"CallSenses",1
-)]
+	[h:ab.Final = json.set(ab.Final,
+		"CallSenses",1
+	)]
 };{}]
 
 [h,if(ab.Check),CODE:{
-[h:abort(input(
-	" junkVar | Choose aspects of checks affected | 0 | LABEL | SPAN=TRUE ",
-	" junkVar | ------------------------------------------------------------ | 0 | LABEL | SPAN=TRUE ",
-	" ab.CheckAdv | 0 | Grants (Dis)Advantage on Checks | CHECK ",
-	" ab.CheckBonus | 0 | Grants Bonus to Checks | CHECK ",
-	" ab.CheckProf | 0 | <html><span title='Non-Permanent Effects or Effects not granting Expertise/Proficiency (e.g. Jack of All Trades)'>Affects Proficiency of Checks</span></html> | CHECK ",
-	" ab.CheckMsg | 0 | <html><span title='Use for misc effects that occur after a check, or situational bonuses that the program is unable to determine (e.g. History checks about stone)'>Shows Message Following Checks</span></html> | CHECK "
-))]
-[h:ab.Final = json.set(ab.Final,
-	"CallCheckAdv",ab.CheckAdv,
-	"CallCheckBonus",ab.CheckBonus,
-	"CallCheckProf",ab.CheckProf,
-	"CallAfterCheck",ab.CheckMsg
-)]
+	[h:abort(input(
+		" junkVar | Choose aspects of checks affected | 0 | LABEL | SPAN=TRUE ",
+		" junkVar | ------------------------------------------------------------ | 0 | LABEL | SPAN=TRUE ",
+		" ab.CheckAdv | 0 | Grants (Dis)Advantage on Checks | CHECK ",
+		" ab.CheckBonus | 0 | Grants Bonus to Checks | CHECK ",
+		" ab.CheckProf | 0 | <html><span title='Non-Permanent Effects or Effects not granting Expertise/Proficiency (e.g. Jack of All Trades)'>Affects Proficiency of Checks</span></html> | CHECK ",
+		" ab.CheckMsg | 0 | <html><span title='Use for misc effects that occur after a check, or situational bonuses that the program is unable to determine (e.g. History checks about stone)'>Shows Message Following Checks</span></html> | CHECK "
+	))]
+	[h,if(ab.CheckAdv): ab.Final = json.set(ab.Final,"CallCheckAdv",ab.CheckAdv)]
+	[h,if(ab.CheckBonus): ab.Final = json.set(ab.Final,"CallCheckBonus",ab.CheckBonus)]
+	[h,if(ab.CheckProf): ab.Final = json.set(ab.Final,"CallCheckProf",ab.CheckProf)]
+	[h,if(ab.CheckMsg): ab.Final = json.set(ab.Final,"CallAfterCheck",ab.CheckMsg)]
 };{}]
 
 [h,if(ab.Save),CODE:{
-[h:abort(input(
-	" junkVar | Choose aspects of Saves affected | 0 | LABEL | SPAN=TRUE ",
-	" junkVar | ------------------------------------------------------------ | 0 | LABEL | SPAN=TRUE ",
-	" ab.SaveAdv | 0 | Grants (Dis)Advantage on Saves | CHECK ",
-	" ab.SaveBonus | 0 | Grants Bonus to Saves | CHECK ",
-	" ab.SaveProf | 0 | <html><span title='Non-Permanent Effects or Effects not granting Expertise/Proficiency (e.g. Jack of All Trades)'>Affects Proficiency of Saves</span></html> | CHECK ",
-	" ab.SaveMsg | 0 | <html><span title='Use for misc effects that occur after a check, or situational bonuses that the program is unable to determine (e.g. History checks about stone)'>Shows Message Following Saves</span></html> | CHECK "
-))]
-[h:ab.Final = json.set(ab.Final,
-	"CallSaveAdv",ab.SaveAdv,
-	"CallSaveBonus",ab.SaveBonus,
-	"CallSaveProf",ab.SaveProf,
-	"CallAfterSave",ab.SaveMsg
-)]
+	[h:abort(input(
+		" junkVar | Choose aspects of Saves affected | 0 | LABEL | SPAN=TRUE ",
+		" junkVar | ------------------------------------------------------------ | 0 | LABEL | SPAN=TRUE ",
+		" ab.SaveAdv | 0 | Grants (Dis)Advantage on Saves | CHECK ",
+		" ab.SaveBonus | 0 | Grants Bonus to Saves | CHECK ",
+		" ab.SaveProf | 0 | <html><span title='Non-Permanent Effects or Effects not granting Expertise/Proficiency (e.g. Jack of All Trades)'>Affects Proficiency of Saves</span></html> | CHECK ",
+		" ab.SaveMsg | 0 | <html><span title='Use for misc effects that occur after a check, or situational bonuses that the program is unable to determine (e.g. History checks about stone)'>Shows Message Following Saves</span></html> | CHECK "
+	))]
+	[h,if(ab.SaveAdv): ab.Final = json.set(ab.Final,"CallSaveAdv",ab.SaveAdv)]
+	[h,if(ab.SaveBonus): ab.Final = json.set(ab.Final,"CallSaveBonus",ab.SaveBonus)]
+	[h,if(ab.SaveProf): ab.Final = json.set(ab.Final,"CallSaveProf",ab.SaveProf)]
+	[h,if(ab.SaveMsg): ab.Final = json.set(ab.Final,"CallAfterSave",ab.SaveMsg)]
 };{}]
 
 [h,if(ab.Init),CODE:{
-[h:abort(input(
-	" junkVar | Choose aspects of checks affected | 0 | LABEL | SPAN=TRUE ",
-	" junkVar | ------------------------------------------------------------ | 0 | LABEL | SPAN=TRUE ",
-	" ab.InitAdv | 0 | Grants (Dis)Advantage on Initiative | CHECK ",
-	" ab.InitBonus | 0 | Grants Bonus to Initiative | CHECK ",
-	" ab.InitProf | 0 | <html><span title='Non-Permanent Effects or Effects not granting Expertise/Proficiency (e.g. Jack of All Trades)'>Affects Initiative Proficiency</span></html> | CHECK ",
-	" ab.InitMsg | 0 | <html><span title='Use for misc effects that occur after initiative, or situational bonuses that the program is unable to determine (e.g. History checks about stone)'>Shows Message Following Initiative</span></html> | CHECK "
-))]
-[h:ab.Final = json.set(ab.Final,
-	"CallCheckAdv",ab.InitAdv,
-	"CallCheckBonus",ab.InitBonus,
-	"CallCheckProf",ab.InitProf,
-	"CallAfterCheck",ab.InitMsg
-)]
+	[h:abort(input(
+		" junkVar | Choose aspects of checks affected | 0 | LABEL | SPAN=TRUE ",
+		" junkVar | ------------------------------------------------------------ | 0 | LABEL | SPAN=TRUE ",
+		" ab.InitAdv | 0 | Grants (Dis)Advantage on Initiative | CHECK ",
+		" ab.InitBonus | 0 | Grants Bonus to Initiative | CHECK ",
+		" ab.InitProf | 0 | <html><span title='Non-Permanent Effects or Effects not granting Expertise/Proficiency (e.g. Jack of All Trades)'>Affects Initiative Proficiency</span></html> | CHECK ",
+		" ab.InitMsg | 0 | <html><span title='Use for misc effects that occur after initiative, or situational bonuses that the program is unable to determine (e.g. History checks about stone)'>Shows Message Following Initiative</span></html> | CHECK "
+	))]
+	[h,if(ab.InitAdv): ab.Final = json.set(ab.Final,"CallCheckAdv",ab.InitAdv)]
+	[h,if(ab.InitBonus): ab.Final = json.set(ab.Final,"CallCheckBonus",ab.InitBonus)]
+	[h,if(ab.InitProf): ab.Final = json.set(ab.Final,"CallCheckProf",ab.InitProf)]
+	[h,if(ab.InitMsg): ab.Final = json.set(ab.Final,"CallAfterCheck",ab.InitMsg)]
 };{}]
 
 [h,if(ab.Conc),CODE:{
@@ -657,29 +653,25 @@
 	" ab.ConcProf | 0 | <html><span title='Non-Permanent Effects or Effects not granting Expertise/Proficiency (e.g. Jack of All Trades)'>Affects Proficiency of Concentration Saves</span></html> | CHECK ",
 	" ab.ConcMsg | 0 | <html><span title='Use for misc effects that occur after a check, or situational bonuses that the program is unable to determine (e.g. History checks about stone)'>Shows Message Following Concentration Saves</span></html> | CHECK "
 ))]
-[h:ab.Final = json.set(ab.Final,
-	"CallConcAdv",ab.ConcAdv,
-	"CallConcBonus",ab.ConcBonus,
-	"CallConcProf",ab.ConcProf,
-	"CallAfterConc",ab.ConcMsg
-)]
+	[h,if(ab.ConcAdv): ab.Final = json.set(ab.Final,"CallSaveAdv",ab.ConcAdv)]
+	[h,if(ab.ConcBonus): ab.Final = json.set(ab.Final,"CallSaveBonus",ab.ConcBonus)]
+	[h,if(ab.ConcProf): ab.Final = json.set(ab.Final,"CallSaveProf",ab.ConcProf)]
+	[h,if(ab.ConcMsg): ab.Final = json.set(ab.Final,"CallAfterSave",ab.ConcMsg)]
 };{}]
 
 [h,if(ab.Death),CODE:{
-[h:abort(input(
-	" junkVar | Choose aspects of death saves affected | 0 | LABEL | SPAN=TRUE ",
-	" junkVar | ------------------------------------------------------------ | 0 | LABEL | SPAN=TRUE ",
-	" ab.DeathAdv | 0 | Grants (Dis)Advantage on Death Saves | CHECK ",
-	" ab.DeathBonus | 0 | Grants Bonus to Death Saves | CHECK ",
-	" ab.DeathProf | 0 | <html><span title='Non-Permanent Effects or Effects not granting Expertise/Proficiency (e.g. Jack of All Trades)'>Affects Proficiency of Death Saves</span></html> | CHECK ",
-	" ab.DeathMsg | 0 | <html><span title='Use for misc effects that occur after a check, or situational bonuses that the program is unable to determine (e.g. History checks about stone)'>Shows Message Following Death Saves</span></html> | CHECK "
-))]
-[h:ab.Final = json.set(ab.Final,
-	"CallSaveAdv",ab.DeathAdv,
-	"CallSaveBonus",ab.DeathBonus,
-	"CallSaveProf",ab.DeathProf,
-	"CallAfterSave",ab.DeathMsg
-)]
+	[h:abort(input(
+		" junkVar | Choose aspects of death saves affected | 0 | LABEL | SPAN=TRUE ",
+		" junkVar | ------------------------------------------------------------ | 0 | LABEL | SPAN=TRUE ",
+		" ab.DeathAdv | 0 | Grants (Dis)Advantage on Death Saves | CHECK ",
+		" ab.DeathBonus | 0 | Grants Bonus to Death Saves | CHECK ",
+		" ab.DeathProf | 0 | <html><span title='Non-Permanent Effects or Effects not granting Expertise/Proficiency (e.g. Jack of All Trades)'>Affects Proficiency of Death Saves</span></html> | CHECK ",
+		" ab.DeathMsg | 0 | <html><span title='Use for misc effects that occur after a check, or situational bonuses that the program is unable to determine (e.g. History checks about stone)'>Shows Message Following Death Saves</span></html> | CHECK "
+	))]
+	[h,if(ab.DeathAdv): ab.Final = json.set(ab.Final,"CallSaveAdv",ab.DeathAdv)]
+	[h,if(ab.DeathBonus): ab.Final = json.set(ab.Final,"CallSaveBonus",ab.DeathBonus)]
+	[h,if(ab.DeathProf): ab.Final = json.set(ab.Final,"CallSaveProf",ab.DeathProf)]
+	[h,if(ab.DeathMsg): ab.Final = json.set(ab.Final,"CallAfterSave",ab.DeathMsg)]
 };{}]
 
 [h,if(ab.Attacks),CODE:{
@@ -702,55 +694,53 @@
 	" ab.AfterEachAttack | 0 | <html><span title='Same as above, but triggers on every attack instead of once per turn.'>Effect occurs after every attack</span></html> | CHECK ",
 	" ab.AttackCrit | 0 | <html><span title='Same as above, but triggers only on critical hits.'>Effect occurs after critical hits</span></html> | CHECK "
 ))]
-[h:ab.Final = json.set(ab.Final,
-	"CallAttackAdv",ab.AttackAdv,
-	"CallAttackBonus",ab.AttackBonus,
-	"CallAttackStat",ab.AttackStat,
-	"CallAttackCritThresh",ab.AttackCritThresh,
-	"CallAttackNum",ab.AttackNumber,
-	"CallAttackProps",ab.AttackProps,
-	"CallAttackOptions",ab.AttackOptions,
-	"CallAttackRange",ab.AttackRange,
-	"CallAttackDamage",ab.AttackDamage,
-	"CallAttackRoll",ab.AttackRoll,
-	"CallAfterAttack",ab.AfterAttack,
-	"CallAfterEachAttack",ab.AfterEachAttack,
-	"CallAttackCrit",ab.AttackCrit
-)]
+
+	[h,if(ab.AttackAdv): ab.Final = json.set(ab.Final,"CallAttackAdv",ab.AttackAdv)]
+	[h,if(ab.AttackBonus): ab.Final = json.set(ab.Final,"CallAttackBonus",ab.AttackBonus)]
+	[h,if(ab.AttackStat): ab.Final = json.set(ab.Final,"CallAttackStat",ab.AttackStat)]
+	[h,if(ab.AttackCritThresh): ab.Final = json.set(ab.Final,"CallAttackCritThresh",ab.AttackCritThresh)]
+	[h,if(ab.AttackNumber): ab.Final = json.set(ab.Final,"CallAttackNumber",ab.AttackNumber)]
+	[h,if(ab.AttackProps): ab.Final = json.set(ab.Final,"CallAttackProps",ab.AttackProps)]
+	[h,if(ab.AttackOptions): ab.Final = json.set(ab.Final,"CallAttackOptions",ab.AttackOptions)]
+	[h,if(ab.AttackRange): ab.Final = json.set(ab.Final,"CallAttackRange",ab.AttackRange)]
+	[h,if(ab.AttackDamage): ab.Final = json.set(ab.Final,"CallAttackDamage",ab.AttackDamage)]
+	[h,if(ab.AttackRoll): ab.Final = json.set(ab.Final,"CallAttackRoll",ab.AttackRoll)]
+	[h,if(ab.AfterAttack): ab.Final = json.set(ab.Final,"CallAfterAttack",ab.AfterAttack)]
+	[h,if(ab.AfterEachAttack): ab.Final = json.set(ab.Final,"CallAfterEachAttack",ab.AfterEachAttack)]
+	[h,if(ab.AttackCrit): ab.Final = json.set(ab.Final,"CallAttackCrit",ab.AttackCrit)]
 };{}]
 
 [h,if(ab.Spells),CODE:{
-[h:abort(input(
-	" junkVar | Choose aspects of spells affected | 0 | LABEL | SPAN=TRUE ",
-	" junkVar | ------------------------------------------------------------ | 0 | LABEL | SPAN=TRUE ",
+	[h:abort(input(
+		" junkVar | Choose aspects of spells affected | 0 | LABEL | SPAN=TRUE ",
+		" junkVar | ------------------------------------------------------------ | 0 | LABEL | SPAN=TRUE ",
 
-	" ab.SpellClass | No,Chosen on Level Up,Chosen through Button | <html><span title='Intended for abilities like Domain spells or Arcane Trickster. Effects that use their own resources and cannot use spell slots are intended to operate through a separate mechanism (e.g. NOT for Monk - Way of the Four Elements)'>Allows hardcast use of spells from outside of the regular class list</span></html> | LIST ",
-	" ab.SpellParams | 0 | <html><span title='e.g. Duration, range, components, but can also extend to things like if a spell deals half damage on a successful save (Evocation Wizard - Potent Cantrip)'>Affects general parameters of the spell </span></html>| CHECK ",
-	" ab.SpellOptions | 0 | <html><span title='e.g. Evocation Wizard - Overchannel, Sorcerer - Metamagic'>Has an optional effect which must be chosen when cast</span></html>| CHECK ",
-	" ab.SpellStat | 0 | Modifies Spell Primary Stat | CHECK ",
-	" junkVar | ------------------------------------------------------------ | 0 | LABEL | SPAN=TRUE ",
-	" ab.SpellAdv | 0 | Grants (Dis)Advantage on Spell Attacks | CHECK ",
-	" ab.SpellBonus | 0 | Grants Bonus to Spell Attack Rolls | CHECK ",
-	" ab.SpellCritThresh | 0 | Affects Spell Critical Hit Threshhold | CHECK ",
-	" ab.SpellCrit | 0 | <html><span title='See &#39;Event occurs after spells&#39; below, but triggers only on critical hits.'>Effect occurs after critical hits</span></html> | CHECK ",
-	" junkVar | ------------------------------------------------------------ | 0 | LABEL | SPAN=TRUE ",
-	" ab.SpellDamage | 0 | <html><span title='Use for effects that grant a damage bonus based on the damage of the spell. (e.g. Cleric - Disciple of Life, Potent Spellcasting) For effects that grant damage independent of the spell&#39;s damage type, use effect after attack or after each attack (whichever is appropriate)'>Grants Flat Bonus to Spell Damage or Healing</span></html> | CHECK ",
-	" ab.SpellRoll | 0 | <html><span title='Effects that change the value of the die, adding dice to the roll, using max damage, etc. (e.g. Elemental Adept feat setting 1s to 2s, Life Cleric - Supreme Healing)'>Modifies dice rolled for weapon damage</span></html> | CHECK ",
-	" junkVar | ------------------------------------------------------------ | 0 | LABEL | SPAN=TRUE ",
-	" ab.AfterSpell | 0 | <html><span title='Catch-all for effects that operate independently of the spell itself. Can deal damage, force saving throws, force a condition upon an enemy, just display a message, and more. Can still have conditions for types of spells they are triggered by. (e.g. Cleric - Divine Strike, Enchantment Wizard - Alter Memories, Cant find a PHB example, and Eldritch Knight - War Magic, respectively)'>Effect occurs after spell is cast</span></html> | CHECK "
-))]
-[h:ab.Final = json.set(ab.Final,
-	"CallSpellParams",ab.SpellParams,
-	"CallSpellOptions",ab.SpellOptions,
-	"CallSpellStat",ab.SpellStat,
-	"CallSpellAdv",ab.SpellAdv,
-	"CallSpellBonus",ab.SpellBonus,
-	"CallSpellCritThresh",ab.SpellCritThresh,
-	"CallSpellCrit",ab.SpellCrit,
-	"CallSpellDamage",ab.SpellDamage,
-	"CallSpellRoll",ab.SpellRoll,
-	"CallAfterSpell",ab.AfterSpell
-)]
+		" ab.SpellClass | No,Chosen on Level Up,Chosen through Button | <html><span title='Intended for abilities like Domain spells or Arcane Trickster. Effects that use their own resources and cannot use spell slots are intended to operate through a separate mechanism (e.g. NOT for Monk - Way of the Four Elements)'>Allows hardcast use of spells from outside of the regular class list</span></html> | LIST ",
+		" ab.SpellParams | 0 | <html><span title='e.g. Duration, range, components, but can also extend to things like if a spell deals half damage on a successful save (Evocation Wizard - Potent Cantrip)'>Affects general parameters of the spell </span></html>| CHECK ",
+		" ab.SpellOptions | 0 | <html><span title='e.g. Evocation Wizard - Overchannel, Sorcerer - Metamagic'>Has an optional effect which must be chosen when cast</span></html>| CHECK ",
+		" ab.SpellStat | 0 | Modifies Spell Primary Stat | CHECK ",
+		" junkVar | ------------------------------------------------------------ | 0 | LABEL | SPAN=TRUE ",
+		" ab.SpellAdv | 0 | Grants (Dis)Advantage on Spell Attacks | CHECK ",
+		" ab.SpellBonus | 0 | Grants Bonus to Spell Attack Rolls | CHECK ",
+		" ab.SpellCritThresh | 0 | Affects Spell Critical Hit Threshhold | CHECK ",
+		" ab.SpellCrit | 0 | <html><span title='See &#39;Event occurs after spells&#39; below, but triggers only on critical hits.'>Effect occurs after critical hits</span></html> | CHECK ",
+		" junkVar | ------------------------------------------------------------ | 0 | LABEL | SPAN=TRUE ",
+		" ab.SpellDamage | 0 | <html><span title='Use for effects that grant a damage bonus based on the damage of the spell. (e.g. Cleric - Disciple of Life, Potent Spellcasting) For effects that grant damage independent of the spell&#39;s damage type, use effect after attack or after each attack (whichever is appropriate)'>Grants Flat Bonus to Spell Damage or Healing</span></html> | CHECK ",
+		" ab.SpellRoll | 0 | <html><span title='Effects that change the value of the die, adding dice to the roll, using max damage, etc. (e.g. Elemental Adept feat setting 1s to 2s, Life Cleric - Supreme Healing)'>Modifies dice rolled for weapon damage</span></html> | CHECK ",
+		" junkVar | ------------------------------------------------------------ | 0 | LABEL | SPAN=TRUE ",
+		" ab.AfterSpell | 0 | <html><span title='Catch-all for effects that operate independently of the spell itself. Can deal damage, force saving throws, force a condition upon an enemy, just display a message, and more. Can still have conditions for types of spells they are triggered by. (e.g. Cleric - Divine Strike, Enchantment Wizard - Alter Memories, Cant find a PHB example, and Eldritch Knight - War Magic, respectively)'>Effect occurs after spell is cast</span></html> | CHECK "
+	))]
+
+	[h,if(ab.SpellParams): ab.Final = json.set(ab.Final,"CallSpellParams",ab.SpellParams)]
+	[h,if(ab.SpellOptions): ab.Final = json.set(ab.Final,"CallSpellOptions",ab.SpellOptions)]
+	[h,if(ab.SpellStat): ab.Final = json.set(ab.Final,"CallSpellStat",ab.SpellStat)]
+	[h,if(ab.SpellAdv): ab.Final = json.set(ab.Final,"CallSpellAdv",ab.SpellAdv)]
+	[h,if(ab.SpellBonus): ab.Final = json.set(ab.Final,"CallSpellBonus",ab.SpellBonus)]
+	[h,if(ab.SpellCritThresh): ab.Final = json.set(ab.Final,"CallSpellCritThresh",ab.SpellCritThresh)]
+	[h,if(ab.SpellCrit): ab.Final = json.set(ab.Final,"CallSpellCrit",ab.SpellCrit)]
+	[h,if(ab.SpellDamage): ab.Final = json.set(ab.Final,"CallSpellDamage",ab.SpellDamage)]
+	[h,if(ab.SpellRoll): ab.Final = json.set(ab.Final,"CallSpellRoll",ab.SpellRoll)]
+	[h,if(ab.AfterSpell): ab.Final = json.set(ab.Final,"CallAfterSpell",ab.AfterSpell)]
 };{[h:ab.SpellClass=0]}]
 
 [h,if(ab.SpellClass>0),CODE:{
@@ -811,23 +801,20 @@
 		" ab.AfterDamage | 0 | Triggers after taking damage | CHECK ",
 		" ab.TempHPLost | 0 | <html><span title='Mostly for abilities that end when Temp HP is lost'>Triggers when losing all Temporary Hit Points</span></html> | CHECK "
 	))]
-	[h:ab.Final = json.set(ab.Final,
-		"CallAfterDamaged",ab.AfterDamage,
-		"CallTempHPLost",ab.TempHPLost
-	)]
+	[h,if(ab.AfterDamage): ab.Final = json.set(ab.Final,"CallAfterDamaged",ab.AfterDamage)]
+	[h,if(ab.TempHPLost): ab.Final = json.set(ab.Final,"CallTempHPLost",ab.TempHPLost)]
 };{}]
 
 [h,if(ab.Rest),CODE:{
-[h:abort(input(
-	" junkVar | Choose triggers for an ability after resting | 0 | LABEL | SPAN=TRUE ",
-	" junkVar | ------------------------------------------------------------ | 0 | LABEL | SPAN=TRUE ",
-	" ab.AfterShort | 0 | Triggers after short rests | CHECK ",
-	" ab.AfterLong | 0 | Triggers after long rests | CHECK "
-))]
-	[h:ab.Final = json.set(ab.Final,
-		"CallShortRest",ab.AfterShort,
-		"CallLongRest",ab.AfterLong
-	)]
+	[h:abort(input(
+		" junkVar | Choose triggers for an ability after resting | 0 | LABEL | SPAN=TRUE ",
+		" junkVar | ------------------------------------------------------------ | 0 | LABEL | SPAN=TRUE ",
+		" ab.AfterShort | 0 | Triggers after short rests | CHECK ",
+		" ab.AfterLong | 0 | Triggers after long rests | CHECK "
+	))]
+	
+	[h,if(ab.AfterShort): ab.Final = json.set(ab.Final,"CallShortRest",ab.AfterShort)]
+	[h,if(ab.AfterLong): ab.Final = json.set(ab.Final,"CallLongRest",ab.AfterLong)]
 };{}]
 
 [h,if(ab.HitDie),CODE:{
@@ -865,13 +852,14 @@
 	[h:ab.NewButtons = ""]
 	[h,while(ab.MoreButtons==1),CODE:{
 		[h:abort(input(
-	" ab.ButtonName | -- Name Here -- | Input Name of Button ",	" ab.CastTime | Action,BONUS,REACTION,1 MIN,10 MIN, 1 HOUR, 8 HOURS,None,Custom | Enter casting time for display on the button | LIST | VALUE=STRING ",
+			" ab.ButtonName | -- Name Here -- | Input Name of Button ",
+			" ab.CastTime | Action,BONUS,REACTION,1 MIN,10 MIN, 1 HOUR, 8 HOURS,None,Custom | Enter casting time for display on the button | LIST | VALUE=STRING ",
 			"ab.Marker | -- Ignore/Blank for None -- | Enter marker for button group if desired ",
 			"ab.MoreButtons |  | Add an additional button | CHECK "
 			))]
 		[h:abort(input(if(ab.CastTime=="Custom"," ab.CastTime |  | Enter custom casting time ","")))]
 		[h:ab.Marker = if(ab.Marker=="-- Ignore/Blank for None --","",ab.Marker)]
-		[h:ab.NewButtons = json.append(ab.NewButtons,json.set("","CastTime",if(ab.CastTime=="None","",ab.CastTime),"Marker",ab.Marker,"Class",json.get(ab.Final,"Class"),"Subclass",if(ab.Type=="Background",json.get(ab.Final,"Name"),json.get(ab.Final,"Subclass")),"Name",pm.RemoveSpecial(ab.ButtonName),"DisplayName",ab.ButtonName,"Library",json.get(ab.Final,"Library")))]
+		[h:ab.NewButtons = json.append(ab.NewButtons,json.set("","CastTime",if(ab.CastTime=="None","",ab.CastTime),"Marker",ab.Marker,"Class",json.get(ab.Final,"Class"),"Subclass",json.get(ab.Final,"Subclass"),"Name",pm.RemoveSpecial(ab.ButtonName),"DisplayName",ab.ButtonName,"Library",json.get(ab.Final,"Library")))]
 	}]
 	[h:ab.Final = json.set(ab.Final,"ButtonInfo",ab.NewButtons)]
 };{}]

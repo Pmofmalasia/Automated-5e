@@ -159,31 +159,31 @@
 	
 	[h:pm.PassiveFunction("AttackBonus")]
 	
-	[h:AllAttacksToHit=json.append(AllAttacksToHit,json.set("","Roll1",roll1,"Roll2",roll2,"ToHit",wa.ToHit,"ToHitStr",wa.ToHitStr,"RulesStr",wa.ToHitRulesStr,"CritTest",CritTestEach,"CritFailTest",CritFailTest))]
+	[h:AllAttacksToHit=json.append(AllAttacksToHit,json.set("","Roll1",roll1,"Roll2",roll2,"Advantage",wa.AdvDis,"ToHit",wa.ToHit,"ToHitStr",wa.ToHitStr,"RulesStr",wa.ToHitRulesStr,"CritTest",CritTestEach,"CritFailTest",CritFailTest))]
 
 	[h:getNewRolls()]
 	[h:wa.Dmg = eval(wa.DmgDieNum+"d"+wa.DmgDieSize)]
 	[h:wa.DmgRulesStr = wa.DmgDieNum+"d"+wa.DmgDieSize]
-   [h:wa.DmgRollSizeArray = ""]
-   [h,count(wa.DmgDieNum): wa.DmgRollSizeArray = json.append(wa.DmgRollSizeArray,wa.DmgDieSize)]
+	[h:wa.DmgRollSizeArray = ""]
+	[h,count(wa.DmgDieNum): wa.DmgRollSizeArray = json.append(wa.DmgRollSizeArray,wa.DmgDieSize)]
 	[h:wa.DmgArray = getNewRolls()]
 	
 	[h:wa.CritDmg = eval((wa.DmgDieNum+wa.BrutalCrit)+"d"+wa.DmgDieSize)]
 	[h:wa.CritDmgRulesStr = (wa.DmgDieNum+wa.BrutalCrit)+"d"+wa.DmgDieSize]
-   [h:wa.CritDmgRollSizeArray = ""]
-   [h,count((wa.DmgDieNum+wa.BrutalCrit)): wa.CritDmgRollSizeArray = json.append(wa.DmgRollSizeArray,wa.DmgDieSize)]
+	[h:wa.CritDmgRollSizeArray = ""]
+	[h,count((wa.DmgDieNum+wa.BrutalCrit)): wa.CritDmgRollSizeArray = json.append(wa.DmgRollSizeArray,wa.DmgDieSize)]
 	[h:wa.CritDmgArray = getNewRolls()]
 
 	[h:wa.Dmg2 = eval(wa.DmgDie2Num+"d"+wa.DmgDie2Size)]
 	[h:wa.Dmg2RulesStr = wa.DmgDie2Num+"d"+wa.DmgDie2Size]
-   [h:wa.Dmg2RollSizeArray = ""]
-   [h,count(wa.DmgDie2Num): wa.Dmg2RollSizeArray = json.append(wa.Dmg2RollSizeArray,wa.DmgDie2Size)]
+	[h:wa.Dmg2RollSizeArray = ""]
+	[h,count(wa.DmgDie2Num): wa.Dmg2RollSizeArray = json.append(wa.Dmg2RollSizeArray,wa.DmgDie2Size)]
 	[h:wa.Dmg2Array = getNewRolls()]
 	
 	[h:wa.CritDmg2 = eval(wa.DmgDie2Num+"d"+wa.DmgDie2Size)]
 	[h:wa.CritDmg2RulesStr = wa.DmgDie2Num+"d"+wa.DmgDie2Size]
-   [h:wa.CritDmg2RollSizeArray = ""]
-   [h,count(wa.DmgDie2Num): wa.CritDmg2RollSizeArray = json.append(wa.CritDmg2RollSizeArray,wa.DmgDie2Size)]
+	[h:wa.CritDmg2RollSizeArray = ""]
+	[h,count(wa.DmgDie2Num): wa.CritDmg2RollSizeArray = json.append(wa.CritDmg2RollSizeArray,wa.DmgDie2Size)]
 	[h:wa.CritDmg2Array = getNewRolls()]
 	
 	[h:pm.PassiveFunction("AttackDamage")]
@@ -213,6 +213,7 @@
 [h,count(AttackCount,""),code:{
 	[h:roll1 = json.get(json.get(AllAttacksToHit,roll.count),"Roll1")]
 	[h:roll2 = json.get(json.get(AllAttacksToHit,roll.count),"Roll2")]
+	[h:thisAttackAdvDis = json.get(json.get(AllAttacksToHit,roll.count),"Advantage")]
 	[h:thisAttackToHit = json.get(json.get(AllAttacksToHit,roll.count),"ToHit")]
 	[h:thisAttackToHitStr = json.get(json.get(AllAttacksToHit,roll.count),"ToHitStr")]
 	[h:thisAttackToHitRules = json.get(json.get(AllAttacksToHit,roll.count),"RulesStr")]
@@ -228,10 +229,10 @@
 	
 	[h:thisAttackDmg2 = json.get(json.get(AllAttacksDmg2,roll.count),"Dmg2")]
 	[h:thisAttackDmg2Str = json.get(json.get(AllAttacksDmg2,roll.count),"Dmg2Str")]
-	[h:thisAttackDmg2Rules = json.get(json.get(AllAttacksDmg,roll.count),"Dmg2Rules")]
+	[h:thisAttackDmg2Rules = json.get(json.get(AllAttacksDmg2,roll.count),"Dmg2Rules")]
 	[h:thisAttackCritDmg2 = json.get(json.get(AllAttacksDmg2,roll.count),"Dmg2Crit")]
 	[h:thisAttackCritDmg2Str = json.get(json.get(AllAttacksDmg2,roll.count),"Dmg2CritStr")]
-	[h:thisAttackCritDmg2Rules = json.get(json.get(AllAttacksDmg,roll.count),"CritDmg2Rules")]
+	[h:thisAttackCritDmg2Rules = json.get(json.get(AllAttacksDmg2,roll.count),"CritDmg2Rules")]
 
 	[h:wa.AdvRerollLink = macroLinkText("AttackReroll@Lib:pm.a5e.Core","self-gm",json.set(wa.Data,"Advantage",1,"ForcedAdvantage",1,"PreviousRoll",roll1,"AttackNum",-1),ParentToken)]
 	[h:wa.DisRerollLink = macroLinkText("AttackReroll@Lib:pm.a5e.Core","self-gm",json.set(wa.Data,"Advantage",-1,"ForcedAdvantage",1,"PreviousRoll",roll1,"AttackNum",-1),ParentToken)]
@@ -250,13 +251,13 @@
 		"Value",thisAttackToHit
 	)]
 	
-	[h,if(wa.AdvDis == 0),CODE:{
+	[h,if(thisAttackAdvDis == 0),CODE:{
 		[h:ToHitTableLine = json.set(ToHitTableLine,
 			"BonusBody1","Reroll: <a href = '"+wa.AdvRerollLink+"'><span style = 'color:"+LinkColor+"'>Adv.</span></a> / <a href = '"+wa.DisRerollLink+"'><span style = 'color:"+LinkColor+"'>Dis.</span></a>"
 		)]
 	};{
 		[h:ToHitTableLine = json.set(ToHitTableLine,
-			"BonusBody1","(Roll #1: "+(roll1+thisAttackToHit-if(wa.AdvDis==1,max(roll1,roll2),min(roll1,roll2)))+" / Roll #2: "+(roll2+thisAttackToHit-if(wa.AdvDis==1,max(roll1,roll2),min(roll1,roll2)))+")"
+			"BonusBody1","(Roll #1: "+(roll1+thisAttackToHit-if(thisAttackAdvDis==1,max(roll1,roll2),min(roll1,roll2)))+" / Roll #2: "+(roll2+thisAttackToHit-if(thisAttackAdvDis==1,max(roll1,roll2),min(roll1,roll2)))+")"
 		)]
 	}]
 	

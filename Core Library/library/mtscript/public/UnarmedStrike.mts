@@ -1,5 +1,6 @@
 [h:AttackData = macro.args]
 [h:ParentToken = json.get(AttackData,"ParentToken")]
+[h:switchToken(ParentToken)]
 [h:WeaponData = '{"Name":"Unarmed","MagicBonus":0,"Type":"Unarmed","DamageDie":"1d1","DamageType":"Bludgeoning","SecDamageDie":0,"SecDamageType":"None","MeleeRanged":"Melee","Range":0,"Reach":"5","CritRange":0,"CritMultiplier":0,"SpecialAbility":"","Props":{"Magic":0,"Finesse":0,"Monk":1,"Ammo":0,"Heavy":0,"Light":0,"Loading":0,"Reach":0,"Thrown":0,"Two-Handed":0,"Versatile":0,"IntMod":0,"WisMod":0,"ChaMod":0},"MagicItem":0,"ItemBuffs":""}']
 
 [h:ClassFeatureData = json.set("",

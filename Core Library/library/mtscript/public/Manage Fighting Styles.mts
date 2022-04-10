@@ -1,5 +1,6 @@
 [h:ParentToken = json.get(macro.args,"ParentToken")]
-[h:a5e.UnifiedAbilities = a5e.GatherAbilities()]
+[h:switchToken(ParentToken)]
+[h:a5e.UnifiedAbilities = a5e.GatherAbilities(ParentToken)]
 [h:fs.Groups = json.path.read(a5e.UnifiedAbilities,"[*][?(@.FightingStyleList!=null)]","DEFAULT_PATH_LEAF_TO_NULL")]
 [h:fs.GroupNum = json.length(fs.Groups)]
 

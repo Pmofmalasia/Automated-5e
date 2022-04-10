@@ -3,7 +3,7 @@
 [h:ParentToken=json.get(CheckData,"ParentToken")]
 
 [h:ch.AttributeOptions = pm.GetAttributes("DisplayName","json")]
-[h:ch.AttributeDisplay = json.toList(ch.AttributeOptions," Check,")+"Check"]
+[h:ch.AttributeDisplay = json.toList(ch.AttributeOptions," Check,")+" Check"]
 
 [h:ch.SkillList = pm.GetSkills()]
 [h:ch.SkillOptions = ""]

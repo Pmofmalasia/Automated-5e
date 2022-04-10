@@ -31,6 +31,7 @@
 	"DisplayName",pass.abilityDisplayName,
 	"Tooltip",IsTooltip,
 	"ParentToken",ParentToken,
+	"Type","Feature",
 	"FullRules",pass.ShowFullRules
 )]
 

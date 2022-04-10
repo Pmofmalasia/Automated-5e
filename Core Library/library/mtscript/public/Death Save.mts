@@ -1,6 +1,7 @@
 [h:DeathData = macro.args]
 [h:Flavor=json.get(DeathData,"Flavor")]
 [h:ParentToken=json.get(DeathData,"ParentToken")]
+[h:switchToken(ParentToken)]
 
 [h:DamageColor = pm.DamageColor()]
 [h:HealingColor = pm.HealingColor()]
@@ -20,7 +21,7 @@
 	"Save","Death Save",
 	"Type","Death",
 	"ParentToken",ParentToken,
-	"PriorDeath",DeathSaves
+	"PriorDeath",DeathSaves,
 	"PriorHP",HP
 )]
 

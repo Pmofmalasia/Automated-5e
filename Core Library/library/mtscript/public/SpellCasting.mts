@@ -1,6 +1,5 @@
 [h:SpellData = macro.args]
 [h:IsTooltip = 0]
-[h:a5e.UnifiedAbilities = a5e.GatherAbilities()]
 [h:ParentToken=json.get(json.get(SpellData,0),"ParentToken")]
 [h:ForcedClass=json.get(json.get(SpellData,0),"ForcedClass")]
 [h:ForcedLevel=json.get(json.get(SpellData,0),"ForcedLevel")]
@@ -20,6 +19,9 @@
 [h:MonsterCast=json.get(json.get(SpellData,0),"MonsterCast")]
 [h:IsCantrip = if(sLevel==0,1,0)]
 [h:NeedsBorder = if(json.get(json.get(SpellData,0),"NeedsBorder")=="",1,json.get(json.get(SpellData,0),"NeedsBorder"))]
+
+[h:switchToken(ParentToken)]
+[h:a5e.UnifiedAbilities = a5e.GatherAbilities(ParentToken)]
 
 [h:sSpellChoice=0]
 [h:MultiEffectChoiceTest=0]
@@ -113,7 +115,7 @@
 };{
 	[h:sClassSelect=if(ForcedClass!="",ForcedClass,if(InnateCast,Race,""))]
 	[h:sLevelSelect=ForcedLevel]
-   [h,if(IsCantrip): sLevelSelect = "Cantrip"]
+	[h,if(IsCantrip): sLevelSelect = "Cantrip"]
 	[h:sRulesShow=getLibProperty("FullSpellRules","Lib:pm.a5e.Core")]
 	[h:abort(input(
 		disPassiveBars,
@@ -272,17 +274,18 @@
 [h:sSource = "Arcane"]
 
 [h,if(FreeCasting==1),CODE:{
+	[h:RitualTest = 0]
 	[h,switch(sLevelSelect),code:
-		case "Ritual": {[eLevel=0]};
-		case "1st Level": {[eLevel=1]};
-		case "2nd Level": {[eLevel=2]};
-		case "3rd Level": {[eLevel=3]};
-		case "4th Level": {[eLevel=4]};
-		case "5th Level": {[eLevel=5]};
-		case "6th Level": {[eLevel=6]};
-		case "7th Level": {[eLevel=7]};
-		case "8th Level": {[eLevel=8]};
-		case "9th Level": {[eLevel=9]};
+		case "Ritual": {[eLevel=0][h:RitualTest = 1]};
+		case "1": {[eLevel=1]};
+		case "2": {[eLevel=2]};
+		case "3": {[eLevel=3]};
+		case "4": {[eLevel=4]};
+		case "5": {[eLevel=5]};
+		case "6": {[eLevel=6]};
+		case "7": {[eLevel=7]};
+		case "8": {[eLevel=8]};
+		case "9": {[eLevel=9]};
 		case "W": {[eLevel=WSpellLevel]};
 		case "MA": {[eLevel=sLevel]};
 		case "Free": {[eLevel=sLevel]};
@@ -305,8 +308,8 @@
 	case "9th Level": {[eLevel=9][SpellSlots=json.set(SpellSlots,"9",json.get(SpellSlots,"9")-1)]};
 	case "W": {[eLevel=WSpellLevel][SpellSlots=json.set(SpellSlots,"W",json.get(SpellSlots,"W")-1)]};
 	case "Free": {[eLevel=sLevel]};
-   case "Cantrip": {[eLevel=0+if(Level>=5,1,0)+if(Level>=11,1,0)+if(Level>=17,1,0)]};
-   default: {[h:pm.PassiveFunction("SpellResourceChoice")]}
+	case "Cantrip": {[eLevel=0+if(Level>=5,1,0)+if(Level>=11,1,0)+if(Level>=17,1,0)]};
+	default: {[h:pm.PassiveFunction("SpellResourceChoice")]}
 ]
 
 }]
@@ -531,7 +534,6 @@
 	"Value",""
 	))]
 
-[h:"<!-- Note: This loop is nearing its limit in terms of stack overflow. If more features are added the damage rolls can be separated out similar to how it sp. done in the attack macro. -->"]
 [h:CurrentMissile=0]
 [h:sp.AllMissileData = ""]
 [h,count(MissileCount),code:{
@@ -673,14 +675,13 @@
 	[h:"<!-- New array is summed for total damage, and put into a list for display. -->"]
 	[h:"<!-- Array of dice is summed for max possible damage. -->"]
 	[h,if(DmgDieNum==0),CODE:{};{
-		[h:sp.DmgRulesFinal = sp.DmgRules+if(AHLNumDie>0," + "+sp.AHLDmgRules,"")+if(sp.AddedRolledDamageRules=="",""," + "+sp.AddedRolledDamageRules)+if(flatBonusRules=="",""," + "+flatBonusRules)]
+		[h:sp.DmgRulesFinal = sp.DmgRules+if(AHLNumDie>0," + "+sp.AHLDmgRules,"")+if(sp.AddedRolledDamageRules=="",""," + "+sp.AddedRolledDamageRules)+if(flatBonusRules=="",""," + "+flatBonusRules)+if(sp.AddedFlatDamageRules=="",""," + "+sp.AddedFlatDamageRules)]
 		[h:sp.CritDmgRulesFinal = sp.DmgRules+" + "+sp.CritDmgRules+if(AHLNumDie>0," + "+sp.AHLDmgRules+" + "+sp.CritAHLDmgRules,"")+if(sp.AddedRolledDamageRules=="",""," + "+sp.AddedRolledDamageRules+" + "+sp.AddedRolledDamageRules)+if(flatBonusRules=="",""," + "+flatBonusRules)+if(sp.AddedFlatDamageRules=="",""," + "+sp.AddedFlatDamageRules)]
 		
 		[h:sp.FinalDamageDice = json.merge(sp.AllDmgDice,sp.AllAHLDmgDice,sp.AddedRolledDamageDice)]
 		[h:sp.DmgArray = "[]"]
 		[h,foreach(die,sp.FinalDamageDice): sp.DmgArray = json.append(sp.DmgArray,eval("1d"+die))]
-		[h:sp.TotalAddedFlatDamage = 0]
-		[h,foreach(addedDamage,sp.AddedFlatDamage): sp.TotalAddedFlatDamage = sp.TotalAddedFlatDamage + addedDamage]
+		[h,if(json.isEmpty(sp.AddedFlatDamage)): sp.TotalAddedFlatDamage = 0; sp.TotalAddedFlatDamage = math.arraySum(sp.AddedFlatDamage)]
 		[h:sp.Dmg = math.arraySum(sp.DmgArray) + flatDmgTotal + sp.TotalAddedFlatDamage]
 		[h:sp.DmgRolls = json.toList(sp.DmgArray," + ")+pm.PlusMinus(flatBonus,0)+pm.PlusMinus(ModDamageBonus,0)+if(json.isEmpty(sp.AddedFlatDamage),""," + "+json.toList(sp.AddedFlatDamage," + "))]
 		[h:sp.DmgMax = math.arraySum(sp.FinalDamageDice) + flatDmgTotal + sp.TotalAddedFlatDamage]
@@ -696,14 +697,13 @@
 	}]
    
 	[h,if(DmgDie2Num==0),CODE:{};{
-		[h:sp.DmgRulesFinal2 = sp.DmgRules2+if(AHLNumDie2>0," + "+sp.AHLDmgRules2,"")+if(sp.AddedRolledDamageRules2=="",""," + "+sp.AddedRolledDamageRules2)+if(flatBonusRules2=="",""," + "+flatBonusRules2)]
+		[h:sp.DmgRulesFinal2 = sp.DmgRules2+if(AHLNumDie2>0," + "+sp.AHLDmgRules2,"")+if(sp.AddedRolledDamageRules2=="",""," + "+sp.AddedRolledDamageRules2)+if(flatBonusRules2=="",""," + "+flatBonusRules2)+if(sp.AddedFlatDamageRules2=="",""," + "+sp.AddedFlatDamageRules2)]
 		[h:sp.CritDmgRulesFinal2 = sp.DmgRules2+" + "+sp.CritDmgRules2+if(AHLNumDie2>0," + "+sp.AHLDmgRules2+" + "+sp.CritAHLDmgRules2,"")+if(sp.AddedRolledDamageRules2=="",""," + "+sp.AddedRolledDamageRules2+" + "+sp.AddedRolledDamageRules2)+if(flatBonusRules2=="",""," + "+flatBonusRules2)+if(sp.AddedFlatDamageRules2=="",""," + "+sp.AddedFlatDamageRules2)]
 		
 		[h:sp.FinalDamageDice2 = json.merge(sp.AllDmgDice2,sp.AllAHLDmgDice2,sp.AddedRolledDamageDice2)]
 		[h:sp.DmgArray2 = "[]"]
 		[h,foreach(die,sp.FinalDamageDice2): sp.DmgArray2 = json.append(sp.DmgArray2,eval("1d"+die))]
-		[h:sp.TotalAddedFlatDamage2 = 0]
-		[h,foreach(addedDamage,sp.AddedFlatDamage2): sp.TotalAddedFlatDamage2 = sp.TotalAddedFlatDamage2 + addedDamage]
+		[h,if(json.isEmpty(sp.AddedFlatDamage2)): sp.TotalAddedFlatDamage2 = 0; sp.TotalAddedFlatDamage2 = math.arraySum(sp.AddedFlatDamage2)]
 		[h:sp.Dmg2 = math.arraySum(sp.DmgArray2) + flatDmg2Total + sp.TotalAddedFlatDamage2]
 		[h:sp.DmgRolls2 = json.toList(sp.DmgArray2," + ")+pm.PlusMinus(flatBonus2,0)+pm.PlusMinus(ModDamageBonus2,0)+if(json.isEmpty(sp.AddedFlatDamage2),""," + "+json.toList(sp.AddedFlatDamage2," + "))]
 		[h:sp.DmgMax2 = math.arraySum(sp.FinalDamageDice2) + flatDmg2Total + sp.TotalAddedFlatDamage2]

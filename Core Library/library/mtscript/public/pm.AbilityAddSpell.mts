@@ -2,6 +2,8 @@
 [h:abilityClass = json.get(arg(0),"Class")]
 [h:pm.Subclass=json.get(arg(0),"Subclass")]
 [h:pm.Tooltip=json.get(arg(0),"Tooltip")]
+[h:ParentToken = json.get(arg(0),"ParentToken")]
+[h:switchToken(ParentToken)]
 [h:pm.AllSpellInfo = arg(1)]
 
 [h,if(pm.Tooltip == 1),CODE:{

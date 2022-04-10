@@ -1,5 +1,6 @@
 [h:AttackData = macro.args]
 [h:ParentToken = json.get(AttackData,"ParentToken")]
+[h:switchToken(ParentToken)]
 [h:WeaponData = json.get(Weapon,json.get(Weapon,json.get(AttackData,"Hand")))]
 
 [h:ClassFeatureData = json.set("",

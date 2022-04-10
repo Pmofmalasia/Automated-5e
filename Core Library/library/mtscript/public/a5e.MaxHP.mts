@@ -1,5 +1,5 @@
-[h:a5e.UnifiedAbilities = a5e.GatherAbilities()]
 [h:ParentToken = currentToken()]
+[h:a5e.UnifiedAbilities = a5e.GatherAbilities(ParentToken)]
 [h:IsTooltip = 0]
 
 [h:baseMaxHP = RolledMaxHP+(json.get(AtrMods,"Constitution")*Level)-HPDrain]

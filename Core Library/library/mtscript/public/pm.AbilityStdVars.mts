@@ -40,6 +40,7 @@
 		"TitleFont",TitleFont,
 		"BodyFont",BodyFont,
 		"Class",abilityClass,
+		"Type","Feature",
 		"Subclass",abilitySubclass,
 		"Name",abilityName,
 		"DisplayName",abilityDisplayName,
@@ -51,6 +52,7 @@
 	"Level",abilityLevel,
 	"Library",ability.json.get(abilityInfo,"Library")
 	)]
+[h:abilityEffectData = json.append("",json.set("","Class",abilityClass))]
 
 [h:SummonCustomization = json.set("",
 	"Name",ForcedSummonName,
@@ -59,4 +61,4 @@
 	"Handout",ForcedSummonHandout
 	)]
 	
-[h:a5e.UnifiedAbilities = a5e.GatherAbilities()]
+[h:a5e.UnifiedAbilities = a5e.GatherAbilities(ParentToken)]

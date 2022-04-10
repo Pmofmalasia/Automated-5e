@@ -8,13 +8,15 @@
 [h:output.PC = json.get(json.get(macro.return,"Output"),"Player")]
 [h:output.GM = json.get(json.get(macro.return,"Output"),"GM")]
 
-	[h:output.Temp = pm.AbilityTableProcessing(abilityTable,pm.ProcessingData,json.get(abilityInfo,"FullRules"))]
-	[h:output.PC = output.PC + json.get(output.Temp,"Player")]
-	[h:output.GM = output.GM + json.get(output.Temp,"GM")]
+[h:output.Temp = pm.AbilityTableProcessing(abilityTable,pm.ProcessingData,json.get(abilityInfo,"FullRules"))]
+[h:output.PC = output.PC + json.get(output.Temp,"Player")]
+[h:output.GM = output.GM + json.get(output.Temp,"GM")]
 
-	[h:output.Temp=abilityEffect+"</div></div>"]
-	[h:output.PC = if(outputTest.NoRules,output.PC,output.PC + output.Temp)]
-	[h:output.GM = output.GM + output.Temp]
+[h:output.Temp=abilityEffect+"</div></div>"]
+[h:output.PC = if(outputTest.NoRules,output.PC,output.PC + output.Temp)]
+[h:output.GM = output.GM + output.Temp]
 
-	[h:broadcastAsToken(output.PC,"not-gm")]
-	[h:broadcastAsToken(output.GM,"gm")]
+[h:broadcastAsToken(output.PC,"not-gm")]
+[h:broadcastAsToken(output.GM,"gm")]
+
+[h:pm.a5e.AbilityGatherEffect()]

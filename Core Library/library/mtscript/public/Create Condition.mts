@@ -6,7 +6,9 @@
 
 [h:abort(input(
 	" junkVar | -------------------------------------------- Basic Condition Info -------------------------------------------- |  | LABEL | SPAN=TRUE ",
-	" cn.Name | -- Name Here -- | Enter Condition Name ",	" cn.Type | Base Condition,Class Feature,Racial Feature,Spell,Feat,Background | Condition Association | LIST ",
+	" cn.Name | -- Name Here -- | Enter Condition Name ",
+	" cn.Type | Base Condition,Class Feature,Racial Feature,Spell,Feat,Background | Condition Association | LIST ",
+	" cn.ConditionSubtype | None,Boon,Curse,Disease,Poison | Condition Counts As | RADIO | VALUE=STRING ",
 	" cn.Source | "+cn.Sourcebooks+" | Associated Sourcebook | LIST | VALUE=STRING "
 	))]
 
@@ -17,6 +19,7 @@
 	"Name",cn.Name,
 	"DisplayName",cn.DisplayName,
 	"Type","Condition",
+	"ConditionType",if(cn.ConditionSubtype=="None","",cn.ConditionSubtype),
 	"Level",1,
 	"GainOnLevel",0,
 	"Optional",0,
@@ -39,7 +42,7 @@
 [h:cn.Final = json.set(cn.Final,"Class",pm.RemoveSpecial(cn.Class))]
 
 [h,SWITCH(cn.Type):
-	case 0: cn.TypeInput = " cn.Subclass | None,Boon,Curse,Disease,Poison | Subtype of Condition | LIST | VALUE=STRING ";
+	case 0: cn.Subclass = "";
 	case 1: cn.TypeInput=" cn.Subclass | None,"+pm.GetSubclasses(cn.Class,"DisplayName")+" | Subclass associated with Condition | LIST | VALUE=STRING ";
 	case 2: cn.TypeInput=" cn.Subclass | None,"+pm.GetSubraces(cn.Class,"DisplayName")+" | Subrace associated with Condition | LIST | VALUE=STRING ";
 	case 3: cn.Subclass = "";

@@ -12,7 +12,7 @@
 
 [h:BasicInfo=input(
 	"junkVar | "+getTokenImage()+" | New Character | LABEL | ICON=TRUE ",
-	"CharName|"+token.name+"|Character Name",
+	"CharName| "+token.name+" |Character Name",
 	"junkVar|(Without Racial Bonuses)|Ability Score Rolls|LABEL",
 	AttributeInput,
 	"RaceSelection|"+RaceOptions+"|Choose Race|LIST",
@@ -31,7 +31,7 @@
 [h:Alignment=json.set("","Morality",MoralitySelection,"Order",OrderSelection)]
 [h:whichTeam=if(PC.Ally.Enemy==2,2,1)]
 
-[h,macro("Race Selection@Lib:pm.a5e.Core"):json.get(RaceArray,RaceSelection)]
+[h,macro("Race Selection@Lib:pm.a5e.Core"): json.get(RaceArray,RaceSelection)]
 [h:lu.NewAbilities = macro.return]
 [macro("Background Selection@Lib:pm.a5e.Core"):""]
 [h:lu.NewAbilities = json.append(lu.NewAbilities,macro.return)]

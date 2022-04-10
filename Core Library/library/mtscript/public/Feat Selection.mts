@@ -21,7 +21,7 @@
 		[h,foreach(RacePrereq,json.get(ft.Prereqs,"Race")): ft.RaceTest = if(Race == json.get(ft.Prereqs,"Race"),1,ft.RaceTest)]
 		[h,foreach(SubracePrereq,json.get(ft.Prereqs,"Subrace")): ft.SubraceTest = if(Subrace == json.get(ft.Prereqs,"Subrace"),1,ft.SubraceTest)]
 		[h:"<!-- json.intersection has the dual effect of removing the AllOrOne key from the attribute options AND removing attributes that are not indicated both in the prereqs AND currently enabled on Lib:pm.a5e.Core -->"]
-		[h,if(json.get(ft.Prereqs,"Attributes")==""): ft.AttrPrereqOptions = ""; ft.AttrPrereqOptions = json.intersection(json.fields(json.get(ft.Prereqs,"Attributes"),"json"),getLibProperty("sb.Attributes","Lib:pm.a5e.Core"))]
+		[h,if(json.get(ft.Prereqs,"Attributes")==""): ft.AttrPrereqOptions = ""; ft.AttrPrereqOptions = json.intersection(json.fields(json.get(ft.Prereqs,"Attributes"),"json"),pm.GetAttributes("Name","json"))]
 		[h,foreach(attribute,ft.AttrPrereqOptions): ft.AttrMetCount = if(and(json.get(Attributes,attribute)>=json.get(json.get(ft.Prereqs,"Attributes"),attribute),json.get(json.get(ft.Prereqs,"Attributes"),attribute)>0),ft.AttrMetCount+1,ft.AttrMetCount)]
 		[h,if(json.get(ft.Prereqs,"Attributes")==""): ft.AttributeTest = 1; ft.AttributeTest = if(ft.AttrMetCount>=json.get(json.get(ft.Prereqs,"Attributes"),"AllOrOne"),1,0)]
 		[h:ft.Valid = if(and(ft.AbilityTest,ft.LevelTest,ft.ClassTest,ft.SubclassTest,ft.RaceTest,ft.SubraceTest,ft.AttributeTest),json.append(ft.Valid,feat),ft.Valid)]
@@ -36,7 +36,7 @@
 	[h:ft.Options = json.toList(json.path.read(ft.Valid,"[*].DisplayName"))]
 }]
 [h:abort(input(
-	if(Level == 0," junkVar | Note: All feats are displayed without restriction, as all decisions have not been applied to your character yet. |  | LABEL | SPAN=TRUE ## junkVar | Make sure to double-check that you have all prerequisites to your choice of feat. |  | LABEL | SPAN=TRUE ## junkVar | ------------------------------------------------------------------------------------------------- |  | LABEL | SPAN=TRUE",""),
+	if(Level == 0," junkVar | Note: All feats are displayed without restriction, as all decisions have not been applied to your character yet. |  | LABEL | SPAN=TRUE ## junkVar | Make sure to double-check that you will have all prerequisites to your choice of feat after you have finished leveling. |  | LABEL | SPAN=TRUE ## junkVar | ------------------------------------------------------------------------------------------------- |  | LABEL | SPAN=TRUE",""),
 	" ft.Choice | "+ft.Options+" | Choose a feat | RADIO "
 ))]
 

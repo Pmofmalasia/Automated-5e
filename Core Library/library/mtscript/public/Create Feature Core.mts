@@ -394,6 +394,7 @@
 	" ab.Attacks | 0 | Affects weapon attacks | CHECK ",
 	" ab.Spells | 0 | Affects spells | CHECK ",
 	" ab.OtherAbilities | 0 | Affects other features | CHECK ",
+	" ab.OtherConditions | 0 | Affects conditions you have set on others | CHECK ",
 	" junkVar | --------------------------------------------------------------------------------------------------------------------- | 0 | LABEL | SPAN=TRUE ",
 	" ab.Damaged | 0 | Effect triggers when damaged | CHECK ",
 	" ab.CondGain | 0 | Effect triggers when gaining a condition | CHECK ",
@@ -782,6 +783,7 @@
 		
 		[h:AbilitiesAffected = json.append(AbilitiesAffected,json.set(macro.return,"AfterFeature",ab.AfterFeature,"FeatureChoiceNum",ab.FeatureChoiceNum))]
 	};{
+		[h:"<!-- Checks for whether each instance is present in chosen abilities, then deletes data used to track the choice itself so it is not in the end ability object. Commented because this seems like a dumb way to do it but I didn't think of anything better so here it is. -->"]
 		[h:ab.AfterFeatureOptions = json.path.read(AbilitiesAffected,"[*][?(@.AfterFeature==1)]")]
 		[h:ab.AfterFeatureOptions = json.path.delete(ab.AfterFeatureOptions,"[*]['AfterFeature']")]
 		[h:ab.AfterFeatureOptions = json.path.delete(ab.AfterFeatureOptions,"[*]['FeatureChoiceNum']")]
@@ -791,6 +793,33 @@
 		
 		[h,if(!json.isEmpty(ab.AfterFeatureOptions)): ab.Final = json.set(ab.Final,"CallAfterAbility",json.path.delete(ab.AfterFeatureOptions,"[*]['Type']"))]
 		[h,if(!json.isEmpty(ab.FeatureChoiceNumOptions)): ab.Final = json.set(ab.Final,"CallFeatureChoiceNum",json.path.delete(ab.FeatureChoiceNumOptions,"[*]['Type']"))]
+	}]
+}]
+
+[h:MoreConditionsTest = 2]
+[h:ConditionsAffected = ""]
+[h,while(ab.OtherConditions && MoreConditionsTest!=0),CODE:{
+	[h,if(ConditionsAffected!=""): otherAbInput = " junkVar | "+json.toList(json.path.read(ConditionsAffected,"[*]['DisplayName']"))+" | Conditions Chosen | LABEL ## MoreConditionsTest | No,Yes,Yes - Same Filter | Add more Conditions | RADIO "; otherAbInput = ""]
+	
+	[h:abort(input(otherAbInput))]
+	
+	[h,if(MoreConditionsTest>0),CODE:{
+		[h,if(ConditionsAffected==""): lastFilter = ""; lastFilter = json.get(ConditionsAffected,json.length(ConditionsAffected)-1)]
+		[h,if(ConditionsAffected=="" || MoreConditionsTest==1):
+			pm.a5e.ConditionFilter(" junkVar | -------------- Choose Conditions Affected by the New Feature -------------- |  | LABEL | SPAN=TRUE ");
+			pm.a5e.ConditionFilter(" junkVar | -------------- Choose Conditions Affected by the New Feature -------------- |  | LABEL | SPAN=TRUE ",json.get(lastFilter,"Type"),json.get(lastFilter,"Class"),json.get(lastFilter,"Subclass"))
+		]
+		[h:abort(input(
+			" junkVar | -------------- Parts of "+json.get(macro.return,"DisplayName")+" Affected -------------- |  | LABEL | SPAN=TRUE ",
+			" ab.AfterCondition |  | Other effect after the condition | CHECK"
+		))]
+		
+		[h:ConditionsAffected = json.append(ConditionsAffected,json.set(macro.return,"AfterCondition",ab.AfterCondition,"ConditionChoiceNum",ab.ConditionChoiceNum))]
+	};{
+		[h:ab.AfterConditionOptions = json.path.read(ConditionsAffected,"[*][?(@.AfterCondition==1)]")]
+		[h:ab.AfterConditionOptions = json.path.delete(ab.AfterConditionOptions,"[*]['AfterCondition']")]
+		
+		[h,if(!json.isEmpty(ab.AfterConditionOptions)): ab.Final = json.set(ab.Final,"CallAfterCondition",json.path.delete(ab.AfterConditionOptions,"[*]['Type']"))]
 	}]
 }]
 

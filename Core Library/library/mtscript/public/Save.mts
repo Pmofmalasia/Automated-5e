@@ -1,7 +1,8 @@
 [h:sv.Data = macro.args]
 [h:IsTooltip = 0]
-[h:a5e.UnifiedAbilities = a5e.GatherAbilities()]
 [h:ParentToken=json.get(sv.Data,"ParentToken")]
+[h:switchToken(ParentToken)]
+[h:a5e.UnifiedAbilities = a5e.GatherAbilities(ParentToken)]
 [h:sv.Type = json.get(sv.Data,"Type")]
 [h:roll1=if(json.get(sv.Data,"PreviousRoll")=="",1d20,json.get(sv.Data,"PreviousRoll"))]
 [h:roll2=1d20]
@@ -11,12 +12,14 @@
 
 [h,SWITCH(sv.Type):
 	case "Save": PrimeStat = CurrentSave;
+	case "Concentration": PrimeStat = "Constitution";
 	case "Death": PrimeStat = "None";
 	default: PrimeStat = "None"
 ]
 
 [h,SWITCH(sv.Type):
 	case "Save": ProfType = json.get(Saves,CurrentSave);
+	case "Concentration": ProfType = json.get(Saves,"Constitution");
 	case "Death": ProfType = 0;
 	default: ProfType = 0
 ]
@@ -84,6 +87,7 @@
 
 [h,if(sv.AdvDis == 0),CODE:{
 
+	[h:"<!-- Will need to add concentration to the list, once the updated macro is made -->"]
 	[h,SWITCH(sv.Type),CODE:
 		case "Death":{
 			[h:sv.AdvRerollLink = macroLinkText("Death Save Border@Lib:pm.a5e.Core","self-gm",json.set(sv.Data,"PreviousRoll",roll1,"Advantage",1,"ForcedAdvantage",1),ParentToken)]
@@ -123,7 +127,7 @@
 		"BonusSectionType1","Rules",
 		"BonusBody1","(Roll #1: <span style='font-size:1.25em'><b>"+(roll1+TotalBonus)+"</b></span> / Roll #2: <span style='font-size:1.25em'><b>"+(roll2+TotalBonus)+"</b></span>)",
 		"BonusSectionStyling1",""
-		))]
+	))]
 }]
 
 [h:"<!-- May need to actually move this before the check for purposes of sending consumed resource/condition data to the reroll link -->"]

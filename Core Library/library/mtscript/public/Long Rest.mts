@@ -3,7 +3,8 @@
 [h:Flavor=json.get(lr.Data,"Flavor")]
 [h:ParentToken=json.get(lr.Data,"ParentToken")]
 [h:abilityTable = ""]
-[h:a5e.UnifiedAbilities = a5e.GatherAbilities()]
+[h:switchToken(ParentToken)]
+[h:a5e.UnifiedAbilities = a5e.GatherAbilities(ParentToken)]
 
 [h:setAllStates(0)]
 

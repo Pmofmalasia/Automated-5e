@@ -1,6 +1,9 @@
 [h:pm.Ability=json.get(arg(0),"Name")]
 [h:pm.Class=json.get(arg(0),"Class")]
 [h:pm.Subclass=json.get(arg(0),"Subclass")]
+[h:ParentToken = json.get(arg(0),"ParentToken")]
+[h:switchToken(ParentToken)]
+
 [h:pm.PrereqHeader=arg(1)]
 [h:pm.PrereqMet=arg(2)]
 

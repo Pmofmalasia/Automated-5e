@@ -3,7 +3,7 @@
 [h,foreach(ability,pm.ValidAbilities,""),CODE:{
 	[h,switch(json.get(ability,"AbilityType")):
 		case "Feature": a5efunctionName = "pm."+json.get(ability,"Name")+json.get(ability,"Class")+json.get(ability,"Subclass")+"Passive";
-		case "Condition": a5efunctionName = "pm."+json.get(ability,"Name")+json.get(ability,"Class")+json.get(ability,"Subclass")+"Condition"
+		case "Condition": a5efunctionName = "pm."+json.get(ability,"Name")+json.get(ability,"Class")+json.get(ability,"Subclass")+"ConditionPassive"
 	]
 	
 	[h:pm.ValidFunction = isFunctionDefined(a5efunctionName)]

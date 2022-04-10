@@ -53,8 +53,9 @@
 [h:NeedsBorder = if(json.get(SpellData,"NeedsBorder")=="",1,json.get(SpellData,"NeedsBorder"))]
 [h:BorderColor="#000000"]
 [h:TextColor="#FFFFFF"]
+[h:switchToken(ParentToken)]
 
-[h:a5e.UnifiedAbilities = a5e.GatherAbilities()]
+[h:a5e.UnifiedAbilities = a5e.GatherAbilities(ParentToken)]
 [h:IsTooltip = 1]
 
 [h,if(ForcedClass==""),CODE:{

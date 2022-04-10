@@ -1,5 +1,5 @@
-[h:a5e.UnifiedAbilities = a5e.GatherAbilities()]
 [h:ParentToken = currentToken()]
+[h:a5e.UnifiedAbilities = a5e.GatherAbilities(ParentToken)]
 [h:IsTooltip = 0]
 
 [h:baseAC = json.get(json.get(Armor,json.get(Armor,0)),"BaseAC")+json.get(json.get(Armor,json.get(Armor,0)),"MagicBonus")]

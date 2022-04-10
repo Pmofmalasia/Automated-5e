@@ -1,6 +1,7 @@
 [h:pm.FinalAtr = ""]
 [h:pm.TempMods = ""]
-[h:a5e.UnifiedAbilities = a5e.GatherAbilities()]
+[h:ParentToken = currentToken()]
+[h:a5e.UnifiedAbilities = a5e.GatherAbilities(ParentToken)]
 
 [h:"<!-- Note: Currently, the 'default' score for an attribute is 10. This should only come into play if attributes are added to the campaign after character creation, but if you would like to change the default it should be done here. A default must be set, or else errors will occur. -->"]
 [h:pm.TempAllBonus = json.path.read(allAbilities,".Attributes.[?(@.All!=null)]['All']","DEFAULT_PATH_LEAF_TO_NULL")]

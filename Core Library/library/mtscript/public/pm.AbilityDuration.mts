@@ -2,6 +2,9 @@
 [h:pm.Class=json.get(arg(0),"Class")]
 [h:pm.Subclass=json.get(arg(0),"Subclass")]
 [h:pm.Tooltip=json.get(arg(0),"Tooltip")]
+[h:ParentToken = json.get(arg(0),"ParentToken")]
+[h:switchToken(ParentToken)]
+
 [h:pm.DurationNum=arg(1)]
 [h:pm.DurationUnits=arg(2)]
 

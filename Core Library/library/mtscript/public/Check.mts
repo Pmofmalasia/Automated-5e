@@ -3,6 +3,7 @@
 [h:ParentToken=json.get(ch.Data,"ParentToken")]
 [h:switchToken(ParentToken)]
 [h:a5e.UnifiedAbilities = a5e.GatherAbilities(ParentToken)]
+[h:pm.a5e.OverarchingContext = "Check"]
 [h:ch.Type = json.get(ch.Data,"Type")]
 [h:roll1=if(json.get(ch.Data,"PreviousRoll")=="",1d20,json.get(ch.Data,"PreviousRoll"))]
 [h:roll2=1d20]

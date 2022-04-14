@@ -7,6 +7,7 @@
 [h,foreach(UniqueID,json.unique(GroupID)): ConditionFilters = listAppend(ConditionFilters,"@.GroupID=='"+UniqueID+"'"," || ")]
 [h,foreach(UniqueID,json.unique(GroupID)): GroupFilters = listAppend(GroupFilters,"@.GroupID=='"+UniqueID+"'"," || ")]
 [h:a5e.UnifiedAbilities = a5e.GatherAbilities(ParentToken)]
+[h:pm.a5e.OverarchingContext = "EndCondition"]
 
 [h:IsTooltip = 0]
 [h:abilityTable = "[]"]

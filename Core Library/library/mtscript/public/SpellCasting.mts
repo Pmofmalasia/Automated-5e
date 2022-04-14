@@ -22,6 +22,7 @@
 
 [h:switchToken(ParentToken)]
 [h:a5e.UnifiedAbilities = a5e.GatherAbilities(ParentToken)]
+[h:pm.a5e.OverarchingContext = "Spell"]
 
 [h:sSpellChoice=0]
 [h:MultiEffectChoiceTest=0]

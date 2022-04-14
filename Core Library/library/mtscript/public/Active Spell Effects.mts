@@ -25,7 +25,7 @@
 [h:ActiveSpellSend = json.append("",json.get(ActiveSpells,sSelection))]
 
 [r,count(multiCast+1),CODE:{
-	[macro("SpellCasting@Lib:Melek"): ActiveSpellSend]
+	[macro("SpellCasting@Lib:pm.a5e.Core"): ActiveSpellSend]
 }]
 
 [h:deleteTest=if(json.get(macro.return,"ChaosTest")>0,0,if(json.get(macro.return,"ChaosTest")<0,deleteTest,1))]

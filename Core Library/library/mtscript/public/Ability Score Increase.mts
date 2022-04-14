@@ -5,6 +5,7 @@
 [h:IsTooltip = 0]
 [h:ParentToken = currentToken()]
 [h:a5e.UnifiedAbilities = a5e.GatherAbilities(ParentToken)]
+[h:pm.a5e.OverarchingContext = "Stats"]
 
 [h:as.MaxStatScores = ""]
 [h,foreach(TempAbilityScore,pm.GetAttributes("Name")): as.MaxStatScores = json.set(as.MaxStatScores,TempAbilityScore,20)]

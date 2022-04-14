@@ -3,6 +3,7 @@
 [h:ParentToken=json.get(sv.Data,"ParentToken")]
 [h:switchToken(ParentToken)]
 [h:a5e.UnifiedAbilities = a5e.GatherAbilities(ParentToken)]
+[h:pm.a5e.OverarchingContext = "Save"]
 [h:sv.Type = json.get(sv.Data,"Type")]
 [h:roll1=if(json.get(sv.Data,"PreviousRoll")=="",1d20,json.get(sv.Data,"PreviousRoll"))]
 [h:roll2=1d20]
@@ -40,9 +41,10 @@
 [h:pm.PassiveFunction("SaveBonus")]
 [h:TotalBonus = MiscBonus + ProfBonus + AtrBonus]
 
+[h:sv.ForcedAdvantage = if(json.get(sv.Data,"ForcedAdvantage")=="",0,json.get(sv.Data,"ForcedAdvantage"))]
 [h,SWITCH(json.get(sv.Data,"Advantage")),CODE:
 	case -1: {
-		[h,if(json.get(sv.Data,"ForcedAdvantage")),CODE:{
+		[h,if(sv.ForcedAdvantage),CODE:{
 			[h:sv.AdvDis = -1]
 		};{
 			[h:sv.Adv = 0]
@@ -52,7 +54,7 @@
 		}]
 	};
 	case 0: {
-		[h,if(json.get(sv.Data,"ForcedAdvantage")),CODE:{
+		[h,if(sv.ForcedAdvantage),CODE:{
 			[h:sv.AdvDis = 0]
 		};{
 			[h:sv.Adv = 0]
@@ -62,7 +64,7 @@
 		}]
 	};
 	case 1: {
-		[h,if(json.get(sv.Data,"ForcedAdvantage")),CODE:{
+		[h,if(sv.ForcedAdvantage),CODE:{
 			[h:sv.AdvDis = 1]
 		};{
 			[h:sv.Adv = 1]

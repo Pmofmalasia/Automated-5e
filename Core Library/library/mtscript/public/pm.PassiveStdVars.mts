@@ -1,6 +1,7 @@
-[h:pass.abilityDisplayName=pass.abilityName]
+[h:pass.abilityDisplayName = pass.abilityName]
 [h:pass.abilityName=pm.RemoveSpecial(pass.abilityName)]
 [h:pass.abilitySubclass=pm.RemoveSpecial(pass.abilitySubclass)]
+[h:pass.Context = arg(0)]
 [h:pass.DisplayArray = json.path.read(allAbilities,"[?(@.Name=='"+pass.abilityName+"' && @.Class=='"+pass.abilityClass+"' && @.Subclass=='"+pass.AbilitySubclass+"')]['Settings']")]
 [h,if(pass.DisplayArray == "[]"),CODE:{
 	[h:pass.DisplayObject = "{}"]
@@ -29,6 +30,8 @@
 	"Class",pass.abilityClass,
 	"Subclass",pass.abilitySubclass,
 	"DisplayName",pass.abilityDisplayName,
+	"Context",pass.Context,
+	"OverarchingContext",pm.a5e.OverarchingContext,
 	"Tooltip",IsTooltip,
 	"ParentToken",ParentToken,
 	"Type","Feature",
@@ -38,7 +41,7 @@
 [h:pass.abilityLevel = pm.GetAbilityLevel(pass.abilityInfo)]
 [h:pass.abilityInfo=json.set(pass.abilityInfo,
 	"Level",pass.abilityLevel,
-	"Library",ability.json.get(pass.abilityInfo,"Library")
+	"Library",ability.json.get(pass.abilityInfo,"Library","",ParentToken)
 	)]
 
 [h:pass.SummonCustomization = json.set("",

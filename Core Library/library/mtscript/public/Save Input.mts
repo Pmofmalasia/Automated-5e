@@ -43,7 +43,7 @@
 [h:output.PC = json.get(json.get(FormattingData,"Output"),"Player")]
 [h:output.GM = json.get(json.get(FormattingData,"Output"),"GM")]
 
-[h,MACRO("Save@Lib:pm.a5e.Core"): json.set("","Save",sv.Choice,"Type","Save","ParentToken",ParentToken,"Bonus",AddedBonus,"Advantage",if(svAdv==0,-1,if(svAdv==4,1,svAdv - 2)),"ForcedAdvantage",or(svAdv==0,svAdv==4),"PCOutput",outputTargets)]
+[h,MACRO("Save@Lib:pm.a5e.Core"): json.set("","Save",sv.Choice,"Type","Save","ParentToken",ParentToken,"Bonus",AddedBonus,"Advantage",if(svAdv==0,-1,if(svAdv==4,1,svAdv - 2)),"ForcedAdvantage",or(svAdv==0,svAdv==4))]
 [h:SaveData = macro.return]
 [h:abilityTable = json.get(SaveData,"Table")]
 

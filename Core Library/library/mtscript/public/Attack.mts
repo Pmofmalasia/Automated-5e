@@ -3,6 +3,7 @@
 [h:ParentToken=json.get(wa.Data,"ParentToken")]
 [h:switchToken(ParentToken)]
 [h:a5e.UnifiedAbilities = a5e.GatherAbilities(ParentToken)]
+[h:pm.a5e.OverarchingContext = "Attack"]
 
 [h:Flavor=json.get(wa.Data,"Flavor")]
 [h:Hand=json.get(wa.Data,"Hand")]
@@ -176,6 +177,7 @@
 	[h:flatBonusRules = substring(PrimeStat,0,3)+if(wa.MagicBonus==0,""," + Magic")]
 	[h:flatDmgTotal = wa.PrimeStatBonus+wa.MagicBonus]
 	
+	[h:pm.a5e.BrutalCrit = 0]
 	[h:wa.AddedRolledDamageRules = ""]
 	[h:wa.AddedFlatDamageRules = ""]
 	[h:wa.AddedRolledDamageDice = "[]"]
@@ -194,6 +196,7 @@
 		[h:flatBonusRules2 = ""]
 		[h:flatDmg2Total = 0]
 		
+		[h:pm.a5e.BrutalCrit2 = 0]
 		[h:wa.AddedRolledDamageRules2 = ""]
 		[h:wa.AddedFlatDamageRules2 = ""]
 		[h:wa.AddedRolledDamageDice2 = "[]"]
@@ -216,6 +219,7 @@
 	[h:wa.DmgRolls = json.toList(wa.DmgArray," + ")+pm.PlusMinus(wa.PrimeStatBonus,1)+pm.PlusMinus(wa.MagicBonus,0)+if(json.isEmpty(wa.AddedFlatDamage),""," + "+json.toList(wa.AddedFlatDamage," + "))]
 	[h:wa.DmgMax = math.arraySum(wa.FinalDamageDice) + flatDmgTotal + wa.TotalAddedFlatDamage]
 	
+	[h,count(pm.a5e.BrutalCrit): wa.AllCritDmgDice = json.append(wa.AllCritDmgDice,wa.DmgDieSize)]
 	[h:wa.FinalCritDamageDice = json.merge(wa.AllDmgDice,wa.AllCritDmgDice,wa.AddedRolledDamageDice,wa.AddedRolledDamageDice)]
 	[h:wa.CritDmgArray = "[]"]
 	[h,foreach(die,wa.FinalCritDamageDice): wa.CritDmgArray = json.append(wa.CritDmgArray,eval("1d"+die))]
@@ -237,6 +241,7 @@
 		[h:wa.DmgRolls2 = json.toList(wa.DmgArray2," + ")+if(json.isEmpty(wa.AddedFlatDamage2),""," + "+json.toList(wa.AddedFlatDamage2," + "))]
 		[h:wa.DmgMax2 = math.arraySum(wa.FinalDamageDice2) + flatDmg2Total + wa.TotalAddedFlatDamage2]
 		
+		[h,count(pm.a5e.BrutalCrit2): wa.AllCritDmgDice2 = json.append(wa.AllCritDmgDice2,wa.DmgDie2Size)]
 		[h:wa.FinalCritDamageDice2 = json.merge(wa.AllDmgDice2,wa.AllCritDmgDice2,wa.AddedRolledDamageDice2,wa.AddedRolledDamageDice2)]
 		[h:wa.CritDmgArray2 = "[]"]
 		[h,foreach(die,wa.FinalCritDamageDice2): wa.CritDmgArray2 = json.append(wa.CritDmgArray2,eval("1d"+die))]

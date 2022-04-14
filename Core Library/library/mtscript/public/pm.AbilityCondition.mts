@@ -18,7 +18,7 @@
 [h:pm.AuraRange = if(json.get(arg(2),"AuraRange")=="",0,json.get(arg(2),"AuraRange"))]
 [h:pm.AuraUnits = json.get(arg(2),"AuraUnits")]
 
-[h:pm.ConditionEndTriggers = arg(3)]
+[h,if(argCount>3): pm.ConditionEndTriggers = ""; pm.ConditionEndTriggers = if(arg(3)=="","{}",arg(3))]
 
 [h:pm.ConditionEndInfo = json.set("",
 	"Duration",pm.Duration,

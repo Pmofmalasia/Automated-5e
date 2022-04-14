@@ -6,6 +6,7 @@
 [h:hp.IsCrit = if(hp.IsCrit=="",0,hp.IsCrit)]
 [h:hp.DamageDealt = json.get(hp.Data,"DamageDealt")]
 [h:switchToken(ParentToken)]
+[h:pm.a5e.OverarchingContext = "Damage"]
 
 [h:"<!-- hp.ChangeType (e.g. old method of select damage/heal/temp hp) will be incorporated in the Change HP Input macro by converting damage to healing/temp HP/etc. Non-input methods of damage can then just put things into healing automatically -->"]
 

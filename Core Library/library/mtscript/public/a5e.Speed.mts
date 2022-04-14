@@ -1,5 +1,6 @@
 [h:ParentToken = currentToken()]
 [h:a5e.UnifiedAbilities = a5e.GatherAbilities(ParentToken)]
+[h:pm.a5e.OverarchingContext = "Stats"]
 [h:IsTooltip = 0]
 
 [h:"<!-- Note to self: should just do all movement types here, so that calculations for one movement type based on another do not need to be done multiple times on the character sheet -->"]

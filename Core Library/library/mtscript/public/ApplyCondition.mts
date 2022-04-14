@@ -4,6 +4,7 @@
 [h:ParentToken = if(json.get(macro.args,"Target")=="",currentToken(),json.get(macro.args,"Target"))]
 [h:switchToken(ParentToken)]
 [h:a5e.UnifiedAbilities = a5e.GatherAbilities(ParentToken)]
+[h:pm.a5e.OverarchingContext = "ApplyCondition"]
 [h:ConditionSetBy = json.get(macro.args,"SetBy")]
 [h:abilityTable = "[]"]
 

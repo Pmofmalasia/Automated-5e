@@ -2,13 +2,40 @@
 [h:effTargets = json.get(macro.args,"Targets")]
 [h:effTargetSpecific = json.get(macro.args,"TargetSpecificEffects")]
 [h:effConditionsApplied = json.get(macro.args,"ConditionInfo")]
-[h:effDamageInfo = json.get(macro.args,"Damage")]
+[h:effDamageData = json.get(macro.args,"Damage")]
+[h:effSaveData = json.get(macro.args,"SaveData")]
 [h:ParentToken = currentToken()]
 [h:effGroupID = pm.a5e.CreateConditionID(ParentToken,effTargets)]
 
 [h:abilityTable = "[]"]
 [h,foreach(targetToken,effTargets),CODE:{
 	[h:switchToken(targetToken)]
+	[h:"<!-- Maybe move this to its own function, so that i can use the return() function if it is completely nullified (e.g. missed AC, immunity, save or suck). May not want to return in case of effects on missing though (or just return that it was a total miss? and no output unless it triggers something like the BM riposte?) -->"]
+	
+	[h,if(effSaveData!=""),CODE:{
+		[h,MACRO("Save@Lib:pm.a5e.Core"): json.set("","Save",json.get(effSaveData,"SaveType"),"Type","Save","ParentToken",targetToken)]
+		[h:SaveResult = macro.return]
+		[h:abilityTable = json.append(abilityTable,json.get(SaveResult,"Table"))]
+		[h:passedSave = json.get(SaveResult,"Value")>=json.get(effSaveData,"DC")]
+		[h:saveDamageModInfo = json.get(effSaveData,"DamageModifier")]
+		[h:isDamageHalved = json.get(saveDamageModInfo,"DamageHalved")]
+		[h:typesHalvedInclusive = json.get(saveDamageModInfo,"TypesInclusive")]
+		[h:typesHalvedExclusive = if(json.get(saveDamageModInfo,"TypesExclusive")=="","[]",json.get(saveDamageModInfo,"TypesExclusive"))]
+		
+		[h,switch((isDamageHalved!=0)+json.type(typesHalvedInclusive))
+			case "1UNKNOWN": typesHalvedFinal = if(typesHalvedInclusive == "All",pm.GetDamageTypes("json","Name"),"[]");
+			case "1ARRAY": typesHalvedFinal = json.difference(json.intersection(typesHalvedInclusive,pm.GetDamageTypes("json","Name")),typesHalvedExclusive);
+			default: typesHalvedFinal = "[]"
+		]
+		
+		[h:effDamageDealt = json.get(effDamageData,"DamageDealt")]
+		[h,if(effDamageDealt!=""): typesHalvedFinal = json.intersection(typesHalvedFinal,json.fields(json.get(effDamageData,"DamageDealt")))]
+		
+		[h,foreach(damageType,typesHalvedFinal),if(json.get(effDamageDealt,damageType)!="" && isDamageHalved!=0): effDamageDealt = json.set(effDamageDealt,damageType,floor(json.get(effDamageDealt,damageType)*if(isDamageHalved==1,(1/2),0)))]
+		
+		[h:effDamageData = json.set(effDamageData,"DamageDealt",effDamageDealt)]
+	};{}]
+	
 	[h,if(json.length(effTargets)>1):
 		abilityTable = json.append("",json.set("",
 		"ShowIfCondensed",1,
@@ -30,15 +57,15 @@
 	}]
 	
 	[h,foreach(damageType,targetSpecificDamageTypes),CODE:{
-		[h:allTargetsDamage = json.get(json.get(effDamageInfo,"DamageDealt"),damageType)]
+		[h:allTargetsDamage = json.get(json.get(effDamageData,"DamageDealt"),damageType)]
 		[h,if(allTargetsDamage==""):
-			effDamageInfo = json.path.put(effDamageInfo,"['Damage']['DamageDealt']",damageType,json.get(targetSpecificDamage,damageType));
-			effDamageInfo = json.path.set(effDamageInfo,"['Damage']['DamageDealt']['"+damageType+"']",json.get(targetSpecificDamage,damageType)+allTargetsDamage)
+			effDamageData = json.path.put(effDamageData,"['Damage']['DamageDealt']",damageType,json.get(targetSpecificDamage,damageType));
+			effDamageData = json.path.set(effDamageData,"['Damage']['DamageDealt']['"+damageType+"']",json.get(targetSpecificDamage,damageType)+allTargetsDamage)
 		]			
 	}]
 	
-	[h,if(effDamageInfo!=""),CODE:{
-		[h,MACRO("Change HP@Lib:pm.a5e.Core"): json.set(effDamageInfo,"ParentToken",targetToken)]
+	[h,if(effDamageData!=""),CODE:{
+		[h,MACRO("Change HP@Lib:pm.a5e.Core"): json.set(effDamageData,"ParentToken",targetToken)]
 		[h:abilityTable = json.merge(abilityTable,json.get(macro.return,"Table"))]
 	};{}]
 	

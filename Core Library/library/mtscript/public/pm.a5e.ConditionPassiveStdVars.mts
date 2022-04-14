@@ -1,12 +1,14 @@
 [h:cond.abilityDisplayName = cond.abilityName]
 [h:cond.abilityName=pm.RemoveSpecial(cond.abilityName)]
 [h:cond.abilitySubclass=pm.RemoveSpecial(cond.abilitySubclass)]
-[h:cond.Info = json.get(json.path.read(ConditionList,"[?(@.Name=='"+cond.abilityName+"' && @.Class=='"+cond.abilityClass+"' && @.Subclass=='"+cond.AbilitySubclass+"')]"),0)]
+[h:cond.Context = arg(0)]
+[h:cond.Info = json.get(json.path.read(ConditionList,"[?(@.Name=='"+cond.abilityName+"' && @.Class=='"+cond.abilityClass+"' && @.Subclass=='"+cond.abilitySubclass+"')]"),0)]
+[h:cond.Library = json.get(cond.Info,"Library")]
 
 [h:cond.DisplayObject = json.get(cond.Info,"Settings")]
 [h,if(cond.DisplayObject == ""): cond.DisplayObject = "{}"]
 
-[h,if(arg(0)!="AfterAbility"): IsTooltip=0]
+[h,if(cond.Context!="AfterAbility"): IsTooltip=0]
 [h:cond.Flavor=json.get(cond.DisplayObject,"Flavor")]
 [h:cond.DMOnly=if(json.get(cond.DisplayObject,"DMOnly")=="",if(PC.Ally.Enemy==2,min(number(getLibProperty("HideEnemyMacros","Lib:pm.a5e.Core")),1),if(PC.Ally.Enemy==1,min(number(getLibProperty("HideAllyMacros","Lib:pm.a5e.Core")),1),0)),json.get(cond.DisplayObject,"DMOnly"))]
 [h:cond.BorderColorOverride=json.get(cond.DisplayObject,"BorderColorOverride")]
@@ -24,18 +26,30 @@
 [h:cond.ShowFullRules=if(IsTooltip,1,if(cond.ShowFullRulesOverride=="",if(number(getLibProperty("ChatIndividual","Lib:pm.a5e.Core")),FullAbilityRules,getLibProperty("FullAbilityRules","Lib:pm.a5e.Core")),cond.ShowFullRulesOverride))]
 
 [h:cond.SetBy = json.get(cond.Info,"SetBy")]
-[h:cond.abilityInfo=json.set("","Name",cond.abilityName,"Class",cond.abilityClass,"Subclass",cond.abilitySubclass,"DisplayName",cond.abilityDisplayName,"Tooltip",0,"Type","Condition")]
+[h:cond.abilityInfo=json.set("",
+	"Name",cond.abilityName,
+	"Class",cond.abilityClass,
+	"Subclass",cond.abilitySubclass,
+	"DisplayName",cond.abilityDisplayName,
+	"Tooltip",0,
+	"Type","Condition",
+	"ParentToken",ParentToken,
+	"OverarchingContext",pm.a5e.OverarchingContext,
+	"Context",cond.Context,
+	"Library",cond.Library,
+	"FullRules",cond.ShowFullRules
+	)]
 
 [h:cond.NeedsSetByInfo = json.append(pm.GetClasses("Name","json"),"Feat")]
 [h,if(json.contains(cond.NeedsSetByInfo,cond.abilityClass)),CODE:{
 	[h:switchToken(cond.SetBy)]
 	[h:cond.SetByAbilities = a5e.GatherAbilities(cond.SetBy)]
-	[h:cond.AbilityLevel = json.get(json.path.read(allAbilities,"[?(@.Name=='"+cond.abilityName+"' && @.Class=='"+cond.abilityClass+"' && @.Subclass=='"+cond.AbilitySubclass+"')]"),0)]
-	[h:cond.AbilityTier = json.get(cond.Info,"Level")]
+	[h:cond.abilityLevel = json.get(json.get(json.path.read(allAbilities,"[?(@.Name=='"+cond.abilityName+"' && @.Class=='"+cond.abilityClass+"' && @.Subclass=='"+cond.abilitySubclass+"')]"),0),"Level")]
+	[h:cond.abilityTier = json.get(cond.Info,"Level")]
 	[h:switchToken(ParentToken)]
 };{
 	[h:cond.abilityLevel = json.get(cond.Info,"Level")]
-	[h:cond.AbilityTier = cond.abilityLevel]
+	[h:cond.abilityTier = cond.abilityLevel]
 	[h:cond.SetByAbilities = "[]"]
 }]
 

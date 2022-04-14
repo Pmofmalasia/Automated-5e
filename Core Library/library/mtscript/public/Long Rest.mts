@@ -5,6 +5,7 @@
 [h:abilityTable = ""]
 [h:switchToken(ParentToken)]
 [h:a5e.UnifiedAbilities = a5e.GatherAbilities(ParentToken)]
+[h:pm.a5e.OverarchingContext = "Long Rest"]
 
 [h:setAllStates(0)]
 

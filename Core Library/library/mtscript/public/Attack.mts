@@ -4,6 +4,7 @@
 [h:switchToken(ParentToken)]
 [h:a5e.UnifiedAbilities = a5e.GatherAbilities(ParentToken)]
 [h:pm.a5e.OverarchingContext = "Attack"]
+[h:pm.a5e.EffectData = "[]"]
 
 [h:Flavor=json.get(wa.Data,"Flavor")]
 [h:Hand=json.get(wa.Data,"Hand")]
@@ -283,6 +284,16 @@
 	[h:thisAttackCritDmg2 = json.get(json.get(AllAttacksDmg,roll.count),"CritDmg2")]
 	[h:thisAttackCritDmg2Str = json.get(json.get(AllAttacksDmg,roll.count),"CritDmgRolls2")]
 	[h:thisAttackCritDmg2Rules = json.get(json.get(AllAttacksDmg,roll.count),"CritDmgRules2")]
+   
+   [h:thisAttackDamageDealt = json.set("",wa.DmgType,if(thisAttackCrit,thisAttackCritDmg,thisAttackDmg))]
+   [h,if(wa.DmgDie2!=0): thisAttackDamageDealt = json.set("",wa.DmgType2,if(thisAttackCrit,thisAttackCritDmg2,thisAttackDmg2))]
+   
+   [h:thisAttackData = json.set("",
+      "ToHit",thisAttackToHit,
+      "CritTest",thisAttackCrit,
+      "CritFailTest",thisAttackCritFail,
+      "Damage",json.set("","DamageDealt",thisAttackDamageDealt)
+   )]
 
 	[h:wa.AdvRerollLink = macroLinkText("AttackReroll@Lib:pm.a5e.Core","self-gm",json.set(wa.Data,"Advantage",1,"ForcedAdvantage",1,"PreviousRoll",roll1,"AttackNum",-1),ParentToken)]
 	[h:wa.DisRerollLink = macroLinkText("AttackReroll@Lib:pm.a5e.Core","self-gm",json.set(wa.Data,"Advantage",-1,"ForcedAdvantage",1,"PreviousRoll",roll1,"AttackNum",-1),ParentToken)]

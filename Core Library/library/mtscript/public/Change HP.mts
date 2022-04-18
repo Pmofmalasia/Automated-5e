@@ -8,8 +8,6 @@
 [h:switchToken(ParentToken)]
 [h:pm.a5e.OverarchingContext = "Damage"]
 
-[h:"<!-- hp.ChangeType (e.g. old method of select damage/heal/temp hp) will be incorporated in the Change HP Input macro by converting damage to healing/temp HP/etc. Non-input methods of damage can then just put things into healing automatically -->"]
-
 [h:hp.TypesDealt = json.intersection(json.append(pm.GetDamageTypes("Name","json"),"None - Modify Manually","Healing","TempHP"),json.fields(hp.DamageDealt,"json"))]
 [h:hp.DmgModData = pm.a5e.DamageModCalc(hp.Data)]
 

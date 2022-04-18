@@ -9,5 +9,5 @@
 [h,if(pm.Tooltip),CODE:{
 
 };{
-	[h:macro.return = pm.a5e.TargetCreatureFiltering(json.set(arg(1),"ParentToken",ParentToken),arg(2))]
+   [h,if(json.get(arg(1),"Self")==1): macro.return = ParentToken; macro.return = pm.a5e.TargetCreatureFiltering(json.set(arg(1),"ParentToken",ParentToken),arg(2))]
 }]

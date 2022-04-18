@@ -17,7 +17,7 @@
 
 [h:"<!-- The purpose of looping here is to catch any chain reactions - e.g. Ending Condition A causes the end of Condition B, which in turn ends Condition C. -->"]
 [h:"<!-- There is almost certainly a better way to do this. -->"]
-[h:OtherConditionsMaybeEnding = json.path.read(ConditionGroups,"[*][?(@.EndTriggers.CondEnd!=null)]","DEFAULT_PATH_LEAF_TO_NULL")]
+[h:OtherConditionsMaybeEnding = json.path.read(ConditionGroups,"[*][?(@.EndTriggers.CondEnd!=null && @.EndTriggers!='')]","DEFAULT_PATH_LEAF_TO_NULL")]
 [h:FirstLoopTest = 1]
 [h,while(!json.equals(RemovedConditions,RemovedConditionsFinal) || FirstLoopTest),CODE:{
 	[h:RemovedConditionsFinal = RemovedConditions]

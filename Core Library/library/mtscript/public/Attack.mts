@@ -284,17 +284,13 @@
 	[h:thisAttackCritDmg2 = json.get(json.get(AllAttacksDmg,roll.count),"CritDmg2")]
 	[h:thisAttackCritDmg2Str = json.get(json.get(AllAttacksDmg,roll.count),"CritDmgRolls2")]
 	[h:thisAttackCritDmg2Rules = json.get(json.get(AllAttacksDmg,roll.count),"CritDmgRules2")]
-   
-   [h:thisAttackDamageDealt = json.set("",wa.DmgType,if(thisAttackCrit,thisAttackCritDmg,thisAttackDmg))]
-   [h,if(wa.DmgDie2!=0): thisAttackDamageDealt = json.set("",wa.DmgType2,if(thisAttackCrit,thisAttackCritDmg2,thisAttackDmg2))]
-   
-   [h:thisAttackData = json.set("",
-      "ToHit",thisAttackToHit,
-      "CritTest",thisAttackCrit,
-      "CritFailTest",thisAttackCritFail,
-      "Damage",json.set("","DamageDealt",thisAttackDamageDealt)
-   )]
-
+	
+	[h:thisAttackDamageDealt = json.set("",wa.DmgType,thisAttackDmg)]
+	[h,if(wa.DmgDie2!=0): thisAttackDamageDealt = json.set(thisAttackDamageDealt,wa.DmgType2,thisAttackDmg2)]
+	
+	[h:thisAttackCritDamageDealt = json.set("",wa.DmgType,thisAttackCritDmg)]
+	[h,if(wa.DmgDie2!=0): thisAttackCritDamageDealt = json.set(thisAttackCritDamageDealt,wa.DmgType2,thisAttackCritDmg2)]
+	
 	[h:wa.AdvRerollLink = macroLinkText("AttackReroll@Lib:pm.a5e.Core","self-gm",json.set(wa.Data,"Advantage",1,"ForcedAdvantage",1,"PreviousRoll",roll1,"AttackNum",-1),ParentToken)]
 	[h:wa.DisRerollLink = macroLinkText("AttackReroll@Lib:pm.a5e.Core","self-gm",json.set(wa.Data,"Advantage",-1,"ForcedAdvantage",1,"PreviousRoll",roll1,"AttackNum",-1),ParentToken)]
 	
@@ -350,6 +346,15 @@
 	
 	[h:pm.PassiveFunction("AfterEachAttack")]
 
+	[h:pm.a5e.EffectData = json.append(pm.a5e.EffectData,json.set("",
+		"Attack",json.set("",
+			"ToHit",thisAttackToHit,
+			"CritTest",thisAttackCrit,
+			"CritFailTest",thisAttackCritFail,
+			"CritDamage",thisAttackCritDamageDealt),
+		"Damage",thisAttackDamageDealt
+	))]
+
 	[h:WhichAttack=WhichAttack+1]
 }]
 
@@ -376,4 +381,4 @@
 	)
 ]
 
-[h:macro.return = abilityTable]
+[h:macro.return = json.set("","Table",abilityTable,"Effect",pm.a5e.EffectData)]

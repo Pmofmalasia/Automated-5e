@@ -6,8 +6,10 @@
 [h:ParentToken = json.get(arg(0),"ParentToken")]
 [h:switchToken(ParentToken)]
 
-[h,if(pm.Tooltip),CODE:{
-
-};{
-   [h,if(json.get(arg(1),"Self")==1): macro.return = ParentToken; macro.return = pm.a5e.TargetCreatureFiltering(json.set(arg(1),"ParentToken",ParentToken),arg(2))]
+[h,if(pm.Tooltip),CODE:{};{
+	[h:onlySelfTest = json.get(arg(1),"Self")]
+	[h,if(onlySelfTest==1):
+		macro.return = json.append("",ParentToken);
+		macro.return = pm.a5e.TargetCreatureFiltering(json.set(arg(1),"ParentToken",ParentToken),arg(2))
+	]
 }]

@@ -12,7 +12,7 @@
 	[h,switch(pm.ChoiceMethod),CODE:
 		case "NaturalWeapon": {
 			[h:WeaponData = json.get(arg(1),"WeaponData")]
-			[h:macro.return = json.set("",
+			[h:macro.return = json.set("","Table",json.set("",
 				"ShowIfCondensed",1,
 				"Header",json.get(WeaponData,"Name")+" Attack",
 				"FalseHeader","",
@@ -20,13 +20,13 @@
 				"RulesContents",json.get(WeaponData,"DamageDie"),
 				"RollContents","",
 				"DisplayOrder","['Rules','Roll','Full']"
-			)]
+			))]
 		};
 		case "SpecificEquippedWeapon": {
 			
 		};
 		case "AnyValidEquipped": {
-			[h:macro.return = json.set("",
+			[h:macro.return = json.set("","Table",json.set("",
 				"ShowIfCondensed",1,
 				"Header","Weapon Options",
 				"FalseHeader","",
@@ -34,7 +34,7 @@
 				"RulesContents",json.get(json.get(Weapon,json.get(Weapon,0)),"Name")+" or "+json.get(json.get(Weapon,json.get(Weapon,1)),"Name"),
 				"RollContents","",
 				"DisplayOrder","['Rules','Roll','Full']"
-			)]
+			))]
 		}
 	]
 };{

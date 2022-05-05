@@ -12,6 +12,7 @@
 [h:hp.DmgModData = pm.a5e.DamageModCalc(hp.Data)]
 
 [h:hp.FinalDamageDealt = json.set("","Healing",0)]
+[h:hp.DamageDealtString = ""]
 [h,foreach(damagetype,hp.TypesDealt),CODE:{
 	[h,if(damagetype == "None - Modify Manually"),CODE:{
 		[h:hp.FinalDamageDealt = json.set(hp.FinalDamageDealt,"Untyped",json.get(hp.DamageDealt,damagetype))]
@@ -40,6 +41,8 @@
 			hp.FinalDamageDealt = json.set(hp.FinalDamageDealt,"Healing",json.get(hp.FinalDamageDealt,"Healing")+tempDamageDealt);
 			hp.FinalDamageDealt = if(tempDamageDealt>0,json.set(hp.FinalDamageDealt,tempDamageType,tempDamageDealt),hp.FinalDamageDealt)
 		]
+		
+		[h:hp.DamageDealtString = if(tempDamageDealt==0,hp.DamageDealtString,listAppend(hp.DamageDealtString,tempDamageDealt," + "))]
 	}]
 }]
 
@@ -77,7 +80,7 @@
 }]
 
 [h:hp.AlreadyDying = if(HP==0,1,0)]
-[h:HP = HP - hp.Damage + hp.Healing]
+[h:HP = min(HP - hp.Damage + hp.Healing,MaxHP)]
 
 [h,if(hp.AlreadyDying && hp.Healing!=0),CODE:{
 	[h:DeathSaves = json.set(DeathSaves,"Successes",0,"Failures",0)]
@@ -132,6 +135,7 @@
 	))
 ]
 
+[h:"<!-- Currently, hp.DamageDealtString looks odd if there is a combination of healing and damage. May want to fix later. -->"]
 [h:hp.ChangeValue = hp.Healing - hp.Damage]
 [h:abilityTable = json.append(abilityTable,
 	json.set("",
@@ -139,7 +143,7 @@
 	"Header","Total "+if(hp.ChangeValue>0,"Healing","Damage"),
 	"FalseHeader","",
 	"FullContents","<span style='font-size:1.5em; color:"+if(hp.ChangeValue>0,HealingColor,DamageColor)+"'>"+abs(hp.ChangeValue)+"</span>",
-	"RulesContents","",
+	"RulesContents",if(listCount(hp.DamageDealtString)>1,hp.DamageDealtString+" = ",""),
 	"RollContents","",
 	"DisplayOrder","['Rules','Roll','Full']"
 	)
@@ -214,6 +218,6 @@
 	};{}]
 };{}]
 
-[h:"<!-- Things Still Needed: Concentration Saves (later); Shapechange break (later); Temp HP if there is a condition attached to the lesser value (new or old) -->"]
+[h:"<!-- Things Still Needed: Shapechange break (later); Temp HP if there is a condition attached to the lesser value (new or old) -->"]
 
 [h:macro.return = json.set("","Table",abilityTable)]

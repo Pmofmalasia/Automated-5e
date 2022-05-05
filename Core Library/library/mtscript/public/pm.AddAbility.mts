@@ -8,7 +8,7 @@
 [h:pm.ChoiceNum = json.get(arg(1),"Number")]
 [h:pm.ActivateNew = json.get(arg(1),"Active")]
 [h:pm.FromCharacter = json.get(arg(1),"Character")]
-[h:a5e.UnifiedAbilities = a5e.GatherAbilities()]
+[h:a5e.UnifiedAbilities = a5e.GatherAbilities(ParentToken)]
 
 [h:pm.PassiveFunction("FeatureChoiceNum")]
 

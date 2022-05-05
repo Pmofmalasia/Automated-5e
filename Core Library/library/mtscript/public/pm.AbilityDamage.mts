@@ -27,8 +27,8 @@
 };{
 	[h:pm.DamageRoll = pm.DieRoller(pm.baseDieNum,pm.baseDieSize,pm.DamageBonus)]
 	
-	[h:macro.return = json.set("","Table",
-		json.set("","ShowIfCondensed",1,"Header",pm.DamageType+if(or(pm.DamageType=="Healing",pm.DamageType=="Temp HP"),""," Damage"),"FalseHeader","","FullContents","<b><span style='color:"+if(or(pm.DamageType=="Healing",pm.DamageType=="Temp HP"),HealingColor,DamageColor)+"; font-size:1.5em'>"+json.get(pm.DamageRoll,"Roll")+"</span></b>","RulesContents",if(pm.baseDieNum==0,"",pm.baseDieNum+"d"+pm.baseDieSize+pm.PlusMinus(pm.DamageBonus,0)+" = "),"RollContents",if(or(pm.baseDieNum==0,and(pm.baseDieNum==1,pm.DamageBonus==0)),"",json.get(pm.DamageRoll,"String")+" = "),"DisplayOrder","['Rules','Roll','Full']"),
+	[h:macro.return = json.set("",
+		"Table",json.set("","ShowIfCondensed",1,"Header",pm.DamageType+if(or(pm.DamageType=="Healing",pm.DamageType=="Temp HP"),""," Damage"),"FalseHeader","","FullContents","<b><span style='color:"+if(or(pm.DamageType=="Healing",pm.DamageType=="Temp HP"),HealingColor,DamageColor)+"; font-size:1.5em'>"+json.get(pm.DamageRoll,"Roll")+"</span></b>","RulesContents",if(pm.baseDieNum==0,"",pm.baseDieNum+"d"+pm.baseDieSize+pm.PlusMinus(pm.DamageBonus,0)+" = "),"RollContents",if(or(pm.baseDieNum==0,and(pm.baseDieNum==1,pm.DamageBonus==0)),"",json.get(pm.DamageRoll,"String")+" = "),"DisplayOrder","['Rules','Roll','Full']"),
 		"Amount",json.get(pm.DamageRoll,"Roll"),
 		"DamageType",pm.DamageType
 	)]

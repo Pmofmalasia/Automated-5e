@@ -16,7 +16,8 @@
 [h:output.GM = json.get(json.get(FormattingData,"Output"),"GM")]
 
 [macro("Attack@Lib:pm.a5e.Core") : AttackData]
-[h:abilityTable = macro.return]
+[h:abilityTable = json.get(macro.return,"Table")]
+[h:pm.a5e.EffectData = json.path.put(json.get(macro.return,"Effect"),"[*]","Class","zzWeaponAttack")]
 
 [h:output.Temp = pm.AbilityTableProcessing(abilityTable,FormattingData,1)]
 [h:output.PC = output.PC + json.get(output.Temp,"Player")+"</div></div>"]
@@ -24,3 +25,6 @@
 
 [h:broadcastAsToken(output.GM,"gm")]
 [h:broadcastAsToken(output.PC,"not-gm")]
+
+[h:sendToResolveEffectsLink = macroLinkText("Resolve Effects@Lib:pm.a5e.Core","gm",json.get(pm.a5e.EffectData,0),ParentToken)]
+[h:broadcast("<a href='"+sendToResolveEffectsLink+"'>Click here to apply the effects to all targets</a>","gm")]

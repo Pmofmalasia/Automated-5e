@@ -47,43 +47,71 @@
 [h:"<!--- Dialogue --->"]
 [h:sClassSelect=""]
 [h:sLevelSelect=""]
+[h:classList = pm.GetClasses("Name","json")]
 
 [h,if(ForcedClass=="" && InnateCast==0),CODE:{
-	[h:ClassOptionsObj = "{}"]
+	[h:ClassOptionsArray = "[]"]
 	[h:pm.PassiveFunction("SpellClass")]
-
-	[h:ClassOptions=json.fields(ClassOptionsObj)]
-	[h:ClassOptions=listAppend(ClassOptions,"None",",")]
-
+	
+	[h:ClassOptions = ""]
+	[h,foreach(castingClass,ClassOptionsArray),CODE:{
+		[h:isClassTest = json.contains(classList,json.get(castingClass,"Class"))]
+		[h,if(isClassTest):
+			ClassOptions = json.append(ClassOptions,pm.GetDisplayName(json.get(castingClass,"Class"),"sb.Classes"));
+			ClassOptions = json.append(ClassOptions,json.get(castingClass,"DisplayName"))
+		]
+	}]
+	[h:ClassOptionsArray = json.append(ClassOptionsArray,"None")]
 };{
-	[h,if(ForcedClass!=""): ClassOptions=ForcedClass]
+	[h:ClassOptionsArray = json.append("",ForcedClass)]
+	[h,if(ForcedClass!=""): ClassOptionsArray = ForcedClass]
 	[h,if(InnateCast==1): ClassOptions=if(MonsterCast==0,Race,"Monster")]
 }]
 
 [h,if(ForcedLevel==""),CODE:{
-   [h:LevelOptions = 
-      if(Ritual==1,"Ritual,","")
-      +if(and(sLevel<=1,json.get(SpellSlots,"1")>0),"1st Level,","")
-      +if(and(sLevel<=2,json.get(SpellSlots,"2")>0),"2nd Level,","")
-      +if(and(sLevel<=3,json.get(SpellSlots,"3")>0),"3rd Level,","")
-      +if(and(sLevel<=4,json.get(SpellSlots,"4")>0),"4th Level,","")
-      +if(and(sLevel<=5,json.get(SpellSlots,"5")>0),"5th Level,","")
-      +if(and(sLevel<=6,json.get(SpellSlots,"6")>0),"6th Level,","")
-      +if(and(sLevel<=7,json.get(SpellSlots,"7")>0),"7th Level,","")
-      +if(and(sLevel<=8,json.get(SpellSlots,"8")>0),"8th Level,","")
-      +if(and(sLevel<=9,json.get(SpellSlots,"9")>0),"9th Level,","")
-      +if(and(json.get(SpellSlots,"W")>0,WSpellLevel>=sLevel),"W,","")
-      +"Free"
-   ]
-   [h,if(IsCantrip): LevelOptions = "Cantrip"]
-   [h:pm.PassiveFunction("SpellResources")]
-   [h:ForcedLevelTest=1]
+	[h:MaxSpellLevel = 9]
+	[h,if(Ritual==1),CODE:{
+		[h:LevelOptions = json.append("","Ritual")]
+		[h:LevelOptionData = json.append("",json.set("","Name","Ritual","ResourceType","Ritual"))]
+	};{
+		[h:LevelOptions = "[]"]
+		[h:LevelOptionData = "[]"]
+	}]
+	[h,count(MaxSpellLevel),CODE:{
+		[h,if((1+roll.count)>=sLevel && json.get(SpellSlots,roll.count+1)>0): LevelOptions = json.append(LevelOptions,if(roll.count==0,"1st",if(roll.count==1,"2nd",if(roll.count==2,"3rd",(roll.count+1)+"th")))+" Level")]
+		[h,if(roll.count<sLevel && json.get(SpellSlots,roll.count+1)>0): json.append(LevelOptionData,json.set("","Name",(roll.count+1),"ResourceType","Spell Slots"))]
+	}]
+	
+	[h:resourcesAsSpellSlot = json.path.read(allAbilities,"[*][?(@.ResourceAsSpellSlot==1)]")]
+	[h,foreach(resource,resourcesAsSpellSlot),CODE:{
+		[h,if(json.get(resource,"Resource")>0): LevelOptions = json.append(LevelOptions,json.get(resource,"DisplayName"))]
+		[h,if(json.get(resource,"Resource")>0): LevelOptionData = json.append(LevelOptionData,json.set(resource,"ResourceType","FeatureSpell"))]
+	}]
+	
+	[h:LevelOptions = json.append(LevelOptions,"Free")]
+	[h:LevelOptionData = json.append(LevelOptionData,json.set("","Name","FreeCasting","ResourceType","None"))]
+	
+	[h,if(IsCantrip),CODE:{
+		[h:LevelOptions = json.append("","Cantrip")]
+		[h:LevelOptionData = json.append("",json.set("","Name","Cantrip","ResourceType","None"))]
+		[h:chosenLevel = 0]
+	};{
+		[h:chosenLevel = -1]
+	}]
 };{
-   [h:ForcedLevelTest=if(or(json.get(SpellSlots,""+ForcedLevel+"")>0,FreeCasting==1),1,0)]
-   [h:eLevel.Forced = if(ForcedLevel=="W",WSpellLevel,ForcedLevel)]
-   [h:assert(if(eLevel.Forced>=sLevel,1,0),"<br>Your chosen spell level is lower than the base level of the spell!",0)]
-   [h:LevelOptions=ForcedLevel]
-   [h,if(IsCantrip): LevelOptions = "Cantrip"]
+	[h,if(json.type(ForcedLevel)=="UNKNOWN"),CODE:{
+		[h:LevelOptions = if(ForcedLevel==1,"1st",if(ForcedLevel==2,"2nd",if(ForcedLevel==3,"3rd",ForcedLevel+"th")))+" Level"]
+		[h:LevelOptionData = json.append("",json.set("","Name",ForcedLevel,"ResourceType","Spell Slots"))]
+	};{
+		[h:LevelOptions = json.get(ForcedLevel,"DisplayName")]
+		[h:LevelOptionData = json.append("",json.set(ForcedLevel,"ResourceType","FeatureSpell"))]
+	}]
+	
+	[h,if(IsCantrip),CODE:{
+		[h:LevelOptions = json.append("","Cantrip")]
+		[h:LevelOptionData = json.append("",json.set("","Name","Cantrip","ResourceType","Cantrip"))]
+	};{}]
+	[h:chosenLevel = 0]
 }]
 
 [h:dissConcentration=if(or(sConcentration==0,sLevel>=sConcentrationLost),"",if(Concentration=="","","junkVar|<html><span style='font-size:1.2em';>Casting <span style='color:#2222AA'><i>"+SpellName+"</i></span> will cancel concentration on <span style='color:#AA2222'><i>"+Concentration+".</i></span></span></html>|<html><span style='color:#AA2222; font-size:1.2em'><b>sp.NING</b></span></html>|LABEL"))]
@@ -91,6 +119,25 @@
 [h:disIsBlinded=if(or(getState("Blinded")==0,IsSight==0),"","junkVar|<html><span style='font-size:1.2em';><span style='color:#AA2222'><i><b>NOTE: You are currently blinded and this spell requires sight!</b></i></span></span></html>| |LABEL|SPAN=TRUE")]
 [h:disCompConsumed=if(or(mCompConsumed=="0",mCompConsumed==""),"","junkVar|"+mCompConsumed+"|Consumed Components|LABEL")]
 [h:disSpellEffectChoices=if(MultiEffectChoiceTest==1,"sSpellChoice | "+SpellEffectOptions+" | Choose an Effect | RADIO | ","")]
+
+[h,if(json.length(ClassOptionsArray) < 3),CODE:{
+	[h:chosenClass = 0]
+	[h:tempClassSelect = json.get(ClassOptionsArray,0)]
+	[h:infoTypeTest = json.type(tempClassSelect)]
+	[h,if(infoTypeTest == "UNKNOWN"),CODE:{
+		[h:disSpellClassSelect = " junkVar | "+pm.GetDisplayName(tempClassSelect,"sb.Classes")+" | Casting Class | LABEL "]
+	};{
+		[h:tempClassTest = json.contains(classList,json.get(tempClassSelect,"Class"))]
+		[h,if(tempClassTest):
+			disSpellClassSelect = " junkVar | "+pm.GetDisplayName(json.get(tempClassSelect,"Class"),"sb.Classes")+" | Casting Class | LABEL ";
+			disSpellClassSelect = " junkVar | "+json.get(tempClassSelect,"DisplayName")+" | Casting Class | LABEL "			
+		]
+	}]
+};{
+	[h:disSpellClassSelect = " chosenClass | "+ClassOptions+" | Casting Class | LIST | DELIMITER=JSON "]
+}]
+
+[h:disSpellLevelSelect = if(ForcedLevel=="","chosenLevel | "+LevelOptions+" | Spell Level | LIST | DELIMITER=JSON ","junkVar | "+LevelOptions+" | Spell Level | LABEL ")]
 [h:disPassiveChoices = ""]
 
 [h:pm.PassiveFunction("SpellChoices")]
@@ -104,15 +151,15 @@
 		disIsSilenced,
 		disIsBlinded,
 		"junkVar|"+SpellName+" ("+sLevel+") "+sSchool+"|Spell|LABEL",
-		"sClassSelect|"+ClassOptions+"|Choose Class to cast|LIST| VALUE=STRING",
-		"sLevelSelect|"+LevelOptions+"|Choose Spell Slot| "+if(sLevel==0,"LABEL","LIST")+if(sLevel==0,"","| VALUE=STRING"),
+		disSpellClassSelect,
+		disSpellLevelSelect,
 		"sRulesShow| "+(getLibProperty("FullSpellRules","Lib:pm.a5e.Core"))+" |Show Full Spell Rules|CHECK|",
 		disCompConsumed,
 		disSpellEffectChoices,
 		disPassiveBars,
 		disPassiveChoices
 	))]
-   [h,if(IsCantrip): sLevelSelect = "Cantrip"]
+	[h,if(IsCantrip): sLevelSelect = "Cantrip"]
 };{
 	[h:sClassSelect=if(ForcedClass!="",ForcedClass,if(InnateCast,Race,""))]
 	[h:sLevelSelect=ForcedLevel]
@@ -123,6 +170,35 @@
 		disPassiveChoices
 	))]
 }]
+
+[h:sClassSelectData = json.get(ClassOptionsArray,chosenClass)]
+[h,if(json.type(sClassSelectData)=="UNKNOWN"):
+	sClassSelect = sClassSelectData;
+	sClassSelect = json.get(sClassSelectData,"Class")
+]
+
+[h:RitualTest = 0]
+[h:sLevelSelectData = json.get(LevelOptionData,chosenLevel)]
+[h,switch(json.get(sLevelSelectData,"ResourceType")),CODE:
+	case "Spell Slots":{
+		[h:eLevel = number(json.get(sLevelSelectData,"Name"))]
+		[h,if(FreeCasting!=1): SpellSlots = json.set(SpellSlots,eLevel,json.get(SpellSlots,eLevel)-1)]
+	};
+	case "FeatureSpell":{
+		[h:eLevel = evalMacro(json.get(sLevelSelectData,"ResourceSpellLevel"))]
+		[h,if(FreeCasting!=1): allAbilities = json.path.set(allAbilities,"[*][?(@.Name=='"+json.get(sLevelSelectData,"Name")+"' && @.Class=='"+json.get(sLevelSelectData,"Class")+"' && @.Subclass=='"+json.get(sLevelSelectData,"Subclass")+"')]['Resource']",json.get(sLevelSelectData,"Resource")-1)]
+	};
+	case "Ritual":{
+		[h:eLevel = sLevel]
+		[h:RitualTest = 1]
+	};
+	case "Cantrip":{
+		[h:eLevel=0+if(Level>=5,1,0)+if(Level>=11,1,0)+if(Level>=17,1,0]
+	};
+	default:{
+		[h:eLevel = sLevel]
+	}
+]
 
 [h:FinalSpellData=json.get(SpellData,sSpellChoice)]
 [h:"<!--- Dialogue --->"]
@@ -259,8 +335,6 @@
 [h:sConcentration=json.get(FinalSpellData,"sConcentration")]
 [h:sConcentrationLost=json.get(FinalSpellData,"sConcentrationLost")]
 
-[h,if(ForcedLevelTest==0),CODE:{[h:pm.ErrorFormat()]}]
-
 [h:CastTime=if(CastTime=="Action","Action",CastTime)]
 [h:CastTime=if(CastTime=="BONUS","Bonus Action",CastTime)]
 [h:CastTime=if(CastTime=="REACTION","Reaction",CastTime)]
@@ -273,47 +347,6 @@
 
 [h:"<!-- Temporarily setting the type of spell to Arcane always since it has yet to be implemented (will probably happen in full spell rework) -->"]
 [h:sSource = "Arcane"]
-
-[h,if(FreeCasting==1),CODE:{
-	[h:RitualTest = 0]
-	[h,switch(sLevelSelect),code:
-		case "Ritual": {[eLevel=0][h:RitualTest = 1]};
-		case "1": {[eLevel=1]};
-		case "2": {[eLevel=2]};
-		case "3": {[eLevel=3]};
-		case "4": {[eLevel=4]};
-		case "5": {[eLevel=5]};
-		case "6": {[eLevel=6]};
-		case "7": {[eLevel=7]};
-		case "8": {[eLevel=8]};
-		case "9": {[eLevel=9]};
-		case "W": {[eLevel=WSpellLevel]};
-		case "MA": {[eLevel=sLevel]};
-		case "Free": {[eLevel=sLevel]};
-		case "Cantrip": {[eLevel=0+if(Level>=5,1,0)+if(Level>=11,1,0)+if(Level>=17,1,0)]};
-		default: {[h:pm.PassiveFunction("SpellResources")]}
-		]
-};{
-
-[h:RitualTest = 0]
-[h,switch(sLevelSelect),code:
-	case "Ritual": {[eLevel=sLevel][h:RitualTest = 1]};
-	case "1st Level": {[eLevel=1][SpellSlots=json.set(SpellSlots,"1",json.get(SpellSlots,"1")-1)]};
-	case "2nd Level": {[eLevel=2][SpellSlots=json.set(SpellSlots,"2",json.get(SpellSlots,"2")-1)]};
-	case "3rd Level": {[eLevel=3][SpellSlots=json.set(SpellSlots,"3",json.get(SpellSlots,"3")-1)]};
-	case "4th Level": {[eLevel=4][SpellSlots=json.set(SpellSlots,"4",json.get(SpellSlots,"4")-1)]};
-	case "5th Level": {[eLevel=5][SpellSlots=json.set(SpellSlots,"5",json.get(SpellSlots,"5")-1)]};
-	case "6th Level": {[eLevel=6][SpellSlots=json.set(SpellSlots,"6",json.get(SpellSlots,"6")-1)]};
-	case "7th Level": {[eLevel=7][SpellSlots=json.set(SpellSlots,"7",json.get(SpellSlots,"7")-1)]};
-	case "8th Level": {[eLevel=8][SpellSlots=json.set(SpellSlots,"8",json.get(SpellSlots,"8")-1)]};
-	case "9th Level": {[eLevel=9][SpellSlots=json.set(SpellSlots,"9",json.get(SpellSlots,"9")-1)]};
-	case "W": {[eLevel=WSpellLevel][SpellSlots=json.set(SpellSlots,"W",json.get(SpellSlots,"W")-1)]};
-	case "Free": {[eLevel=sLevel]};
-	case "Cantrip": {[eLevel=0+if(Level>=5,1,0)+if(Level>=11,1,0)+if(Level>=17,1,0)]};
-	default: {[h:pm.PassiveFunction("SpellResourceChoice")]}
-]
-
-}]
 
 [h:DefaultDisplayData = pm.SpellColors(json.set("","Level",if(IsCantrip,"0",string(eLevel)),"Source",sSource))]
 [h:BorderColor = json.get(DefaultDisplayData,"Border")]
@@ -370,10 +403,13 @@
 	
 }]
 
-[h:CastTime=if(sLevelSelect=="Ritual",CastTime+" + 10 minutes (ritual)",CastTime)]
+[h:CastTime=if(RitualTest,CastTime+" + 10 minutes (ritual)",CastTime)]
 [h:AHL=eLevel-sLevel]
 
-[h:PrimeStat = json.get(getLibProperty("sb.CastingAbilities","Lib:pm.a5e.Core"),sClassSelect)]
+[h,if(json.type(sClassSelectData)=="UNKNOWN"): 
+	PrimeStat = json.get(getLibProperty("sb.CastingAbilities","Lib:pm.a5e.Core"),sClassSelect);
+	PrimeStat = json.get(sClassSelectData,"PrimeStat")
+]
 [h:PrimeStat = if(PrimeStat=="","None",PrimeStat)]
 [h,if(PrimeStat == "None"): PrimeStatMod = 0; PrimeStatMod = json.get(AtrMods,PrimeStat)]
 [h:pm.PassiveFunction("SpellStat")]
@@ -414,11 +450,11 @@
 [h:dRangeAHL = sRangeAHL*RangeScaling]
 [h:DamageScaling=if(AHLScaling=="Every Level",AHL,if(AHLScaling=="Every Other Level",floor(AHL/2),if(AHLScaling=="Every Three Levels",floor(AHL/3),0)))]
 
-[h:RerollSpellData=json.append("",json.set(FinalSpellData,"ForcedClass",sClassSelect,"ForcedLevel",sLevelSelect,"FreeCasting",1))]
+[h:RerollSpellData=json.append("",json.set(FinalSpellData,"ForcedClass",sClassSelect,"ForcedLevel",if(IsCantrip,"Cantrip",eLevel),"FreeCasting",1))]
 [h:sRerollLink=macroLinkText("SpellCasting@Lib:pm.a5e.Core","gm-self",RerollSpellData,ParentToken)]
 
 [h:abilityClass = sClassSelect]
-[h:abilityDisplayName = "<b>"+CompendiumLink+"</b> ("+sLevel+") <i>"+if(sLevelSelect=="Ritual"," (ritual)","")+"</i>"]
+[h:abilityDisplayName = "<b>"+CompendiumLink+"</b> ("+sLevel+") <i>"+if(RitualTest," (ritual)","")+"</i>"]
 [h:abilityFalseName = "Spellcasting"]
 [h:abilityOnlyRules = 0]
 
@@ -840,6 +876,8 @@
 	[h:pm.Summons(json.set("","Name",SpellName,"Class",sClassSelect),SummonData,SummonCustomization)]
 }]
 
+[h:pm.PassiveFunction("AfterSpell")]
+
 [h,if(NeedsBorder),CODE:{
 	[h:ClassFeatureData = json.set("",
 		"Flavor",Flavor,
@@ -878,5 +916,5 @@
 	[h:SpellDescriptionFinal = if(sRulesShow==0,"<a style='color:"+LinkColor+";' href='"+sDescriptionLink+"'>Click to show full spell text</a>",sDescription)]
 }]
 
-[h:ReturnData = json.set("{}","Slot",sLevelSelect,"Class",sClassSelect,"DmgType",DmgType,"DmgType2",DmgType2,"Table",abilityTable,"Effect",SpellDescriptionFinal)]
+[h:ReturnData = json.set("{}","Slot",if(IsCantrip,"Cantrip",eLevel),"Class",sClassSelect,"DmgType",DmgType,"DmgType2",DmgType2,"Table",abilityTable,"Effect",SpellDescriptionFinal,"ChaosTest",SpellName=="Chaos Bolt")]
 [h:macro.return = ReturnData]

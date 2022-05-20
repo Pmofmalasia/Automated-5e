@@ -11,7 +11,7 @@
 	[h:pm.CreateSpellcastingClass(json.set("","Class",pm.RemoveSpecial(sp.Class),"Subclass",pm.RemoveSpecial(sp.Name),"Library",sp.SourcebookLib))]
 };{}]
 
-[h:setLibProperty("sb.Subclasses",json.append(getLibProperty("sb.Subclasses","Lib:"+sp.SourcebookLib),json.set("","Name",pm.RemoveSpecial(sp.Name),"DisplayName",sp.Name,"Class",pm.RemoveSpecial(sp.Class))),"Lib:"+sp.SourcebookLib)]
+[h:setLibProperty("sb.Subclasses",json.sort(json.append(getLibProperty("sb.Subclasses","Lib:"+sp.SourcebookLib),json.set("","Name",pm.RemoveSpecial(sp.Name),"DisplayName",sp.Name,"Class",pm.RemoveSpecial(sp.Class))),"a","Class","DisplayName"),"Lib:"+sp.SourcebookLib)]
 
 [r:sp.Class+" subclass "+sp.Name+" from the sourcebook "+sp.Source+" created."]
 [h,MACRO("Gather Sourcebook Information@Lib:pm.a5e.Core"):""]

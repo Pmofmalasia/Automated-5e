@@ -48,21 +48,20 @@
 			case "Class": ab.MasterInput=" ab.MasterClass | "+ab.ClassList+" | Class associated with Master Feature | LIST | VALUE=STRING ## junkVar | Next Screen | Subclass Selection | LABEL";
 			case "Race": ab.MasterInput=" ab.MasterClass | "+ab.RaceList+" | Class associated with Master Feature | LIST | VALUE=STRING ## junkVar | Next Screen | Subrace Selection | LABEL";
 			default: ab.MasterClass = ab.MasterType
-			]
+		]
 		[h:abort(input(ab.MasterInput))]
 
 		[h,SWITCH(ab.MasterType):
 			case "Class": ab.MasterInput=" ab.MasterSubclass | None,"+pm.GetSubclasses(ab.Class,"DisplayName")+" | Subclass associated with Master Feature | LIST | VALUE=STRING ";
 			case "Race": ab.MasterInput=" ab.MasterSubclass | None,"+pm.GetSubraces(ab.Class,"DisplayName")+" | Subrace associated with Master Feature | LIST | VALUE=STRING ";
 			default: ab.MasterSubclass=""
-			]
+		]
 		[h:abort(input(ab.MasterInput))]
 		
 		[h:ab.MasterSubclass = pm.RemoveSpecial(ab.MasterSubclass)]
 		[h:ab.MasterOptions = json.toList(json.path.read(getLibProperty("sb.Abilities","Lib:pm.a5e.Core"),"[?(@.Class=='"+ab.MasterClass+"' && (@.Subclass==''|| @.Subclass=='"+ab.MasterSubclass+"'))]['DisplayName']"))]
 
-		[h:abort(input(
-			" ab.MasterName | "+ab.MasterOptions+" | Name of Master Feature | LIST | VALUE=STRING "))]
+		[h:abort(input(" ab.MasterName | "+ab.MasterOptions+" | Name of Master Feature | LIST | VALUE=STRING "))]
 
 		[h:ab.MasterFeature = json.set("","Name",pm.RemoveSpecial(ab.MasterName),"DisplayName",ab.MasterName,"Class",ab.MasterClass,"Subclass",if(ab.MasterSubclass=="None","",pm.RemoveSpecial(ab.MasterSubclass)))]
 	};{

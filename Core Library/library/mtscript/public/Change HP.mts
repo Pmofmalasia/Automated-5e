@@ -6,6 +6,9 @@
 [h:hp.IsCrit = if(hp.IsCrit=="",0,hp.IsCrit)]
 [h:hp.DamageDealt = json.get(hp.Data,"DamageDealt")]
 [h:switchToken(ParentToken)]
+[h:IsTooltip = 0]
+[h:a5e.UnifiedAbilities = a5e.GatherAbilities(ParentToken)]
+[h:pm.a5e.EffectData = "[]"]
 [h:pm.a5e.OverarchingContext = "Damage"]
 
 [h:hp.TypesDealt = json.intersection(json.append(pm.GetDamageTypes("Name","json"),"None - Modify Manually","Healing","TempHP"),json.fields(hp.DamageDealt,"json"))]
@@ -218,6 +221,7 @@
 	};{}]
 };{}]
 
+[h:pm.PassiveFunction("AfterDamaged")]
 [h:"<!-- Things Still Needed: Shapechange break (later); Temp HP if there is a condition attached to the lesser value (new or old) -->"]
 
 [h:macro.return = json.set("","Table",abilityTable)]

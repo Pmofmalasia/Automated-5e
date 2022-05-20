@@ -24,7 +24,6 @@
 	" lu.ClassChoice | "+lu.ClassOptions+" | Choose a class | RADIO ",
 	HPOption
 	))]
-
 [h:lu.Class = json.get(lu.FinalClassOptions,lu.ClassChoice)]
 
 [h:lu.NewLevel = json.get(LClass,lu.Class)+1]
@@ -38,6 +37,7 @@
 		[h:lu.NewAbilities = json.append(lu.NewAbilities,json.get(json.get(lu.FinalClassArray,lu.ClassChoice),"MultiProficiencies"))]
 	};{}]
 	[h:lu.HitDieSize = json.get(json.get(lu.FinalClassArray,lu.ClassChoice),"HitDie")]
+
 	[h:lu.HPIncrease = if(HowHP == 0,floor(lu.HitDieSize/2)+1,if(HowHP == 1,eval("1d"+lu.HitDieSize),max(eval("1d"+lu.HitDieSize),floor(lu.HitDieSize/2)+1)))]
 }]
 [h:lu.OldConMod = json.get(AtrMods,"Constitution")]
@@ -57,11 +57,20 @@
 };{}]
 
 [h:"<!-- Adds abilities based on class, race, and background that are gained on level up, separately since race and background go off of total level -->"]
-[h:lu.NewAbilities = json.merge(lu.NewAbilities,json.path.read(getLibProperty("sb.Abilities","Lib:pm.a5e.Core"),"[*][?((@.Class=='"+pm.RemoveSpecial(Race)+"' || @.Class=='') && (@.Subclass=='"+pm.RemoveSpecial(Subrace)+"' || @.Subclass=='') && @.Level=="+(Level+1)+" && @.GainOnLevel==1)]"))]
 
-[h:lu.NewAbilities = json.merge(lu.NewAbilities,json.path.read(getLibProperty("sb.Abilities","Lib:pm.a5e.Core"),"[*][?(@.Class=='Background' && @.Subclass=='"+pm.RemoveSpecial(Background)+"' && @.Level=="+(Level+1)+" && @.GainOnLevel==1)]"))]
+[h:tempNewAbilities = json.path.read(getLibProperty("sb.Abilities","Lib:pm.a5e.Core"),"[*][?((@.Class=='"+pm.RemoveSpecial(Race)+"' || @.Class=='') && (@.Subclass=='"+pm.RemoveSpecial(Subrace)+"' || @.Subclass=='') && @.Level=="+(Level+1)+" && @.GainOnLevel==1)]")]
 
-[h:lu.NewAbilities = json.merge(lu.NewAbilities,json.path.read(getLibProperty("sb.Abilities","Lib:pm.a5e.Core"),"[*][?((@.Class=='"+lu.Class+"' || @.Class=='') && (@.Subclass=='"+pm.RemoveSpecial(json.get(Subclasses,lu.Class))+"' || @.Subclass=='') && @.Level=="+lu.NewLevel+" && @.GainOnLevel==1)]"))]
+[h:tempNewAbilities = json.merge(tempNewAbilities,json.path.read(getLibProperty("sb.Abilities","Lib:pm.a5e.Core"),"[*][?(@.Class=='Background' && @.Subclass=='"+pm.RemoveSpecial(Background)+"' && @.Level=="+(Level+1)+" && @.GainOnLevel==1)]"))]
+
+[h:tempNewAbilities = json.merge(tempNewAbilities,json.path.read(getLibProperty("sb.Abilities","Lib:pm.a5e.Core"),"[*][?((@.Class=='"+lu.Class+"' || @.Class=='') && (@.Subclass=='"+pm.RemoveSpecial(json.get(Subclasses,lu.Class))+"' || @.Subclass=='') && @.Level=="+lu.NewLevel+" && @.GainOnLevel==1)]"))]
+
+[h:tempNewAbilitiesWithPrereqs = json.path.read(tempNewAbilities,"[*][?(@.Prereqs!=null)]","DEFAULT_PATH_LEAF_TO_NULL")]
+[h,foreach(feature,tempNewAbilitiesWithPrereqs),CODE:{
+	[h:pm.a5e.CheckFeaturePrereqs(json.get(feature,"Prereqs"))]
+	[h,if(!macro.return): tempNewAbilities = json.path.delete(tempNewAbilities,"[*][?(@.Name=='"+json.get(feature,"Name")+"' && @.Class=='"+json.get(feature,"Class")+"' && @.Subclass=='"+json.get(feature,"Subclass")+"')]")]
+}]
+
+[h:lu.NewAbilities = json.merge(lu.NewAbilities,tempNewAbilities)]
 
 [h:lu.FightingStyleTest = !json.isEmpty(json.path.read(lu.NewAbilities,"[*][?(@.FightingStyleList!=null)]","DEFAULT_PATH_LEAF_TO_NULL"))]
 [h,if(lu.FightingStyleTest),CODE:{
@@ -82,7 +91,7 @@
 }]
 
 [h:"<!-- Checks to see if there is already a spellcasting ability associated with this class, so that spells will be added later even if it is not the 'correct' level for it by the calculation ceiling(Level*(1/2)*(1/CastingType)). Also needed for cantrips. -->"]
-[h,if(json.isEmpty(allAbilities)): lu.HasSpellcastingTest = 0; lu.HasSpellcastingTest = !json.isEmpty(json.path.read(allAbilities,"[*][?((@.Name == 'Spellcasting' || @.Name == 'PactMagic') && @.Class=='"+lu.Class+"' && (@.Subclass=='"+json.get(Subclasses,lu.Class)+"' || @.Subclass == ''))]","DEFAULT_PATH_LEAF_TO_NULL"))]
+[h,if(json.isEmpty(allAbilities)): lu.HadSpellcastingTest = 0; lu.HadSpellcastingTest = !json.isEmpty(json.path.read(allAbilities,"[*][?((@.Name == 'Spellcasting' || @.Name == 'PactMagic') && @.Class=='"+lu.Class+"' && (@.Subclass=='"+json.get(Subclasses,lu.Class)+"' || @.Subclass == ''))]","DEFAULT_PATH_LEAF_TO_NULL"))]
 
 [h:"<!-- Searches AbilityUpdates for any updates to the leveled class, plus subclass combo. The object keys of any updates found replace the current corresponding object keys for that ability. -->"]
 [h:lu.AbilityUpdates = json.path.read(getLibProperty("sb.AbilityUpdates","Lib:pm.a5e.Core"),"[*][?(@.Class == '"+lu.Class+"' && (@.Subclass == null || @.Subclass == '' || @.Subclass == '"+pm.RemoveSpecial(json.get(Subclasses,lu.Class))+"') && @."+lu.NewLevel+" != null)]","DEFAULT_PATH_LEAF_TO_NULL")]
@@ -145,21 +154,38 @@
 
 [h:MaxSpellSlotsOld = MaxSpellSlots]
 [h:MaxSpellSlots = table("Spell Slots",LSpellSlots)]
-[h,if(json.get(LClass,"Warlock")!=""),CODE:{
-	[h:MaxSpellSlots = json.set(MaxSpellSlots,"W",if(json.get(LClass,"Warlock")>0,1,0)+if(json.get(LClass,"Warlock")>1,1,0)+if(json.get(LClass,"Warlock")>10,1,0)+if(json.get(LClass,"Warlock")>16,1,0))]
-	[h:WarlockSpellLevel = min(ceiling(json.get(LClass,"Warlock")/2),5)]
-}]
-
 [h:SpellAdd = 0]
 [h,count(10),CODE:{
 	[h:SpellAdd = number(json.get(MaxSpellSlots,string(roll.count)))-number(json.get(MaxSpellSlotsOld,string(roll.count)))]
 	[h:SpellSlots = json.set(SpellSlots,roll.count,(number(json.get(SpellSlots,string(roll.count)))+SpellAdd))]
 	[h:SpellAdd = 0]
 }]
+[h,if(json.equals(MaxSpellSlotsOld,MaxSpellSlots)),CODE:{
+	[h:abilityTable = json.append(abilityTable,json.set("",
+		"ShowIfCondensed",1,
+		"Header","New Spell Slot Maximum",
+		"FalseHeader","",
+		"FullContents","",
+		"RulesContents",pm.a5e.MaxSpellSlots(),
+		"RollContents","",
+		"DisplayOrder","['Rules','Roll','Full']"
+	))]
+};{}]
+
+[h,if(ceiling(Level/4)+1 != ceiling(Level-1/4)+1):
+	abilityTable = json.append(abilityTable,json.set("",
+		"ShowIfCondensed",1,
+		"Header","Proficiency",
+		"FalseHeader","",
+		"FullContents","",
+		"RulesContents","Your proficiency bonus is now "+Proficiency+".",
+		"RollContents","",
+		"DisplayOrder","['Rules','Roll','Full']"
+	))]
 
 [h:"<!-- Adds newly gained spell macros to the character. Occurs after gaining spell slots because filtering macro limits to spells that you have slots for by default -->"]
 [h:"<!-- Switch statement is temporary until spells are adjusted in the way their classes are stored -->"]
-[h,if(json.isEmpty(allAbilities)): lu.NewSpellClass = ""; lu.NewSpellClass = json.path.read(allAbilities,"[*][?((@.Name == 'Spellcasting' || @.Name == 'PactMagic') && @.Class=='"+lu.Class+"' && (@.Subclass=='"+json.get(Subclasses,lu.Class)+"' || @.Subclass == ''))]","DEFAULT_PATH_LEAF_TO_NULL")]
+[h,if(json.isEmpty(allAbilities)): lu.NewSpellClass = "[]"; lu.NewSpellClass = json.path.read(allAbilities,"[*][?((@.Name == 'Spellcasting' || @.Name == 'PactMagic') && @.Class=='"+lu.Class+"' && (@.Subclass=='"+json.get(Subclasses,lu.Class)+"' || @.Subclass == ''))]","DEFAULT_PATH_LEAF_TO_NULL")]
 [h,if(!json.isEmpty(lu.NewSpellClass)),CODE:{
 	[h:lu.NewSpellClass = json.get(lu.NewSpellClass,0)]
 	[h,switch(json.get(lu.NewSpellClass,"Class")),CODE:
@@ -176,14 +202,16 @@
 		]
 	[h:TempSpellClass = json.get(lu.NewSpellClass,"Class")]
 	
+	[h:MaxSpellLevel = 9]
+	[h:spellLevelCap = if(json.get(lu.NewSpellClass,"CasterCap")=="",MaxSpellLevel,json.get(lu.NewSpellClass,"CasterCap"))]
 	[h:lu.NewSpellFilter = if(
-		or(lu.HasSpellcastingTest==0,ceiling(json.get(lu.NewSpellClass,"Level")*(1/2)*json.get(lu.NewSpellClass,"CasterType"))!=ceiling((json.get(lu.NewSpellClass,"Level")-1)*(1/2)*json.get(lu.NewSpellClass,"CasterType"))),
+		or(lu.HadSpellcastingTest==0,and(ceiling(json.get(lu.NewSpellClass,"Level")*(1/2)*json.get(lu.NewSpellClass,"CasterType"))!=ceiling((json.get(lu.NewSpellClass,"Level")-1)*(1/2)*json.get(lu.NewSpellClass,"CasterType")),ceiling(json.get(lu.NewSpellClass,"Level")*(1/2)*json.get(lu.NewSpellClass,"CasterType"))<=spellLevelCap)),
 		json.set("","Class",json.append("",TempSpellClass),"Level",json.append("",ceiling(json.get(lu.NewSpellClass,"Level")*(1/2)*json.get(lu.NewSpellClass,"CasterType")))),
 		"")]
 		
 	[h,if(lu.NewSpellFilter==""): 
-		lu.NewSpellFilter = if(lu.HasSpellcastingTest,lu.NewSpellFilter,json.set("","Class",json.append("",TempSpellClass),"Level",json.append("",0)));
-		lu.NewSpellFilter = if(lu.HasSpellcastingTest,lu.NewSpellFilter,json.set(lu.NewSpellFilter,"Class",json.append(json.get(lu.NewSpellFilter,"Class"),TempSpellClass),"Level",json.append(json.get(lu.NewSpellFilter,"Level"),0)))
+		lu.NewSpellFilter = if(lu.HadSpellcastingTest,lu.NewSpellFilter,json.set("","Class",json.append("",TempSpellClass),"Level",json.append("",0)));
+		lu.NewSpellFilter = if(lu.HadSpellcastingTest,lu.NewSpellFilter,json.set(lu.NewSpellFilter,"Class",json.append(json.get(lu.NewSpellFilter,"Class"),TempSpellClass),"Level",json.append(json.get(lu.NewSpellFilter,"Level"),0)))
 	]
 	
 	[h,if(lu.NewSpellFilter!=""),CODE:{
@@ -234,12 +262,6 @@
 [h:output.Temp = pm.AbilityTableProcessing(abilityTable,FormattingData,1)]
 [h:output.PC = output.PC + json.get(output.Temp,"Player")]
 [h:output.GM = output.GM + json.get(output.Temp,"GM")]
-	
-[h:output.PC = output.PC + if(or(LSpellSlots>0,json.get(LClass,"LWlk")>0),"<b>Max Spell Slots:</b> "+json.get(MaxSpellSlots,"1")+"/"+json.get(MaxSpellSlots,"2")+"/"+json.get(MaxSpellSlots,"3")+"/"+json.get(MaxSpellSlots,"4")+"/"+json.get(MaxSpellSlots,"5")+"/"+json.get(MaxSpellSlots,"6")+"/"+json.get(MaxSpellSlots,"7")+"/"+json.get(MaxSpellSlots,"8")+"/"+json.get(MaxSpellSlots,"9")+" W:"+json.get(MaxSpellSlots,"W"),"")]
-
-[h:output.PC = output.PC + if(json.get(LClass,"LWlk")>0,"<br><b>Warlock Spell Level:</b> "+WSpellLevel,"")]
-
-[h:output.PC = output.PC + if(or(Level==5,Level==9,Level==13,Level==17),"<br><b>Proficiency</b>: Your proficiency bonus increases by 1 to "+Proficiency+".","")]
 
 [h:AbilityGainedText = ""]
 [h:output.PC = output.PC + AbilityGainedText]

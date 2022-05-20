@@ -60,7 +60,7 @@
 [h:setConditionsRemoved = json.unique(json.path.read(setConditionsRemoved,"[*]['DisplayName']"))]
 [h,if(!json.isEmpty(setConditionsRemoved)): abilityTable = json.append(abilityTable,json.set("",
 	"ShowIfCondensed",1,
-	"Header","Conditions on Targets Starting",
+	"Header","Conditions on Targets Ending",
 	"FalseHeader","",
 	"FullContents","",
 	"RulesContents",json.toList(setConditionsRemoved,", "),

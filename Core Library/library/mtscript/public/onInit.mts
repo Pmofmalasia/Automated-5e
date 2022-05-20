@@ -39,6 +39,7 @@
 [h:defineFunction("a5e.TotalLevel","a5e.TotalLevel@Lib:pm.a5e.Core")]
 [h:defineFunction("character.Distances","character.Distances@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.SpellSlots","pm.SpellSlots@Lib:pm.a5e.Core")]
+[h:defineFunction("pm.a5e.MaxSpellSlots","pm.a5e.MaxSpellSlots@Lib:pm.a5e.Core")]
 
 [h:"<!-- Functions for Abilities -->"]
 [h:defineFunction("ability.json.get","ability.json.get@Lib:pm.a5e.Core")]
@@ -62,6 +63,7 @@
 [h:defineFunction("pm.AbilityResourceRestoration","pm.AbilityResourceRestoration@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.AbilityResources","pm.AbilityResources@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.a5e.AbilityResources","pm.a5e.AbilityResources@Lib:pm.a5e.Core")]
+[h:defineFunction("pm.a5e.AbilityResourcesProcessing","pm.a5e.AbilityResourcesProcessing@Lib:pm.a5e.Core",0,0)]
 [h:defineFunction("pm.a5e.GeneralFeatureResourceOptions","pm.a5e.GeneralFeatureResourceOptions@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.a5e.SpecificFeatureResourceOptions","pm.a5e.SpecificFeatureResourceOptions@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.AbilityRoll","pm.AbilityRoll@Lib:pm.a5e.Core")]
@@ -87,6 +89,12 @@
 [h:defineFunction("pm.a5e.PassiveFunctionFromOther","pm.a5e.PassiveFunctionFromOther@Lib:pm.a5e.Core",0,0)]
 [h:defineFunction("a5e.GatherAbilities","a5e.GatherAbilities@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.Summons","pm.Summons@Lib:pm.a5e.Core")]
+[h:defineFunction("pm.a5e.FeatureSummons","pm.a5e.FeatureSummons@Lib:pm.a5e.Core")]
+[h:defineFunction("pm.a5e.FeatureSummonsProcessing","pm.a5e.FeatureSummonsProcessing@Lib:pm.a5e.Core",0,0)]
+[h:defineFunction("pm.a5e.FeatureSpellClass","pm.a5e.FeatureSpellClass@Lib:pm.a5e.Core",0,0)]
+[h:defineFunction("pm.a5e.FeatureCheck","pm.a5e.FeatureCheck@Lib:pm.a5e.Core")]
+[h:defineFunction("pm.a5e.FeatureCheckProcessing","pm.a5e.FeatureCheckProcessing@Lib:pm.a5e.Core",0,0)]
+[h:defineFunction("pm.a5e.FeatureComponentStdVars","pm.a5e.FeatureComponentStdVars@Lib:pm.a5e.Core",0,0)]
 
 [h:"<!-- Functions for resolving damage/condition effects -->"]
 [h:defineFunction("pm.a5e.AdvanceTime","pm.a5e.AdvanceTime@Lib:pm.a5e.Core")]
@@ -110,6 +118,7 @@
 
 [h:"<!-- Functions for Leveling -->"]
 [h:defineFunction("pm.SubclassSelection","pm.SubclassSelection@Lib:pm.a5e.Core")]
+[h:defineFunction("pm.a5e.CheckFeaturePrereqs","pm.a5e.CheckFeaturePrereqs@Lib:pm.a5e.Core")]
 
 [h:"<!-- Functions for Getting Data from Sourcebook Library Tokens -->"]
 [h:defineFunction("pm.GetAttributes","pm.GetAttributes@Lib:pm.a5e.Core")]

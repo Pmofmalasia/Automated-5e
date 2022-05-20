@@ -46,9 +46,13 @@
 [h:pm.PassiveFunction("AttackProps")]
 
 [h:VersatileTest=if(json.get(wa.Props,"Versatile")>0,if(json.get(Weapon,OtherHand)==2,if(json.get(Shield,0)==1,1,0),0),0)]
-
 [h,if(VersatileTest==1),code:{
 	[wa.DmgDie=substring(wa.DmgDie,0,indexOf(wa.DmgDie,"d")+1)+(number(substring(wa.DmgDie,indexOf(wa.DmgDie,"d")+1))+2)]
+};{}]
+
+[h,if(ThrowingWeapon && json.get(wa.Props,"Thrown")==0),CODE:{
+	[h:wa.DmgDie = "1d4"]
+	[h:wa.Class = "Improvised"]
 };{}]
 
 [h:PrimeStat=if(and(json.get(wa.Props,"Finesse")>0,json.get(AtrMods,"Dexterity")>json.get(AtrMods,"Strength")),"Dexterity","Strength")]
@@ -60,9 +64,6 @@
 [h:pm.PassiveFunction("AttackStat")]
 
 [h:wa.PrimeStatBonus = json.get(AtrMods,PrimeStat)]
-
-[h:wa.DmgDie=if(and(ThrowingWeapon,json.get(wa.Props,"Thrown")==0),"1d4",wa.DmgDie)]
-[h:wa.Class=if(and(ThrowingWeapon,json.get(wa.Props,"Thrown")==0),"Improvised",wa.Class)]
 
 [h:wa.DmgDieSize=number(substring(wa.DmgDie,indexOf(wa.DmgDie,"d")+1))]
 [h:wa.DmgDie2Size=number(substring(wa.DmgDie2,indexOf(wa.DmgDie2,"d")+1))]
@@ -365,8 +366,8 @@
 
 [h:pm.RemovedConditions = "[]"]
 [h,foreach(group,json.path.read(ConditionGroups,"[*]['EndTriggers'][?(@.AfterAttack != null)]","DEFAULT_PATH_LEAF_TO_NULL")),CODE:{
-	[h,macro("EndCondition@Lib:pm.a5e.Core"): json.get(group,"GroupID")]
-	[h:pm.RemovedConditions = json.merge(pm.RemovedConditions,macro.return)]
+	[h,macro("EndCondition@Lib:pm.a5e.Core"): json.set("","GroupID",json.get(group,"GroupID"),"ParentToken",ParentToken)]
+	[h:pm.RemovedConditions = json.merge(pm.RemovedConditions,json.get(macro.return,"Table"))]
 }]
 
 [h,if(!json.isEmpty(pm.RemovedConditions)): 

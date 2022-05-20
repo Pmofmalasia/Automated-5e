@@ -1,10 +1,6 @@
-[h:pm.Ability=json.get(arg(0),"Name")]
-[h:pm.DisplayName=json.get(arg(0),"DisplayName")]
-[h:pm.Class=json.get(arg(0),"Class")]
-[h:pm.Subclass=json.get(arg(0),"Subclass")]
-[h:pm.Tooltip=json.get(arg(0),"Tooltip")]
+[h:pm.a5e.FeatureComponentStdVars(arg(0))]
 
-[h:pm.ResourceInfo=arg(1)]
+[h:pm.ResourceInfo = arg(1)]
 [h:pm.FeatureResourceData = json.get(pm.ResourceInfo,"Feature")]
 [h:pm.FeatureBackupResourceData = json.get(pm.ResourceInfo,"FeatureBackup")]
 [h:pm.SpellSlotData = json.get(pm.ResourceInfo,"SpellSlots")]
@@ -32,10 +28,12 @@
 
 [h,if(pm.SpellSlotData!=""),CODE:{
 	[h:pm.SpellOption = json.get(pm.SpellSlotData,"Option")]
-	[h:pm.SpellLevelMin=if(json.get(SpellSlotData,"SpellLevelMin")=="",1,json.get(SpellSlotData,"SpellLevelMin"))]
-	[h:pm.SpellLevelMax=if(json.get(SpellSlotData,"SpellLevelMax")=="",99,json.get(SpellSlotData,"SpellLevelMax"))]
+	[h:pm.SpellLevelMin=if(json.get(pm.SpellSlotData,"SpellLevelMin")=="",1,json.get(pm.SpellSlotData,"SpellLevelMin"))]
+	[h:pm.SpellLevelMax=if(json.get(pm.SpellSlotData,"SpellLevelMax")=="",99,json.get(pm.SpellSlotData,"SpellLevelMax"))]
 };{
 	[h:pm.SpellOption = 0]
+	[h:pm.SpellLevelMin=1]
+	[h:pm.SpellLevelMax=999]
 }]
 
 [h,if(pm.HitDiceData!=""),CODE:{
@@ -60,27 +58,13 @@
 [h:ResourceInfo = "[]"]
 [h:BackupResourceOptions = "[]"]
 [h:BackupResourceInfo = "[]"]
-
-[h:sharedSlotsCount = 0]
-[h:sharedSlotsBackupCount = 0]
-[h:spellSlotsCount = 0]
-[h:spellSlotsBackupCount = 0]
-[h:hitDiceCount = 0]
-[h:hitDiceBackupCount = 0]
-[h:featureResourceCount = 0]
-[h:featureBackupResourceCount = 0]
+[h:resourcesAsSpellSlot = json.path.read(allAbilities,"[*][?(@.ResourceAsSpellSlot==1)]")]
 
 [h,switch((pm.FeatureResource!="")+""+json.type(pm.FeatureResource)),CODE:
 	case "1UNKNOWN":{
 		[h:featureResourceData = pm.a5e.GeneralFeatureResourceOptions(pm.FeatureResource,pm.FeatureResourceUsed)]
       
         [h:ResourceInfo = json.append(ResourceInfo,featureResourceData)]
-		
-		[h,if(json.get(featureResourceData,"TempEnoughResource")==1),CODE:{
-			[h:featureResourceCount = 1]
-		};{
-			[h,if(pm.Tooltip): featureResourceCount = 1]
-		}]
 		[h:pm.FeatureResourceUsedMaxFinal = min(json.get(featureResourceData,"Resource"),pm.FeatureResourceUsedMax)]
 	};
 	case "1OBJECT":{
@@ -88,13 +72,6 @@
 		[h:featureResourceData = pm.a5e.SpecificFeatureResourceOptions(pm.FeatureResource,pm.FeatureResourceUsed,pm.ResourceKey)]
         
 		[h:ResourceInfo = json.append(ResourceInfo,featureResourceData)]
-		
-		[h,if(json.get(featureResourceData,"TempEnoughResource")==1),CODE:{
-			[h:featureResourceCount = 1]
-		};{
-			[h,if(pm.Tooltip): featureResourceCount = 1]
-		}]
-		
 		[h,if(pm.ResourceKey==""):
 			pm.FeatureResourceUsedMaxFinal = min(json.get(featureResourceData,"Resource"),pm.FeatureResourceUsedMax);
 			pm.FeatureResourceUsedMaxFinal = min(json.get(json.get(featureResourceData,"Resource"),pm.ResourceKey),pm.FeatureResourceUsedMax)		
@@ -116,7 +93,6 @@
 			]
 			
 			[h:ResourceInfo = json.append(json.get(featureResourceData,"Info")]
-			[h,if(json.get(featureResourceData,"TempEnoughResource")==1 || pm.Tooltip): featureResourceCount = featureResourceCount + 1]
 		}]
 	};
 	default:{[h:pm.FeatureResourceUsedMaxFinal = 0]}
@@ -127,11 +103,6 @@
 		[h:featureBackupResourceData = pm.a5e.GeneralFeatureResourceOptions(pm.FeatureBackupResource,pm.FeatureBackupResourceUsed)]
 		[h:BackupResourceInfo = json.append(BackupResourceInfo,featureBackupResourceData)]
 		
-		[h,if(json.get(featureBackupResourceData,"TempEnoughResource")==1),CODE:{
-			[h:featureBackupResourceCount = 1]
-		};{
-			[h,if(pm.Tooltip): featureBackupResourceCount = 1]
-		}]
 		[h:pm.FeatureBackupResourceUsedMaxFinal = min(json.get(featureBackupResourceData,"Resource"),pm.FeatureBackupResourceUsedMax)]
 	};
 	case "1OBJECT":{
@@ -139,11 +110,6 @@
 		[h:featureBackupResourceData = pm.a5e.SpecificFeatureResourceOptions(pm.FeatureBackupResource,pm.FeatureBackupResourceUsed,pm.ResourceKey)]
 		[h:BackupResourceInfo = json.append(BackupResourceInfo,featureBackupResourceData)]
 		
-		[h,if(json.get(featureBackupResourceData,"TempEnoughResource")==1),CODE:{
-			[h:featureBackupResourceCount = 1]
-		};{
-			[h,if(pm.Tooltip): featureBackupResourceCount = 1]
-		}]
 		[h,if(pm.ResourceKey==""):
 			pm.FeatureBackupResourceUsedMaxFinal = min(json.get(featureBackupResourceData,"Resource"),pm.FeatureBackupResourceUsedMax);
 			pm.FeatureBackupResourceUsedMaxFinal = min(json.get(json.get(featureBackupResourceData,"Resource"),pm.ResourceKey),pm.FeatureBackupResourceUsedMax)		
@@ -164,7 +130,6 @@
 				pm.FeatureBackupResourceUsedMaxFinal = max(pm.FeatureBackupResourceUsedMaxFinal,min(json.get(json.get(featureBackupResourceData,"Resource"),pm.ResourceKey),pm.FeatureBackupResourceUsedMax))
 			]
 			
-			[h,if(json.get(featureBackupResourceData,"TempEnoughResource")==1 || pm.Tooltip): featureBackupResourceCount = featureBackupResourceCount + 1]
 			[h:BackupResourceInfo = json.append(json.get(featureBackupResourceData,"Info")]
 		}]
 	};
@@ -179,13 +144,9 @@
 			[h:ResourceInfo = json.append(ResourceInfo,
 				json.set(resource,
 				"TempResourceDisplayName",tempResourceDisplayName,
-				"TempResourceType",if(pm.Tooltip,"Spell Slots","FeatureSpell"),
+				"TempResourceType",if(IsTooltip,"Spell Slots","FeatureSpell"),
 				"TempEnoughResource",json.get(resource,"Resource")>0)
 			)]
-			[h,if(pm.Tooltip):
-				sharedSlotsCount = if(json.get(resource,"Resource")>0,sharedSlotsCount+1,sharedSlotsCount);
-				featureResourceCount = if(json.get(resource,"Resource")>0,featureResourceCount+1,featureResourceCount)			
-			]
 		}]
 		
 		[h,if(pm.SpellLevelMin<=1 && pm.SpellLevelMax>=1 && json.get(MaxSpellSlots,"1")>0),CODE:{
@@ -196,7 +157,6 @@
 				"TempResourceType","Spell Slots",
 				"TempEnoughResource",json.get(SpellSlots,"1")>0))
 			]
-			[h:sharedSlotsCount = sharedSlotsCount + 1]
 		};{}]
 		[h,if(pm.SpellLevelMin<=2 && pm.SpellLevelMax>=2 && json.get(MaxSpellSlots,"2")>0),CODE:{
 			[h:ResourceInfo = json.append(ResourceInfo,
@@ -206,7 +166,6 @@
 				"TempResourceType","Spell Slots",
 				"TempEnoughResource",json.get(SpellSlots,"2")>0))
 			]
-			[h:sharedSlotsCount = sharedSlotsCount + 1]
 		};{}]
 		[h,if(pm.SpellLevelMin<=3 && pm.SpellLevelMax>=3 && json.get(MaxSpellSlots,"3")>0),CODE:{
 			[h:ResourceInfo = json.append(ResourceInfo,
@@ -216,7 +175,6 @@
 				"TempResourceType","Spell Slots",
 				"TempEnoughResource",json.get(SpellSlots,"3")>0))
 			]
-			[h:sharedSlotsCount = sharedSlotsCount + 1]
 		};{}]
 		[h,if(pm.SpellLevelMin<=4 && pm.SpellLevelMax>=4 && json.get(MaxSpellSlots,"4")>0),CODE:{
 			[h:ResourceInfo = json.append(ResourceInfo,
@@ -226,7 +184,6 @@
 				"TempResourceType","Spell Slots",
 				"TempEnoughResource",json.get(SpellSlots,"4")>0))
 			]
-			[h:sharedSlotsCount = sharedSlotsCount + 1]
 		};{}]
 		[h,if(pm.SpellLevelMin<=5 && pm.SpellLevelMax>=5 && json.get(MaxSpellSlots,"5")>0),CODE:{
 			[h:ResourceInfo = json.append(ResourceInfo,
@@ -236,7 +193,6 @@
 				"TempResourceType","Spell Slots",
 				"TempEnoughResource",json.get(SpellSlots,"5")>0))
 			]
-			[h:sharedSlotsCount = sharedSlotsCount + 1]
 		};{}]
 		[h,if(pm.SpellLevelMin<=6 && pm.SpellLevelMax>=6 && json.get(MaxSpellSlots,"6")>0),CODE:{
 			[h:ResourceInfo = json.append(ResourceInfo,
@@ -246,7 +202,6 @@
 				"TempResourceType","Spell Slots",
 				"TempEnoughResource",json.get(SpellSlots,"6")>0))
 			]
-			[h:sharedSlotsCount = sharedSlotsCount + 1]
 		};{}]
 		[h,if(pm.SpellLevelMin<=7 && pm.SpellLevelMax>=7 && json.get(MaxSpellSlots,"7")>0),CODE:{
 			[h:ResourceInfo = json.append(ResourceInfo,
@@ -256,7 +211,6 @@
 				"TempResourceType","Spell Slots",
 				"TempEnoughResource",json.get(SpellSlots,"7")>0))
 			]
-			[h:sharedSlotsCount = sharedSlotsCount + 1]
 		};{}]
 		[h,if(pm.SpellLevelMin<=8 && pm.SpellLevelMax>=8 && json.get(MaxSpellSlots,"8")>0),CODE:{
 			[h:ResourceInfo = json.append(ResourceInfo,
@@ -266,7 +220,6 @@
 				"TempResourceType","Spell Slots",
 				"TempEnoughResource",json.get(SpellSlots,"8")>0))
 			]
-			[h:sharedSlotsCount = sharedSlotsCount + 1]
 		};{}]
 		[h,if(pm.SpellLevelMin<=9 && pm.SpellLevelMax>=9 && json.get(MaxSpellSlots,"9")>0),CODE:{
 			[h:ResourceInfo = json.append(ResourceInfo,
@@ -276,7 +229,6 @@
 				"TempResourceType","Spell Slots",
 				"TempEnoughResource",json.get(SpellSlots,"9")>0))
 			]
-			[h:sharedSlotsCount = sharedSlotsCount + 1]
 		};{}]
 	};
 	case 2:{
@@ -285,13 +237,9 @@
 			[h:BackupResourceInfo = json.append(BackupResourceInfo,
 				json.set(resource,
 				"TempResourceDisplayName",tempResourceDisplayName,
-				"TempResourceType",if(pm.Tooltip,"Spell Slots","FeatureSpell"),
+				"TempResourceType",if(IsTooltip,"Spell Slots","FeatureSpell"),
 				"TempEnoughResource",json.get(resource,"Resource")>0)
 			)]
-			[h,if(pm.Tooltip):
-				sharedSlotsBackupCount = if(json.get(resource,"Resource")>0,sharedSlotsBackupCount+1,sharedSlotsBackupCount);
-				featureResourceCount = if(json.get(resource,"Resource")>0,featureResourceCount+1,featureResourceCount)			
-			]
 		}]
 		
 		[h,if(pm.SpellLevelMin<=1 && pm.SpellLevelMax>=1 && json.get(MaxSpellSlots,"1")>0),CODE:{
@@ -302,7 +250,6 @@
 				"TempResourceType","Spell Slots",
 				"TempEnoughResource",json.get(SpellSlots,"1")>0))
 			]
-			[h:sharedSlotsBackupCount = sharedSlotsBackupCount + 1]
 		};{}]
 		[h,if(pm.SpellLevelMin<=2 && pm.SpellLevelMax>=2 && json.get(MaxSpellSlots,"2")>0),CODE:{
 			[h:BackupResourceInfo = json.append(BackupResourceInfo,
@@ -312,7 +259,6 @@
 				"TempResourceType","Spell Slots",
 				"TempEnoughResource",json.get(SpellSlots,"2")>0))
 			]
-			[h:sharedSlotsBackupCount = sharedSlotsBackupCount + 1]
 		};{}]
 		[h,if(pm.SpellLevelMin<=3 && pm.SpellLevelMax>=3 && json.get(MaxSpellSlots,"3")>0),CODE:{
 			[h:BackupResourceInfo = json.append(BackupResourceInfo,
@@ -322,7 +268,6 @@
 				"TempResourceType","Spell Slots",
 				"TempEnoughResource",json.get(SpellSlots,"3")>0))
 			]
-			[h:sharedSlotsBackupCount = sharedSlotsBackupCount + 1]
 		};{}]
 		[h,if(pm.SpellLevelMin<=4 && pm.SpellLevelMax>=4 && json.get(MaxSpellSlots,"4")>0),CODE:{
 			[h:BackupResourceInfo = json.append(BackupResourceInfo,
@@ -332,7 +277,6 @@
 				"TempResourceType","Spell Slots",
 				"TempEnoughResource",json.get(SpellSlots,"4")>0))
 			]
-			[h:sharedSlotsBackupCount = sharedSlotsBackupCount + 1]
 		};{}]
 		[h,if(pm.SpellLevelMin<=5 && pm.SpellLevelMax>=5 && json.get(MaxSpellSlots,"5")>0),CODE:{
 			[h:BackupResourceInfo = json.append(BackupResourceInfo,
@@ -342,7 +286,6 @@
 				"TempResourceType","Spell Slots",
 				"TempEnoughResource",json.get(SpellSlots,"5")>0))
 			]
-			[h:sharedSlotsBackupCount = sharedSlotsBackupCount + 1]
 		};{}]
 		[h,if(pm.SpellLevelMin<=6 && pm.SpellLevelMax>=6 && json.get(MaxSpellSlots,"6")>0),CODE:{
 			[h:BackupResourceInfo = json.append(BackupResourceInfo,
@@ -352,7 +295,6 @@
 				"TempResourceType","Spell Slots",
 				"TempEnoughResource",json.get(SpellSlots,"6")>0))
 			]
-			[h:sharedSlotsBackupCount = sharedSlotsBackupCount + 1]
 		};{}]
 		[h,if(pm.SpellLevelMin<=7 && pm.SpellLevelMax>=7 && json.get(MaxSpellSlots,"7")>0),CODE:{
 			[h:BackupResourceInfo = json.append(BackupResourceInfo,
@@ -362,7 +304,6 @@
 				"TempResourceType","Spell Slots",
 				"TempEnoughResource",json.get(SpellSlots,"7")>0))
 			]
-			[h:sharedSlotsBackupCount = sharedSlotsBackupCount + 1]
 		};{}]
 		[h,if(pm.SpellLevelMin<=8 && pm.SpellLevelMax>=8 && json.get(MaxSpellSlots,"8")>0),CODE:{
 			[h:BackupResourceInfo = json.append(BackupResourceInfo,
@@ -372,7 +313,6 @@
 				"TempResourceType","Spell Slots",
 				"TempEnoughResource",json.get(SpellSlots,"8")>0))
 			]
-			[h:sharedSlotsBackupCount = sharedSlotsBackupCount + 1]
 		};{}]
 		[h,if(pm.SpellLevelMin<=9 && pm.SpellLevelMax>=9 && json.get(MaxSpellSlots,"9")>0),CODE:{
 			[h:BackupResourceInfo = json.append(BackupResourceInfo,
@@ -382,12 +322,10 @@
 				"TempResourceType","Spell Slots",
 				"TempEnoughResource",json.get(SpellSlots,"9")>0))
 			]
-			[h:sharedSlotsBackupCount = sharedSlotsBackupCount + 1]
 		};{}]
 	};
 	default:{}
 ]
-[h:broadcast("After Spell")]
 
 [h,switch(pm.HitDiceOption),CODE:
 	case 0:{
@@ -397,7 +335,6 @@
 	case 1:{
 		[h:pm.HitDiceUsedMaxFinal = 0]
 		[h:pm.BackupHitDiceUsedMaxFinal = 0]
-		[h:hitDiceCount = 0]
 		[h,if(json.get(MaxHitDice,"1d6")>0),CODE:{
 			[h:ResourceInfo = json.append(ResourceInfo,
 				json.set("",
@@ -407,7 +344,6 @@
 				"TempEnoughResource",json.get(HitDice,"1d6")>0))
 			]
 			[h:pm.HitDiceUsedMaxFinal = max(pm.HitDiceUsedMaxFinal,min(pm.HitDiceUsedMax,json.get(HitDice,"1d6")))]
-			[h:hitDiceCount = hitDiceCount + 1]
 		};{}]
 		[h,if(json.get(MaxHitDice,"1d8")>0),CODE:{
 			[h:ResourceInfo = json.append(ResourceInfo,
@@ -418,7 +354,6 @@
 				"TempEnoughResource",json.get(HitDice,"1d8")>0))
 			]
 			[h:pm.HitDiceUsedMaxFinal = max(pm.HitDiceUsedMaxFinal,min(pm.HitDiceUsedMax,json.get(HitDice,"1d8")))]
-			[h:hitDiceCount = hitDiceCount + 1]
 		};{}]
 		[h,if(json.get(MaxHitDice,"1d10")>0),CODE:{
 			[h:ResourceInfo = json.append(ResourceInfo,
@@ -429,7 +364,6 @@
 				"TempEnoughResource",json.get(HitDice,"1d10")>0))
 			]
 			[h:pm.HitDiceUsedMaxFinal = max(pm.HitDiceUsedMaxFinal,min(pm.HitDiceUsedMax,json.get(HitDice,"1d10")))]
-			[h:hitDiceCount = hitDiceCount + 1]
 		};{}]
 		[h,if(json.get(MaxHitDice,"1d12")>0),CODE:{
 			[h:ResourceInfo = json.append(ResourceInfo,
@@ -440,13 +374,11 @@
 				"TempEnoughResource",json.get(HitDice,"1d12")>0))
 			]
 			[h:pm.HitDiceUsedMaxFinal = max(pm.HitDiceUsedMaxFinal,min(pm.HitDiceUsedMax,json.get(HitDice,"1d12")))]
-			[h:hitDiceCount = hitDiceCount + 1]
 		};{}]
 	};
 	case 2:{
 		[h:pm.HitDiceUsedMaxFinal = 0]
 		[h:pm.BackupHitDiceUsedMaxFinal = 0]
-		[h:hitDiceBackupCount = 0]
 		[h,if(json.get(MaxHitDice,"1d6")>0),CODE:{
 			[h:BackupResourceInfo = json.append(BackupResourceInfo,
 				json.set("",
@@ -456,7 +388,6 @@
 				"TempEnoughResource",json.get(HitDice,"1d6")>0))
 			]
 			[h:pm.BackupHitDiceUsedMaxFinal = max(pm.BackupHitDiceUsedMaxFinal,min(pm.HitDiceUsedMax,json.get(HitDice,"1d6")))]
-			[h:hitDiceBackupCount = hitDiceBackupCount + 1]
 		};{}]
 		[h,if(json.get(MaxHitDice,"1d8")>0),CODE:{
 			[h:BackupResourceInfo = json.append(BackupResourceInfo,
@@ -467,7 +398,6 @@
 				"TempEnoughResource",json.get(HitDice,"1d8")>0))
 			]
 			[h:pm.BackupHitDiceUsedMaxFinal = max(pm.BackupHitDiceUsedMaxFinal,min(pm.HitDiceUsedMax,json.get(HitDice,"1d8")))]
-			[h:hitDiceBackupCount = hitDiceBackupCount + 1]
 		};{}]
 		[h,if(json.get(MaxHitDice,"1d10")>0),CODE:{
 			[h:BackupResourceInfo = json.append(BackupResourceInfo,
@@ -478,7 +408,6 @@
 				"TempEnoughResource",json.get(HitDice,"1d10")>0))
 			]
 			[h:pm.BackupHitDiceUsedMaxFinal = max(pm.BackupHitDiceUsedMaxFinal,min(pm.HitDiceUsedMax,json.get(HitDice,"1d10")))]
-			[h:hitDiceBackupCount = hitDiceBackupCount + 1]
 		};{}]
 		[h,if(json.get(MaxHitDice,"1d12")>0),CODE:{
 			[h:BackupResourceInfo = json.append(BackupResourceInfo,
@@ -489,7 +418,6 @@
 				"TempEnoughResource",json.get(HitDice,"1d12")>0))
 			]
 			[h:pm.BackupHitDiceUsedMaxFinal = max(pm.BackupHitDiceUsedMaxFinal,min(pm.HitDiceUsedMax,json.get(HitDice,"1d12")))]
-			[h:hitDiceBackupCount = hitDiceBackupCount + 1]
 		};{}]
 	};
 	default:{
@@ -497,12 +425,29 @@
 		[h:pm.BackupHitDiceUsedMaxFinal = 0]
 	}
 ]
-[h:broadcast("ResourceInfo: "+ResourceInfo)]
 
 [h:enoughResourceInfo = json.path.read(ResourceInfo,"[*][?(@.TempEnoughResource==1)]")]
 [h:enoughBackupResourceInfo = json.path.read(BackupResourceInfo,"[*][?(@.TempEnoughResource==1)]")]
+[h:ResourceOptions = json.path.read(enoughResourceInfo,"[*]['TempResourceDisplayName']")]
+[h:BackupResourceOptions = json.path.read(enoughBackupResourceInfo,"[*]['TempResourceDisplayName']")]
+[h:ResourceTypes = json.unique(json.path.read(enoughResourceInfo,"[*]['TempResourceType']"))]
+[h:BackupResourceTypes = json.unique(json.path.read(enoughBackupResourceInfo,"[*]['TempResourceType']"))]
 
-[h,if(pm.Tooltip && json.isEmpty(enoughResourceInfo) && !json.isEmpty(BackupResourceInfo)),CODE:{
+[h:BackupResourceMax = -1]
+[h,if(json.contains(BackupResourceTypes,"HitDice")): BackupResourceMax = max(BackupResourceMax,pm.BackupHitDiceUsedMaxFinal)]
+[h,if(json.contains(BackupResourceTypes,"Feature")): BackupResourceMax = max(BackupResourceMax,pm.FeatureBackupResourceUsedMaxFinal)]
+[h,if(BackupResourceMax == -1): BackupResourceMax = 1]
+
+[h:BackupResourceMin = -1]
+[h,if(json.contains(BackupResourceTypes,"HitDice")): BackupResourceMin = if(BackupResourceMin==-1,pm.HitDiceUsed,min(BackupResourceMin,pm.HitDiceUsed))]
+[h,if(json.contains(BackupResourceTypes,"Feature")): BackupResourceMin = if(BackupResourceMin==-1,pm.FeatureBackupResourceUsed,min(BackupResourceMin,pm.FeatureBackupResourceUsed))]
+[h,if(BackupResourceMin == -1): BackupResourceMin = 1]
+
+[h:ResourceUsed = BackupResourceMin]
+[h:BackupResourceAmountOptions = ""]
+[h,count(BackupResourceMax - (BackupResourceMin-1)): BackupResourceAmountOptions = listAppend(BackupResourceAmountOptions,(roll.count+BackupResourceMin))]
+
+[h,if(IsTooltip && json.isEmpty(enoughResourceInfo) && !json.isEmpty(BackupResourceInfo)),CODE:{
 	[h:resourceToDisplay = ""]
 	[h,if(json.path.read(BackupResourceInfo,"[*][?(@.TempResourceType=='Spell Slots')]")!="[]"): resourceToDisplay = "Spell Slots"]
 	[h,if(json.path.read(BackupResourceInfo,"[*][?(@.TempResourceType=='Hit Dice')]")!="[]"): resourceToDisplay = "Hit Dice"]
@@ -537,11 +482,24 @@
 		case "Hit Dice": resourceTable = json.append("",json.set("","ShowIfCondensed",1,"Header","Hit Dice Remaining","FalseHeader","","FullContents","","RulesContents","<b><span style='font-size:1.25em;'>"+a5e.HitDieDisplay()+"</span></b>","RollContents","","DisplayOrder","['Rules','Roll','Full']"));
 		case "Feature": resourceTable = featureBackupResourceTable
 	]
-	[h:return(0,json.set("","Table",resourceTable))]
+	[h:return(0,json.set("","Table",resourceTable,"SpellLevel",pm.SpellLevelMin,"HitDieSize",8,"AmountSpent",ResourceUsed))]
 };{}]
-[h:broadcast("After Backup TT")]
 
-[h,if(pm.Tooltip),CODE:{
+[h:ResourceMax = -1]
+[h,if(json.contains(ResourceTypes,"HitDice")): ResourceMax = max(ResourceMax,pm.HitDiceUsedMaxFinal)]
+[h,if(json.contains(ResourceTypes,"Feature")): ResourceMax = max(ResourceMax,pm.FeatureResourceUsedMaxFinal)]
+[h,if(ResourceMax == -1): ResourceMax = 1]
+
+[h:ResourceMin = -1]
+[h,if(json.contains(ResourceTypes,"HitDice")): ResourceMin = if(ResourceMin==-1,pm.HitDiceUsed,min(ResourceMin,pm.HitDiceUsed))]
+[h,if(json.contains(ResourceTypes,"Feature")): ResourceMin = if(ResourceMin==-1,pm.FeatureResourceUsed,min(ResourceMin,pm.FeatureResourceUsed))]
+[h,if(ResourceMin == -1): ResourceMin = 1]
+
+[h:ResourceUsed = ResourceMin]
+[h:ResourceAmountOptions = ""]
+[h,count(ResourceMax - (ResourceMin-1)): ResourceAmountOptions = listAppend(ResourceAmountOptions,(roll.count+ResourceMin))]
+
+[h,if(IsTooltip),CODE:{
 	[h:resourceToDisplay = ""]
 	[h,if(json.path.read(ResourceInfo,"[*][?(@.TempResourceType=='Spell Slots')]")!="[]"): resourceToDisplay = "Spell Slots"]
 	[h,if(json.path.read(ResourceInfo,"[*][?(@.TempResourceType=='Hit Dice')]")!="[]"): resourceToDisplay = "Hit Dice"]
@@ -576,33 +534,14 @@
 		case "Hit Dice": resourceTable = json.append("",json.set("","ShowIfCondensed",1,"Header","Hit Dice Remaining","FalseHeader","","FullContents","","RulesContents","<b><span style='font-size:1.25em;'>"+a5e.HitDieDisplay()+"</span></b>","RollContents","","DisplayOrder","['Rules','Roll','Full']"));
 		case "Feature": resourceTable = featureResourceTable
 	]
-	[h:return(0,json.set("","Table",resourceTable))]
+	[h:return(0,json.set("","Table",resourceTable,"SpellLevel",pm.SpellLevelMin,"HitDieSize",8,"AmountSpent",ResourceUsed))]
 };{}]
-
-[h:ResourceOptions = json.path.read(enoughResourceInfo,"[*]['TempResourceDisplayName']")]
-[h:BackupResourceOptions = json.path.read(enoughBackupResourceInfo,"[*]['TempResourceDisplayName']")]
-[h:ResourceTypes = json.unique(json.path.read(enoughResourceInfo,"[*]['TempResourceType']"))]
-[h:BackupResourceTypes = json.unique(json.path.read(enoughBackupResourceInfo,"[*]['TempResourceType']"))]
 
 [h:"<!-- A bit annoying to do the logic backwards here (i.e. Has Resource == 0) but using ! to get the opposite requires more parens to not turn the whole thing into a 0 -->"]
 [h,SWITCH(json.isEmpty(ResourceOptions)+""+json.isEmpty(BackupResourceOptions)),CODE:
 	case "00":{
 		[h,if(json.length(enoughResourceInfo)>1),CODE:{
-			[h:ResourceMax = -1]
-			[h,if(json.contains(ResourceTypes,"HitDice")): ResourceMax = max(ResourceMax,pm.HitDiceUsedMaxFinal)]
-			[h,if(json.contains(ResourceTypes,"Feature")): ResourceMax = max(ResourceMax,pm.FeatureResourceUsedMaxFinal)]
-			[h,if(ResourceMax == -1): ResourceMax = 1]
-			
-			[h:ResourceMin = -1]
-			[h,if(json.contains(ResourceTypes,"HitDice")): ResourceMin = if(ResourceMin==-1,pm.HitDiceUsed,min(ResourceMin,pm.HitDiceUsed))]
-			[h,if(json.contains(ResourceTypes,"Feature")): ResourceMin = if(ResourceMin==-1,pm.FeatureResourceUsed,min(ResourceMin,pm.FeatureResourceUsed))]
-			[h,if(ResourceMin == -1): ResourceMin = 1]
-			
-			[h:ResourceUsed = ResourceMin]
-			[h:ResourceAmountOptions = ""]
-			[h,count(ResourceMax - (ResourceMin-1)): ResourceAmountOptions = listAppend(ResourceAmountOptions,(roll.count+ResourceMin))]
-			
-			[h:disResourceAmountChoice = if(listCount(ResourceAmountOptions)>1,"ResourceUsed | 0,"+ResourceAmountOptions+" | How much to use | LIST | VALUE=STRING ","")]
+			[h:disResourceAmountChoice = if(listCount(ResourceAmountOptions)>1," ResourceUsed | 0,"+ResourceAmountOptions+" | How much to use | LIST | VALUE=STRING ","")]
 			[h:disResourceChoiceMsg = if(pm.ResourceChoiceMsg=="","","junkVar | "+pm.ResourceChoiceMsg+" |  | LABEL | SPAN=TRUE ")]
 			
 			[h:abort(input(
@@ -613,20 +552,6 @@
 			
 			[h:ResourceSelected = json.get(enoughResourceInfo,ResourceChoice)]
 		};{
-			[h:ResourceMax = -1]
-			[h,if(json.contains(ResourceTypes,"HitDice")): ResourceMax = max(ResourceMax,pm.HitDiceUsedMaxFinal)]
-			[h,if(json.contains(ResourceTypes,"Feature")): ResourceMax = max(ResourceMax,pm.FeatureResourceUsedMaxFinal)]
-			[h,if(ResourceMax == -1): ResourceMax = 1]
-			
-			[h:ResourceMin = -1]
-			[h,if(json.contains(ResourceTypes,"HitDice")): ResourceMin = if(ResourceMin==-1,pm.HitDiceUsed,min(ResourceMin,pm.HitDiceUsed))]
-			[h,if(json.contains(ResourceTypes,"Feature")): ResourceMin = if(ResourceMin==-1,pm.FeatureResourceUsed,min(ResourceMin,pm.FeatureResourceUsed))]
-			[h,if(ResourceMin == -1): ResourceMin = 1]
-			
-			[h:ResourceUsed = ResourceMin]
-			[h:ResourceAmountOptions = ""]
-			[h,count(ResourceMax - (ResourceMin-1)): ResourceAmountOptions = listAppend(ResourceAmountOptions,(roll.count+ResourceMin))]
-			
 			[h:disResourceAmountChoice = if(listCount(ResourceAmountOptions)>1,"ResourceUsed | 0,"+ResourceAmountOptions+" | How much "+json.get(json.get(enoughResourceInfo,0),"TempResourceDisplayName")+ "to use | LIST | VALUE=STRING ","")]
 			[h:disResourceChoiceMsg = if(or(listCount(ResourceAmountOptions)==1,pm.ResourceChoiceMsg==""),"","junkVar | "+pm.ResourceChoiceMsg+" |  | LABEL | SPAN=TRUE ")]
 			
@@ -640,20 +565,6 @@
 	};
 	case "01":{
 		[h,if(json.length(enoughResourceInfo)>1),CODE:{
-			[h:ResourceMax = -1]
-			[h,if(json.contains(ResourceTypes,"HitDice")): ResourceMax = max(ResourceMax,pm.HitDiceUsedMaxFinal)]
-			[h,if(json.contains(ResourceTypes,"Feature")): ResourceMax = max(ResourceMax,pm.FeatureResourceUsedMaxFinal)]
-			[h,if(ResourceMax == -1): ResourceMax = 1]
-			
-			[h:ResourceMin = -1]
-			[h,if(json.contains(ResourceTypes,"HitDice")): ResourceMin = if(ResourceMin==-1,pm.HitDiceUsed,min(ResourceMin,pm.HitDiceUsed))]
-			[h,if(json.contains(ResourceTypes,"Feature")): ResourceMin = if(ResourceMin==-1,pm.FeatureResourceUsed,min(ResourceMin,pm.FeatureResourceUsed))]
-			[h,if(ResourceMin == -1): ResourceMin = 1]
-			
-			[h:ResourceUsed = ResourceMin]
-			[h:ResourceAmountOptions = ""]
-			[h,count(ResourceMax - (ResourceMin-1)): ResourceAmountOptions = listAppend(ResourceAmountOptions,(roll.count+ResourceMin))]
-			
 			[h:disResourceAmountChoice = if(listCount(ResourceAmountOptions)>1,"ResourceUsed | 0,"+ResourceAmountOptions+" | How much to use | LIST | VALUE=STRING ","")]
 			[h:disResourceChoiceMsg = if(pm.ResourceChoiceMsg=="","","junkVar | "+pm.ResourceChoiceMsg+" |  | LABEL | SPAN=TRUE ")]
 			
@@ -665,20 +576,6 @@
 			
 			[h:ResourceSelected = json.get(enoughResourceInfo,ResourceChoice)]
 		};{
-			[h:ResourceMax = -1]
-			[h,if(json.contains(ResourceTypes,"HitDice")): ResourceMax = max(ResourceMax,pm.HitDiceUsedMaxFinal)]
-			[h,if(json.contains(ResourceTypes,"Feature")): ResourceMax = max(ResourceMax,pm.FeatureResourceUsedMaxFinal)]
-			[h,if(ResourceMax == -1): ResourceMax = 1]
-			
-			[h:ResourceMin = -1]
-			[h,if(json.contains(ResourceTypes,"HitDice")): ResourceMin = if(ResourceMin==-1,pm.HitDiceUsed,min(ResourceMin,pm.HitDiceUsed))]
-			[h,if(json.contains(ResourceTypes,"Feature")): ResourceMin = if(ResourceMin==-1,pm.FeatureResourceUsed,min(ResourceMin,pm.FeatureResourceUsed))]
-			[h,if(ResourceMin == -1): ResourceMin = 1]
-			
-			[h:ResourceUsed = ResourceMin]
-			[h:ResourceAmountOptions = ""]
-			[h,count(ResourceMax - (ResourceMin-1)): ResourceAmountOptions = listAppend(ResourceAmountOptions,(roll.count+ResourceMin))]
-			
 			[h:disResourceAmountChoice = if(listCount(ResourceAmountOptions)>1,"ResourceUsed | 0,"+ResourceAmountOptions+" | How much "+json.get(json.get(enoughResourceInfo,0),"TempResourceDisplayName")+ "to use | LIST | VALUE=STRING ","")]
 			[h:disResourceChoiceMsg = if(or(listCount(ResourceAmountOptions)==1,pm.ResourceChoiceMsg==""),"","junkVar | "+pm.ResourceChoiceMsg+" |  | LABEL | SPAN=TRUE ")]
 			
@@ -692,21 +589,8 @@
 	};
 	case "10":{
 		[h,if(json.length(enoughBackupResourceInfo)>1),CODE:{
-			[h:ResourceMax = -1]
-			[h,if(json.contains(ResourceTypes,"HitDice")): ResourceMax = max(ResourceMax,pm.BackupHitDiceUsedMaxFinal)]
-			[h,if(json.contains(ResourceTypes,"Feature")): ResourceMax = max(ResourceMax,pm.FeatureBackupResourceUsedMaxFinal)]
-			[h,if(ResourceMax == -1): ResourceMax = 1]
-			
-			[h:ResourceMin = -1]
-			[h,if(json.contains(ResourceTypes,"HitDice")): ResourceMin = if(ResourceMin==-1,pm.HitDiceUsed,min(ResourceMin,pm.HitDiceUsed))]
-			[h,if(json.contains(ResourceTypes,"Feature")): ResourceMin = if(ResourceMin==-1,pm.FeatureBackupResourceUsed,min(ResourceMin,pm.FeatureBackupResourceUsed))]
-			[h,if(ResourceMin == -1): ResourceMin = 1]
-			
-			[h:ResourceUsed = ResourceMin]
-			[h:ResourceAmountOptions = ""]
-			[h,count(ResourceMax - (ResourceMin-1)): ResourceAmountOptions = listAppend(ResourceAmountOptions,(roll.count+ResourceMin))]
-			
-			[h:disResourceAmountChoice = if(listCount(ResourceAmountOptions)>1,"ResourceUsed | 0,"+ResourceAmountOptions+" | How much to use | LIST | VALUE=STRING ","")]
+			[h:ResourceUsed = BackupResourceMin]
+			[h:disResourceAmountChoice = if(listCount(BackupResourceAmountOptions)>1,"ResourceUsed | 0,"+BackupResourceAmountOptions+" | How much to use | LIST | VALUE=STRING ","")]
 			[h:disResourceChoiceMsg = if(pm.ResourceChoiceMsg=="","","junkVar | "+pm.ResourceChoiceMsg+" |  | LABEL | SPAN=TRUE ")]
 			
 			[h:abort(input(
@@ -717,22 +601,9 @@
 			
 			[h:ResourceSelected = json.get(enoughBackupResourceInfo,ResourceChoice)]
 		};{
-			[h:ResourceMax = -1]
-			[h,if(json.contains(ResourceTypes,"HitDice")): ResourceMax = max(ResourceMax,pm.BackupHitDiceUsedMaxFinal)]
-			[h,if(json.contains(ResourceTypes,"Feature")): ResourceMax = max(ResourceMax,pm.FeatureBackupResourceUsedMaxFinal)]
-			[h,if(ResourceMax == -1): ResourceMax = 1]
-			
-			[h:ResourceMin = -1]
-			[h,if(json.contains(ResourceTypes,"HitDice")): ResourceMin = if(ResourceMin==-1,pm.HitDiceUsed,min(ResourceMin,pm.HitDiceUsed))]
-			[h,if(json.contains(ResourceTypes,"Feature")): ResourceMin = if(ResourceMin==-1,pm.FeatureBackupResourceUsed,min(ResourceMin,pm.FeatureBackupResourceUsed))]
-			[h,if(ResourceMin == -1): ResourceMin = 1]
-			
-			[h:ResourceUsed = ResourceMin]
-			[h:ResourceAmountOptions = ""]
-			[h,count(ResourceMax - (ResourceMin-1)): ResourceAmountOptions = listAppend(ResourceAmountOptions,(roll.count+ResourceMin))]
-			
-			[h:disResourceAmountChoice = if(listCount(ResourceAmountOptions)>1,"ResourceUsed | 0,"+ResourceAmountOptions+" | How much "+json.get(json.get(enoughBackupResourceInfo,0),"TempResourceDisplayName")+ "to use | LIST | VALUE=STRING ","")]
-			[h:disResourceChoiceMsg = if(or(listCount(ResourceAmountOptions)==1,pm.ResourceChoiceMsg==""),"","junkVar | "+pm.ResourceChoiceMsg+" |  | LABEL | SPAN=TRUE ")]
+			[h:ResourceUsed = BackupResourceMin]
+			[h:disResourceAmountChoice = if(listCount(BackupResourceAmountOptions)>1,"ResourceUsed | 0,"+BackupResourceAmountOptions+" | How much "+json.get(json.get(enoughBackupResourceInfo,0),"TempResourceDisplayName")+ "to use | LIST | VALUE=STRING ","")]
+			[h:disResourceChoiceMsg = if(or(listCount(BackupResourceAmountOptions)==1,pm.ResourceChoiceMsg==""),"","junkVar | "+pm.ResourceChoiceMsg+" |  | LABEL | SPAN=TRUE ")]
 			
 			[h:abort(input(
 				disResourceChoiceMsg,
@@ -743,8 +614,7 @@
 		}]
 	};
 	case "11":{
-		[h:broadcast(ResourceInfo)]
-		[h:ResourceSelected = json.get(ResourceInfo,0)]
+		[h,if(json.isEmpty(BackupResourceInfo)): ResourceSelected = json.get(ResourceInfo,0); ResourceSelected = json.get(BackupResourceInfo,0)]
 	}
 ]
 
@@ -785,7 +655,7 @@
 	};
 	case "Feature":{
 		[h,if(json.get(ResourceSelected,"TempResourceKey")==""),CODE:{
-			[h:ResourceAmount = max(json.get(ResourceSelected,"Resource") - ResourceUsed,0)]
+			[h:ResourceAmount = json.get(ResourceSelected,"Resource") - ResourceUsed]
 			[h:allAbilities = json.path.set(allAbilities,"[*][?(@.Name=='"+json.get(ResourceSelected,"Name")+"' && @.Class=='"+json.get(ResourceSelected,"Class")+"' && @.Subclass=='"+json.get(ResourceSelected,"Subclass")+"')]['Resource']",ResourceAmount)]
 			[h:macro.return = json.set("",
 				"Table",json.append("",json.set("",
@@ -837,7 +707,7 @@
 				"ResourceSpent","FeatureSpell",
 				"AmountSpent",1,
 				"ResourceSpentName",pm.RemoveSpecial(json.get(ResourceSelected,"TempResourceDisplayName")),
-				"SpellLevel",json.get(evalMacro(json.get(ResourceSelected,"ResourceSpellLevel")),json.get(ResourceSelected,"TempResourceKey"))
+				"SpellLevel",evalMacro(json.get(ResourceSelected,"ResourceSpellLevel"))
 			)]
 		};{
 			[h:ResourceAmount = max(json.get(json.get(ResourceSelected,"Resource"),json.get(ResourceSelected,"TempResourceKey")) - 1,0)]
@@ -855,7 +725,7 @@
 				"ResourceSpent","FeatureSpell",
 				"AmountSpent",1,
 				"ResourceSpentName",pm.RemoveSpecial(json.get(ResourceSelected,"TempResourceDisplayName")),
-				"SpellLevel",evalMacro(json.get(ResourceSelected,"ResourceSpellLevel"))
+				"SpellLevel",json.get(evalMacro(json.get(ResourceSelected,"ResourceSpellLevel")),json.get(ResourceSelected,"TempResourceKey"))
 			)]
 		}]
 	}

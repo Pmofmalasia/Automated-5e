@@ -4,7 +4,8 @@
 
 [h:listSpells=""]
 
-<!--Object vs array distinction is because spells with a random ongoing effect need to be put in an array instead of an object-->
+[h:
+"<!--Object vs array distinction is because spells with a random ongoing effect need to be put in an array instead of an object-->"]
 
 [h,foreach(spell,ActiveSpells),CODE:{
 	[h:MultiEffectTest = json.type(spell)]

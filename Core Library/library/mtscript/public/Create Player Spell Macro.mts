@@ -14,7 +14,7 @@
 [h:"<!-- The following are customization options to personalize your macros! They wont actually affect calculations or anything -->"]
 
 [h:"<!-- Flavor text that will appear at the start of the macro. The token.name part outputs the name of your token, remove it if you dont want the name of your token in the flavor text. -->"]
-[h:Flavor=token.name+" FLAVOR TEXT"]
+[h:Flavor=""]
 
 [h:"<!-- Output messages when you crit or crit fail-->"]
 [h:CritMessage=""]
@@ -74,7 +74,7 @@
 
 [MACRO("'+json.get(MainSpellData,"SpellName")+' ('+json.get(MainSpellData,"sLevel")+')@Lib:Complete Spellbook"): FlavorData]']
 
-	[h:pm.NewMacroTooltip = '[h:Flavor=""][h:BorderColorOverride=""][h:TitleFontColorOverride=""][h:tooltipDisplaySizeOverride=""][h:TitleFont=""][h:BodyFont=""][h:ForcedClass=""][h:DMOnly=0][h:InnateCast=0][h:MonsterCast=0][h:placeholdToAdd=""][h:TooltipData = json.set("","Flavor",Flavor,"BorderColorOverride",BorderColorOverride,"TitleFontColorOverride",TitleFontColorOverride,"tooltipDisplaySizeOverride",tooltipDisplaySizeOverride,"TitleFont",TitleFont,"BodyFont",BodyFont,"ForcedClass",ForcedClass,"DMOnly",DMOnly,"InnateCast",InnateCast,"MonsterCast",MonsterCast,"IsTooltip",1,"placeholdToAdd",placeholdToAdd)][MACRO("'+json.get(MainSpellData,"SpellName")+' ('+json.get(MainSpellData,"sLevel")+')@Lib:Complete Spellbook"): TooltipData]']
+	[h:pm.NewMacroTooltip = '[h:Flavor=""][h:BorderColorOverride=""][h:TitleFontColorOverride=""][h:tooltipDisplaySizeOverride=""][h:TitleFont=""][h:BodyFont=""][h:ForcedClass=""][h:DMOnly=0][h:InnateCast=0][h:MonsterCast=0][h:placeholdToAdd=""][h:TooltipData = json.set("","Flavor",Flavor,"ParentToken",currentToken(),"BorderColorOverride",BorderColorOverride,"TitleFontColorOverride",TitleFontColorOverride,"tooltipDisplaySizeOverride",tooltipDisplaySizeOverride,"TitleFont",TitleFont,"BodyFont",BodyFont,"ForcedClass",ForcedClass,"DMOnly",DMOnly,"InnateCast",InnateCast,"MonsterCast",MonsterCast,"IsTooltip",1,"placeholdToAdd",placeholdToAdd)][MACRO("'+json.get(MainSpellData,"SpellName")+' ('+json.get(MainSpellData,"sLevel")+')@Lib:Complete Spellbook"): TooltipData]']
 
 	[h:"<!-- Source is temporarily set to Arcane permanently until Divine is implemented -->"]
 	[h:DefaultDisplayData = pm.SpellColors(json.set("","Level",string(json.get(MainSpellData,"sLevel")),"Source","Arcane"))]

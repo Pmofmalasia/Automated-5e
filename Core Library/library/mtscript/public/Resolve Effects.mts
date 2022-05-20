@@ -127,12 +127,13 @@
 
 [h,if(ParentToken!=""): switchToken(ParentToken)]
 
+[h,if(json.length(effTargets)==1): titleAddon = " on "+getName(json.get(effTargets,0)); titleAddon = ""]
 [h:ClassFeatureData = json.set("",
 	"Flavor","",
 	"ParentToken",ParentToken,
 	"DMOnly",0,
 	"Class",if(effClass=="","zzChecksAndSaves",effClass),
-	"Name","Resolve Effects"+if(json.length(effTargets)==1," on "+getName(json.get(effTargets,0)),""),
+	"Name","Resolve Effects"+titleAddon,
 	"FalseName","",
 	"OnlyRules",0
 )]

@@ -1,5 +1,24 @@
-[h:pm.MaxSpellLevel = 0]
-[h:pm.BoxSize = ceiling(sqrt(pm.MaxSpellLevel))]
+[h:maxSpellLevel = 9]
+[h:SpellSlotDisplay = ""]
+[h,count(maxSpellLevel),CODE:{
+	[h,switch(roll.count):
+		case 0: SpellSlotDisplay = if(json.get(MaxSpellSlots,"1")>0,listAppend(SpellSlotDisplay,"1st: "+json.get(SpellSlots,"1")," | "),SpellSlotDisplay);
+		case 1: SpellSlotDisplay = if(json.get(MaxSpellSlots,"2")>0,listAppend(SpellSlotDisplay,"2nd: "+json.get(SpellSlots,"2")," | "),SpellSlotDisplay);
+		case 2: SpellSlotDisplay = if(json.get(MaxSpellSlots,"3")>0,listAppend(SpellSlotDisplay,"3rd: "+json.get(SpellSlots,"3")," | "),SpellSlotDisplay);
+		default: SpellSlotDisplay = if(json.get(MaxSpellSlots,(roll.count+1)+"")>0,listAppend(SpellSlotDisplay,(roll.count+1)+"th: "+json.get(SpellSlots,(roll.count+1)+"")," | "),SpellSlotDisplay)
+	]
+}]
 
-[r:if(or(LSpellSlots>0,json.get(LClass,"LWlk")>0),if(json.get(MaxSpellSlots,"1")>0,"1st: "+json.get(SpellSlots,"1"),"")+if(json.get(MaxSpellSlots,"2")>0," | 2nd: "+json.get(SpellSlots,"2"),"")+if(json.get(MaxSpellSlots,"3")>0," | 3rd: "+json.get(SpellSlots,"3"),"")+if(json.get(MaxSpellSlots,"4")>0," | 4th: "+json.get(SpellSlots,"4"),"")+if(json.get(MaxSpellSlots,"5")>0,"| 5th: "+json.get(SpellSlots,"5"),"")+if(json.get(MaxSpellSlots,"6")>0," | 6th: "+json.get(SpellSlots,"6"),"")+if(json.get(MaxSpellSlots,"7")>0," | 7th: "+json.get(SpellSlots,"7"),"")+if(json.get(MaxSpellSlots,"8")>0," | 8th: "+json.get(SpellSlots,"8"),"")+if(json.get(MaxSpellSlots,"9")>0," | 9th: "+json.get(SpellSlots,"9"),"")+if(and(json.get(MaxSpellSlots,"1")>0,json.get(MaxSpellSlots,"W")>0),"
-","")+if(json.get(MaxSpellSlots,"W")>0,"W: "+json.get(SpellSlots,"W"),""),"")]
+[h:unsharedSpellSlots = json.path.read(allAbilities,"[*][?(@.ResourceAsSpellSlot==1)]")]
+[h,foreach(feature,unsharedSpellSlots),CODE:{
+	[h:multiResourceTest = json.type(json.get(feature,"Resource"))=="OBJECT"]
+	[h,if(multiResourceTest),CODE:{
+		[h:tempResources = json.get(feature,"Resource")]
+		[h,foreach(resource,json.fields(tempResources)): SpellSlotDisplay = listAppend(SpellSlotDisplay,resource+": "+json.get(json.get(feature,"Resource"),resource)," | ")]
+	};{
+		[h:tempResourceName = if(json.get(feature,"ResourceDisplayName")=="",json.get(feature,"DisplayName"),json.get(feature,"ResourceDisplayName"))]
+		[h:SpellSlotDisplay = listAppend(SpellSlotDisplay,tempResourceName+": "+json.get(feature,"Resource")," | ")]
+	}]
+}]
+
+[h:macro.return = SpellSlotDisplay]

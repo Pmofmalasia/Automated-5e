@@ -11,20 +11,20 @@
 	" cl.Spellcasting |  | <html><span title='Applies to shared spell slots (most classes) and non-shared (e.g. Warlock). Does NOT apply to abilities that let you cast a spell using their own resource (e.g. Way of the Four Elements Monk)'>Does this class gain access to spellcasting using spell slots</span></html> | CHECK ",
 	" cl.HitDie | 4,6,8,10,12 | Hit Die Size | LIST | VALUE=STRING ",
 	cl.AttributePrereqs
-	))]
+))]
 
 
 [h:cl.FinalPrereqs = ""]
 [h:cl.AllorOneFinal = 0]
 [h,foreach(TempAttribute,cl.AttributeList),CODE:{
 	[h:cl.AllorOneFinal = if(cl.AllorOne,1,if(eval("cl."+json.get(TempAttribute,"Name")+"Prereq")>0,cl.AllorOneFinal+1,cl.AllorOneFinal))]
-	[h:cl.FinalPrereqs = json.set(cl.FinalPrereqs,json.get(TempAttribute,"Name"),eval("cl."+json.get(TempAttribute,"Name")+"Prereq"))]
+	[h:cl.FinalPrereqs = if(eval("cl."+json.get(TempAttribute,"Name")+"Prereq")>0,json.set(cl.FinalPrereqs,json.get(TempAttribute,"Name"),eval("cl."+json.get(TempAttribute,"Name")+"Prereq")),cl.FinalPrereqs)]
 }]
 [h:cl.FinalPrereqs = json.set(cl.FinalPrereqs,"AllOrOne",cl.AllorOneFinal))]
 
 [h:cl.SourcebookLib = json.get(json.path.read(getLibProperty("ms.Sources","Lib:pm.a5e.Core"),"[?(@.Name=='"+pm.RemoveSpecial(cl.Source)+"')]['Library']"),0)]
 
-[h:cl.Final = json.set("","Name",pm.RemoveSpecial(cl.Name),"DisplayName",cl.Name,"SubclassLevel",cl.SubclassLevel,"Prereqs",cl.FinalPrereqs)]
+[h:cl.Final = json.set("","Name",pm.RemoveSpecial(cl.Name),"DisplayName",cl.Name,"SubclassLevel",cl.SubclassLevel,"HitDie",cl.HitDie,"Prereqs",cl.FinalPrereqs)]
 
 [h:abort(input(
 	" junkVar |  ------------------------ Choose Levels for ASI ------------------------ | | LABEL | SPAN=TRUE ",
@@ -50,8 +50,8 @@
 	" cl.ASI20 |  | 20 | CHECK "
 	))]
 
-[h:cl.ASILevels = ""]
-[h,count(20): if(eval("cl.ASI"+(roll.count+1)),json.append(cl.ASILevels,(roll.count+1)),cl.ASILevels)]
+[h:cl.ASILevels = "[]"]
+[h,count(20): cl.ASILevels = if(eval("cl.ASI"+(roll.count+1)),json.append(cl.ASILevels,(roll.count+1)),cl.ASILevels)]
 [h:cl.Final = json.set(cl.Final,"ASILevels",cl.ASILevels)]
 
 [h,if(cl.Spellcasting),CODE:{
@@ -72,7 +72,6 @@
 	"Class",pm.RemoveSpecial(cl.Name),
 	"Subclass","",
 	"Level",1,
-	"HitDie",cl.HitDie,
 	"Library",cl.SourcebookLib
 	))]
 
@@ -161,7 +160,7 @@
 
 [h:cl.Final = json.set(cl.Final,"FullProficiencies",cl.Base,"MultiProficiencies",cl.Multi)]
 
-[h:setLibProperty("sb.Classes",json.append(getLibProperty("sb.Classes","Lib:"+cl.SourcebookLib),cl.Final),"Lib:"+cl.SourcebookLib)]
+[h:setLibProperty("sb.Classes",json.sort(json.append(getLibProperty("sb.Classes","Lib:"+cl.SourcebookLib),cl.Final),"a","DisplayName"),"Lib:"+cl.SourcebookLib)]
 
 [r:cl.Name+" class from the sourcebook "+cl.Source+" created."]
 [h,MACRO("Gather Sourcebook Information@Lib:pm.a5e.Core"):""]

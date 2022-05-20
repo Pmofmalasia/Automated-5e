@@ -27,6 +27,12 @@
 	[h,foreach(ability,pm.TempAbilitiesList): pm.AbilitiesList = json.merge(pm.AbilitiesList,json.path.read(getLibProperty("sb.Abilities","Lib:pm.a5e.Core"),"[?(@.Name=='"+json.get(ability,"Name")+"' && @.Class=='"+json.get(ability,"Class")+"' && @.Subclass=='"+json.get(ability,"Subclass")+"' && @.Master.Name=='"+json.get(json.get(ability,"Master"),"Name")+"' && @.Master.Class=='"+json.get(json.get(ability,"Master"),"Class")+"' && @.Master.Subclass=='"+json.get(json.get(ability,"Master"),"Subclass")+"')]"))]
 };{
 	[h:pm.AbilitiesList = json.path.read(getLibProperty("sb.Abilities","Lib:pm.a5e.Core"),"[?(@.Master.Name=='"+pm.Ability+"' && @.Master.Class=='"+pm.Class+"' && @.Master.Subclass=='"+pm.Subclass+"' && @.Level<="+pm.LevelPrereq+")]")]
+	
+	[h:tempAbilitiesWithPrereqs = json.path.read(pm.AbilitiesList,"[*][?(@.Prereqs!=null)]","DEFAULT_PATH_LEAF_TO_NULL")]
+	[h,foreach(feature,tempAbilitiesWithPrereqs),CODE:{
+		[h:pm.a5e.CheckFeaturePrereqs(json.get(feature,"Prereqs"))]
+		[h,if(!macro.return): pm.AbilitiesList = json.path.delete(pm.AbilitiesList,"[*][?(@.Name=='"+json.get(feature,"Name")+"' && @.Class=='"+json.get(feature,"Class")+"' && @.Subclass=='"+json.get(feature,"Subclass")+"')]")]
+	}]
 }]
 
 [h:pm.AbilitiesList = json.sort(pm.AbilitiesList,"a","Name")]
@@ -34,7 +40,7 @@
 [h,if(IsTooltip),CODE:{
 	[h:pm.AbilitiesChosenStr = json.toList(json.path.read(allAbilities,"[?(@.Master.Name=='"+pm.Ability+"' && @.Master.Class=='"+pm.Class+"' && @.Master.Subclass=='"+pm.Subclass+"' && @.IsActive > 0)]['DisplayName']"),if(json.get(getLibProperty("TooltipVertical","Lib:pm.a5e.Core"),getPlayerName())=="",if(json.get(getLibProperty("TooltipVertical","Lib:pm.a5e.Core"),"Default")==1,"<br>",", "),if(json.get(getLibProperty("TooltipVertical","Lib:pm.a5e.Core"),getPlayerName())==1,"<br>",", ")))]
 };{
-	[h:pm.SelectionInput = "junkVar | Choose "+pm.ChoiceNum+" of the following "+pm.AbilityDisplay+" abilities |  | LABEL | SPAN=TRUE "]
+	[h:pm.SelectionInput = "junkVar | Choose "+pm.ChoiceNum+" of the following "+pm.AbilityDisplay+" "+if(substring(pm.AbilityDisplay,length(pm.AbilityDisplay)-1)=="s","abilities","")+" |  | LABEL | SPAN=TRUE "]
 	[h,foreach(ability,pm.AbilitiesList),CODE:{
 		[h:set("pm.Choose"+json.get(ability,"Name"),if(json.isEmpty(json.path.read(allAbilities,"[?(@.Name=='"+json.get(ability,"Name")+"' && @.Master.Name=='"+pm.Ability+"' && @.Master.Class=='"+pm.Class+"' && @.Master.Subclass=='"+pm.Subclass+"' && @.Class=='"+json.get(ability,"Class")+"' && @.Subclass=='"+json.get(ability,"Subclass")+"' && @.IsActive > 0)]")),0,1))]
 		[h:pm.SelectionInput = listAppend(pm.SelectionInput," pm.Choose"+json.get(ability,"Name")+" | "+eval("pm.Choose"+json.get(ability,"Name"))+" | "+json.get(ability,"DisplayName")+" | CHECK ","##")]

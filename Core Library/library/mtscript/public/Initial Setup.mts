@@ -17,8 +17,8 @@
 	AttributeInput,
 	"RaceSelection|"+RaceOptions+"|Choose Race|LIST",
 	"junkVar|On next screen|Subrace|LABEL",
-	"MoralitySelection|Good,Neutral,Evil|Choose Morality|LIST|VALUE=STRING",
 	"OrderSelection|Lawful,Neutral,Chaotic|Choose Order|LIST|VALUE=STRING",
+	"MoralitySelection|Good,Neutral,Evil|Choose Morality|LIST|VALUE=STRING",
 	"DeitySelection|"+Deity+"|Deity",
 	"PC.Ally.Enemy|PC,Ally,Enemy|What type of character is this|LIST"
 )]

@@ -56,13 +56,22 @@
 [h:switchToken(ParentToken)]
 
 [h:a5e.UnifiedAbilities = a5e.GatherAbilities(ParentToken)]
+[h:pm.a5e.OverarchingContext = "Spell"]
 [h:IsTooltip = 1]
 
 [h,if(ForcedClass==""),CODE:{
-	[h:ClassOptionsObj = "{}"]
+	[h:ClassOptionsArray = "[]"]
 	[h:pm.PassiveFunction("SpellClass")]
-
-	[h:ClassOptions=json.fields(ClassOptionsObj,"json")]
+	
+	[h:ClassOptions = ""]
+	[h:classList = pm.GetClasses("Name","json")]
+	[h,foreach(castingClass,ClassOptionsArray),CODE:{
+		[h:isClassTest = json.contains(classList,json.get(castingClass,"Class"))]
+		[h,if(isClassTest):
+			ClassOptions = json.append(ClassOptions,pm.GetDisplayName(json.get(castingClass,"Class"),"sb.Classes"));
+			ClassOptions = json.append(ClassOptions,json.get(castingClass,"DisplayName"))
+		]
+	}]
 	
 	[h:BarbarianTest=if(json.contains(ClassOptions,"Barbarian"),1,0)]
 	[h:BardTest=if(json.contains(ClassOptions,"Bard"),1,0)]

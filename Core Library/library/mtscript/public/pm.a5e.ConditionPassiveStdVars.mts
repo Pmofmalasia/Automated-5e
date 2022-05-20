@@ -35,6 +35,7 @@
 	"Type","Condition",
 	"ParentToken",ParentToken,
 	"OverarchingContext",pm.a5e.OverarchingContext,
+	"UnifiedAbilities",a5e.UnifiedAbilities,
 	"Context",cond.Context,
 	"Library",cond.Library,
 	"FullRules",cond.ShowFullRules

@@ -32,6 +32,7 @@
 	"DisplayName",pass.abilityDisplayName,
 	"Context",pass.Context,
 	"OverarchingContext",pm.a5e.OverarchingContext,
+	"UnifiedAbilities",a5e.UnifiedAbilities,
 	"Tooltip",IsTooltip,
 	"ParentToken",ParentToken,
 	"Type","Feature",

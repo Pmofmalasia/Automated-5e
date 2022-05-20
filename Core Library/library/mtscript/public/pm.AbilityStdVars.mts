@@ -48,10 +48,6 @@
 		)]
 		
 [h:abilityLevel = pm.GetAbilityLevel(abilityInfo)]
-[h:abilityInfo = json.set(abilityInfo,
-	"Level",abilityLevel,
-	"Library",ability.json.get(abilityInfo,"Library")
-	)]
 [h:pm.a5e.EffectData = json.append("",json.set("","Class",abilityClass))]
 
 [h:SummonCustomization = json.set("",
@@ -62,4 +58,9 @@
 	)]
 	
 [h:a5e.UnifiedAbilities = a5e.GatherAbilities(ParentToken)]
+[h:abilityInfo = json.set(abilityInfo,
+	"Level",abilityLevel,
+	"UnifiedAbilities",a5e.UnifiedAbilities,
+	"Library",ability.json.get(abilityInfo,"Library")
+	)]
 [h:pm.a5e.OverarchingContext = "Feature"]

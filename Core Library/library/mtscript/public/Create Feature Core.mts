@@ -248,7 +248,7 @@
 		" ab.ClassPrereq | None,One,Multiple | Has required classes | LIST ",
 		" ab.SubclassPrereq | None,One,Multiple | Has required subclasses | LIST ",
 		" ab.LevelPrereq | "+ab.LevelList+" | Has total level requirement | LIST | ",
-		" ab.AbilityPrereq | -- Ignore/Blank for None -- | Has required feature ",
+		" ab.AbilityPrereq |  | Has required feature | CHECK ",
 		" ab.RacePrereq | None,One,Multiple | Has required races | LIST ",
 		" ab.SubracePrereq | None,One,Multiple | Has required subraces | LIST ",
 		" ab.AttrPrereq |  | Has base attribute requirements | CHECK ",
@@ -259,7 +259,6 @@
 		))]
 	
 	[h,if(ab.LevelPrereq>0): ab.PrereqsFinal = json.set(ab.PrereqsFinal,"Level",ab.LevelPrereq)]
-	[h,if(ab.AbilityPrereq!=""): ab.PrereqsFinal = json.set(ab.PrereqsFinal,"Ability",if(ab.AbilityPrereq=="-- Ignore/Blank for None --","",pm.RemoveSpecial(ab.AbilityPrereq)))]
 	
 	[h,if(ab.ClassPrereq>0),CODE:{
 		[h:ab.ClassPrereqDis = ""]
@@ -296,32 +295,73 @@
 		[h:ab.PrereqsFinal = json.set(ab.PrereqsFinal,"Subclass",ab.SubclassPrereqFinal)]
 	};{}]
 	
+	[h:ab.FeaturePrereqs = "[]"]
+	[h:ab.PrereqFeatureType = ""]
+	[h:ab.PrereqFeatureClass = ""]
+	[h:ab.PrereqFeatureSubclass = ""]
+	[h:ab.PrereqFeatureNumRequired = 1]
+	[h,while(ab.AbilityPrereq>0),CODE:{
+		[h,if(ab.AbilityPrereq==1): abort(input(" ab.PrereqFeatureType | Class,Race,Feat,Background | Prerequiste Feature Type | RADIO | VALUE=STRING "))]
+		
+		[h,SWITCH(if(ab.AbilityPrereq==1,ab.PrereqFeatureType,"Same")):
+			case "Class": abort(input(" ab.PrereqFeatureClass | "+pm.GetClasses("DisplayName",",")+" | Class associated with Prerequiste Feature | LIST | VALUE=STRING ## junkVar | Next Screen | Subclass Selection | LABEL"));
+			case "Race": abort(input(" ab.PrereqFeatureClass | "+pm.GetRaces("DisplayName",",")+" | Race associated with Prerequiste Feature | LIST | VALUE=STRING ## junkVar | Next Screen | Subrace Selection | LABEL"));
+			case "Same": "";
+			default: ab.PrereqFeatureClass = ab.PrereqFeatureType
+		]
+		[h:ab.PrereqFeatureClass = pm.RemoveSpecial(ab.PrereqFeatureClass)]
+		
+		[h,SWITCH(if(ab.AbilityPrereq==1,ab.PrereqFeatureType,"Same")):
+			case "Class": abort(input(" ab.PrereqFeatureSubclass | None,"+pm.GetSubclasses(ab.PrereqFeatureClass,"DisplayName")+" | Subclass associated with Prerequiste Feature | LIST | VALUE=STRING "));
+			case "Race": abort(input(" ab.PrereqFeatureSubclass | None,"+pm.GetSubraces(ab.PrereqFeatureClass,"DisplayName")+" | Subrace associated with Prerequiste Feature | LIST | VALUE=STRING "));
+			case "Same": "";
+			default: ab.PrereqFeatureSubclass = ""
+		]
+		[h:ab.PrereqFeatureSubclass = if(ab.PrereqFeatureSubclass=="None","",pm.RemoveSpecial(ab.PrereqFeatureSubclass))]
+		
+		[h:ab.PrereqFeatureOptions = json.toList(json.path.read(getLibProperty("sb.Abilities","Lib:pm.a5e.Core"),"[?(@.Class=='"+ab.PrereqFeatureClass+"' && (@.Subclass==''|| @.Subclass=='"+ab.PrereqFeatureSubclass+"'))]['DisplayName']"))]
+		[h:abort(input(
+			" ab.PrereqFeatureName | "+ab.PrereqFeatureOptions+" | Name of Prerequiste Feature | LIST | VALUE=STRING ",
+			" ab.AbilityPrereq | No,Yes,Yes - Use Same Filter | Add Additional Prerequisite Feature | RADIO "
+		))]
+		
+		[h:ab.FeaturePrereqs = json.append(ab.FeaturePrereqs,json.set("","Name",pm.RemoveSpecial(ab.PrereqFeatureName),"Class",ab.PrereqFeatureClass,"Subclass",ab.PrereqFeatureSubclass))]
+		
+		[h:tempPrereqFeatureNum = json.length(ab.FeaturePrereqs)]
+		[h:numberOptions = ""]
+		[h,count(tempPrereqFeatureNum): numberOptions = listAppend(numberOptions,(roll.count+1))]
+		[h,if(tempPrereqFeatureNum>1 && ab.AbilityPrereq == 0): abort(input(" ab.PrereqFeatureNumRequired | All,"+numberOptions+" | Number of Prerequisite Features Needed | RADIO "))]
+		
+		[h:ab.PrereqsFinal = json.set(ab.PrereqsFinal,"Features",ab.FeaturePrereqs,"FeatureNum",ab.PrereqFeatureNumRequired)]
+	}]
+		
+	
 	[h,if(ab.RacePrereq>0 || ab.SubracePrereq>0),CODE:{
-		[h:ab.RaceList = pm.GetRaces()]
+		[h:ab.RaceList = pm.GetRaces("DisplayName","json")]
 		[h:ab.RacePrereqDis = ""]
-		[h,foreach(RaceOption,ab.RaceList): ab.RacePrereqDis = listAppend(ab.RacePrereqDis," ab.Choice"+RaceOption+" |  | "+RaceOption+" | CHECK ","##")]
+		[h,foreach(RaceOption,ab.RaceList): ab.RacePrereqDis = listAppend(ab.RacePrereqDis," ab.Choice"+pm.RemoveSpecial(RaceOption)+" |  | "+RaceOption+" | CHECK ","##")]
 		[h:ab.RacePrereqFinal = ""]
-		[h:ab.RacePrereqDis = if(ab.RacePrereq == 1,"ab.RacePrereqChoice | "+ab.RaceList+" | Prerequisite Race | RADIO | VALUE=STRING ",ab.RacePrereqDis)]
-		[h:ab.RacePrereqDis = if(ab.RacePrereq == 0,"ab.RacePrereqChoice | "+ab.RaceList+" | Race of Subrace Prerequisite | RADIO | VALUE=STRING ",ab.RacePrereqDis)]
+		[h:ab.RacePrereqDis = if(ab.RacePrereq == 1,"ab.RacePrereqChoice | "+ab.RaceList+" | Prerequisite Race | RADIO | VALUE=STRING DELIMITER=JSON ",ab.RacePrereqDis)]
+		[h:ab.RacePrereqDis = if(ab.RacePrereq == 0,"ab.RacePrereqChoice | "+ab.RaceList+" | Race of Subrace Prerequisite | RADIO | VALUE=STRING DELIMITER=JSON",ab.RacePrereqDis)]
 		
 		[h:abort(input(ab.RacePrereqDis))]
 		
-		[h,if(ab.RacePrereq==2),foreach(RaceOption,ab.RaceList): ab.RacePrereqFinal = if(eval("ab.Choice"+RaceOption),json.append(ab.RacePrereqFinal,RaceOption),ab.RacePrereqFinal)]
-		[h,if(ab.RacePrereq!=2): ab.RacePrereqFinal = json.append("",ab.RacePrereqChoice)]
+		[h,if(ab.RacePrereq==2),foreach(RaceOption,ab.RaceList): ab.RacePrereqFinal = if(eval("ab.Choice"+pm.RemoveSpecial(RaceOption)),json.append(ab.RacePrereqFinal,pm.RemoveSpecial(RaceOption)),ab.RacePrereqFinal)]
+		[h,if(ab.RacePrereq!=2): ab.RacePrereqFinal = json.append("",pm.RemoveSpecial(ab.RacePrereqChoice))]
 		[h:ab.PrereqsFinal = json.set(ab.PrereqsFinal,"Race",ab.RacePrereqFinal)]
 	};{}]
 	
 	[h,if(ab.SubracePrereq>0),CODE:{
-		[h:ab.SubraceList = pm.GetSubraces(ab.RacePrereqChoice)]
+		[h:ab.SubraceList = pm.GetSubraces(ab.RacePrereqChoice,"DisplayName","json")]
 		[h:ab.SubracePrereqDis = ""]
-		[h,foreach(SubraceOption,ab.SubraceList): ab.SubracePrereqDis = listAppend(ab.SubracePrereqDis," ab.Choice"+SubraceOption+" |  | "+SubraceOption+" | CHECK ","##")]
+		[h,foreach(SubraceOption,ab.SubraceList): ab.SubracePrereqDis = listAppend(ab.SubracePrereqDis," ab.Choice"+pm.RemoveSpecial(SubraceOption)+" |  | "+SubraceOption+" | CHECK ","##")]
 		[h:ab.SubracePrereqFinal = ""]
-		[h:ab.SubracePrereqDis = if(ab.SubracePrereq == 1,"ab.SubracePrereqChoice | "+ab.SubraceList+" | Prerequisite Class | RADIO | VALUE=STRING ",ab.SubracePrereqDis)]
+		[h:ab.SubracePrereqDis = if(ab.SubracePrereq == 1,"ab.SubracePrereqChoice | "+ab.SubraceList+" | Prerequisite Class | RADIO | VALUE=STRING DELIMITER=JSON ",ab.SubracePrereqDis)]
 		
 		[h:abort(input(ab.SubracePrereqDis))]
 		
-		[h,if(ab.SubracePrereq==2),foreach(SubraceOption,ab.SubraceList): ab.SubracePrereqFinal = if(eval("ab.Choice"+SubraceOption),json.append(ab.SubracePrereqFinal,SubraceOption),ab.SubracePrereqFinal)]
-		[h,if(ab.SubracePrereq==1): ab.SubracePrereqFinal = json.append("",ab.SubracePrereqChoice)]
+		[h,if(ab.SubracePrereq==2),foreach(SubraceOption,ab.SubraceList): ab.SubracePrereqFinal = if(eval("ab.Choice"+pm.RemoveSpecial(SubraceOption)),json.append(ab.SubracePrereqFinal,pm.RemoveSpecial(SubraceOption)),ab.SubracePrereqFinal)]
+		[h,if(ab.SubracePrereq==1): ab.SubracePrereqFinal = json.append("",pm.RemoveSpecial(ab.SubracePrereqChoice))]
 		[h:ab.PrereqsFinal = json.set(ab.PrereqsFinal,"Subrace",ab.SubracePrereqFinal)]
 	};{}]
 
@@ -352,15 +392,34 @@
 
 [h,if(ab.Resource == 1),CODE:{
 	[h:abort(input(
+		" ab.ResourceDisplayName | -- Blank/Ignore to Use Feature Name -- | Name of Resource ",
 		" ab.ResourceType | 1,Other Flat Number,Attribute Based,Linearly Class Level Based,Non-Linearly Class Level Based,Proficiency Based,Multiple Resources,Custom | Amount of Resource | LIST | VALUE=STRING ",
 		" ab.RestoreShortRest |  | Resource Restored on Short Rests | CHECK ",
 		" ab.RestoreLongRest | 1 | Resource Restored on Long Rests | CHECK "
 	))]
 	[h:ab.ResourceInfo = pm.ResourceInput(json.set("","Name",json.get(ab.Final,"Name"),"Class",json.get(ab.Final,"Class"),"Subclass",json.get(ab.Final,"Subclass"),"Level",ab.Level),ab.ResourceType)]
 	[h:ab.Final = json.set(ab.Final,"RestoreShortRest",ab.RestoreShortRest,"RestoreLongRest",ab.RestoreLongRest,"MaxResource",json.get(ab.ResourceInfo,"Base"))]
+	[h,if(json.get(ab.ResourceInfo,"DisplayName")==""),CODE:{
+		[h,if(ab.ResourceDisplayName!="" && ab.ResourceDisplayName!="0" && ab.ResourceDisplayName!="-- Blank/Ignore to Use Feature Name --"): ab.Final = json.set(ab.Final,"ResourceDisplayName",ab.ResourceDisplayName)]
+	};{
+		[h:ab.Final = json.set(ab.Final,"ResourceDisplayName",json.get(ab.ResourceInfo,"DisplayName"))]
+	}]
 	[h:ab.ResourceUpdateInfo = json.get(ab.ResourceInfo,"Updates")]
 	[h,if(ab.ResourceUpdateInfo==""),CODE:{};{
-		[h,foreach(tempLevel,ab.UpdateLevelOptions): ab.Updates = if(json.get(ab.ResourceUpdateInfo,tempLevel)=="",ab.Updates,json.set(ab.Updates,tempLevel,json.set(json.get(ab.Updates,tempLevel),"MaxResource",json.get(ab.ResourceUpdateInfo,tempLevel))))]
+		[h,foreach(tempLevel,ab.UpdateLevelOptions): ab.Updates = 
+			if(json.get(ab.ResourceUpdateInfo,tempLevel)=="",
+				ab.Updates,
+				json.set(ab.Updates,tempLevel,
+					json.set(json.get(ab.Updates,tempLevel),
+						"MaxResource",json.get(ab.ResourceUpdateInfo,tempLevel),
+						"ResourceDisplayName",if(json.get(ab.ResourceInfo,"DisplayName")=="",
+							if(ab.ResourceDisplayName!="" && ab.ResourceDisplayName!="0" && ab.ResourceDisplayName!="-- Blank/Ignore to Use Feature Name --",ab.ResourceDisplayName,""),
+							json.get(ab.ResourceInfo,"DisplayName")
+						)
+					)
+				)
+			)
+		]
 	}]
 	[h:"<!-- Note: 'Resource' key is not set because amount is not known for things that vary based on the character that gains them, such as proficiency or attribute based. -->"]
 };{}]

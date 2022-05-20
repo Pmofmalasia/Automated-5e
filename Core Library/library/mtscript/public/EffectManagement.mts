@@ -2,7 +2,6 @@
 [h:em.Options = ""]
 [h,foreach(effect,incompleteEffects),CODE:{
 	[h:targetList = json.get(effect,"Targets")]
-	[h:broadcast(targetList)] 
 	[h:targetName = ""]
 	[h,switch(json.length(targetList)):
 		case 1: targetName = getName(json.get(targetList,0));

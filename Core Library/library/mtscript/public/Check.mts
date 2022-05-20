@@ -53,7 +53,7 @@
 
 [h,SWITCH(json.get(ch.Data,"Advantage")),CODE:
 	case -1: {
-		[h,if(json.get(ch.Data,"ForcedAdvantage")),CODE:{
+		[h,if(json.get(ch.Data,"ForcedAdvantage")==1),CODE:{
 			[h:ch.AdvDis = -1]
 		};{
 			[h:ch.Adv = 0]
@@ -63,7 +63,7 @@
 		}]
 	};
 	case 0: {
-		[h,if(json.get(ch.Data,"ForcedAdvantage")),CODE:{
+		[h,if(json.get(ch.Data,"ForcedAdvantage")==1),CODE:{
 			[h:ch.AdvDis = 0]
 		};{
 			[h:ch.Adv = 0]
@@ -73,7 +73,7 @@
 		}]
 	};
 	case 1: {
-		[h,if(json.get(ch.Data,"ForcedAdvantage")),CODE:{
+		[h,if(json.get(ch.Data,"ForcedAdvantage")==1),CODE:{
 			[h:ch.AdvDis = 1]
 		};{
 			[h:ch.Adv = 1]
@@ -143,4 +143,4 @@
 [h:"<!-- May need to actually move this before the check for purposes of sending consumed resource/condition data to the reroll link -->"]
 [h:pm.PassiveFunction("AfterCheck")]
 	
-[h:macro.return = json.set("","Table",abilityTable,"Value",FinalRoll+TotalBonus)]
+[h:macro.return = json.set("","Table",abilityTable,"Value",FinalRoll+TotalBonus,"Roll1",Roll1,"Roll2",Roll2)]

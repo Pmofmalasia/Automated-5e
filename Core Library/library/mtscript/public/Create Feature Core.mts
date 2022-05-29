@@ -865,8 +865,8 @@
 	[h,if(MoreConditionsTest>0),CODE:{
 		[h,if(ConditionsAffected==""): lastFilter = ""; lastFilter = json.get(ConditionsAffected,json.length(ConditionsAffected)-1)]
 		[h,if(ConditionsAffected=="" || MoreConditionsTest==1):
-			pm.a5e.ConditionFilter(" junkVar | -------------- Choose Conditions Affected by the New Feature -------------- |  | LABEL | SPAN=TRUE ");
-			pm.a5e.ConditionFilter(" junkVar | -------------- Choose Conditions Affected by the New Feature -------------- |  | LABEL | SPAN=TRUE ",json.get(lastFilter,"Type"),json.get(lastFilter,"Class"),json.get(lastFilter,"Subclass"))
+			pm.a5e.ConditionFilter(json.set("","InputTitle"," junkVar | -------------- Choose Conditions Affected by the New Feature -------------- |  | LABEL | SPAN=TRUE "));
+			pm.a5e.ConditionFilter(json.set("","InputTitle"," junkVar | -------------- Choose Conditions Affected by the New Feature -------------- |  | LABEL | SPAN=TRUE ","Type",json.get(lastFilter,"Type"),"Class",json.get(lastFilter,"Class"),"Subclass",json.get(lastFilter,"Subclass")))
 		]
 		[h:abort(input(
 			" junkVar | -------------- Parts of "+json.get(macro.return,"DisplayName")+" Affected -------------- |  | LABEL | SPAN=TRUE ",

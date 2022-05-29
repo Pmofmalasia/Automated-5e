@@ -1,12 +1,21 @@
-[h:ab.InputTitle = arg(0)]
-[h,if(argCount()>1): ab.PresetType = arg(1); ab.PresetType = ""]
-[h,if(argCount()>2): ab.PresetClass = arg(2); ab.PresetClass = ""]
-[h,if(argCount()>3): ab.PresetSubclass = arg(3); ab.PresetSubclass = ""]
+[h,if(argCount()>0),CODE:{
+	[h:ab.InputTitle = json.get(arg(0),"InputTitle")]
+	[h:ab.PresetType = json.get(arg(0),"Type")]
+	[h:ab.PresetClass = json.get(arg(0),"Class")]
+	[h:ab.PresetSubclass = json.get(arg(0),"Subclass")]
+	[h:askToAddAnotherTest = if(json.get(arg(0),"AddAnother")=="",0,json.get(arg(0),"AddAnother"))]
+};{
+	[h:ab.InputTitle = ""]
+	[h:ab.PresetType = ""]
+	[h:ab.PresetClass = ""]
+	[h:ab.PresetSubclass = ""]
+	[h:askToAddAnotherTest = 0]
+}]
 
 [h,if(ab.PresetType==""),CODE:{
 	[h:abort(input(
 		ab.InputTitle,
-		" ab.ConditionType | Base Condition,Background,Class,Feat,Race,Spell | Choose Condition Type | RADIO | VALUE=STRING "
+		" ab.ConditionType | Base Condition,Background,Class,Feat,Race,Spell,Movement | Choose Condition Type | RADIO | VALUE=STRING "
 		))]
 };{
 	[h:ab.ConditionType = ab.PresetType]
@@ -56,9 +65,12 @@
 	[h:ab.ConditionSubclass = if(ab.PresetSubclass=="None","",ab.PresetSubclass)]
 }]
 
+[h:goAgane = 0]
+[h:disGoAgain = if(askToAddAnotherTest," goAgane | No,Yes,Yes - Use Same Filter | Choose Another Condition? | RADIO ","")]
+
 [h:abort(input(
 	ab.InputTitle,
 	"ab.ConditionName | "+json.toList(json.path.read(getLibProperty("sb.Conditions","Lib:pm.a5e.Core"),"[*][?(@.Class=='"+ab.ConditionClass+"' && @.Subclass=='"+ab.ConditionSubclass+"')]['DisplayName']"))+" | Choose a Condition | RADIO | VALUE=STRING "
 ))]
 
-[h:macro.return = json.set("","Name",pm.RemoveSpecial(ab.ConditionName),"DisplayName",ab.ConditionName,"Type",ab.ConditionType,"Class",ab.ConditionClass,"Subclass",ab.ConditionSubclass)]
+[h:macro.return = json.set("","Name",pm.RemoveSpecial(ab.ConditionName),"DisplayName",ab.ConditionName,"Type",ab.ConditionType,"Class",ab.ConditionClass,"Subclass",ab.ConditionSubclass,"AddAnother",goAgane)]

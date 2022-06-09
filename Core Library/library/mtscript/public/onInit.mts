@@ -75,6 +75,8 @@
 [h:defineFunction("pm.AbilityRoll","pm.AbilityRoll@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.a5e.AbilitySave","pm.a5e.AbilitySave@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.a5e.AbilitySaveProcessing","pm.a5e.AbilitySaveProcessing@Lib:pm.a5e.Core",0,0)]
+[h:defineFunction("pm.a5e.AbilitySaveDC","pm.a5e.AbilitySaveDC@Lib:pm.a5e.Core")]
+[h:defineFunction("pm.a5e.AbilitySaveDCProcessing","pm.a5e.AbilitySaveDCProcessing@Lib:pm.a5e.Core",0,0)]
 [h:defineFunction("pm.AbilitySpell","pm.AbilitySpell@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.AbilitySpellProcessing","pm.AbilitySpellProcessing@Lib:pm.a5e.Core",0,0)]
 [h:defineFunction("pm.AbilityStateActive","pm.AbilityStateActive@Lib:pm.a5e.Core")]
@@ -100,6 +102,8 @@
 [h:defineFunction("pm.a5e.FeatureSpellClass","pm.a5e.FeatureSpellClass@Lib:pm.a5e.Core",0,0)]
 [h:defineFunction("pm.a5e.FeatureCheck","pm.a5e.FeatureCheck@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.a5e.FeatureCheckProcessing","pm.a5e.FeatureCheckProcessing@Lib:pm.a5e.Core",0,0)]
+[h:defineFunction("pm.a5e.FeatureCheckDC","pm.a5e.FeatureCheckDC@Lib:pm.a5e.Core")]
+[h:defineFunction("pm.a5e.FeatureCheckDCProcessing","pm.a5e.FeatureCheckDCProcessing@Lib:pm.a5e.Core",0,0)]
 [h:defineFunction("pm.a5e.FeatureComponentStdVars","pm.a5e.FeatureComponentStdVars@Lib:pm.a5e.Core",0,0)]
 
 [h:"<!-- Functions for resolving damage/condition effects -->"]
@@ -166,6 +170,7 @@
 [h:defineFunction("pm.AbilityTableTooltip","pm.AbilityTableTooltip@Lib:pm.a5e.Core",1,0)]
 [h:defineFunction("pm.AbilityTooltipCall","pm.AbilityTooltipCall@Lib:pm.a5e.Core",0,0)]
 [h:defineFunction("pm.AbilityFormatCall","pm.AbilityFormatCall@Lib:pm.a5e.Core",0,0)]
+[h:defineFunction("pm.a5e.CreateDisplayList","pm.a5e.CreateDisplayList@Lib:pm.a5e.Core")]
 
 [h:"<!-- Functions for Magic Items -->"]
 [h:defineFunction("pm.ItemTests","pm.ItemTests@Lib:pm.a5e.Core",0,0)]
@@ -176,6 +181,11 @@
 [h:defineFunction("pm.SpellFilter","pm.SpellFilter@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.SpellFilterDisplay","pm.SpellFilterDisplay@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.SpellStdVars","pm.SpellStdVars@Lib:pm.a5e.Core",0,0)]
+
+[h:"<!-- Functions for Checks -->"]
+[h:defineFunction("pm.a5e.CheckBonusTotal","pm.a5e.CheckBonusTotal@Lib:pm.a5e.Core",0,0)]
+[h:defineFunction("pm.a5e.GetSizeChange","pm.a5e.GetSizeChange@Lib:pm.a5e.Core")]
+[h:defineFunction("pm.a5e.CompareSizes","pm.a5e.CompareSizes@Lib:pm.a5e.Core")]
 
 [h:"<!-- Functions for Trusted Bypass -->"]
 [h:defineFunction("pm.SwitchToken","pm.SwitchToken@Lib:pm.a5e.Core",0,0)]

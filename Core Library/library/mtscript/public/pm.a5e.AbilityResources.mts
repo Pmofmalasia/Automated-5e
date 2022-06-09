@@ -1,6 +1,6 @@
+[h:pm.ResourceInfo = arg(1)]
 [h:pm.a5e.FeatureComponentStdVars(arg(0))]
 
-[h:pm.ResourceInfo = arg(1)]
 [h:pm.FeatureResourceData = json.get(pm.ResourceInfo,"Feature")]
 [h:pm.FeatureBackupResourceData = json.get(pm.ResourceInfo,"FeatureBackup")]
 [h:pm.SpellSlotData = json.get(pm.ResourceInfo,"SpellSlots")]

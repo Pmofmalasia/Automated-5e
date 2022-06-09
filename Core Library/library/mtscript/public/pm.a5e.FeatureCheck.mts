@@ -1,23 +1,34 @@
-[h:pm.Ability=json.get(arg(0),"Name")]
-[h:pm.Class=json.get(arg(0),"Class")]
-[h:pm.Subclass=json.get(arg(0),"Subclass")]
-[h:IsTooltip=json.get(arg(0),"Tooltip")]
-[h:ParentToken = json.get(arg(0),"ParentToken")]
-[h:switchToken(ParentToken)]
-
 [h:SkillOptions = json.get(arg(1),"Skill")]
-[h:SkillType = "Skill"]
 [h:SkillAdvantage = json.get(arg(1),"Advantage")]
 [h:SkillPreviousRoll = json.get(arg(1),"PreviousRoll")]
+[h:SkillType = json.get(arg(1),"Type")]
+[h:SkillBonus = json.get(arg(1),"Bonus")]
+[h:pm.a5e.FeatureComponentStdVars(arg(0))]
+
+[h:pm.AttributesList = pm.GetAttributes("Name","json")]
 
 [h,if(IsTooltip),CODE:{
 	[h,if(json.type(SkillOptions)=="UNKNOWN"),CODE:{
+		
+		[h,switch(SkillType):
+			case "Ability Score": skillDisplayName = pm.GetDisplayName(SkillOptions,"sb.Attributes");
+			case "Skill": skillDisplayName = pm.GetDisplayName(SkillOptions,"sb.Skills");
+			case "Tool": skillDisplayName = pm.GetDisplayName(SkillOptions,"sb.Tools");
+			case "Initiative": skillDisplayName = "Initiative"
+		]
+		
+		[h:pm.a5e.CheckBonusTotal(json.set("",
+			"Skill",SkillOptions,
+			"Type",SkillType,
+			"Bonus",SkillBonus
+		))]
+
 		[h:abilityTable = json.append("",json.set("",
 			"ShowIfCondensed",1,
-			"Header",pm.GetDisplayName(SkillOptions,"sb.Skills")+" Check",
+			"Header",skillDisplayName+" Check",
 			"FalseHeader","",
 			"FullContents","",
-			"RulesContents","",
+			"RulesContents","<b>"+pm.PlusMinus(TotalBonus,1,0)+"</b> Total Bonus",
 			"RollContents","",
 			"DisplayOrder","['Rules','Roll','Full']"
 		))]
@@ -27,7 +38,7 @@
 			"Header","Check Options",
 			"FalseHeader","",
 			"FullContents","",
-			"RulesContents",json.toList(SkillOptions,", "),
+			"RulesContents",pm.a5e.CreateDisplayList(SkillOptions,"or"),
 			"RollContents","",
 			"DisplayOrder","['Rules','Roll','Full']"
 		))]

@@ -11,13 +11,16 @@
 [h:IsAHLSummon = json.get(macro.args,"IsAHLSummon")]
 [h:sList = json.get(macro.args,"sList")]
 [h:sLevel = json.get(macro.args,"sLevel")]
+[h:finalSpellData = "{}"]
+[h:MaxSpellLevel = 9]
 
 [h:listDamageTypes = json.append(pm.GetDamageTypes("DisplayName","json"),"Healing","Temp HP","Choose From Multiple")]
 [h:listDamageTypesAHL = json.append(pm.GetDamageTypes("DisplayName","json"),"Healing","Temp HP","Same As Chosen")]
 [h:listDamageDieNumber = "0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30"]
 [h:listDamageDieSize = "0,1,2,4,6,8,10,12"]
 [h:listPrimaryStat = pm.GetAttributes("DisplayName","json")]
-[h:listsLevel = "0,1,2,3,4,5,6,7,8,9"]
+[h:listsLevel = ""]
+[h,count(MaxSpellLevel+1): listsLevel = listAppend(listsLevel,roll.count)]
 [h:listCastTime = "Action,BONUS,REACTION,1 MIN,10 MIN,1 HOUR,8 HOURS,12 HOURS,24 HOURS,Custom"]
 [h:SaveType="None"]
 [h:DmgType=""]
@@ -127,41 +130,47 @@
 		"RangeType | Self,Touch,Ranged | Range |LIST| VALUE=STRING SELECT="+if(RangeType=="Self",0,if(RangeType=="Touch",1,2))+"",
 		"TargetType | Creature,Object,Creature or Object,Point,Condition,Free Hand | What is Targeted |LIST| VALUE=STRING ",
 		"AoEShape | None,Cone,Cube,Cylinder,Half Sphere,Line,Sphere,Wall,Choose From Multiple | Area of Effect |LIST| VALUE=STRING ",
-		"secondStepTest |  | <html><span title='e.g. Acid Splash needs to target a creature first, then a creature within 5 feet.'>Needs a Second Step to Complete Targeting</html></span> | CHECK "
+		"secondStepTest |  | <html><span title='e.g. Acid Splash needs to target a creature first, then a creature within 5 feet.'>Needs a Second Step to Complete Targeting</html></span> | CHECK ",
+		"junkVar|---------------------------------------------- Target Number Info ----------------------------------------------||LABEL|SPAN=TRUE",
+		"sMultiTarget | Unlimited,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20 | Maximum Number of Targets | LIST | SELECT=1 ",
+		" AHLTargetScaling | No Change,Every Level,Every Other Level,Every Three Levels | How Often Targets Increase AHL | LIST | VALUE=STRING ",
+		"sMultiTargetRange | -- N/A -- | <html><span title='Ignore for Single Target, Not Specified By Spell. Look for text like in Charm Person: The creatures must be within X feet of each other when you target them.'>Creatures Must Be Within What Distance of Each Other</span></html> "
 	))]
 	
+	[h:dissRangeScalingAHL = if(RangeType=="Ranged","","")]
+	[h:dissRangeAHL = if(RangeType=="Ranged","","")]
 	[h,if(RangeType=="Ranged"):
-		rangeInput = " junkVar| ---------------------------------------------- Range Info ---------------------------------------------- ||LABEL|SPAN=TRUE ## rangeValue |  | Range ## rangeUnits | Feet,Miles | Range Units | LIST | VALUE=STRING ";
+		rangeInput = " junkVar| ---------------------------------------------- Range Info ---------------------------------------------- ||LABEL|SPAN=TRUE ## rangeValue |  | Range ## rangeUnits | Feet,Miles | Range Units | LIST | VALUE=STRING ## rangeScalingAHL | No Change,Every Level,Every Other Level,Every Three Levels | How Often Range Increases At Higher Levels | LIST | VALUE=STRING ## rangeAHL | 0 | How Much Range Increases When it Changes AHL ";
 		rangeInput = ""
 	]
 	
 	[h,switch(AoEShape),CODE:
 		case "Cone":{
-			[h:aoeInput = " junkVar| ---------------------------------------------- AoE Info ---------------------------------------------- ||LABEL|SPAN=TRUE ## aoeSize |  | Cone Size ## aoeUnits | Feet,Miles | Cone Size Units | LIST | VALUE=STRING "]
+			[h:aoeInput = " junkVar| ---------------------------------------------- AoE Info ---------------------------------------------- ||LABEL|SPAN=TRUE ## aoeSize |  | Cone Size ## aoeUnits | Feet,Miles | Cone Size Units | LIST | VALUE=STRING ## aoeSizeScalingAHL | No Change,Every Level,Every Other Level,Every Three Levels | How Often Cone Size Increases At Higher Levels | LIST | VALUE=STRING ## aoeSizeAHL |  | How Much Cone Size Increases AHL ## aoeNumber | "+listsLevel+" | Number of Areas of Effect | LIST | VALUE=STRING ## aoeNumberScalingAHL | No Change,Every Level,Every Other Level,Every Three Levels | How Often Number of Cones Increases At Higher Levels | LIST | VALUE=STRING ## aoeNumberAHL | "+listsLevel+" | Additional Areas of Effect Per Increase | LIST "]
 			[h:aoeDimensionsNum = 1]
 		};
 		case "Cube":{
-			[h:aoeInput = " junkVar| ---------------------------------------------- AoE Info ---------------------------------------------- ||LABEL|SPAN=TRUE ## aoeSize |  | Cube Size ## aoeUnits | Feet,Miles | Cube Size Units | LIST | VALUE=STRING "]
+			[h:aoeInput = " junkVar| ---------------------------------------------- AoE Info ---------------------------------------------- ||LABEL|SPAN=TRUE ## aoeSize |  | Cube Size ## aoeUnits | Feet,Miles | Cube Size Units | LIST | VALUE=STRING ## aoeSizeScalingAHL | No Change,Every Level,Every Other Level,Every Three Levels | How Often Cube Size Increases At Higher Levels | LIST | VALUE=STRING ## aoeSizeAHL |  | How Much Cube Size Increases AHL ## aoeNumber | "+listsLevel+" | Number of Areas of Effect | LIST | VALUE=STRING ## aoeNumberScalingAHL | No Change,Every Level,Every Other Level,Every Three Levels | How Often Number of Cubes Increases At Higher Levels | LIST | VALUE=STRING ## aoeNumberAHL | "+listsLevel+" | Additional Areas of Effect Per Increase | LIST "]
 			[h:aoeDimensionsNum = 1]
 		};
 		case "Cylinder":{
-			[h:aoeInput = " junkVar| ---------------------------------------------- AoE Info ---------------------------------------------- ||LABEL|SPAN=TRUE ## aoeSize |  | Cylinder Radius ## aoeUnits | Feet,Miles | Cylinder Radius Units | LIST | VALUE=STRING ## aoeSize2 |  | Cylinder Height ## aoeUnits2 | Feet,Miles | Cylinder Height Units | LIST | VALUE=STRING "]
+			[h:aoeInput = " junkVar| ---------------------------------------------- AoE Info ---------------------------------------------- ||LABEL|SPAN=TRUE ## aoeSize |  | Cylinder Radius ## aoeUnits | Feet,Miles | Cylinder Radius Units | LIST | VALUE=STRING ## aoeSize2 |  | Cylinder Height ## aoeUnits2 | Feet,Miles | Cylinder Height Units | LIST | VALUE=STRING ## aoeSizeScalingAHL | No Change,Every Level,Every Other Level,Every Three Levels | How Often Cylinder Size Increases At Higher Levels | LIST | VALUE=STRING ## aoeSizeAHL |  | How Much Cylinder Radius Increases AHL ## aoeSizeAHL2 |  | How Much Cylinder Height Increases AHL ## aoeNumber | "+listsLevel+" | Number of Areas of Effect | LIST | VALUE=STRING ## aoeNumberScalingAHL | No Change,Every Level,Every Other Level,Every Three Levels | How Often Number of Cylinders Increases At Higher Levels | LIST | VALUE=STRING ## aoeNumberAHL | "+listsLevel+" | Additional Areas of Effect Per Increase | LIST "]
 			[h:aoeDimensionsNum = 2]
 		};
 		case "Half Sphere":{
-			[h:aoeInput = " junkVar| ---------------------------------------------- AoE Info ---------------------------------------------- ||LABEL|SPAN=TRUE ## aoeSize |  | Half Sphere Radius ## aoeUnits | Feet,Miles | Half Sphere Radius Units | LIST | VALUE=STRING "]
+			[h:aoeInput = " junkVar| ---------------------------------------------- AoE Info ---------------------------------------------- ||LABEL|SPAN=TRUE ## aoeSize |  | Half Sphere Radius ## aoeUnits | Feet,Miles | Half Sphere Radius Units | LIST | VALUE=STRING ## aoeSizeScalingAHL | No Change,Every Level,Every Other Level,Every Three Levels | How Often Half Sphere Size Increases At Higher Levels | LIST | VALUE=STRING ## aoeSizeAHL |  | How Much Half Sphere Radius Increases AHL ## aoeNumber | "+listsLevel+" | Number of Areas of Effect | LIST | VALUE=STRING ## aoeNumberScalingAHL | No Change,Every Level,Every Other Level,Every Three Levels | How Often Number of Half Spheres Increases At Higher Levels | LIST | VALUE=STRING ## aoeNumberAHL | "+listsLevel+" | Additional Areas of Effect Per Increase | LIST "]
 			[h:aoeDimensionsNum = 1]
 		};
 		case "Line":{
-			[h:aoeInput = " junkVar| ---------------------------------------------- AoE Info ---------------------------------------------- ||LABEL|SPAN=TRUE ## aoeSize |  | Line Length ## aoeUnits | Feet,Miles | Line Length Units | LIST | VALUE=STRING ## aoeSize2 | 5 | Line Width ## aoeUnits2 | Feet,Miles | Line Width Units | LIST | VALUE=STRING "]
+			[h:aoeInput = " junkVar| ---------------------------------------------- AoE Info ---------------------------------------------- ||LABEL|SPAN=TRUE ## aoeSize |  | Line Length ## aoeUnits | Feet,Miles | Line Length Units | LIST | VALUE=STRING ## aoeSize2 | 5 | Line Width ## aoeUnits2 | Feet,Miles | Line Width Units | LIST | VALUE=STRING ## aoeSizeScalingAHL | No Change,Every Level,Every Other Level,Every Three Levels | How Often Line Size Increases At Higher Levels | LIST | VALUE=STRING ## aoeSizeAHL |  | How Much Line Length Increases AHL ## aoeSizeAHL2 |  | How Much Line Width Increases AHL ## aoeNumber | "+listsLevel+" | Number of Areas of Effect | LIST | VALUE=STRING ## aoeNumberScalingAHL | No Change,Every Level,Every Other Level,Every Three Levels | How Often Number of Lines Increases At Higher Levels | LIST | VALUE=STRING ## aoeNumberAHL | "+listsLevel+" | Additional Areas of Effect Per Increase | LIST "]
 			[h:aoeDimensionsNum = 2]
 		};
 		case "Sphere":{
-			[h:aoeInput = " junkVar| ---------------------------------------------- AoE Info ---------------------------------------------- ||LABEL|SPAN=TRUE ## aoeSize |  | Sphere Radius ## aoeUnits | Feet,Miles | Sphere Radius Units | LIST | VALUE=STRING "]
+			[h:aoeInput = " junkVar| ---------------------------------------------- AoE Info ---------------------------------------------- ||LABEL|SPAN=TRUE ## aoeSize |  | Sphere Radius ## aoeUnits | Feet,Miles | Sphere Radius Units | LIST | VALUE=STRING ## aoeNumberScalingAHL | No Change,Every Level,Every Other Level,Every Three Levels | How Often Number of Spheres Increases At Higher Levels | LIST | VALUE=STRING ## aoeNumberAHL | "+listsLevel+" | Additional Areas of Effect Per Increase | LIST "]
 			[h:aoeDimensionsNum = 1]
 		};
 		case "Wall":{
-			[h:aoeInput = " junkVar| ---------------------------------------------- AoE Info ---------------------------------------------- ||LABEL|SPAN=TRUE ## aoeSize |  | Wall Length ## aoeUnits | Feet,Miles | Wall Length Units | LIST | VALUE=STRING ## aoeSize2 | 5 | Wall Width ## aoeUnits2 | Feet,Miles | Wall Width Units | LIST | VALUE=STRING "]
+			[h:aoeInput = " junkVar| ---------------------------------------------- AoE Info ---------------------------------------------- ||LABEL|SPAN=TRUE ## aoeSize |  | Wall Length ## aoeUnits | Feet,Miles | Wall Length Units | LIST | VALUE=STRING ## aoeSize2 | 5 | Wall Width ## aoeUnits2 | Feet,Miles | Wall Width Units | LIST | VALUE=STRING ## aoeSizeScalingAHL | No Change,Every Level,Every Other Level,Every Three Levels | How Often Wall Size Increases At Higher Levels | LIST | VALUE=STRING ## aoeSizeAHL |  | How Much Wall Length Increases AHL ## aoeSizeAHL2 |  | How Much Wall Width Increases AHL ## aoeNumber | "+listsLevel+" | Number of Areas of Effect | LIST | VALUE=STRING ## aoeNumberScalingAHL | No Change,Every Level,Every Other Level,Every Three Levels | How Often Number of Walls Increases At Higher Levels | LIST | VALUE=STRING ## aoeNumberAHL | "+listsLevel+" | Additional Areas of Effect Per Increase | LIST "]
 			[h:aoeDimensionsNum = 2]
 		};
 		case "Choose From Multiple":{
@@ -179,7 +188,7 @@
 		aoeInput
 	))]
 	
-	[h:"<!-- Need to decide how I want range and AoE info to be stored, need number of targets data. -->"]
+	[h:"<!-- Need to decide how I want range, number of targets, and AoE info to be stored. -->"]
 	
 	[h,switch(aoeDimensionsNum),CODE:
 		case 0:{};
@@ -303,86 +312,23 @@
 		};
 		default:{}
 	]
+	
+	[h:sConcentrationLost=99]
 
-	[h:sRange=0]
-	[h:sRangeUnits=""]
-	[h:sRangeScalingAHL="No Change"]
-	[h:sRangeAHL=0]
-	[h:sConeSize=0]
-	[h:sCubeSize=0]
-	[h:sCylinderRadius=0]
-	[h:sCylinderHeight=0]
-	[h:sLineLength=0]
-	[h:sLineWidth=0]
-	[h:sSphereSize=0]
-	[h:sAoEUnits=""]
-	[h:sAoESizeScalingAHL="No Change"]
-	[h:sAoESizeAHL=0]
-	[h:sAoENumber=0]
-	[h:sMultiTarget=0]
-	[h:sMultiTargetRange="0"]
-	[h:IsTargetsAHL=0]
-	[h:AHLTargetScaling=""]
-	[h:AHL2Duration=""]
-	[h:AHL3Duration=""]
-	[h:AHL4Duration=""]
-	[h:AHL5Duration=""]
-	[h:AHL6Duration=""]
-	[h:AHL7Duration=""]
-	[h:AHL8Duration=""]
-	[h:AHL9Duration=""]
-	[h:sConcentrationLost=50]
-
-	[h:disssssRanged= if(and(or(RangeType=="Self",RangeType=="Touch"),AoEShape=="None"),"","throwaway|---------------------------------------------- Data for Spell Range ---------------------------------------------||LABEL|SPAN=TRUE")]
-	[h:dissRange = if(RangeType=="Ranged","sRange | 0 | Numeric Range of Spell ","")]
-	[h:dissRangeUnits = if(RangeType=="Ranged","sRangeUnits | Feet,Miles | Measured in Feet or Miles | LIST | VALUE=STRING","")]
-	[h:dissRangeScalingAHL = if(RangeType=="Ranged","sRangeScalingAHL | No Change,Every Level,Every Other Level,Every Three Levels | How Often Does the Range Increase At Higher Levels | LIST | VALUE=STRING","")]
-	[h:dissRangeAHL = if(RangeType=="Ranged","sRangeAHL |  | How Much the Range Increases When it Changes ","")]
-	[h:disRangedSpaces = if(RangeType=="Ranged","throwaway|------------------------------------------------------------------------------------------------------------------------| |LABEL|SPAN=TRUE","")]
-
-
-
-
-
-	[h:dissConeSize = if(AoEShape=="Cone","sConeSize | 0 | Cone Size ","")]
-	[h:dissCubeSize = if(AoEShape=="Cube","sCubeSize | 0 | Cube Size ","")]
-	[h:dissCylinderRadius = if(AoEShape=="Cylinder","sCylinderRadius | 0 | Cylinder Radius ","")]
-	[h:dissCylinderHeight = if(AoEShape=="Cylinder","sCylinderHeight | 0 | Cylinder Height ","")]
-	[h:dissLineLength = if(AoEShape=="Line","sLineLength | 0 | Line Length ","")]
-	[h:dissLineWidth = if(AoEShape=="Line","sLineWidth | 5 | Line Width ","")]
-	[h:dissSphereSize = if(AoEShape=="Sphere","sSphereSize | 0 | Sphere Radius ","")]
-	[h:dissAoEUnits = if(AoEShape=="None","","sAoEUnits | Feet,Miles | Measured in Feet or Miles | LIST | VALUE=STRING")]
-	[h:disAoESpaces = if(AoEShape=="None","","throwaway|------------------------------------------------------------------------------------------------------------------------| |LABEL|SPAN=TRUE")]
-
-
-
-
-
-	[h:dissAoESizeScalingAHL = if(AoEShape=="None","","sAoESizeScalingAHL | No Change,Every Level,Every Other Level,Every Three Levels | How Often Does the AoE Size Increase At Higher Levels | LIST | VALUE=STRING")]
-	[h:dissAoESizeAHL = if(AoEShape=="None","","sAoESizeAHL |  | How Much the AoE Size Increases When it Changes | ")]
-	[h:dissAoENumber = if(AoEShape=="None","","sAoENumber | "+listsLevel+" | Number of Areas of Effect | LIST ")]
-	[h:disRangedAoESpaces = if(and(RangeType=="Ranged",AoEShape!="None"),"throwaway|------------------------------------------------------------------------------------------------------------------------| |LABEL|SPAN=TRUE","")]
-
-
-
-
-
-
-	[h:disMultiTarget=if(or(AoEShape!="None",RangeType=="Self",IsMissiles==1),"","sMultiTarget | "+listsLevel+" | Maximum Number of Targets |LIST| VALUE=STRING")]
-	[h:disIsTargetsAHL=if(or(AoEShape!="None",RangeType=="Self",IsMissiles==1),"","IsTargetsAHL |  | Targets More At Higher Levels? | Check")]
-	[h:disAHLTargetScaling = if(or(AoEShape!="None",RangeType=="Self",IsMissiles==1),"","AHLTargetScaling | Every Level,Every Other Level,Every Three Levels,Other | If Yes, How Often do Targets Increase? | LIST | VALUE=STRING SELECT=0")]
-	[h:dissMultiTargetRange = if(or(AoEShape!="None",RangeType=="Self",IsMissiles==1),"","sMultiTargetRange |  | <html><a href='Use 0 if Not Indicated in Spell Text'>If Yes, How Close do Additional Targets Need to Be?</a></html> | ")]
+	[h:disAHLDurationTitle = ""]
+	[h:AHLDurationLevels = ""]
+	[h,count(MaxSpellLevel-sLevel),CODE:{
+		[h:disAHLDurationTitle = listAppend(disAHLDurationTitle,"AHL"+(roll.count+sLevel+1)+"Duration | Instantaneous,1 Round,1 Minute,10 Minutes,1 Hour,8 Hours,24 Hours,10 Days,Until Dispelled,Custom | Level "+(roll.count+sLevel+1)+" Duration | LIST | VALUE=STRING SELECT="+AHLDurationPlacehold,"##")]
+		[h:AHLDurationLevels = json.append(AHLDurationLevels,(roll.count+sLevel+1))]
+	}]
+	
+	[h,if(!IsAHLDuration),CODE:{
+		[h:disAHLDurationTitle = ""]
+		[h:AHLDurationLevels = ""]
+	};{}]
 
 	[h:disAHLDuration=if(or(IsAHLDuration==1,sIsConcentrationLost),"throwaway|-------------------------------- Data for Spell Duration at Higher Levels --------------------------------|  |LABEL|SPAN=TRUE","")]
-	[h:disl2Duration=if(and(IsAHLDuration==1,sLevel<2),"AHL2Duration | Instantaneous,1 Round,1 Minute,10 Minutes,1 Hour,8 Hours,24 Hours,10 Days,Until Dispelled | Level 2 Duration | LIST | VALUE=STRING SELECT="+AHLDurationPlacehold+"","")]
-	[h:disl3Duration=if(and(IsAHLDuration==1,sLevel<3),"AHL3Duration | Instantaneous,1 Round,1 Minute,10 Minutes,1 Hour,8 Hours,24 Hours,10 Days,Until Dispelled | Level 3 Duration | LIST | VALUE=STRING SELECT="+AHLDurationPlacehold+"","")]
-	[h:disl4Duration=if(and(IsAHLDuration==1,sLevel<4),"AHL4Duration | Instantaneous,1 Round,1 Minute,10 Minutes,1 Hour,8 Hours,24 Hours,10 Days,Until Dispelled | Level 4 Duration | LIST | VALUE=STRING SELECT="+AHLDurationPlacehold+"","")]
-	[h:disl5Duration=if(and(IsAHLDuration==1,sLevel<5),"AHL5Duration | Instantaneous,1 Round,1 Minute,10 Minutes,1 Hour,8 Hours,24 Hours,10 Days,Until Dispelled | Level 5 Duration | LIST | VALUE=STRING SELECT="+AHLDurationPlacehold+"","")]
-	[h:disl6Duration=if(and(IsAHLDuration==1,sLevel<6),"AHL6Duration | Instantaneous,1 Round,1 Minute,10 Minutes,1 Hour,8 Hours,24 Hours,10 Days,Until Dispelled | Level 6 Duration | LIST | VALUE=STRING SELECT="+AHLDurationPlacehold+"","")]
-	[h:disl7Duration=if(and(IsAHLDuration==1,sLevel<7),"AHL7Duration | Instantaneous,1 Round,1 Minute,10 Minutes,1 Hour,8 Hours,24 Hours,10 Days,Until Dispelled | Level 7 Duration | LIST | VALUE=STRING SELECT="+AHLDurationPlacehold+"","")]
-	[h:disl8Duration=if(and(IsAHLDuration==1,sLevel<8),"AHL8Duration | Instantaneous,1 Round,1 Minute,10 Minutes,1 Hour,8 Hours,24 Hours,10 Days,Until Dispelled | Level 8 Duration | LIST | VALUE=STRING SELECT="+AHLDurationPlacehold+"","")]
-	[h:disl9Duration=if(and(IsAHLDuration==1,sLevel<9),"AHL9Duration | Instantaneous,1 Round,1 Minute,10 Minutes,1 Hour,8 Hours,24 Hours,10 Days,Until Dispelled | Level 9 Duration | LIST | VALUE=STRING SELECT="+AHLDurationPlacehold+"","")]
-	[h:dissIsConcentrationLost=if(sIsConcentrationLost,"sConcentrationLost | "+listsLevel+" | Concentration Not Required at Level | LIST | VALUE=STRING SELECT="+sLevel+"","")]
+	[h:dissIsConcentrationLost=if(sIsConcentrationLost,"sConcentrationLost | "+listsLevel+" | Concentration No Longer Required at Level | LIST | VALUE=STRING SELECT="+sLevel+"","")]
 		
 	[h:mCompItems=""]
 	[h:mCompConsumed=""]
@@ -391,88 +337,60 @@
 	[h:dismCompItems = if(mComp==0,"","mCompItems |  | Material Components")]
 	[h:dismCompConsumed = if(mComp==0,"","mCompConsumed |  | Consumed Material Components")]
 
-	[h: SpellRange=input(
-		""+disIsmComp+"",
-		""+dismCompItems+"",
-		""+dismCompConsumed+"",
-		""+disAHLDuration+"",
-		""+disl2Duration+"",
-		""+disl3Duration+"",
-		""+disl4Duration+"",
-		""+disl5Duration+"",
-		""+disl6Duration+"",
-		""+disl7Duration+"",
-		""+disl8Duration+"",
-		""+disl9Duration+"",
-		""+dissIsConcentrationLost+"",
-		""+disssssRanged+"",
-		""+dissRange+"",
-		""+dissRangeUnits+"",
-		""+dissRangeScalingAHL+"",
-		""+dissRangeAHL+"",
-		""+disRangedSpaces+"",
-		""+dissConeSize+"",
-		""+dissCubeSize+"",
-		""+dissCylinderRadius+"",
-		""+dissCylinderHeight+"",
-		""+dissLineLength+"",
-		""+dissLineWidth+"",
-		""+dissSphereSize+"",
-		""+dissAoEUnits+"",
-		""+disAoESpaces+"",
-		""+dissAoESizeScalingAHL+"",
-		""+dissAoESizeAHL+"",
-		""+dissAoENumber+"",
-		""+disRangedAoESpaces+"",
-		""+disMultiTarget+"",
-		""+disIsTargetsAHL+"",
-		""+disAHLTargetScaling+"",
-		""+dissMultiTargetRange+""
-		)]
-	[h: abort(SpellRange)]
+	[h:abort(input(
+		disIsmComp,
+		dismCompItems,
+		dismCompConsumed,
+		disAHLDurationTitle,
+		disAHLDuration,
+		dissIsConcentrationLost
+	))]
 
 	[h:mCompItemsTT=replace(mCompItems,"'","")]
 	[h:mCompConsumedTT=replace(mCompConsumed,"'","")]
-
-	[h:SaveType=""]
-	[h:sBaseMissiles=1]
-	[h:sAHLMissiles=0]
-	[h:DmgType=""]
-	[h:DmgDieNumber=0]
-	[h:DmgDieSize=0]
-	[h:DmgDieFlatBonus=0]
-	[h:DmgDieMODBonus=0]
-	[h:DmgType2=""]
-	[h:DmgDie2Number=0]
-	[h:DmgDie2Size=0]
-	[h:DmgDie2FlatBonus=0]
-	[h:DmgDie2MODBonus=0]
-	[h:DmgHalved=0]
-	[h:sCritThresh=0]
-
-	[h:disDmgSpaces = if(IsDamage==0,"","throwaway|-------------------------------------------------------------------------------------------------------| |LABEL|SPAN=TRUE")]
-
-	[h:disIsSave = if(IsSave==0,"","throwaway|---------------------------------- Data for Saving Throws ----------------------------------| |LABEL|SPAN=TRUE")]
-	[h:disSaveType = if(IsSave==0,"","SaveType | "+listPrimaryStat+" | Ability Save Type |LIST|VALUE=STRING")]
-	[h:disDmgHalved = if(or(IsDamage==0,IsSave==0),"","DmgHalved |  | Is Damage Halved on a Success |CHECK")]
-
-	[h:disIsAttack = if(IsAttack==0,"","throwaway|--------------------------------------- Data for Attacks ---------------------------------------| |LABEL|SPAN=TRUE")]
-	[h:dissCritThresh = if(IsAttack==0,"","sCritThresh | 20,19,18,17,16,15 | Critical Hit Threshhold |LIST")]
-	[h:dissBaseMissiles = if(IsMissiles==0,"","sBaseMissiles | "+listsLevel+" | Choose Base Number of Missiles | LIST | VALUE=STRING SELECT=0")]
-	[h:dissAHLMissiles = if(IsMissiles==0,"","sAHLMissiles | "+listsLevel+" | How Many More Missiles per Level | LIST | VALUE=STRING SELECT=0")]
-
-	[h:abort(input(
-		""+disIsSave+"",
-		""+disSaveType+"",
-		""+disDmgHalved+"",
-		""+disIsAttack+"",
-		""+dissCritThresh+"",
-		""+dissBaseMissiles+"",
-		""+dissAHLMissiles+""
-	))]
+	
+	[h:AHLDurationInfo = "{}"]
+	[h,foreach(tempLevel,AHLDurationLevels),CODE:{
+		[h:customTest = 0]
+		[h,switch(eval("AHL"+tempLevel+"Duration")):
+			case "Instantaneous": "";
+			case "1 Round": tempDurationInfo = json.set("","Duration",1,"Units","Round");
+			case "1 Minute": tempDurationInfo = json.set("","Duration",1,"Units","Minute");
+			case "10 Minutes": tempDurationInfo = json.set("","Duration",10,"Units","Minute");
+			case "1 Hour": tempDurationInfo = json.set("","Duration",1,"Units","Hour");
+			case "8 Hours": tempDurationInfo = json.set("","Duration",8,"Units","Hour");
+			case "24 Hours": tempDurationInfo = json.set("","Duration",24,"Units","Hour");
+			case "10 Days": tempDurationInfo = json.set("","Duration",10,"Units","Day");
+			case "Until Dispelled":"";
+			default: customTest = 1
+		]
+		
+		[h,if(customTest):
+			abort(input(
+				" throwaway | ----- Custom Duration Info: Level "+tempLevel+" ----- |  | LABEL | SPAN=TRUE",
+				" tempDurationValue |  | Duration ",
+				" tempDurationUnits | Turn,Round,Minute,Hour,Day,Year | Duration Units | LIST | SELECT=1 "
+			));
+			AHLDurationInfo = json.set(AHLDurationInfo,tempLevel,tempDurationInfo)
+		]
+		[h,if(customTest): AHLDurationInfo = json.set(AHLDurationInfo,tempLevel,json.set("","Duration",tempDurationValue,"Units",tempDurationUnits))]
+	}]
+	
+	[h,if(!json.isEmpty(AHLDurationInfo)): finalSpellData = json.set(finalSpellData,"AHLDuration",AHLDurationInfo)]
+	[h,if(sConcentrationLost!=99): finalSpellData = json.set(finalSpellData,"ConcentrationLost",sConcentrationLost)]
 
 	[h:DamageTypeData = pm.a5e.InputSpellDamageTypesDealt()]
 
+	[h:"<!-- Need to add: 
+	
+		Dynamic Basic Condition Selection,
+		Spell Name-Based Condition Naming,
+		Multiple Spell Conditions Per Spell (e.g. Enhance Ability, Contagion),
+		Which conditions to apply (one, all, mix of both),
+		Non-Duration based ending conditions for conditions (e.g. on attack, repeating save, etc.)
+		Force to use a reaction (maybe should go elsewhere)
+		
+	Can look to ability conditions for some of this info -->"]
 	[h:IsBuff="None"]
 	[h:IsDebuff="None"]
 	[h:IsBuffDebuffChoices=0]
@@ -595,7 +513,7 @@
 	[h:disAHLSummonNumAdditive = if(and(IsSummon!="No",or(IsAHLSummon==1,IsAHLSummon==3)),"AHLSummonNumAdditive | No,"+listsLevel+" | Does the Number of Creatures Increase By a Set Amount Each Level? | LIST | VALUE=STRING SELECT=0","")]
 	[h:disAHLSummonNumMultiplier = if(and(IsSummon!="No",or(IsAHLSummon==1,IsAHLSummon==3)),"AHLSummonNumMultiplier | No,Doubled,Tripled,Quadrupled,Quintupled | <html><a href='From Base Value, e.g. Doubled = 2x then 3x, Tripled = 3x then 6x, etc.'>Does the Number of Creatures Increase Multiplicatively?</a></html> | LIST | VALUE=STRING SELECT=0","")]
 	[h:disAHLSummonCRScaling = if(and(IsSummon!="No",or(IsAHLSummon==2,IsAHLSummon==3)),"AHLSummonCRScaling | Every Level,Every Other Level,Every Three Levels,Other | How Often Does CR Increase At Higher Levels? | LIST | VALUE=STRING SELECT=1","")]
-	[h:disAHLSummonCRAdditive = if(and(IsSummon!="No",or(IsAHLSummon==2,IsAHLSummon==3)),"AHLSummonCRAdditive | No"+listsLevel+" | Does CR Increase By a Set Amount Each Level? | LIST | VALUE=STRING SELECT=0","")]
+	[h:disAHLSummonCRAdditive = if(and(IsSummon!="No",or(IsAHLSummon==2,IsAHLSummon==3)),"AHLSummonCRAdditive | "+listsLevel+" | Amount CR Increases By Each Level | LIST | VALUE=STRING SELECT=0","")]
 	[h:disAHLSummonCRMultiplier = if(and(IsSummon!="No",or(IsAHLSummon==2,IsAHLSummon==3)),"AHLSummonCRMultiplier | No,Doubled,Tripled,Quadrupled,Quintupled | <html><a href='From Base Value, e.g. Doubled = 2x then 3x, Tripled = 3x then 6x, etc.'>Does CR Increase Multiplicatively?</a></html> | LIST | VALUE=STRING SELECT=0","")]
 
 	[h: SpellSummons=input(
@@ -623,6 +541,44 @@
 		""+dissSummonList+""
 		)]
 	[h: abort(SpellSummonList)]
+	
+	[h:"<!-- Need to add:
+		Attack Rolls:
+			- Does spell fizzle immediately on failed attack? If no, what parts get through?
+			- Crit range
+			- Parts attached to attack roll
+		Saves:
+			- Save type
+			- Damage halved/nullified? All or by type?
+			- Conditions avoided? Different condition if failing by more than X amount?
+		
+	-->"]
+	[h:SaveType=""]
+	[h:sBaseMissiles=1]
+	[h:sAHLMissiles=0]
+	[h:DmgHalved=0]
+	[h:sCritThresh=0]
+
+	[h:disDmgSpaces = if(IsDamage==0,"","throwaway|-------------------------------------------------------------------------------------------------------| |LABEL|SPAN=TRUE")]
+
+	[h:disIsSave = if(IsSave==0,"","throwaway|---------------------------------- Data for Saving Throws ----------------------------------| |LABEL|SPAN=TRUE")]
+	[h:disSaveType = if(IsSave==0,"","SaveType | "+listPrimaryStat+" | Ability Save Type |LIST|VALUE=STRING")]
+	[h:disDmgHalved = if(or(IsDamage==0,IsSave==0),"","DmgHalved |  | Is Damage Halved on a Success |CHECK")]
+
+	[h:disIsAttack = if(IsAttack==0,"","throwaway|--------------------------------------- Data for Attacks ---------------------------------------| |LABEL|SPAN=TRUE")]
+	[h:dissCritThresh = if(IsAttack==0,"","sCritThresh | 20,19,18,17,16,15 | Critical Hit Threshhold |LIST")]
+	[h:dissBaseMissiles = if(IsMissiles==0,"","sBaseMissiles | "+listsLevel+" | Choose Base Number of Missiles | LIST | VALUE=STRING SELECT=0")]
+	[h:dissAHLMissiles = if(IsMissiles==0,"","sAHLMissiles | "+listsLevel+" | How Many More Missiles per Level | LIST | VALUE=STRING SELECT=0")]
+
+	[h:abort(input(
+		""+disIsSave+"",
+		""+disSaveType+"",
+		""+disDmgHalved+"",
+		""+disIsAttack+"",
+		""+dissCritThresh+"",
+		""+dissBaseMissiles+"",
+		""+dissAHLMissiles+""
+	))]
 }]
 
 [h:TooltipDesc=""]
@@ -643,6 +599,10 @@
 [h:sScr=0]
 [h:sWlk=0]
 [h:sWiz=0]
+
+[h:"<!-- Need to add:
+	Dynamic class selection from casting classes
+-->"]
 
 [h:disTooltipTextBars=if(FirstPassTest,"throwaway|--------------------------------------------------------------------- Tooltip Text ----------------------------------------------------------------------| |LABEL|SPAN=TRUE","")]
 [h:disTooltipText1=if(FirstPassTest,"TooltipDesc | Do not include damage, save type/DC, etc. | Shortened Version for Tooltip || WIDTH=30","")]
@@ -689,7 +649,7 @@
 	""+disTooltipText7+"",
 	""+disTooltipText8+"",
 	""+disTooltipText9+"",
-	"IsOngoing | 0,"+listsLevel+" | <html><a href='e.g. Moonbeam, Delayed Fireball, etc.'>Number of Effects After Casting</a></html> | LIST ",
+	"IsOngoing | "+listsLevel+" | <html><a href='e.g. Moonbeam, Delayed Fireball, etc.'>Number of Effects After Initial Casting</a></html> | LIST ",
 	"IsOngoingRandom |  | Is the above effect chosen randomly after the initial casting | CHECK ",
 	""+disSpellListBars+"",
 	""+disSpellListArt+"",

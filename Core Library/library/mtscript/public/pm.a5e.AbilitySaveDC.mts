@@ -1,12 +1,9 @@
-[h:pm.a5e.FeatureComponentStdVars(arg(0))]
-[h:pm.Ability=json.get(arg(0),"Name")]
-[h:pm.Class=json.get(arg(0),"Class")]
-[h:pm.Subclass=json.get(arg(0),"Subclass")]
-[h:IsTooltip=json.get(arg(0),"Tooltip")]
-[h:ParentToken = json.get(arg(0),"ParentToken")]
-[h:switchToken(ParentToken)]
-
 [h:pm.DCInfo=arg(1)]
+[h:pm.SaveType=arg(2)]
+[h:pm.SaveModifiers=arg(3)]
+[h,if(argCount()>4): otherSaveOptions = arg(4); otherSaveOptions = "{}"]
+[h:pm.a5e.FeatureComponentStdVars(arg(0))]
+
 [h:DCType = json.type(pm.DCInfo)]
 [h,if(DCType=="UNKNOWN"),CODE:{
 	[h:"<!-- Expected input if it is a string is either a number or the name of a stat -->"]
@@ -23,8 +20,6 @@
 	[h:pm.DC = pm.baseDC + json.get(AtrMods,pm.DCPrimeStat) + Proficiency]
 }]
 
-[h:pm.SaveType=arg(2)]
-[h:pm.SaveModifiers=arg(3)]
 [h:isDamageHalved = json.get(pm.SaveModifiers,"DamageHalved")]
 [h:isDamageHalved = if(isDamageHalved == "",0,isDamageHalved)]
 [h:TypesHalvedInclusive = json.get(pm.SaveModifiers,"TypesInclusive")]
@@ -32,7 +27,6 @@
 [h:conditionsResistedInclusive = json.get(pm.SaveModifiers,"ConditionsInclusive")]
 [h:conditionsResistedExclusive = json.get(pm.SaveModifiers,"ConditionsExclusive")]
 
-[h,if(argCount()>4): otherSaveOptions = arg(4); otherSaveOptions = "{}"]
 [h:isSpellSave = if(json.get(otherSaveOptions,"SpellSave")=="",0,json.get(otherSaveOptions,"SpellSave"))]
 
 [h:miSaveDCSet=json.path.read(MagicItemClassBonuses,"[*][?(@.IsActive>0 && @.Ability=='"+pm.Ability+"' && @.Class=='"+pm.Class+"'  && @.Subclass=='"+pm.Subclass+"' && @.SaveDCSet!=-1)]['SaveDCSet']")]

@@ -1,14 +1,8 @@
-[h:pm.Ability=json.get(arg(0),"Name")]
-[h:pm.Class=json.get(arg(0),"Class")]
-[h:pm.Subclass=json.get(arg(0),"Subclass")]
-[h:pm.Tooltip=json.get(arg(0),"Tooltip")]
-[h:ParentToken = json.get(arg(0),"ParentToken")]
-[h:switchToken(ParentToken)]
-
 [h:pm.baseDieNum=arg(1)]
 [h:pm.baseDieSize=arg(2)]
 [h:pm.DamageBonus=arg(3)]
 [h:pm.DamageType=arg(4)]
+[h:pm.a5e.FeatureComponentStdVars(arg(0))]
 [h:DamageColor=pm.DamageColor()]
 [h:HealingColor=pm.HealingColor()]
 
@@ -18,7 +12,7 @@
 [h,if(json.isEmpty(miDieSizeBonus)): miDieSizeBonusFinal = 0 ; miDieSizeBonusFinal = math.arraySum(miDieSizeBonus)]
 [h:DieSizeFinal = if(miDieSizeSetFinal == -1,(pm.baseDieSize+miDieSizeBonusFinal),max(miDieSizeSetFinal,(pm.baseDieSize+miDieSizeBonusFinal)))]
 
-[h,if(pm.Tooltip),CODE:{
+[h,if(IsTooltip),CODE:{
 	[h:macro.return = json.set("",
 		"Table",json.set("","ShowIfCondensed",1,"Header",if(or(pm.DamageType=="Healing",pm.DamageType=="Temp HP"),"Healing","Damage"),"FalseHeader","","FullContents","","RulesContents",if(pm.baseDieNum>0,pm.baseDieNum+"d"+DieSizeFinal,"")+pm.PlusMinus(pm.DamageBonus,0)+" "+pm.DamageType+if(or(pm.DamageType=="Healing",pm.DamageType=="Temp HP"),""," Damage"),"RollContents","","DisplayOrder","['Rules','Roll','Full']")
 		,"Value",pm.baseDieNum,

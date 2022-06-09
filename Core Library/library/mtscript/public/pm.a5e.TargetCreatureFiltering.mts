@@ -27,6 +27,8 @@
 }]
 
 [h:pm.TargetSize = json.get(arg(1),"Size")]
+[h:pm.TargetSizeMax = json.get(arg(1),"SizeMax")]
+[h:pm.TargetSizeMin = json.get(arg(1),"SizeMin")]
 [h:pm.TargetTypeInclusive = json.get(arg(1),"TypeInclusive")]
 [h:pm.TargetSubtypeInclusive = json.get(arg(1),"SubtypeInclusive")]
 [h:pm.TargetTypeExclusive = json.get(arg(1),"TypeExclusive")]
@@ -58,6 +60,14 @@
 	[h,if(json.type(pm.TargetSize) == "UNKNOWN"):
 		pm.SizeTest = if(or(pm.TargetSize=="",pm.TargetSize==getSize(target)),1,0);
 		pm.SizeTest = json.contains(pm.SizeTest,getSize(target))
+	]
+	
+	[h,if(pm.TargetSizeMax != ""):
+		pm.SizeTest = if(pm.a5e.CompareSizes(pm.TargetSizeMax,getSize(target)) > 0, 0, pm.SizeTest)
+	]
+	
+	[h,if(pm.TargetSizeMin != ""):
+		pm.SizeTest = if(pm.a5e.CompareSizes(pm.TargetSizeMin,getSize(target)) < 0, 0, pm.SizeTest)
 	]
 	
 	[h,if(json.type(pm.TargetTypeInclusive) == "UNKNOWN"):

@@ -75,7 +75,7 @@
 [h:lu.FightingStyleTest = !json.isEmpty(json.path.read(lu.NewAbilities,"[*][?(@.FightingStyleList!=null)]","DEFAULT_PATH_LEAF_TO_NULL"))]
 [h,if(lu.FightingStyleTest),CODE:{
 	[h:needsMacroTest = !json.contains(getMacros("json"),"Manage Fighting Styles")]
-	[h,if(needsMacroTest): createMacro(json.set("","label","Manage Fighting Styles","command",'[MACRO("Manage Fighting Styles@Lib:pm.a5e.Core"): json.set("","LevelUp",0,"Class","'+lu.Class+'")]',"group"," New Macros","color",pm.BorderColor("FightingStyle"),"fontColor",pm.TitleColor("FightingStyle"),"applyToSelected",1,"playerEditable",0,"minWidth",89))]
+	[h,if(needsMacroTest): createMacro(json.set("","label","Manage Fighting Styles","command",'[MACRO("Manage Fighting Styles@Lib:pm.a5e.Core"): json.set("","LevelUp",0,"Class","'+lu.Class+'","ParentToken",currentToken())]',"group"," New Macros","color",pm.BorderColor("FightingStyle"),"fontColor",pm.TitleColor("FightingStyle"),"applyToSelected",1,"playerEditable",0,"minWidth",89))]
 };{}]
 
 [h,MACRO("New Ability Processing@Lib:pm.a5e.Core"): json.set("","Abilities",lu.NewAbilities)]
@@ -160,7 +160,7 @@
 	[h:SpellSlots = json.set(SpellSlots,roll.count,(number(json.get(SpellSlots,string(roll.count)))+SpellAdd))]
 	[h:SpellAdd = 0]
 }]
-[h,if(json.equals(MaxSpellSlotsOld,MaxSpellSlots)),CODE:{
+[h,if(!json.equals(MaxSpellSlotsOld,MaxSpellSlots)),CODE:{
 	[h:abilityTable = json.append(abilityTable,json.set("",
 		"ShowIfCondensed",1,
 		"Header","New Spell Slot Maximum",
@@ -172,7 +172,8 @@
 	))]
 };{}]
 
-[h,if(ceiling(Level/4)+1 != ceiling(Level-1/4)+1):
+[h:newProfBonusTest = ceiling(Level/4)+1 != ceiling((Level-1)/4)+1]
+[h,if(newProfBonusTest):
 	abilityTable = json.append(abilityTable,json.set("",
 		"ShowIfCondensed",1,
 		"Header","Proficiency",
@@ -181,7 +182,8 @@
 		"RulesContents","Your proficiency bonus is now "+Proficiency+".",
 		"RollContents","",
 		"DisplayOrder","['Rules','Roll','Full']"
-	))]
+	))
+]
 
 [h:"<!-- Adds newly gained spell macros to the character. Occurs after gaining spell slots because filtering macro limits to spells that you have slots for by default -->"]
 [h:"<!-- Switch statement is temporary until spells are adjusted in the way their classes are stored -->"]

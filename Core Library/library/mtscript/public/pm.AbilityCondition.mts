@@ -71,7 +71,7 @@
 	]
 };{
 	[h:pm.ConditionInfo = pm.a5e.ChooseCondition(pm.ConditionNames,pm.ChoiceMethod)]
-	[h:pm.ConditionNames = json.toList(json.path.read(pm.ConditionInfo,"[*]['DisplayName']"))]
+	[h:pm.ConditionNames = pm.a5e.CreateDisplayList(json.path.read(pm.ConditionInfo,"[*]['DisplayName']"),"and")]
 	[h,if(pm.Tooltip),CODE:{
 		[h:macro.return = json.set("","Table",json.set("","ShowIfCondensed",1,"Header","Conditions Applied","FalseHeader","","FullContents","","RulesContents",pm.ConditionNames,"RollContents","","DisplayOrder","['Rules','Roll','Full']"),"ConditionInfo",json.set("","Conditions",pm.ConditionInfo,"EndInfo",pm.ConditionEndInfo),"Toggle",0)]
 	};{

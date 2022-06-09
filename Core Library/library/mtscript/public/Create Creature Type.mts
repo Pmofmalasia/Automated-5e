@@ -1,5 +1,3 @@
-[h:ct.LevelOptions = "None,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20"]
-
 [h:abort(input(
 	" ct.Name | -- Name Here -- | Enter creature type name ",
 	" ct.Source | "+pm.GetBookInfo("DisplayName")+" | Which sourcebook is the creature type from | LIST | VALUE=STRING "

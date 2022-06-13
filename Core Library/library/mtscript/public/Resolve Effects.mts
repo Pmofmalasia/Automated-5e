@@ -2,6 +2,11 @@
 [h:effTargets = json.get(macro.args,"Targets")]
 [h:effTargetSpecific = json.get(macro.args,"TargetSpecificEffects")]
 [h:effConditionInfo = json.get(macro.args,"ConditionInfo")]
+[h,switch(json.type(effConditionInfo)):
+    case "OBJECT": effConditionInfo = json.append("",effConditionInfo);
+    case "ARRAY": effConditionInfo = effConditionInfo;
+    case "UNKNOWN": effConditionInfo = json.append("",json.set("","Conditions","[]","EndInfo","{}"))
+]
 [h:effDamageData = json.get(macro.args,"Damage")]
 [h:effAttackData = json.get(macro.args,"Attack")]
 [h:effCheckData = json.get(macro.args,"Check")]
@@ -9,16 +14,22 @@
 [h:ParentToken = currentToken()]
 [h:effGroupID = pm.a5e.CreateConditionID(ParentToken,effTargets)]
 
+[h:effAllConditionIdentifiers = ""]
+[h,foreach(conditionSet,effConditionInfo),CODE:{
+    [h,foreach(tempCondition,json.get(conditionSet,"Conditions")): effAllConditionIdentifiers = json.append(effAllConditionIdentifiers,json.set("","Name",json.get(tempCondition,"Name"),"Class",json.get(tempCondition,"Class"),"Subclass",json.get(tempCondition,"Subclass")))]
+}]
+
 [h:abilityTable = "[]"]
 [h,foreach(targetToken,effTargets),CODE:{
 	[h:"<!-- Maybe move this all to its own function, so that i can use the return() function if it is completely nullified (e.g. missed AC, immunity, save or suck). May not want to return in case of effects on missing though (or just return that it was a total miss? and no output unless it triggers something like the BM riposte?) -->"]
 	
+    [h:thisTokenInputDisplay = "junkVar | "+getTokenImage("",targetToken)+" | Resolving Effects on "+getName(targetToken)+" | LABEL | ICON=TRUE "]
 	[h:thisTokenAttackData = effAttackData]
 	[h:thisTokenSaveData = effSaveData]
 	[h:thisTokenCheckData = effCheckData]
 	[h:thisTokenDamageDealt = effDamageData]
 	[h:thisTokenConditionInfo = effConditionInfo]
-	[h,if(thisTokenConditionInfo!=""): thisTokenConditionsApplied = json.get(thisTokenConditionInfo,"Conditions"); thisTokenConditionsApplied = "[]"]
+    [h:thisTokenConditionsApplied = effAllConditionIdentifiers]
 	[h:switchToken(targetToken)]
 	
 	[h,if(json.length(effTargets)>1):
@@ -47,7 +58,7 @@
 		[h:thisTokenCheckData = ""]
 		[h:thisTokenDamageDealt = ""]
 		[h:thisTokenConditionInfo = ""]
-		[h,if(thisTokenConditionInfo!=""): thisTokenConditionsApplied = json.get(thisTokenConditionInfo,"Conditions"); thisTokenConditionsApplied = "[]"]
+		[h:thisTokenConditionsApplied = json.append("",json.set("","Conditions","[]","EndInfo","{}"))]
 		[h:abilityTable = json.append(abilityTable,json.set("",
 		"ShowIfCondensed",1,
 		"Header","Attack Missed",
@@ -64,8 +75,8 @@
 		[h:SaveResult = macro.return]
 		[h:abilityTable = json.merge(abilityTable,json.get(SaveResult,"Table"))]
 		[h:passedSave = json.get(SaveResult,"Value")>=json.get(thisTokenSaveData,"DC")]
-		[h:saveDamageModInfo = json.get(thisTokenSaveData,"DamageModifier")]
-		[h:isDamageHalved = json.get(saveDamageModInfo,"DamageHalved")]
+		[h:saveDamageModInfo = if(json.get(thisTokenSaveData,"DamageModifier")=="","{}",json.get(thisTokenSaveData,"DamageModifier"))]
+		[h:isDamageHalved = if(json.get(saveDamageModInfo,"DamageHalved")=="",0,json.get(saveDamageModInfo,"DamageHalved"))]
 		[h:typesHalvedInclusive = json.get(saveDamageModInfo,"TypesInclusive")]
 		[h:typesHalvedExclusive = if(json.get(saveDamageModInfo,"TypesExclusive")=="","[]",json.get(saveDamageModInfo,"TypesExclusive"))]
       
@@ -82,18 +93,22 @@
 		[h:saveConditionsResistedInfo = json.get(thisTokenSaveData,"ConditionsResisted")]
 		[h:conditionsResistedInclusive = json.get(saveConditionsResistedInfo,"Inclusive")]
 		[h:conditionsResistedExclusive = if(json.get(saveConditionsResistedInfo,"Exclusive")=="","[]",json.get(saveConditionsResistedInfo,"Exclusive"))]
-      
-		[h:"<!-- resistedExclusive for the first case doesn't work since the objects dont line up exactly - more info in condApplied. -->"]
+    
 		[h,switch(passedSave+""+json.type(conditionsResistedInclusive)):
 			case "1UNKNOWN": conditionsResistedFinal = if(conditionsResistedInclusive == "All",thisTokenConditionsApplied,if(conditionsResistedExclusive=="[]","[]",json.difference(thisTokenConditionsApplied,conditionsResistedExclusive)));
 			case "1ARRAY": conditionsResistedFinal = json.difference(conditionsResistedInclusive,conditionsResistedExclusive);
 			default: conditionsResistedFinal = "[]"
 		]
-      
-		[h,foreach(condition,conditionsResistedFinal): thisTokenConditionsApplied = json.path.delete(thisTokenConditionsApplied,"[*][?(@.Name=='"+json.get(condition,"Name")+"' && @.Class=='"+json.get(condition,"Class")+"' && @.Subclass=='"+json.get(condition,"Subclass")+"')]")]
+    
+		[h,foreach(condition,conditionsResistedFinal): thisTokenConditionInfo = json.path.delete(thisTokenConditionInfo,"[*]['Conditions'][*][?(@.Name=='"+json.get(condition,"Name")+"' && @.Class=='"+json.get(condition,"Class")+"' && @.Subclass=='"+json.get(condition,"Subclass")+"')]")]
 	};{}]
-   
-	[h:thisTokenConditionInfo = json.set(thisTokenConditionInfo,"Conditions",thisTokenConditionsApplied)]
+    
+    [h:tempDeleteCount = 0]
+    [h,foreach(conditionSet,thisTokenConditionInfo),CODE:{
+        [h:allResistedTest = json.isEmpty(json.get(conditionSet,"Conditions"))]
+        [h,if(allResistedTest): thisTokenConditionInfo = json.remove(thisTokenConditionInfo,(roll.count-tempDeleteCount))]
+        [h,if(allResistedTest): tempDeleteCount = tempDeleteCount + 1]
+    }]
 
 	[h,if(json.type(effTargetSpecific)=="OBJECT"),CODE:{
 		[h:targetSpecificDamage = json.get(effTargetSpecific,targetToken)]
@@ -112,12 +127,29 @@
 	}]
 	
 	[h,if(thisTokenCheckData!=""),CODE:{
-		[h,MACRO("Check@Lib:pm.a5e.Core"): json.set(json.get(thisTokenCheckData,"CheckType"),"ParentToken",targetToken)]
+        [h:effCheckType = json.get(thisTokenCheckData,"CheckType")]
+        [h:multiCheckTypeTest = json.type(effCheckType) == "ARRAY"]
+        [h,if(!multiCheckTypeTest): effCheckType = json.append("",effCheckType)]
+        [h:checkOptionNames = ""]
+        
+        [h,foreach(checkOption,effCheckType): checkOptionNames = json.append(checkOptionNames,if(json.get(checkOption,"Type")=="Initiative","Initiative",pm.GetDisplayName(json.get(checkOption,"Skill"),if(json.get(checkOption,"Type")=="Skill","sb.Skills",if(json.get(checkOption,"Type")=="Ability Score","sb.Attributes","sb.Tools")))))]
+
+        [h,if(json.length(effCheckType)>0): 
+            abort(input(
+                thisTokenInputDisplay,
+                " checkChoice | "+checkOptionNames+" | Choose a Skill to Contest the Check DC | LIST | DELIMITER=JSON "
+            ));
+            checkChoice = 0
+        ]
+        
+        [h:finalCheckData = json.get(effCheckType,checkChoice)]
+        
+		[h,MACRO("Check@Lib:pm.a5e.Core"): json.set(finalCheckData,"ParentToken",targetToken)]
 		[h:CheckResult = macro.return]
 		[h:abilityTable = json.merge(abilityTable,json.get(CheckResult,"Table"))]
 		[h:passedCheck = json.get(CheckResult,"Value")>=json.get(thisTokenCheckData,"DC")]
-		[h:CheckDamageModInfo = json.get(thisTokenCheckData,"DamageModifier")]
-		[h:isDamageHalved = json.get(CheckDamageModInfo,"DamageHalved")]
+		[h:CheckDamageModInfo = if(json.get(thisTokenCheckData,"DamageModifier")=="","{}",json.get(thisTokenCheckData,"DamageModifier"))]
+		[h:isDamageHalved = if(json.get(CheckDamageModInfo,"DamageHalved")=="",0,json.get(CheckDamageModInfo,"DamageHalved"))]
 		[h:typesHalvedInclusive = json.get(CheckDamageModInfo,"TypesInclusive")]
 		[h:typesHalvedExclusive = if(json.get(CheckDamageModInfo,"TypesExclusive")=="","[]",json.get(CheckDamageModInfo,"TypesExclusive"))]
       
@@ -134,18 +166,22 @@
 		[h:CheckConditionsResistedInfo = json.get(thisTokenCheckData,"ConditionsResisted")]
 		[h:conditionsResistedInclusive = json.get(CheckConditionsResistedInfo,"Inclusive")]
 		[h:conditionsResistedExclusive = if(json.get(CheckConditionsResistedInfo,"Exclusive")=="","[]",json.get(CheckConditionsResistedInfo,"Exclusive"))]
-      
-		[h:"<!-- resistedExclusive for the first case doesn't work since the objects dont line up exactly - more info in condApplied. -->"]
+    
 		[h,switch(passedCheck+""+json.type(conditionsResistedInclusive)):
 			case "1UNKNOWN": conditionsResistedFinal = if(conditionsResistedInclusive == "All",thisTokenConditionsApplied,if(conditionsResistedExclusive=="[]","[]",json.difference(thisTokenConditionsApplied,conditionsResistedExclusive)));
 			case "1ARRAY": conditionsResistedFinal = json.difference(conditionsResistedInclusive,conditionsResistedExclusive);
 			default: conditionsResistedFinal = "[]"
 		]
-      
-		[h,foreach(condition,conditionsResistedFinal): thisTokenConditionsApplied = json.path.delete(thisTokenConditionsApplied,"[*][?(@.Name=='"+json.get(condition,"Name")+"' && @.Class=='"+json.get(condition,"Class")+"' && @.Subclass=='"+json.get(condition,"Subclass")+"')]")]
+        
+		[h,foreach(condition,conditionsResistedFinal): thisTokenConditionInfo = json.path.delete(thisTokenConditionInfo,"[*]['Conditions'][*][?(@.Name=='"+json.get(condition,"Name")+"' && @.Class=='"+json.get(condition,"Class")+"' && @.Subclass=='"+json.get(condition,"Subclass")+"')]")]
 	};{}]
-   
-	[h:thisTokenConditionInfo = json.set(thisTokenConditionInfo,"Conditions",thisTokenConditionsApplied)]
+    
+    [h:tempDeleteCount = 0]
+    [h,foreach(conditionSet,thisTokenConditionInfo),CODE:{
+        [h:allResistedTest = json.isEmpty(json.get(conditionSet,"Conditions"))]
+        [h,if(allResistedTest): thisTokenConditionInfo = json.remove(thisTokenConditionInfo,(roll.count-tempDeleteCount))]
+        [h,if(allResistedTest): tempDeleteCount = tempDeleteCount + 1]
+    }]
 
 	[h,if(json.type(effTargetSpecific)=="OBJECT"),CODE:{
 		[h:targetSpecificDamage = json.get(effTargetSpecific,targetToken)]
@@ -163,21 +199,21 @@
 		]			
 	}]
 	
-	[h:"<!-- Note to future self: Add crit data to the damage info here. Will make processing abilities easier. -->"]
+	[h:"<!-- Note to future self: Add crit data to the damage info here. Will make processing abilities easier if they add/negate a crit. -->"]
 	[h,if(thisTokenDamageDealt!=""),CODE:{
 		[h,MACRO("Change HP@Lib:pm.a5e.Core"): json.set("","DamageDealt",thisTokenDamageDealt,"ParentToken",targetToken)]
 		[h:abilityTable = json.merge(abilityTable,json.get(macro.return,"Table"))]
 	};{}]
 	
-	[h,if(thisTokenConditionsApplied != "[]"),CODE:{
+	[h,foreach(conditionSet,thisTokenConditionInfo),CODE:{
 		[h,MACRO("ApplyCondition@Lib:pm.a5e.Core"):
-			json.set(thisTokenConditionInfo,
+			json.set(conditionSet,
 			"GroupID",effGroupID,
 			"Target",targetToken,
 			"SetBy",ParentToken)
 		]
 		[h:abilityTable = json.merge(abilityTable,json.get(macro.return,"Table"))]
-	};{}]
+	}]
 }]
 
 [h,if(ParentToken!=""): switchToken(ParentToken)]
@@ -201,5 +237,10 @@
 [h:output.PC = output.PC + json.get(output.Temp,"Player")+"</div></div>"]
 [h:output.GM = output.GM + json.get(output.Temp,"GM")+"</div></div>"]
 
-[h:broadcastAsToken(output.GM,"gm")]
-[h:broadcastAsToken(output.PC,"not-gm")]
+[h,if(json.length(effTargets)==1),CODE:{
+    [h:broadcastAsToken(output.GM,"gm",",",json.get(effTargets,0))]
+    [h:broadcastAsToken(output.PC,"not-gm",",",json.get(effTargets,0))]
+};{
+    [h:broadcastAsToken(output.GM,"gm")]
+    [h:broadcastAsToken(output.PC,"not-gm")]
+}]

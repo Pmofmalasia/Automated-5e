@@ -1,0 +1,1 @@
+[h:abilityTable = json.merge(abilityTable,json.get(SaveInfo,"Table"))]

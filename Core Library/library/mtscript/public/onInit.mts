@@ -73,8 +73,8 @@
 [h:defineFunction("pm.a5e.GeneralFeatureResourceOptions","pm.a5e.GeneralFeatureResourceOptions@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.a5e.SpecificFeatureResourceOptions","pm.a5e.SpecificFeatureResourceOptions@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.AbilityRoll","pm.AbilityRoll@Lib:pm.a5e.Core")]
-[h:defineFunction("pm.a5e.AbilitySave","pm.a5e.AbilitySave@Lib:pm.a5e.Core")]
-[h:defineFunction("pm.a5e.AbilitySaveProcessing","pm.a5e.AbilitySaveProcessing@Lib:pm.a5e.Core",0,0)]
+[h:defineFunction("pm.a5e.FeatureSave","pm.a5e.FeatureSave@Lib:pm.a5e.Core")]
+[h:defineFunction("pm.a5e.FeatureSaveProcessing","pm.a5e.FeatureSaveProcessing@Lib:pm.a5e.Core",0,0)]
 [h:defineFunction("pm.a5e.AbilitySaveDC","pm.a5e.AbilitySaveDC@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.a5e.AbilitySaveDCProcessing","pm.a5e.AbilitySaveDCProcessing@Lib:pm.a5e.Core",0,0)]
 [h:defineFunction("pm.AbilitySpell","pm.AbilitySpell@Lib:pm.a5e.Core")]
@@ -184,6 +184,7 @@
 
 [h:"<!-- Functions for Checks -->"]
 [h:defineFunction("pm.a5e.CheckBonusTotal","pm.a5e.CheckBonusTotal@Lib:pm.a5e.Core",0,0)]
+[h:defineFunction("pm.a5e.SaveBonusTotal","pm.a5e.SaveBonusTotal@Lib:pm.a5e.Core",0,0)]
 [h:defineFunction("pm.a5e.GetSizeChange","pm.a5e.GetSizeChange@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.a5e.CompareSizes","pm.a5e.CompareSizes@Lib:pm.a5e.Core")]
 

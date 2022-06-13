@@ -6,7 +6,7 @@
 
 [h:conditionsSelected = ""]
 [h,foreach(creature,pm.TargetCreatures),CODE:{
-	[h:cn.Input = "junkVar | Select Condition"+if(pm.ConditionChoiceNum==1,"","s")+" Affecting "+getName(creature)+" | "+getTokenImage()+" | LABEL | ICON=TRUE "]
+	[h:cn.Input = "junkVar | Select Condition"+if(pm.ConditionChoiceNum==1,"","s")+" Affecting "+getName(creature)+" | "+getTokenImage("",creature)+" | LABEL | ICON=TRUE "]
 	
 	[h:validConditionGroups = ""]
 	[h:"<!-- Add json.path.read to filter condition groups, then replace the ConditionGroups calls later with that -->"]

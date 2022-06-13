@@ -13,4 +13,4 @@
 	[h,if(newIndex > json.length(sizeArray)-1): finalSize = "Colossal"; finalSize = json.get(sizeArray,newIndex)]
 }]
 
-[h:macro.return = newIndex]
+[h:macro.return = json.get(sizeArray,newIndex)]

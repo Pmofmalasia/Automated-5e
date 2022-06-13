@@ -18,7 +18,7 @@
 		]
 		
 		[h:pm.a5e.CheckBonusTotal(json.set("",
-			"Skill",SkillOptions,
+			"Skill",skillDisplayName,
 			"Type",SkillType,
 			"Bonus",SkillBonus
 		))]
@@ -61,7 +61,7 @@
 		"ParentToken",ParentToken
 	)]
 
-	[h,MACRO("Check@Lib:pm.a5e.Core"): CheckData]
+	[h,MACRO("Check Reroll Rerouting@Lib:pm.a5e.Core"): CheckData]
 	[h:CheckReturnData = macro.return]
 	
 	[h:macro.return = CheckReturnData]

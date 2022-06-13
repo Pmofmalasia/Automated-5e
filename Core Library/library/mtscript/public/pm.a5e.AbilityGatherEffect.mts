@@ -1,9 +1,9 @@
 [h:hasEffectsTest = pm.a5e.EffectData != json.append("",json.set("","Class",abilityClass))]
 [h,if(hasEffectsTest),CODE:{
 	[h,foreach(effect,pm.a5e.EffectData),CODE:{
-		[h:effectID = 1d10000000000000]
+		[h:effectID = 1d10000000000000 + json.get(getInfo("client"),"timeInMs")]
 		[h:priorEffectIDs = json.path.read(getLibProperty("gd.Effects","Lib:pm.a5e.Core"),"[*]['ID']")]
-		[h,while(json.contains(priorEffectIDs,effectID)): effectID = 1d10000000000000]
+		[h,while(json.contains(priorEffectIDs,effectID)): effectID = 1d10000000000000 + json.get(getInfo("client"),"timeInMs")]
 		[h:setLibProperty("gd.Effects",json.append(getLibProperty("gd.Effects","Lib:pm.a5e.Core"),json.set(effect,"ID",effectID,"ParentToken",ParentToken)),"Lib:pm.a5e.Core")]
 	}]
 

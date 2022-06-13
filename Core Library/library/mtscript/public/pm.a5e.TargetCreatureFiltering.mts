@@ -61,13 +61,13 @@
 		pm.SizeTest = if(or(pm.TargetSize=="",pm.TargetSize==getSize(target)),1,0);
 		pm.SizeTest = json.contains(pm.SizeTest,getSize(target))
 	]
-	
+    
 	[h,if(pm.TargetSizeMax != ""):
-		pm.SizeTest = if(pm.a5e.CompareSizes(pm.TargetSizeMax,getSize(target)) > 0, 0, pm.SizeTest)
+		pm.SizeTest = if(pm.a5e.CompareSizes(pm.TargetSizeMax,getSize(target)) < 0, 0, pm.SizeTest)
 	]
 	
 	[h,if(pm.TargetSizeMin != ""):
-		pm.SizeTest = if(pm.a5e.CompareSizes(pm.TargetSizeMin,getSize(target)) < 0, 0, pm.SizeTest)
+		pm.SizeTest = if(pm.a5e.CompareSizes(pm.TargetSizeMin,getSize(target)) > 0, 0, pm.SizeTest)
 	]
 	
 	[h,if(json.type(pm.TargetTypeInclusive) == "UNKNOWN"):
@@ -92,7 +92,7 @@
 	 
 	[h:pm.IntTest = if(and(json.get(getProperty("Attributes",target),"Intelligence")>pm.TargetIntMin,json.get(getProperty("Attributes",target),"Intelligence")<pm.TargetIntMax),1,0)]
    
-	[h:pm.ValidTargets = if(and(pm.AllyFoeTest,pm.TypeTest,pm.SubtypeTest,pm.IntTest,pm.SelfTest),json.append(pm.ValidTargets,target),pm.ValidTargets)]
+	[h:pm.ValidTargets = if(and(pm.AllyFoeTest,pm.TypeTest,pm.SubtypeTest,pm.IntTest,pm.SelfTest,pm.SizeTest),json.append(pm.ValidTargets,target),pm.ValidTargets)]
 }]
 
 [h,switch(getProperty("TargetingStyle")),CODE:

@@ -1,3 +1,4 @@
+[h,if(argCount()>=4): switchToken(arg(3))]
 [h, if(currentToken() != ""), code:
   { [h: broadcastAsToken_image = strformat("<img src='%s'>", getTokenImage(44))]
     [h: broadcastAsToken_name = token.name]
@@ -13,5 +14,6 @@
     case 1: broadcast(broadcastAsToken_output);
     case 2: broadcast(broadcastAsToken_output, arg(1));
     case 3: broadcast(broadcastAsToken_output, arg(1), arg(2));
-    default: assert(0, strformat("Function 'broadcastAsToken' requires 1-3 arguments; %s were provided.", argCount()), 0)
+    case 4: broadcast(broadcastAsToken_output, arg(1), arg(2));
+    default: assert(0, strformat("Function 'broadcastAsToken' requires 1-4 arguments; %s were provided.", argCount()), 0)
 ]

@@ -1,5 +1,6 @@
 [h:pm.DCInfo = arg(1)]
 [h:pm.ForcedCheckInfo = arg(2)]
+[h:"<!-- Forced check needs to support multiple skill options target can make -->"]
 [h:pm.CheckModifiers = arg(3)]
 [h,if(argCount()>4): otherCheckOptions = arg(4); otherCheckOptions = "{}"]
 [h:pm.a5e.FeatureComponentStdVars(arg(0))]

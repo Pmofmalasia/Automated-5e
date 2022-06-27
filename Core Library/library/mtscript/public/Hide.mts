@@ -5,9 +5,9 @@
 [h:a5e.UnifiedAbilities = a5e.GatherAbilities(ParentToken)]
 [h:pm.a5e.OverarchingContext = "Hide"]
 
-[h:HideConditionInfo = pm.a5e.GetSpecificCondition("Hide","Condition")]
+[h:HideConditionInfo = pm.a5e.GetSpecificCondition("Hidden","Condition")]
 [h:HideTarget = ParentToken]
-[h:HideDuration = 1]
+[h:HideDuration = 10]
 [h:HideDurationUnits = "round"]
 [h:HideAdvancePoint = "EndofTurn"]
 [h:HideEndTriggers = json.set("{}","AfterAttack",1)]

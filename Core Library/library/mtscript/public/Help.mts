@@ -6,8 +6,6 @@
 [h:pm.a5e.OverarchingContext = "Help"]
 
 [h:HelpTargetNum = 1]
-[h:CanHelpSelf = 0]
-[h:HelpAllyorFoe = "Ally"]
 [h:HelpOrigin = ParentToken]
 [h:HelpRange = 5]
 [h:HelpRangeUnits = "feet"]
@@ -16,8 +14,7 @@
 	json.set("",
 		"Number",HelpTargetNum,
 		"Category","Creature",
-		"Self",CanHelpSelf,
-		"AllyFoe",HelpAllyorFoe,
+		"Allegiance",json.set("","NotSelf",1),
 		"Origin",HelpOrigin,
 		"Range",json.set("","Value",HelpRange,"Units",HelpRangeUnits),
 		"ParentToken",ParentToken

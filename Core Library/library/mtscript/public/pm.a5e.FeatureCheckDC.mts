@@ -1,6 +1,5 @@
 [h:pm.DCInfo = arg(1)]
 [h:pm.ForcedCheckInfo = arg(2)]
-[h:"<!-- Forced check needs to support multiple skill options target can make -->"]
 [h:pm.CheckModifiers = arg(3)]
 [h,if(argCount()>4): otherCheckOptions = arg(4); otherCheckOptions = "{}"]
 [h:pm.a5e.FeatureComponentStdVars(arg(0))]
@@ -39,7 +38,7 @@
 		]
 	};
 	case "Contested":{
-		[h:CheckInfo = pm.a5e.FeatureCheck(abilityInfo,pm.DCInfo)]
+		[h:CheckInfo = pm.a5e.FeatureCheck(currentFeatureInfo,pm.DCInfo)]
 		[h:pm.DC = json.get(CheckInfo,"Value")]
 	};
 	default:{}
@@ -79,19 +78,19 @@
 
 [h:"<!-- Need to decide between getting what is currently CheckType from its own arg still, or getting from arg(1) and setting during switch() (likely). Make arg(2) the type of check forced. -->"]
 [h,if(DCMethod == "Contested"),CODE:{
-	[h:abilityTable = json.get(CheckInfo,"Table")]
+	[h:checkDCTable = json.get(CheckInfo,"Table")]
 	[h,if(IsTooltip),CODE:{
-		[h:tableLinetoEdit = json.get(abilityTable,0)]
+		[h:tableLinetoEdit = json.get(checkDCTable,0)]
 		[h:tableLinetoEdit = json.set(tableLinetoEdit,
 			"Header","Contested Check",
 			"FullContents",pm.ForcedSkillDisplay,
 			"RulesContents"," vs. "+json.get(tableLinetoEdit,"RulesContents"),
 			"DisplayOrder","['Full','Rules','Roll']"
 		)]
-		[h:abilityTable = json.set(abilityTable,0,tableLinetoEdit)]
+		[h:checkDCTable = json.set(checkDCTable,0,tableLinetoEdit)]
 	};{}]
 };{
-	[h:abilityTable = json.append("",json.set("",
+	[h:checkDCTable = json.append("",json.set("",
 		"ShowIfCondensed",1,
 		"Header","Forced Check",
 		"FalseHeader","",
@@ -114,9 +113,12 @@
 		"Exclusive",conditionsResistedExclusive)
 )]
 
-[h:macro.return = json.set("",
-   "Table",abilityTable,
-   "CheckDC",pm.DCFinal,
-   "CheckType",pm.ForcedCheckInfo,
-   "CheckData",CheckDataFinal
-)]
+[h:effectsToMerge = json.append("",json.set("","CheckDC",CheckDataFinal))]
+
+[h:abilityTable = json.merge(abilityTable,checkDCTable)]
+
+[h:return(!IsTooltip)]
+
+[h,MACRO("Build Effect@Lib:pm.a5e.Core"): json.set("","CurrentEffects",pm.a5e.EffectData,"ToMerge",effectsToMerge,"BaseEffect",pm.a5e.BaseEffectData,"WhichEffect",whichEffect)]
+
+[h:pm.a5e.EffectData = macro.return]

@@ -11,6 +11,7 @@
 
 [h:IsTooltip = 0]
 [h:abilityTable = "[]"]
+[h:pm.a5e.EffectData = "[]"]
 
 [h:RemovedConditions = json.path.read(ConditionList,"[*][?("+ConditionFilters+")]")]
 [h:RemovedConditionsFinal = RemovedConditions]
@@ -65,6 +66,13 @@
 		[h,if(json.get(condition,"BackupState")==""): RemoveBackupTest = 0; RemoveBackupTest = json.isEmpty(json.path.read(ConditionList,"[?(@.BackupState == '"+json.get(condition,"BackupState")+"')]"))]
 		[h,if(RemoveBackupTest): setState(json.get(condition,"BackupState"),0)]
 	}]
+	[h:tempReactivationTest = -1]
+	[h:backupCounter = 0]
+	[h,foreach(reactivationCondition,ConditionList),CODE:{
+		[h,if(json.get(reactivationCondition,"Name")==json.get(condition,"Name")): tempReactivationTest = backupCounter]
+		[h:backupCounter = backupCounter + 1]
+	}]
+	[h,if(tempReactivationTest>=0): ConditionList = json.path.set(ConditionList,"["+tempReactivationTest+"]['IsActive']",1)]
 }]
 
 [h:pm.PassiveFunction("CondEnd")]

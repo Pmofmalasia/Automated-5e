@@ -1,4 +1,3 @@
-[h:pass.abilityDisplayName = pass.abilityName]
 [h:pass.abilityName=pm.RemoveSpecial(pass.abilityName)]
 [h:pass.abilitySubclass=pm.RemoveSpecial(pass.abilitySubclass)]
 [h:pass.Context = arg(0)]
@@ -50,4 +49,6 @@
 	"Image",pass.ForcedSummonImage,
 	"Portrait",pass.ForcedSummonPortrait,
 	"Handout",pass.ForcedSummonHandout
-	)]
+)]
+
+[h:pass.abilityEffect = if(pass.ShowFullRules,pass.abilityFullEffect,pass.abilityAbridgedEffect)]

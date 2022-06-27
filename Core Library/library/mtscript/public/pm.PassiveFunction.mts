@@ -4,7 +4,12 @@
 [h,if(switchTest!=""),CODE:{
 	[h:oldParentToken = ParentToken]
 	[h:oldFeatures = a5e.UnifiedAbilities]
-	[h:a5e.UnifiedAbilities = SetByAbilities]
+	[h:switchType = json.get(arg(1),"SwitchType")]
+	[h,switch(switchType):
+		case "Condition": a5e.UnifiedAbilities = SetByAbilities;
+		case "Target": a5e.UnifiedAbilities = TargetAbilities;
+		default: a5e.UnifiedAbilities = SetByAbilities
+	]
 	[h:ParentToken = switchTest]
 	[h:switchToken(ParentToken)]
 };{}]

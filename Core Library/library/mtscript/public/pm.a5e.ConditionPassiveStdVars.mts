@@ -1,8 +1,7 @@
-[h:cond.abilityDisplayName = cond.abilityName]
-[h:cond.abilityName=pm.RemoveSpecial(cond.abilityName)]
-[h:cond.abilitySubclass=pm.RemoveSpecial(cond.abilitySubclass)]
+[h:cond.abilityName = pm.RemoveSpecial(cond.abilityName)]
+[h:cond.abilitySubclass = pm.RemoveSpecial(cond.abilitySubclass)]
 [h:cond.Context = arg(0)]
-[h:cond.Info = json.get(json.path.read(ConditionList,"[?(@.Name=='"+cond.abilityName+"' && @.Class=='"+cond.abilityClass+"' && @.Subclass=='"+cond.abilitySubclass+"')]"),0)]
+[h:cond.Info = json.get(json.path.read(ConditionList,"[?(@.Name=='"+cond.abilityName+"' && @.Class=='"+cond.abilityClass+"' && @.Subclass=='"+cond.abilitySubclass+"' && @.IsActive>0)]"),0)]
 [h:cond.Library = json.get(cond.Info,"Library")]
 
 [h:cond.DisplayObject = json.get(cond.Info,"Settings")]
@@ -26,7 +25,7 @@
 [h:cond.ShowFullRules=if(IsTooltip,1,if(cond.ShowFullRulesOverride=="",if(number(getLibProperty("ChatIndividual","Lib:pm.a5e.Core")),FullAbilityRules,getLibProperty("FullAbilityRules","Lib:pm.a5e.Core")),cond.ShowFullRulesOverride))]
 
 [h:cond.SetBy = json.get(cond.Info,"SetBy")]
-[h:cond.abilityInfo=json.set("",
+[h:cond.abilityInfo = json.set("",
 	"Name",cond.abilityName,
 	"Class",cond.abilityClass,
 	"Subclass",cond.abilitySubclass,
@@ -39,18 +38,19 @@
 	"Context",cond.Context,
 	"Library",cond.Library,
 	"FullRules",cond.ShowFullRules
-	)]
+)]
 
 [h:cond.NeedsSetByInfo = json.append(pm.GetClasses("Name","json"),"Feat")]
 [h,if(json.contains(cond.NeedsSetByInfo,cond.abilityClass)),CODE:{
 	[h:switchToken(cond.SetBy)]
 	[h:cond.SetByAbilities = a5e.GatherAbilities(cond.SetBy)]
 	[h:cond.abilityLevel = json.get(json.get(json.path.read(allAbilities,"[?(@.Name=='"+cond.abilityName+"' && @.Class=='"+cond.abilityClass+"' && @.Subclass=='"+cond.abilitySubclass+"')]"),0),"Level")]
+	[h,if(json.get(cond.Info,"HasTiers")==1): cond.abilityTier = math.arraySum(json.path.read(ConditionList,"[*][?(@.Name=='"+cond.abilityName+"')]['Level']")); cond.abilityTier = json.get(cond.Info,"Level")]
 	[h:cond.abilityTier = json.get(cond.Info,"Level")]
 	[h:switchToken(ParentToken)]
 };{
 	[h:cond.abilityLevel = json.get(cond.Info,"Level")]
-	[h:cond.abilityTier = cond.abilityLevel]
+	[h,if(json.get(cond.Info,"HasTiers")==1): cond.abilityTier = math.arraySum(json.path.read(ConditionList,"[*][?(@.Name=='"+cond.abilityName+"')]['Level']")); cond.abilityTier = cond.abilityLevel]
 	[h:cond.SetByAbilities = "[]"]
 }]
 

@@ -3,7 +3,7 @@
 [h,if(IsTooltip),CODE:{};{
 	[h:pm.ConditionsToSet = json.get(ConditionInfo,"ConditionInfo")]
 	[h,if(argCount()>0): whichEffect = arg(0); whichEffect = 0]
-	[h,if(whichEffect >= json.length(pm.a5e.EffectData)): thisEffect = json.set("","Class",abilityClass); thisEffect = json.get(pm.a5e.EffectData,whichEffect)]
+	[h,if(whichEffect >= json.length(pm.a5e.EffectData)): thisEffect = json.path.set(pm.a5e.BaseEffectData,"GeneralData.ID",pm.a5e.GenerateEffectID()); thisEffect = json.get(pm.a5e.EffectData,whichEffect)]
     
     [h:noPriorConditionsTest = json.isEmpty(json.get(thisEffect,"ConditionInfo"))]
     [h,if(noPriorConditionsTest),CODE:{
@@ -17,7 +17,7 @@
         
         [h,if(sameGroupTest>=0): 
             thisEffect = json.path.set(thisEffect,"['ConditionInfo']["+sameGroupTest+"]['Conditions']",thisEffectNewConditions);
-            thisEffect = json.set(thisEffect,"ConditionInfo",json.append(json.get(thisEffect,"ConditionInfo"),pm.ConditionsToSet)
+            thisEffect = json.set(thisEffect,"ConditionInfo",json.append(json.get(thisEffect,"ConditionInfo"),pm.ConditionsToSet))
         ]
     }]
 

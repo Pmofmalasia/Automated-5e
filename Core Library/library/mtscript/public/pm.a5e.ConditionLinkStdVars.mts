@@ -1,14 +1,14 @@
-[h:abilityDisplayName = abilityName]
 [h:abilityName = pm.RemoveSpecial(abilityName)]
 [h:abilitySubclass = pm.RemoveSpecial(abilitySubclass)]
 
-[h:cond.Info = json.get(json.path.read(ConditionList,"[?(@.Name=='"+abilityName+"' && @.Class=='"+abilityClass+"' && @.Subclass=='"+abilitySubclass+"')]"),0)]
+[h:cond.Info = json.get(json.path.read(ConditionList,"[?(@.Name=='"+abilityName+"' && @.Class=='"+abilityClass+"' && @.Subclass=='"+abilitySubclass+"' && @.IsActive>0)]"),0)]
 [h:cond.Library = json.get(cond.Info,"Library")]
 [h:cond.SetBy = json.get(cond.Info,"SetBy")]
 
 [h:DisplayObject = json.get(cond.Info,"Settings")]
 [h,if(DisplayObject == ""): DisplayObject = "{}"]
 
+[h:priorData = arg(0)]
 [h:ParentToken=json.get(arg(0),"ParentToken")]
 [h:IsTooltip=json.get(arg(0),"IsTooltip")]
 [h:abilityContext=json.get(arg(0),"Context")]
@@ -57,15 +57,24 @@
 	[h:switchToken(cond.SetBy)]
 	[h:SetByAbilities = a5e.GatherAbilities(cond.SetBy)]
 	[h:abilityLevel = json.get(json.get(json.path.read(allAbilities,"[?(@.Name=='"+abilityName+"' && @.Class=='"+abilityClass+"' && @.Subclass=='"+abilitySubclass+"')]"),0),"Level")]
-	[h:abilityTier = json.get(cond.Info,"Level")]
+	[h,if(json.get(cond.Info,"HasTiers")==1): abilityTier = math.arraySum(json.path.read(ConditionList,"[*][?(@.Name=='"+abilityName+"')]['Level']")); abilityTier = json.get(cond.Info,"Level")]
 	[h:switchToken(ParentToken)]
 };{
 	[h:abilityLevel = json.get(cond.Info,"Level")]
-	[h:abilityTier = abilityLevel]
+	[h,if(json.get(cond.Info,"HasTiers")==1): abilityTier = math.arraySum(json.path.read(ConditionList,"[*][?(@.Name=='"+abilityName+"')]['Level']")); abilityTier = abilityLevel]
 	[h:SetByAbilities = "[]"]
 }]
 
-[h:pm.a5e.EffectData = json.append("",json.set("","Class",abilityClass))]
+[h:pm.a5e.BaseEffectData = json.set("",
+	"Class",abilityClass,
+	"DisplayName",abilityDisplayName,
+	"FalseName",abilityFalseName,
+	"Type","Feature",
+	"ID",pm.a5e.GenerateEffectID(),
+	"ParentToken",ParentToken
+)]
+
+[h:pm.a5e.EffectData = json.append("",pm.a5e.BaseEffectData)]
 
 [h:SummonCustomization = json.set("",
 	"Name",ForcedSummonName,
@@ -80,3 +89,5 @@
 	"UnifiedAbilities",a5e.UnifiedAbilities,
 	"Library",cond.Library
 )]
+
+[h:abilityEffect = if(ShowFullRules,abilityFullEffect,abilityAbridgedEffect)]

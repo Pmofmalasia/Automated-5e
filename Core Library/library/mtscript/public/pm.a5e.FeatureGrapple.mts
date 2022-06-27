@@ -1,6 +1,6 @@
 [h:gr.Data = arg(1)]
 [h:pm.a5e.FeatureComponentStdVars(arg(0))]
-[h:gr.Data = json.set(gr.Data,"Skill","Athletics")]
+[h:gr.Data = json.set(gr.Data,"Skill","Athletics","Type","Skill")]
 
 [h,if(IsTooltip),CODE:{
     [h:gr.Bonus = if(json.get(gr.Data,"Bonus")=="",0,json.get(gr.Data,"Bonus"))]
@@ -10,18 +10,24 @@
     [h:pm.PassiveFunction("GrappleAdv")]
     
     [h:gr.Data = json.set(gr.Data,"Advantage",gr.Adv,"Bonus",gr.Bonus)]
-    [h:GrappleReturnInfo = pm.a5e.FeatureCheck(abilityInfo,gr.Data)]
+    [h:GrappleReturnInfo = pm.a5e.FeatureCheck(currentFeatureInfo,gr.Data)]
 
-	[h:abilityTable = json.get(GrappleReturnInfo,"Table")]
-    [h:tableLinetoEdit = json.get(abilityTable,0)]
+	[h:grappleTable = json.get(GrappleReturnInfo,"Table")]
+    [h:tableLinetoEdit = json.get(grappleTable,0)]
     [h:tableLinetoEdit = json.set(tableLinetoEdit,
         "Header","Grapple",
         "FullContents","Athletics or Acrobatics",
         "RulesContents"," vs. "+json.get(tableLinetoEdit,"RulesContents"),
         "DisplayOrder","['Full','Rules','Roll']"
     )]
-    [h:macro.return = json.set("","Table",abilityTable)]
+    [h:abilityTable = json.merge(abilityTable,json.set(grappleTable,0,tableLinetoEdit))]
 };{
     [h,MACRO("Grapple@Lib:pm.a5e.Core"): json.set(gr.Data,"ParentToken",ParentToken)]
-    [h:macro.return = macro.return]
+    [h:GrappleInfo = macro.return]
+    [h:effectsToMerge = json.get(GrappleInfo,"Effect")]
+    [h:abilityTable = json.merge(abilityTable,json.get(GrappleInfo,"Table"))]
+
+    [h,MACRO("Build Effect@Lib:pm.a5e.Core"): json.set("","CurrentEffects",pm.a5e.EffectData,"ToMerge",effectsToMerge,"BaseEffect",pm.a5e.BaseEffectData,"WhichEffect",whichEffect)]
+
+    [h:pm.a5e.EffectData = macro.return]
 }]

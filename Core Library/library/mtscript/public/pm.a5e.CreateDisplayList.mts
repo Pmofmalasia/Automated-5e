@@ -4,6 +4,7 @@
 [h,if(json.type(inputList) == "UNKNOWN"): inputList = json.fromList(inputList)]
 
 [h,switch(json.length(inputList)):
+	case 0:  displayText = "";
 	case 1:  displayText = json.get(inputList, 0);
 	case 2:  displayText = json.toList(inputList, " "+insertWord+" ");
 	default: displayText = json.toList(json.get(inputList, 0, -2), ", ") + ", "+insertWord+" " + json.get(json.get(inputList, -1, -1), 0)

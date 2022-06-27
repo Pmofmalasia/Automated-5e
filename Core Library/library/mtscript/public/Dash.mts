@@ -5,7 +5,7 @@
 [h:a5e.UnifiedAbilities = a5e.GatherAbilities(ParentToken)]
 [h:pm.a5e.OverarchingContext = "Dash"]
 
-[h:DashConditionInfo = pm.a5e.GetSpecificCondition("Dash","Condition")]
+[h:DashConditionInfo = pm.a5e.GetSpecificCondition("Dash","Movement")]
 [h:DashTarget = ParentToken]
 [h:DashDuration = 1]
 [h:DashDurationUnits = "round"]

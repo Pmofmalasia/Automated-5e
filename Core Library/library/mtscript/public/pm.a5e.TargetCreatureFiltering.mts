@@ -1,17 +1,20 @@
 [h:ParentToken = json.get(arg(0),"ParentToken")]
 [h:switchToken(ParentToken)]
 [h:pm.TargetNum = json.get(arg(0),"Number")]
-[h:pm.TargetAllyFoe = json.get(arg(0),"AllyFoe")]
-[h:pm.TargetSelf = json.get(arg(0),"Self")]
+[h:pm.TargetAllegiance = if(json.get(arg(0),"Allegiance")=="",json.set("","Any",1),json.get(arg(0),"Allegiance"))]
 [h:pm.TargetOrigin = json.get(arg(0),"Origin")]
 [h:pm.RangeNum = json.get(json.get(arg(0),"Range"),"Value")]
 [h:pm.RangeUnits = pm.StandardRange(json.get(json.get(arg(0),"Range"),"Units"))]
-[h:pm.RangeNumFinal = if(pm.RangeUnits=="Other","",if(pm.RangeUnits=="Miles",pm.RangeNum*5280,pm.RangeNum))]
+[h,switch(pm.RangeNum):
+	case "Unlimited": pm.RangeNumFinal = "Unlimited";
+	case "": pm.RangeNumFinal = "";
+	default: pm.RangeNumFinal = if(pm.RangeUnits=="Other","",if(pm.RangeUnits=="Miles",pm.RangeNum*5280,pm.RangeNum))
+]
 [h:pm.AoEInfo = json.get(arg(0),"AoE")]
 [h:pm.MultiTargetRange = json.get(arg(0),"MultiTargetRange")]
 
 [h,if(json.type(pm.AoEInfo)=="OBJECT"),CODE:{
-	[h:pm.AoEShape = if(json.get(pm.AoEInfo,"Shape")]
+	[h:pm.AoEShape = json.get(pm.AoEInfo,"Shape")]
 	[h:pm.AoENumber = if(json.get(pm.AoEInfo,"Number")=="",1,json.get(pm.AoEInfo,"Number"))]
 	[h:pm.AoESize = if(json.get(pm.AoEInfo,"Size")=="",0,json.get(pm.AoEInfo,"Size"))]
 	[h:pm.AoEUnits = json.get(pm.AoEInfo,"Units")]
@@ -39,17 +42,34 @@
 [h:pm.TargetIntMin = if(json.get(arg(1),"IntMin")=="",0,json.get(arg(1),"IntMin"))]
 [h:pm.TargetIntMax = if(json.get(arg(1),"IntMax")=="",999999,json.get(arg(1),"IntMax"))]
 
-[h:pm.TargetsInRange = getTokens("json",json.set("","range",json.set("","token",pm.TargetOrigin,"upto",pm.RangeNumFinal,"distancePerCell",1)))]
-[h,if(pm.TargetSelf!=0): pm.TargetsInRange = json.append(pm.TargetsInRange,ParentToken)]
-[h:pm.ValidTargets = "[]"]
+[h,switch(pm.RangeNumFinal):
+	case "": pm.TargetsInRange = "[]";
+	case "Unlimited": pm.TargetsInRange = getTokens("json");
+	default: pm.TargetsInRange = getTokens("json",json.set("","range",json.set("","token",pm.TargetOrigin,"upto",pm.RangeNumFinal,"distancePerCell",1)))
+]
+[h:"<!-- Return self without going through targeting input ONLY if the ability is ALWAYS incapable of targeting anything other than self. -->"]
+[h,if(json.get(pm.TargetAllegiance,"Self")==1 || json.get(pm.TargetAllegiance,"Any")==1),CODE:{
+	[h:pm.TargetSelf = 1]
+	[h:pm.TargetsInRange = json.append(pm.TargetsInRange,ParentToken)]
+	[h:pm.TargetAllegiance = json.remove(pm.TargetAllegiance,"Self")]
 
+	[h:pm.SelfOnlyTest = 1]
+	[h,foreach(allegianceType,json.fields(pm.TargetAllegiance)): pm.SelfOnlyTest = if(json.get(pm.TargetAllegiance,allegianceType)==1,0,pm.SelfOnlyTest)]
+	[h:return(!pm.SelfOnlyTest,json.append("",ParentToken))]
+};{
+	[h:pm.TargetSelf = 0]
+}]
+
+[h:pm.ValidTargets = "[]"]
 [h,foreach(target,pm.TargetsInRange),CODE:{
-	[h,switch(pm.TargetAllyFoe):
-		case "Ally": pm.AllyFoeTest = (getProperty("whichTeam") == getProperty("whichTeam",target));
-		case "Foe": pm.AllyFoeTest = (getProperty("whichTeam") != getProperty("whichTeam",target));
-		case "Any": pm.AllyFoeTest = 1;
-		default: pm.AllyFoeTest = 1
-	]
+	[h,if(json.get(pm.TargetAllegiance,"Any")==1 || json.get(pm.TargetAllegiance,"NotSelf")==1),CODE:{
+		[h,if(json.get(pm.TargetAllegiance,"NotSelf")==1 && json.get(pm.TargetAllegiance,"Any")!=1): pm.AllegianceTest = target != ParentToken; pm.AllegianceTest = 1]
+	};{
+		[h:pm.AllegianceTest = 0]
+		[h,if(json.get(pm.TargetAllegiance,"Neutral")==1): pm.AllegianceTest = if(getProperty("whichTeam",target) == 0,1,pm.AllegianceTest)]
+		[h,if(json.get(pm.TargetAllegiance,"Ally")==1): pm.AllegianceTest = if(getProperty("whichTeam",target) == getProperty("whichTeam"),1,pm.AllegianceTest)]
+		[h,if(json.get(pm.TargetAllegiance,"Foe")==1): pm.AllegianceTest = if(and(getProperty("whichTeam",target) != getProperty("whichTeam"),getProperty("whichTeam",target) != 0),1,pm.AllegianceTest)]
+	}]
 	
 	[h,switch(pm.TargetSelf):
 		case 1: pm.SelfTest = (target==currentToken());
@@ -92,7 +112,7 @@
 	 
 	[h:pm.IntTest = if(and(json.get(getProperty("Attributes",target),"Intelligence")>pm.TargetIntMin,json.get(getProperty("Attributes",target),"Intelligence")<pm.TargetIntMax),1,0)]
    
-	[h:pm.ValidTargets = if(and(pm.AllyFoeTest,pm.TypeTest,pm.SubtypeTest,pm.IntTest,pm.SelfTest,pm.SizeTest),json.append(pm.ValidTargets,target),pm.ValidTargets)]
+	[h:pm.ValidTargets = if(and(pm.AllegianceTest,pm.TypeTest,pm.SubtypeTest,pm.IntTest,pm.SelfTest,pm.SizeTest),json.append(pm.ValidTargets,target),pm.ValidTargets)]
 }]
 
 [h,switch(getProperty("TargetingStyle")),CODE:

@@ -5,7 +5,7 @@
 [h:a5e.UnifiedAbilities = a5e.GatherAbilities(ParentToken)]
 [h:pm.a5e.OverarchingContext = "Disengage"]
 
-[h:DisengageConditionInfo = pm.a5e.GetSpecificCondition("Disengage","Condition")]
+[h:DisengageConditionInfo = pm.a5e.GetSpecificCondition("Disengage","Movement")]
 [h:DisengageTarget = ParentToken]
 [h:DisengageDuration = 1]
 [h:DisengageDurationUnits = "round"]

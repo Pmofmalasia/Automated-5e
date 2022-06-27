@@ -1,11 +1,12 @@
 [h,if(initiativeSize() < 1): assert(0, "There are no tokens in initiative at this time.", 0)]
-[h,if(getInitiativeRound() == -1 && initiativeSize() > 0),CODE:
-{
+[h,if(getInitiativeRound() == -1 && initiativeSize() > 0),CODE:{
     [h:nextInitiative()]
     [h:setState("Initiative", 1, getInitiativeToken())]
     [h:selectTokens(getInitiativeToken(), 0)]
-};
-{
+	[h:broadcast("Start of Initiative")]
+	[h:return(0)]
+};{}]
+
 [h:initList = getInitiativeList()]
 [h:initTokens = json.get(initList, "tokens")]
 [h:numInitTokens = json.length(initTokens)]
@@ -49,4 +50,3 @@
 };{}]
 [h:selectTokens(tokenStartingTurn, 0)]
 [h:nextInitiative()]
-}]

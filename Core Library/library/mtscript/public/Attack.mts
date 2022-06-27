@@ -99,18 +99,22 @@
 [h:LinkColor = pm.LinkColor()]
 
 [h,count(AttackCount),code:{
-	[h:roll1=if(json.get(wa.Data,"PreviousRoll")=="",1d20,json.get(wa.Data,"PreviousRoll"))]
-	[h:roll2=1d20]
+	[h:d20RolledNum = 1]
+	[h:thisAttackd20Rolls = if(json.get(wa.Data,"PreviousRoll")=="","[]",json.get(wa.Data,"PreviousRoll"))]
+	[h:d20RolledNum = d20RolledNum - json.length(thisAttackd20Rolls)]
 		
 	[h,SWITCH(json.get(wa.Data,"Advantage")+""+json.get(wa.Data,"ForcedAdvantage")),CODE:
 		case "-11": {
+			[h:pm.PassiveFunction("AttackAdv")]
 			[h:wa.AdvDis = -1]
+			[h:d20RolledNum = d20RolledNum + 1]
 			};
 		case "-10": {
 			[h:wa.Adv = 0]
 			[h:wa.Dis = 1]
 			[h:pm.PassiveFunction("AttackAdv")]
 			[h:wa.AdvDis = if(or(and(wa.Dis == 0,wa.Adv == 0),and(wa.Dis !=0,wa.Adv != 0)),0,if(wa.Dis == 0,1,-1))]
+			[h:d20RolledNum = d20RolledNum + 1]
 			};
 		case "01": {
 			[h:wa.AdvDis = 0]
@@ -122,33 +126,39 @@
 			[h:wa.AdvDis = if(or(and(wa.Dis == 0,wa.Adv == 0),and(wa.Dis !=0,wa.Adv != 0)),0,if(wa.Dis == 0,1,-1))]
 			};
 		case "11": {
+			[h:pm.PassiveFunction("AttackAdv")]
 			[h:wa.AdvDis = 1]
+			[h:d20RolledNum = d20RolledNum + 1]
 			};
 		case "10": {
 			[h:wa.Adv = 1]
 			[h:wa.Dis = 0]
 			[h:pm.PassiveFunction("AttackAdv")]
 			[h:wa.AdvDis = if(or(and(wa.Dis == 0,wa.Adv == 0),and(wa.Dis !=0,wa.Adv != 0)),0,if(wa.Dis == 0,1,-1))]
+			[h:d20RolledNum = d20RolledNum + 1]
 			};
 		default: {
 			[h:wa.Adv = 0]
 			[h:wa.Dis = 0]
 			[h:pm.PassiveFunction("AttackAdv")]
 			[h:wa.AdvDis = if(or(and(wa.Dis == 0,wa.Adv == 0),and(wa.Dis !=0,wa.Adv != 0)),0,if(wa.Dis == 0,1,-1))]
+			[h:d20RolledNum = if(wa.AdvDis!=0,d20RolledNum + 1,d20RolledNum)]
 		}
 	]
+	
+	[h,count(d20RolledNum): thisAttackd20Rolls = json.append(thisAttackd20Rolls,1d20)]
 
 	[h,switch(wa.AdvDis),CODE:
 		case -1:{
-			[h:effectiveRoll = min(roll1,roll2)]
+			[h:effectiveRoll = math.arrayMin(thisAttackd20Rolls)]
 			[h:wa.ToHitRulesStr = "1d20 <span style='color:"+DamageColor+"'>with Dis</span>"]
 		};
 		case 0:{
-			[h:effectiveRoll = roll1]
+			[h:effectiveRoll = json.get(thisAttackd20Rolls,0)]
 			[h:wa.ToHitRulesStr = "1d20"]
 		};
 		case 1:{
-			[h:effectiveRoll = max(roll1,roll2)]
+			[h:effectiveRoll = math.arrayMax(thisAttackd20Rolls)]
 			[h:wa.ToHitRulesStr = "1d20 <span style='color:"+HealingColor+"'>with Adv</span>"]
 		}
 	]
@@ -163,7 +173,7 @@
 	
 	[h:pm.PassiveFunction("AttackBonus")]
 	
-	[h:AllAttacksToHit=json.append(AllAttacksToHit,json.set("","Roll1",roll1,"Roll2",roll2,"Advantage",wa.AdvDis,"ToHit",wa.ToHit,"ToHitStr",wa.ToHitStr,"RulesStr",wa.ToHitRulesStr,"CritTest",CritTestEach,"CritFailTest",CritFailTest))]
+	[h:AllAttacksToHit=json.append(AllAttacksToHit,json.set("","d20Rolls",thisAttackd20Rolls,"d20Used",effectiveRoll,"Advantage",wa.AdvDis,"ToHit",wa.ToHit,"ToHitStr",wa.ToHitStr,"RulesStr",wa.ToHitRulesStr,"CritTest",CritTestEach,"CritFailTest",CritFailTest))]
 
 	[h:"<!-- An array is created with the size of the dice for regular damage, crits, and flat damage. Variables are created for passive functions to use. -->"]
 	[h:"<!-- The array is created so that later passive functions that reroll dice have a reference for the original die size - since added dice may be of a different size. -->"]
@@ -263,8 +273,8 @@
 [h:"<!-- Perhaps set up separate loops for attack and damage rolls with different tables, which are assembled separately depending on the condensed vs. expanded approach -->"]
 [h:abilityTable = ""]
 [h,count(AttackCount,""),code:{
-	[h:roll1 = json.get(json.get(AllAttacksToHit,roll.count),"Roll1")]
-	[h:roll2 = json.get(json.get(AllAttacksToHit,roll.count),"Roll2")]
+	[h:thisAttackd20Rolls = json.get(json.get(AllAttacksToHit,roll.count),"d20Rolls")]
+	[h:thisAttackd20Used = json.get(json.get(AllAttacksToHit,roll.count),"d20Used")]
 	[h:thisAttackAdvDis = json.get(json.get(AllAttacksToHit,roll.count),"Advantage")]
 	[h:thisAttackToHit = json.get(json.get(AllAttacksToHit,roll.count),"ToHit")]
 	[h:thisAttackToHitStr = json.get(json.get(AllAttacksToHit,roll.count),"ToHitStr")]
@@ -292,8 +302,9 @@
 	[h:thisAttackCritDamageDealt = json.set("",wa.DmgType,thisAttackCritDmg)]
 	[h,if(wa.DmgDie2!=0): thisAttackCritDamageDealt = json.set(thisAttackCritDamageDealt,wa.DmgType2,thisAttackCritDmg2)]
 	
-	[h:wa.AdvRerollLink = macroLinkText("AttackReroll@Lib:pm.a5e.Core","self-gm",json.set(wa.Data,"Advantage",1,"ForcedAdvantage",1,"PreviousRoll",roll1,"AttackNum",-1),ParentToken)]
-	[h:wa.DisRerollLink = macroLinkText("AttackReroll@Lib:pm.a5e.Core","self-gm",json.set(wa.Data,"Advantage",-1,"ForcedAdvantage",1,"PreviousRoll",roll1,"AttackNum",-1),ParentToken)]
+	[h:"<!-- Will have to create the effect ID during targeting previously so it can find the effect to reroll it. FOR FEATURES, attacks/spells/grapples/anything else with its own targeting will need to create its own targeting. Perhaps create Effect IDs always during targeting, including for features. -->"]
+	[h:wa.AdvRerollLink = macroLinkText("AttackReroll@Lib:pm.a5e.Core","self-gm",json.set(wa.Data,"Advantage",1,"ForcedAdvantage",1,"PreviousRoll",thisAttackd20Rolls,"AttackNum",-1,"EffectID",""),ParentToken)]
+	[h:wa.DisRerollLink = macroLinkText("AttackReroll@Lib:pm.a5e.Core","self-gm",json.set(wa.Data,"Advantage",-1,"ForcedAdvantage",1,"PreviousRoll",thisAttackd20Rolls,"AttackNum",-1,"EffectID",""),ParentToken)]
 	
 	[h:ToHitTableLine = json.set("",
 		"ShowIfCondensed",1,
@@ -314,8 +325,11 @@
 			"BonusBody1","Reroll: <a href = '"+wa.AdvRerollLink+"'><span style = 'color:"+LinkColor+"'>Adv.</span></a> / <a href = '"+wa.DisRerollLink+"'><span style = 'color:"+LinkColor+"'>Dis.</span></a>"
 		)]
 	};{
+		[h:extraRollsDisplay = ""]
+		[h,foreach(tempRoll,thisAttackd20Rolls): extraRollsDisplay = listAppend(extraRollsDisplay,"Roll #"+(roll.count+1)+": "+(tempRoll+thisAttackToHit-thisAttackd20Used)," / ")]
+		[h:extraRollsDisplay = "("+extraRollsDisplay+")"]
 		[h:ToHitTableLine = json.set(ToHitTableLine,
-			"BonusBody1","(Roll #1: "+(roll1+thisAttackToHit-if(thisAttackAdvDis==1,max(roll1,roll2),min(roll1,roll2)))+" / Roll #2: "+(roll2+thisAttackToHit-if(thisAttackAdvDis==1,max(roll1,roll2),min(roll1,roll2)))+")"
+			"BonusBody1",extraRollsDisplay
 		)]
 	}]
 	
@@ -349,6 +363,8 @@
 
 	[h:pm.a5e.EffectData = json.append(pm.a5e.EffectData,json.set("",
 		"Attack",json.set("",
+			"Alld20Rolls",thisAttackd20Rolls,
+			"d20Used",thisAttackd20Used,
 			"ToHit",thisAttackToHit,
 			"CritTest",thisAttackCrit,
 			"CritFailTest",thisAttackCritFail,

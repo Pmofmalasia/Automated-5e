@@ -12,4 +12,4 @@
 		"Effect",abilityEffect,
 		"abilityTable",abilityTable
 		)]
-	[r:pm.TooltipOutput(ClassFeatureData)]
+[r:pm.TooltipOutput(ClassFeatureData)]

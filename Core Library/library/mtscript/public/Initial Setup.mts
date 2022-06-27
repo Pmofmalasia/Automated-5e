@@ -20,7 +20,7 @@
 	"OrderSelection|Lawful,Neutral,Chaotic|Choose Order|LIST|VALUE=STRING",
 	"MoralitySelection|Good,Neutral,Evil|Choose Morality|LIST|VALUE=STRING",
 	"DeitySelection|"+Deity+"|Deity",
-	"PC.Ally.Enemy|PC,Ally,Enemy|What type of character is this|LIST"
+	"PC.Ally.Enemy|PC,Ally,Enemy,Neutral|What type of character is this|LIST"
 )]
 [h:abort(BasicInfo)]
 
@@ -29,7 +29,7 @@
 [h:Race=json.get(json.get(RaceArray,RaceSelection),"DisplayName")]
 [h:Deity=DeitySelection]
 [h:Alignment=json.set("","Morality",MoralitySelection,"Order",OrderSelection)]
-[h:whichTeam=if(PC.Ally.Enemy==2,2,1)]
+[h:whichTeam=if(PC.Ally.Enemy==2,2,if(PC.Ally.Enemy==3,0,1))]
 
 [h,macro("Race Selection@Lib:pm.a5e.Core"): json.get(RaceArray,RaceSelection)]
 [h:lu.NewAbilities = macro.return]

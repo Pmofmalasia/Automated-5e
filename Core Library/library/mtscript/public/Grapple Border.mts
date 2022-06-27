@@ -1,7 +1,8 @@
 [h:GrappleData = macro.args]
-[h:Flavor=json.get(GrappleData,"Flavor")]
-[h:ParentToken=json.get(GrappleData,"ParentToken")]
+[h:Flavor = json.get(GrappleData,"Flavor")]
+[h:ParentToken = json.get(GrappleData,"ParentToken")]
 [h:outputTargets = if(PC.Ally.Enemy == 2,"none","not-gm")]
+[h:pm.a5e.EffectData = "[]"]
 
 [h:ClassFeatureData = json.set("",
 	"Flavor",Flavor,
@@ -24,16 +25,26 @@
 [h:output.PC = json.get(json.get(FormattingData,"Output"),"Player")]
 [h:output.GM = json.get(json.get(FormattingData,"Output"),"GM")]
 
-[h,MACRO("Grapple@Lib:pm.a5e.Core"):GrappleData]
-[h:ReturnData = macro.return]
-[h:abilityTable = json.get(ReturnData,"Table")]
-[h:abilityEffect = json.get(ReturnData,"Effect")]
+[h:pm.a5e.BaseEffectData = json.set("",
+	"Class","zzChecksAndSaves",
+	"DisplayName","Grapple",
+	"Type","Check",
+	"ID",pm.a5e.GenerateEffectID(),
+	"ParentToken",ParentToken
+)]
+[h:pm.a5e.EffectData = "[]"]
 
-[h,foreach(effect,abilityEffect),CODE:{
-    [h:effectID = 1d10000000000000 + json.get(getInfo("client"),"timeInMs")]
-    [h:priorEffectIDs = json.path.read(getLibProperty("gd.Effects","Lib:pm.a5e.Core"),"[*]['ID']")]
-    [h,while(json.contains(priorEffectIDs,effectID)): effectID = 1d10000000000000 + json.get(getInfo("client"),"timeInMs")]
-    [h:setLibProperty("gd.Effects",json.append(getLibProperty("gd.Effects","Lib:pm.a5e.Core"),json.set(effect,"ID",effectID,"ParentToken",ParentToken)),"Lib:pm.a5e.Core")]
+[h:GrappleData = json.set(GrappleData,"BaseEffect",pm.a5e.BaseEffectData)]
+
+[h,MACRO("Grapple@Lib:pm.a5e.Core"): GrappleData]
+[h:GrappleInfo = macro.return]
+[h:effectsToMerge = json.get(GrappleInfo,"Effect")]
+[h:abilityTable = json.get(GrappleInfo,"Table")]
+
+[h,MACRO("Build Effect@Lib:pm.a5e.Core"): json.set("","CurrentEffects",pm.a5e.EffectData,"ToMerge",effectsToMerge,"BaseEffect",pm.a5e.BaseEffectData)]
+[h:pm.a5e.EffectData = macro.return]
+[h,foreach(effect,pm.a5e.EffectData),CODE:{
+    [h:setLibProperty("gd.Effects",json.append(getLibProperty("gd.Effects","Lib:pm.a5e.Core"),effect),"Lib:pm.a5e.Core")]
 }]
 
 [h:output.Temp = pm.AbilityTableProcessing(abilityTable,FormattingData,1)]

@@ -255,7 +255,7 @@
 		" ab.SkillProfPrereq | None,One,Multiple | Has required skill proficiencies | LIST ",
 		" ab.WeaponProfPrereq | None,One,Multiple | Has required weapon proficiencies | LIST ",
 		" ab.ArmorProfPrereq | None,One,Multiple | Has required armor proficiencies | LIST ",
-		" ab.SpellPrereq |  | Requires ability to cast spells | CHECK "
+		" ab.SpellPrereq |  | Requires the ability to cast spells | CHECK "
 		))]
 	
 	[h,if(ab.LevelPrereq>0): ab.PrereqsFinal = json.set(ab.PrereqsFinal,"Level",ab.LevelPrereq)]
@@ -454,6 +454,7 @@
 	" ab.Spells | 0 | Affects spells | CHECK ",
 	" ab.OtherAbilities | 0 | Affects other features | CHECK ",
 	" ab.OtherConditions | 0 | Affects conditions you have set on others | CHECK ",
+	" ab.WhenTargeted | 0 | Effect triggers when you are targeted | CHECK ",
 	" junkVar | --------------------------------------------------------------------------------------------------------------------- | 0 | LABEL | SPAN=TRUE ",
 	" ab.Damaged | 0 | Effect triggers when damaged | CHECK ",
 	" ab.CondGain | 0 | Effect triggers when gaining a condition | CHECK ",
@@ -666,12 +667,14 @@
 		" ab.CheckAdv | 0 | Grants (Dis)Advantage on Checks | CHECK ",
 		" ab.CheckBonus | 0 | Grants Bonus to Checks | CHECK ",
 		" ab.CheckProf | 0 | <html><span title='Non-Permanent Effects or Effects not granting Expertise/Proficiency (e.g. Jack of All Trades)'>Affects Proficiency of Checks</span></html> | CHECK ",
+		" ab.CheckSuccess | 0 | Grants Automatic Success or Failure on Checks | CHECK ",
 		" ab.CheckMsg | 0 | <html><span title='Use for misc effects that occur after a check, or situational bonuses that the program is unable to determine (e.g. History checks about stone)'>Shows Message Following Checks</span></html> | CHECK "
 	))]
 	[h,if(ab.CheckAdv): ab.Final = json.set(ab.Final,"CallCheckAdv",ab.CheckAdv)]
 	[h,if(ab.CheckBonus): ab.Final = json.set(ab.Final,"CallCheckBonus",ab.CheckBonus)]
 	[h,if(ab.CheckProf): ab.Final = json.set(ab.Final,"CallCheckProf",ab.CheckProf)]
 	[h,if(ab.CheckMsg): ab.Final = json.set(ab.Final,"CallAfterCheck",ab.CheckMsg)]
+	[h,if(ab.CheckSuccess): ab.Final = json.set(ab.Final,"CallCheckSuccess",ab.CheckSuccess)]
 };{}]
 
 [h,if(ab.Save),CODE:{
@@ -681,12 +684,14 @@
 		" ab.SaveAdv | 0 | Grants (Dis)Advantage on Saves | CHECK ",
 		" ab.SaveBonus | 0 | Grants Bonus to Saves | CHECK ",
 		" ab.SaveProf | 0 | <html><span title='Non-Permanent Effects or Effects not granting Expertise/Proficiency (e.g. Jack of All Trades)'>Affects Proficiency of Saves</span></html> | CHECK ",
+		" ab.SaveSuccess | 0 | Grants Automatic Success or Failure on Saves | CHECK ",
 		" ab.SaveMsg | 0 | <html><span title='Use for misc effects that occur after a check, or situational bonuses that the program is unable to determine (e.g. History checks about stone)'>Shows Message Following Saves</span></html> | CHECK "
 	))]
 	[h,if(ab.SaveAdv): ab.Final = json.set(ab.Final,"CallSaveAdv",ab.SaveAdv)]
 	[h,if(ab.SaveBonus): ab.Final = json.set(ab.Final,"CallSaveBonus",ab.SaveBonus)]
 	[h,if(ab.SaveProf): ab.Final = json.set(ab.Final,"CallSaveProf",ab.SaveProf)]
 	[h,if(ab.SaveMsg): ab.Final = json.set(ab.Final,"CallAfterSave",ab.SaveMsg)]
+	[h,if(ab.SaveSuccess): ab.Final = json.set(ab.Final,"CallSaveSuccess",ab.SaveSuccess)]
 };{}]
 
 [h,if(ab.Init),CODE:{
@@ -705,18 +710,20 @@
 };{}]
 
 [h,if(ab.Conc),CODE:{
-[h:abort(input(
-	" junkVar | Choose aspects of concentration saves affected | 0 | LABEL | SPAN=TRUE ",
-	" junkVar | ------------------------------------------------------------ | 0 | LABEL | SPAN=TRUE ",
-	" ab.ConcAdv | 0 | Grants (Dis)Advantage on Concentration Saves | CHECK ",
-	" ab.ConcBonus | 0 | Grants Bonus to Concentration Saves | CHECK ",
-	" ab.ConcProf | 0 | <html><span title='Non-Permanent Effects or Effects not granting Expertise/Proficiency (e.g. Jack of All Trades)'>Affects Proficiency of Concentration Saves</span></html> | CHECK ",
-	" ab.ConcMsg | 0 | <html><span title='Use for misc effects that occur after a check, or situational bonuses that the program is unable to determine (e.g. History checks about stone)'>Shows Message Following Concentration Saves</span></html> | CHECK "
-))]
+	[h:abort(input(
+		" junkVar | Choose aspects of concentration saves affected | 0 | LABEL | SPAN=TRUE ",
+		" junkVar | ------------------------------------------------------------ | 0 | LABEL | SPAN=TRUE ",
+		" ab.ConcAdv | 0 | Grants (Dis)Advantage on Concentration Saves | CHECK ",
+		" ab.ConcBonus | 0 | Grants Bonus to Concentration Saves | CHECK ",
+		" ab.ConcProf | 0 | <html><span title='Non-Permanent Effects or Effects not granting Expertise/Proficiency (e.g. Jack of All Trades)'>Affects Proficiency of Concentration Saves</span></html> | CHECK ",
+		" ab.ConcSuccess | 0 | Grants Automatic Success or Failure on Concentration Saves | CHECK ",
+		" ab.ConcMsg | 0 | <html><span title='Use for misc effects that occur after a check, or situational bonuses that the program is unable to determine (e.g. History checks about stone)'>Shows Message Following Concentration Saves</span></html> | CHECK "
+	))]
 	[h,if(ab.ConcAdv): ab.Final = json.set(ab.Final,"CallSaveAdv",ab.ConcAdv)]
 	[h,if(ab.ConcBonus): ab.Final = json.set(ab.Final,"CallSaveBonus",ab.ConcBonus)]
 	[h,if(ab.ConcProf): ab.Final = json.set(ab.Final,"CallSaveProf",ab.ConcProf)]
 	[h,if(ab.ConcMsg): ab.Final = json.set(ab.Final,"CallAfterSave",ab.ConcMsg)]
+	[h,if(ab.ConcSuccess): ab.Final = json.set(ab.Final,"CallConcSaveSuccess",ab.ConcSuccess)]
 };{}]
 
 [h,if(ab.Death),CODE:{
@@ -726,34 +733,36 @@
 		" ab.DeathAdv | 0 | Grants (Dis)Advantage on Death Saves | CHECK ",
 		" ab.DeathBonus | 0 | Grants Bonus to Death Saves | CHECK ",
 		" ab.DeathProf | 0 | <html><span title='Non-Permanent Effects or Effects not granting Expertise/Proficiency (e.g. Jack of All Trades)'>Affects Proficiency of Death Saves</span></html> | CHECK ",
+		" ab.DeathSuccess | 0 | Grants Automatic Success or Failure on Death Saves | CHECK ",
 		" ab.DeathMsg | 0 | <html><span title='Use for misc effects that occur after a check, or situational bonuses that the program is unable to determine (e.g. History checks about stone)'>Shows Message Following Death Saves</span></html> | CHECK "
 	))]
 	[h,if(ab.DeathAdv): ab.Final = json.set(ab.Final,"CallSaveAdv",ab.DeathAdv)]
 	[h,if(ab.DeathBonus): ab.Final = json.set(ab.Final,"CallSaveBonus",ab.DeathBonus)]
 	[h,if(ab.DeathProf): ab.Final = json.set(ab.Final,"CallSaveProf",ab.DeathProf)]
 	[h,if(ab.DeathMsg): ab.Final = json.set(ab.Final,"CallAfterSave",ab.DeathMsg)]
+	[h,if(ab.DeathSuccess): ab.Final = json.set(ab.Final,"CallDeathSaveSuccess",ab.DeathSuccess)]
 };{}]
 
 [h,if(ab.Attacks),CODE:{
-[h:abort(input(
-	" junkVar | Choose aspects of weapon attacks affected | 0 | LABEL | SPAN=TRUE ",
-	" junkVar | ------------------------------------------------------------ | 0 | LABEL | SPAN=TRUE ",
-	" ab.AttackAdv | 0 | Grants (Dis)Advantage on Weapon Attacks | CHECK ",
-	" ab.AttackBonus | 0 | Grants Bonus to Weapon Attack Rolls | CHECK ",
-	" ab.AttackStat | 0 | Modifies Weapon Attack Primary Stat | CHECK ",
-	" ab.AttackCritThresh | 0 | Affects Critical Hit Threshhold | CHECK ",
-	" junkVar | ------------------------------------------------------------ | 0 | LABEL | SPAN=TRUE ",
-	" ab.AttackNumber | 0 | <html><span title='Specifically for effects like Extra Attack - Does not apply to effects that let you make an attack as a bonus action, etc.'>Increases number of attacks granted by the Attack action</span></html> | CHECK ",
-	" ab.AttackProps | 0 | <html><span title='Making weapons count as magical, count as monk weapons, etc.'>Modifies properties of weapons</span></html> | CHECK ",	" ab.AttackOptions | 0 | <html><span title='e.g. Feat - Great Weapons Master'>Has an optional effect which must be chosen before attacking</span></html>| CHECK ",
-	" ab.AttackRange | 0 | Affects range or reach of the attack | CHECK ",
-	" junkVar | ------------------------------------------------------------ | 0 | LABEL | SPAN=TRUE ",
-	" ab.AttackDamage | 0 | <html><span title='Use for effects that grant a damage type based on the weapon used. For effects that grant damage independent of the weapons damage type, use effect after attack or after each attack (whichever is appropriate)'>Grants Flat Bonus to Weapon Damage</span></html> | CHECK ",
-	" ab.AttackRoll | 0 | <html><span title='Effects that change the value of the die, adding dice to the roll, using max damage, etc. (e.g. Great Weapon Fighting rerolling 1s and 2s, Barbarian - Brutal Critical, Tempest Cleric - Destructive Wrath)'>Modifies dice rolled for weapon damage</span></html> | CHECK ",
-	" junkVar | ------------------------------------------------------------ | 0 | LABEL | SPAN=TRUE ",
-	" ab.AfterAttack | 0 | <html><span title='Catch-all for effects that operate independently of the weapon damage itself. Can deal damage, force saving throws, force a condition upon an enemy, just display a message, and more. (e.g. Cleric - Divine Strike, Assassin - Death Strike, Eldritch Knight - Eldritch Strike, and Tempest Cleric - Thunderbolt Strike, respectively)'>Effect occurs after attacks</span></html> | CHECK ",
-	" ab.AfterEachAttack | 0 | <html><span title='Same as above, but triggers on every attack instead of once per turn.'>Effect occurs after every attack</span></html> | CHECK ",
-	" ab.AttackCrit | 0 | <html><span title='Same as above, but triggers only on critical hits.'>Effect occurs after critical hits</span></html> | CHECK "
-))]
+	[h:abort(input(
+		" junkVar | Choose aspects of weapon attacks affected | 0 | LABEL | SPAN=TRUE ",
+		" junkVar | ------------------------------------------------------------ | 0 | LABEL | SPAN=TRUE ",
+		" ab.AttackAdv | 0 | Grants (Dis)Advantage on Weapon Attacks | CHECK ",
+		" ab.AttackBonus | 0 | Grants Bonus to Weapon Attack Rolls | CHECK ",
+		" ab.AttackStat | 0 | Modifies Weapon Attack Primary Stat | CHECK ",
+		" ab.AttackCritThresh | 0 | Affects Critical Hit Threshhold | CHECK ",
+		" junkVar | ------------------------------------------------------------ | 0 | LABEL | SPAN=TRUE ",
+		" ab.AttackNumber | 0 | <html><span title='Specifically for effects like Extra Attack - Does not apply to effects that let you make an attack as a bonus action, etc.'>Increases number of attacks granted by the Attack action</span></html> | CHECK ",
+		" ab.AttackProps | 0 | <html><span title='Making weapons count as magical, count as monk weapons, etc.'>Modifies properties of weapons</span></html> | CHECK ",	" ab.AttackOptions | 0 | <html><span title='e.g. Feat - Great Weapons Master'>Has an optional effect which must be chosen before attacking</span></html>| CHECK ",
+		" ab.AttackRange | 0 | Affects range or reach of the attack | CHECK ",
+		" junkVar | ------------------------------------------------------------ | 0 | LABEL | SPAN=TRUE ",
+		" ab.AttackDamage | 0 | <html><span title='Use for effects that grant a damage type based on the weapon used. For effects that grant damage independent of the weapons damage type, use effect after attack or after each attack (whichever is appropriate)'>Grants Flat Bonus to Weapon Damage</span></html> | CHECK ",
+		" ab.AttackRoll | 0 | <html><span title='Effects that change the value of the die, adding dice to the roll, using max damage, etc. (e.g. Great Weapon Fighting rerolling 1s and 2s, Barbarian - Brutal Critical, Tempest Cleric - Destructive Wrath)'>Modifies dice rolled for weapon damage</span></html> | CHECK ",
+		" junkVar | ------------------------------------------------------------ | 0 | LABEL | SPAN=TRUE ",
+		" ab.AfterAttack | 0 | <html><span title='Catch-all for effects that operate independently of the weapon damage itself. Can deal damage, force saving throws, force a condition upon an enemy, just display a message, and more. (e.g. Cleric - Divine Strike, Assassin - Death Strike, Eldritch Knight - Eldritch Strike, and Tempest Cleric - Thunderbolt Strike, respectively)'>Effect occurs after attacks</span></html> | CHECK ",
+		" ab.AfterEachAttack | 0 | <html><span title='Same as above, but triggers on every attack instead of once per turn.'>Effect occurs after every attack</span></html> | CHECK ",
+		" ab.AttackCrit | 0 | <html><span title='Same as above, but triggers only on critical hits.'>Effect occurs after critical hits</span></html> | CHECK "
+	))]
 
 	[h,if(ab.AttackAdv): ab.Final = json.set(ab.Final,"CallAttackAdv",ab.AttackAdv)]
 	[h,if(ab.AttackBonus): ab.Final = json.set(ab.Final,"CallAttackBonus",ab.AttackBonus)]
@@ -882,20 +891,31 @@
 	}]
 }]
 
+[h,if(ab.WhenTargeted),CODE:{
+	[h:abort(input(
+		" junkVar | Choose triggers for a feature when targeted | 0 | LABEL | SPAN=TRUE ",
+		" junkVar | ------------------------------------------------------------ | 0 | LABEL | SPAN=TRUE ",
+		" ab.AttackAdvTargeted | 0 | Grants (Dis)Advantage to Attacker | CHECK ",
+		" ab.AttackAutoHitTargeted | 0 | Grants Automatic Hit or Miss on Attacker's Attack | CHECK ",
+		" ab.AttackCritTargeted | 0 | Affects Attacker's Critical Hits | CHECK ",
+		" ab.AfterDamage | 0 |  | CHECK ",
+	))]
+};{}]
+
 [h,if(ab.Damaged),CODE:{
 	[h:abort(input(
-		" junkVar | Choose triggers for an ability after taking damage | 0 | LABEL | SPAN=TRUE ",
+		" junkVar | Choose triggers for a feature after taking damage | 0 | LABEL | SPAN=TRUE ",
 		" junkVar | ------------------------------------------------------------ | 0 | LABEL | SPAN=TRUE ",
-		" ab.AfterDamage | 0 | Triggers after taking damage | CHECK ",
+		" ab.AfterDamaged | 0 | Triggers after taking damage | CHECK ",
 		" ab.TempHPLost | 0 | <html><span title='Mostly for abilities that end when Temp HP is lost'>Triggers when losing all Temporary Hit Points</span></html> | CHECK "
 	))]
-	[h,if(ab.AfterDamage): ab.Final = json.set(ab.Final,"CallAfterDamaged",ab.AfterDamage)]
+	[h,if(ab.AfterDamaged): ab.Final = json.set(ab.Final,"CallAfterDamaged",ab.AfterDamaged)]
 	[h,if(ab.TempHPLost): ab.Final = json.set(ab.Final,"CallTempHPLost",ab.TempHPLost)]
 };{}]
 
 [h,if(ab.Rest),CODE:{
 	[h:abort(input(
-		" junkVar | Choose triggers for an ability after resting | 0 | LABEL | SPAN=TRUE ",
+		" junkVar | Choose triggers for a feature after resting | 0 | LABEL | SPAN=TRUE ",
 		" junkVar | ------------------------------------------------------------ | 0 | LABEL | SPAN=TRUE ",
 		" ab.AfterShort | 0 | Triggers after short rests | CHECK ",
 		" ab.AfterLong | 0 | Triggers after long rests | CHECK "

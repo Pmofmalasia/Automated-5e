@@ -7,7 +7,7 @@
 	[h:abort(input(
 		ab.InputTitle,
 		" ab.FeatureType | Class,Race,Feat,Background | Choose Feature Type | RADIO | VALUE=STRING "
-		))]
+	))]
 };{
 	[h:ab.FeatureType = ab.PresetType]
 }]

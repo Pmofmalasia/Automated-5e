@@ -5,8 +5,10 @@
 [h:a5e.UnifiedAbilities = a5e.GatherAbilities(ParentToken)]
 [h:pm.a5e.OverarchingContext = "Save"]
 [h:sv.Type = json.get(sv.Data,"Type")]
-[h:roll1=if(json.get(sv.Data,"PreviousRoll")=="",1d20,json.get(sv.Data,"PreviousRoll"))]
-[h:roll2=1d20]
+
+[h:d20RolledNum = 1]
+[h:alld20Rolls = if(json.get(sv.Data,"PreviousRoll")=="","[]",json.get(sv.Data,"PreviousRoll"))]
+[h:d20RolledNum = d20RolledNum - json.length(alld20Rolls)]
 
 [h:pm.a5e.SaveBonusTotal(sv.Data)]
         
@@ -15,11 +17,13 @@
 	case -1: {
 		[h,if(sv.ForcedAdvantage),CODE:{
 			[h:sv.AdvDis = -1]
+			[h:d20RolledNum = d20RolledNum + 1]
 		};{
 			[h:sv.Adv = 0]
 			[h:sv.Dis = 1]
 			[h:pm.PassiveFunction("SaveAdv")]
 			[h:sv.AdvDis = if(or(and(sv.Dis == 0,sv.Adv == 0),and(sv.Dis !=0,sv.Adv != 0)),0,if(sv.Dis == 0,1,-1))]
+			[h:d20RolledNum = if(sv.AdvDis!=0,d20RolledNum + 1,d20RolledNum)]
 		}]
 	};
 	case 0: {
@@ -30,16 +34,19 @@
 			[h:sv.Dis = 0]
 			[h:pm.PassiveFunction("SaveAdv")]
 			[h:sv.AdvDis = if(or(and(sv.Dis == 0,sv.Adv == 0),and(sv.Dis !=0,sv.Adv != 0)),0,if(sv.Dis == 0,1,-1))]
+			[h:d20RolledNum = if(sv.AdvDis!=0,d20RolledNum + 1,d20RolledNum)]
 		}]
 	};
 	case 1: {
 		[h,if(sv.ForcedAdvantage),CODE:{
 			[h:sv.AdvDis = 1]
+			[h:d20RolledNum = d20RolledNum + 1]
 		};{
 			[h:sv.Adv = 1]
 			[h:sv.Dis = 0]
 			[h:pm.PassiveFunction("SaveAdv")]
 			[h:sv.AdvDis = if(or(and(sv.Dis == 0,sv.Adv == 0),and(sv.Dis !=0,sv.Adv != 0)),0,if(sv.Dis == 0,1,-1))]
+			[h:d20RolledNum = if(sv.AdvDis!=0,d20RolledNum + 1,d20RolledNum)]
 		}]
 	};
 	default: {
@@ -47,8 +54,15 @@
 		[h:sv.Dis = 0]
 		[h:pm.PassiveFunction("SaveAdv")]
 		[h:sv.AdvDis = if(or(and(sv.Dis == 0,sv.Adv == 0),and(sv.Dis !=0,sv.Adv != 0)),0,if(sv.Dis == 0,1,-1))]
+		[h:d20RolledNum = if(sv.AdvDis!=0,d20RolledNum + 1,d20RolledNum)]
 	}
 ]
+
+[h,if(d20RolledNum < 0),CODE:{
+	[h,count(abs(d20RolledNum)): alld20Rolls = if((json.length(alld20Rolls)-1-roll.count)<1,alld20Rolls,json.remove(alld20Rolls,max(0,json.length(alld20Rolls)-1-roll.count)))]
+};{
+	[h,count(d20RolledNum): alld20Rolls = json.append(alld20Rolls,1d20)]
+}]
 
 [h:DamageColor = pm.DamageColor()]
 [h:HealingColor = pm.HealingColor()]
@@ -61,23 +75,23 @@
 	[h:"<!-- Will need to add concentration to the list, once the updated macro is made -->"]
 	[h,SWITCH(sv.Type),CODE:
 		case "Death":{
-			[h:sv.AdvRerollLink = macroLinkText("Death Save Border@Lib:pm.a5e.Core","self-gm",json.set(sv.Data,"PreviousRoll",roll1,"Advantage",1,"ForcedAdvantage",1),ParentToken)]
-			[h:sv.DisRerollLink = macroLinkText("Death Save Border@Lib:pm.a5e.Core","self-gm",json.set(sv.Data,"PreviousRoll",roll1,"Advantage",-1,"ForcedAdvantage",1),ParentToken)]
+			[h:sv.AdvRerollLink = macroLinkText("Death Save Border@Lib:pm.a5e.Core","self-gm",json.set(sv.Data,"PreviousRoll",alld20Rolls,"Advantage",1,"ForcedAdvantage",1),ParentToken)]
+			[h:sv.DisRerollLink = macroLinkText("Death Save Border@Lib:pm.a5e.Core","self-gm",json.set(sv.Data,"PreviousRoll",alld20Rolls,"Advantage",-1,"ForcedAdvantage",1),ParentToken)]
 		};
 		default:{
-			[h:sv.AdvRerollLink = macroLinkText("Save Reroll@Lib:pm.a5e.Core","self-gm",json.set(sv.Data,"PreviousRoll",roll1,"Advantage",1,"ForcedAdvantage",1),ParentToken)]
-			[h:sv.DisRerollLink = macroLinkText("Save Reroll@Lib:pm.a5e.Core","self-gm",json.set(sv.Data,"PreviousRoll",roll1,"Advantage",-1,"ForcedAdvantage",1),ParentToken)]
+			[h:sv.AdvRerollLink = macroLinkText("Save Reroll@Lib:pm.a5e.Core","self-gm",json.set(sv.Data,"PreviousRoll",alld20Rolls,"Advantage",1,"ForcedAdvantage",1),ParentToken)]
+			[h:sv.DisRerollLink = macroLinkText("Save Reroll@Lib:pm.a5e.Core","self-gm",json.set(sv.Data,"PreviousRoll",alld20Rolls,"Advantage",-1,"ForcedAdvantage",1),ParentToken)]
 		}
 	]
 	
-	[h:FinalRoll = roll1]
+	[h:FinalRoll = json.get(alld20Rolls,0)]
 	[h:abilityTable = json.append("",json.set("",
 		"ShowIfCondensed",1,
 		"Header",CurrentSaveDisplay,
 		"FalseHeader","",
-		"FullContents","<b><span style='"+if(roll1==20,"font-size:2em; color:"+CritColor,if(roll1==1,"font-size:2em; color:"+CritFailColor,"font-size:1.5em"))+"'>"+(roll1+TotalBonus)+"</span></b>",
+		"FullContents","<b><span style='"+if(FinalRoll==20,"font-size:2em; color:"+CritColor,if(FinalRoll==1,"font-size:2em; color:"+CritFailColor,"font-size:1.5em"))+"'>"+(FinalRoll+TotalBonus)+"</span></b>",
 		"RulesContents","1d20"+if(PrimeStat=="None",""," + "+substring(PrimeStat,0,3))+if(ProfTypeStr=="",""," + "+ProfTypeStr)+pm.PlusMinus(MiscBonus,0)+" = ",
-		"RollContents",roll1+pm.PlusMinus(AtrBonus,1)+pm.PlusMinus(ProfBonus,0)+" = ",
+		"RollContents",FinalRoll+pm.PlusMinus(AtrBonus,1)+pm.PlusMinus(ProfBonus,0)+" = ",
 		"DisplayOrder","['Rules','Roll','Full']",
 		"BonusSectionNum",1,
 		"BonusSectionType1","Rules",
@@ -85,7 +99,12 @@
 		"BonusSectionStyling1",""
 		))]
 };{
-	[h:FinalRoll = if(sv.AdvDis == 1,max(roll1,roll2),min(roll1,roll2))]
+	[h:FinalRoll = if(sv.AdvDis == 1,math.arrayMax(alld20Rolls),math.arrayMin(alld20Rolls))]
+
+	[h:extraRollsDisplay = ""]
+	[h,foreach(tempRoll,alld20Rolls): extraRollsDisplay = listAppend(extraRollsDisplay,"Roll #"+(roll.count+1)+": "+(tempRoll+TotalBonus-FinalRoll)," / ")]
+	[h:extraRollsDisplay = "("+extraRollsDisplay+")"]
+	
 	[h:abilityTable = json.append("",json.set("",
 		"ShowIfCondensed",1,
 		"Header",CurrentSaveDisplay,
@@ -96,7 +115,7 @@
 		"DisplayOrder","['Rules','Roll','Full']",
 		"BonusSectionNum",1,
 		"BonusSectionType1","Rules",
-		"BonusBody1","(Roll #1: <span style='font-size:1.25em'><b>"+(roll1+TotalBonus)+"</b></span> / Roll #2: <span style='font-size:1.25em'><b>"+(roll2+TotalBonus)+"</b></span>)",
+		"BonusBody1",extraRollsDisplay,
 		"BonusSectionStyling1",""
 	))]
 }]

@@ -9,6 +9,8 @@
 	" cn.Name | -- Name Here -- | Enter Condition Name ",
 	" cn.Type | Base Condition,Class Feature,Racial Feature,Spell,Feat,Background | Condition Association | LIST ",
 	" cn.ConditionSubtype | None,Boon,Curse,Disease,Poison | Condition Counts As | RADIO | VALUE=STRING ",
+	" cn.HasTiers |  | Condition Has Multiple Tiers With Varying Effects | CHECK ",
+	" cn.HasAssociatedConditions |  | Always Adds Other Conditions When Gained | CHECK ",
 	" cn.Source | "+cn.Sourcebooks+" | Associated Sourcebook | LIST | VALUE=STRING "
 	))]
 
@@ -54,6 +56,18 @@
 
 [h:cn.Subclass = if(cn.Subclass == "None","",pm.RemoveSpecial(cn.Subclass))]
 [h:cn.Final = json.set(cn.Final,"Subclass",cn.Subclass)]
+
+[h,if(cn.HasTiers): cn.Final = json.set(cn.Final,"HasTiers",cn.HasTiers)]
+
+[h:"<!-- Currently unable to add non-base conditions. May want to add later, but don't really care to for now since not used in official 5e content afaik. Would also need to restructure how associated conditions are stored so may want to at least do that part now.... -->"]
+[h,if(cn.HasAssociatedConditions),CODE:{
+	[h:associatedCondInput = " junkVar | ----------------------------------- Associated Conditions ----------------------------------- | | LABEL | SPAN=TRUE "]
+	[h,foreach(baseCondition,pm.a5e.GetBaseConditions()): associatedCondInput = listAppend(associatedCondInput," choice."+json.get(baseCondition,"Name")+" |  | "+json.get(baseCondition,"DisplayName")+" | CHECK ","##")]
+	[h:abort(input(associatedCondInput))]
+	
+	[h:associatedConditionList = "[]"]
+	[h,foreach(baseCondition,pm.a5e.GetBaseConditions("Name","json")): associatedConditionList = if(eval("choice."+baseCondition),json.append(associatedConditionList,json.get(baseCondition,"Name","Class","Subclass","DisplayName")),associatedConditionList)]
+};{}]
 
 [h,macro("Create Feature Core@Lib:pm.a5e.Core"): json.set("","Feature",cn.Final,"PrereqsTest",0)]
 

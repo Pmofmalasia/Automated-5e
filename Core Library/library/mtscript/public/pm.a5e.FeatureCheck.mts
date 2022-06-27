@@ -9,7 +9,6 @@
 
 [h,if(IsTooltip),CODE:{
 	[h,if(json.type(SkillOptions)=="UNKNOWN"),CODE:{
-		
 		[h,switch(SkillType):
 			case "Ability Score": skillDisplayName = pm.GetDisplayName(SkillOptions,"sb.Attributes");
 			case "Skill": skillDisplayName = pm.GetDisplayName(SkillOptions,"sb.Skills");
@@ -23,7 +22,7 @@
 			"Bonus",SkillBonus
 		))]
 
-		[h:abilityTable = json.append("",json.set("",
+		[h:checkTable = json.append("",json.set("",
 			"ShowIfCondensed",1,
 			"Header",skillDisplayName+" Check",
 			"FalseHeader","",
@@ -33,7 +32,7 @@
 			"DisplayOrder","['Rules','Roll','Full']"
 		))]
 	};{
-		[h:abilityTable = json.append("",json.set("",
+		[h:checkTable = json.append("",json.set("",
 			"ShowIfCondensed",1,
 			"Header","Check Options",
 			"FalseHeader","",
@@ -44,7 +43,7 @@
 		))]
 	}]
 	
-	[h:macro.return = json.set("","Table",abilityTable)]
+	[h:abilityTable = json.merge(abilityTable,checkTable)]
 };{
 	[h,if(json.type(SkillOptions)=="UNKNOWN"),CODE:{
 		[h:SkillSelection = SkillOptions]
@@ -64,5 +63,5 @@
 	[h,MACRO("Check Reroll Rerouting@Lib:pm.a5e.Core"): CheckData]
 	[h:CheckReturnData = macro.return]
 	
-	[h:macro.return = CheckReturnData]
+	[h:abilityTable = json.merge(abilityTable,CheckReturnData)]
 }]

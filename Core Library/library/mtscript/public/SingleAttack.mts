@@ -11,7 +11,7 @@
 	"Name",json.get(WeaponData,"Name")+" Attack",
 	"FalseName","Weapon Attack",
 	"OnlyRules",0
-	)]
+)]
 
 [h:FormattingData = pm.MacroFormat(ClassFeatureData)]
 [h:output.PC = json.get(json.get(FormattingData,"Output"),"Player")]

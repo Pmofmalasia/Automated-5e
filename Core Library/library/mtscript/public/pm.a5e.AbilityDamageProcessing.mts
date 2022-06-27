@@ -1,9 +1,7 @@
-[h:abilityTable = json.append(abilityTable,json.get(DamageInfo,"Table"))]
-
 [h:return(!IsTooltip)]
 
 [h,if(argCount()>0): whichEffect = arg(0); whichEffect = 0]
-[h,if(whichEffect >= json.length(pm.a5e.EffectData)): thisEffect = json.set("","Class",abilityClass); thisEffect = json.get(pm.a5e.EffectData,whichEffect)]
+[h,if(whichEffect >= json.length(pm.a5e.EffectData)): thisEffect = json.path.set(pm.a5e.BaseEffectData,"GeneralData.ID",pm.a5e.GenerateEffectID()); thisEffect = json.get(pm.a5e.EffectData,whichEffect)]
 
 [h,if(json.get(thisEffect,"Damage")==""),CODE:{
 	[h:thisEffect = json.set(thisEffect,"Damage",json.set("",json.get(DamageInfo,"DamageType"),json.get(DamageInfo,"Amount")))]

@@ -92,7 +92,7 @@
 				pm.FeatureResourceUsedMaxFinal = max(pm.FeatureResourceUsedMaxFinal,min(json.get(json.get(featureResourceData,"Resource"),pm.ResourceKey),pm.FeatureResourceUsedMax))
 			]
 			
-			[h:ResourceInfo = json.append(json.get(featureResourceData,"Info")]
+			[h:ResourceInfo = json.append(json.get(featureResourceData,"Info"))]
 		}]
 	};
 	default:{[h:pm.FeatureResourceUsedMaxFinal = 0]}
@@ -130,7 +130,7 @@
 				pm.FeatureBackupResourceUsedMaxFinal = max(pm.FeatureBackupResourceUsedMaxFinal,min(json.get(json.get(featureBackupResourceData,"Resource"),pm.ResourceKey),pm.FeatureBackupResourceUsedMax))
 			]
 			
-			[h:BackupResourceInfo = json.append(json.get(featureBackupResourceData,"Info")]
+			[h:BackupResourceInfo = json.append(json.get(featureBackupResourceData,"Info"))]
 		}]
 	};
 	default:{[h:pm.FeatureBackupResourceUsedMaxFinal = 0]}
@@ -482,7 +482,13 @@
 		case "Hit Dice": resourceTable = json.append("",json.set("","ShowIfCondensed",1,"Header","Hit Dice Remaining","FalseHeader","","FullContents","","RulesContents","<b><span style='font-size:1.25em;'>"+a5e.HitDieDisplay()+"</span></b>","RollContents","","DisplayOrder","['Rules','Roll','Full']"));
 		case "Feature": resourceTable = featureBackupResourceTable
 	]
-	[h:return(0,json.set("","Table",resourceTable,"SpellLevel",pm.SpellLevelMin,"HitDieSize",8,"AmountSpent",ResourceUsed))]
+	[h:abilityTable = json.merge(abilityTable,resourceTable)]
+	[h:currentFeatureSpellLevel = pm.SpellLevelMin]
+	[h:currentFeatureHitDieSize = 8]
+	[h:currentFeatureResourceSpentType = ""]
+	[h:currentFeatureResourceSpentAmount = ResourceUsed]
+	[h:currentFeatureResourceSpentName = ""]
+	[h:return(0)]
 };{}]
 
 [h:ResourceMax = -1]
@@ -534,7 +540,13 @@
 		case "Hit Dice": resourceTable = json.append("",json.set("","ShowIfCondensed",1,"Header","Hit Dice Remaining","FalseHeader","","FullContents","","RulesContents","<b><span style='font-size:1.25em;'>"+a5e.HitDieDisplay()+"</span></b>","RollContents","","DisplayOrder","['Rules','Roll','Full']"));
 		case "Feature": resourceTable = featureResourceTable
 	]
-	[h:return(0,json.set("","Table",resourceTable,"SpellLevel",pm.SpellLevelMin,"HitDieSize",8,"AmountSpent",ResourceUsed))]
+	[h:abilityTable = json.merge(abilityTable,resourceTable)]
+	[h:currentFeatureSpellLevel = pm.SpellLevelMin]
+	[h:currentFeatureHitDieSize = 8]
+	[h:currentFeatureResourceSpentType = ""]
+	[h:currentFeatureResourceSpentAmount = ResourceUsed]
+	[h:currentFeatureResourceSpentName = ""]
+	[h:return(0)]
 };{}]
 
 [h:"<!-- A bit annoying to do the logic backwards here (i.e. Has Resource == 0) but using ! to get the opposite requires more parens to not turn the whole thing into a 0 -->"]
@@ -622,111 +634,117 @@
 	case "Spell Slots":{
 		[h:SpellLevel = json.get(ResourceSelected,"Name")]
 		[h:SpellSlots = json.set(SpellSlots,SpellLevel+"",json.get(SpellSlots,SpellLevel+"")-1)]
-		[h:macro.return = json.set("",
-			"Table",json.append("",json.set("",
-				"ShowIfCondensed",1,
-				"Header","Spell Slots Remaining",
-				"FalseHeader","",
-				"FullContents","",
-				"RulesContents","<b><span style='font-size:1.25em;'>"+pm.SpellSlots()+"</span></b>",
-				"RollContents","",
-				"DisplayOrder","['Rules','Roll','Full']")),
-			"ResourceSpent","Spell Slots",
-			"SpellLevel",SpellLevel,
-			"AmountSpent",1
+		
+		[h:abilityTable = json.append(abilityTable,json.set("",
+			"ShowIfCondensed",1,
+			"Header","Spell Slots Remaining",
+			"FalseHeader","",
+			"FullContents","",
+			"RulesContents","<b><span style='font-size:1.25em;'>"+pm.SpellSlots()+"</span></b>",
+			"RollContents","",
+			"DisplayOrder","['Rules','Roll','Full']")
 		)]
+		[h:currentFeatureSpellLevel = SpellLevel]
+		[h:currentFeatureHitDieSize = 8]
+		[h:currentFeatureResourceSpentType = "Spell Slots"]
+		[h:currentFeatureResourceSpentAmount = 1]
+		[h:currentFeatureResourceSpentName = "Spell Slot"]
 	};
 	case "Hit Dice":{
 		[h:HitDieSize = json.get(ResourceSelected,"Name")]
 		[h:HitDice = json.set(HitDice,"1d"+HitDieSize,json.get(HitDice,"1d"+HitDieSize)-1)]
-		[h:macro.return = json.set("",
-			"Table",json.append("",json.set("",
-				"ShowIfCondensed",1,
-				"Header","Hit Dice Remaining",
-				"FalseHeader","",
-				"FullContents","",
-				"RulesContents","<b><span style='font-size:1.25em;'>"+a5e.HitDieDisplay()+"</span></b>",
-				"RollContents","",
-				"DisplayOrder","['Rules','Roll','Full']")),
-			"ResourceSpent","Hit Dice",
-			"HitDieSize",HitDieSize,
-			"AmountSpent",1
+
+		[h:abilityTable = json.append(abilityTable,json.set("",
+			"ShowIfCondensed",1,
+			"Header","Hit Dice Remaining",
+			"FalseHeader","",
+			"FullContents","",
+			"RulesContents","<b><span style='font-size:1.25em;'>"+a5e.HitDieDisplay()+"</span></b>",
+			"RollContents","",
+			"DisplayOrder","['Rules','Roll','Full']")
 		)]
+		[h:currentFeatureSpellLevel = 0]
+		[h:currentFeatureHitDieSize = HitDieSize]
+		[h:currentFeatureResourceSpentType = "Hit Dice"]
+		[h:currentFeatureResourceSpentAmount = 1]
+		[h:currentFeatureResourceSpentName = "Hit Dice"]
 	};
 	case "Feature":{
 		[h,if(json.get(ResourceSelected,"TempResourceKey")==""),CODE:{
 			[h:ResourceAmount = json.get(ResourceSelected,"Resource") - ResourceUsed]
 			[h:allAbilities = json.path.set(allAbilities,"[*][?(@.Name=='"+json.get(ResourceSelected,"Name")+"' && @.Class=='"+json.get(ResourceSelected,"Class")+"' && @.Subclass=='"+json.get(ResourceSelected,"Subclass")+"')]['Resource']",ResourceAmount)]
-			[h:macro.return = json.set("",
-				"Table",json.append("",json.set("",
-					"ShowIfCondensed",1,
-					"Header",json.get(ResourceSelected,"TempResourceDisplayName")+" Remaining",
-					"FalseHeader","",
-					"FullContents","",
-					"RulesContents","<b><span style='font-size:1.25em;'>"+ResourceAmount+"/"+evalMacro(json.get(ResourceSelected,"MaxResource"))+"</span></b>",
-					"RollContents","",
-					"DisplayOrder","['Rules','Roll','Full']"
-					)),
-				"ResourceSpent","Feature",
-				"AmountSpent",ResourceUsed,
-				"ResourceSpentName",pm.RemoveSpecial(json.get(ResourceSelected,"TempResourceDisplayName"))
-			)]
+
+			[h:abilityTable = json.append(abilityTable,json.set("",
+				"ShowIfCondensed",1,
+				"Header",json.get(ResourceSelected,"TempResourceDisplayName")+" Remaining",
+				"FalseHeader","",
+				"FullContents","",
+				"RulesContents","<b><span style='font-size:1.25em;'>"+ResourceAmount+"/"+evalMacro(json.get(ResourceSelected,"MaxResource"))+"</span></b>",
+				"RollContents","",
+				"DisplayOrder","['Rules','Roll','Full']"
+			))]
+			[h:currentFeatureSpellLevel = 0]
+			[h:currentFeatureHitDieSize = 8]
+			[h:currentFeatureResourceSpentType = "Feature"]
+			[h:currentFeatureResourceSpentAmount = ResourceUsed]
+			[h:currentFeatureResourceSpentName = pm.RemoveSpecial(json.get(ResourceSelected,"TempResourceDisplayName"))]
 		};{
 			[h:ResourceAmount = max(json.get(json.get(ResourceSelected,"Resource"),json.get(ResourceSelected,"TempResourceKey")) - ResourceUsed,0)]
 			[h:allAbilities = json.path.set(allAbilities,"[*][?(@.Name=='"+json.get(ResourceSelected,"Name")+"' && @.Class=='"+json.get(ResourceSelected,"Class")+"' && @.Subclass=='"+json.get(ResourceSelected,"Subclass")+"')]['Resource']['"+json.get(ResourceSelected,"TempResourceKey")+"']",ResourceAmount)]
-			[h:macro.return = json.set("",
-				"Table",json.append("",json.set("",
-					"ShowIfCondensed",1,
-					"Header",json.get(ResourceSelected,"TempResourceDisplayName")+" Remaining",
-					"FalseHeader","",
-					"FullContents","",
-					"RulesContents","<b><span style='font-size:1.25em;'>"+ResourceAmount+"/"+evalMacro(json.get(ResourceSelected,"MaxResource"))+"</span></b>",
-					"RollContents","",
-					"DisplayOrder","['Rules','Roll','Full']"
-					)),
-				"ResourceSpent","Feature",
-				"AmountSpent",ResourceUsed,
-				"ResourceSpentName",pm.RemoveSpecial(json.get(ResourceSelected,"TempResourceDisplayName"))
-			)]
+
+			[h:abilityTable = json.append(abilityTable,json.set("",
+				"ShowIfCondensed",1,
+				"Header",json.get(ResourceSelected,"TempResourceDisplayName")+" Remaining",
+				"FalseHeader","",
+				"FullContents","",
+				"RulesContents","<b><span style='font-size:1.25em;'>"+ResourceAmount+"/"+evalMacro(json.get(ResourceSelected,"MaxResource"))+"</span></b>",
+				"RollContents","",
+				"DisplayOrder","['Rules','Roll','Full']"
+			))]
+			[h:currentFeatureSpellLevel = 0]
+			[h:currentFeatureHitDieSize = 8]
+			[h:currentFeatureResourceSpentType = "Feature"]
+			[h:currentFeatureResourceSpentAmount = ResourceUsed]
+			[h:currentFeatureResourceSpentName = pm.RemoveSpecial(json.get(ResourceSelected,"TempResourceDisplayName"))]
 		}]
 	};
 	case "FeatureSpell":{
 		[h,if(json.get(ResourceSelected,"TempResourceKey")==""),CODE:{
 			[h:ResourceAmount = max(json.get(ResourceSelected,"Resource") - 1,0)]
 			[h:allAbilities = json.path.set(allAbilities,"[*][?(@.Name=='"+json.get(ResourceSelected,"Name")+"' && @.Class=='"+json.get(ResourceSelected,"Class")+"' && @.Subclass=='"+json.get(ResourceSelected,"Subclass")+"')]['Resource']",ResourceAmount)]
-			[h:macro.return = json.set("",
-				"Table",json.append("",json.set("",
-					"ShowIfCondensed",1,
-					"Header","Spell Slots Remaining",
-					"FalseHeader","",
-					"FullContents","",
-					"RulesContents","<b><span style='font-size:1.25em;'>"+pm.SpellSlots()+"</span></b>",
-					"RollContents","",
-					"DisplayOrder","['Rules','Roll','Full']"
-					)),
-				"ResourceSpent","FeatureSpell",
-				"AmountSpent",1,
-				"ResourceSpentName",pm.RemoveSpecial(json.get(ResourceSelected,"TempResourceDisplayName")),
-				"SpellLevel",evalMacro(json.get(ResourceSelected,"ResourceSpellLevel"))
-			)]
+
+			[h:abilityTable = json.append(abilityTable,json.set("",
+				"ShowIfCondensed",1,
+				"Header","Spell Slots Remaining",
+				"FalseHeader","",
+				"FullContents","",
+				"RulesContents","<b><span style='font-size:1.25em;'>"+pm.SpellSlots()+"</span></b>",
+				"RollContents","",
+				"DisplayOrder","['Rules','Roll','Full']"
+			))]
+			[h:currentFeatureSpellLevel = evalMacro(json.get(ResourceSelected,"ResourceSpellLevel"))]
+			[h:currentFeatureHitDieSize = 8]
+			[h:currentFeatureResourceSpentType = "FeatureSpell"]
+			[h:currentFeatureResourceSpentAmount = 1]
+			[h:currentFeatureResourceSpentName = pm.RemoveSpecial(json.get(ResourceSelected,"TempResourceDisplayName"))]
 		};{
 			[h:ResourceAmount = max(json.get(json.get(ResourceSelected,"Resource"),json.get(ResourceSelected,"TempResourceKey")) - 1,0)]
 			[h:allAbilities = json.path.set(allAbilities,"[*][?(@.Name=='"+json.get(ResourceSelected,"Name")+"' && @.Class=='"+json.get(ResourceSelected,"Class")+"' && @.Subclass=='"+json.get(ResourceSelected,"Subclass")+"')]['Resource']['"+json.get(ResourceSelected,"TempResourceKey")+"']",ResourceAmount)]
-			[h:macro.return = json.set("",
-				"Table",json.append("",json.set("",
-					"ShowIfCondensed",1,
-					"Header","Spell Slots Remaining",
-					"FalseHeader","",
-					"FullContents","",
-					"RulesContents","<b><span style='font-size:1.25em;'>"+pm.SpellSlots()+"</span></b>",
-					"RollContents","",
-					"DisplayOrder","['Rules','Roll','Full']"
-					)),
-				"ResourceSpent","FeatureSpell",
-				"AmountSpent",1,
-				"ResourceSpentName",pm.RemoveSpecial(json.get(ResourceSelected,"TempResourceDisplayName")),
-				"SpellLevel",json.get(evalMacro(json.get(ResourceSelected,"ResourceSpellLevel")),json.get(ResourceSelected,"TempResourceKey"))
-			)]
+
+			[h:abilityTable = json.append(abilityTable,json.set("",
+				"ShowIfCondensed",1,
+				"Header","Spell Slots Remaining",
+				"FalseHeader","",
+				"FullContents","",
+				"RulesContents","<b><span style='font-size:1.25em;'>"+pm.SpellSlots()+"</span></b>",
+				"RollContents","",
+				"DisplayOrder","['Rules','Roll','Full']"
+			))]
+			[h:currentFeatureSpellLevel = json.get(evalMacro(json.get(ResourceSelected,"ResourceSpellLevel")),json.get(ResourceSelected,"TempResourceKey"))]
+			[h:currentFeatureHitDieSize = 8]
+			[h:currentFeatureResourceSpentType = "FeatureSpell"]
+			[h:currentFeatureResourceSpentAmount = 1]
+			[h:currentFeatureResourceSpentName = pm.RemoveSpecial(json.get(ResourceSelected,"TempResourceDisplayName"))]
 		}]
 	}
 ]

@@ -15,7 +15,13 @@
 		parentName = getName(json.get(effect,"ParentToken"))
 	]
 	
-	[h:em.Options = json.append(em.Options,parentName+" vs. "+targetName)]
+	[h:effectsToResolve = json.get(effect,"ToResolve")]
+	[h,if(json.get(effectsToResolve,"CheckDC")!=""): em.SecondPassDisplay = if(!json.isEmpty(json.get(json.get(effectsToResolve,"CheckDC"),"ChecksMade")),"Checks",""); em.SecondPassDisplay = ""]
+	[h,if(json.get(effectsToResolve,"SaveDC")!=""): em.SecondPassDisplay = if(!json.isEmpty(json.get(json.get(effectsToResolve,"SaveDC"),"SavesMade")),listAppend(em.SecondPassDisplay,"Saves"),em.SecondPassDisplay)]
+	[h:em.SecondPassDisplay = pm.a5e.CreateDisplayList(em.SecondPassDisplay,"and")]
+	[h,if(em.SecondPassDisplay!=""): em.SecondPassDisplay = ": "+em.SecondPassDisplay+" Made"]
+	
+	[h:em.Options = json.append(em.Options,parentName+" vs. "+targetName+em.SecondPassDisplay)]
 }]
 
 [h:abort(input(
@@ -30,7 +36,6 @@
 		[h,switch(resolveHow),CODE:
 			case 0:{
 				[h,MACRO("Resolve Effects@Lib:pm.a5e.Core"): json.get(incompleteEffects,em.Choice)]
-				[h:setLibProperty("gd.Effects",json.remove(incompleteEffects,em.Choice),"Lib:pm.a5e.Core")]
 			};
 			case 1:{
 				[h:broadcast("This feature does not exist yet!")]
@@ -44,7 +49,6 @@
 	case 1:{
 		[h,foreach(effect,incompleteEffects),CODE:{
 			[h,MACRO("Resolve Effects@Lib:pm.a5e.Core"): effect]
-			[h:setLibProperty("gd.Effects",json.path.delete(getLibProperty("gd.Effects","Lib:pm.a5e.Core"),"[?(@.ID=="+json.get(effect,"ID")+")]"),"Lib:pm.a5e.Core")]
 		}]
 	};
 	case 2:{

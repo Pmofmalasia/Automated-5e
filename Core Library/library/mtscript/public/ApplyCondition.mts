@@ -5,6 +5,7 @@
 [h:switchToken(ParentToken)]
 [h:a5e.UnifiedAbilities = a5e.GatherAbilities(ParentToken)]
 [h:pm.a5e.OverarchingContext = "ApplyCondition"]
+[h:pm.a5e.EffectData = "[]"]
 [h:ConditionSetBy = json.get(macro.args,"SetBy")]
 [h:abilityTable = "[]"]
 
@@ -24,21 +25,31 @@
 [h,while(!json.equals(a5e.Conditions,a5e.ConditionsTemp) || FirstLoopTest),CODE:{
 	[h:a5e.Conditions = a5e.ConditionsTemp]
 	[h:FirstLoopTest = 0]
-	[h:AssociatedConditionNamesTemp = json.path.read(a5e.ConditionsTemp,"[*]['AssociatedConditions']")]
-	[h:AssociatedConditionNames = "[]"]
-	[h,foreach(condition,AssociatedConditionNamesTemp): AssociatedConditionNames = json.merge(AssociatedConditionNames,condition)]
-	[h:AssociatedConditionNames = json.difference(AssociatedConditionNames,json.path.read(a5e.ConditionsTemp,"[*]['Name']"))]
-	[h:AssociatedConditionsFinal = json.path.put(json.path.read(getLibProperty("sb.Conditions","Lib:pm.a5e.Core"),"[*][?(@.Name in "+AssociatedConditionNames+" && @.Class=='Condition')]"),"[*]","IsAssociated",1)]
+
+	[h:AssociatedConditionsTemp = json.path.read(a5e.ConditionsTemp,"[*]['AssociatedConditions']")]
+	[h:AssociatedConditions = "[]"]
+	[h,foreach(condition,AssociatedConditionsTemp): AssociatedConditions = json.merge(AssociatedConditions,condition)]
+	
+	[h:AssociatedConditionNames = json.path.read(AssociatedConditions,"[*]['Name']")]
+	[h:AssociatedConditionNamesToAdd = json.difference(AssociatedConditionNames,json.path.read(a5e.ConditionsTemp,"[*]['Name']"))]
+
+	[h:AssociatedConditionsToAdd = json.path.read(AssociatedConditions,"[*][?(@.Name in "+AssociatedConditionNamesToAdd+")]")]
+
+	[h:newAssociatedConditions = "[]"]
+	[h,foreach(condition,AssociatedConditionsToAdd): newAssociatedConditions = json.merge(newAssociatedConditions,json.path.put(json.path.read(getLibProperty("sb.Conditions","Lib:pm.a5e.Core"),"[*][?(@.Name=='"+json.get(condition,"Name")+"' && @.Class=='"+json.get(condition,"Class")+"' && @.Subclass=='"+json.get(condition,"Subclass")+"')]"),"[*]","IsAssociated",1))]
 	
 	[h:pm.PassiveFunction("ChangeCondGain")]
 	
-	[h:a5e.ConditionsTemp = json.merge(a5e.Conditions,AssociatedConditionsFinal)]
+	[h:a5e.ConditionsTemp = json.merge(a5e.Conditions,newAssociatedConditions)]
 }]
 
 [h:a5e.Conditions = json.path.put(a5e.Conditions,"[*]","Duration",DurationFinal)]
 [h:a5e.Conditions = json.path.put(a5e.Conditions,"[*]","SetBy",ConditionSetBy)]
 [h:a5e.Conditions = json.path.put(a5e.Conditions,"[*]","GroupID",a5e.GroupID)]
 [h:a5e.Conditions = json.path.put(a5e.Conditions,"[*]","IsActive",1)]
+
+[h:"<!-- The following line sets any previously set conditions of the same name as inactive. The reasoning is based on PHB 205: effects of the same spell cast multiple times don't combine, and the most potent effect applies while they overlap - OR, if equally potent, the most recent effect applies. In lieu of being able to calculate which is more 'potent' ahead of time (which, at times, can be abstract), the latter method is the one used at all times instead. Will continue to think of ways to enforce the more 'potent' effect when possible. For now, the current method should cover the majority of cases, and should add an option to change which is active in the Condition Management macro to cover edge cases. Note: There is a similar ruling on PHB 290 for base conditions, so this is not limited to spells. -->"]
+[h,foreach(tempCondition,a5e.Conditions): ConditionList = json.path.set(ConditionList,"[*][?(@.Name=='"+json.get(tempCondition,"Name")+"')]['IsActive']",0)]
 
 [h,foreach(condition,a5e.Conditions),CODE:{
 	[h:StateExistsTest = !json.isEmpty(json.path.read(getInfo("campaign"),"states.*.[?(@.name=='"+json.get(condition,"Name")+"')]"))]

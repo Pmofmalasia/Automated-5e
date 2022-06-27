@@ -5,6 +5,7 @@
 
 [h:baseMaxHP = RolledMaxHP+(json.get(AtrMods,"Constitution")*Level)-HPDrain]
 [h:bonusMaxHP = 0]
+[h:multiplierMaxHP = 1]
 [h:setMaxHP = 0]
 [h:setOverrideMaxHP = -1]
 
@@ -15,7 +16,7 @@
 
 [h:pm.PassiveFunction("MaxHP")]
 
-[h:maxHPFinal = baseMaxHP + bonusMaxHP]
+[h:maxHPFinal = (baseMaxHP + bonusMaxHP) * multiplierMaxHP]
 [h:maxHPFinal = max(setMaxHP,maxHPFinal)]
 [h,if(setOverrideMaxHP!=-1): maxHPFinal = setOverrideMaxHP]
 

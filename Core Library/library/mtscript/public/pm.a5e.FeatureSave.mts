@@ -22,7 +22,7 @@
 			"Bonus",SaveBonus
 		))]
 
-		[h:abilityTable = json.append("",json.set("",
+		[h:saveTable = json.append("",json.set("",
 			"ShowIfCondensed",1,
 			"Header",SaveDisplayName+" Save",
 			"FalseHeader","",
@@ -32,7 +32,7 @@
 			"DisplayOrder","['Rules','Roll','Full']"
 		))]
 	};{
-		[h:abilityTable = json.append("",json.set("",
+		[h:saveTable = json.append("",json.set("",
 			"ShowIfCondensed",1,
 			"Header","Save Options",
 			"FalseHeader","",
@@ -43,7 +43,7 @@
 		))]
 	}]
 	
-	[h:macro.return = json.set("","Table",abilityTable)]
+	[h:abilityTable = json.append(abilityTable,saveTable)]
 };{
 	[h,if(json.type(SaveOptions)=="UNKNOWN"),CODE:{
 		[h:SaveSelection = SaveOptions]
@@ -63,5 +63,5 @@
 	[h,MACRO("Save Reroll Rerouting@Lib:pm.a5e.Core"): SaveData]
 	[h:SaveReturnData = macro.return]
 	
-	[h:macro.return = SaveReturnData]
+	[h:abilityTable = json.merge(abilityTable,json.get(SaveReturnData,"Table"))]
 }]

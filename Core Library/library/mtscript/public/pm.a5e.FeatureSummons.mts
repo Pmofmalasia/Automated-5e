@@ -57,7 +57,7 @@
 			"DisplayOrder","['Rules','Roll','Full']"
 		)]
 	}]
-	[h:macro.return = json.set("","Table",summonTable)]
+	[h:abilityTable = json.append(abilityTable,summonTable)]
 };{
-	[h:pm.Summons(abilityInfo,summonParams,summonCosmetics)]
+	[h:pm.Summons(currentFeatureInfo,summonParams,summonCosmetics)]
 }]

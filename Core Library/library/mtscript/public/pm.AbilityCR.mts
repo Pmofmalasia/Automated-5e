@@ -17,4 +17,4 @@
 
 [h:pm.DCFinal=if(miSaveDCSetFinal==-1,(pm.baseDC+miSaveDCBonusFinal),max(miSaveDCSetFinal,(pm.baseDC+miSaveDCBonusFinal)))]
 
-[h:macro.return = json.set("","ShowIfCondensed",1,"Header","Saving Throw","FalseHeader","","FullContents",pm.SaveType,"RulesContents",": DC "+pm.DCFinal+" ","RollContents","","DisplayOrder","['Full','Rules','Roll']","Value",pm.DCFinal,"Units",pm.SaveType)]
+[h:macro.return = json.set("","ShowIfCondensed",1,"Header","Saving Throw","FalseHeader","","FullContents",pm.SaveType,"RulesContents",": DC "+pm.DCFinal+" ","RollContents","","DisplayOrder","['Full','Rules','Roll']")]

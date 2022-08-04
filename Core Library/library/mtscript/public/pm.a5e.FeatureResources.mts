@@ -553,7 +553,7 @@
 [h,SWITCH(json.isEmpty(ResourceOptions)+""+json.isEmpty(BackupResourceOptions)),CODE:
 	case "00":{
 		[h,if(json.length(enoughResourceInfo)>1),CODE:{
-			[h:disResourceAmountChoice = if(listCount(ResourceAmountOptions)>1," ResourceUsed | 0,"+ResourceAmountOptions+" | How much to use | LIST | VALUE=STRING ","")]
+			[h:disResourceAmountChoice = if(listCount(ResourceAmountOptions)>1," ResourceUsed | "+ResourceAmountOptions+" | How much to use | LIST | VALUE=STRING ","")]
 			[h:disResourceChoiceMsg = if(pm.ResourceChoiceMsg=="","","junkVar | "+pm.ResourceChoiceMsg+" |  | LABEL | SPAN=TRUE ")]
 			
 			[h:abort(input(
@@ -564,7 +564,7 @@
 			
 			[h:ResourceSelected = json.get(enoughResourceInfo,ResourceChoice)]
 		};{
-			[h:disResourceAmountChoice = if(listCount(ResourceAmountOptions)>1,"ResourceUsed | 0,"+ResourceAmountOptions+" | How much "+json.get(json.get(enoughResourceInfo,0),"TempResourceDisplayName")+ "to use | LIST | VALUE=STRING ","")]
+			[h:disResourceAmountChoice = if(listCount(ResourceAmountOptions)>1,"ResourceUsed | "+ResourceAmountOptions+" | How much "+json.get(json.get(enoughResourceInfo,0),"TempResourceDisplayName")+ " to use | LIST | VALUE=STRING ","")]
 			[h:disResourceChoiceMsg = if(or(listCount(ResourceAmountOptions)==1,pm.ResourceChoiceMsg==""),"","junkVar | "+pm.ResourceChoiceMsg+" |  | LABEL | SPAN=TRUE ")]
 			
 			[h:abort(input(
@@ -577,7 +577,7 @@
 	};
 	case "01":{
 		[h,if(json.length(enoughResourceInfo)>1),CODE:{
-			[h:disResourceAmountChoice = if(listCount(ResourceAmountOptions)>1,"ResourceUsed | 0,"+ResourceAmountOptions+" | How much to use | LIST | VALUE=STRING ","")]
+			[h:disResourceAmountChoice = if(listCount(ResourceAmountOptions)>1,"ResourceUsed | "+ResourceAmountOptions+" | How much to use | LIST | VALUE=STRING ","")]
 			[h:disResourceChoiceMsg = if(pm.ResourceChoiceMsg=="","","junkVar | "+pm.ResourceChoiceMsg+" |  | LABEL | SPAN=TRUE ")]
 			
 			[h:abort(input(
@@ -588,7 +588,7 @@
 			
 			[h:ResourceSelected = json.get(enoughResourceInfo,ResourceChoice)]
 		};{
-			[h:disResourceAmountChoice = if(listCount(ResourceAmountOptions)>1,"ResourceUsed | 0,"+ResourceAmountOptions+" | How much "+json.get(json.get(enoughResourceInfo,0),"TempResourceDisplayName")+ "to use | LIST | VALUE=STRING ","")]
+			[h:disResourceAmountChoice = if(listCount(ResourceAmountOptions)>1,"ResourceUsed | "+ResourceAmountOptions+" | How much "+json.get(json.get(enoughResourceInfo,0),"TempResourceDisplayName")+ " to use | LIST | VALUE=STRING ","")]
 			[h:disResourceChoiceMsg = if(or(listCount(ResourceAmountOptions)==1,pm.ResourceChoiceMsg==""),"","junkVar | "+pm.ResourceChoiceMsg+" |  | LABEL | SPAN=TRUE ")]
 			
 			[h:abort(input(
@@ -602,7 +602,7 @@
 	case "10":{
 		[h,if(json.length(enoughBackupResourceInfo)>1),CODE:{
 			[h:ResourceUsed = BackupResourceMin]
-			[h:disResourceAmountChoice = if(listCount(BackupResourceAmountOptions)>1,"ResourceUsed | 0,"+BackupResourceAmountOptions+" | How much to use | LIST | VALUE=STRING ","")]
+			[h:disResourceAmountChoice = if(listCount(BackupResourceAmountOptions)>1,"ResourceUsed | "+BackupResourceAmountOptions+" | How much to use | LIST | VALUE=STRING ","")]
 			[h:disResourceChoiceMsg = if(pm.ResourceChoiceMsg=="","","junkVar | "+pm.ResourceChoiceMsg+" |  | LABEL | SPAN=TRUE ")]
 			
 			[h:abort(input(
@@ -614,7 +614,7 @@
 			[h:ResourceSelected = json.get(enoughBackupResourceInfo,ResourceChoice)]
 		};{
 			[h:ResourceUsed = BackupResourceMin]
-			[h:disResourceAmountChoice = if(listCount(BackupResourceAmountOptions)>1,"ResourceUsed | 0,"+BackupResourceAmountOptions+" | How much "+json.get(json.get(enoughBackupResourceInfo,0),"TempResourceDisplayName")+ "to use | LIST | VALUE=STRING ","")]
+			[h:disResourceAmountChoice = if(listCount(BackupResourceAmountOptions)>1,"ResourceUsed | "+BackupResourceAmountOptions+" | How much "+json.get(json.get(enoughBackupResourceInfo,0),"TempResourceDisplayName")+" to use | LIST | VALUE=STRING ","")]
 			[h:disResourceChoiceMsg = if(or(listCount(BackupResourceAmountOptions)==1,pm.ResourceChoiceMsg==""),"","junkVar | "+pm.ResourceChoiceMsg+" |  | LABEL | SPAN=TRUE ")]
 			
 			[h:abort(input(
@@ -644,11 +644,13 @@
 			"RollContents","",
 			"DisplayOrder","['Rules','Roll','Full']")
 		)]
-		[h:currentFeatureSpellLevel = SpellLevel]
-		[h:currentFeatureHitDieSize = 8]
-		[h:currentFeatureResourceSpentType = "Spell Slots"]
-		[h:currentFeatureResourceSpentAmount = 1]
-		[h:currentFeatureResourceSpentName = "Spell Slot"]
+		
+		[h:resourceData = json.set("",
+			"ResourceName","Spell Slot",
+			"ResourceType","Spell Slots",
+			"SpellLevel",SpellLevel,
+			"Used",1
+		)]
 	};
 	case "Hit Dice":{
 		[h:HitDieSize = json.get(ResourceSelected,"Name")]
@@ -663,11 +665,13 @@
 			"RollContents","",
 			"DisplayOrder","['Rules','Roll','Full']")
 		)]
-		[h:currentFeatureSpellLevel = 0]
-		[h:currentFeatureHitDieSize = HitDieSize]
-		[h:currentFeatureResourceSpentType = "Hit Dice"]
-		[h:currentFeatureResourceSpentAmount = 1]
-		[h:currentFeatureResourceSpentName = "Hit Dice"]
+
+		[h:resourceData = json.set("",
+			"ResourceName","Hit Dice",
+			"ResourceType","Hit Dice",
+			"HitDieSize",HitDieSize,
+			"Used",ResourceUsed
+		)]
 	};
 	case "Feature":{
 		[h,if(json.get(ResourceSelected,"TempResourceKey")==""),CODE:{
@@ -683,11 +687,12 @@
 				"RollContents","",
 				"DisplayOrder","['Rules','Roll','Full']"
 			))]
-			[h:currentFeatureSpellLevel = 0]
-			[h:currentFeatureHitDieSize = 8]
-			[h:currentFeatureResourceSpentType = "Feature"]
-			[h:currentFeatureResourceSpentAmount = ResourceUsed]
-			[h:currentFeatureResourceSpentName = pm.RemoveSpecial(json.get(ResourceSelected,"TempResourceDisplayName"))]
+
+			[h:resourceData = json.set("",
+				"ResourceName",pm.RemoveSpecial(json.get(ResourceSelected,"TempResourceDisplayName")),
+				"ResourceType","Feature",
+				"Used",ResourceUsed
+			)]
 		};{
 			[h:ResourceAmount = max(json.get(json.get(ResourceSelected,"Resource"),json.get(ResourceSelected,"TempResourceKey")) - ResourceUsed,0)]
 			[h:allAbilities = json.path.set(allAbilities,"[*][?(@.Name=='"+json.get(ResourceSelected,"Name")+"' && @.Class=='"+json.get(ResourceSelected,"Class")+"' && @.Subclass=='"+json.get(ResourceSelected,"Subclass")+"')]['Resource']['"+json.get(ResourceSelected,"TempResourceKey")+"']",ResourceAmount)]
@@ -701,11 +706,12 @@
 				"RollContents","",
 				"DisplayOrder","['Rules','Roll','Full']"
 			))]
-			[h:currentFeatureSpellLevel = 0]
-			[h:currentFeatureHitDieSize = 8]
-			[h:currentFeatureResourceSpentType = "Feature"]
-			[h:currentFeatureResourceSpentAmount = ResourceUsed]
-			[h:currentFeatureResourceSpentName = pm.RemoveSpecial(json.get(ResourceSelected,"TempResourceDisplayName"))]
+
+			[h:resourceData = json.set("",
+				"ResourceName",pm.RemoveSpecial(json.get(ResourceSelected,"TempResourceDisplayName")),
+				"ResourceType","Feature",
+				"Used",ResourceUsed
+			)]
 		}]
 	};
 	case "FeatureSpell":{
@@ -722,11 +728,13 @@
 				"RollContents","",
 				"DisplayOrder","['Rules','Roll','Full']"
 			))]
-			[h:currentFeatureSpellLevel = evalMacro(json.get(ResourceSelected,"ResourceSpellLevel"))]
-			[h:currentFeatureHitDieSize = 8]
-			[h:currentFeatureResourceSpentType = "FeatureSpell"]
-			[h:currentFeatureResourceSpentAmount = 1]
-			[h:currentFeatureResourceSpentName = pm.RemoveSpecial(json.get(ResourceSelected,"TempResourceDisplayName"))]
+
+			[h:resourceData = json.set("",
+				"ResourceName",pm.RemoveSpecial(json.get(ResourceSelected,"TempResourceDisplayName")),
+				"ResourceType","FeatureSpell",
+				"Used",1,
+				"SpellLevel",evalMacro(json.get(ResourceSelected,"ResourceSpellLevel"))
+			)]
 		};{
 			[h:ResourceAmount = max(json.get(json.get(ResourceSelected,"Resource"),json.get(ResourceSelected,"TempResourceKey")) - 1,0)]
 			[h:allAbilities = json.path.set(allAbilities,"[*][?(@.Name=='"+json.get(ResourceSelected,"Name")+"' && @.Class=='"+json.get(ResourceSelected,"Class")+"' && @.Subclass=='"+json.get(ResourceSelected,"Subclass")+"')]['Resource']['"+json.get(ResourceSelected,"TempResourceKey")+"']",ResourceAmount)]
@@ -740,11 +748,19 @@
 				"RollContents","",
 				"DisplayOrder","['Rules','Roll','Full']"
 			))]
-			[h:currentFeatureSpellLevel = json.get(evalMacro(json.get(ResourceSelected,"ResourceSpellLevel")),json.get(ResourceSelected,"TempResourceKey"))]
-			[h:currentFeatureHitDieSize = 8]
-			[h:currentFeatureResourceSpentType = "FeatureSpell"]
-			[h:currentFeatureResourceSpentAmount = 1]
-			[h:currentFeatureResourceSpentName = pm.RemoveSpecial(json.get(ResourceSelected,"TempResourceDisplayName"))]
+
+			[h:resourceData = json.set("",
+				"ResourceName",pm.RemoveSpecial(json.get(ResourceSelected,"TempResourceDisplayName")),
+				"ResourceType","FeatureSpell",
+				"Used",1,
+				"SpellLevel",evalMacro(json.get(ResourceSelected,"ResourceSpellLevel"))
+			)]
 		}]
 	}
 ]
+	
+[h:effectsToMerge = json.append("",json.set("","Resource",resourceData))]
+
+[h,MACRO("Build Effect@Lib:pm.a5e.Core"): json.set("","CurrentEffects",pm.a5e.EffectData,"ToMerge",effectsToMerge,"BaseEffect",pm.a5e.BaseEffectData,"WhichEffect",whichEffect)]
+
+[h:pm.a5e.EffectData = macro.return]

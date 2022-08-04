@@ -27,16 +27,22 @@
 		"DisplayOrder","['Rules','Roll','Full']"
 	))]
 };{
-	[h:pm.DamageRoll = pm.DieRoller(pm.baseDieNum,pm.baseDieSize,pm.baseBonus)]
+	[h:pm.MiscRoll = pm.DieRoller(pm.baseDieNum,pm.baseDieSize,pm.baseBonus)]
 	
-	[h:currentFeatureRoll = json.get(pm.DamageRoll,"Roll")]
+	[h:currentFeatureRoll = json.get(pm.MiscRoll,"Total")]
 	[h:abilityTable = json.append(abilityTable,json.set("",
 		"ShowIfCondensed",1,
 		"Header","Roll",
 		"FalseHeader","",
-		"FullContents","<b><span style='color:"+DamageColor+"; font-size:1.5em'>"+json.get(pm.DamageRoll,"Roll")+"</span></b>",
+		"FullContents","<b><span style='color:"+DamageColor+"; font-size:1.5em'>"+json.get(pm.MiscRoll,"Total")+"</span></b>",
 		"RulesContents",if(pm.baseDieNum==0,"",pm.baseDieNum+"d"+pm.baseDieSize+pm.PlusMinus(pm.baseBonus,0)+" = "),
-		"RollContents",if(or(pm.baseDieNum==0,and(pm.baseDieNum==1,pm.baseBonus==0)),"",json.get(pm.DamageRoll,"String")+" = "),
+		"RollContents",if(or(pm.baseDieNum==0,and(pm.baseDieNum==1,pm.baseBonus==0)),"",json.get(pm.MiscRoll,"String")+" = "),
 		"DisplayOrder","['Rules','Roll','Full']")
 	)]
+	
+	[h:effectsToMerge = json.append("",json.set("","Roll",pm.MiscRoll))]
+
+	[h,MACRO("Build Effect@Lib:pm.a5e.Core"): json.set("","CurrentEffects",pm.a5e.EffectData,"ToMerge",effectsToMerge,"BaseEffect",pm.a5e.BaseEffectData,"WhichEffect",whichEffect)]
+
+	[h:pm.a5e.EffectData = macro.return]
 }]

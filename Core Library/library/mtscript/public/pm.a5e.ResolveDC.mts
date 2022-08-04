@@ -14,9 +14,15 @@
 };{
     [h:typesHalvedFinal = "[]"]
 }]
-[h,if(thisTokenDamageDealt!=""): typesHalvedFinal = json.intersection(typesHalvedFinal,json.fields(thisTokenDamageDealt,"json"))]
+[h:thisEffectDamageTypes = json.unique(json.path.read(thisTokenDamageDealt,"[*]['DamageType']"))]
+[h,if(thisTokenDamageDealt!=""): typesHalvedFinal = json.intersection(typesHalvedFinal,thisEffectDamageTypes)]
 
-[h,foreach(damageType,json.fields(thisTokenDamageDealt,"json")): thisTokenDamageDealt = if(json.contains(typesHalvedFinal,damageType) && isDamageHalved!=0,json.set(thisTokenDamageDealt,damageType,floor(json.get(thisTokenDamageDealt,damageType)*if(isDamageHalved==1,(1/2),0))),thisTokenDamageDealt)]
+[h,foreach(damageInstance,thisTokenDamageDealt),CODE:{
+    [h:thisTypeModifiedTest = (json.contains(typesHalvedFinal,json.get(damageInstance,"DamageType")) && isDamageHalved!=0)]
+    [h:modificationImmunityTest = (json.get(damageInstance,"NoModification")==1)]
+    [h:modifyThisInstance = and(!modificationImmunityTest,thisTypeModifiedTest)]
+    [h,if(modifyThisInstance): thisTokenDamageDealt = json.path.set(thisTokenDamageDealt,"["+roll.count+"]['Modifier']",json.path.read(thisTokenDamageDealt,"["+roll.count+"]['Modifier']")*if(isDamageHalved==1,(1/2),0))]
+}]
 
 [h:ConditionsResistedInfo = json.get(DCData,"ConditionsResisted")]
 [h:conditionsResistedInclusive = json.get(ConditionsResistedInfo,"Inclusive")]
@@ -48,7 +54,7 @@
 [h,foreach(damageType,targetSpecificDamageTypes),CODE:{
     [h:allTargetsDamage = json.get(thisTokenDamageDealt,damageType)]
     [h,if(allTargetsDamage==""):
-    thisTokenDamageDealt = json.path.put(thisTokenDamageDealt,"['Damage']",damageType,json.get(targetSpecificDamage,damageType));
+        thisTokenDamageDealt = json.path.put(thisTokenDamageDealt,"['Damage']",damageType,json.get(targetSpecificDamage,damageType));
         thisTokenDamageDealt = json.path.set(thisTokenDamageDealt,"['Damage']['"+damageType+"']",json.get(targetSpecificDamage,damageType)+allTargetsDamage)
     ]			
 }]

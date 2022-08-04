@@ -11,4 +11,12 @@
 
 [h:currentFeatureDuration = if(miDurationSetFinal==-1,(pm.DurationNum+miDurationBonusFinal),max(miDurationSetFinal,(pm.DurationNum+miDurationBonusFinal)))]
 
-[h:abilityTable = json.append(abilityTable,(json.set("","ShowIfCondensed",0,"Header","Duration","FalseHeader","","FullContents","","RulesContents",currentFeatureDuration+" "+pm.DurationUnits+if(currentFeatureDuration!=1,"s",""),"RollContents","","DisplayOrder","['Rules','Roll','Full']","Value",currentFeatureDuration,"Units",currentFeatureDuration)))]
+[h:abilityTable = json.append(abilityTable,(json.set("","ShowIfCondensed",0,"Header","Duration","FalseHeader","","FullContents","","RulesContents",currentFeatureDuration+" "+currentFeatureDurationUnits+if(currentFeatureDuration!=1,"s",""),"RollContents","","DisplayOrder","['Rules','Roll','Full']")))]
+
+[h:return(!IsTooltip)]
+	
+[h:effectsToMerge = json.append("",json.set("","Duration",json.set("","Value",currentFeatureDuration,"Units",currentFeatureDurationUnits)))]
+
+[h,MACRO("Build Effect@Lib:pm.a5e.Core"): json.set("","CurrentEffects",pm.a5e.EffectData,"ToMerge",effectsToMerge,"BaseEffect",pm.a5e.BaseEffectData,"WhichEffect",whichEffect)]
+
+[h:pm.a5e.EffectData = macro.return]

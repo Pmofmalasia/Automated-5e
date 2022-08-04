@@ -8,7 +8,7 @@
 	[h,switch(pm.ChoiceMethod),CODE:
 		case "NaturalWeapon": {
 			[h:WeaponData = json.get(WeaponAttackData,"WeaponData")]
-			[h:weaponAttackTableLine = "Table",json.set("",
+			[h:weaponAttackTableLine = json.set("",
 				"ShowIfCondensed",1,
 				"Header",json.get(WeaponData,"Name")+" Attack",
 				"FalseHeader","",
@@ -22,7 +22,7 @@
 			
 		};
 		case "AnyValidEquipped": {
-			[h:weaponAttackTableLine = "Table",json.set("",
+			[h:weaponAttackTableLine = json.set("",
 				"ShowIfCondensed",1,
 				"Header","Weapon Options",
 				"FalseHeader","",
@@ -67,7 +67,7 @@
 	[h,macro("Attack@Lib:pm.a5e.Core"): AttackData]
 	[h:WeaponAttackInfo = macro.return]
 
-	[h:abilityTable = json.append(abilityTable,json.get(WeaponAttackInfo,"Table"))]
+	[h:abilityTable = json.merge(abilityTable,json.get(WeaponAttackInfo,"Table"))]
 	[h:effectsToMerge = json.get(WeaponAttackInfo,"Effect")]
 
 	[h,MACRO("Build Effect@Lib:pm.a5e.Core"): json.set("","CurrentEffects",pm.a5e.EffectData,"ToMerge",effectsToMerge,"BaseEffect",pm.a5e.BaseEffectData,"WhichEffect",whichEffect)]

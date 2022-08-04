@@ -59,7 +59,7 @@
 
 [h,if(cn.HasTiers): cn.Final = json.set(cn.Final,"HasTiers",cn.HasTiers)]
 
-[h:"<!-- Currently unable to add non-base conditions. May want to add later, but don't really care to for now since not used in official 5e content afaik. Would also need to restructure how associated conditions are stored so may want to at least do that part now.... -->"]
+[h:"<!-- Currently unable to add non-base conditions. May want to add later, but don't really care to for now since not used in official 5e content afaik. MAYBE might want to add 'movement' conditions (which I made up.) -->"]
 [h,if(cn.HasAssociatedConditions),CODE:{
 	[h:associatedCondInput = " junkVar | ----------------------------------- Associated Conditions ----------------------------------- | | LABEL | SPAN=TRUE "]
 	[h,foreach(baseCondition,pm.a5e.GetBaseConditions()): associatedCondInput = listAppend(associatedCondInput," choice."+json.get(baseCondition,"Name")+" |  | "+json.get(baseCondition,"DisplayName")+" | CHECK ","##")]

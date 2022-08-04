@@ -27,7 +27,9 @@
 	"SizeMax",pm.a5e.GetSizeChange(getSize(ParentToken),1,1)
 )]
 
-[h:gr.Target = pm.a5e.TargetCreatureFiltering(gr.TargetingData,gr.TargetingFilters)]
+[h:gr.TargetOptions = pm.a5e.TargetCreatureFiltering(gr.TargetingData,gr.TargetingFilters)]
+[h:gr.Target = pm.a5e.TargetCreatureTargeting(gr.TargetOptions,1)]
+
 [h:gr.thisEffect = json.set(gr.thisEffect,"Targets",gr.Target)]
 
 [h:"<!-- Needs EndInfo: 

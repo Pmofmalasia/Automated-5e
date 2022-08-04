@@ -3,8 +3,15 @@
 [h:pm.TargetNum = json.get(arg(0),"Number")]
 [h:pm.TargetAllegiance = if(json.get(arg(0),"Allegiance")=="",json.set("","Any",1),json.get(arg(0),"Allegiance"))]
 [h:pm.TargetOrigin = json.get(arg(0),"Origin")]
-[h:pm.RangeNum = json.get(json.get(arg(0),"Range"),"Value")]
-[h:pm.RangeUnits = pm.StandardRange(json.get(json.get(arg(0),"Range"),"Units"))]
+
+[h:rangeData = json.get(arg(0),"Range")]
+[h,if(json.type(rangeData)=="OBJECT"),CODE:{
+	[h:pm.RangeNum = json.get(json.get(arg(0),"Range"),"Value")]
+	[h:pm.RangeUnits = pm.StandardRange(json.get(json.get(arg(0),"Range"),"Units"))]
+};{
+	[h:pm.RangeNum = ""]
+	[h:pm.RangeUnits = ""]
+}]
 [h,switch(pm.RangeNum):
 	case "Unlimited": pm.RangeNumFinal = "Unlimited";
 	case "": pm.RangeNumFinal = "";
@@ -47,7 +54,7 @@
 	case "Unlimited": pm.TargetsInRange = getTokens("json");
 	default: pm.TargetsInRange = getTokens("json",json.set("","range",json.set("","token",pm.TargetOrigin,"upto",pm.RangeNumFinal,"distancePerCell",1)))
 ]
-[h:"<!-- Return self without going through targeting input ONLY if the ability is ALWAYS incapable of targeting anything other than self. -->"]
+
 [h,if(json.get(pm.TargetAllegiance,"Self")==1 || json.get(pm.TargetAllegiance,"Any")==1),CODE:{
 	[h:pm.TargetSelf = 1]
 	[h:pm.TargetsInRange = json.append(pm.TargetsInRange,ParentToken)]
@@ -71,12 +78,6 @@
 		[h,if(json.get(pm.TargetAllegiance,"Foe")==1): pm.AllegianceTest = if(and(getProperty("whichTeam",target) != getProperty("whichTeam"),getProperty("whichTeam",target) != 0),1,pm.AllegianceTest)]
 	}]
 	
-	[h,switch(pm.TargetSelf):
-		case 1: pm.SelfTest = (target==currentToken());
-		case 0: pm.SelfTest = (target!=currentToken());
-		default: pm.SelfTest = 1
-	]
-	
 	[h,if(json.type(pm.TargetSize) == "UNKNOWN"):
 		pm.SizeTest = if(or(pm.TargetSize=="",pm.TargetSize==getSize(target)),1,0);
 		pm.SizeTest = json.contains(pm.SizeTest,getSize(target))
@@ -92,7 +93,6 @@
 	
 	[h,if(json.type(pm.TargetTypeInclusive) == "UNKNOWN"):
 		pm.TypeTest = if(or(pm.TargetTypeInclusive==getProperty("CreatureType",target),pm.TargetTypeInclusive=="Any",pm.TargetTypeInclusive==""),1,0);
-		pm.TypeTest = if(json.contains(pm.TargetTypeInclusive,getProperty("CreatureType",target)),1,0)
 	]
 	
 	[h,if(json.type(pm.TargetSubtypeInclusive) == "UNKNOWN"):
@@ -112,17 +112,7 @@
 	 
 	[h:pm.IntTest = if(and(json.get(getProperty("Attributes",target),"Intelligence")>pm.TargetIntMin,json.get(getProperty("Attributes",target),"Intelligence")<pm.TargetIntMax),1,0)]
    
-	[h:pm.ValidTargets = if(and(pm.AllegianceTest,pm.TypeTest,pm.SubtypeTest,pm.IntTest,pm.SelfTest,pm.SizeTest),json.append(pm.ValidTargets,target),pm.ValidTargets)]
+	[h:pm.ValidTargets = if(and(pm.AllegianceTest,pm.TypeTest,pm.SubtypeTest,pm.IntTest,pm.SizeTest),json.append(pm.ValidTargets,target),pm.ValidTargets)]
 }]
 
-[h,switch(getProperty("TargetingStyle")),CODE:
-	case "Impersonate":{
-		[h:TargetChoice = pm.a5e.ImpersonatedTargeting(pm.ValidTargets)]
-	};
-	case "Input":{
-		[h:TargetChoice = pm.a5e.InputTargeting(json.set("","ValidTargets",pm.ValidTargets,"SingleTarget",if(pm.TargetNum==1,1,0)))]
-	};
-	default:{[h:TargetChoice = "[]"]}
-]
-
-[h:macro.return = TargetChoice]
+[h:macro.return = pm.ValidTargets]

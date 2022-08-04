@@ -11,7 +11,14 @@
 [h:pm.a5e.EffectData = "[]"]
 [h:pm.a5e.OverarchingContext = "Damage"]
 
-[h:hp.TypesDealt = json.intersection(json.append(pm.GetDamageTypes("Name","json"),"None - Modify Manually","Healing","TempHP"),json.fields(hp.DamageDealt,"json"))]
+[h:"<!-- Temporary adjustment to data from the Change HP Input macro -->"]
+[h:tempDamageDealt = ""]
+[h,if(json.type(hp.DamageDealt)=="OBJECT"),CODE:{
+	[h,foreach(damageType,json.fields(hp.DamageDealt)): tempDamageDealt = json.append(tempDamageDealt,json.set(json.get(hp.DamageDealt,damageType),"DamageType",damageType))]
+	[h:hp.DamageDealt = tempDamageDealt]
+};{}]
+
+[h:hp.TypesDealt = json.intersection(json.append(pm.GetDamageTypes("Name","json"),"None - Modify Manually","Healing","TempHP"),json.unique(json.path.read(hp.DamageDealt,"[*]['DamageType']")))]
 [h:hp.DmgModData = pm.a5e.DamageModCalc(hp.Data)]
 
 [h:hp.FinalDamageDealt = json.set("","Healing",0)]
@@ -28,9 +35,12 @@
 		
 		[h:hp.ModType = if(hp.AbsorbTest,"Absorption",if(hp.ImmunTest,"Immunity",if(hp.ResTest,if(hp.VulnTest,"","Resistance"),if(hp.VulnTest,"Vulnerability",""))))]
 		
-		[h:tempDamageDealt = json.get(hp.DamageDealt,damagetype)]
-		[h:tempDamageDealt = tempDamageDealt - hp.DRTest]
-	
+		[h:thisDamageTypeInfo = json.path.read(hp.DamageDealt,"[*][?(@.DamageType=='"+damagetype+"')]")]
+
+		[h:tempDamageDealt = 0]
+		[h,foreach(damageInstance,thisDamageTypeInfo): tempDamageDealt = tempDamageDealt + if(json.get(damageInstance,"NoModification")==0,json.get(damageInstance,"Total")*json.get(damageInstance,"Modifier"),0)]
+		[h:tempDamageDealt = floor(tempDamageDealt) - hp.DRTest]
+
 		[h:tempDamageType = damagetype]
 		[h,switch(hp.ModType):
 			case "Absorption": tempDamageType = "Healing";
@@ -40,9 +50,16 @@
 			default: tempDamageDealt = tempDamageDealt
 		]
 		
+		[h:noModsDamageDealt = math.arraySum(json.append(json.path.read(hp.DamageDealt,"[?(@.NoModification==1 && @.DamageType=='"+damagetype+"')]['Total']"),0))]
+	
 		[h,if(tempDamageType == "Healing"):
 			hp.FinalDamageDealt = json.set(hp.FinalDamageDealt,"Healing",json.get(hp.FinalDamageDealt,"Healing")+tempDamageDealt);
-			hp.FinalDamageDealt = if(tempDamageDealt>0,json.set(hp.FinalDamageDealt,tempDamageType,tempDamageDealt),hp.FinalDamageDealt)
+			tempDamageDealt = tempDamageDealt + noModsDamageDealt
+		]
+
+		[h,if(tempDamageType == "Healing" && noModsDamageDealt > 0):
+			hp.FinalDamageDealt = json.set(hp.FinalDamageDealt,damagetype,tempDamageDealt);
+			hp.FinalDamageDealt = if(and(tempDamageDealt>0,tempDamageType != "Healing"),json.set(hp.FinalDamageDealt,tempDamageType,tempDamageDealt),hp.FinalDamageDealt)
 		]
 		
 		[h:hp.DamageDealtString = if(tempDamageDealt==0,hp.DamageDealtString,listAppend(hp.DamageDealtString,tempDamageDealt," + "))]

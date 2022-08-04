@@ -42,8 +42,7 @@
 			"FullContents","",
 			"RulesContents",a5e.HitDieDisplay(),
 			"RollContents","",
-			"DisplayOrder","['Rules','Roll','Full']",
-			"Value",""
+			"DisplayOrder","['Rules','Roll','Full']"
 			))]
 	
 [h:SpellSlots=MaxSpellSlots]
@@ -55,8 +54,7 @@
 		"FullContents","",
 		"RulesContents",pm.SpellSlots(),
 		"RollContents","",
-		"DisplayOrder","['Rules','Roll','Full']",
-		"Value",""
+		"DisplayOrder","['Rules','Roll','Full']"
 		))]
 			
 [h:Concentration=""]
@@ -77,8 +75,7 @@
 	"FullContents",exhaustionMessage,
 	"RulesContents","",
 	"RollContents","",
-	"DisplayOrder","['Full','Rules','Roll']",
-	"Value",""
+	"DisplayOrder","['Full','Rules','Roll']"
 	))]
 [h:"<!-- For each ability in the abilities array, checks to see if there is a magic item bonus to the max resource, then checks to see if restored on a long rest and sets resource equal to max resource plus any magic item bonuses. Magic item bonuses do not currently work for abilities with multiple resources (therefore stored as objects). -->"]
 

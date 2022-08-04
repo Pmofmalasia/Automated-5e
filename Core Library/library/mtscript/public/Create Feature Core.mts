@@ -450,7 +450,8 @@
 	" ab.Conc | 0 | Affects concentration | CHECK ",
 	" ab.Death | 0 | Affects death saves | CHECK ",
 	" junkVar | --------------------------------------------------------------------------------------------------------------------- | 0 | LABEL | SPAN=TRUE ",
-	" ab.Attacks | 0 | Affects weapon attacks | CHECK ",
+	" ab.Attacks | 0 | <html><span title='Only choose affects weapon attacks or affects spells if there is an effect that is unique to one or both.'>Affects all attacks</span></html> | CHECK ",
+	" ab.WeaponAttacks | 0 | Affects weapon attacks | CHECK ",
 	" ab.Spells | 0 | Affects spells | CHECK ",
 	" ab.OtherAbilities | 0 | Affects other features | CHECK ",
 	" ab.OtherConditions | 0 | Affects conditions you have set on others | CHECK ",
@@ -745,21 +746,21 @@
 
 [h,if(ab.Attacks),CODE:{
 	[h:abort(input(
-		" junkVar | Choose aspects of weapon attacks affected | 0 | LABEL | SPAN=TRUE ",
+		" junkVar | Choose aspects of attacks affected | 0 | LABEL | SPAN=TRUE ",
 		" junkVar | ------------------------------------------------------------ | 0 | LABEL | SPAN=TRUE ",
-		" ab.AttackAdv | 0 | Grants (Dis)Advantage on Weapon Attacks | CHECK ",
-		" ab.AttackBonus | 0 | Grants Bonus to Weapon Attack Rolls | CHECK ",
-		" ab.AttackStat | 0 | Modifies Weapon Attack Primary Stat | CHECK ",
+		" ab.AttackAdv | 0 | Grants (Dis)Advantage on Attacks | CHECK ",
+		" ab.AttackBonus | 0 | Grants Bonus to Attack Rolls | CHECK ",
+		" ab.AttackStat | 0 | Modifies Attack Primary Stat | CHECK ",
 		" ab.AttackCritThresh | 0 | Affects Critical Hit Threshhold | CHECK ",
 		" junkVar | ------------------------------------------------------------ | 0 | LABEL | SPAN=TRUE ",
-		" ab.AttackNumber | 0 | <html><span title='Specifically for effects like Extra Attack - Does not apply to effects that let you make an attack as a bonus action, etc.'>Increases number of attacks granted by the Attack action</span></html> | CHECK ",
+		" ab.AttackNumber | 0 | <html><span title='Specifically for effects like Extra Attack - Does not apply to effects that let you make an attack as a bonus action, etc.'>Increases number of attacks granted at once</span></html> | CHECK ",
 		" ab.AttackProps | 0 | <html><span title='Making weapons count as magical, count as monk weapons, etc.'>Modifies properties of weapons</span></html> | CHECK ",	" ab.AttackOptions | 0 | <html><span title='e.g. Feat - Great Weapons Master'>Has an optional effect which must be chosen before attacking</span></html>| CHECK ",
 		" ab.AttackRange | 0 | Affects range or reach of the attack | CHECK ",
 		" junkVar | ------------------------------------------------------------ | 0 | LABEL | SPAN=TRUE ",
-		" ab.AttackDamage | 0 | <html><span title='Use for effects that grant a damage type based on the weapon used. For effects that grant damage independent of the weapons damage type, use effect after attack or after each attack (whichever is appropriate)'>Grants Flat Bonus to Weapon Damage</span></html> | CHECK ",
-		" ab.AttackRoll | 0 | <html><span title='Effects that change the value of the die, adding dice to the roll, using max damage, etc. (e.g. Great Weapon Fighting rerolling 1s and 2s, Barbarian - Brutal Critical, Tempest Cleric - Destructive Wrath)'>Modifies dice rolled for weapon damage</span></html> | CHECK ",
+		" ab.AttackDamage | 0 | <html><span title='Use for effects that grant a damage type based on the main damage type. For effects that grant damage independent of the main damage type, use effect after attack or after each attack (whichever is appropriate)'>Grants Flat Bonus to Damage</span></html> | CHECK ",
+		" ab.AttackRoll | 0 | <html><span title='Effects that change the value of the die, adding dice to the roll, using max damage, etc. (e.g. Great Weapon Fighting rerolling 1s and 2s, Barbarian - Brutal Critical, Tempest Cleric - Destructive Wrath)'>Modifies dice rolled for damage</span></html> | CHECK ",
 		" junkVar | ------------------------------------------------------------ | 0 | LABEL | SPAN=TRUE ",
-		" ab.AfterAttack | 0 | <html><span title='Catch-all for effects that operate independently of the weapon damage itself. Can deal damage, force saving throws, force a condition upon an enemy, just display a message, and more. (e.g. Cleric - Divine Strike, Assassin - Death Strike, Eldritch Knight - Eldritch Strike, and Tempest Cleric - Thunderbolt Strike, respectively)'>Effect occurs after attacks</span></html> | CHECK ",
+		" ab.AfterAttack | 0 | <html><span title='Catch-all for effects that operate independently of the attack itself. Can deal damage, force saving throws, force a condition upon an enemy, just display a message, and more. (e.g. Cleric - Divine Strike, Assassin - Death Strike, Eldritch Knight - Eldritch Strike, and Tempest Cleric - Thunderbolt Strike, respectively)'>Effect occurs after attacks</span></html> | CHECK ",
 		" ab.AfterEachAttack | 0 | <html><span title='Same as above, but triggers on every attack instead of once per turn.'>Effect occurs after every attack</span></html> | CHECK ",
 		" ab.AttackCrit | 0 | <html><span title='Same as above, but triggers only on critical hits.'>Effect occurs after critical hits</span></html> | CHECK "
 	))]
@@ -776,7 +777,41 @@
 	[h,if(ab.AttackRoll): ab.Final = json.set(ab.Final,"CallAttackRoll",ab.AttackRoll)]
 	[h,if(ab.AfterAttack): ab.Final = json.set(ab.Final,"CallAfterAttack",ab.AfterAttack)]
 	[h,if(ab.AfterEachAttack): ab.Final = json.set(ab.Final,"CallAfterEachAttack",ab.AfterEachAttack)]
-	[h,if(ab.AttackCrit): ab.Final = json.set(ab.Final,"CallAttackCrit",ab.AttackCrit)]
+};{}]
+
+[h,if(ab.WeaponAttacks),CODE:{
+	[h:abort(input(
+		" junkVar | Choose aspects of weapon attacks affected | 0 | LABEL | SPAN=TRUE ",
+		" junkVar | ------------------------------------------------------------ | 0 | LABEL | SPAN=TRUE ",
+		" ab.WeaponAttackAdv | 0 | Grants (Dis)Advantage on Weapon Attacks | CHECK ",
+		" ab.WeaponAttackBonus | 0 | Grants Bonus to Weapon Attack Rolls | CHECK ",
+		" ab.WeaponAttackStat | 0 | Modifies Weapon Attack Primary Stat | CHECK ",
+		" ab.WeaponAttackCritThresh | 0 | Affects Critical Hit Threshhold | CHECK ",
+		" junkVar | ------------------------------------------------------------ | 0 | LABEL | SPAN=TRUE ",
+		" ab.WeaponAttackNumber | 0 | <html><span title='Specifically for effects like Extra Attack - Does not apply to effects that let you make an attack as a bonus action, etc.'>Increases number of attacks granted by the Attack action</span></html> | CHECK ",
+		" ab.WeaponAttackProps | 0 | <html><span title='Making weapons count as magical, count as monk weapons, etc.'>Modifies properties of weapons</span></html> | CHECK ",
+		" ab.WeaponAttackOptions | 0 | <html><span title='e.g. Feat - Great Weapons Master'>Has an optional effect which must be chosen before attacking</span></html>| CHECK ",
+		" ab.WeaponAttackRange | 0 | Affects range or reach of the attack | CHECK ",
+		" junkVar | ------------------------------------------------------------ | 0 | LABEL | SPAN=TRUE ",
+		" ab.WeaponAttackDamage | 0 | <html><span title='Use for effects that grant a damage type based on the weapon used. For effects that grant damage independent of the weapons damage type, use effect after attack or after each attack (whichever is appropriate)'>Grants Flat Bonus to Weapon Damage</span></html> | CHECK ",
+		" ab.WeaponAttackRoll | 0 | <html><span title='Effects that change the value of the die, adding dice to the roll, using max damage, etc. (e.g. Great Weapon Fighting rerolling 1s and 2s, Barbarian - Brutal Critical, Tempest Cleric - Destructive Wrath)'>Modifies dice rolled for weapon damage</span></html> | CHECK ",
+		" junkVar | ------------------------------------------------------------ | 0 | LABEL | SPAN=TRUE ",
+		" ab.AfterWeaponAttack | 0 | <html><span title='Catch-all for effects that operate independently of the weapon damage itself. Can deal damage, force saving throws, force a condition upon an enemy, just display a message, and more. (e.g. Cleric - Divine Strike, Assassin - Death Strike, Eldritch Knight - Eldritch Strike, and Tempest Cleric - Thunderbolt Strike, respectively)'>Effect occurs after attacks</span></html> | CHECK ",
+		" ab.AfterEachWeaponAttack | 0 | <html><span title='Same as above, but triggers on every attack instead of once per turn.'>Effect occurs after every attack</span></html> | CHECK "
+	))]
+
+	[h,if(ab.WeaponAttackAdv): ab.Final = json.set(ab.Final,"CallWeaponAttackAdv",ab.WeaponAttackAdv)]
+	[h,if(ab.WeaponAttackBonus): ab.Final = json.set(ab.Final,"CallWeaponAttackBonus",ab.WeaponAttackBonus)]
+	[h,if(ab.WeaponAttackStat): ab.Final = json.set(ab.Final,"CallWeaponAttackStat",ab.WeaponAttackStat)]
+	[h,if(ab.WeaponAttackCritThresh): ab.Final = json.set(ab.Final,"CallWeaponAttackCritThresh",ab.WeaponAttackCritThresh)]
+	[h,if(ab.WeaponAttackNumber): ab.Final = json.set(ab.Final,"CallWeaponAttackNumber",ab.WeaponAttackNumber)]
+	[h,if(ab.WeaponAttackProps): ab.Final = json.set(ab.Final,"CallWeaponAttackProps",ab.WeaponAttackProps)]
+	[h,if(ab.WeaponAttackOptions): ab.Final = json.set(ab.Final,"CallWeaponAttackOptions",ab.WeaponAttackOptions)]
+	[h,if(ab.WeaponAttackRange): ab.Final = json.set(ab.Final,"CallWeaponAttackRange",ab.WeaponAttackRange)]
+	[h,if(ab.WeaponAttackDamage): ab.Final = json.set(ab.Final,"CallWeaponAttackDamage",ab.WeaponAttackDamage)]
+	[h,if(ab.WeaponAttackRoll): ab.Final = json.set(ab.Final,"CallWeaponAttackRoll",ab.WeaponAttackRoll)]
+	[h,if(ab.AfterWeaponAttack): ab.Final = json.set(ab.Final,"CallAfterWeaponAttack",ab.AfterWeaponAttack)]
+	[h,if(ab.AfterEachWeaponAttack): ab.Final = json.set(ab.Final,"CallAfterEachWeaponAttack",ab.AfterEachWeaponAttack)]
 };{}]
 
 [h,if(ab.Spells),CODE:{

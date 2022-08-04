@@ -3,8 +3,8 @@
 [h:pm.ChoiceMethod = if(json.get(arg(1),"Choice")=="","All",json.get(arg(1),"Choice"))]
 
 [h:pm.IsToggle = json.get(arg(2),"Toggle")]
-[h:pm.Duration = json.get(arg(2),"Duration")]
-[h:pm.DurationUnits = json.get(arg(2),"DurationUnits")]
+[h:pm.Duration = json.get(arg(2),"Value")]
+[h:pm.DurationUnits = json.get(arg(2),"Units")]
 [h:pm.AdvancePoint = json.get(arg(2),"AdvancePoint")]
 [h:pm.AuraRange = if(json.get(arg(2),"AuraRange")=="",0,json.get(arg(2),"AuraRange"))]
 [h:pm.AuraUnits = json.get(arg(2),"AuraUnits")]
@@ -85,7 +85,7 @@
 			[h:abilityEffect=""]
 			[h:pm.a5e.EffectData = json.append("",json.set("","Class",currentFeatureClass))]
 			[h:abilityClass = currentFeatureClass]
-			[h:pm.AbilityFormatCall()]
+			[h:pm.a5e.FeatureFormatCall()]
 			[h:abort(0)]
 		}
 	]

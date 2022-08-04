@@ -10,7 +10,7 @@
 [h:HelpRange = 5]
 [h:HelpRangeUnits = "feet"]
 
-[h:HelpTargets = pm.a5e.TargetCreatureFiltering(
+[h:HelpTargetOptions = pm.a5e.TargetCreatureFiltering(
 	json.set("",
 		"Number",HelpTargetNum,
 		"Category","Creature",
@@ -21,6 +21,7 @@
 	),
 	"{}"
 )]
+[h:HelpTargets = pm.a5e.TargetCreatureTargeting(HelpTargetOptions,HelpTargetNum)]
 
 [h:HelpConditionInfo = pm.a5e.GetSpecificCondition("Help","Condition")]
 [h:HelpDuration = 1]

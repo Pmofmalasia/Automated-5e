@@ -2,7 +2,7 @@
 [h:pm.SingleTarget = json.get(arg(0),"SingleTarget")]
 
 [h,if(pm.SingleTarget),CODE:{
-    [h:pm.TargetOptions = ""]
+    [h:pm.TargetOptions = "[]"]
     [h,foreach(target,pm.ValidTargets),CODE:{
         [h:pm.TargetOptions = json.append(pm.TargetOptions,getName(target)+" "+getTokenImage("",target))]
     }]

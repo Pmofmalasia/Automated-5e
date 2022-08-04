@@ -1,4 +1,5 @@
 [h:pm.SpellData = json.set(arg(1),"MonsterCast",0,"NeedsBorder",0)]
+[h:abilityEffect = arg(2)]
 [h:pm.a5e.FeatureComponentStdVars(arg(0))]
 
 [h,MACRO(json.get(pm.SpellData,"SpellName")+" ("+json.get(pm.SpellData,"sLevel")+")@Lib:Complete Spellbook"): pm.SpellData]

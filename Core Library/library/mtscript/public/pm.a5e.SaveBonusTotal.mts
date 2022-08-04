@@ -1,17 +1,17 @@
-[h:sv.Data = arg(0)]
+[h:d20Data = arg(0)]
 
-[h:CurrentSaveDisplay = json.get(sv.Data,"Save")]
+[h:CurrentSaveDisplay = json.get(d20Data,"Save")]
 [h:CurrentSave = pm.RemoveSpecial(CurrentSaveDisplay)]
 
-[h:sv.Type = json.get(sv.Data,"Type")]
-[h,SWITCH(sv.Type):
+[h:d20Type = json.get(d20Data,"Type")]
+[h,SWITCH(d20Type):
 	case "Save": PrimeStat = CurrentSave;
 	case "Concentration": PrimeStat = "Constitution";
 	case "Death": PrimeStat = "None";
 	default: PrimeStat = "None"
 ]
 
-[h,SWITCH(sv.Type):
+[h,SWITCH(d20Type):
 	case "Save": ProfType = json.get(Saves,CurrentSave);
 	case "Concentration": ProfType = json.get(Saves,"Constitution");
 	case "Death": ProfType = 0;
@@ -29,7 +29,7 @@
 ]
 
 [h,if(PrimeStat=="None"): AtrBonus = 0; AtrBonus = json.get(AtrMods,PrimeStat)]
-[h:MiscBonus = if(json.get(sv.Data,"Bonus")=="",0,json.get(sv.Data,"Bonus"))]
-[h:MiscBonusStr = json.get(sv.Data,"Bonus")]
+[h:MiscBonus = if(json.get(d20Data,"Bonus")=="",0,json.get(d20Data,"Bonus"))]
+[h:MiscBonusStr = json.get(d20Data,"Bonus")]
 [h:pm.PassiveFunction("SaveBonus")]
 [h:TotalBonus = MiscBonus + ProfBonus + AtrBonus]

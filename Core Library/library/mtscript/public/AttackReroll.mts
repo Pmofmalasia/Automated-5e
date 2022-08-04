@@ -26,6 +26,3 @@
 
 [h:broadcastAsToken(output.GM,"gm")]
 [h:broadcastAsToken(output.PC,"not-gm")]
-
-[h:sendToResolveEffectsLink = macroLinkText("Resolve Effects@Lib:pm.a5e.Core","gm",json.get(pm.a5e.EffectData,0),ParentToken)]
-[h:broadcast("<a href='"+sendToResolveEffectsLink+"'>Click here to apply the effects to all targets</a>","gm")]

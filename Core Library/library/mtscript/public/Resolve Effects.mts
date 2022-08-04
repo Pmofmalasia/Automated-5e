@@ -23,7 +23,6 @@
 [h,foreach(conditionSet,effConditionInfo),CODE:{
     [h,foreach(tempCondition,json.get(conditionSet,"Conditions")): effAllConditionIdentifiers = json.append(effAllConditionIdentifiers,json.set("","Name",json.get(tempCondition,"Name"),"Class",json.get(tempCondition,"Class"),"Subclass",json.get(tempCondition,"Subclass")))]
 }]
-
 [h,if(effSaveDCData==""): effSavesMadeData = "{}"; effSavesMadeData = if(json.get(effSaveDCData,"SavesMade")=="","{}",json.get(effSaveDCData,"SavesMade"))]
 [h,if(effCheckDCData==""): effChecksMadeData = "{}"; effChecksMadeData = if(json.get(effCheckDCData,"ChecksMade")=="","{}",json.get(effCheckDCData,"ChecksMade"))]
 
@@ -40,7 +39,6 @@
 	[h:thisTokenConditionInfo = effConditionInfo]
     [h:thisTokenConditionsApplied = effAllConditionIdentifiers]
 	[h:switchToken(targetToken)]
-	
 	[h,if(json.length(effTargets)>1):
 		abilityTable = json.append(abilityTable,json.set("",
 		"ShowIfCondensed",1,
@@ -84,7 +82,7 @@
 	[h:"<!-- Wish this could be an if/else but CODE block limits say no -->"]
 	[h,switch((thisTokenSaveDCData!="")+""+(needsToSave)),CODE:
 		case "11":{
-			[h,MACRO("Save@Lib:pm.a5e.Core"): json.set("","Save",json.get(thisTokenSaveDCData,"SaveType"),"Type","Save","ParentToken",targetToken)]
+			[h,MACRO("Save@Lib:pm.a5e.Core"): json.set("","Save",json.get(thisTokenSaveDCData,"SaveType"),"Type","Save","ParentToken",targetToken,"ID",effID)]
 			[h:SaveResult = macro.return]
 			[h:effSavesMadeData = json.set(effSavesMadeData,targetToken,SaveResult)]
 			[h:abilityTable = json.merge(abilityTable,json.get(SaveResult,"Table"))]
@@ -120,16 +118,22 @@
 			
 			[h:finalCheckDCData = json.get(effCheckDCType,checkChoice)]
 			
-			[h,MACRO("Check@Lib:pm.a5e.Core"): json.set(finalCheckDCData,"ParentToken",targetToken)]
+			[h,MACRO("Check@Lib:pm.a5e.Core"): json.set(finalCheckDCData,"ParentToken",targetToken,"ID",effID)]
 			[h:CheckResult = macro.return]
 			[h:effChecksMadeData = json.set(effChecksMadeData,targetToken,CheckResult)]
 			[h:abilityTable = json.merge(abilityTable,json.get(CheckResult,"Table"))]
 			[h:needsFurtherResolution = 1]
 		};
 		case "10":{
+			[h:"<!-- Separate storage format for contested checks is so that it can be recognized on the effect filtering side of things as a contested check -->"]
 			[h:CheckResult = json.get(effChecksMadeData,targetToken)]
-			[h:passedCheck = json.get(CheckResult,"Value")>=json.get(thisTokenCheckDCData,"DC")]
-			[h,if(passedCheck==1): pm.a5e.ResolveDC(json.set("","DCData",thisTokenCheckDCData))]
+			[h:ContestedCheckTest = json.type(json.get(thisTokenCheckDCData,"DC")) == "OBJECT"]
+			[h,if(ContestedCheckTest):
+				DCValue = json.get(json.get(thisTokenCheckDCData,"DC"),"Value");
+				DCValue = json.get(thisTokenCheckDCData,"DC")
+			]
+			
+			[h,if(json.get(CheckResult,"Value") >= DCValue): pm.a5e.ResolveDC(json.set("","DCData",thisTokenCheckDCData))]
 			[h:abilityTable = json.merge(abilityTable,json.get(CheckResult,"Table"))]
 		};
 		default:{}
@@ -160,7 +164,7 @@
 
 [h,if(!json.isEmpty(remainingTargetsList)),CODE:{
 	[h:effFull = json.set(effFull,"Targets",remainingTargetsList)]
-	
+
 [h:"<!-- This is awful. I am sorry. I blame CODE block limits. -->"]
 	[h,if(json.get(effToResolve,"SaveDC")!=""): effFull = json.set(effFull,"ToResolve",json.set(json.get(effFull,"ToResolve"),"SaveDC",json.set(json.get(json.get(effFull,"ToResolve"),"SaveDC"),"SavesMade",effSavesMadeData)))]
 	[h,if(json.get(effToResolve,"CheckDC")!=""): effFull = json.set(effFull,"ToResolve",json.set(json.get(effFull,"ToResolve"),"CheckDC",json.set(json.get(json.get(effFull,"ToResolve"),"CheckDC"),"ChecksMade",effChecksMadeData)))]

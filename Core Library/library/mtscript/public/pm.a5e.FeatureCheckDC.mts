@@ -88,7 +88,9 @@
 			"DisplayOrder","['Full','Rules','Roll']"
 		)]
 		[h:checkDCTable = json.set(checkDCTable,0,tableLinetoEdit)]
-	};{}]
+	};{
+		[h:finalDCInfo = json.remove(CheckInfo,"Table")]
+	}]
 };{
 	[h:checkDCTable = json.append("",json.set("",
 		"ShowIfCondensed",1,
@@ -99,6 +101,8 @@
 		"RollContents","",
 		"DisplayOrder","['Full','Rules','Roll']"
 	))]
+
+	[h:finalDCInfo = json.set("","Value",pm.DCFinal)]
 }]
 
 [h:CheckDataFinal = json.set("",

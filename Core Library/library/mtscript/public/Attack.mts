@@ -44,6 +44,7 @@
 [h:wa.ProfTest=1]
 
 [h:pm.PassiveFunction("AttackProps")]
+[h:pm.PassiveFunction("WeaponAttackProps")]
 
 [h:VersatileTest=if(json.get(wa.Props,"Versatile")>0,if(json.get(Weapon,OtherHand)==2,if(json.get(Shield,0)==1,1,0),0),0)]
 [h,if(VersatileTest==1),code:{
@@ -62,6 +63,7 @@
 [h:PrimeStat=if(json.get(wa.Props,"ChaMod")>0,"Charisma",PrimeStat)]
 
 [h:pm.PassiveFunction("AttackStat")]
+[h:pm.PassiveFunction("WeaponAttackStat")]
 
 [h:wa.PrimeStatBonus = json.get(AtrMods,PrimeStat)]
 
@@ -69,6 +71,7 @@
 [h:wa.DmgDie2Size=number(substring(wa.DmgDie2,indexOf(wa.DmgDie2,"d")+1))]
 
 [h:pm.PassiveFunction("AttackCritThresh")]
+[h:pm.PassiveFunction("WeaponAttackCritThresh")]
 
 [h:wa.BrutalCrit = 0]
 [h:wa.FinalCritRange = 20 - wa.CritRange]
@@ -77,7 +80,7 @@
 [h:wa.DmgDie2Placehold = if(wa.DmgDie2=="0","0d1",wa.DmgDie2)]
 [h:CritSecDmgDie=(wa.FinalCritMultiplier*number(substring(wa.DmgDie2Placehold,0,indexOf(wa.DmgDie2Placehold,"d"))))]
 
-[h:wa.DmgDieNum = number(substring(wa.DmgDie,0,indexOf(wa.DmgDie,"d"))))]
+[h:wa.DmgDieNum = number(substring(wa.DmgDie,0,indexOf(wa.DmgDie,"d")))]
 [h:wa.DmgDie2Num = number(substring(wa.DmgDie2,0,1))]
 
 [h,if(AttackNum<0),CODE:{
@@ -85,6 +88,7 @@
 };{
 	[h:AttackCount = AttackNum]
 	[h:pm.PassiveFunction("AttackNum")]
+	[h:pm.PassiveFunction("WeaponAttackNum")]
 }]
 
 [h:CritTest=0]
@@ -106,6 +110,7 @@
 	[h,SWITCH(json.get(wa.Data,"Advantage")+""+json.get(wa.Data,"ForcedAdvantage")),CODE:
 		case "-11": {
 			[h:pm.PassiveFunction("AttackAdv")]
+			[h:pm.PassiveFunction("WeaponAttackAdv")]
 			[h:wa.AdvDis = -1]
 			[h:d20RolledNum = d20RolledNum + 1]
 			};
@@ -113,6 +118,7 @@
 			[h:wa.Adv = 0]
 			[h:wa.Dis = 1]
 			[h:pm.PassiveFunction("AttackAdv")]
+			[h:pm.PassiveFunction("WeaponAttackAdv")]
 			[h:wa.AdvDis = if(or(and(wa.Dis == 0,wa.Adv == 0),and(wa.Dis !=0,wa.Adv != 0)),0,if(wa.Dis == 0,1,-1))]
 			[h:d20RolledNum = d20RolledNum + 1]
 			};
@@ -123,10 +129,12 @@
 			[h:wa.Adv = 0]
 			[h:wa.Dis = 0]
 			[h:pm.PassiveFunction("AttackAdv")]
+			[h:pm.PassiveFunction("WeaponAttackAdv")]
 			[h:wa.AdvDis = if(or(and(wa.Dis == 0,wa.Adv == 0),and(wa.Dis !=0,wa.Adv != 0)),0,if(wa.Dis == 0,1,-1))]
 			};
 		case "11": {
 			[h:pm.PassiveFunction("AttackAdv")]
+			[h:pm.PassiveFunction("WeaponAttackAdv")]
 			[h:wa.AdvDis = 1]
 			[h:d20RolledNum = d20RolledNum + 1]
 			};
@@ -134,6 +142,7 @@
 			[h:wa.Adv = 1]
 			[h:wa.Dis = 0]
 			[h:pm.PassiveFunction("AttackAdv")]
+			[h:pm.PassiveFunction("WeaponAttackAdv")]
 			[h:wa.AdvDis = if(or(and(wa.Dis == 0,wa.Adv == 0),and(wa.Dis !=0,wa.Adv != 0)),0,if(wa.Dis == 0,1,-1))]
 			[h:d20RolledNum = d20RolledNum + 1]
 			};
@@ -141,6 +150,7 @@
 			[h:wa.Adv = 0]
 			[h:wa.Dis = 0]
 			[h:pm.PassiveFunction("AttackAdv")]
+			[h:pm.PassiveFunction("WeaponAttackAdv")]
 			[h:wa.AdvDis = if(or(and(wa.Dis == 0,wa.Adv == 0),and(wa.Dis !=0,wa.Adv != 0)),0,if(wa.Dis == 0,1,-1))]
 			[h:d20RolledNum = if(wa.AdvDis!=0,d20RolledNum + 1,d20RolledNum)]
 		}
@@ -172,6 +182,7 @@
 	[h:wa.ToHitRulesStr = wa.ToHitRulesStr+" + "+substring(PrimeStat,0,3)+if(wa.ProfTest," + Prof","")+if(wa.MagicBonus==0,""," + Magic")]
 	
 	[h:pm.PassiveFunction("AttackBonus")]
+	[h:pm.PassiveFunction("WeaponAttackBonus")]
 	
 	[h:AllAttacksToHit=json.append(AllAttacksToHit,json.set("","d20Rolls",thisAttackd20Rolls,"d20Used",effectiveRoll,"Advantage",wa.AdvDis,"ToHit",wa.ToHit,"ToHitStr",wa.ToHitStr,"RulesStr",wa.ToHitRulesStr,"CritTest",CritTestEach,"CritFailTest",CritFailTest))]
 
@@ -215,7 +226,8 @@
 		[h:wa.AddedFlatDamage2 = "[]"]		
 	}]
    
-	[h:pm.PassiveFunction("AttackDamage")]
+	[h:pm.PassiveFunction("WeaponDamage")]
+	[h:pm.PassiveFunction("WeaponAttackDamage")]
 	
 	[h:"<!-- Merge all of the arrays of dice into one, then roll them into a new array of rolled dice. -->"]
 	[h:"<!-- New array is summed for total damage, and put into a list for display. -->"]
@@ -267,6 +279,7 @@
 	[h:AllAttacksDmg = json.append(AllAttacksDmg,ThisAttackDmg)]
 }]
 [h:pm.PassiveFunction("AttackRoll")]
+[h:pm.PassiveFunction("WeaponAttackRoll")]
 
 [h:WhichAttack=0]
 
@@ -360,6 +373,7 @@
 	)))]
 	
 	[h:pm.PassiveFunction("AfterEachAttack")]
+	[h:pm.PassiveFunction("AfterEachWeaponAttack")]
 
 	[h:pm.a5e.EffectData = json.append(pm.a5e.EffectData,json.set("",
 		"Attack",json.set("",
@@ -379,6 +393,7 @@
 [h:if(wa.SpecialAbility=="","","<tr><th style=''><b>Special Ability</b>"+""+wa.SpecialAbility+"</td></tr>")]
 
 [h:pm.PassiveFunction("AfterAttack")]
+[h:pm.PassiveFunction("AfterWeaponAttack")]
 
 [h:pm.RemovedConditions = "[]"]
 [h,foreach(group,json.path.read(ConditionGroups,"[*]['EndTriggers'][?(@.AfterAttack != null)]","DEFAULT_PATH_LEAF_TO_NULL")),CODE:{

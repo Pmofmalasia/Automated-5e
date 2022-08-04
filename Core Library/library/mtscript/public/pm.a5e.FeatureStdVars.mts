@@ -50,12 +50,12 @@
 [h:abilityLevel = pm.GetAbilityLevel(abilityInfo)]
 
 [h:pm.a5e.BaseEffectData = json.set("",
-"Class",abilityClass,
-"DisplayName",abilityDisplayName,
-"FalseName",abilityFalseName,
-"Type","Feature",
-"ID",pm.a5e.GenerateEffectID(),
-"ParentToken",ParentToken
+	"Class",abilityClass,
+	"DisplayName",abilityDisplayName,
+	"FalseName",abilityFalseName,
+	"Type","Feature",
+	"ID",pm.a5e.GenerateEffectID(),
+	"ParentToken",ParentToken
 )]
 
 [h:pm.a5e.EffectData = json.append("",pm.a5e.BaseEffectData)]

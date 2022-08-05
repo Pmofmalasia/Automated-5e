@@ -38,4 +38,5 @@
 [h:OuterBorderFrame=json.get(arg(0),"OuterBorderFrame")]
 [h:OuterBorderTooltip=json.get(arg(0),"OuterBorderTooltip")]
 [h:LibUpdate=if(json.get(arg(0),"LibUpdate")=="",0,json.get(arg(0),"LibUpdate"))]
+[h:NeedsBorder = if(json.get(arg(0),"NeedsBorder")=="",1,json.get(arg(0),"NeedsBorder"))]
 [h:IsOngoingRandom=""]

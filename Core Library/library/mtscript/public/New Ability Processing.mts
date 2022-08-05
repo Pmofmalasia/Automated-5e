@@ -121,30 +121,72 @@
 	};{}]
 }]
 
+[h:"<!-- Assemble Predetermined Skill Proficiencies Gained to be Tracked During Selection -->"]
+[h:"<!-- Not entirely sound since a lower prof may override a higher one in the merge. -->"]
+[h:lu.AllNewSkillProficiencies = "{}"]
+[h,if(json.isEmpty(lu.NewAbilities)): lu.SkillsGained = ""; lu.SkillsGained = json.path.read(lu.NewAbilities,"[*][?(@.Skills != null)]","DEFAULT_PATH_LEAF_TO_NULL")]
+[h,foreach(ability,lu.SkillsGained): lu.AllNewSkillProficiencies = json.merge(lu.AllNewSkillProficiencies,json.get(ability,"Skills"))]
+
 [h:"<!-- Choose Skill Proficiencies -->"]
-[h,if(json.isEmpty(lu.NewAbilities)): lu.SkillChoiceAbilities = ""; lu.SkillChoiceAbilities = json.path.read(lu.NewAbilities,"[*][?(@.SkillOptions != null)]","DEFAULT_PATH_LEAF_TO_NULL")]
+[h,if(json.isEmpty(lu.NewAbilities)): lu.SkillChoiceAbilities = ""; lu.SkillChoiceAbilities = json.path.read(lu.NewAbilities,"[*][?(@.SkillOptions != null && @.SkillOptions.ProftoExp!=1)]","DEFAULT_PATH_LEAF_TO_NULL")]
 [h,foreach(ability,lu.SkillChoiceAbilities),CODE:{
 	[h:lu.ProftoExpTest = json.get(json.get(ability,"SkillOptions"),"ProftoExp")]
 	[h:lu.ValidSkills = ""]
-	[h,if(lu.ProftoExpTest==1),CODE:{
-		[h,foreach(skill,pm.GetSkills("Name","json")): lu.ValidSkills = if(json.get(Skills,skill)==1,json.set(lu.ValidSkills,skill,2),lu.ValidSkills)]
-		[h:lu.ValidSkills = json.set(lu.ValidSkills,"ChoiceText",json.get(ability,"DisplayName")+": "+json.get(json.get(ability,"SkillOptions"),"ChoiceText"),"ChoiceNum",json.get(json.get(ability,"SkillOptions"),"ChoiceNum"))]
-	};{
-		[h:lu.AllSkillsTest = json.get(json.get(ability,"SkillOptions"),"AllSkills")]
-		[h,if(lu.AllSkillsTest==1): lu.ValidSkills = json.merge(json.fromStrProp(pm.GetSkills("Name","=1;")+"=1"),json.get(ability,"SkillOptions")); lu.ValidSkills = json.get(ability,"SkillOptions")]
-	}]
+	
+	[h:lu.AllSkillsTest = json.get(json.get(ability,"SkillOptions"),"AllSkills")]
+	[h,if(lu.AllSkillsTest==1): lu.ValidSkills = json.merge(json.fromStrProp(pm.GetSkills("Name","=1;")+"=1"),json.get(ability,"SkillOptions")); lu.ValidSkills = json.get(ability,"SkillOptions")]
+	[h:lu.ValidSkills = json.set(lu.ValidSkills,"ChoiceText",json.get(ability,"DisplayName")+": "+json.get(json.get(ability,"SkillOptions"),"ChoiceText"),"ChoiceNum",json.get(json.get(ability,"SkillOptions"),"ChoiceNum"),"NewProf",lu.AllNewSkillProficiencies)]
+	
 	[h,MACRO("Skill Selection@Lib:pm.a5e.Core"): lu.ValidSkills]
-	[h,if(json.get(ability,"Skills")!=""): lu.NewAbilities = 
-	json.path.set(lu.NewAbilities,"[?(@.Name == '"+json.get(ability,"Name")+"' && @.Class == '"+json.get(ability,"Class")+"' && @.Subclass == '"+json.get(ability,"Subclass")+"')]['Skills']",json.merge(json.get(ability,"Skills"),json.get(macro.return,"Skills"))); 
-	lu.NewAbilities = json.path.put(lu.NewAbilities,"[?(@.Name == '"+json.get(ability,"Name")+"' && @.Class == '"+json.get(ability,"Class")+"' && @.Subclass == '"+json.get(ability,"Subclass")+"')]","Skills",json.get(macro.return,"Skills")))]
+	[h,if(json.get(ability,"Skills")!=""),CODE:{
+		[h:lu.NewSkillProficiencies = json.merge(json.get(ability,"Skills"),json.get(macro.return,"Skills"))]
+		[h:lu.AllNewSkillProficiencies = json.merge(lu.AllNewSkillProficiencies,lu.NewSkillProficiencies)]
+		[h:lu.NewAbilities = 
+	json.path.set(lu.NewAbilities,"[?(@.Name == '"+json.get(ability,"Name")+"' && @.Class == '"+json.get(ability,"Class")+"' && @.Subclass == '"+json.get(ability,"Subclass")+"')]['Skills']",lu.NewSkillProficiencies)]
+	};{
+		[h:lu.AllNewSkillProficiencies = json.merge(lu.AllNewSkillProficiencies,json.get(macro.return,"Skills"))]
+		[h:lu.NewAbilities = json.path.put(lu.NewAbilities,"[?(@.Name == '"+json.get(ability,"Name")+"' && @.Class == '"+json.get(ability,"Class")+"' && @.Subclass == '"+json.get(ability,"Subclass")+"')]","Skills",json.get(macro.return,"Skills")))]
+	}]
 }]
+
+[h:"<!-- Choose Skill Proficiencies: Giving Expertise to Proficient Skills -->"]
+[h:"<!-- Operates after the previous loop to allow proficiencies chosen this level to get expertise. -->"]
+[h,if(json.isEmpty(lu.NewAbilities)): lu.ExpertiseChoiceAbilities = ""; lu.ExpertiseChoiceAbilities = json.path.read(lu.NewAbilities,"[*][?(@.SkillOptions != null && @.SkillOptions.ProftoExp==1)]","DEFAULT_PATH_LEAF_TO_NULL")]
+[h,foreach(ability,lu.ExpertiseChoiceAbilities),CODE:{
+	[h:lu.ProftoExpTest = json.get(json.get(ability,"SkillOptions"),"ProftoExp")]
+	[h:lu.ValidSkills = ""]
+	
+	[h,foreach(skill,pm.GetSkills("Name","json")): lu.ValidSkills = if(json.get(json.merge(Skills,lu.AllNewSkillProficiencies),skill)==1,json.set(lu.ValidSkills,skill,2),lu.ValidSkills)]
+	[h:lu.ValidSkills = json.set(lu.ValidSkills,"ChoiceText",json.get(ability,"DisplayName")+": "+json.get(json.get(ability,"SkillOptions"),"ChoiceText"),"ChoiceNum",json.get(json.get(ability,"SkillOptions"),"ChoiceNum"),"NewProf",lu.AllNewSkillProficiencies)]
+	
+	[h,MACRO("Skill Selection@Lib:pm.a5e.Core"): lu.ValidSkills]
+	
+	[h,if(json.get(ability,"Skills")!=""),CODE:{
+		[h:lu.NewSkillProficiencies = json.merge(json.get(ability,"Skills"),json.get(macro.return,"Skills"))]
+		[h:lu.AllNewSkillProficiencies = json.merge(lu.AllNewSkillProficiencies,lu.NewSkillProficiencies)]
+		[h:lu.NewAbilities = 
+	json.path.set(lu.NewAbilities,"[?(@.Name == '"+json.get(ability,"Name")+"' && @.Class == '"+json.get(ability,"Class")+"' && @.Subclass == '"+json.get(ability,"Subclass")+"')]['Skills']",lu.NewSkillProficiencies)]
+	};{
+		[h:lu.AllNewSkillProficiencies = json.merge(lu.AllNewSkillProficiencies,json.get(macro.return,"Skills"))]
+		[h:lu.NewAbilities = json.path.put(lu.NewAbilities,"[?(@.Name == '"+json.get(ability,"Name")+"' && @.Class == '"+json.get(ability,"Class")+"' && @.Subclass == '"+json.get(ability,"Subclass")+"')]","Skills",json.get(macro.return,"Skills")))]
+	}]
+}]
+
+[h:"<!-- Assemble Predetermined Save Proficiencies Gained to be Tracked During Selection -->"]
+[h:"<!-- Not entirely sound since a lower prof may override a higher one in the merge. (Less likely for saves.) -->"]
+[h:lu.AllNewSaveProficiencies = "{}"]
+[h,if(json.isEmpty(lu.NewAbilities)): lu.SavesGained = ""; lu.SavesGained = json.path.read(lu.NewAbilities,"[*][?(@.Saves != null)]","DEFAULT_PATH_LEAF_TO_NULL")]
+[h,foreach(ability,lu.SavesGained): lu.AllNewSaveProficiencies = json.merge(lu.AllNewSaveProficiencies,json.get(ability,"Saves"))]
 
 [h:"<!-- Choose Save Proficiencies -->"]
 [h,if(json.isEmpty(lu.NewAbilities)): lu.SaveChoiceAbilities = ""; lu.SaveChoiceAbilities = json.path.read(lu.NewAbilities,"[*][?(@.SaveOptions != null)]","DEFAULT_PATH_LEAF_TO_NULL")]
 [h,foreach(ability,lu.SaveChoiceAbilities),CODE:{
 	[h:lu.AllSavesTest = json.get(json.get(ability,"SaveOptions"),"AllSaves")]
 	[h,if(lu.AllSavesTest==1): lu.ValidSaves = json.merge(json.fromStrProp(pm.GetAttributes("Name","=1;")+"=1"),json.get(ability,"SaveOptions")); lu.ValidSaves = json.get(ability,"SaveOptions")]
+	[h:lu.ValidSaves = json.set(lu.ValidSaves,"ChoiceText",json.get(ability,"DisplayName")+": "+json.get(json.get(ability,"SkillOptions"),"ChoiceText"),"ChoiceNum",json.get(json.get(ability,"SkillOptions"),"ChoiceNum"),"NewProf",lu.AllNewSaveProficiencies)]
+	
 	[h,MACRO("Skill Selection@Lib:pm.a5e.Core"): lu.ValidSaves]
+	
 	[h,if(json.get(ability,"Saves")!=""): lu.NewAbilities = 
 	json.path.set(lu.NewAbilities,"[?(@.Name == '"+json.get(ability,"Name")+"' && @.Class == '"+json.get(ability,"Class")+"' && @.Subclass == '"+json.get(ability,"Subclass")+"')]['Saves']",json.merge(json.get(ability,"Saves"),json.get(macro.return,"Saves")));
 	lu.NewAbilities = json.path.put(lu.NewAbilities,"[?(@.Name == '"+json.get(ability,"Name")+"' && @.Class == '"+json.get(ability,"Class")+"' && @.Subclass == '"+json.get(ability,"Subclass")+"')]","Saves",json.get(macro.return,"Saves"))]
@@ -161,12 +203,20 @@
 	[h:lu.NewAbilities = json.path.put(lu.NewAbilities,"[?(@.Name == '"+json.get(ability,"Name")+"' && @.Class == '"+json.get(ability,"Class")+"' && @.Subclass == '"+json.get(ability,"Subclass")+"')]","PrimeStat",pm.RemoveSpecial(lu.StatChoice))))]
 }]
 
+[h:"<!-- Assemble Languages Gained -->"]
+[h:lu.AllNewLanguages = "{}"]
+[h,if(json.isEmpty(lu.NewAbilities)): lu.LanguagesGained = ""; lu.LanguagesGained = json.path.read(lu.NewAbilities,"[*][?(@.Languages != null)]","DEFAULT_PATH_LEAF_TO_NULL")]
+[h,foreach(ability,lu.LanguagesGained): lu.AllNewLanguages = json.merge(lu.AllNewLanguages,json.get(ability,"Languages"))]
+
 [h:"<!-- Choose Languages -->"]
 [h,if(json.isEmpty(lu.NewAbilities)): lu.LanguageChoiceAbilities = ""; lu.LanguageChoiceAbilities = json.path.read(lu.NewAbilities,"[*][?(@.LanguageOptions != null)]","DEFAULT_PATH_LEAF_TO_NULL")]
 [h,foreach(ability,lu.LanguageChoiceAbilities),CODE:{
+	[h:lu.NewLanguages = pm.LanguageSelection(json.get(ability,"LanguageOptions"),json.get(ability,"DisplayName"),lu.AllNewLanguages)]
+	[h:lu.AllNewLanguages = json.merge(lu.AllNewLanguages,lu.NewLanguages)]
 	[h,if(json.get(ability,"Languages")!=""): 
-		lu.NewAbilities = json.path.set(lu.NewAbilities,"[?(@.Name == '"+json.get(ability,"Name")+"' && @.Class == '"+json.get(ability,"Class")+"' && @.Subclass == '"+json.get(ability,"Subclass")+"')]['Languages']",json.merge(json.get(ability,"Languages"),pm.LanguageSelection(json.get(ability,"LanguageOptions"))));
-		lu.NewAbilities = json.path.put(lu.NewAbilities,"[?(@.Name == '"+json.get(ability,"Name")+"' && @.Class == '"+json.get(ability,"Class")+"' && @.Subclass == '"+json.get(ability,"Subclass")+"')]","Languages",pm.LanguageSelection(json.get(ability,"LanguageOptions")))]	
+		lu.NewAbilities = json.path.set(lu.NewAbilities,"[?(@.Name == '"+json.get(ability,"Name")+"' && @.Class == '"+json.get(ability,"Class")+"' && @.Subclass == '"+json.get(ability,"Subclass")+"')]['Languages']",json.merge(json.get(ability,"Languages"),lu.NewLanguages));
+		lu.NewAbilities = json.path.put(lu.NewAbilities,"[?(@.Name == '"+json.get(ability,"Name")+"' && @.Class == '"+json.get(ability,"Class")+"' && @.Subclass == '"+json.get(ability,"Subclass")+"')]","Languages",lu.NewLanguages)
+	]	
 }]
 
 [h:"<!-- Choose Damage Type -->"]

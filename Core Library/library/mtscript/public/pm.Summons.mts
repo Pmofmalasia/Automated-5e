@@ -1,12 +1,12 @@
 [h:pm.Ability=json.get(arg(0),"Name")]
 [h:pm.Class=json.get(arg(0),"Class")]
 [h:pm.Subclass=json.get(arg(0),"Subclass")]
-[h:pm.SummonCRMax=json.get(arg(1),"CR")]
+[h:pm.SummonCRMax=if(json.get(arg(1),"CR")=="",9999,json.get(arg(1),"CR"))]
 [h:pm.SummonType=json.get(arg(1),"Type")]
 [h:pm.SummonNumber=json.get(arg(1),"Number")]
 [h:pm.SummonList=json.get(arg(1),"List")]
-[h:pm.SummonMultiplier=json.get(arg(1),"Multiplier")]
-[h:pm.SummonBonus=json.get(arg(1),"Bonus")]
+[h:pm.SummonMultiplier=if(json.get(arg(1),"Multiplier")=="",1,json.get(arg(1),"Multiplier"))]
+[h:pm.SummonBonus=if(json.get(arg(1),"Bonus")=="",0,json.get(arg(1),"Bonus"))]
 [h:ParentToken=json.get(arg(1),"ParentToken")]
 [h:pm.ForcedSummonName=json.get(arg(2),"Name")]
 [h:pm.ForcedSummonImage=json.get(arg(2),"Image")]
@@ -54,7 +54,7 @@
 	"tokenImage",if(pm.ForcedSummonImage=="",json.get(pm.SummonImages,pm.ChosenSummon),pm.ForcedSummonImage),
 	"tokenPortrait",if(pm.ForcedSummonPortrait=="",json.get(pm.SummonPortraits,pm.ChosenSummon),pm.ForcedSummonPortrait),
 	"tokenHandout",if(pm.ForcedSummonHandout=="",json.get(pm.SummonHandouts,pm.ChosenSummon),pm.ForcedSummonHandout)
-	)]
+)]
 
 [h:tempCRcheck = getProperty("CR",json.get(pm.SummonIDs,pm.ChosenSummon),"z.0 Wild Shapes")]
 

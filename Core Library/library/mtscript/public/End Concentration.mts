@@ -1,5 +1,6 @@
 [h:Flavor=json.get(macro.args,"Flavor")]
 [h:ParentToken=json.get(macro.args,"ParentToken")]
+[h:switchToken(ParentToken)]
 
 [h:assert(if(Concentration=="",0,1),"You are not concentrating on anything!",0)]
 

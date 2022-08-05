@@ -5,7 +5,7 @@
 ))]
 
 [h:OldMacroSettings = json.path.read(allAbilities,"[?(@.Name=='"+chosenMacro+"')]['Settings']")]
-[h,if(OldMacroSettings == "[]"): OldMacroSettings="{}";OldMacroSettings=json.get(OldMacroSettings,0)] 
+[h,if(OldMacroSettings == "[]"): OldMacroSettings="{}";  OldMacroSettings=json.get(OldMacroSettings,0)] 
 
 [h:choice.DM = 0]
 [h:abort(input(

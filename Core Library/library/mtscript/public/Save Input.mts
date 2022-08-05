@@ -9,7 +9,7 @@
 	"SkillDesc|--Description Here--|Description||WIDTH=40",
 	"iSaves|"+sv.Options+"|Saves|LIST",
 	"sBonus|0|Situational Bonus||WIDTH=20",
-	"svAdv|Forced Disadvantage,Situational Disadvantage,Normal Roll,Situational Advantage,Forced Advantage|Use Alternate Ability|RADIO|SELECT=2",
+	"svAdv|Forced Disadvantage,Situational Disadvantage,Normal Roll,Situational Advantage,Forced Advantage|Advantage Type|RADIO|SELECT=2",
 	"outputOptions|"+if(isGM(),"Everyone,DM Only","Everyone,You and DM,DM Only")+"|Who sees the result?|RADIO"
 ))]
 [h:AddedBonus=eval(sBonus+"+1d1-1")]
@@ -37,13 +37,24 @@
 	"Name","Saving Throw",
 	"FalseName","",
 	"OnlyRules",0
-	)]
+)]
 
 [h:FormattingData = pm.MacroFormat(ClassFeatureData)]
 [h:output.PC = json.get(json.get(FormattingData,"Output"),"Player")]
 [h:output.GM = json.get(json.get(FormattingData,"Output"),"GM")]
 
-[h,MACRO("Save@Lib:pm.a5e.Core"): json.set("","Save",sv.Choice,"Type","Save","ParentToken",ParentToken,"Bonus",AddedBonus,"Advantage",svAdv - 2,"PCOutput",outputTargets)]
+[h:SaveData = json.set("",
+	"Save",sv.Choice,
+	"Type","Save",
+	"ParentToken",ParentToken,
+	"Bonus",AddedBonus,
+	"Advantage",or(svAdv==3,svAdv==4),
+	"Disadvantage",or(svAdv==0,svAdv==1),
+	"ForcedAdvantage",or(svAdv==0,svAdv==4),
+	"PCOutput",outputTargets
+)]
+
+[h,MACRO("Save@Lib:pm.a5e.Core"): SaveData]
 [h:SaveData = macro.return]
 [h:abilityTable = json.get(SaveData,"Table")]
 

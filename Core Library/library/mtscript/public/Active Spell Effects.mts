@@ -4,7 +4,8 @@
 
 [h:listSpells=""]
 
-<!--Object vs array distinction is because spells with a random ongoing effect need to be put in an array instead of an object-->
+[h:
+"<!--Object vs array distinction is because spells with a random ongoing effect need to be put in an array instead of an object-->"]
 
 [h,foreach(spell,ActiveSpells),CODE:{
 	[h:MultiEffectTest = json.type(spell)]
@@ -25,7 +26,7 @@
 [h:ActiveSpellSend = json.append("",json.get(ActiveSpells,sSelection))]
 
 [r,count(multiCast+1),CODE:{
-	[macro("SpellCasting@Lib:Melek"): ActiveSpellSend]
+	[macro("SpellCasting@Lib:pm.a5e.Core"): ActiveSpellSend]
 }]
 
 [h:deleteTest=if(json.get(macro.return,"ChaosTest")>0,0,if(json.get(macro.return,"ChaosTest")<0,deleteTest,1))]

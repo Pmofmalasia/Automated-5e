@@ -1,0 +1,1 @@
+[h,if(arg(0)==""): macro.return = ""; macro.return = json.get(json.path.read(getLibProperty(arg(1),"Lib:pm.a5e.Core"),"[*][?(@.Name=='"+arg(0)+"')]['DisplayName']"),0)]

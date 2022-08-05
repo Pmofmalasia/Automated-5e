@@ -1,0 +1,6 @@
+[h:abilityTable = json.merge(abilityTable,json.get(ResourceInfo,"Table"))]
+[h:re.ResourceSpent = json.get(ResourceInfo,"ResourceSpent")]
+[h:re.AmountSpent = json.get(ResourceInfo,"AmountSpent")]
+[h:re.SpellLevel = json.get(ResourceInfo,"SpellLevel")]
+[h:re.HitDieSize = json.get(ResourceInfo,"HitDieSize")]
+[h:re.SpentName = json.get(ResourceInfo,"ResourceSpentName")]

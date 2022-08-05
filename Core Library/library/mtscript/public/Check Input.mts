@@ -3,7 +3,7 @@
 [h:ParentToken=json.get(CheckData,"ParentToken")]
 
 [h:ch.AttributeOptions = pm.GetAttributes("DisplayName","json")]
-[h:ch.AttributeDisplay = json.toList(ch.AttributeOptions," Check,")+"Check"]
+[h:ch.AttributeDisplay = json.toList(ch.AttributeOptions," Check,")+" Check"]
 
 [h:ch.SkillList = pm.GetSkills()]
 [h:ch.SkillOptions = ""]
@@ -19,7 +19,7 @@
 	"iSkills|"+json.toList(listSkills)+"|Skills|LIST",
 	"Alternate|-NO-,"+pm.GetAttributes("DisplayName")+"|Use Alternate Ability|LIST|VALUE=STRING",
 	"sBonus||Situational Bonus||WIDTH=20",
-	"chAdv|Forced Disadvantage,Situational Disadvantage,Normal Roll,Situational Advantage,Forced Advantage|Use Alternate Ability|RADIO|SELECT=2",
+	"chAdv|Forced Disadvantage,Situational Disadvantage,Normal Roll,Situational Advantage,Forced Advantage|Advantage Type|RADIO|SELECT=2",
 	"outputOptions|"+if(isGM(),"Everyone,DM Only","Everyone,You and DM,DM Only")+"|Who sees the result?|RADIO"
 ))]
 [h:AddedBonus=eval(sBonus+"+1d1-1")]
@@ -34,9 +34,16 @@
 
 [h,if(iSkills==0 || iSkills==json.length(ch.SkillOptions)+1),CODE:{
 	[h:ch.Choice = "No Skill Selected"]
+	[h:ch.Type = ""]
 	[h:Alternate = "None"]
 };{
-	[h,if(iSkills>json.length(ch.SkillOptions)): ch.Choice = json.get(ch.AttributeOptions,(iSkills-json.length(ch.SkillOptions))); ch.Choice = json.get(ch.SkillOptions,iSkills-1)]
+	[h,if(iSkills>json.length(ch.SkillOptions)),CODE:{
+		[h:ch.Choice = json.get(ch.AttributeOptions,(iSkills-json.length(ch.SkillOptions)-2))]
+		[h:ch.Type = "Ability Score"]
+	};{
+		[h:ch.Choice = json.get(ch.SkillOptions,iSkills-1)]
+		[h:ch.Type = "Skill"]
+	}]
 }]
 
 [h:"<!-- Note: If changes are made to outputTargets, a new method may need to be used to determine if it is GM only or not. Also may need a different method anyway for passive skills. -->"]
@@ -60,7 +67,7 @@
 [h:output.PC = json.get(json.get(FormattingData,"Output"),"Player")]
 [h:output.GM = json.get(json.get(FormattingData,"Output"),"GM")]
 
-[h,MACRO("Check@Lib:pm.a5e.Core"): json.set("","Skill",ch.Choice,"Type","Skill","ParentToken",ParentToken,"Alternate",Alternate,"Bonus",AddedBonus,"Advantage",chAdv - 2,"PCOutput",outputTargets)]
+[h,MACRO("Check@Lib:pm.a5e.Core"): json.set("","Skill",ch.Choice,"Type",ch.Type,"ParentToken",ParentToken,"Alternate",Alternate,"Bonus",AddedBonus,"Advantage",if(chAdv==0,-1,if(chAdv==4,1,chAdv - 2)),"ForcedAdvantage",or(chAdv==0,chAdv==4),"PCOutput",outputTargets)]
 [h:CheckData = macro.return]
 [h:abilityTable = json.get(CheckData,"Table")]
 

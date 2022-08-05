@@ -96,8 +96,8 @@
 	[h:macro.return = json.set("","ShowIfCondensed",1,"Header","Spell Slots Remaining","FalseHeader","","FullContents","","RulesContents","<b><span style='font-size:1.25em;'>"+pm.SpellSlots()+"</span></b>","RollContents","","DisplayOrder","['Rules','Roll','Full']","Value","","Units","")]
 };{
 	[h,if(pm.ResourceKey!=""),CODE:{
-		[h:pm.ResourceAmount = json.get(json.get(json.path.read(allAbilities,"[?(@.IsActive>0 && @.Name=='"+pm.ResourceVarName+"' && @.Class=='"+pm.Class+"' && (@.Subclass=='"+pm.Subclass+"' || @.Subclass==''))]['Resource']"),0),pm.ResourceKey)]
-		[h:pm.MaxResourceBase = json.get(json.get(json.evaluate(json.path.read(allAbilities,"[?(@.IsActive>0 && @.Name=='"+pm.ResourceVarName+"' && @.Class=='"+pm.Class+"' && (@.Subclass=='"+pm.Subclass+"' || @.Subclass==''))]['MaxResource']")),0),pm.ResourceKey)]
+		[h:pm.ResourceAmount = json.get(json.get(json.path.read(allAbilities,"[?(@.IsActive>0 && @.Name=='"+pm.ResourceVarName+"' && @.Class=='"+pm.Class+"' && @.Subclass=='"+pm.Subclass+"')]['Resource']"),0),pm.ResourceKey)]
+		[h:pm.MaxResourceBase = json.get(json.get(json.evaluate(json.path.read(allAbilities,"[?(@.IsActive>0 && @.Name=='"+pm.ResourceVarName+"' && @.Class=='"+pm.Class+"' && @.Subclass=='"+pm.Subclass+"')]['MaxResource']")),0),pm.ResourceKey)]
 	};{
 		[h:pm.ResourceAmount = math.arraySum(json.path.read(allAbilities,"[?(@.IsActive>0 && @.Name=='"+pm.ResourceVarName+"' && @.Class=='"+pm.Class+"' && (@.Subclass=='"+pm.Subclass+"' || @.Subclass==''))]['Resource']"))]
 		[h:pm.MaxResourceBase = math.arraySum(json.evaluate(json.path.read(allAbilities,"[?(@.IsActive>0 && @.Name=='"+pm.ResourceVarName+"' && @.Class=='"+pm.Class+"' && (@.Subclass=='"+pm.Subclass+"' || @.Subclass==''))]['MaxResource']")))]

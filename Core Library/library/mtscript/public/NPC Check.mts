@@ -26,31 +26,31 @@
 [h:NO=0]
 [h:SkillBonus=0]
 
-[h:bStr=json.get(AtrMods, "Strength")][h:lStr=if(bStr>-1,"+","")][h:lStr=lStr+bStr+" - Strength Check"]
-[h:bDex=json.get(AtrMods, "Dexterity")][h:lDex=if(bDex>-1,"+","")][h:lDex=lDex+bDex+" - Dexterity Check"]
-[h:bCon=json.get(AtrMods, "Constitution")][h:lCon=if(bCon>-1,"+","")][h:lCon=lCon+bCon+" - Constitution Check"]
-[h:bInt=json.get(AtrMods, "Intelligence")][h:lInt=if(bInt>-1,"+","")][h:lInt=lInt+bInt+" - Intelligence Check"]
-[h:bWis=json.get(AtrMods, "Wisdom")][h:lWis=if(bWis>-1,"+","")][h:lWis=lWis+bWis+" - Wisdom Check"]
-[h:bCha=json.get(AtrMods, "Charisma")][h:lCha=if(bCha>-1,"+","")][h:lCha=lCha+bCha+" - Charisma Check"]
+[h:bStr=Str][h:lStr=if(bStr>-1,"+","")][h:lStr=lStr+bStr+" - Strength Check"]
+[h:bDex=Dex][h:lDex=if(bDex>-1,"+","")][h:lDex=lDex+bDex+" - Dexterity Check"]
+[h:bCon=Con][h:lCon=if(bCon>-1,"+","")][h:lCon=lCon+bCon+" - Constitution Check"]
+[h:bInt=Int][h:lInt=if(bInt>-1,"+","")][h:lInt=lInt+bInt+" - Intelligence Check"]
+[h:bWis=Wis][h:lWis=if(bWis>-1,"+","")][h:lWis=lWis+bWis+" - Wisdom Check"]
+[h:bCha=Cha][h:lCha=if(bCha>-1,"+","")][h:lCha=lCha+bCha+" - Charisma Check"]
 
-[h:bAcb=json.get(AtrMods, "Dexterity")+(Acb*Proficiency)][h:lAcb=if(bAcb>-1,"+","")][h:lAcb=lAcb+bAcb+" - Acrobatics (Dex)"]
-[h:bAnH=json.get(AtrMods, "Wisdom")+(Proficiency*AnH)][h:lAnH=if(bAnH>-1,"+","")][h:lAnH=lAnH+bAnH+" - Animal Handling (Wis)"]
-[h:bArc=json.get(AtrMods, "Intelligence")+(Proficiency*Arc)][h:lArc=if(bArc>-1,"+","")][h:lArc=lArc+bArc+" - Arcana (Int)"]
-[h:bAth=json.get(AtrMods, "Strength")+(Ath*Proficiency)][h:lAth=if(bAth>-1,"+","")][h:lAth=lAth+bAth+" - Athletics (Str)"]
-[h:bDcp=json.get(AtrMods, "Charisma")+(Proficiency*Dcp)][h:lDcp=if(bDcp>-1,"+","")][h:lDcp=lDcp+bDcp+" - Deception (Cha)"]
-[h:bHst=json.get(AtrMods, "Intelligence")+(Proficiency*Hst)][h:lHst=if(bHst>-1,"+","")][h:lHst=lHst+bHst+" - History (Int)"]
-[h:bIns=json.get(AtrMods, "Wisdom")+floor(Proficiency*Ins)][h:lIns=if(bIns>-1,"+","")][h:lIns=lIns+bIns+" - Insight (Wis)"]
-[h:bImd=json.get(AtrMods, "Charisma")+floor(Proficiency*Imd)][h:lImd=if(bImd>-1,"+","")][h:lImd=lImd+bImd+" - Intimidation (Cha)"]
-[h:bInv=json.get(AtrMods, "Intelligence")+floor(Proficiency*Inv)][h:lInv=if(bInv>-1,"+","")][h:lInv=lInv+bInv+" - Investigation (Int)"]
-[h:bMed=json.get(AtrMods, "Wisdom")+floor(Proficiency*Med)][h:lMed=if(bMed>-1,"+","")][h:lMed=lMed+bMed+" - Medicine (Wis)"]
-[h:bNtr=json.get(AtrMods, "Intelligence")+floor(Proficiency*Ntr)][h:lNtr=if(bNtr>-1,"+","")][h:lNtr=lNtr+bNtr+" - Nature (Int)"]
-[h:bPcp=json.get(AtrMods, "Wisdom")+floor(Proficiency*Pcp)][h:lPcp=if(bPcp>-1,"+","")][h:lPcp=lPcp+bPcp+" - Perception (Wis)"]
-[h:bPfm=json.get(AtrMods, "Charisma")+floor(Proficiency*Pfm)][h:lPfm=if(bPfm>-1,"+","")][h:lPfm=lPfm+bPfm+" - Performance (Cha)"]
-[h:bPrs=json.get(AtrMods, "Charisma")+floor(Proficiency*Prs)][h:lPrs=if(bPrs>-1,"+","")][h:lPrs=lPrs+bPrs+" - Persuasion (Cha)"]
-[h:bRlg=json.get(AtrMods, "Intelligence")+floor(Proficiency*Rlg)][h:lRlg=if(bRlg>-1,"+","")][h:lRlg=lRlg+bRlg+" - Religion (Int)"]
-[h:bSoH=json.get(AtrMods, "Dexterity")+(SoH*Proficiency)][h:lSoH=if(bSoH>-1,"+","")][h:lSoH=lSoH+bSoH+" - Sleight of Hand (Dex)"]
-[h:bStl=json.get(AtrMods, "Dexterity")+(Stl*Proficiency)][h:lStl=if(bStl>-1,"+","")][h:lStl=lStl+bStl+" - Stealth (Dex)"]
-[h:bSrv=json.get(AtrMods, "Wisdom")+floor(Proficiency*Srv)][h:lSrv=if(bSrv>-1,"+","")][h:lSrv=lSrv+bSrv+" - Survival (Wis)"]
+[h:bAcb=Dex+(Acb*Proficiency)][h:lAcb=if(bAcb>-1,"+","")][h:lAcb=lAcb+bAcb+" - Acrobatics (Dex)"]
+[h:bAnH=Wis+(Proficiency*AnH)][h:lAnH=if(bAnH>-1,"+","")][h:lAnH=lAnH+bAnH+" - Animal Handling (Wis)"]
+[h:bArc=Int+(Proficiency*Arc)][h:lArc=if(bArc>-1,"+","")][h:lArc=lArc+bArc+" - Arcana (Int)"]
+[h:bAth=Str+(Ath*Proficiency)][h:lAth=if(bAth>-1,"+","")][h:lAth=lAth+bAth+" - Athletics (Str)"]
+[h:bDcp=Cha+(Proficiency*Dcp)][h:lDcp=if(bDcp>-1,"+","")][h:lDcp=lDcp+bDcp+" - Deception (Cha)"]
+[h:bHst=Int+(Proficiency*Hst)][h:lHst=if(bHst>-1,"+","")][h:lHst=lHst+bHst+" - History (Int)"]
+[h:bIns=Wis+floor(Proficiency*Ins)][h:lIns=if(bIns>-1,"+","")][h:lIns=lIns+bIns+" - Insight (Wis)"]
+[h:bImd=Cha+floor(Proficiency*Imd)][h:lImd=if(bImd>-1,"+","")][h:lImd=lImd+bImd+" - Intimidation (Cha)"]
+[h:bInv=Int+floor(Proficiency*Inv)][h:lInv=if(bInv>-1,"+","")][h:lInv=lInv+bInv+" - Investigation (Int)"]
+[h:bMed=Wis+floor(Proficiency*Med)][h:lMed=if(bMed>-1,"+","")][h:lMed=lMed+bMed+" - Medicine (Wis)"]
+[h:bNtr=Int+floor(Proficiency*Ntr)][h:lNtr=if(bNtr>-1,"+","")][h:lNtr=lNtr+bNtr+" - Nature (Int)"]
+[h:bPcp=Wis+floor(Proficiency*Pcp)][h:lPcp=if(bPcp>-1,"+","")][h:lPcp=lPcp+bPcp+" - Perception (Wis)"]
+[h:bPfm=Cha+floor(Proficiency*Pfm)][h:lPfm=if(bPfm>-1,"+","")][h:lPfm=lPfm+bPfm+" - Performance (Cha)"]
+[h:bPrs=Cha+floor(Proficiency*Prs)][h:lPrs=if(bPrs>-1,"+","")][h:lPrs=lPrs+bPrs+" - Persuasion (Cha)"]
+[h:bRlg=Int+floor(Proficiency*Rlg)][h:lRlg=if(bRlg>-1,"+","")][h:lRlg=lRlg+bRlg+" - Religion (Int)"]
+[h:bSoH=Dex+(SoH*Proficiency)][h:lSoH=if(bSoH>-1,"+","")][h:lSoH=lSoH+bSoH+" - Sleight of Hand (Dex)"]
+[h:bStl=Dex+(Stl*Proficiency)][h:lStl=if(bStl>-1,"+","")][h:lStl=lStl+bStl+" - Stealth (Dex)"]
+[h:bSrv=Wis+floor(Proficiency*Srv)][h:lSrv=if(bSrv>-1,"+","")][h:lSrv=lSrv+bSrv+" - Survival (Wis)"]
 
 [h:listSkills="--Choose--,"+lAcb+","+lAnH+","+lArc+","+lAth+","+lDcp+","+lHst+","+lIns+","+lImd+","+lInv+","+lMed+","+lNtr+","+lPcp+","+lPfm+","+lPrs+","+lRlg+","+lSoH+","+lStl+","+lSrv+","+lStr+","+lDex+","+lCon+","+lInt+","+lWis+","+lCha]
 
@@ -105,24 +105,24 @@
 
 [h,switch(iSkills),code:
 	case 0: {[SkillTitle="-No Skill Selected"]};
-	case 1: {[SkillTitle=lAcb][SkillBonus=bAcb+if(Alternate=="-NO-",0,eval(Alternate)-json.get(AtrMods, "Dexterity"))]};
-	case 2: {[SkillTitle=lAnH][SkillBonus=bAnH+if(Alternate=="-NO-",0,eval(Alternate)-json.get(AtrMods, "Wisdom"))]};
-	case 3: {[SkillTitle=lArc][SkillBonus=bArc+if(Alternate=="-NO-",0,eval(Alternate)-json.get(AtrMods, "Intelligence"))]};
-	case 4: {[SkillTitle=lAth][SkillBonus=bAth+if(Alternate=="-NO-",0,eval(Alternate)-json.get(AtrMods, "Strength"))]};
-	case 5: {[SkillTitle=lDcp][SkillBonus=bDcp+if(Alternate=="-NO-",0,eval(Alternate)-json.get(AtrMods, "Charisma"))]};
-	case 6: {[SkillTitle=lHst][SkillBonus=bHst+if(Alternate=="-NO-",0,eval(Alternate)-json.get(AtrMods, "Intelligence"))]};
-	case 7: {[SkillTitle=lIns][SkillBonus=bIns+if(Alternate=="-NO-",0,eval(Alternate)-json.get(AtrMods, "Wisdom"))]};
-	case 8: {[SkillTitle=lImd][SkillBonus=bImd+if(Alternate=="-NO-",0,eval(Alternate)-json.get(AtrMods, "Charisma"))]};
-	case 9: {[SkillTitle=lInv][SkillBonus=bInv+if(Alternate=="-NO-",0,eval(Alternate)-json.get(AtrMods, "Intelligence"))]};
-	case 10: {[SkillTitle=lMed][SkillBonus=bMed+if(Alternate=="-NO-",0,eval(Alternate)-json.get(AtrMods, "Wisdom"))]};
-	case 11: {[SkillTitle=lNtr][SkillBonus=bNtr+if(Alternate=="-NO-",0,eval(Alternate)-json.get(AtrMods, "Intelligence"))]};
-	case 12: {[SkillTitle=lPcp][SkillBonus=bPcp+if(Alternate=="-NO-",0,eval(Alternate)-json.get(AtrMods, "Wisdom"))]};
-	case 13: {[SkillTitle=lPfm][SkillBonus=bPfm+if(Alternate=="-NO-",0,eval(Alternate)-json.get(AtrMods, "Charisma"))]};
-	case 14: {[SkillTitle=lPrs][SkillBonus=bPrs+if(Alternate=="-NO-",0,eval(Alternate)-json.get(AtrMods, "Charisma"))]};
-	case 15: {[SkillTitle=lRlg][SkillBonus=bRlg+if(Alternate=="-NO-",0,eval(Alternate)-json.get(AtrMods, "Intelligence"))]};
-	case 16: {[SkillTitle=lSoH][SkillBonus=bSoH+if(Alternate=="-NO-",0,eval(Alternate)-json.get(AtrMods, "Dexterity"))]};
-	case 17: {[SkillTitle=lStl][SkillBonus=bStl+if(Alternate=="-NO-",0,eval(Alternate)-json.get(AtrMods, "Dexterity"))]};
-	case 18: {[SkillTitle=lSrv][SkillBonus=bSrv+if(Alternate=="-NO-",0,eval(Alternate)-json.get(AtrMods, "Wisdom"))]};
+	case 1: {[SkillTitle=lAcb][SkillBonus=bAcb+if(Alternate=="-NO-",0,eval(Alternate)-Dex)]};
+	case 2: {[SkillTitle=lAnH][SkillBonus=bAnH+if(Alternate=="-NO-",0,eval(Alternate)-Wis)]};
+	case 3: {[SkillTitle=lArc][SkillBonus=bArc+if(Alternate=="-NO-",0,eval(Alternate)-Int)]};
+	case 4: {[SkillTitle=lAth][SkillBonus=bAth+if(Alternate=="-NO-",0,eval(Alternate)-Str)]};
+	case 5: {[SkillTitle=lDcp][SkillBonus=bDcp+if(Alternate=="-NO-",0,eval(Alternate)-Cha)]};
+	case 6: {[SkillTitle=lHst][SkillBonus=bHst+if(Alternate=="-NO-",0,eval(Alternate)-Int)]};
+	case 7: {[SkillTitle=lIns][SkillBonus=bIns+if(Alternate=="-NO-",0,eval(Alternate)-Wis)]};
+	case 8: {[SkillTitle=lImd][SkillBonus=bImd+if(Alternate=="-NO-",0,eval(Alternate)-Cha)]};
+	case 9: {[SkillTitle=lInv][SkillBonus=bInv+if(Alternate=="-NO-",0,eval(Alternate)-Int)]};
+	case 10: {[SkillTitle=lMed][SkillBonus=bMed+if(Alternate=="-NO-",0,eval(Alternate)-Wis)]};
+	case 11: {[SkillTitle=lNtr][SkillBonus=bNtr+if(Alternate=="-NO-",0,eval(Alternate)-Int)]};
+	case 12: {[SkillTitle=lPcp][SkillBonus=bPcp+if(Alternate=="-NO-",0,eval(Alternate)-Wis)]};
+	case 13: {[SkillTitle=lPfm][SkillBonus=bPfm+if(Alternate=="-NO-",0,eval(Alternate)-Cha)]};
+	case 14: {[SkillTitle=lPrs][SkillBonus=bPrs+if(Alternate=="-NO-",0,eval(Alternate)-Cha)]};
+	case 15: {[SkillTitle=lRlg][SkillBonus=bRlg+if(Alternate=="-NO-",0,eval(Alternate)-Int)]};
+	case 16: {[SkillTitle=lSoH][SkillBonus=bSoH+if(Alternate=="-NO-",0,eval(Alternate)-Dex)]};
+	case 17: {[SkillTitle=lStl][SkillBonus=bStl+if(Alternate=="-NO-",0,eval(Alternate)-Dex)]};
+	case 18: {[SkillTitle=lSrv][SkillBonus=bSrv+if(Alternate=="-NO-",0,eval(Alternate)-Wis)]};
 	
 	case 19: {[SkillTitle=lStr][SkillBonus=bStr]};
 	case 20: {[SkillTitle=lDex][SkillBonus=bDex]};

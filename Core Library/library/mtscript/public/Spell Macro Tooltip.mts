@@ -1,63 +1,77 @@
-[h:BorderColorOverride=json.get(macro.args,"BorderColorOverride")]
-[h:TitleFontColorOverride=json.get(macro.args,"TitleFontColorOverride")]
-[h:TitleFontColorOverride=json.get(macro.args,"TitleFontColorOverride")]
-[h:TitleFont=json.get(macro.args,"TitleFont")]
-[h:BodyFont=json.get(macro.args,"BodyFont")]
-[h:ForcedClass=json.get(macro.args,"ForcedClass")]
-[h:ForcedLevel=json.get(macro.args,"ForcedLevel")]
-[h:tooltipDisplaySizeOverride=json.get(macro.args,"tooltipDisplaySizeOverride")]
-[h:DMOnly=json.get(macro.args,"DMOnly")]
-[h:SpellName=json.get(macro.args,"SpellName")]
-[h:sList=json.get(macro.args,"sList")]
-[h:sLevel=json.get(macro.args,"sLevel")]
-[h:Ritual=json.get(macro.args,"Ritual")]
-[h:sSchool=json.get(macro.args,"sSchool")]
-[h:CastTime=json.get(macro.args,"CastTime")]
-[h:RangeType=json.get(macro.args,"RangeType")]
-[h:AoEShape=json.get(macro.args,"AoEShape")]
-[h:sAoENumber=json.get(macro.args,"sAoENumber")]
-[h:Range=json.get(macro.args,"sRange")]
-[h:sRangeUnits=json.get(macro.args,"sRangeUnits")]
-[h:AoESize=json.get(macro.args,"AoESize")]
-[h:AoESize2=json.get(macro.args,"AoESize2")]
-[h:vComp=json.get(macro.args,"vComp")]
-[h:sComp=json.get(macro.args,"sComp")]
-[h:mComp=json.get(macro.args,"mComp")]
-[h:mCompItems=json.get(macro.args,"mCompItems")]
-[h:mCompConsumed=json.get(macro.args,"mCompConsumed")]
-[h:sSpellAttack=json.get(macro.args,"sSpellAttack")]
-[h:sSpellSave=json.get(macro.args,"sSpellSave")]
-[h:sSaveType=json.get(macro.args,"sSaveType")]
-[h:Duration=json.get(macro.args,"sDuration")]
-[h:DmgHalved=json.get(macro.args,"DmgHalved")]
-[h:DmgType=json.get(macro.args,"DmgType")]
-[h:DmgDieNumber=json.get(macro.args,"DmgDieNum")]
-[h:DmgDieSize=json.get(macro.args,"DmgDieSize")]
-[h:DmgDieFlatBonus=json.get(macro.args,"DmgDieFlatBonus")]
-[h:DmgDieMODBonus=json.get(macro.args,"DmgDieMODBonus")]
-[h:DmgType2=json.get(macro.args,"DmgType2")]
-[h:DmgDie2Number=json.get(macro.args,"DmgDie2Num")]
-[h:DmgDie2Size=json.get(macro.args,"DmgDie2Size")]
-[h:DmgDie2FlatBonus=json.get(macro.args,"DmgDie2FlatBonus")]
-[h:DmgDie2MODBonus=json.get(macro.args,"DmgDie2MODBonus")]
-[h:IsSight=json.get(macro.args,"IsSight")]
-[h:sConcentration=json.get(macro.args,"sConcentration")]
-[h:sDescription=json.get(macro.args,"sDescription")]
-[h:sDescriptionTT=json.get(macro.args,"sDescriptionTT")]
-[h:sDescriptionAHL=json.get(macro.args,"sDescriptionAHL")]
-[h:TooltipPretext=json.get(macro.args,"Pretext")]
-[h:TooltipPosttext=json.get(macro.args,"Posttext")]
-[h:OuterBorderFrame=json.get(macro.args,"OuterBorderFrame")]
-[h:OuterBorderTooltip=json.get(macro.args,"OuterBorderTooltip")]
+[h:SpellData = macro.args]
+[h:BorderColorOverride=json.get(SpellData,"BorderColorOverride")]
+[h:TitleFontColorOverride=json.get(SpellData,"TitleFontColorOverride")]
+[h:TitleFont=json.get(SpellData,"TitleFont")]
+[h:BodyFont=json.get(SpellData,"BodyFont")]
+[h:ForcedClass=json.get(SpellData,"ForcedClass")]
+[h:ForcedLevel=json.get(SpellData,"ForcedLevel")]
+[h:tooltipDisplaySizeOverride=json.get(SpellData,"tooltipDisplaySizeOverride")]
+[h:DMOnly=json.get(SpellData,"DMOnly")]
+[h:SpellName=json.get(SpellData,"SpellName")]
+[h:sList=json.get(SpellData,"sList")]
+[h:sLevel=json.get(SpellData,"sLevel")]
+[h:Ritual=json.get(SpellData,"Ritual")]
+[h:sSchool=json.get(SpellData,"sSchool")]
+[h:CastTime=json.get(SpellData,"CastTime")]
+[h:RangeType=json.get(SpellData,"RangeType")]
+[h:AoEShape=json.get(SpellData,"AoEShape")]
+[h:sAoENumber=json.get(SpellData,"sAoENumber")]
+[h:Range=json.get(SpellData,"sRange")]
+[h:sRangeUnits=json.get(SpellData,"sRangeUnits")]
+[h:AoESize=json.get(SpellData,"AoESize")]
+[h:AoESize2=json.get(SpellData,"AoESize2")]
+[h:vComp=json.get(SpellData,"vComp")]
+[h:sComp=json.get(SpellData,"sComp")]
+[h:mComp=json.get(SpellData,"mComp")]
+[h:mCompItems=json.get(SpellData,"mCompItems")]
+[h:mCompConsumed=json.get(SpellData,"mCompConsumed")]
+[h:sSpellAttack=json.get(SpellData,"sSpellAttack")]
+[h:sSpellSave=json.get(SpellData,"sSpellSave")]
+[h:sSaveType=json.get(SpellData,"sSaveType")]
+[h:Duration=json.get(SpellData,"sDuration")]
+[h:DmgHalved=json.get(SpellData,"DmgHalved")]
+[h:DmgType=json.get(SpellData,"DmgType")]
+[h:DmgDieNumber=json.get(SpellData,"DmgDieNum")]
+[h:DmgDieSize=json.get(SpellData,"DmgDieSize")]
+[h:DmgDieFlatBonus=json.get(SpellData,"DmgDieFlatBonus")]
+[h:DmgDieMODBonus=json.get(SpellData,"DmgDieMODBonus")]
+[h:DmgType2=json.get(SpellData,"DmgType2")]
+[h:DmgDie2Number=json.get(SpellData,"DmgDie2Num")]
+[h:DmgDie2Size=json.get(SpellData,"DmgDie2Size")]
+[h:DmgDie2FlatBonus=json.get(SpellData,"DmgDie2FlatBonus")]
+[h:DmgDie2MODBonus=json.get(SpellData,"DmgDie2MODBonus")]
+[h:IsSight=json.get(SpellData,"IsSight")]
+[h:sConcentration=json.get(SpellData,"sConcentration")]
+[h:sDescription=json.get(SpellData,"sDescription")]
+[h:sDescriptionTT=json.get(SpellData,"sDescriptionTT")]
+[h:sDescriptionAHL=json.get(SpellData,"sDescriptionAHL")]
+[h:TooltipPretext=json.get(SpellData,"Pretext")]
+[h:TooltipPosttext=json.get(SpellData,"Posttext")]
+[h:OuterBorderFrame=json.get(SpellData,"OuterBorderFrame")]
+[h:OuterBorderTooltip=json.get(SpellData,"OuterBorderTooltip")]
+[h:ParentToken = json.get(SpellData,"ParentToken")]
+[h:NeedsBorder = if(json.get(SpellData,"NeedsBorder")=="",1,json.get(SpellData,"NeedsBorder"))]
 [h:BorderColor="#000000"]
 [h:TextColor="#FFFFFF"]
-[h:a5e.GatherAbilities()]
+[h:switchToken(ParentToken)]
+
+[h:a5e.UnifiedAbilities = a5e.GatherAbilities(ParentToken)]
+[h:pm.a5e.OverarchingContext = "Spell"]
+[h:IsTooltip = 1]
 
 [h,if(ForcedClass==""),CODE:{
-	[h:ClassOptionsObj = "{}"]
+	[h:ClassOptionsArray = "[]"]
 	[h:pm.PassiveFunction("SpellClass")]
-
-	[h:ClassOptions=json.fields(ClassOptionsObj,"json")]
+	
+	[h:ClassOptions = ""]
+	[h:classList = pm.GetClasses("Name","json")]
+	[h,foreach(castingClass,ClassOptionsArray),CODE:{
+		[h:isClassTest = json.contains(classList,json.get(castingClass,"Class"))]
+		[h,if(isClassTest):
+			ClassOptions = json.append(ClassOptions,pm.GetDisplayName(json.get(castingClass,"Class"),"sb.Classes"));
+			ClassOptions = json.append(ClassOptions,json.get(castingClass,"DisplayName"))
+		]
+	}]
 	
 	[h:BarbarianTest=if(json.contains(ClassOptions,"Barbarian"),1,0)]
 	[h:BardTest=if(json.contains(ClassOptions,"Bard"),1,0)]
@@ -147,18 +161,6 @@
 [h:ToHitOutput=substring(ToHitOutput,1)]
 [h:DCOutput=substring(DCOutput,1)]
 
-[h,switch(sLevel),code: 
-	case 1: {[BorderColor="#fd2a19"][TextColor="#FFFFFF"]};
-	case 2: {[BorderColor="#f7ae27"][TextColor="#000000"]};
-	case 3: {[BorderColor="#fcf734"][TextColor="#000000"]};
-	case 4: {[BorderColor="#c3f130"][TextColor="#000000"]};
-	case 5: {[BorderColor="#008c14"][TextColor="#FFFFFF"]};
-	case 6: {[BorderColor="#103ffb"][TextColor="#FFFFFF"]};
-	case 7: {[BorderColor="#052090"][TextColor="#FFFFFF"]};
-	case 8: {[BorderColor="#8e268c"][TextColor="#FFFFFF"]};
-	case 9 :{[BorderColor="#f84af4"][TextColor="#FFFFFF"]}
-]
-
 [h:ttCastTime=if(CastTime=="Action","Action",CastTime)]
 [h:ttCastTime=if(CastTime=="BONUS","Bonus Action",ttCastTime)]
 [h:ttCastTime=if(CastTime=="REACTION","Reaction",ttCastTime)]
@@ -169,14 +171,198 @@
 [h:ttCastTime=if(CastTime=="12 HOURS","12 Hours",ttCastTime)]
 [h:ttCastTime=if(CastTime=="24 HOURS","12 Hours",ttCastTime)]
 
-[h:pm.TooltipVars()]
+[h,switch(sLevel),code: 
+	case 1: {[BorderColor="#fd2a19"][TextColor="#FFFFFF"]};
+	case 2: {[BorderColor="#f7ae27"][TextColor="#000000"]};
+	case 3: {[BorderColor="#fcf734"][TextColor="#000000"]};
+	case 4: {[BorderColor="#c3f130"][TextColor="#000000"]};
+	case 5: {[BorderColor="#008c14"][TextColor="#FFFFFF"]};
+	case 6: {[BorderColor="#103ffb"][TextColor="#FFFFFF"]};
+	case 7: {[BorderColor="#052090"][TextColor="#FFFFFF"]};
+	case 8: {[BorderColor="#8e268c"][TextColor="#FFFFFF"]};
+	case 9 :{[BorderColor="#f84af4"][TextColor="#FFFFFF"]};
+	default:{}
+]
 
-[h:TooltipPermissions=if(or(DMOnly==0,isGM()),1,0)]
+[h:abilityTable = ""]
 
-[r,if(Frame.tooltip && TooltipPermissions),CODE:{
-	[r,frame5("Ability Info"):{[r:strformat('<html>'+OuterBorderFrame+TooltipPretext+'<div style="background-color: '+if(and(isOwner(getPlayerName()),BorderColorOverride!=""),BorderColorOverride,""+BorderColor+"")+'; color: '+if(and(isOwner(getPlayerName()),TitleFontColorOverride!=""),TitleFontColorOverride,""+TextColor+"")+'; padding-top:2px; padding-bottom:10px; padding-left:8px; padding-right:8px; font-family:'+TitleFont.tooltip+'"><b>'+SpellName+"</b>: Level "+sLevel+" "+sSchool+" Spell"+'<div style="background-color:'+BodyBackgroundFinal.tooltip+'; color: '+BodyTextFinal.tooltip+'; padding:2px; font-family:'+BodyFont.tooltip+';">'+"<table style='font-size:1em; color: "+BodyTextFinal.tooltip+";'><tr><th style = '"+FrameAccentFormat+"'><b>Casting Time</b> "+VerticalFormat+""+ttCastTime+if(Ritual,", or Ritual cast","")+"</td></tr><tr><th style = '"+FrameAccentFormat+"'><b>Concentration</b> "+VerticalFormat+""+if(sConcentration,"Yes","No")+"</td></tr>"+if(RangeType=="","","<tr><th style = '"+FrameAccentFormat+"'><b>Range</b> "+VerticalFormat+" "+if(RangeType=="Ranged",Range+" "+sRangeUnits,RangeType)+if(AoEShape=="None","",", "+AoESize+if(or(AoEShape=="Line",AoEShape=="Cylinder"),"x"+AoeSize2,"")+" "+AoEShape)+"</td></tr>")+if(or(vComp,SComp,MComp),"<tr><th style = '"+FrameAccentFormat+"'><b>Components</b>"+VerticalFormat+""+if(vComp,"V","")+if(and(vComp,sComp),", ","")+if(sComp,"S","")+if(or(and(sComp,mComp),and(vComp,mComp,sComp==0)),", ","")+if(mComp,"M ("+mCompItems+")","")+"</td></tr>","")+if(or(mCompConsumed=="0",mCompConsumed==""),"","<tr><th style = '"+FrameAccentFormat+"'><b>Consumed Components</b>"+VerticalFormat+""+mCompConsumed+"</td></tr>")+"<tr><th style = '"+FrameAccentFormat+"'><b>Requires Sight</b>"+VerticalFormat+""+if(IsSight,"Yes","No")+"</td></tr>"+if(Duration=="","","<tr><th style = '"+FrameAccentFormat+"'><b>Duration</b>"+VerticalFormat+""+Duration+"</td></tr>")+if(sSpellAttack,"<tr><th style = '"+FrameAccentFormat+"'><b>Spell Attack</b>  "+VerticalFormat+" "+ToHitOutput+" </td></tr>","")+if(sSpellSave==0,"","<tr><th style = '"+FrameAccentFormat+"'><b>Saving Throw</b>"+VerticalFormat+""+sSaveType+", DC "+DCOutput+"</td></tr>")+if(DmgDieNumber==0,"","<tr><th style = '"+FrameAccentFormat+"'><b>"+DmgType+" "+if(or(DmgType=="Healing",DmgType=="Temp HP",DmgType=="Special"),"","Damage")+"</b>"+VerticalFormat+" "+DmgDieNumber+"d"+DmgDieSize+if(DmgDieFlatBonus==0,""," + "+DmgDieFlatBonus)+if(DmgDieMODBonus==0,""," + MOD")+if(DmgHalved,", Halved on Save","")+"</td></tr>")+if(DmgDie2Number==0,"","<tr><th style = '"+FrameAccentFormat+"'><b>"+DmgType2+" "+if(or(DmgType2=="Healing",DmgType2=="Temp HP",DmgType2=="Special"),"","Damage")+"</b>"+VerticalFormat+" "+DmgDie2Number+"d"+DmgDie2Size+if(DmgDie2FlatBonus==0,""," + "+DmgDie2FlatBonus)+if(DmgDie2MODBonus==0,""," + MOD")+if(DmgHalved,", Halved on Save","")+"</td></tr>")+"</table><span style = 'color:"+BodyTextFinal.tooltip+"'><br>"+sDescription+if(or(sDescriptionAHL=="",sDescriptionAHL=="0"),"","<br><br>"+sDescriptionAHL)+'</span></div></div>'+TooltipPosttext+'</html>')]}]
-};{}]
+[h,if(NeedsBorder==0): abilityTable = json.append(abilityTable,json.set("",
+	"ShowIfCondensed",1,
+	"Header","Spell Name, Level, and School",
+	"FalseHeader","",
+	"FullContents","",
+	"RulesContents",SpellName+": Level "+sLevel+" "+upper(sSchool,1)+" Spell",
+	"RollContents","",
+	"DisplayOrder","['Rules','Roll','Full']",
+	"LinkText","",
+	"Link","",
+	"Value",""
+	))]
+	
+[h:abilityTable = json.append(abilityTable,json.set("",
+	"ShowIfCondensed",1,
+	"Header","Casting Time",
+	"FalseHeader","",
+	"FullContents","",
+	"RulesContents",ttCastTime,
+	"RollContents","",
+	"DisplayOrder","['Rules','Roll','Full']",
+	"LinkText","",
+	"Link","",
+	"Value",""
+	))]
 
-[r,if(Mouseover.tooltip && TooltipPermissions),CODE:{
-	[r:strformat('<html>'+OuterBorderTooltip+TooltipPretext+'<div style="background-color: '+if(and(isOwner(getPlayerName()),BorderColorOverride!=""),BorderColorOverride,""+BorderColor+"")+'; color: '+if(and(isOwner(getPlayerName()),TitleFontColorOverride!=""),TitleFontColorOverride,""+TextColor+"")+'; padding-top:2px; padding-bottom:10px; padding-left:8px; padding-right:8px; font-family:'+TitleFont.tooltip+'; '+if(DisplayType.tooltip==2,"",if(DisplayType.tooltip==1,"max-","")+"width:"+DisplaySize.tooltip+"px")+'"><b>'+SpellName+"</b>: Level "+sLevel+" "+sSchool+" Spell"+'<div style="background-color:'+BodyBackgroundFinal.tooltip+'; color: '+BodyTextFinal.tooltip+'; padding:2px; font-family:'+BodyFont.tooltip+';">'+"<table style='font-size:1em; color: "+BodyTextFinal.tooltip+";'><tr><th style = '"+AccentFormat+"'><b>Casting Time</b> "+VerticalFormat+""+ttCastTime+if(Ritual,", or Ritual cast","")+"</td></tr><tr><th style = '"+AccentFormat+"'><b>Concentration</b> "+VerticalFormat+""+if(sConcentration,"Yes","No")+"</td></tr>"+if(RangeType=="","","<tr><th style = '"+AccentFormat+"'><b>Range</b> "+VerticalFormat+" "+if(RangeType=="Ranged",Range+" "+sRangeUnits,RangeType)+if(AoEShape=="None","",", "+AoESize+if(or(AoEShape=="Line",AoEShape=="Cylinder"),"x"+AoeSize2,"")+" "+AoEShape)+"</td></tr>")+if(or(vComp,SComp,MComp),"<tr><th style = '"+AccentFormat+"'><b>Components</b>"+VerticalFormat+""+if(vComp,"V","")+if(and(vComp,sComp),", ","")+if(sComp,"S","")+if(or(and(sComp,mComp),and(vComp,mComp,sComp==0)),", ","")+if(mComp,"M ("+mCompItems+")","")+"</td></tr>","")+if(or(mCompConsumed=="0",mCompConsumed==""),"","<tr><th style = '"+AccentFormat+"'><b>Consumed Components</b>"+VerticalFormat+""+mCompConsumed+"</td></tr>")+"<tr><th style = '"+AccentFormat+"'><b>Requires Sight</b>"+VerticalFormat+""+if(IsSight,"Yes","No")+"</td></tr>"+if(Duration=="","","<tr><th style = '"+AccentFormat+"'><b>Duration</b>"+VerticalFormat+""+Duration+"</td></tr>")+if(sSpellAttack,"<tr><th style = '"+AccentFormat+"'><b>Spell Attack</b>  "+VerticalFormat+" "+ToHitOutput+" </td></tr>","")+if(sSpellSave==0,"","<tr><th style = '"+AccentFormat+"'><b>Saving Throw</b>"+VerticalFormat+""+sSaveType+", DC "+DCOutput+"</td></tr>")+if(DmgDieNumber==0,"","<tr><th style = '"+AccentFormat+"'><b>"+DmgType+" "+if(or(DmgType=="Healing",DmgType=="Temp HP",DmgType=="Special"),"","Damage")+"</b>"+VerticalFormat+" "+DmgDieNumber+"d"+DmgDieSize+if(DmgDieFlatBonus==0,""," + "+DmgDieFlatBonus)+if(DmgDieMODBonus==0,""," + MOD")+if(DmgHalved,", Halved on Save","")+"</td></tr>")+if(DmgDie2Number==0,"","<tr><th style = '"+AccentFormat+"'><b>"+DmgType2+" "+if(or(DmgType2=="Healing",DmgType2=="Temp HP",DmgType2=="Special"),"","Damage")+"</b>"+VerticalFormat+" "+DmgDie2Number+"d"+DmgDie2Size+if(DmgDie2FlatBonus==0,""," + "+DmgDie2FlatBonus)+if(DmgDie2MODBonus==0,""," + MOD")+if(DmgHalved,", Halved on Save","")+"</td></tr>")+"</table><span style = 'color:"+BodyTextFinal.tooltip+"'><br>"+sDescription+if(or(sDescriptionAHL=="",sDescriptionAHL=="0"),"","<br><br>"+sDescriptionAHL)+'</span></div></div>'+TooltipPosttext+'</html>')]
-};{}]
+[h:abilityTable = json.append(abilityTable,json.set("",
+	"ShowIfCondensed",1,
+	"Header","Requires Concentration",
+	"FalseHeader","",
+	"FullContents","",
+	"RulesContents",if(sConcentration,"Yes","No"),
+	"RollContents","",
+	"DisplayOrder","['Rules','Roll','Full']",
+	"LinkText","",
+	"Link","",
+	"Value",""
+	))]
+
+[h:abilityTable = json.append(abilityTable,json.set("",
+	"ShowIfCondensed",1,
+	"Header","Range",
+	"FalseHeader","",
+	"FullContents","",
+	"RulesContents",if(RangeType=="Ranged",Range+" "+sRangeUnits,RangeType)+if(AoEShape=="None","",", "+AoESize+if(or(AoEShape=="Line",AoEShape=="Cylinder"),"x"+AoeSize2,"")+" "+AoEShape),
+	"RollContents","",
+	"DisplayOrder","['Rules','Roll','Full']",
+	"LinkText","",
+	"Link","",
+	"Value",""
+	))]
+	
+[h:ComponentsRequired = if(vComp,"V","")]
+[h,if(sComp): ComponentsRequired = listAppend(ComponentsRequired,"S",", ")]
+[h,if(mComp): ComponentsRequired = listAppend(ComponentsRequired,"M",", ")]
+[h,if(mCompItems!=""): ComponentsRequired + "("+mCompItems+")"]
+
+[h:abilityTable = json.append(abilityTable,json.set("",
+	"ShowIfCondensed",1,
+	"Header","Components",
+	"FalseHeader","",
+	"FullContents","",
+	"RulesContents",ComponentsRequired,
+	"RollContents","",
+	"DisplayOrder","['Rules','Roll','Full']",
+	"LinkText","",
+	"Link","",
+	"Value",""
+	))]
+
+[h,if(mCompConsumed!="" && mCompConsumed!="0" && mCompConsumed!=0): abilityTable = json.append(abilityTable,json.set("",
+	"ShowIfCondensed",1,
+	"Header","Components Consumed",
+	"FalseHeader","",
+	"FullContents","",
+	"RulesContents",mCompConsumed,
+	"RollContents","",
+	"DisplayOrder","['Rules','Roll','Full']",
+	"LinkText","",
+	"Link","",
+	"Value",""
+	))]
+
+[h:abilityTable = json.append(abilityTable,json.set("",
+	"ShowIfCondensed",1,
+	"Header","Requires Sight",
+	"FalseHeader","",
+	"FullContents","",
+	"RulesContents",if(IsSight,"Yes","No"),
+	"RollContents","",
+	"DisplayOrder","['Rules','Roll','Full']",
+	"LinkText","",
+	"Link","",
+	"Value",""
+	))]
+
+[h:abilityTable = json.append(abilityTable,json.set("",
+	"ShowIfCondensed",1,
+	"Header","Duration",
+	"FalseHeader","",
+	"FullContents","",
+	"RulesContents",Duration,
+	"RollContents","",
+	"DisplayOrder","['Rules','Roll','Full']",
+	"LinkText","",
+	"Link","",
+	"Value",""
+	))]
+
+[h,if(sSpellAttack): abilityTable = json.append(abilityTable,json.set("",
+	"ShowIfCondensed",1,
+	"Header","To Hit Bonus",
+	"FalseHeader","",
+	"FullContents","",
+	"RulesContents",ToHitOutput,
+	"RollContents","",
+	"DisplayOrder","['Rules','Roll','Full']",
+	"LinkText","",
+	"Link","",
+	"Value",""
+	))]
+
+[h,if(sSpellSave!=0): abilityTable = json.append(abilityTable,json.set("",
+	"ShowIfCondensed",1,
+	"Header","Saving Throw",
+	"FalseHeader","",
+	"FullContents","",
+	"RulesContents",sSaveType+", DC "+DCOutput,
+	"RollContents","",
+	"DisplayOrder","['Rules','Roll','Full']",
+	"LinkText","",
+	"Link","",
+	"Value",""
+	))]
+
+[h,if(DmgDieNumber!=0): abilityTable = json.append(abilityTable,json.set("",
+	"ShowIfCondensed",1,
+	"Header",DmgType+" "+if(or(DmgType=="Healing",DmgType=="Temp HP",DmgType=="Special"),"","Damage"),
+	"FalseHeader","",
+	"FullContents","",
+	"RulesContents",DmgDieNumber+"d"+DmgDieSize+if(DmgDieFlatBonus==0,""," + "+DmgDieFlatBonus)+if(DmgDieMODBonus==0,""," + MOD")+if(DmgHalved,", Halved on Save",""),
+	"RollContents","",
+	"DisplayOrder","['Rules','Roll','Full']",
+	"LinkText","",
+	"Link","",
+	"Value",""
+	))]
+
+[h,if(DmgDie2Number!=0): abilityTable = json.append(abilityTable,json.set("",
+	"ShowIfCondensed",1,
+	"Header",DmgType2+" "+if(or(DmgType2=="Healing",DmgType2=="Temp HP",DmgType2=="Special"),"","Damage"),
+	"FalseHeader","",
+	"FullContents","",
+	"RulesContents",DmgDie2Number+"d"+DmgDie2Size+if(DmgDie2FlatBonus==0,""," + "+DmgDie2FlatBonus)+if(DmgDie2MODBonus==0,""," + MOD")+if(DmgHalved,", Halved on Save",""),
+	"RollContents","",
+	"DisplayOrder","['Rules','Roll','Full']",
+	"LinkText","",
+	"Link","",
+	"Value",""
+	))]
+
+[h:abilityEffect = sDescription+if(or(sDescriptionAHL=="",sDescriptionAHL=="0"),"","<br><br>"+sDescriptionAHL)]
+
+[h,if(NeedsBorder),CODE:{
+	[h:ClassFeatureData = json.set("",
+		"DMOnly",DMOnly,
+		"BorderColorOverride",if(BorderColorOverride=="",BorderColor,BorderColorOverride),
+		"TitleFontColorOverride",if(TitleFontColorOverride=="",TextColor,TitleFontColorOverride),
+		"TitleFont",TitleFont,
+		"BodyFont",BodyFont,
+		"Class","zzSpell",
+		"Name",pm.RemoveSpecial(SpellName),
+		"DisplayName","<b>"+SpellName+"</b>: Level "+sLevel+" "+upper(sSchool,1)+" Spell",
+		"Effect",abilityEffect,
+		"abilityTable",abilityTable
+		)]
+	[r:pm.TooltipOutput(ClassFeatureData)]
+};{
+	[h:macro.return = json.set("","Table",abilityTable,"Effect",abilityEffect)]
+}]

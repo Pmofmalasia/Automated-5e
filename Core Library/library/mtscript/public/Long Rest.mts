@@ -1,8 +1,11 @@
 [h:lr.Data = macro.args]
+[h:IsTooltip = 0]
 [h:Flavor=json.get(lr.Data,"Flavor")]
 [h:ParentToken=json.get(lr.Data,"ParentToken")]
-[h:a5e.GatherAbilities()]
 [h:abilityTable = ""]
+[h:switchToken(ParentToken)]
+[h:a5e.UnifiedAbilities = a5e.GatherAbilities(ParentToken)]
+[h:pm.a5e.OverarchingContext = "Long Rest"]
 
 [h:setAllStates(0)]
 
@@ -37,10 +40,9 @@
 			"Header","Hit Dice",
 			"FalseHeader","",
 			"FullContents","",
-			"RulesContents",pm.HitDieDisplay(),
+			"RulesContents",a5e.HitDieDisplay(),
 			"RollContents","",
-			"DisplayOrder","['Rules','Roll','Full']",
-			"Value",""
+			"DisplayOrder","['Rules','Roll','Full']"
 			))]
 	
 [h:SpellSlots=MaxSpellSlots]
@@ -52,8 +54,7 @@
 		"FullContents","",
 		"RulesContents",pm.SpellSlots(),
 		"RollContents","",
-		"DisplayOrder","['Rules','Roll','Full']",
-		"Value",""
+		"DisplayOrder","['Rules','Roll','Full']"
 		))]
 			
 [h:Concentration=""]
@@ -74,8 +75,7 @@
 	"FullContents",exhaustionMessage,
 	"RulesContents","",
 	"RollContents","",
-	"DisplayOrder","['Full','Rules','Roll']",
-	"Value",""
+	"DisplayOrder","['Full','Rules','Roll']"
 	))]
 [h:"<!-- For each ability in the abilities array, checks to see if there is a magic item bonus to the max resource, then checks to see if restored on a long rest and sets resource equal to max resource plus any magic item bonuses. Magic item bonuses do not currently work for abilities with multiple resources (therefore stored as objects). -->"]
 

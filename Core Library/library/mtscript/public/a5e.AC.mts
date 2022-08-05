@@ -1,4 +1,7 @@
-[h:a5e.GatherAbilities()]
+[h:ParentToken = currentToken()]
+[h:a5e.UnifiedAbilities = a5e.GatherAbilities(ParentToken)]
+[h:pm.a5e.OverarchingContext = "Stats"]
+[h:IsTooltip = 0]
 
 [h:baseAC = json.get(json.get(Armor,json.get(Armor,0)),"BaseAC")+json.get(json.get(Armor,json.get(Armor,0)),"MagicBonus")]
 [h:dexMax = json.get(json.get(Armor,json.get(Armor,0)),"DexMax")]

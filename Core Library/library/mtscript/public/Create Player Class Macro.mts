@@ -21,6 +21,6 @@
 		"playerEditable",0,
 		"tooltip",pm.NewMacroTooltip,
 		"delim","json"
-		)]
+	)]
 	[h:createMacro(pm.NewMacroProps)]
 }]

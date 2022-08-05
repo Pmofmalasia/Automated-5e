@@ -2,49 +2,25 @@
 [h:Flavor=json.get(CheckData,"Flavor")]
 [h:ParentToken=json.get(CheckData,"ParentToken")]
 
-[h:"<!-- Note: as is, magic item proficiency in all checks of an ability do not stack with magic item proficiency in subtypes of that ability. Not sure whether they should or not, or if it even matters since its unlikely to ever be relevant anyway. -->"]
-
-[h:"<!-- Magic Item bonuses arent swapping though and that probably does need fixing. -->"]
-
-[{"Name":"AlchemistsSupplies","DisplayName":"Alchemist's Supplies","Attribute":"Intelligence"}]
-
-[h:tch.SkillList = pm.GetTools()]
-[h:tch.SkillOptions = ""]
-[h:tch.SkillDisplay = ""]
-[h,foreach(TempSkill,tch.SkillList),CODE:{
-	[h:tempBonus = json.get(AtrMods,json.get(TempSkill,"Attribute"))+(json.get(Skills,json.get(TempSkill,"Name"))*Proficiency)]
-	[h:tch.SkillOptions = json.append(tch.SkillOptions,json.set("",
-		"Name",json.get(TempSkill,"Name"),
-		"DisplayName",json.get(TempSkill,"DisplayName"),
-		"Attribute",json.get(TempSkill,"Attribute"),
-		"Bonus",tempBonus,
-		"BonusDisplay",pm.PlusMinus((json.get(Skills,json.get(TempSkill,"Name"))*Proficiency),0),
-		"BonusFromAttribute",json.get(AtrMods,json.get(TempSkill,"Attribute")),
-		"BonusFromAttributeDisplay",pm.PlusMinus(json.get(AtrMods,json.get(TempSkill,"Attribute")),1)
-		))]
-	[h:tch.SkillDisplay = json.append(tch.SkillDisplay,"<html>"+pm.PlusMinus(tempBonus,1,0)+" - "+json.get(TempSkill,"DisplayName")+" ("+substring(json.get(TempSkill,"Attribute"),0,3)+")</html>")]
+[h:ch.ToolList = pm.GetTools()]
+[h:ch.ToolOptions = ""]
+[h:ch.ToolDisplay = ""]
+[h,foreach(TempTool,ch.ToolList),CODE:{
+	[h:ch.ToolOptions = json.append(ch.ToolOptions,json.get(TempTool,"DisplayName"))]
+	[h:ch.ToolDisplay = listAppend(ch.ToolDisplay,json.get(TempTool,"DisplayName")+" ("+substring(json.get(TempTool,"Attribute"),0,3)+")")]
 }]
 
-[h:AddedBonus=0]
-[h:sBonus="0"]
-[h:SkillDesc=""]
-[h:iSkills=-1]
-[h:mBonusStr=""]
-[h:mBonus=0]
-[h:mBonusOriginal=0]
-[h:mAdv=""]
-[h:mDis=""]
-[h:mMessage=""]
-
-[h:listSkills=json.merge(json.append("","--Choose a Skill--"),tch.SkillDisplay,tch.AttributeDisplay)]
+[h:listTools = json.fromStrProp("--Choose a Tool--,"+ch.ToolDisplay)]
 [h:abort(input(
-	"SkillDesc|--Description Here--|Description||WIDTH=40",
-	"iSkills|"+json.toList(listSkills)+"|Skills|LIST",
-	"Alternate|-NO-,"+json.toList(tch.AttributeList)+"|Use Alternate Ability|LIST|VALUE=STRING",
-	"sBonus||Bonus||WIDTH=20",
+	"ToolDesc|--Description Here--|Description||WIDTH=40",
+	"iTools|"+json.toList(listTools)+"|Choose a Tool|LIST",
+	"Alternate|-NO-,"+pm.GetAttributes("DisplayName")+"|Use Alternate Ability|LIST|VALUE=STRING",
+	"sBonus||Situational Bonus||WIDTH=20",
+	"chAdv|Forced Disadvantage,Situational Disadvantage,Normal Roll,Situational Advantage,Forced Advantage|Advantage Type|RADIO|SELECT=2",
 	"outputOptions|"+if(isGM(),"Everyone,DM Only","Everyone,You and DM,DM Only")+"|Who sees the result?|RADIO"
 ))]
 [h:AddedBonus=eval(sBonus+"+1d1-1")]
+[h:Alternate = if(Alternate=="-NO-","",Alternate)]
 
 [h:"<!-- Note: outputTargets does not include the GM since their output is constructed separately from the players' -->"]
 [h,switch(outputOptions),CODE:
@@ -53,15 +29,16 @@
 	case 2:{[h:outputTargets = "none"][h:linkPermissions = "gm"]}
 ]
 
-[h,if(iSkills==0),CODE:{
-	[h:tch.Choice = json.set("","Name","No Skill Selected","DisplayName","No Skill Selected")]
+[h,if(iTools==0),CODE:{
+	[h:ch.Choice = "No Tool Selected"]
+	[h:Alternate = "None"]
 };{
-	[h,if(iSkills>json.length(tch.SkillOptions)): tch.Choice = json.get(tch.AttributeOptions,(iSkills-json.length(tch.SkillOptions)-1)); tch.Choice = json.get(tch.SkillOptions,iSkills-1)]
+	[h:ch.Choice = json.get(ch.ToolOptions,iTools-1)]
 }]
 
-[h:"<!-- Note: If changes are made to outputTargets, a new method may need to be used to determine if it is GM only or not. Also may need a different method anyway for passive skills. -->"]
+[h:"<!-- Note: If changes are made to outputTargets, a new method may need to be used to determine if it is GM only or not. Also may need a different method anyway for passive Tools. -->"]
 [h:ClassFeatureData = json.set("",
-	"Flavor",if(or(SkillDesc=="",SkillDesc=="--Description Here--"),Flavor,SkillDesc),
+	"Flavor",if(or(ToolDesc=="",ToolDesc=="--Description Here--"),Flavor,ToolDesc),
 	"ParentToken",ParentToken,
 	"DMOnly",if(outputTargets=="none",1,0),
 	"BorderColorOverride",json.get(CheckData,"BorderColorOverride"),
@@ -80,4 +57,13 @@
 [h:output.PC = json.get(json.get(FormattingData,"Output"),"Player")]
 [h:output.GM = json.get(json.get(FormattingData,"Output"),"GM")]
 
-[h,MACRO("Check@Lib:pm.a5e.Core"): json.set(tch.Choice,"ParentToken",ParentToken,"Alternate",Alternate,"Formatting",FormattingData,"Output",json.set("","Player",output.PC,"GM",output.GM),"OutputTargets",outputTargets)]
+[h,MACRO("Check@Lib:pm.a5e.Core"): json.set("","Skill",ch.Choice,"Type","Tool","ParentToken",ParentToken,"Alternate",Alternate,"Bonus",AddedBonus,"Advantage",if(chAdv==0,-1,if(chAdv==4,1,chAdv - 2)),"ForcedAdvantage",or(chAdv==0,chAdv==4),"PCOutput",outputTargets)]
+[h:CheckData = macro.return]
+[h:abilityTable = json.get(CheckData,"Table")]
+
+[h:output.Temp = pm.AbilityTableProcessing(abilityTable,FormattingData,1)]
+
+[h:output.PC = output.PC + json.get(macro.return,"Player")+"</div></div>"]
+[h:output.GM = output.GM + json.get(macro.return,"GM")+"</div></div>"]
+[h:broadcastAsToken(output.GM,"gm")]
+[h:broadcastAsToken(output.PC,outputTargets)]

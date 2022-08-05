@@ -1,13 +1,13 @@
 [h:choice.TitleFont=""]
 [h:choice.BodyFont=""]
 
-[h:display.settings=input(
+[h:abort(input(
 	"junkVar | ---------------------------------------- Tooltip Settings ---------------------------------------- | | LABEL | SPAN=TRUE",
 	"choice.Default | | Restore Default Settings | CHECK",
 	"choice.Mouseover | "+if(json.get(getLibProperty("TooltipMouseover","Lib:pm.a5e.Core"),getPlayerName())=="",json.get(getLibProperty("TooltipMouseover","Lib:pm.a5e.Core"),"Default"),json.get(getLibProperty("TooltipMouseover","Lib:pm.a5e.Core"),getPlayerName()))+" | Show Tooltips Over Macro Buttons | CHECK",
 	"choice.Frame | "+if(json.get(getLibProperty("TooltipFrame","Lib:pm.a5e.Core"),getPlayerName())=="",json.get(getLibProperty("TooltipFrame","Lib:pm.a5e.Core"),"Default"),json.get(getLibProperty("TooltipFrame","Lib:pm.a5e.Core"),getPlayerName()))+" | Show Tooltips in Frame | CHECK",
 	"choice.DisplaySize | "+if(json.get(getLibProperty("TooltipDisplaySize","Lib:pm.a5e.Core"),getPlayerName())=="",json.get(getLibProperty("TooltipDisplaySize","Lib:pm.a5e.Core"),"Default"),json.get(getLibProperty("TooltipDisplaySize","Lib:pm.a5e.Core"),getPlayerName()))+" | Tooltip Display Width ",
-	"choice.DisplaySize | "+if(json.get(getLibProperty("TooltipVertical","Lib:pm.a5e.Core"),getPlayerName())=="",json.get(getLibProperty("TooltipVertical","Lib:pm.a5e.Core"),"Default"),json.get(getLibProperty("TooltipVertical","Lib:pm.a5e.Core"),getPlayerName()))+" | Use Vertical Tooltip Frames | CHECK ",
+	"choice.Vertical | "+if(json.get(getLibProperty("TooltipVertical","Lib:pm.a5e.Core"),getPlayerName())=="",json.get(getLibProperty("TooltipVertical","Lib:pm.a5e.Core"),"Default"),json.get(getLibProperty("TooltipVertical","Lib:pm.a5e.Core"),getPlayerName()))+" | Use Vertical Tooltip Frames | CHECK ",
 	"choice.DisplayType | Fixed Width,Maximum Width,Unlimited Width | Tooltip Width Options | LIST | SELECT="+if(json.get(getLibProperty("TooltipDisplayType","Lib:pm.a5e.Core"),getPlayerName())=="",json.get(getLibProperty("TooltipDisplayType","Lib:pm.a5e.Core"),"Default"),json.get(getLibProperty("TooltipDisplayType","Lib:pm.a5e.Core"),getPlayerName()))+" ",
 	"choice.DarkMode | "+if(json.get(getLibProperty("TooltipDarkMode","Lib:pm.a5e.Core"),getPlayerName())=="",json.get(getLibProperty("TooltipDarkMode","Lib:pm.a5e.Core"),"Default"),json.get(getLibProperty("TooltipDarkMode","Lib:pm.a5e.Core"),getPlayerName()))+" | Use Dark Mode | CHECK",
 	"junkVar | ------------------------------ Color Settings: Use Hex Codes ------------------------------ | | LABEL | SPAN=TRUE",
@@ -21,8 +21,7 @@
     "choice.LightAccent | "+if(json.get(getLibProperty("TooltipLightAccent","Lib:pm.a5e.Core"),getPlayerName())=="",json.get(getLibProperty("TooltipLightAccent","Lib:pm.a5e.Core"),"Default"),json.get(getLibProperty("TooltipLightAccent","Lib:pm.a5e.Core"),getPlayerName()))+" | Light Mode Accent Color",
     "choice.LightAccentText | "+if(json.get(getLibProperty("TooltipLightAccentText","Lib:pm.a5e.Core"),getPlayerName())=="",json.get(getLibProperty("TooltipLightAccentText","Lib:pm.a5e.Core"),"Default"),json.get(getLibProperty("TooltipLightAccentText","Lib:pm.a5e.Core"),getPlayerName()))+" | Light Mode Accent Text Color",
 	"junkVar | ---------------------------------------------- Font Settings ---------------------------------------------- | | LABEL | SPAN=TRUE"
-	)]
-[h:abort(display.settings)]
+))]
 
 [h,if(choice.Default),CODE:{
 	[h:choice.Mouseover=json.get(getLibProperty("TooltipMouseover","Lib:pm.a5e.Core"),"Default")]

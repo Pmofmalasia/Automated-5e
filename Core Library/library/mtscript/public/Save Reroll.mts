@@ -8,12 +8,36 @@
 [h:d20ID = json.get(d20Data,"ID")]
 [h:CurrentSaveDisplay = json.get(d20Data,"Save")]
 
-[h:pm.a5e.d20Roll(d20Data)]
-
-[h:TotalBonus = json.get(d20Data,"TotalBonus")]
-
+[h:isNewRoll = json.get(d20Data,"NewRoll")]
+[h:isNewBonus = json.get(d20Data,"NewBonus")]
 [h:rollFormula = json.get(d20Data,"Formula")]
 [h:rollString = json.get(d20Data,"RollString")]
+
+[h,if(isNewRoll == ""),CODE:{
+	[h:d20AllRolls = json.get(d20Data,"PreviousRoll")]
+	[h:d20Advantage = json.get(d20Data,"Advantage")]
+	[h:d20Disadvantage = json.get(d20Data,"Disadvantage")]
+	[h:d20AdvantageBalance = if(or(and(d20Disadvantage == 0,d20Advantage == 0),and(d20Disadvantage !=0,d20Advantage != 0)),0,if(d20Disadvantage == 0,1,-1))]
+};{
+	[h:ForcedRoll = json.get(isNewRoll,"ForcedRoll")]
+	[h,if(ForcedRoll==""),CODE:{
+		[h:pm.a5e.d20Roll(d20Data)]
+	};{
+		[h:d20AllRolls = json.append("",ForcedRoll)]
+		[h:d20Advantage = 0]
+		[h:d20Disadvantage = 0]
+		[h:d20AdvantageBalance = 0]
+	}]
+}]
+
+[h,if(isNewBonus == ""),CODE:{
+	[h:TotalBonus = json.get(d20Data,"TotalBonus")]
+};{
+	[h:newBonus = json.get(isNewBonus,"Value")]
+	[h:rollFormula = json.get(d20Data,"Formula") + if(json.get(isNewBonus,"Formula")=="",pm.PlusMinus(newBonus,1)," + "+json.get(isNewBonus,"Formula"))]
+	[h:rollString = json.get(d20Data,"RollString") + pm.PlusMinus(newBonus,1)]
+	[h:TotalBonus = json.get(d20Data,"TotalBonus") + newBonus]
+}]
 
 [h:DamageColor = pm.DamageColor()]
 [h:HealingColor = pm.HealingColor()]

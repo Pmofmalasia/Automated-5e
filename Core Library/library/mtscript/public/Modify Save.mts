@@ -10,24 +10,24 @@
 
 [h:isNewRoll = json.get(d20Data,"NewRoll")]
 [h:isNewBonus = json.get(d20Data,"NewBonus")]
+[h:ForcedRoll = json.get(d20Data,"ForcedRoll")]
 [h:rollFormula = json.get(d20Data,"Formula")]
 [h:rollString = json.get(d20Data,"RollString")]
 
-[h,if(isNewRoll == ""),CODE:{
-	[h:d20AllRolls = json.get(d20Data,"PreviousRoll")]
-	[h:d20Advantage = json.get(d20Data,"Advantage")]
-	[h:d20Disadvantage = json.get(d20Data,"Disadvantage")]
-	[h:d20AdvantageBalance = if(or(and(d20Disadvantage == 0,d20Advantage == 0),and(d20Disadvantage !=0,d20Advantage != 0)),0,if(d20Disadvantage == 0,1,-1))]
-};{
-	[h:ForcedRoll = json.get(isNewRoll,"ForcedRoll")]
-	[h,if(ForcedRoll==""),CODE:{
-		[h:pm.a5e.d20Roll(d20Data)]
+[h,if(isNewRoll == "" || isNewRoll == 0),CODE:{
+	[h,if(ForcedRoll == ""),CODE:{
+		[h:d20AllRolls = json.get(d20Data,"PreviousRoll")]
+		[h:d20Advantage = json.get(d20Data,"Advantage")]
+		[h:d20Disadvantage = json.get(d20Data,"Disadvantage")]
+		[h:d20AdvantageBalance = if(or(and(d20Disadvantage == 0,d20Advantage == 0),and(d20Disadvantage !=0,d20Advantage != 0)),0,if(d20Disadvantage == 0,1,-1))]
 	};{
 		[h:d20AllRolls = json.append("",ForcedRoll)]
 		[h:d20Advantage = 0]
 		[h:d20Disadvantage = 0]
 		[h:d20AdvantageBalance = 0]
 	}]
+};{
+	[h:pm.a5e.d20Roll(d20Data)]
 }]
 
 [h,if(isNewBonus == ""),CODE:{
@@ -53,12 +53,12 @@
 	
 	[h,SWITCH(d20Type),CODE:
 		case "Death":{
-			[h:d20AdvRerollLink = macroLinkText("Death Save Border@Lib:pm.a5e.Core","self-gm",json.set(rerollData,"Advantage",1,"Disadvantage",0,"ForcedAdvantage",1),ParentToken)]
-			[h:d20DisRerollLink = macroLinkText("Death Save Border@Lib:pm.a5e.Core","self-gm",json.set(rerollData,"Advantage",0,"Disadvantage",1,"ForcedAdvantage",1),ParentToken)]
+			[h:d20AdvRerollLink = macroLinkText("Death Save Border@Lib:pm.a5e.Core","self-gm",json.set(rerollData,"Advantage",1,"Disadvantage",0,"ForcedAdvantage",1,"NewRoll",1),ParentToken)]
+			[h:d20DisRerollLink = macroLinkText("Death Save Border@Lib:pm.a5e.Core","self-gm",json.set(rerollData,"Advantage",0,"Disadvantage",1,"ForcedAdvantage",1,"NewRoll",1),ParentToken)]
 		};
 		default:{
-			[h:d20AdvRerollLink = macroLinkText("Save Reroll@Lib:pm.a5e.Core","self-gm",json.set(rerollData,"Advantage",1,"Disadvantage",0,"ForcedAdvantage",1),ParentToken)]
-			[h:d20DisRerollLink = macroLinkText("Save Reroll@Lib:pm.a5e.Core","self-gm",json.set(rerollData,"Advantage",0,"Disadvantage",1,"ForcedAdvantage",1),ParentToken)]
+			[h:d20AdvRerollLink = macroLinkText("Modify Save Border@Lib:pm.a5e.Core","self-gm",json.set(rerollData,"Advantage",1,"Disadvantage",0,"ForcedAdvantage",1,"NewRoll",1),ParentToken)]
+			[h:d20DisRerollLink = macroLinkText("Modify Save Border@Lib:pm.a5e.Core","self-gm",json.set(rerollData,"Advantage",0,"Disadvantage",1,"ForcedAdvantage",1,"NewRoll",1),ParentToken)]
 		}
 	]
 

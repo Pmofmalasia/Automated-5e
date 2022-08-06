@@ -24,7 +24,7 @@
 [h:output.PC = json.get(json.get(FormattingData,"Output"),"Player")]
 [h:output.GM = json.get(json.get(FormattingData,"Output"),"GM")]
 
-[h,MACRO("Save Reroll@Lib:pm.a5e.Core"): SaveData]
+[h,MACRO("Modify Save@Lib:pm.a5e.Core"): SaveData]
 [h:SaveData = macro.return]
 [h:abilityTable = json.get(SaveData,"Table")]
 

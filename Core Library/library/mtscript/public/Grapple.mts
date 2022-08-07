@@ -11,6 +11,7 @@
 [h:pm.PassiveFunction("GrappleBonus")]
 
 [h:gr.Adv = if(json.get(gr.Data,"Advantage")=="",0,json.get(gr.Data,"Advantage"))]
+[h:gr.Dis = if(json.get(gr.Data,"Disadvantage")=="",0,json.get(gr.Data,"Disadvantage"))]
 [h:pm.PassiveFunction("GrappleAdv")]
 
 [h:gr.thisEffect = baseEffectData]
@@ -51,6 +52,7 @@
     "Skill","Athletics",
     "Type","Skill",
     "Advantage",gr.Adv,
+    "Disadvantage",gr.Dis,
     "Bonus",gr.Bonus
 )]
 [h,macro("Check@Lib:pm.a5e.Core"): gr.CheckData]
@@ -64,11 +66,13 @@
             "Skill","Athletics",
             "Type","Skill",
             "Advantage",0,
+            "Disadvantage",0,
             "Bonus",0),
         json.set("",
             "Skill","Acrobatics",
             "Type","Skill",
             "Advantage",0,
+            "Disadvantage",0,
             "Bonus",0)
         ),
     "ConditionsResisted",json.set("","Inclusive","All")

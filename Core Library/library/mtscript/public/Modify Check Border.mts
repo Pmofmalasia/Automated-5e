@@ -18,15 +18,22 @@
 	"Name","Skill Check Reroll",
 	"FalseName","",
 	"OnlyRules",0
-	)]
+)]
 
 [h:FormattingData = pm.MacroFormat(ClassFeatureData)]
 [h:output.PC = json.get(json.get(FormattingData,"Output"),"Player")]
 [h:output.GM = json.get(json.get(FormattingData,"Output"),"GM")]
 
-[h,MACRO("Check@Lib:pm.a5e.Core"): CheckData]
+[h,MACRO("Modify Check@Lib:pm.a5e.Core"): CheckData]
 [h:CheckData = macro.return]
 [h:abilityTable = json.get(CheckData,"Table")]
+
+[h:effectID = json.get(CheckData,"ID")]
+[h,if(effectID==""),CODE:{};{
+	[h:"<!-- TODO: Add contested check data from the token setting the DC to the effect data -->"]
+	[h:rerolledEffect = json.path.set(getLibProperty("gd.Effects","Lib:pm.a5e.Core"),"[*][?(@.ID=="+effectID+")]['ToResolve']['CheckDC']['ChecksMade']['"+ParentToken+"']",json.remove(CheckData,"EffectID"))]
+	[h:setLibProperty("gd.Effects",rerolledEffect,"Lib:pm.a5e.Core")]
+}]
 
 [h:output.Temp = pm.AbilityTableProcessing(abilityTable,FormattingData,1)]
 

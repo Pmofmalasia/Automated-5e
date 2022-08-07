@@ -118,6 +118,7 @@
 			
 			[h:finalCheckDCData = json.get(effCheckDCType,checkChoice)]
 			
+			[h:"<!-- TODO: Add ability to select output targets (DM only, everyone, roller + DM) here, likely through some default settings -->"]
 			[h,MACRO("Check@Lib:pm.a5e.Core"): json.set(finalCheckDCData,"ParentToken",targetToken,"ID",effID)]
 			[h:CheckResult = macro.return]
 			[h:effChecksMadeData = json.set(effChecksMadeData,targetToken,CheckResult)]

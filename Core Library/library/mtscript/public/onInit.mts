@@ -62,6 +62,7 @@
 [h:defineFunction("pm.a5e.FeatureDuration","pm.a5e.FeatureDuration@Lib:pm.a5e.Core",0,0)]
 [h:defineFunction("pm.a5e.AbilityGatherEffect","pm.a5e.AbilityGatherEffect@Lib:pm.a5e.Core",0,0)]
 [h:defineFunction("pm.a5e.FeatureLink","pm.a5e.FeatureLink@Lib:pm.a5e.Core",0,0)]
+[h:defineFunction("pm.a5e.FeatureModifyd20","pm.a5e.FeatureModifyd20@Lib:pm.a5e.Core",0,0)]
 [h:defineFunction("pm.AbilityMagItemMsg","pm.AbilityMagItemMsg@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.AbilityPrereq","pm.AbilityPrereq@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.a5e.FeatureRange","pm.a5e.FeatureRange@Lib:pm.a5e.Core",0,0)]

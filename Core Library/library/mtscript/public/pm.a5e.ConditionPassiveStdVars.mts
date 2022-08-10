@@ -60,3 +60,5 @@
 	"Portrait",cond.ForcedSummonPortrait,
 	"Handout",cond.ForcedSummonHandout
 )]
+
+[h:cond.abilityEffect = if(cond.ShowFullRules,cond.abilityFullEffect,cond.abilityAbridgedEffect)]

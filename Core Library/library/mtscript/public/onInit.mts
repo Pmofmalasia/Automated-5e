@@ -180,6 +180,7 @@
 [h:defineFunction("pm.PassiveTableProcessing","pm.PassiveTableProcessing@Lib:pm.a5e.Core",0,0)]
 [h:defineFunction("pm.AbilityTableTooltip","pm.AbilityTableTooltip@Lib:pm.a5e.Core",1,0)]
 [h:defineFunction("pm.a5e.StdFeatureEnd","pm.a5e.StdFeatureEnd@Lib:pm.a5e.Core",0,0)]
+[h:defineFunction("pm.a5e.StdConditionLinkEnd","pm.a5e.StdConditionLinkEnd@Lib:pm.a5e.Core",0,0)]
 [h:defineFunction("pm.a5e.FeatureTooltipCall","pm.a5e.FeatureTooltipCall@Lib:pm.a5e.Core",0,0)]
 [h:defineFunction("pm.a5e.FeatureFormatCall","pm.a5e.FeatureFormatCall@Lib:pm.a5e.Core",0,0)]
 [h:defineFunction("pm.a5e.CreateDisplayList","pm.a5e.CreateDisplayList@Lib:pm.a5e.Core")]

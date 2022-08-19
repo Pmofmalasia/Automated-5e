@@ -120,6 +120,6 @@
 	))]
 }]
 
-[h:pm.PassiveFunction("AfterSave")]
+[h:pm.PassiveFunction("AfterCheck")]
 
 [h:macro.return = json.set("","Table",abilityTable,"Value",FinalRoll+TotalBonus,"FinalRoll",FinalRoll,"PreviousRoll",d20AllRolls,"Advantage",d20Advantage,"Disadvantage",d20Disadvantage,"TotalBonus",TotalBonus,"ID",d20ID)]

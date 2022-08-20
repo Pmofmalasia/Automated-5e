@@ -37,11 +37,28 @@
     }]
 }]
 
+[h,if(miscCheckAllowed): effectOptionsDisplay = json.append(effectOptionsDisplay,"Other Check")]
+[h,if(miscSaveAllowed): effectOptionsDisplay = json.append(effectOptionsDisplay,"Other Save")]
+[h,if(miscAttackAllowed): effectOptionsDisplay = json.append(effectOptionsDisplay,"Other Attack")]
+
 [h:abort(input(
     "junkVar | --------------------------- Choose an Effect --------------------------- | | LABEL | SPAN=TRUE ",
-    "effectChoice | "+effectOptionsDisplay+" | Effect Options | RADIO | DELIMITER=JSON SPAN=TRUE"
+    "effectChoiceIndex | "+effectOptionsDisplay+" | Effect Options | RADIO | DELIMITER=JSON SPAN=TRUE"
 ))]
 
-[h:effectChoice = json.get(effectOptions,effectChoice)]
+[h:"<!-- TODO: Need to add conditions and in the future, active spell effects. Distinguish using the 'type' key. -->"]
 
-[h:macro.return = json.set("","ID",json.get(effectChoice,"ID"),"Target",json.get(effectChoice,"tempThisTarget"),"Type",json.get(effectChoice,"tempEffectType"))]
+[h,if(effectChoiceIndex + 1 > json.length(effectOptions)),CODE:{
+    [h:effectChoice = json.get(effectOptionsDisplay,effectChoice)]
+    [h,switch(effectChoice):
+        case "Other Check": tempEffectType = "Check";
+        case "Other Save": tempEffectType = "Save";
+        case "Other Attack": tempEffectType = "Attack"
+    ]
+
+    [h:macro.return = json.set("","Type",tempEffectType)]
+};{
+    [h:effectChoice = json.get(effectOptions,effectChoice)]
+
+    [h:macro.return = json.set("","ID",json.get(effectChoice,"ID"),"Target",json.get(effectChoice,"tempThisTarget"),"Type",json.get(effectChoice,"tempEffectType"))]
+}]

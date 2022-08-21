@@ -1,38 +1,39 @@
-[h:EffectData = arg(1)]
-[h:RollType = json.get(EffectData,"RollType")]
-[h:RollData = json.get(EffectData,"RollData")]
-[h:RerollInfo = json.get(EffectData,"RerollInfo")]
-[h:NewBonus = json.get(EffectData,"NewBonus")]
-[h:ForcedRoll = json.get(EffectData,"ForcedRoll")]
-[h:pm.a5e.FeatureComponentStdVars(arg(0))]
+[h:RollType = json.get(EffectData,"OverallType")]
+[h:RollData = EffectData]
 
-[h:return(!IsTooltip)]
+[h,if(json.type(EffectModificationData)=="ARRAY"),CODE:{
+    [h:thisEffectModificationData = json.get(EffectModificationData,roll.count)]
+    [h:RerollInfo = json.get(thisEffectModificationData,"RerollInfo")]
+    [h:NewBonus = json.get(thisEffectModificationData,"NewBonus")]
+    [h:ForcedRoll = json.get(thisEffectModificationData,"ForcedRoll")]
+};{}]
 
 [h,switch(RollType),CODE:
     case "Check":{
-        [h,if(json.type(RollData)=="UNKNOWN"),CODE:{
-            [h:effectID = RollData]
+        [h,if(json.get(RollData,"ID")!=""),CODE:{
+            [h:effectID = json.get(RollData,"ID")]
             [h:rerolledEffect = json.get(json.path.read(getLibProperty("gd.Effects","Lib:pm.a5e.Core"),"[*][?(@.ID=="+effectID+")]['ToResolve']['CheckDC']['ChecksMade']['"+ParentToken+"']"),0)]
         };{
-            [h:effectID = json.get(RollData,"ID")]
+            [h:effectID = ""]
         }]
     };
     case "Save":{
-        [h,if(json.type(RollData)=="UNKNOWN"),CODE:{
-            [h:effectID = RollData]
+        [h,if(json.get(RollData,"ID")!=""),CODE:{
+            [h:effectID = json.get(RollData,"ID")]
             [h:rerolledEffect = json.get(json.path.read(getLibProperty("gd.Effects","Lib:pm.a5e.Core"),"[*][?(@.ID=="+effectID+")]['ToResolve']['SaveDC']['SavesMade']['"+ParentToken+"']"),0)]
         };{
-            [h:effectID = json.get(RollData,"ID")]
+            [h:effectID = ""]
         }]
     };
     case "Attack":{
-        [h,if(json.type(RollData)=="UNKNOWN"),CODE:{
-            [h:effectID = RollData]
-            [h:rerolledEffect = json.get(json.path.read(getLibProperty("gd.Effects","Lib:pm.a5e.Core"),"[*][?(@.ID=="+effectID+")]['ToResolve']['Attack']['"+ParentToken+"']"),0)]
-        };{
+        [h,if(json.get(RollData,"ID")!=""),CODE:{
             [h:effectID = json.get(RollData,"ID")]
+            [h:rerolledEffect = json.get(json.path.read(getLibProperty("gd.Effects","Lib:pm.a5e.Core"),"[*][?(@.ID=="+effectID+" && @.ParentToken=='"+ParentToken+"')]['ToResolve']['Attack']"),0)]
+        };{
+            [h:effectID = ""]
         }]
-    }
+    };
+    default :{[h:return(0)]}
 ]
 
 [h,if(RerollInfo==""),CODE:{

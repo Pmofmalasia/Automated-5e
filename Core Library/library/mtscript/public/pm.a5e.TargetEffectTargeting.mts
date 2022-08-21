@@ -1,6 +1,6 @@
 [h:effectOptions = arg(0)]
 [h,if(argCount()>1),CODE:{
-    [h:miscCheckAllowed = if(json.get(arg(1),"MiscCheck")=="",0,json.get(arg(1),"MiscAttack"))]
+    [h:miscCheckAllowed = if(json.get(arg(1),"MiscCheck")=="",0,json.get(arg(1),"MiscCheck"))]
     [h:miscSaveAllowed = if(json.get(arg(1),"MiscSave")=="",0,json.get(arg(1),"MiscSave"))]
     [h:miscAttackAllowed = if(json.get(arg(1),"MiscAttack")=="",0,json.get(arg(1),"MiscAttack"))]
 };{
@@ -41,24 +41,30 @@
 [h,if(miscSaveAllowed): effectOptionsDisplay = json.append(effectOptionsDisplay,"Other Save")]
 [h,if(miscAttackAllowed): effectOptionsDisplay = json.append(effectOptionsDisplay,"Other Attack")]
 
-[h:abort(input(
-    "junkVar | --------------------------- Choose an Effect --------------------------- | | LABEL | SPAN=TRUE ",
-    "effectChoiceIndex | "+effectOptionsDisplay+" | Effect Options | RADIO | DELIMITER=JSON SPAN=TRUE"
-))]
+[h,if(json.length(effectOptionsDisplay)<2),CODE:{
+    [h:effectChoiceIndex = 0]
+    [h,if(json.length(effectOptionsDisplay)==0): return(0,json.set("","OverallType","None"))]
+};{
+    [h:abort(input(
+        "junkVar | --------------------------- Choose an Effect --------------------------- | | LABEL | SPAN=TRUE ",
+        "effectChoiceIndex | "+effectOptionsDisplay+" | Effect Options | RADIO | DELIMITER=JSON SPAN=TRUE"
+    ))]
+}]
 
 [h:"<!-- TODO: Need to add conditions and in the future, active spell effects. Distinguish using the 'type' key. -->"]
 
 [h,if(effectChoiceIndex + 1 > json.length(effectOptions)),CODE:{
-    [h:effectChoice = json.get(effectOptionsDisplay,effectChoice)]
+    [h:effectChoice = json.get(effectOptionsDisplay,effectChoiceIndex)]
     [h,switch(effectChoice):
         case "Other Check": tempEffectType = "Check";
         case "Other Save": tempEffectType = "Save";
         case "Other Attack": tempEffectType = "Attack"
     ]
 
-    [h:macro.return = json.set("","Type",tempEffectType)]
+    [h:macro.return = json.set("","OverallType",tempEffectType)]
 };{
-    [h:effectChoice = json.get(effectOptions,effectChoice)]
+    [h:"<!-- TODO: Add ability to select multiple effects (e.g. Dispel Magic removing all spell effects of your choice). Note, this is why single targets are in an array by default. -->"]
+    [h:effectChoice = json.get(effectOptions,effectChoiceIndex)]
 
-    [h:macro.return = json.set("","ID",json.get(effectChoice,"ID"),"Target",json.get(effectChoice,"tempThisTarget"),"Type",json.get(effectChoice,"tempEffectType"))]
+    [h:macro.return = json.append("",json.set("","ID",json.get(effectChoice,"ID"),"Target",json.get(effectChoice,"tempThisTarget"),"OverallType",json.get(effectChoice,"tempEffectType")))]
 }]

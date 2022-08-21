@@ -7,7 +7,7 @@
 	[h:DisplayObject = json.get(DisplayArray,0)]
 }]
 
-[h:priorData = arg(0)]
+[h:abilityPriorData = arg(0)]
 [h:ParentToken=json.get(arg(0),"ParentToken")]
 [h:IsTooltip=json.get(arg(0),"IsTooltip")]
 [h:Flavor=json.get(DisplayObject,"Flavor")]

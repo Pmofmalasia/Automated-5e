@@ -92,7 +92,7 @@
     case "Condition":{
         
     };
-    case "EffectID":{
-        [h:macro.return = json.get(json.get(allEffectData,whichEffect),"ID")]
+    case "TargetedEffects":{
+        [h:macro.return = json.get(json.get(allEffectData,whichEffect),"TargetedEffects")]
     }
 ]

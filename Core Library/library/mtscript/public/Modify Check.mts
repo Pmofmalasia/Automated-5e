@@ -37,11 +37,9 @@
 };{
     [h,if(json.type(isNewBonus)=="UNKNOWN"),CODE:{
         [h:newBonus = isNewBonus]
-		[h:broadcast("Bonus"+newBonus)]
         [h:rollFormula = json.get(d20Data,"Formula") + pm.PlusMinus(newBonus,1)]
     };{
         [h:newBonus = json.get(isNewBonus,"Value")]
-		[h:broadcast("Bonus"+newBonus)]
         [h:rollFormula = json.get(d20Data,"Formula") + " + "+json.get(isNewBonus,"Formula")]
     }]
 	[h:rollString = json.get(d20Data,"RollString") + pm.PlusMinus(newBonus,1)]

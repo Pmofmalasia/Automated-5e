@@ -9,13 +9,11 @@
 
 [h:effectChoice = pm.a5e.TargetEffectTargeting(effectOptions,miscOptions)]
 
-[h:return(json.get(effectChoice,"OverallType")!="None")]
+[h:effectChoice = json.path.delete(effectChoice,"[*][?(@.OverallType=='None')]")]
 
-[h,if(json.get(effectChoice,"ID")==""),CODE:{
-    [h,if(json.get(abilityPriorData,"OverallType") == json.get(effectChoice,"OverallType")),CODE:{
-        [h:effectChoice = json.append("",abilityPriorData)]
-    }]
-};{}]
+[h:return(!json.isEmpty(effectChoice))]
+
+[h:effectChoice = json.path.set(effectChoice,"[*][?(@.OverallType == '"+json.get(abilityPriorData,"OverallType")+"' && @.ID == '')]",abilityPriorData)]
 
 [h:effectsToMerge = json.append("",json.set("","TargetedEffects",effectChoice))]
 

@@ -94,5 +94,8 @@
     };
     case "TargetedEffects":{
         [h:macro.return = json.get(json.get(allEffectData,whichEffect),"TargetedEffects")]
+    };
+    case "TargetedEffectOptions":{
+        [h:macro.return = json.get(json.get(allEffectData,whichEffect),"TargetedEffectOptions")]
     }
 ]

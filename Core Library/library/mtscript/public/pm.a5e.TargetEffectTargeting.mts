@@ -9,6 +9,8 @@
     [h:miscAttackAllowed = 0]
 }]
 
+[h:"<-- TODO: Additional option for all targets of an effect at once - e.g. dispelling the whole spell, not just against one target -->"]
+
 [h:effectOptionsDisplay = ""]
 [h,foreach(effect,effectOptions),CODE:{
     [h,if(json.get(effect,"ParentToken")==json.get(effect,"tempThisTarget")),CODE:{
@@ -43,7 +45,7 @@
 
 [h,if(json.length(effectOptionsDisplay)<2),CODE:{
     [h:effectChoiceIndex = 0]
-    [h,if(json.length(effectOptionsDisplay)==0): return(0,json.set("","OverallType","None"))]
+    [h,if(json.length(effectOptionsDisplay)==0): return(0,"[]")]
 };{
     [h:abort(input(
         "junkVar | --------------------------- Choose an Effect --------------------------- | | LABEL | SPAN=TRUE ",
@@ -66,5 +68,10 @@
     [h:"<!-- TODO: Add ability to select multiple effects (e.g. Dispel Magic removing all spell effects of your choice). Note, this is why single targets are in an array by default. -->"]
     [h:effectChoice = json.get(effectOptions,effectChoiceIndex)]
 
-    [h:macro.return = json.append("",json.set("","ID",json.get(effectChoice,"ID"),"Target",json.get(effectChoice,"tempThisTarget"),"OverallType",json.get(effectChoice,"tempEffectType")))]
+    [h,if(json.get(effectChoice,"ID")==""),CODE:{
+        [h:macro.return = json.append("",effectChoice)]
+    };{
+        [h:macro.return = json.append("",json.set("","ID",json.get(effectChoice,"ID"),"Target",json.get(effectChoice,"tempThisTarget"),"OverallType",json.get(effectChoice,"tempEffectType")))]
+    }]
 }]
+    

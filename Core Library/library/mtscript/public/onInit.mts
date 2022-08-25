@@ -55,6 +55,8 @@
 [h:defineFunction("pm.a5e.FeatureCreatureTargeting","pm.a5e.FeatureCreatureTargeting@Lib:pm.a5e.Core",0,0)]
 [h:defineFunction("pm.a5e.FeatureCreatureTargetFiltering","pm.a5e.FeatureCreatureTargetFiltering@Lib:pm.a5e.Core",0,0)]
 [h:defineFunction("pm.a5e.FeatureEffectTargeting","pm.a5e.FeatureEffectTargeting@Lib:pm.a5e.Core",0,0)]
+[h:defineFunction("pm.a5e.FeatureSpecificEffect","pm.a5e.FeatureSpecificEffect@Lib:pm.a5e.Core",0,0)]
+[h:defineFunction("pm.a5e.FeatureEffectFiltering","pm.a5e.FeatureEffectFiltering@Lib:pm.a5e.Core",0,0)]
 [h:defineFunction("pm.a5e.FeatureDamage","pm.a5e.FeatureDamage@Lib:pm.a5e.Core",0,0)]
 
 [h:defineFunction("pm.AbilityDieSize","pm.AbilityDieSize@Lib:pm.a5e.Core")]

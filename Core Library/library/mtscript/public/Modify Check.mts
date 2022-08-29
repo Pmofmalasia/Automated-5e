@@ -8,20 +8,21 @@
 [h:d20ID = json.get(d20Data,"ID")]
 [h:CurrentSkillDisplay = json.get(d20Data,"Skill")]
 
-[h:isNewRoll = json.get(d20Data,"NewRoll")]
+[h:RerollData = json.get(d20Data,"RerollData")]
 [h:isNewBonus = json.get(d20Data,"NewBonus")]
 [h:ForcedRoll = json.get(d20Data,"ForcedRoll")]
 [h:rollFormula = json.get(d20Data,"Formula")]
 [h:rollString = json.get(d20Data,"RollString")]
 
 [h,if(ForcedRoll == ""),CODE:{
-    [h,if(isNewRoll == "" || isNewRoll == 0),CODE:{
+    [h,if(RerollData == ""),CODE:{
 		[h:d20AllRolls = json.get(d20Data,"PreviousRoll")]
 		[h:d20TotalRolled = json.length(d20AllRolls)]
 		[h:d20Advantage = json.get(d20Data,"Advantage")]
 		[h:d20Disadvantage = json.get(d20Data,"Disadvantage")]
 		[h:d20AdvantageBalance = if(or(and(d20Disadvantage == 0,d20Advantage == 0),and(d20Disadvantage !=0,d20Advantage != 0)),0,if(d20Disadvantage == 0,1,-1))]
     };{
+		[h:d20Data = pm.a5e.d20TestRerollDataProcessing(d20Data,RerollData)]
         [h:pm.a5e.d20Roll(d20Data)]
     }]
 };{

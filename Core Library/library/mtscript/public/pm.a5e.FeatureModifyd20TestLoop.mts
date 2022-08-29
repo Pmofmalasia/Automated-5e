@@ -37,35 +37,8 @@
     default :{[h:return(0)]}
 ]
 
-[h,if(RerollInfo==""),CODE:{
-    [h:IsReroll = ""]
-};{
-    [h:IsReroll = 1]
-
-    [h,if(json.get(RerollInfo,"ForcedAdvantage")=="" || json.get(RerollInfo,"ForcedAdvantage")==0),CODE:{
-        [h:NewAdvantage = if(json.get(RerollInfo,"Advantage")=="",0,json.get(RerollInfo,"Advantage"))]
-        [h:NewDisadvantage = if(json.get(RerollInfo,"Disadvantage")=="",0,json.get(RerollInfo,"Disadvantage"))]
-        [h:NewAdvantage = if(json.get(RerollInfo,"Advantage")=="",0,json.get(RerollInfo,"Advantage"))]
-        [h:NewDisadvantage = if(json.get(RerollInfo,"Disadvantage")=="",0,json.get(RerollInfo,"Disadvantage"))]
-        [h:RollData = json.set(RollData,
-            "Advantage",json.get(RollData,"Advantage")+NewAdvantage,
-            "Disadvantage",json.get(RollData,"Disadvantage")+NewDisadvantage
-        )]
-    };{
-        [h:NewAdvantage = if(json.get(RerollInfo,"Advantage")=="",0,json.get(RerollInfo,"Advantage"))]
-        [h:NewDisadvantage = if(json.get(RerollInfo,"Disadvantage")=="",0,json.get(RerollInfo,"Disadvantage"))]
-        [h:RollData = json.set(RollData,
-            "Advantage",NewAdvantage,
-            "Disadvantage",NewDisadvantage,
-            "ForcedAdvantage",1
-        )]
-    }]
-
-    [h,if(json.get(RerollInfo,"ReplacePrevious")==1): RollData = json.set(RollData,"PreviousRoll","")]
-}]
-
 [h:ModifyRollData = json.set(RollData,
-    "NewRoll",IsReroll,
+    "RerollData",RerollInfo,
     "NewBonus",NewBonus,
     "ForcedRoll",ForcedRoll
 )]

@@ -47,9 +47,19 @@
 [h:"<!-- Also sets the prime stat of an ability IF it is dependent on the attribute chosen. If multiple are chosen for that ability, it sets PrimeStatOptions to contain all chosen, to be picked later. -->"]
 [h,if(json.isEmpty(lu.NewAbilities)): lu.AttributeChoices = ""; lu.AttributeChoices = json.path.read(lu.NewAbilities,"[*][?(@.AttributeOptions != null)]","DEFAULT_PATH_LEAF_TO_NULL")]
 [h,foreach(ability,lu.AttributeChoices),CODE:{
+	[h:allPointOptions = json.get(ability,"AttributeOptions")]
+
+	[h,if(allPointOptions=="FlexibleChoice"),CODE:{
+		[h:abort(input(" flexibleSelection | +2/+1,+1/+1/+1 | Choose an Ability Score distribution | RADIO "))]
+		[h,if(flexibleSelection == 0):
+			allPointOptions = json.append("",json.set("","AllAttributes",1,"Points",2),json.set("","AllAttributes",1,"Points",1))
+			allPointOptions = json.append("",json.set("","AllAttributes",1,"Points",1),json.set("","AllAttributes",1,"Points",1),json.set("","AllAttributes",1,"Points",1))
+		]
+	};{}]
+
 	[h:lu.AttrChoiceInput = " junkVar | Select Attributes for "+json.get(ability,"DisplayName")+" |  | LABEL | SPAN=TRUE "]
 	[h:tempCountVar = 0]
-	[h,foreach(SetofPoints,json.get(ability,"AttributeOptions")),CODE:{
+	[h,foreach(SetofPoints,allPointOptions),CODE:{
 		[h:lu.AttributeOptions = ""]
 		[h,foreach(attribute,pm.GetAttributes("DisplayName","json")): lu.AttributeOptions = if(or(json.get(SetofPoints,pm.RemoveSpecial(attribute))==json.get(SetofPoints,"Inclusive"),json.get(SetofPoints,"AllAttributes")==1),listAppend(lu.AttributeOptions,attribute),lu.AttributeOptions)]
 		[h:lu.AttrChoiceInput = listAppend(lu.AttrChoiceInput," lu.AttrSelection"+tempCountVar+" | "+lu.AttributeOptions+" | Allocate "+json.get(SetofPoints,"Points")+" Point"+if(json.get(SetofPoints,"Points")==1,"","s")+" to | RADIO | VALUE=STRING ","##")]
@@ -60,7 +70,7 @@
 
 	[h:tempCountVar = 0]
 	[h:lu.FinalAttributeChoices = if(json.get(ability,"Attributes")=="","{}",json.get(ability,"Attributes"))]
-	[h,foreach(SetofPoints,json.get(ability,"AttributeOptions")),CODE:{
+	[h,foreach(SetofPoints,allPointOptions),CODE:{
 		[h:lu.PresetPoints = json.get(lu.FinalAttributeChoices,pm.RemoveSpecial(eval("lu.AttrSelection"+tempCountVar)))]
 		[h,if(lu.PresetPoints==""):
 			lu.FinalAttributeChoices = json.set(lu.FinalAttributeChoices,pm.RemoveSpecial(eval("lu.AttrSelection"+tempCountVar)),json.get(SetofPoints,"Points"));

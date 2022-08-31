@@ -7,8 +7,8 @@
 	" ra.Size | Tiny,Small,Medium,Large,Huge,Choose From Multiple | Size of Race | LIST | VALUE=STRING SELECT=2 ",
 	" ra.CreatureType | "+pm.GetCreatureTypes("DisplayName")+" | Type of Creature | LIST | VALUE=STRING ",
 	" ra.CountsAs | None,"+pm.GetRaces("DisplayName")+" | <html><span title='For the purposes of magic items, features that require X race'>Counts as another race</span></html> | LIST | VALUE=STRING ",
-	" ra.Darkvision |  | Gives Darkvision | CHECK ",
-	" ra.Res |  | Gives Damage Resistances | CHECK ",
+	" ra.Senses |  | Gives Special Senses (including Darkvision) | CHECK ",
+	" ra.Res |  | Gives Damage Resistance | CHECK ",
 	" ra.CondImmun |  | Gives Condition Immunities | CHECK ",
 	" ra.Burrow |  | Gives a Burrowing Speed | CHECK ",
 	" ra.Climb |  | Gives a Climbing Speed | CHECK ",
@@ -16,16 +16,39 @@
 	" ra.Swim |  | Gives a Swimming Speed | CHECK ",
 	" ra.MaxHP |  | Gives Max HP Bonus | CHECK ",
 	" junkVar | ----------------------------------------------------------------------------------------------------- | 0 | LABEL | SPAN=TRUE ",
-	" ra.AttributeAllocation | None,By Choice,Preset,Some of Both | How are Attributes Allocated | LIST | SELECT=2 ",
+	" ra.AttributeAllocation | None,By Choice,Preset,Some of Both,Choice of +2/+1 or +1/+1/+1 | How are Attributes Allocated | LIST | SELECT=2 ",
 	" ra.SkillProficiencies | None,By Choice,Preset,Some of Both | Affects skill proficiencies | LIST ",
 	" ra.SaveProficiencies | None,By Choice,Preset,Some of Both | Affects save proficiencies | LIST ",
 	" ra.WeaponProficiencies | None,By Choice,Preset,Some of Both | Affects weapon proficiencies | LIST ",
 	" ra.ArmorProficiencies | None,By Choice,Preset,Some of Both | Affects armor proficiencies | LIST ",
 	" ra.FeatChoice |  | Allows for Choosing a Feat at Level 1 | CHECK ",
 	" ra.MiscChoice | None,Chosen at Creation,Can Change Later | <html><span title='For choices that do not quite rise to the level of subrace. Mostly for Dragonborn colors since they can have subraces on top of colors in some books.'>Makes some other choice at Level 1</span></html> | LIST "
-	))]
+))]
+
 	
-[h:ra.Final = json.set("","Name",pm.RemoveSpecial(ra.Name),"DisplayName",ra.Name,"Size",ra.Size,"CreatureType",ra.CreatureType)]
+[h:ra.Final = json.set("","Name",pm.RemoveSpecial(ra.Name),"DisplayName",ra.Name,"CreatureType",ra.CreatureType)]
+[h,if(ra.CountsAs!="None"): json.set(ra.Final,"RaceCountsAs",pm.RemoveSpecial(ra.CountsAs))]
+[h,if(ra.Size=="Choose From Multiple"),CODE:{
+	[h:abort(input(
+		" junkVar | ---------- Select Valid Sizes ---------- | | LABEL | SPAN=TRUE ",
+		" canBeTiny |  | Tiny | CHECK ",
+		" canBeSmall |  | Small | CHECK ",
+		" canBeMedium |  | Medium | CHECK ",
+		" canBeLarge |  | Large | CHECK ",
+		" canBeHuge |  | Huge | CHECK "
+	))]
+
+	[h:ra.SizeOptions = ""]
+	[h,if(canBeTiny): ra.SizeOptions = json.append("","Tiny")]
+	[h,if(canBeSmall): ra.SizeOptions = json.append("","Small")]
+	[h,if(canBeMedium): ra.SizeOptions = json.append("","Medium")]
+	[h,if(canBeLarge): ra.SizeOptions = json.append("","Large")]
+	[h,if(canBeHuge): ra.SizeOptions = json.append("","Huge")]
+	[h:ra.Final = json.set(ra.Final,"SizeOptions",ra.SizeOptions)]
+};{
+	[h:ra.Final = json.set(ra.Final,"Size",ra.Size)]
+}]
+
 [h:ra.SourcebookLib = json.get(json.path.read(getLibProperty("ms.Sources","Lib:pm.a5e.Core"),"[?(@.Name=='"+pm.RemoveSpecial(ra.Source)+"')]['Library']"),0)]
 
 [h:ra.Base =  json.set("",
@@ -37,7 +60,7 @@
 	"CallSpeedSet",1,
 	"CallLanguages",1,
 	"Library",ra.SourcebookLib
-	))]
+)]
 
 [h:ra.Base = json.merge(ra.Base,pm.LanguageChoices())]
 
@@ -47,7 +70,7 @@
 [h,if(ra.CondImmun): ra.Base = json.set(ra.Base,"CallCondImmun",ra.CondImmun)]
 
 [h:"<!-- Greater than 0 for when I eventually change the input to have the number for distance (or 0 for none) -->"]
-[h,if(ra.Darkvision>0): ra.Base = json.set(ra.Base,"CallSenses",1)]
+[h,if(ra.Senses>0): ra.Base = json.set(ra.Base,"CallSenses",1)]
 [h,if(ra.Burrow>0): ra.Base = json.set(ra.Base,"CallBurrowSet",1)]
 [h,if(ra.Climb>0): ra.Base = json.set(ra.Base,"CallClimbSet",1)]
 [h,if(ra.Fly>0): ra.Base = json.set(ra.Base,"CallFlySet",1)]
@@ -60,6 +83,8 @@
 [h,if(ra.AttributeAllocation==2 || ra.AttributeAllocation==3),CODE:{
 	[h:ra.Base = json.set(ra.Base,"Attributes",pm.AttributeSelectionPreset())]
 };{}]
+
+[h,if(ra.AttributeAllocation==4): json.set(ra.Base,"AttributeOptions","FlexibleChoice")]
 	
 [h,if(ra.SkillProficiencies==1 || ra.SkillProficiencies==3),CODE:{
 	[h:ra.Base = json.set(ra.Base,"SkillOptions",pm.SkillSelectionChoices())]

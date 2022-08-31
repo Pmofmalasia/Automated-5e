@@ -39,6 +39,16 @@
         case 2: OldRollData = json.set(OldRollData,"PreviousRoll",json.append("",json.get(OldRollData,"FinalRoll")));
         default: ""
     ]
+
+    [h,if(json.get(RerollInfo,"ExtraRolls")!=""):
+        OldRollData = json.set(OldRollData,
+            "ExtraRolls",if(
+                json.get(OldRollData,"ExtraRolls")=="",
+                    json.get(RerollInfo,"ExtraRolls"),
+                    json.get(OldRollData,"ExtraRolls")+json.get(RerollInfo,"ExtraRolls")
+                )
+            )
+    ]
 }]
 
 [h:macro.return = OldRollData]

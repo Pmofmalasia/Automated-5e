@@ -52,7 +52,7 @@
 	[h,if(allPointOptions=="FlexibleChoice"),CODE:{
 		[h:abort(input(" flexibleSelection | +2/+1,+1/+1/+1 | Choose an Ability Score distribution | RADIO "))]
 		[h,if(flexibleSelection == 0):
-			allPointOptions = json.append("",json.set("","AllAttributes",1,"Points",2),json.set("","AllAttributes",1,"Points",1))
+			allPointOptions = json.append("",json.set("","AllAttributes",1,"Points",2),json.set("","AllAttributes",1,"Points",1));
 			allPointOptions = json.append("",json.set("","AllAttributes",1,"Points",1),json.set("","AllAttributes",1,"Points",1),json.set("","AllAttributes",1,"Points",1))
 		]
 	};{}]

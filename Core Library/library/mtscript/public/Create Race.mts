@@ -25,29 +25,7 @@
 	" ra.MiscChoice | None,Chosen at Creation,Can Change Later | <html><span title='For choices that do not quite rise to the level of subrace. Mostly for Dragonborn colors since they can have subraces on top of colors in some books.'>Makes some other choice at Level 1</span></html> | LIST "
 ))]
 
-	
 [h:ra.Final = json.set("","Name",pm.RemoveSpecial(ra.Name),"DisplayName",ra.Name,"CreatureType",ra.CreatureType)]
-[h,if(ra.CountsAs!="None"): json.set(ra.Final,"RaceCountsAs",pm.RemoveSpecial(ra.CountsAs))]
-[h,if(ra.Size=="Choose From Multiple"),CODE:{
-	[h:abort(input(
-		" junkVar | ---------- Select Valid Sizes ---------- | | LABEL | SPAN=TRUE ",
-		" canBeTiny |  | Tiny | CHECK ",
-		" canBeSmall |  | Small | CHECK ",
-		" canBeMedium |  | Medium | CHECK ",
-		" canBeLarge |  | Large | CHECK ",
-		" canBeHuge |  | Huge | CHECK "
-	))]
-
-	[h:ra.SizeOptions = ""]
-	[h,if(canBeTiny): ra.SizeOptions = json.append("","Tiny")]
-	[h,if(canBeSmall): ra.SizeOptions = json.append("","Small")]
-	[h,if(canBeMedium): ra.SizeOptions = json.append("","Medium")]
-	[h,if(canBeLarge): ra.SizeOptions = json.append("","Large")]
-	[h,if(canBeHuge): ra.SizeOptions = json.append("","Huge")]
-	[h:ra.Final = json.set(ra.Final,"SizeOptions",ra.SizeOptions)]
-};{
-	[h:ra.Final = json.set(ra.Final,"Size",ra.Size)]
-}]
 
 [h:ra.SourcebookLib = json.get(json.path.read(getLibProperty("ms.Sources","Lib:pm.a5e.Core"),"[?(@.Name=='"+pm.RemoveSpecial(ra.Source)+"')]['Library']"),0)]
 
@@ -61,6 +39,29 @@
 	"CallLanguages",1,
 	"Library",ra.SourcebookLib
 )]
+
+[h,if(ra.CountsAs!="None"): json.set(ra.Base,"RaceCountsAs",pm.RemoveSpecial(ra.CountsAs))]
+
+[h,if(ra.Size=="Choose From Multiple"),CODE:{
+	[h:abort(input(
+		" junkVar | ---------- Select Valid Sizes ---------- | | LABEL | SPAN=TRUE ",
+		" canBeTiny |  | Tiny | CHECK ",
+		" canBeSmall |  | Small | CHECK ",
+		" canBeMedium |  | Medium | CHECK ",
+		" canBeLarge |  | Large | CHECK ",
+		" canBeHuge |  | Huge | CHECK "
+	))]
+
+	[h:ra.SizeOptions = ""]
+	[h,if(canBeTiny): ra.SizeOptions = json.append(ra.SizeOptions,"Tiny")]
+	[h,if(canBeSmall): ra.SizeOptions = json.append(ra.SizeOptions,"Small")]
+	[h,if(canBeMedium): ra.SizeOptions = json.append(ra.SizeOptions,"Medium")]
+	[h,if(canBeLarge): ra.SizeOptions = json.append(ra.SizeOptions,"Large")]
+	[h,if(canBeHuge): ra.SizeOptions = json.append(ra.SizeOptions,"Huge")]
+	[h:ra.Base = json.set(ra.Base,"SizeOptions",ra.SizeOptions)]
+};{
+	[h:ra.Base = json.set(ra.Base,"Size",ra.Size)]
+}]
 
 [h:ra.Base = json.merge(ra.Base,pm.LanguageChoices())]
 
@@ -84,7 +85,7 @@
 	[h:ra.Base = json.set(ra.Base,"Attributes",pm.AttributeSelectionPreset())]
 };{}]
 
-[h,if(ra.AttributeAllocation==4): json.set(ra.Base,"AttributeOptions","FlexibleChoice")]
+[h,if(ra.AttributeAllocation==4): ra.Base = json.set(ra.Base,"AttributeOptions","FlexibleChoice")]
 	
 [h,if(ra.SkillProficiencies==1 || ra.SkillProficiencies==3),CODE:{
 	[h:ra.Base = json.set(ra.Base,"SkillOptions",pm.SkillSelectionChoices())]

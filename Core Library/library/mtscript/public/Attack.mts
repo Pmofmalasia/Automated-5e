@@ -91,6 +91,15 @@
 	[h:pm.PassiveFunction("WeaponAttackNum")]
 }]
 
+[h:wa.TargetOptions = pm.a5e.TargetCreatureFiltering(json.set("","ParentToken",ParentToken,"Number",1,"Origin",wa.TargetOrigin,"Range",json.set("","Value",wa.Range,"Units","Feet")),"{}")]
+[h:wa.AllTargets = pm.a5e.TargetCreatureTargeting(wa.TargetOptions,1,AttackCount)]
+[h,if(AttackCount==1),CODE:{
+	[h:wa.TargetList = wa.AllTargets]
+};{
+	[h:wa.TargetList = "[]"]
+	[h,count(AttackCount): wa.TargetList = json.merge(wa.TargetList,json.get(wa.AllTargets,roll.count))]
+}]
+
 [h:CritTest=0]
 [h:AllAttacksToHit="[]"]
 [h:AllAttacksDmg="[]"]
@@ -103,6 +112,7 @@
 [h:LinkColor = pm.LinkColor()]
 
 [h,count(AttackCount),code:{
+	[h:thisAttackTarget = json.get(wa.TargetList,roll.count)]
 	[h:d20RolledNum = 1]
 	[h:thisAttackd20Rolls = if(json.get(wa.Data,"PreviousRoll")=="","[]",json.get(wa.Data,"PreviousRoll"))]
 	[h:d20RolledNum = d20RolledNum - json.length(thisAttackd20Rolls)]
@@ -111,6 +121,8 @@
 		case "-11": {
 			[h:pm.PassiveFunction("AttackAdv")]
 			[h:pm.PassiveFunction("WeaponAttackAdv")]
+			[h:pm.PassiveFunction("AttackAdvTargeted",json.set("","ParentToken",thisAttackTarget))]
+			[h:pm.PassiveFunction("WeaponAttackAdvTargeted",json.set("","ParentToken",thisAttackTarget))]
 			[h:wa.AdvDis = -1]
 			[h:d20RolledNum = d20RolledNum + 1]
 			};

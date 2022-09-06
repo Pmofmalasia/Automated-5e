@@ -58,4 +58,6 @@
 [h:setLibProperty("AttributeSourcebooks",'{}',"Lib:pm.a5e.Core")]
 [h:setLibProperty("BackgroundSourcebooks",'{}',"Lib:pm.a5e.Core")]
 
+[h:setLibProperty("gd.Effects",'[]',"Lib:pm.a5e.Core")]
+
 [broadcast("First-time setup complete.")]

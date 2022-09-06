@@ -20,10 +20,11 @@
 
 [h,if(pm.SingleTarget),CODE:{
     [h,if(pm.TargetingInstances==1),CODE:{
-        [h:macro.return = json.append("",json.get(pm.ValidTargets,pm.TargetChoice))]
+        [h:macro.return = json.append("",json.get(pm.ValidTargets,pm.TargetChoice0))]
     };{
         [h:allTargets = ""]
         [h,count(pm.TargetingInstances): allTargets = json.append(allTargets,json.append("",json.get(pm.ValidTargets,eval("pm.TargetChoice"+if(sameTarget,"0",roll.count)))))]
+        [h:macro.return = allTargets]
     }]    
 };{
     [h:pm.TargetsChosen = ""]

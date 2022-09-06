@@ -930,11 +930,16 @@
 	[h:abort(input(
 		" junkVar | Choose triggers for a feature when targeted | 0 | LABEL | SPAN=TRUE ",
 		" junkVar | ------------------------------------------------------------ | 0 | LABEL | SPAN=TRUE ",
-		" ab.AttackAdvTargeted | 0 | Grants (Dis)Advantage to Attacker | CHECK ",
-		" ab.AttackAutoHitTargeted | 0 | Grants Automatic Hit or Miss on Attacker's Attack | CHECK ",
-		" ab.AttackCritTargeted | 0 | Affects Attacker's Critical Hits | CHECK ",
-		" ab.AfterDamage | 0 |  | CHECK ",
+		" ab.AttackAdvTargeted | Nothing,Weapon Attacks,Spell Attacks,All Attacks | Grants (Dis)Advantage to Attacker On | LIST ",
+		" ab.AttackBonusTargeted | Nothing,Weapon Attacks,Spell Attacks,All Attacks | Grants Attack Roll Bonus to Attacker On | LIST ",
+		" ab.AttackAutoHitTargeted | Nothing,Weapon Attacks,Spell Attacks,All Attacks | Grants Automatic Hit or Miss on Attacker's Attack On | LIST ",
+		" ab.AttackCritTargeted | Nothing,Weapon Attacks,Spell Attacks,All Attacks | Affects Attacker's Critical Hits On | LIST "
 	))]
+
+	[h,if(ab.AttackAdvTargeted>0): ab.Final = json.set(ab.Final,if(ab.AttackAdvTargeted==1,"CallWeaponAttackAdvTargeted",if(ab.AttackAdvTargeted==2,"CallSpellAdvTargeted","CallAttackAdvTargeted")),1)]
+	[h,if(ab.AttackBonusTargeted>0): ab.Final = json.set(ab.Final,if(ab.AttackBonusTargeted==1,"CallWeaponAttackBonusTargeted",if(ab.AttackBonusTargeted==2,"CallSpellBonusTargeted","CallAttackBonusTargeted")),1)]
+	[h,if(ab.AttackAutoHitTargeted>0): ab.Final = json.set(ab.Final,if(ab.AttackAutoHitTargeted==1,"CallWeaponAttackAutoHitTargeted",if(ab.AttackAutoHitTargeted==2,"CallSpellAutoHitTargeted","CallAttackAutoHitTargeted")),1)]
+	[h,if(ab.AttackCritTargeted>0): ab.Final = json.set(ab.Final,if(ab.AttackCritTargeted==1,"CallWeaponAttackCritTargeted",if(ab.AttackCritTargeted==2,"CallSpellCritTargeted","CallAttackCritTargeted")),1)]
 };{}]
 
 [h,if(ab.Damaged),CODE:{

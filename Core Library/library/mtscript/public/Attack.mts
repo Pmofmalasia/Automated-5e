@@ -1,52 +1,56 @@
 [h:wa.Data = macro.args]
 [h:IsTooltip = 0]
-[h:ParentToken=json.get(wa.Data,"ParentToken")]
+[h:ParentToken = json.get(wa.Data,"ParentToken")]
 [h:switchToken(ParentToken)]
 [h:a5e.UnifiedAbilities = a5e.GatherAbilities(ParentToken)]
 [h:pm.a5e.OverarchingContext = "Attack"]
 [h:pm.a5e.EffectData = "[]"]
 
-[h:Flavor=json.get(wa.Data,"Flavor")]
-[h:Hand=json.get(wa.Data,"Hand")]
-[h:OtherHand=if(Hand==0,1,0)]
-[h:AttackNum=json.get(wa.Data,"AttackNum")]
-[h:ThrowingWeapon=json.get(wa.Data,"Throw Weapon")]
-[h:DMOnly=json.get(wa.Data,"DMOnly")]
-[h:DMOnly=0]
-[h:ShowFullRules=1]
+[h:Flavor = json.get(wa.Data,"Flavor")]
+[h:Hand = json.get(wa.Data,"Hand")]
+[h:OtherHand = if(Hand==0,1,0)]
+[h:AttackNum = json.get(wa.Data,"AttackNum")]
+[h:ThrowingWeapon = json.get(wa.Data,"Throw Weapon")]
+[h:DMOnly = json.get(wa.Data,"DMOnly")]
+[h:DMOnly = 0]
+[h:ShowFullRules = 1]
 [h:wa.WeaponUsed = json.get(wa.Data,"WeaponData")]
+[h:wa.EffectIDs = json.get(wa.Data,"ID")]
+[h,if(wa.EffectIDs == ""): wa.EffectIDs = "[]"]
 
-[h:BorderColorOverride=json.get(wa.Data,"BorderColorOverride")]
-[h:TitleFontColorOverride=json.get(wa.Data,"TitleFontColorOverride")]
-[h:AccentBackgroundOverride=json.get(wa.Data,"AccentBackgroundOverride")]
-[h:AccentTextOverride=json.get(wa.Data,"AccentTextOverride")]
-[h:TitleFont=json.get(wa.Data,"TitleFont")]
-[h:BodyFont=json.get(wa.Data,"BodyFont")]
-[h:CritMessage=json.get(wa.Data,"CritMessage")]
-[h:CritFailMessage=json.get(wa.Data,"CritFailMessage")]
+[h:BorderColorOverride = json.get(wa.Data,"BorderColorOverride")]
+[h:TitleFontColorOverride = json.get(wa.Data,"TitleFontColorOverride")]
+[h:AccentBackgroundOverride = json.get(wa.Data,"AccentBackgroundOverride")]
+[h:AccentTextOverride = json.get(wa.Data,"AccentTextOverride")]
+[h:TitleFont = json.get(wa.Data,"TitleFont")]
+[h:BodyFont = json.get(wa.Data,"BodyFont")]
+[h:CritMessage = json.get(wa.Data,"CritMessage")]
+[h:CritFailMessage = json.get(wa.Data,"CritFailMessage")]
 
-[h:wa.Name=json.get(wa.WeaponUsed,"Name")]
-[h:wa.MagicBonus=json.get(wa.WeaponUsed,"MagicBonus")]
-[h:wa.WeaponType=json.get(wa.WeaponUsed,"Type")]
-[h:wa.DmgDie=json.get(wa.WeaponUsed,"DamageDie")]
-[h:wa.DmgType=json.get(wa.WeaponUsed,"DamageType")]
-[h:wa.DmgDie2=json.get(wa.WeaponUsed,"SecDamageDie")]
-[h:wa.DmgType2=json.get(wa.WeaponUsed,"SecDamageType")]
-[h:wa.MeleeRanged=json.get(wa.WeaponUsed,"MeleeRanged")]
-[h:wa.Class=json.get(wa.WeaponUsed,"Class")]
-[h:wa.Range=json.get(wa.WeaponUsed,"Range")]
-[h:wa.CritRange=json.get(wa.WeaponUsed,"CritRange")]
-[h:wa.CritMultiplier=json.get(wa.WeaponUsed,"CritMultiplier")]
-[h:wa.SpecialAbility=json.get(wa.WeaponUsed,"SpecialAbility")]
-[h:wa.Props=json.get(wa.WeaponUsed,"Props")]
-[h:wa.Magical=json.get(wa.WeaponUsed,"MagicItem")]
-[h:wa.ProfTest=if(or(json.get(WeaponProficiencies,wa.WeaponType)==1,json.get(MagicItemStats,wa.WeaponType+"Prof")==1),1,0)]
-[h:wa.ProfTest=1]
+[h:wa.Name = json.get(wa.WeaponUsed,"Name")]
+[h:wa.MagicBonus = json.get(wa.WeaponUsed,"MagicBonus")]
+[h:wa.WeaponType = json.get(wa.WeaponUsed,"Type")]
+[h:wa.DmgDie = json.get(wa.WeaponUsed,"DamageDie")]
+[h:wa.DmgType = json.get(wa.WeaponUsed,"DamageType")]
+[h:wa.DmgDie2 = json.get(wa.WeaponUsed,"SecDamageDie")]
+[h:wa.DmgType2 = json.get(wa.WeaponUsed,"SecDamageType")]
+[h:wa.MeleeRanged = json.get(wa.WeaponUsed,"MeleeRanged")]
+[h:wa.Class = json.get(wa.WeaponUsed,"Class")]
+[h:wa.Reach = json.get(wa.WeaponUsed,"Reach")]
+[h:wa.Range = json.get(wa.WeaponUsed,"Range")]
+[h:wa.CritRange = json.get(wa.WeaponUsed,"CritRange")]
+[h:wa.CritMultiplier = 1 + json.get(wa.WeaponUsed,"CritMultiplier")]
+[h:wa.SpecialAbility = json.get(wa.WeaponUsed,"SpecialAbility")]
+[h:wa.Props = json.get(wa.WeaponUsed,"Props")]
+[h:wa.Magical = json.get(wa.WeaponUsed,"MagicItem")]
+[h:wa.ProfTest = if(or(json.get(WeaponProficiencies,wa.WeaponType)==1,json.get(MagicItemStats,wa.WeaponType+"Prof")==1),1,0)]
+[h:wa.ProfTest = 1]
+[h:wa.TargetOrigin = ParentToken]
 
 [h:pm.PassiveFunction("AttackProps")]
 [h:pm.PassiveFunction("WeaponAttackProps")]
 
-[h:VersatileTest=if(json.get(wa.Props,"Versatile")>0,if(json.get(Weapon,OtherHand)==2,if(json.get(Shield,0)==1,1,0),0),0)]
+[h:VersatileTest = if(json.get(wa.Props,"Versatile")>0,if(json.get(Weapon,OtherHand)==2,if(json.get(Shield,0)==1,1,0),0),0)]
 [h,if(VersatileTest==1),code:{
 	[wa.DmgDie=substring(wa.DmgDie,0,indexOf(wa.DmgDie,"d")+1)+(number(substring(wa.DmgDie,indexOf(wa.DmgDie,"d")+1))+2)]
 };{}]
@@ -56,29 +60,28 @@
 	[h:wa.Class = "Improvised"]
 };{}]
 
-[h:PrimeStat=if(and(json.get(wa.Props,"Finesse")>0,json.get(AtrMods,"Dexterity")>json.get(AtrMods,"Strength")),"Dexterity","Strength")]
-[h:PrimeStat=if(wa.MeleeRanged=="Ranged","Dexterity",PrimeStat)]
-[h:PrimeStat=if(json.get(wa.Props,"IntMod")>0,"Intelligence",PrimeStat)]
-[h:PrimeStat=if(json.get(wa.Props,"WisMod")>0,"Wisdom",PrimeStat)]
-[h:PrimeStat=if(json.get(wa.Props,"ChaMod")>0,"Charisma",PrimeStat)]
+[h:PrimeStat = if(and(json.get(wa.Props,"Finesse")>0,json.get(AtrMods,"Dexterity")>json.get(AtrMods,"Strength")),"Dexterity","Strength")]
+[h:PrimeStat = if(wa.MeleeRanged=="Ranged","Dexterity",PrimeStat)]
+[h:PrimeStat = if(json.get(wa.Props,"IntMod")>0,"Intelligence",PrimeStat)]
+[h:PrimeStat = if(json.get(wa.Props,"WisMod")>0,"Wisdom",PrimeStat)]
+[h:PrimeStat = if(json.get(wa.Props,"ChaMod")>0,"Charisma",PrimeStat)]
 
 [h:pm.PassiveFunction("AttackStat")]
 [h:pm.PassiveFunction("WeaponAttackStat")]
 
 [h:wa.PrimeStatBonus = json.get(AtrMods,PrimeStat)]
 
-[h:wa.DmgDieSize=number(substring(wa.DmgDie,indexOf(wa.DmgDie,"d")+1))]
-[h:wa.DmgDie2Size=number(substring(wa.DmgDie2,indexOf(wa.DmgDie2,"d")+1))]
+[h:wa.DmgDieSize = number(substring(wa.DmgDie,indexOf(wa.DmgDie,"d")+1))]
+[h:wa.DmgDie2Size = number(substring(wa.DmgDie2,indexOf(wa.DmgDie2,"d")+1))]
 
+[h:wa.BrutalCrit = 0]
 [h:pm.PassiveFunction("AttackCritThresh")]
 [h:pm.PassiveFunction("WeaponAttackCritThresh")]
 
-[h:wa.BrutalCrit = 0]
 [h:wa.FinalCritRange = 20 - wa.CritRange]
-[h:wa.FinalCritMultiplier=CritMultiplier+wa.CritMultiplier]
-[h:CritDmgDie=(wa.FinalCritMultiplier*number(substring(wa.DmgDie,0,indexOf(wa.DmgDie,"d"))))]
+[h:CritDmgDie = (wa.CritMultiplier*number(substring(wa.DmgDie,0,indexOf(wa.DmgDie,"d")))) + wa.BrutalCrit]
 [h:wa.DmgDie2Placehold = if(wa.DmgDie2=="0","0d1",wa.DmgDie2)]
-[h:CritSecDmgDie=(wa.FinalCritMultiplier*number(substring(wa.DmgDie2Placehold,0,indexOf(wa.DmgDie2Placehold,"d"))))]
+[h:CritSecDmgDie = (wa.CritMultiplier*number(substring(wa.DmgDie2Placehold,0,indexOf(wa.DmgDie2Placehold,"d"))))]
 
 [h:wa.DmgDieNum = number(substring(wa.DmgDie,0,indexOf(wa.DmgDie,"d")))]
 [h:wa.DmgDie2Num = number(substring(wa.DmgDie2,0,1))]
@@ -91,10 +94,19 @@
 	[h:pm.PassiveFunction("WeaponAttackNum")]
 }]
 
-[h:CritTest=0]
-[h:AllAttacksToHit="[]"]
-[h:AllAttacksDmg="[]"]
-[h:AllAttacksDmg2="[]"]
+[h:wa.TargetOptions = pm.a5e.TargetCreatureFiltering(json.set("","ParentToken",ParentToken,"Number",1,"Allegiance",json.set("","NotSelf",1),"Origin",wa.TargetOrigin,"Range",json.set("","Value",if(wa.MeleeRanged=="Ranged",wa.Range,wa.Reach),"Units","Feet")),"{}")]
+[h:wa.AllTargets = pm.a5e.TargetCreatureTargeting(wa.TargetOptions,1,AttackCount)]
+[h,if(AttackCount==1),CODE:{
+	[h:wa.TargetList = wa.AllTargets]
+};{
+	[h:wa.TargetList = "[]"]
+	[h,count(AttackCount): wa.TargetList = json.merge(wa.TargetList,json.get(wa.AllTargets,roll.count))]
+}]
+
+[h:CritTest = 0]
+[h:AllAttacksToHit = "[]"]
+[h:AllAttacksDmg = "[]"]
+[h:AllAttacksDmg2 = "[]"]
 
 [h:DamageColor = pm.DamageColor()]
 [h:HealingColor = pm.HealingColor()]
@@ -103,6 +115,8 @@
 [h:LinkColor = pm.LinkColor()]
 
 [h,count(AttackCount),code:{
+	[h,if(json.length(wa.EffectIDs)-1 < roll.count): wa.EffectIDs = json.append(wa.EffectIDs,pm.a5e.GenerateEffectID())]
+	[h:thisAttackTarget = json.get(wa.TargetList,roll.count)]
 	[h:d20RolledNum = 1]
 	[h:thisAttackd20Rolls = if(json.get(wa.Data,"PreviousRoll")=="","[]",json.get(wa.Data,"PreviousRoll"))]
 	[h:d20RolledNum = d20RolledNum - json.length(thisAttackd20Rolls)]
@@ -111,6 +125,8 @@
 		case "-11": {
 			[h:pm.PassiveFunction("AttackAdv")]
 			[h:pm.PassiveFunction("WeaponAttackAdv")]
+			[h:pm.PassiveFunction("AttackAdvTargeted",json.set("","ParentToken",thisAttackTarget))]
+			[h:pm.PassiveFunction("WeaponAttackAdvTargeted",json.set("","ParentToken",thisAttackTarget))]
 			[h:wa.AdvDis = -1]
 			[h:d20RolledNum = d20RolledNum + 1]
 			};
@@ -119,6 +135,8 @@
 			[h:wa.Dis = 1]
 			[h:pm.PassiveFunction("AttackAdv")]
 			[h:pm.PassiveFunction("WeaponAttackAdv")]
+			[h:pm.PassiveFunction("AttackAdvTargeted",json.set("","ParentToken",thisAttackTarget))]
+			[h:pm.PassiveFunction("WeaponAttackAdvTargeted",json.set("","ParentToken",thisAttackTarget))]
 			[h:wa.AdvDis = if(or(and(wa.Dis == 0,wa.Adv == 0),and(wa.Dis !=0,wa.Adv != 0)),0,if(wa.Dis == 0,1,-1))]
 			[h:d20RolledNum = d20RolledNum + 1]
 			};
@@ -130,11 +148,15 @@
 			[h:wa.Dis = 0]
 			[h:pm.PassiveFunction("AttackAdv")]
 			[h:pm.PassiveFunction("WeaponAttackAdv")]
+			[h:pm.PassiveFunction("AttackAdvTargeted",json.set("","ParentToken",thisAttackTarget))]
+			[h:pm.PassiveFunction("WeaponAttackAdvTargeted",json.set("","ParentToken",thisAttackTarget))]
 			[h:wa.AdvDis = if(or(and(wa.Dis == 0,wa.Adv == 0),and(wa.Dis !=0,wa.Adv != 0)),0,if(wa.Dis == 0,1,-1))]
 			};
 		case "11": {
 			[h:pm.PassiveFunction("AttackAdv")]
 			[h:pm.PassiveFunction("WeaponAttackAdv")]
+			[h:pm.PassiveFunction("AttackAdvTargeted",json.set("","ParentToken",thisAttackTarget))]
+			[h:pm.PassiveFunction("WeaponAttackAdvTargeted",json.set("","ParentToken",thisAttackTarget))]
 			[h:wa.AdvDis = 1]
 			[h:d20RolledNum = d20RolledNum + 1]
 			};
@@ -143,6 +165,8 @@
 			[h:wa.Dis = 0]
 			[h:pm.PassiveFunction("AttackAdv")]
 			[h:pm.PassiveFunction("WeaponAttackAdv")]
+			[h:pm.PassiveFunction("AttackAdvTargeted",json.set("","ParentToken",thisAttackTarget))]
+			[h:pm.PassiveFunction("WeaponAttackAdvTargeted",json.set("","ParentToken",thisAttackTarget))]
 			[h:wa.AdvDis = if(or(and(wa.Dis == 0,wa.Adv == 0),and(wa.Dis !=0,wa.Adv != 0)),0,if(wa.Dis == 0,1,-1))]
 			[h:d20RolledNum = d20RolledNum + 1]
 			};
@@ -151,6 +175,8 @@
 			[h:wa.Dis = 0]
 			[h:pm.PassiveFunction("AttackAdv")]
 			[h:pm.PassiveFunction("WeaponAttackAdv")]
+			[h:pm.PassiveFunction("AttackAdvTargeted",json.set("","ParentToken",thisAttackTarget))]
+			[h:pm.PassiveFunction("WeaponAttackAdvTargeted",json.set("","ParentToken",thisAttackTarget))]
 			[h:wa.AdvDis = if(or(and(wa.Dis == 0,wa.Adv == 0),and(wa.Dis !=0,wa.Adv != 0)),0,if(wa.Dis == 0,1,-1))]
 			[h:d20RolledNum = if(wa.AdvDis!=0,d20RolledNum + 1,d20RolledNum)]
 		}
@@ -183,8 +209,10 @@
 	
 	[h:pm.PassiveFunction("AttackBonus")]
 	[h:pm.PassiveFunction("WeaponAttackBonus")]
+	[h:pm.PassiveFunction("AttackBonusTargeted",json.set("","ParentToken",thisAttackTarget))]
+	[h:pm.PassiveFunction("WeaponAttackBonusTargeted",json.set("","ParentToken",thisAttackTarget))]
 	
-	[h:AllAttacksToHit=json.append(AllAttacksToHit,json.set("","d20Rolls",thisAttackd20Rolls,"d20Used",effectiveRoll,"Advantage",wa.AdvDis,"ToHit",wa.ToHit,"ToHitStr",wa.ToHitStr,"RulesStr",wa.ToHitRulesStr,"CritTest",CritTestEach,"CritFailTest",CritFailTest))]
+	[h:AllAttacksToHit=json.append(AllAttacksToHit,json.set("","d20Rolls",thisAttackd20Rolls,"FinalRoll",effectiveRoll,"Advantage",wa.AdvDis,"ToHit",wa.ToHit,"ToHitStr",wa.ToHitStr,"RulesStr",wa.ToHitRulesStr,"CritTest",CritTestEach,"CritFailTest",CritFailTest))]
 
 	[h:"<!-- An array is created with the size of the dice for regular damage, crits, and flat damage. Variables are created for passive functions to use. -->"]
 	[h:"<!-- The array is created so that later passive functions that reroll dice have a reference for the original die size - since added dice may be of a different size. -->"]
@@ -200,7 +228,6 @@
 	[h:flatBonusRules = substring(PrimeStat,0,3)+if(wa.MagicBonus==0,""," + Magic")]
 	[h:flatDmgTotal = wa.PrimeStatBonus+wa.MagicBonus]
 	
-	[h:pm.a5e.BrutalCrit = 0]
 	[h:wa.AddedRolledDamageRules = ""]
 	[h:wa.AddedFlatDamageRules = ""]
 	[h:wa.AddedRolledDamageDice = "[]"]
@@ -219,7 +246,6 @@
 		[h:flatBonusRules2 = ""]
 		[h:flatDmg2Total = 0]
 		
-		[h:pm.a5e.BrutalCrit2 = 0]
 		[h:wa.AddedRolledDamageRules2 = ""]
 		[h:wa.AddedFlatDamageRules2 = ""]
 		[h:wa.AddedRolledDamageDice2 = "[]"]
@@ -228,6 +254,8 @@
    
 	[h:pm.PassiveFunction("WeaponDamage")]
 	[h:pm.PassiveFunction("WeaponAttackDamage")]
+	[h:pm.PassiveFunction("AttackDamageTargeted",json.set("","ParentToken",thisAttackTarget))]
+	[h:pm.PassiveFunction("WeaponAttackDamageTargeted",json.set("","ParentToken",thisAttackTarget))]
 	
 	[h:"<!-- Merge all of the arrays of dice into one, then roll them into a new array of rolled dice. -->"]
 	[h:"<!-- New array is summed for total damage, and put into a list for display. -->"]
@@ -238,21 +266,40 @@
 	[h:wa.FinalDamageDice = json.merge(wa.AllDmgDice,wa.AddedRolledDamageDice)]
 	[h:wa.DmgArray = "[]"]
 	[h,foreach(die,wa.FinalDamageDice): wa.DmgArray = json.append(wa.DmgArray,eval("1d"+die))]
-	[h,if(json.isEmpty(wa.AddedFlatDamage)): wa.TotalAddedFlatDamage = 0; wa.TotalAddedFlatDamage = math.arraySum(wa.AddedFlatDamage)]
-	[h:wa.Dmg = math.arraySum(wa.DmgArray) + flatDmgTotal + wa.TotalAddedFlatDamage]
+	[h,if(json.isEmpty(wa.AddedFlatDamage)): wa.TotalAddedFlatDamage = flatDmgTotal; wa.TotalAddedFlatDamage = math.arraySum(wa.AddedFlatDamage) + flatDmgTotal]
+
+	[h:wa.Dmg = math.arraySum(wa.DmgArray) + wa.TotalAddedFlatDamage]
 	[h:wa.DmgRolls = json.toList(wa.DmgArray," + ")+pm.PlusMinus(wa.PrimeStatBonus,1)+pm.PlusMinus(wa.MagicBonus,0)+if(json.isEmpty(wa.AddedFlatDamage),""," + "+json.toList(wa.AddedFlatDamage," + "))]
-	[h:wa.DmgMax = math.arraySum(wa.FinalDamageDice) + flatDmgTotal + wa.TotalAddedFlatDamage]
+	[h:wa.DmgMax = math.arraySum(wa.FinalDamageDice) + wa.TotalAddedFlatDamage]
 	
-	[h,count(pm.a5e.BrutalCrit): wa.AllCritDmgDice = json.append(wa.AllCritDmgDice,wa.DmgDieSize)]
 	[h:wa.FinalCritDamageDice = json.merge(wa.AllDmgDice,wa.AllCritDmgDice,wa.AddedRolledDamageDice,wa.AddedRolledDamageDice)]
 	[h:wa.CritDmgArray = "[]"]
 	[h,foreach(die,wa.FinalCritDamageDice): wa.CritDmgArray = json.append(wa.CritDmgArray,eval("1d"+die))]
-	[h:wa.CritDmg = math.arraySum(wa.CritDmgArray) + flatDmgTotal + wa.TotalAddedFlatDamage]
+	[h:wa.CritDmg = math.arraySum(wa.CritDmgArray) + wa.TotalAddedFlatDamage]
 	[h:wa.CritDmgRolls = json.toList(wa.CritDmgArray," + ")+pm.PlusMinus(wa.PrimeStatBonus,1)+pm.PlusMinus(wa.MagicBonus,0)+if(json.isEmpty(wa.AddedFlatDamage),""," + "+json.toList(wa.AddedFlatDamage," + "))]
-	[h:wa.CritDmgMax = math.arraySum(wa.FinalCritDamageDice) + flatDmgTotal + wa.TotalAddedFlatDamage]
+	[h:wa.CritDmgMax = math.arraySum(wa.FinalCritDamageDice) + wa.TotalAddedFlatDamage]
 
-	[h:ThisAttackDmg = json.set("","DmgRules",wa.DmgRulesFinal,"DamageDice",wa.FinalDamageDice,"DmgArray",wa.DmgArray,"DmgRolls",wa.DmgRolls,"Dmg",wa.Dmg,"DmgMax",wa.DmgMax,"CritDmgRules",wa.CritDmgRulesFinal,"CritDamageDice",wa.FinalCritDamageDice,"CritDmgArray",wa.CritDmgArray,"CritDmgRolls",wa.CritDmgRolls,"CritDmg",wa.CritDmg,"CritDmgMax",wa.CritDmgMax)]
-   
+	[h:ThisAttackDmg = json.set("",
+		"Array",wa.DmgArray,
+		"Total",wa.Dmg,
+		"String",wa.DmgRolls,
+		"MaxTotal",wa.DmgMax,
+		"Dice",wa.FinalDamageDice,
+		"Bonus",wa.TotalAddedFlatDamage,
+		"Formula",wa.DmgRulesFinal,
+		"CritFormula",wa.CritDmgRulesFinal,
+		"CritDice",wa.FinalCritDamageDice,
+		"CritArray",wa.CritDmgArray,
+		"CritString",wa.CritDmgRolls,
+		"CritTotal",wa.CritDmg,
+		"CritMaxTotal",wa.CritDmgMax,
+		"DamageType",wa.DmgType,
+		"NoModification",0,
+		"IsWeapon",1,
+		"IsSpell",0,
+		"Modifier",1
+	)]
+
 	[h,if(wa.DmgDie2=="0"),CODE:{};{
 		[h:wa.DmgRulesFinal2 = wa.DmgRules2+if(wa.AddedRolledDamageRules2=="",""," + "+wa.AddedRolledDamageRules2)+if(flatBonusRules2=="",""," + "+flatBonusRules2)]
 		[h:wa.CritDmgRulesFinal2 = wa.DmgRules2+" + "+wa.CritDmgRules2+if(wa.AddedRolledDamageRules2=="",""," + "+wa.AddedRolledDamageRules2+" + "+wa.AddedRolledDamageRules2)+if(flatBonusRules2=="",""," + "+flatBonusRules2)+if(wa.AddedFlatDamageRules2=="",""," + "+wa.AddedFlatDamageRules2)]
@@ -260,34 +307,60 @@
 		[h:wa.FinalDamageDice2 = json.merge(wa.AllDmgDice2,wa.AddedRolledDamageDice2)]
 		[h:wa.DmgArray2 = "[]"]
 		[h,foreach(die,wa.FinalDamageDice2): wa.DmgArray2 = json.append(wa.DmgArray2,eval("1d"+die))]
-		[h,if(json.isEmpty(wa.AddedFlatDamage2)): wa.TotalAddedFlatDamage2 = 0; wa.TotalAddedFlatDamage2 = math.arraySum(wa.AddedFlatDamage2)]
-		[h:wa.Dmg2 = math.arraySum(wa.DmgArray2) + flatDmg2Total + wa.TotalAddedFlatDamage2]
+		[h,if(json.isEmpty(wa.AddedFlatDamage2)): wa.TotalAddedFlatDamage2 = flatDmg2Total; wa.TotalAddedFlatDamage2 = math.arraySum(wa.AddedFlatDamage2) + flatDmg2Total]
+		[h:wa.Dmg2 = math.arraySum(wa.DmgArray2) + wa.TotalAddedFlatDamage2]
 		[h:wa.DmgRolls2 = json.toList(wa.DmgArray2," + ")+if(json.isEmpty(wa.AddedFlatDamage2),""," + "+json.toList(wa.AddedFlatDamage2," + "))]
-		[h:wa.DmgMax2 = math.arraySum(wa.FinalDamageDice2) + flatDmg2Total + wa.TotalAddedFlatDamage2]
+		[h:wa.DmgMax2 = math.arraySum(wa.FinalDamageDice2) + wa.TotalAddedFlatDamage2]
 		
-		[h,count(pm.a5e.BrutalCrit2): wa.AllCritDmgDice2 = json.append(wa.AllCritDmgDice2,wa.DmgDie2Size)]
 		[h:wa.FinalCritDamageDice2 = json.merge(wa.AllDmgDice2,wa.AllCritDmgDice2,wa.AddedRolledDamageDice2,wa.AddedRolledDamageDice2)]
 		[h:wa.CritDmgArray2 = "[]"]
 		[h,foreach(die,wa.FinalCritDamageDice2): wa.CritDmgArray2 = json.append(wa.CritDmgArray2,eval("1d"+die))]
-		[h:wa.CritDmg2 = math.arraySum(wa.CritDmgArray2) + flatDmg2Total + wa.TotalAddedFlatDamage2]
+		[h:wa.CritDmg2 = math.arraySum(wa.CritDmgArray2) + wa.TotalAddedFlatDamage2]
 		[h:wa.CritDmgRolls2 = json.toList(wa.CritDmgArray2," + ")+if(json.isEmpty(wa.AddedFlatDamage2),""," + "+json.toList(wa.AddedFlatDamage2," + "))]
-		[h:wa.CritDmgMax2 = math.arraySum(wa.FinalCritDamageDice2) + flatDmg2Total + wa.TotalAddedFlatDamage2]
+		[h:wa.CritDmgMax2 = math.arraySum(wa.FinalCritDamageDice2) + wa.TotalAddedFlatDamage2]
 
 		[h:ThisAttackDmg = json.set(ThisAttackDmg,"DmgRules2",wa.DmgRulesFinal2,"DamageDice2",wa.FinalDamageDice2,"DmgArray2",wa.DmgArray2,"DmgRolls2",wa.DmgRolls2,"Dmg2",wa.Dmg2,"DmgMax2",wa.DmgMax2,"CritDmgRules2",wa.CritDmgRulesFinal2,"CritDamageDice2",wa.FinalCritDamageDice2,"CritDmgArray2",wa.CritDmgArray2,"CritDmgRolls2",wa.CritDmgRolls2,"CritDmg2",wa.CritDmg2,"CritDmgMax2",wa.CritDmgMax2)]
+
+		[h:ThisAttackDmg2 = json.set("",
+			"Array",wa.DmgArray2,
+			"Total",wa.Dmg2,
+			"String",wa.DmgRolls2,
+			"MaxTotal",wa.DmgMax2,
+			"Dice",wa.FinalDamageDice2,
+			"Bonus",wa.TotalAddedFlatDamage2,
+			"Formula",wa.DmgRulesFinal2,
+			"CritFormula",wa.CritDmgRulesFinal2,
+			"CritDice",wa.FinalCritDamageDice2,
+			"CritArray",wa.CritDmgArray2,
+			"CritString",wa.CritDmgRolls2,
+			"CritTotal",wa.CritDmg2,
+			"CritMaxTotal",wa.CritDmgMax2,
+			"DamageType",wa.DmgType2,
+			"NoModification",0,
+			"IsWeapon",1,
+			"IsSpell",0,
+			"Modifier",1
+		)]
 	}]
-	
-	[h:AllAttacksDmg = json.append(AllAttacksDmg,ThisAttackDmg)]
+
+	[h:pm.PassiveFunction("AttackRoll")]
+	[h:pm.PassiveFunction("WeaponAttackRoll")]
+	[h:pm.PassiveFunction("AttackRollTargeted",json.set("","ParentToken",thisAttackTarget))]
+	[h:pm.PassiveFunction("WeaponAttackRollTargeted",json.set("","ParentToken",thisAttackTarget))]
+
+	[h:thisAttackWeaponDamage = json.append("",ThisAttackDmg)]
+	[h,if(wa.DmgDie2!=0): json.append(thisAttackWeaponDamage,ThisAttackDmg2)]
+
+	[h:AllAttacksDmg = json.append(AllAttacksDmg,thisAttackWeaponDamage)]
 }]
-[h:pm.PassiveFunction("AttackRoll")]
-[h:pm.PassiveFunction("WeaponAttackRoll")]
 
 [h:WhichAttack=0]
 
 [h:"<!-- Perhaps set up separate loops for attack and damage rolls with different tables, which are assembled separately depending on the condensed vs. expanded approach -->"]
 [h:abilityTable = ""]
-[h,count(AttackCount,""),code:{
+[h,count(AttackCount),CODE:{
 	[h:thisAttackd20Rolls = json.get(json.get(AllAttacksToHit,roll.count),"d20Rolls")]
-	[h:thisAttackd20Used = json.get(json.get(AllAttacksToHit,roll.count),"d20Used")]
+	[h:thisAttackFinalRoll = json.get(json.get(AllAttacksToHit,roll.count),"FinalRoll")]
 	[h:thisAttackAdvDis = json.get(json.get(AllAttacksToHit,roll.count),"Advantage")]
 	[h:thisAttackToHit = json.get(json.get(AllAttacksToHit,roll.count),"ToHit")]
 	[h:thisAttackToHitStr = json.get(json.get(AllAttacksToHit,roll.count),"ToHitStr")]
@@ -295,29 +368,31 @@
 	[h:thisAttackCrit = json.get(json.get(AllAttacksToHit,roll.count),"CritTest")]
 	[h:thisAttackCritFail = json.get(json.get(AllAttacksToHit,roll.count),"CritFailTest")]
 	
-	[h:thisAttackDmg = json.get(json.get(AllAttacksDmg,roll.count),"Dmg")]
-	[h:thisAttackDmgStr = json.get(json.get(AllAttacksDmg,roll.count),"DmgRolls")]
-	[h:thisAttackDmgRules = json.get(json.get(AllAttacksDmg,roll.count),"DmgRules")]
-	[h:thisAttackCritDmg = json.get(json.get(AllAttacksDmg,roll.count),"CritDmg")]
-	[h:thisAttackCritDmgStr = json.get(json.get(AllAttacksDmg,roll.count),"CritDmgRolls")]
-	[h:thisAttackCritDmgRules = json.get(json.get(AllAttacksDmg,roll.count),"CritDmgRules")]
+	[h:thisAttackAllDamage = json.get(AllAttacksDmg,roll.count)]
+	[h:thisAttackDamageInfo = json.get(thisAttackAllDamage,0)]
+	[h:thisAttackDmg = json.get(thisAttackDamageInfo,"Total")]
+	[h:thisAttackDmgStr = json.get(thisAttackDamageInfo,"String")]
+	[h:thisAttackDmgRules = json.get(thisAttackDamageInfo,"Formula")]
+	[h:thisAttackCritDmg = json.get(thisAttackDamageInfo,"CritTotal")]
+	[h:thisAttackCritDmgStr = json.get(thisAttackDamageInfo,"CritString")]
+	[h:thisAttackCritDmgRules = json.get(thisAttackDamageInfo,"CritFormula")]
 	
-	[h:thisAttackDmg2 = json.get(json.get(AllAttacksDmg,roll.count),"Dmg2")]
-	[h:thisAttackDmg2Str = json.get(json.get(AllAttacksDmg,roll.count),"DmgRolls2")]
-	[h:thisAttackDmg2Rules = json.get(json.get(AllAttacksDmg,roll.count),"DmgRules2")]
-	[h:thisAttackCritDmg2 = json.get(json.get(AllAttacksDmg,roll.count),"CritDmg2")]
-	[h:thisAttackCritDmg2Str = json.get(json.get(AllAttacksDmg,roll.count),"CritDmgRolls2")]
-	[h:thisAttackCritDmg2Rules = json.get(json.get(AllAttacksDmg,roll.count),"CritDmgRules2")]
-	
-	[h:thisAttackDamageDealt = json.set("",wa.DmgType,thisAttackDmg)]
-	[h,if(wa.DmgDie2!=0): thisAttackDamageDealt = json.set(thisAttackDamageDealt,wa.DmgType2,thisAttackDmg2)]
-	
-	[h:thisAttackCritDamageDealt = json.set("",wa.DmgType,thisAttackCritDmg)]
-	[h,if(wa.DmgDie2!=0): thisAttackCritDamageDealt = json.set(thisAttackCritDamageDealt,wa.DmgType2,thisAttackCritDmg2)]
+	[h,if(wa.DmgDie2!=0):
+		thisAttackDamageInfo2 = json.get(thisAttackAllDamage,1);
+		thisAttackDamageInfo2 = "{}"
+	]
+	[h:thisAttackDmg2 = json.get(thisAttackDamageInfo2,"Total")]
+	[h:thisAttackDmg2Str = json.get(thisAttackDamageInfo2,"String")]
+	[h:thisAttackDmg2Rules = json.get(thisAttackDamageInfo2,"Formula")]
+	[h:thisAttackCritDmg2 = json.get(thisAttackDamageInfo2,"CritTotal")]
+	[h:thisAttackCritDmg2Str = json.get(thisAttackDamageInfo2,"CritString")]
+	[h:thisAttackCritDmg2Rules = json.get(thisAttackDamageInfo2,"CritFormula")]
 	
 	[h:"<!-- Will have to create the effect ID during targeting previously so it can find the effect to reroll it. FOR FEATURES, attacks/spells/grapples/anything else with its own targeting will need to create its own targeting. Perhaps create Effect IDs always during targeting, including for features. -->"]
-	[h:wa.AdvRerollLink = macroLinkText("AttackReroll@Lib:pm.a5e.Core","self-gm",json.set(wa.Data,"Advantage",1,"ForcedAdvantage",1,"PreviousRoll",thisAttackd20Rolls,"AttackNum",-1,"EffectID",""),ParentToken)]
-	[h:wa.DisRerollLink = macroLinkText("AttackReroll@Lib:pm.a5e.Core","self-gm",json.set(wa.Data,"Advantage",-1,"ForcedAdvantage",1,"PreviousRoll",thisAttackd20Rolls,"AttackNum",-1,"EffectID",""),ParentToken)]
+	[h:broadcast(wa.TargetList)]
+	[h:broadcast(wa.EffectIDs)]
+	[h:wa.AdvRerollLink = macroLinkText("AttackReroll@Lib:pm.a5e.Core","self-gm",json.set(wa.Data,"Advantage",1,"ForcedAdvantage",1,"PreviousRoll",thisAttackd20Rolls,"PreviousDamage",thisAttackAllDamage,"Target",json.get(wa.TargetList,roll.count),"AttackNum",-1,"EffectID",json.get(wa.EffectIDs,roll.count)),ParentToken)]
+	[h:wa.DisRerollLink = macroLinkText("AttackReroll@Lib:pm.a5e.Core","self-gm",json.set(wa.Data,"Advantage",-1,"ForcedAdvantage",1,"PreviousRoll",thisAttackd20Rolls,"PreviousDamage",thisAttackAllDamage,"Target",json.get(wa.TargetList,roll.count),"AttackNum",-1,"EffectID",json.get(wa.EffectIDs,roll.count)),ParentToken)]
 	
 	[h:ToHitTableLine = json.set("",
 		"ShowIfCondensed",1,
@@ -339,7 +414,7 @@
 		)]
 	};{
 		[h:extraRollsDisplay = ""]
-		[h,foreach(tempRoll,thisAttackd20Rolls): extraRollsDisplay = listAppend(extraRollsDisplay,"Roll #"+(roll.count+1)+": "+(tempRoll+thisAttackToHit-thisAttackd20Used)," / ")]
+		[h,foreach(tempRoll,thisAttackd20Rolls): extraRollsDisplay = listAppend(extraRollsDisplay,"Roll #"+(roll.count+1)+": "+(tempRoll+thisAttackToHit-thisAttackFinalRoll)," / ")]
 		[h:extraRollsDisplay = "("+extraRollsDisplay+")"]
 		[h:ToHitTableLine = json.set(ToHitTableLine,
 			"BonusBody1",extraRollsDisplay
@@ -374,19 +449,20 @@
 	
 	[h:pm.PassiveFunction("AfterEachAttack")]
 	[h:pm.PassiveFunction("AfterEachWeaponAttack")]
+	[h:pm.PassiveFunction("AfterEachAttackTargeted",json.set("","ParentToken",thisAttackTarget))]
+	[h:pm.PassiveFunction("AfterEachWeaponAttackTargeted",json.set("","ParentToken",thisAttackTarget))]
 
 	[h:pm.a5e.EffectData = json.append(pm.a5e.EffectData,json.set("",
 		"Attack",json.set("",
-			"Alld20Rolls",thisAttackd20Rolls,
-			"d20Used",thisAttackd20Used,
+			"PreviousRoll",thisAttackd20Rolls,
+			"FinalRoll",thisAttackFinalRoll,
 			"ToHit",thisAttackToHit,
 			"CritTest",thisAttackCrit,
-			"CritFailTest",thisAttackCritFail,
-			"CritDamage",thisAttackCritDamageDealt),
-		"Damage",thisAttackDamageDealt
+			"CritFailTest",thisAttackCritFail),
+		"Damage",thisAttackAllDamage
 	))]
 
-	[h:WhichAttack=WhichAttack+1]
+	[h:WhichAttack = WhichAttack + 1]
 }]
 
 [h:if(wa.Range==0,"","<tr><th style=''><b>Range</b>"+" "+wa.Range+"</td></tr>")]
@@ -394,6 +470,8 @@
 
 [h:pm.PassiveFunction("AfterAttack")]
 [h:pm.PassiveFunction("AfterWeaponAttack")]
+[h:pm.PassiveFunction("AfterAttackTargeted",json.set("","ParentToken",thisAttackTarget))]
+[h:pm.PassiveFunction("AfterWeaponAttackTargeted",json.set("","ParentToken",thisAttackTarget))]
 
 [h:pm.RemovedConditions = "[]"]
 [h,foreach(group,json.path.read(ConditionGroups,"[*]['EndTriggers'][?(@.AfterAttack != null)]","DEFAULT_PATH_LEAF_TO_NULL")),CODE:{

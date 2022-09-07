@@ -61,13 +61,25 @@
 	"Name","Skill Check",
 	"FalseName","",
 	"OnlyRules",0
-	)]
+)]
 
 [h:FormattingData = pm.MacroFormat(ClassFeatureData)]
 [h:output.PC = json.get(json.get(FormattingData,"Output"),"Player")]
 [h:output.GM = json.get(json.get(FormattingData,"Output"),"GM")]
 
-[h,MACRO("Check@Lib:pm.a5e.Core"): json.set("","Skill",ch.Choice,"Type",ch.Type,"ParentToken",ParentToken,"Alternate",Alternate,"Bonus",AddedBonus,"Advantage",if(chAdv==0,-1,if(chAdv==4,1,chAdv - 2)),"ForcedAdvantage",or(chAdv==0,chAdv==4),"PCOutput",outputTargets)]
+[h:CheckData = json.set("",
+	"Skill",ch.Choice,
+	"Type",ch.Type,
+	"ParentToken",ParentToken,
+	"Alternate",Alternate,
+	"Bonus",AddedBonus,
+	"Advantage",or(chAdv==3,chAdv==4),
+	"Disadvantage",or(chAdv==0,chAdv==1),
+	"ForcedAdvantage",or(chAdv==0,chAdv==4),
+	"PCOutput",outputTargets
+)]
+
+[h,MACRO("Check@Lib:pm.a5e.Core"): CheckData]
 [h:CheckData = macro.return]
 [h:abilityTable = json.get(CheckData,"Table")]
 

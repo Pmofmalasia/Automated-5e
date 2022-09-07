@@ -8,11 +8,12 @@
 [h:DisplayObject = json.get(cond.Info,"Settings")]
 [h,if(DisplayObject == ""): DisplayObject = "{}"]
 
-[h:priorData = arg(0)]
-[h:ParentToken=json.get(arg(0),"ParentToken")]
-[h:IsTooltip=json.get(arg(0),"IsTooltip")]
-[h:abilityContext=json.get(arg(0),"Context")]
-[h:pm.a5e.OverarchingContext=json.get(arg(0),"OverarchingContext")]
+[h:abilityPriorData = arg(0)]
+[h:ParentToken = json.get(arg(0),"ParentToken")]
+[h:IsTooltip = json.get(arg(0),"IsTooltip")]
+[h:abilityContext = json.get(arg(0),"Context")]
+[h:pm.a5e.OverarchingContext = json.get(arg(0),"OverarchingContext")]
+
 [h:Flavor=json.get(DisplayObject,"Flavor")]
 [h:DMOnly=if(json.get(DisplayObject,"DMOnly")=="",if(PC.Ally.Enemy==2,min(number(getLibProperty("HideEnemyMacros","Lib:pm.a5e.Core")),1),if(PC.Ally.Enemy==1,min(number(getLibProperty("HideAllyMacros","Lib:pm.a5e.Core")),1),0)),json.get(DisplayObject,"DMOnly"))]
 [h:BorderColorOverride=json.get(DisplayObject,"BorderColorOverride")]
@@ -31,26 +32,26 @@
 [h:abilityTable="[]"]
 
 [h:abilityInfo = json.set("",
-		"Flavor",Flavor,
-		"ParentToken",ParentToken,
-		"Tooltip",IsTooltip,
-		"DMOnly",DMOnly,
-		"FullRules",ShowFullRules,
-		"BorderColorOverride",BorderColorOverride,
-		"TitleFontColorOverride",TitleFontColorOverride,
-		"AccentBackgroundOverride",AccentBackgroundOverride,
-		"AccentTextOverride",AccentTextOverride,
-		"TitleFont",TitleFont,
-		"BodyFont",BodyFont,
-		"OverarchingContext",pm.a5e.OverarchingContext,
-		"Context",abilityContext,
-		"Class",abilityClass,
-		"Type","Feature",
-		"Subclass",abilitySubclass,
-		"Name",abilityName,
-		"DisplayName",abilityDisplayName,
-		"FalseName",abilityFalseName
-		)]
+	"Flavor",Flavor,
+	"ParentToken",ParentToken,
+	"Tooltip",IsTooltip,
+	"DMOnly",DMOnly,
+	"FullRules",ShowFullRules,
+	"BorderColorOverride",BorderColorOverride,
+	"TitleFontColorOverride",TitleFontColorOverride,
+	"AccentBackgroundOverride",AccentBackgroundOverride,
+	"AccentTextOverride",AccentTextOverride,
+	"TitleFont",TitleFont,
+	"BodyFont",BodyFont,
+	"OverarchingContext",pm.a5e.OverarchingContext,
+	"Context",abilityContext,
+	"Class",abilityClass,
+	"Type","Feature",
+	"Subclass",abilitySubclass,
+	"Name",abilityName,
+	"DisplayName",abilityDisplayName,
+	"FalseName",abilityFalseName
+)]
 		
 [h:cond.NeedsSetByInfo = json.append(pm.GetClasses("Name","json"),"Feat")]
 [h,if(json.contains(cond.NeedsSetByInfo,abilityClass)),CODE:{

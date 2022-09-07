@@ -1,10 +1,10 @@
-[h:ch.Data = arg(0)]
-[h:ch.Type = json.get(ch.Data,"Type")]
+[h:d20Data = arg(0)]
+[h:d20Type = json.get(d20Data,"Type")]
 
-[h:CurrentSkillDisplay = json.get(ch.Data,"Skill")]
+[h:CurrentSkillDisplay = json.get(d20Data,"Skill")]
 [h:CurrentSkill = pm.RemoveSpecial(CurrentSkillDisplay)]
-[h,if(json.get(ch.Data,"Alternate")==""),CODE:{
-	[h,SWITCH(ch.Type):
+[h,if(json.get(d20Data,"Alternate")==""),CODE:{
+	[h,SWITCH(d20Type):
 		case "Ability Score": PrimeStat = CurrentSkill;
 		case "Skill": PrimeStat = json.get(json.path.read(getLibProperty("sb.Skills","Lib:pm.a5e.Core"),"[?(@.Name=='"+CurrentSkill+"')]['Attribute']"),0);
 		case "Tool": PrimeStat = json.get(json.path.read(getLibProperty("sb.Tools","Lib:pm.a5e.Core"),"[?(@.Name=='"+CurrentSkill+"')]['Attribute']"),0);
@@ -12,7 +12,7 @@
 		default: PrimeStat = "None"
 	]
 };{
-	[h:PrimeStat = pm.RemoveSpecial(json.get(ch.Data,"Alternate"))]
+	[h:PrimeStat = pm.RemoveSpecial(json.get(d20Data,"Alternate"))]
 }]
 
 [h,if(CurrentSkill == "NoSkillSelected"),CODE:{
@@ -20,7 +20,7 @@
 	[h:ProfBonus = 0]
 	[h:ProfTypeStr = ""]
 };{
-	[h,SWITCH(ch.Type):
+	[h,SWITCH(d20Type):
 		case "Skill": ProfType = json.get(Skills,CurrentSkill);
 		case "Tool": ProfType = json.get(Tools,CurrentSkill);
 		case "Initiative": ProfType = 0;
@@ -40,7 +40,10 @@
 }]
 
 [h,if(PrimeStat=="None"): AtrBonus = 0; AtrBonus = json.get(AtrMods,PrimeStat)]
-[h:MiscBonus = if(json.get(ch.Data,"Bonus")=="",0,json.get(ch.Data,"Bonus"))]
-[h:MiscBonusStr = json.get(ch.Data,"Bonus")]
+[h:MiscBonus = if(json.get(d20Data,"Bonus")=="",0,json.get(d20Data,"Bonus"))]
+[h:MiscBonusStr = json.get(d20Data,"Bonus")]
+[h:MiscBonusFormula = if(json.get(d20Data,"Bonus")=="","",pm.PlusMinus(json.get(d20Data,"Bonus"),0))]
+
 [h:pm.PassiveFunction("CheckBonus")]
+
 [h:TotalBonus = MiscBonus + ProfBonus + AtrBonus]

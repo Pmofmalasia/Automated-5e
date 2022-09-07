@@ -1,5 +1,6 @@
 [h:SkillOptions = json.get(arg(1),"Skill")]
 [h:SkillAdvantage = json.get(arg(1),"Advantage")]
+[h:SkillDisadvantage = json.get(arg(1),"Disadvantage")]
 [h:SkillPreviousRoll = json.get(arg(1),"PreviousRoll")]
 [h:SkillType = json.get(arg(1),"Type")]
 [h:SkillBonus = json.get(arg(1),"Bonus")]
@@ -48,7 +49,7 @@
 	[h,if(json.type(SkillOptions)=="UNKNOWN"),CODE:{
 		[h:SkillSelection = SkillOptions]
 	};{
-		[h:abort(input(" SkillSelection | "+SkillOptions+" | Choose a Skill | LIST | DELIMITER=JSON VALUE=STRING "))]
+		[h:abort(input(" SkillSelection | "+SkillOptions+" | Choose a Skill | RADIO | DELIMITER=JSON VALUE=STRING "))]
 		[h:SkillSelection = pm.RemoveSpecial(SkillSelection)]
 	}]
 
@@ -56,12 +57,13 @@
 		"Skill",SkillSelection,
 		"Type",SkillType,
 		"Advantage",SkillAdvantage,
+		"Disadvantage",SkillDisadvantage,
 		"PreviousRoll",SkillPreviousRoll,
 		"ParentToken",ParentToken
 	)]
 
-	[h,MACRO("Check Reroll Rerouting@Lib:pm.a5e.Core"): CheckData]
+	[h,MACRO("Check@Lib:pm.a5e.Core"): CheckData]
 	[h:CheckReturnData = macro.return]
 	
-	[h:abilityTable = json.merge(abilityTable,CheckReturnData)]
+	[h:abilityTable = json.merge(abilityTable,json.get(CheckReturnData,"Table"))]
 }]

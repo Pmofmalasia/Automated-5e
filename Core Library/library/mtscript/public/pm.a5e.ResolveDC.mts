@@ -14,8 +14,11 @@
 };{
     [h:typesHalvedFinal = "[]"]
 }]
-[h:thisEffectDamageTypes = json.unique(json.path.read(thisTokenDamageDealt,"[*]['DamageType']"))]
-[h,if(thisTokenDamageDealt!=""): typesHalvedFinal = json.intersection(typesHalvedFinal,thisEffectDamageTypes)]
+
+[h,if(thisTokenDamageDealt!=""),CODE:{
+    [h:thisEffectDamageTypes = json.unique(json.path.read(thisTokenDamageDealt,"[*]['DamageType']"))]
+    [h:typesHalvedFinal = json.intersection(typesHalvedFinal,thisEffectDamageTypes)]
+};{}] 
 
 [h,foreach(damageInstance,thisTokenDamageDealt),CODE:{
     [h:thisTypeModifiedTest = (json.contains(typesHalvedFinal,json.get(damageInstance,"DamageType")) && isDamageHalved!=0)]

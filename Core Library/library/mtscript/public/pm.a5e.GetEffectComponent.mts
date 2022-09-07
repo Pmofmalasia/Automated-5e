@@ -75,7 +75,9 @@
         ]
     };
     case "Roll":{
-        [h:macro.return = json.get(json.get(allEffectData,whichEffect),"Roll")]
+        [h:rollData = json.get(json.get(allEffectData,whichEffect),"Roll")]
+        [h,if(json.type(componentToGetData)=="OBJECT"): rollData = json.get(rollData,json.get(componentToGetData,"SecondaryKey"))]
+        [h:macro.return = rollData]
     };
     case "Damage":{
         [h,if(json.type(componentToGetData)=="OBJECT"),CODE:{
@@ -90,7 +92,10 @@
     case "Condition":{
         
     };
-    case "EffectID":{
-        [h:macro.return = json.get(json.get(allEffectData,whichEffect),"ID")]
+    case "TargetedEffects":{
+        [h:macro.return = json.get(json.get(allEffectData,whichEffect),"TargetedEffects")]
+    };
+    case "TargetedEffectOptions":{
+        [h:macro.return = json.get(json.get(allEffectData,whichEffect),"TargetedEffectOptions")]
     }
 ]

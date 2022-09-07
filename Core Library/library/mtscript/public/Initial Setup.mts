@@ -10,7 +10,7 @@
 [h:AttributeInput = ""]
 [h,foreach(TempAttribute,AttributeList): AttributeInput = listAppend(AttributeInput," "+json.get(TempAttribute,"Name")+"Choice | "+StatList+" | "+json.get(TempAttribute,"DisplayName")+" | LIST | VALUE=STRING SELECT=8 ","##")]
 
-[h:BasicInfo=input(
+[h:abort(input(
 	"junkVar | "+getTokenImage()+" | New Character | LABEL | ICON=TRUE ",
 	"CharName| "+token.name+" |Character Name",
 	"junkVar|(Without Racial Bonuses)|Ability Score Rolls|LABEL",
@@ -21,8 +21,7 @@
 	"MoralitySelection|Good,Neutral,Evil|Choose Morality|LIST|VALUE=STRING",
 	"DeitySelection|"+Deity+"|Deity",
 	"PC.Ally.Enemy|PC,Ally,Enemy,Neutral|What type of character is this|LIST"
-)]
-[h:abort(BasicInfo)]
+))]
 
 [h:setName(CharName)]
 [h,foreach(TempAttribute,AttributeList): baseAttributes = json.set(baseAttributes,json.get(TempAttribute,"Name"),eval(json.get(TempAttribute,"Name")+"Choice"))]

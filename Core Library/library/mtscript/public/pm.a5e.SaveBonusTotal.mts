@@ -31,5 +31,8 @@
 [h,if(PrimeStat=="None"): AtrBonus = 0; AtrBonus = json.get(AtrMods,PrimeStat)]
 [h:MiscBonus = if(json.get(d20Data,"Bonus")=="",0,json.get(d20Data,"Bonus"))]
 [h:MiscBonusStr = json.get(d20Data,"Bonus")]
+[h:MiscBonusFormula = if(json.get(d20Data,"Bonus")=="","",pm.PlusMinus(json.get(d20Data,"Bonus"),0))]
+
 [h:pm.PassiveFunction("SaveBonus")]
+
 [h:TotalBonus = MiscBonus + ProfBonus + AtrBonus]

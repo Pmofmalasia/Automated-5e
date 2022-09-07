@@ -38,7 +38,7 @@
 }]
 
 [h:"<!-- ReturnForPatch: Can replace the loop to delete conditions with no remaining targets and replace it with junkVar if they ever patch json.path functions to compare arrays. -->"]
-[h:RemovedSetBy = json.unique(json.path.read(ConditionList,"[*]['SetBy']"))]
+[h:RemovedSetBy = json.unique(json.path.read(ConditionList,"[*][?(@.SetBy!='')]['SetBy']"))]
 [h,foreach(setBy,RemovedSetBy),CODE:{
 	[h:switchToken(setBy)]
 	[h:RemovedGroups = json.unique(json.path.read(getProperty("ConditionList",ParentToken),"[*][?(@.SetBy=='"+setBy+"')]['GroupID']"))]

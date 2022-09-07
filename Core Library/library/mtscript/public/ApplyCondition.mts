@@ -71,16 +71,18 @@
 [h:ConditionList = json.merge(ConditionList,a5e.Conditions)]
 [h:ConditionGroups = json.append(ConditionGroups,json.set(a5e.GroupingInfo,"SetBy",ConditionSetBy))]
 
-[h:switchToken(ConditionSetBy)]
-[h:"<!-- New group test needs to be done on SetBy token but not target token because group may have already been created by another target going through this macro. -->"]
-[h:newGroupTest = json.isEmpty(json.path.read(ConditionsSet,"[*][?(@.GroupID=="+a5e.GroupID+")]"))]
-[h,if(newGroupTest),CODE:{
-	[h:ConditionsSet = json.append(ConditionsSet,json.set(a5e.GroupingInfo,"Targets",json.append("",ParentToken)))]
-};{
-	[h:NewTargets = json.append(json.get(json.path.read(ConditionsSet,"[*][?(@.GroupID=="+a5e.GroupID+")]"),0),ParentToken)]
-	[h:ConditionsSet = json.path.set(ConditionsSet,"[*][?(@.GroupID=="+a5e.GroupID+")]",NewTargets)]
-}]
-[h:switchToken(ParentToken)]
+[h,if(ConditionSetBy!=""),CODE:{
+	[h:switchToken(ConditionSetBy)]
+	[h:"<!-- New group test needs to be done on SetBy token but not target token because group may have already been created by another target going through this macro. -->"]
+	[h:newGroupTest = json.isEmpty(json.path.read(ConditionsSet,"[*][?(@.GroupID=="+a5e.GroupID+")]"))]
+	[h,if(newGroupTest),CODE:{
+		[h:ConditionsSet = json.append(ConditionsSet,json.set(a5e.GroupingInfo,"Targets",json.append("",ParentToken)))]
+	};{
+		[h:NewTargets = json.append(json.get(json.path.read(ConditionsSet,"[*][?(@.GroupID=="+a5e.GroupID+")]"),0),ParentToken)]
+		[h:ConditionsSet = json.path.set(ConditionsSet,"[*][?(@.GroupID=="+a5e.GroupID+")]",NewTargets)]
+	}]
+	[h:switchToken(ParentToken)]
+};{}]
 
 [h:abilityTable = json.append(abilityTable,json.set("",
 	"ShowIfCondensed",1,

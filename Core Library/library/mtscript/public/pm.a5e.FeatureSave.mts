@@ -60,7 +60,7 @@
 		"ParentToken",ParentToken
 	)]
 
-	[h,MACRO("Save Reroll Rerouting@Lib:pm.a5e.Core"): SaveData]
+	[h,MACRO("Modify Save Rerouting@Lib:pm.a5e.Core"): SaveData]
 	[h:SaveReturnData = macro.return]
 	
 	[h:abilityTable = json.merge(abilityTable,json.get(SaveReturnData,"Table"))]

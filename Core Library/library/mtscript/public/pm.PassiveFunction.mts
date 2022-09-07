@@ -8,7 +8,7 @@
 	[h,switch(switchType):
 		case "Condition": a5e.UnifiedAbilities = SetByAbilities;
 		case "Target": a5e.UnifiedAbilities = TargetAbilities;
-		default: a5e.UnifiedAbilities = SetByAbilities
+		default: a5e.UnifiedAbilities = a5e.GatherAbilities(switchTest)
 	]
 	[h:ParentToken = switchTest]
 	[h:switchToken(ParentToken)]

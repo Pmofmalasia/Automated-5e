@@ -1,14 +1,13 @@
 [h:AttackData = macro.args]
+[h:WeaponData = json.get(AttackData,"WeaponData")]
 [h:ParentToken = json.get(AttackData,"ParentToken")]
-[h:switchToken(ParentToken)]
-[h:WeaponData = json.get(Weapon,json.get(Weapon,json.get(AttackData,"Hand")))]
 
 [h:ClassFeatureData = json.set("",
 	"Flavor",json.get(WeaponData,"Flavor"),
 	"ParentToken",ParentToken,
 	"DMOnly",0,
 	"Class","zzWeaponAttack",
-	"Name",json.get(WeaponData,"Name")+" Attack",
+	"Name",json.get(WeaponData,"Name")+" Attack Reroll",
 	"FalseName","Weapon Attack",
 	"OnlyRules",0
 )]
@@ -16,14 +15,6 @@
 [h:FormattingData = pm.MacroFormat(ClassFeatureData)]
 [h:output.PC = json.get(json.get(FormattingData,"Output"),"Player")]
 [h:output.GM = json.get(json.get(FormattingData,"Output"),"GM")]
-
-[h:AttackData = json.set(AttackData,
-	"WeaponData",WeaponData,
-	"Throw Weapon",0,
-	"AttackNum",1,
-	"DMOnly",0,
-	"ParentToken",ParentToken
-)]
 
 [macro("Attack@Lib:pm.a5e.Core") : AttackData]
 [h:abilityTable = json.get(macro.return,"Table")]

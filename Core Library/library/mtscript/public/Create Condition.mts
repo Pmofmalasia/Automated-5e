@@ -66,7 +66,7 @@
 	[h:abort(input(associatedCondInput))]
 	
 	[h:associatedConditionList = "[]"]
-	[h,foreach(baseCondition,pm.a5e.GetBaseConditions("Name","json")): associatedConditionList = if(eval("choice."+baseCondition),json.append(associatedConditionList,json.get(baseCondition,"Name","Class","Subclass","DisplayName")),associatedConditionList)]
+	[h,foreach(baseCondition,pm.a5e.GetBaseConditions()): associatedConditionList = if(eval("choice."+json.get(baseCondition,"Name")),json.append(associatedConditionList,json.get(baseCondition,"Name","Class","Subclass","DisplayName")),associatedConditionList)]
 };{}]
 
 [h,macro("Create Feature Core@Lib:pm.a5e.Core"): json.set("","Feature",cn.Final,"PrereqsTest",0)]

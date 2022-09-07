@@ -7,8 +7,8 @@
 [h:d20AllRolls = if(json.get(d20Data,"PreviousRoll")=="","[]",json.get(d20Data,"PreviousRoll"))]
 [h:d20ExtraRolls = if(json.get(d20Data,"ExtraRolls")=="",0,json.get(d20Data,"ExtraRolls"))]
 [h:d20ForcedAdvantage = if(json.get(d20Data,"ForcedAdvantage")=="",0,json.get(d20Data,"ForcedAdvantage"))]
-[h:d20Advantage = json.get(d20Data,"Advantage")]
-[h:d20Disadvantage = json.get(d20Data,"Disadvantage")]
+[h:d20Advantage = if(json.get(d20Data,"Advantage")=="",0,json.get(d20Data,"Advantage"))]
+[h:d20Disadvantage = if(json.get(d20Data,"Disadvantage")=="",0,json.get(d20Data,"Disadvantage"))]
 
 [h:d20RolledNum = 1 + d20ExtraRolls]
 
@@ -40,3 +40,5 @@
 };{
 	[h,count(d20RolledNum): d20AllRolls = json.append(d20AllRolls,1d20)]
 }]
+
+[h:d20TotalRolled = json.length(d20AllRolls)]

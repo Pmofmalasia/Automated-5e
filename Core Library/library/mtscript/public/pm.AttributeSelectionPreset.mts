@@ -1,4 +1,4 @@
-[h:ab.Input = " junkVar | --------- Select Points to Allocate Ability Scores --------- |  | LABEL | SPAN=TRUE ## ab.AllChoice | -4,-3,-2,-1,0,1,2,3,4 | <html><span title='Will apply bonus to all attributes including any added in the future. Any other bonuses applied will add on top of this number.'>All Attributes</span></html> | LIST | SELECT=4 VALUE=STRING "]
+[h:ab.Input = " junkVar | --------- Select Points to Allocate to Ability Scores --------- |  | LABEL | SPAN=TRUE ## ab.AllChoice | -4,-3,-2,-1,0,1,2,3,4 | <html><span title='Will apply bonus to all attributes including any added in the future. Any other bonuses applied will add on top of this number.'>All Attributes</span></html> | LIST | SELECT=4 VALUE=STRING "]
 [h,foreach(TempAtr,pm.GetAttributes()): ab.Input = listAppend(ab.Input," ab."+json.get(TempAtr,"Name")+"Choice | -4,-3,-2,-1,0,1,2,3,4 | "+json.get(TempAtr,"DisplayName")+" | LIST | SELECT=4 VALUE=STRING ","##")]
 
 [h:abort(input(ab.Input))]

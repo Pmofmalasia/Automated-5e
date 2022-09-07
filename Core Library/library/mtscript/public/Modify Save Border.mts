@@ -24,14 +24,14 @@
 [h:output.PC = json.get(json.get(FormattingData,"Output"),"Player")]
 [h:output.GM = json.get(json.get(FormattingData,"Output"),"GM")]
 
-[h,MACRO("Save Reroll@Lib:pm.a5e.Core"): SaveData]
+[h,MACRO("Modify Save@Lib:pm.a5e.Core"): SaveData]
 [h:SaveData = macro.return]
 [h:abilityTable = json.get(SaveData,"Table")]
 
 [h:effectID = json.get(SaveData,"ID")]
 [h,if(effectID==""),CODE:{};{
 	[h:rerolledEffect = json.path.set(getLibProperty("gd.Effects","Lib:pm.a5e.Core"),"[*][?(@.ID=="+effectID+")]['ToResolve']['SaveDC']['SavesMade']['"+ParentToken+"']",json.remove(SaveData,"EffectID"))]
-	[h:setLibProperty("gd.Effects","Lib:pm.a5e.Core",rerolledEffect)]
+	[h:setLibProperty("gd.Effects",rerolledEffect,"Lib:pm.a5e.Core")]
 }]
 
 [h:output.Temp = pm.AbilityTableProcessing(abilityTable,FormattingData,1)]

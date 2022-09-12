@@ -6,6 +6,7 @@
 [h:RangeType = json.get(macro.args,"RangeType")]
 [h:AoEShape = json.get(macro.args,"AoEShape")]
 [h:sDuration = json.get(macro.args,"sDuration")]
+[h:DurationString = json.get(sDuration,"Value")+" "+json.get(sDuration,"Units")]
 [h:sSchool = json.get(macro.args,"sSchool")]
 [h:IsSummon = json.get(macro.args,"IsSummon")]
 [h:IsAHLSummon = json.get(macro.args,"IsAHLSummon")]
@@ -14,13 +15,20 @@
 
 [h:listDamageTypesAHL = json.append(pm.GetDamageTypes("DisplayName","json"),"Healing","Temp HP")]
 [h:listDamageTypes = json.append(listDamageTypesAHL,"Multiple Options")]
+
 [h:listDamageDieNumber = json.append("","0","1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30")]
 [h:listDamageDieSize = json.append("","0","1","2","4","6","8","10","12")]
+
 [h:listPrimaryStat = pm.GetAttributes("DisplayName","json")]
+
 [h:list1through9 = json.append("","1","2","3","4","5","6","7","8","9")]
 [h:listsLevel = json.merge(json.append("","Cantrip"),list1through9)]
-[h:listCastTime = json.append("","Action","Bonus Action","Reaction","Round","Minute","Hour","Day","Other")]
+
+[h:listCastTime = json.append("","Action","Bonus Action","Reaction","Round","Minute","Hour","Day","Custom")]
+
 [h:listDuration = json.append("","Instantaneous","1 Round","1 Minute","10 Minutes","1 Hour","8 Hours","24 Hours","10 Days","Until Dispelled","Custom")]
+[h,if(DurationString!=" " && !json.contains(listDuration,DurationString)): listDuration = json.append(listDuration,DurationString)]
+
 [h:listSchools = pm.GetSpellSchools("DisplayName","json")]
 
 [h:SaveType = "None"]
@@ -53,7 +61,7 @@
 	"mComp |  | Material Components | Check",
 	"IsSight |  | Requires Seeing Target | Check ",
 	"junkVar|-----------------------------------------------------------------------------------------------------------------------||LABEL|SPAN=TRUE",
-	"sDuration | Instantaneous,1 Round,1 Minute,10 Minutes,1 Hour,8 Hours,24 Hours,10 Days,Until Dispelled | Duration | LIST | VALUE=STRING SELECT="+if(sDuration=="Instantaneous",0,if(sDuration=="1 Round",1,if(sDuration=="1 Minute",2,if(sDuration=="10 Minutes",3,if(sDuration=="1 Hour",4,if(sDuration=="8 Hours",5,if(sDuration=="24 Hours",6,if(sDuration=="10 Days",7,8))))))))+"",
+	"sDuration | "+listDuration+" | Duration | LIST | VALUE=STRING SELECT="+max(0,json.indexOf(listDuration,DurationString))+"",
 	"IsAHLDuration |  | Increased Duration at Higher levels | Check ",
 	"sConcentration |  | Concentration | Check",
 	"sIsConcentrationLost |  | Concentration Not Required at Higher Level | CHECK ",
@@ -75,11 +83,60 @@
 	disIsMultiSubEffects
 ))]
 
+[h:durationInfo = "{}"]
+[h,switch(sDuration),CODE:
+	case "Instantaneous":{
+		[h:AHLDurationPlacehold="0"]
+	};
+	case "1 Round":{
+		[h:AHLDurationPlacehold="1"]
+		[h:durationInfo = json.set("","Value",1,"Units","Round")]
+	};
+	case "1 Minute":{
+		[h:AHLDurationPlacehold="2"]
+		[h:durationInfo = json.set("","Value",1,"Units","Minute")]
+	};
+	case "10 Minutes":{
+		[h:AHLDurationPlacehold="3"]
+		[h:durationInfo = json.set("","Value",10,"Units","Minute")]
+	};
+	case "1 Hour":{
+		[h:AHLDurationPlacehold="4"]
+		[h:durationInfo = json.set("","Value",1,"Units","Hour")]
+	};
+	case "8 Hours":{
+		[h:AHLDurationPlacehold="5"]
+		[h:durationInfo = json.set("","Value",8,"Units","Hour")]
+	};
+	case "24 Hours":{
+		[h:AHLDurationPlacehold="6"]
+		[h:durationInfo = json.set("","Value",24,"Units","Hour")]
+	};
+	case "10 Days":{
+		[h:AHLDurationPlacehold="7"]
+		[h:durationInfo = json.set("","Value",10,"Units","Day")]
+	};
+	case "Until Dispelled":{
+		[h:AHLDurationPlacehold="8"]
+	};
+	case "Custom":{
+		[h:AHLDurationPlacehold="0"]
+		[h:abort(input(
+			" throwaway | -------------- Custom Duration Info -------------- |  | LABEL | SPAN=TRUE",
+			" durationValue |  | Duration ",
+			" durationUnits | Turn,Round,Minute,Hour,Day,Year | Duration Units | LIST | SELECT=1 "
+		))]
+		[h:durationInfo = json.set("","Value",durationValue,"Units",durationUnits)]
+	};
+	default:{
+		[h:durationInfo = sDuration]
+	}
+]
+
 [h:thisSpellEffectData = json.set("",
 	"Name",pm.RemoveSpecial(sName),
 	"DisplayName",sName,
-	"Level",sLevel,
-
+	"Level",sLevel
 )]
 
 [h:sMultiEffects = number(sMultiEffects)]

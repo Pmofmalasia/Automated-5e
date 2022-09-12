@@ -84,43 +84,46 @@
 	};
 	case "1 Round":{
 		[h:AHLDurationPlacehold="1"]
-		[h:durationInfo = json.set("","Duration",1,"Units","Round")]
+		[h:durationInfo = json.set("","Value",1,"Units","Round")]
 	};
 	case "1 Minute":{
 		[h:AHLDurationPlacehold="2"]
-		[h:durationInfo = json.set("","Duration",1,"Units","Minute")]
+		[h:durationInfo = json.set("","Value",1,"Units","Minute")]
 	};
 	case "10 Minutes":{
 		[h:AHLDurationPlacehold="3"]
-		[h:durationInfo = json.set("","Duration",10,"Units","Minute")]
+		[h:durationInfo = json.set("","Value",10,"Units","Minute")]
 	};
 	case "1 Hour":{
 		[h:AHLDurationPlacehold="4"]
-		[h:durationInfo = json.set("","Duration",1,"Units","Hour")]
+		[h:durationInfo = json.set("","Value",1,"Units","Hour")]
 	};
 	case "8 Hours":{
 		[h:AHLDurationPlacehold="5"]
-		[h:durationInfo = json.set("","Duration",8,"Units","Hour")]
+		[h:durationInfo = json.set("","Value",8,"Units","Hour")]
 	};
 	case "24 Hours":{
 		[h:AHLDurationPlacehold="6"]
-		[h:durationInfo = json.set("","Duration",24,"Units","Hour")]
+		[h:durationInfo = json.set("","Value",24,"Units","Hour")]
 	};
 	case "10 Days":{
 		[h:AHLDurationPlacehold="7"]
-		[h:durationInfo = json.set("","Duration",10,"Units","Day")]
+		[h:durationInfo = json.set("","Value",10,"Units","Day")]
 	};
 	case "Until Dispelled":{
 		[h:AHLDurationPlacehold="8"]
 	};
-	default:{
+	case "Custom":{
 		[h:AHLDurationPlacehold="0"]
 		[h:abort(input(
 			" throwaway | -------------- Custom Duration Info -------------- |  | LABEL | SPAN=TRUE",
 			" durationValue |  | Duration ",
 			" durationUnits | Turn,Round,Minute,Hour,Day,Year | Duration Units | LIST | SELECT=1 "
 		))]
-		[h:durationInfo = json.set("","Duration",durationValue,"Units",durationUnits)]
+		[h:durationInfo = json.set("","Value",durationValue,"Units",durationUnits)]
+	};
+	default:{
+		[h:durationInfo = sDuration]
 	}
 ]
 

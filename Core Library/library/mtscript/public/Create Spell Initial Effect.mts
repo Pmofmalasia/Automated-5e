@@ -66,7 +66,7 @@
 	"IsCheck | No,Spellcasting Ability,"+pm.GetAttributes("DisplayName")+","+pm.GetSkills("DisplayName")+" | Makes an Ability Check When Cast | LIST | VALUE=STRING ",
 	"IsSummon | No,Single,Multiple | Summons Tokens | LIST | VALUE=STRING ",
 	"IsAHLSummon | No Change,Increase Number,Increase CR,Both | If Yes, How Do the Summons Change at Higher Levels | LIST | SELECT="+IsAHLSummon+"",
-"junkVar| ---------------------------------- Advanced Options: Can be Ignored ---------------------------------- ||LABEL|SPAN=TRUE",
+	"junkVar| ---------------------------------- Advanced Options: Can be Ignored ---------------------------------- ||LABEL|SPAN=TRUE",
 	disIsMultiEffects,
 	disRandomEffects,
 	disIsMultiSubEffects

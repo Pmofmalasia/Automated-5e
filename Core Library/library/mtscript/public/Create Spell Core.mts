@@ -12,13 +12,13 @@
 [h:sList = json.get(macro.args,"sList")]
 [h:sLevel = json.get(macro.args,"sLevel")]
 
-[h:listDamageTypes = json.append(pm.GetDamageTypes("DisplayName","json"),"Healing","Temp HP")]
-[h:listDamageTypesAHL = json.append(listDamageTypes,"Same As Chosen Option")]
-[h:listDamageTypes = json.append(listDamageTypes,"Multiple Options")]
+[h:listDamageTypesAHL = json.append(pm.GetDamageTypes("DisplayName","json"),"Healing","Temp HP")]
+[h:listDamageTypes = json.append(listDamageTypesAHL,"Multiple Options")]
 [h:listDamageDieNumber = json.append("","0","1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30")]
 [h:listDamageDieSize = json.append("","0","1","2","4","6","8","10","12")]
 [h:listPrimaryStat = pm.GetAttributes("DisplayName","json")]
-[h:listsLevel = json.append("","1","2","3","4","5","6","7","8","9")]
+[h:list1through9 = json.append("","1","2","3","4","5","6","7","8","9")]
+[h:listsLevel = json.merge(json.append("","Cantrip"),list1through9)]
 [h:listCastTime = json.append("","Action","Bonus Action","Reaction","Round","Minute","Hour","Day","Other")]
 [h:listDuration = json.append("","Instantaneous","1 Round","1 Minute","10 Minutes","1 Hour","8 Hours","24 Hours","10 Days","Until Dispelled","Custom")]
 [h:listSchools = pm.GetSpellSchools("DisplayName","json")]
@@ -33,14 +33,15 @@
 [h:CastTimeUnits = ""]
 [h:EffectName = "All Effect Rules"]
 [h:disMultiEffectsName = if(FirstPassTest,"","EffectName | Name | Effect Name")]
-[h:disIsMultiEffects = if(FirstPassTest,"sMultiEffects | "+listsLevel+" | <html><a href='Increase ONLY for effects where multiple portions of the spell change together, for example Plant Growth, Control Winds, etc. Do NOT use for spells where just the damage type, creature summoned, etc. changes. On the first passthrough, input only features of the spell common to all effects.'>Number of Effects to Choose From</a></html> | LIST | VALUE=STRING ","")]
+[h:disIsMultiEffects = if(FirstPassTest,"sMultiEffects | "+list1through9+" | <html><a href='Increase ONLY for effects where multiple portions of the spell change together, for example Plant Growth, Control Winds, etc. Do NOT use for spells where just the damage type, creature summoned, etc. changes. On the first passthrough, input only features of the spell common to all effects.'>Number of Effects to Choose From</a></html> | LIST | VALUE=STRING ","")]
 [h:disRandomEffects = if(FirstPassTest,"IsRandomEffect |  | If Yes, is the Effect Random | Check ","")]
+[h:disIsMultiSubEffects=if(FirstPassTest,"sMultiSubEffects | "+list1through9+" | <html><span title='Increase for a Single Spell Effect that Has Different Parts for Different Targets - e.g. Ice Knife initial attack + AoE, Vampiric Touch damages target and heals self, etc.'>Number of Sub-Effects to Choose From</span></html> | LIST | VALUE=STRING ","")]
 
 [h:"<!-- Need to update CastTime/Duration tracking throughout -->"]
 [h:abort(input(
 	"sName | "+sName+" | Spell Name ",
 	""+disMultiEffectsName+"",
-	if(sLevel==0,"","sLevel | "+listsLevel+" | Spell Level | LIST | VALUE=STRING SELECT="+(number(sLevel)-1)+""),
+	if(sLevel==0,"","sLevel | "+listsLevel+" | Spell Level | LIST | DELIMITER=JSON SELECT="+max(0,json.indexOf(listsLevel,sLevel))+""),
 	"CastTime |  | Casting Time ",
 	"CastTimeUnits | "+listCastTime+" | Casting Time Units |LIST|VALUE=STRING",
 	if(sLevel==0,"","Ritual |  | Ritual Spell | Check"),
@@ -50,9 +51,9 @@
 	"vComp |  | Verbal Components | Check",
 	"sComp |  | Somatic Components | Check",
 	"mComp |  | Material Components | Check",
-	"IsSight |  | Requires Line of Sight | Check ",
+	"IsSight |  | Requires Seeing Target | Check ",
 	"junkVar|-----------------------------------------------------------------------------------------------------------------------||LABEL|SPAN=TRUE",
-"sDuration | Instantaneous,1 Round,1 Minute,10 Minutes,1 Hour,8 Hours,24 Hours,10 Days,Until Dispelled | Duration | LIST | VALUE=STRING SELECT="+if(sDuration=="Instantaneous",0,if(sDuration=="1 Round",1,if(sDuration=="1 Minute",2,if(sDuration=="10 Minutes",3,if(sDuration=="1 Hour",4,if(sDuration=="8 Hours",5,if(sDuration=="24 Hours",6,if(sDuration=="10 Days",7,8))))))))+"",
+	"sDuration | Instantaneous,1 Round,1 Minute,10 Minutes,1 Hour,8 Hours,24 Hours,10 Days,Until Dispelled | Duration | LIST | VALUE=STRING SELECT="+if(sDuration=="Instantaneous",0,if(sDuration=="1 Round",1,if(sDuration=="1 Minute",2,if(sDuration=="10 Minutes",3,if(sDuration=="1 Hour",4,if(sDuration=="8 Hours",5,if(sDuration=="24 Hours",6,if(sDuration=="10 Days",7,8))))))))+"",
 	"IsAHLDuration |  | Increased Duration at Higher levels | Check ",
 	"sConcentration |  | Concentration | Check",
 	"sIsConcentrationLost |  | Concentration Not Required at Higher Level | CHECK ",
@@ -62,23 +63,29 @@
 	"IsSave |  | Save Required | Check ",
 	"IsDamage |  | Heals or Deals Damage | Check ",
 	"IsAHL |  | Increased Healing or Damage at Higher Levels | Check ",
-	"IsMissiles | |<html><span title='(Magic Missiles, Scorching Ray)'>Is it a Missile Attack</span></html> | Check",
+	"IsMissiles | |<html><span title='(Magic Missiles, Scorching Ray)'>Is it a Missile Spell</span></html> | Check",
 	"junkVar|-----------------------------------------------------------------------------------------------------------------------||LABEL|SPAN=TRUE",
 	"IsBuffDebuff |  | Sets a Condition on Target or Self | Check ",
-	"IsCheck |  | Makes an Ability Check When Cast | CHECK ",
+	"IsCheck | No,Spellcasting Ability,"+pm.GetAttributes("DisplayName")+","+pm.GetSkills("DisplayName")+" | Makes an Ability Check When Cast | LIST | VALUE=STRING ",
 	"IsSummon | No,Single,Multiple | Summons Tokens | LIST | VALUE=STRING ",
 	"IsAHLSummon MOVE THIS TO LATER | No Change,Increase Number,Increase CR,Both | If Yes, How Do the Summons Change at Higher Levels | LIST | SELECT="+IsAHLSummon+"",
-	"junkVar|-----------------------------------------------------------------------------------------------------------------------||LABEL|SPAN=TRUE",
-	"IsOngoing | 0,"+listsLevel+" | <html><span title='e.g. Moonbeam, Smite Spells, etc.'>Number of Effects After Casting</span></html> | LIST ",
-	"IsOngoingRandom |  | Is the above effect chosen randomly after the initial casting | CHECK ",
+	"junkVar| -------------------------------------------- Advanced Options -------------------------------------------- ||LABEL|SPAN=TRUE",
 	""+disIsMultiEffects+"",
-	""+disRandomEffects+""
+	""+disRandomEffects+"",
+	disIsMultiSubEffects
 ))]
 
-[h:sMultiEffects=number(sMultiEffects)]
-[h:sMultiEffects=if(or(FirstPassTest==0,sMultiEffects==1),sMultiEffects,sMultiEffects+1)]
+[h:thisSpellEffectData = json.set("",
+	"Name",pm.RemoveSpecial(sName),
+	"DisplayName",sName,
+	"Level",sLevel,
 
-[h:sLevel=number(sLevel)]
+)]
+
+[h:sMultiEffects = number(sMultiEffects)]
+[h:sMultiEffects = if(or(FirstPassTest==0,sMultiEffects==1),sMultiEffects,sMultiEffects+1)]
+
+[h:sLevel = number(sLevel)]
 [h,switch(sDuration),CODE:
 	case "Instantaneous":{[h:AHLDurationPlacehold="0"]};
 	case "1 Round":{[h:AHLDurationPlacehold="1"]};
@@ -94,37 +101,48 @@
 [h:SaveType=""]
 [h:sBaseMissiles=1]
 [h:sAHLMissiles=0]
-[h:DmgType=""]
-[h:DmgDieNumber=0]
-[h:DmgDieSize=0]
-[h:DmgDieFlatBonus=0]
-[h:DmgDieMODBonus=0]
-[h:DmgType2=""]
-[h:DmgDie2Number=0]
-[h:DmgDie2Size=0]
-[h:DmgDie2FlatBonus=0]
-[h:DmgDie2MODBonus=0]
-[h:DmgHalved=0]
 [h:sCritThresh=0]
 
 [h:disIsSave = if(IsSave==0,"","throwaway|---------------------------------- Data for Saving Throws ----------------------------------| |LABEL|SPAN=TRUE")]
-[h:disSaveType = if(IsSave==0,"","SaveType | "+listPrimaryStat+" | Ability Save Type |LIST|VALUE=STRING DELIMITER=JSON")]
-[h:disDmgHalved = if(or(IsDamage==0,IsSave==0),"","DmgHalved |  | Is Damage Halved on a Success |CHECK")]
+[h:disSaveType = if(IsSave==0,"","SaveType | "+listPrimaryStat+" | Save Type |LIST|VALUE=STRING DELIMITER=JSON")]
+[h:disDmgHalved = if(or(IsDamage==0,IsSave==0),"","DmgHalved | Not Reduced,Halved,No Damage | Damage on Successful Save | Damage Reduction on Successful Save |LIST ")]
+[h:disDmgAffectedSave = if(or(IsDamage==0,IsSave==0),"","DmgAffectedSave | 1 | Reduce All Damage Types As Above | CHECK ")]
 
 [h:disIsAttack = if(IsAttack==0,"","throwaway|--------------------------------------- Data for Attacks ---------------------------------------| |LABEL|SPAN=TRUE")]
 [h:dissCritThresh = if(IsAttack==0,"","sCritThresh | 20,19,18,17,16,15 | Critical Hit Threshhold | LIST")]
-[h:dissBaseMissiles = if(IsMissiles==0,"","sBaseMissiles | "+listsLevel+" | Choose Base Number of Missiles | LIST | VALUE=STRING SELECT=0")]
-[h:dissAHLMissiles = if(IsMissiles==0,"","sAHLMissiles | "+listsLevel+" | How Many More Missiles per Level | LIST | VALUE=STRING SELECT=0")]
+[h:dissBaseMissiles = if(IsMissiles==0,"","sBaseMissiles | "+list1through9+" | Choose Base Number of Missiles | LIST | VALUE=STRING SELECT=0")]
+[h:dissAHLMissiles = if(IsMissiles==0,"","sAHLMissiles | "+list1through9+" | How Many More Missiles per Level | LIST | VALUE=STRING SELECT=0")]
 
 [h:abort(input(
 	""+disIsSave+"",
 	""+disSaveType+"",
-	""+disDmgHalved+"",
+	disDmgHalved,
+	disDmgAffectedSave,
 	""+disIsAttack+"",
 	""+dissCritThresh+"",
 	""+dissBaseMissiles+"",
 	""+dissAHLMissiles+""
 ))]
+
+[h,if(IsSave==0),CODE:{
+	[h:saveQuestionTest = 0]
+	[h:spellSaveData = "{}"]
+};{
+	[h:spellSaveData = json.set("",
+		"SaveType",SaveType
+	)]
+
+	[h,if(IsDamage==0),CODE:{
+		[h:saveQuestionTest = 0]
+	};{
+		[h:saveQuestionTest = !DmgAffectedSave]
+		[h:saveTypesInclusive = "[]"]
+		[h,if(saveQuestionTest):
+			spellSaveModifierData = json.set("","DamageHalved",DmgHalved);
+			spellSaveModifierData = json.set("","DamageHalved",DmgHalved,"TypesInclusive","All")
+		]
+	}]
+}]
 
 [h:spellDamageData = "[]"]
 [h:moreDamageTypes = 1]
@@ -136,6 +154,7 @@
 		"DmgDieSize | "+listDamageDieSize+" | Damage Die Size | LIST | VALUE=STRING DELIMITER=JSON SELECT=1",
 		"DmgDieFlatBonus |   | Flat Damage Bonus",
 		"DmgDieMODBonus |   | Add Spellcasting Modifier to Damage | CHECK",
+		if(saveQuestionTest," saveDamageInclusive |   | Damaged Reduced on Successful Save | CHECK",""),
 		"moreDamageTypes |   | Add Additional Damage Type | CHECK"
 	))]
 
@@ -143,8 +162,11 @@
 		"Number",DmgDieNumber,
 		"Size",DmgDieSize,
 		"Bonus",DmgDieFlatBonus,
-		"UseModifier",DmgDieMODBonus
+		"UseModifier",DmgDieMODBonus,
+		"tempIndex",roll.count
 	)]
+
+	[h,if(saveQuestionTest): saveTypesInclusive = if(saveDamageInclusive,json.append(saveTypesInclusive,DmgType),saveTypesInclusive)]
 
 	[h,if(DmgType == "Multiple Options"),CODE:{
 		[h:disDamageTypeChoices = "junkVar | ------- Select Damage Type Options ------- | | LABEL | SPAN=TRUE ## isRandomType |  | Choice is Random | CHECK "]
@@ -161,49 +183,80 @@
 		)]
 	};{
 		[h:thisDamageData = json.set(thisDamageData,
-			"Type",pm.RemoveSpecial(DmgType)
+			"Type",DmgType
 		)]
 	}]
 
 	[h:spellDamageData = json.append(spellDamageData,thisDamageData)]
 }]
 
-[h:AHLScaling=""]
-[h:AHLDmgType=""]
-[h:AHLDamageNumber=0]
-[h:AHLDmgDieSize=0]
-[h:AHLFlatBonus=0]
-[h:AHLDmgType2=""]
-[h:AHLDmgDie2Number=0]
-[h:AHLDmgDie2Size=0]
-[h:AHL2FlatBonus=0]
+[h:spellAHLDamageData = "[]"]
+[h:moreAHLDamageTypes = 1]
+[h:safeCounter = 0]
+[h,while(IsAHL && moreAHLDamageTypes),CODE:{
+	[h,if(safeCounter==0),CODE:{
+		[h:disAHLDamageTypes = "throwaway | --------------------- Damage At Higher Levels --------------------- | |LABEL|SPAN=TRUE ## junkVar | Set Die Number to 0 for No AHL Damage | Note | LABEL "]
+		[h,foreach(damageInstance,spellDamageData): disAHLDamageTypes = listAppend(disAHLDamageTypes,"
+			dmgAHLScaling"+json.get(damageInstance,"tempIndex")+" | Every Level,Every Other Level,Every Three Levels | How Often Damage Increases | LIST ##
+			dmgAHLType"+json.get(damageInstance,"tempIndex")+" | "+if(json.get(damageInstance,"Type")=="","Same As Chosen Option",json.get(damageInstance,"Type"))+" | Damage Type | LABEL | VALUE=STRING ##
+			dmgAHLNumber"+json.get(damageInstance,"tempIndex")+" | "+listDamageDieNumber+" | Number of Dice Added | LIST | DELIMITER=JSON ##
+			dmgAHLSize"+json.get(damageInstance,"tempIndex")+" | "+listDamageDieSize+" | Damage Die Size | LIST | VALUE=STRING DELIMITER=JSON SELECT="+json.indexOf(listDamageDieSize,DmgDieSize)+" ##
+			dmgAHLFlatBonus"+json.get(damageInstance,"tempIndex")+" |  | Flat Damage Bonus Added ##
+			throwaway|-------------------------------------------------------------------------------------------------------------| |LABEL|SPAN=TRUE
+		","##")]
+		[h:disAHLDamageTypes = listAppend(disAHLDamageTypes,"moreAHLDamageTypes |  | Add different type | CHECK "," ## ")]
 
-[h:disIsAHL = if(IsAHL==0,"","throwaway|<html><b>KEEP TYPES CONSISTENT WITH 1 OR 2</b></html>|Data for damage at higher levels|LABEL")]
-[h:disAHLScaling = if(IsAHL==0,"","AHLScaling | Every Level,Every Other Level,Every Three Levels,Other | How Often Does AHL Damage Increase? | LIST | VALUE=STRING SELECT=0")]
-[h:disAHLDmgType = if(IsAHL==0,"","AHLDmgType | "+listDamageTypesAHL+" | AHL Damage Type | LIST | VALUE=STRING DELIMITER=JSON SELECT="+json.indexOf(listDamageTypesAHL,DmgType)+"")]
-[h:disAHLDamageNumber = if(IsAHL==0,"","AHLDamageNumber | "+listDamageDieNumber+" | AHL Damage Number | LIST | VALUE=STRING DELIMITER=JSON SELECT=1")]
-[h:disAHLDieSize = if(IsAHL==0,"","AHLDmgDieSize | "+listDamageDieSize+" | Damage Die Size (d4, d6, d8, etc.) | LIST | VALUE=STRING DELIMITER=JSON SELECT="+json.indexOf(listDamageDieSize,DmgDieSize)+"")]
-[h:disAHLFlatBonus = if(IsAHL==0,"","AHLFlatBonus |  | Flat Damage Bonus")]
-[h:disAHLSpaces = if(IsAHL==0,"","throwaway|------------------------------------------------------------------------------------------------------------------------| |LABEL|SPAN=TRUE")]
-[h:disAHLType2 = if(IsAHL==0,"","AHLDmgType2 | None,"+listDamageTypesAHL+" | Second Damage Type AHL | LIST | VALUE=STRING DELIMITER=JSON SELECT="+json.indexOf(listDamageTypesAHL,DmgType2)+"")]
-[h:disAHLDie2Number = if(IsAHL==0,"","AHLDmgDie2Number | "+listDamageDieNumber+" | Number of Second Damage Dice AHL | LIST | VALUE=STRING DELIMITER=JSON SELECT=0")]
-[h:disAHLDie2Size = if(IsAHL==0,"","AHLDmgDie2Size | "+listDamageDieSize+" | Second Damage Die Size (d4, d6, d8, etc.) | LIST | VALUE=STRING DELIMITER=JSON SELECT="+json.indexOf(listDamageDieSize,DmgDieSize2)+"")]
-[h:disAHL2FlatBonus = if(IsAHL==0,"","AHL2FlatBonus |   | Second Flat Damage Bonus")]
+		[h:abort(input(disAHLDamageTypes))]
 
-[h: SpellAHLDamage=input(
-	""+disIsAHL+"",
-	""+disAHLScaling+"",
-	""+disAHLDmgType+"",
-	""+disAHLDamageNumber+"",
-	""+disAHLDieSize+"",
-	""+disAHLFlatBonus+"",
-	""+disAHLSpaces+"",
-	""+disAHLType2+"",
-	""+disAHLDie2Number+"",
-	""+disAHLDie2Size+"",
-	""+disAHL2FlatBonus+""
-	)]
-[h: abort(SpellAHLDamage)]
+		[h,foreach(damageInstance,spellDamageData): spellAHLDamageData = if(eval("dmgAHLNumber"+json.get(damageInstance,"tempIndex"))==0,spellAHLDamageData,json.append(spellAHLDamageData,if(eval("dmgAHLType"+json.get(damageInstance,"tempIndex"))=="Same As Chosen Option",
+			json.set("",
+				"Number",eval("dmgAHLNumber"+json.get(damageInstance,"tempIndex")),
+				"Size",eval("dmgAHLSize"+json.get(damageInstance,"tempIndex")),
+				"Bonus",eval("dmgAHLFlatBonus"+json.get(damageInstance,"tempIndex")),
+				"Scaling",eval("dmgAHLScaling"+json.get(damageInstance,"tempIndex")),
+				"MatchedTypeIndex",json.get(damageInstance,"tempIndex"),
+				"Type","Same As Chosen"
+			)
+			json.set("",
+				"Number",eval("dmgAHLNumber"+json.get(damageInstance,"tempIndex")),
+				"Size",eval("dmgAHLSize"+json.get(damageInstance,"tempIndex")),
+				"Bonus",eval("dmgAHLFlatBonus"+json.get(damageInstance,"tempIndex")),
+				"Scaling",eval("dmgAHLScaling"+json.get(damageInstance,"tempIndex")),
+				"Type",eval("dmgAHLType"+json.get(damageInstance,"tempIndex"))
+			)
+		)))]
+	};{
+		[h:abort(input(
+			"throwaway | --------------------- Damage At Higher Levels --------------------- | |LABEL|SPAN=TRUE",
+			"junkVar | Set Die Number to 0 for No AHL Damage | Note | LABEL ",
+			"dmgAHLScaling | Every Level,Every Other Level,Every Three Levels | How Often Damage Increases | LIST ##
+			dmgAHLType | "+listDamageTypesAHL+" | Damage Type | LABEL | VALUE=STRING ##
+			dmgAHLNumber | "+listDamageDieNumber+" | Number of Dice Added | LIST | DELIMITER=JSON ##
+			dmgAHLSize | "+listDamageDieSize+" | Damage Die Size | LIST | VALUE=STRING DELIMITER=JSON SELECT="+json.indexOf(listDamageDieSize,DmgDieSize)+" ##
+			dmgAHLFlatBonus |  | Flat Damage Bonus Added ##
+			throwaway|-------------------------------------------------------------------------------------------------------------| |LABEL|SPAN=TRUE",
+			if(saveQuestionTest," saveDamageInclusive |   | Damaged Reduced on Successful Save | CHECK",""),
+			"moreAHLDamageTypes |  | Add additional type | CHECK "
+		))]
+
+		[h,if(dmgAHLNumber>0):spellAHLDamageData = json.append(spellAHLDamageData,json.set("",
+			"Number",dmgAHLNumber,
+			"Size",dmgAHLSize,
+			"Bonus",dmgAHLFlatBonus,
+			"Scaling",dmgAHLScaling,
+			"Type",dmgAHLType
+		))]
+
+		[h,if(saveQuestionTest): saveTypesInclusive = if(saveDamageInclusive,json.append(saveTypesInclusive,dmgAHLType),saveTypesInclusive)]
+	}]
+
+	[h:safeCounter = safeCounter + 1]
+}]
+
+[h,if(IsSave==0),CODE:{};{
+	[h,if(saveQuestionTest): spellSaveModifierData = json.set(spellSaveModifierData,"TypesInclusive",saveTypesInclusive)]
+	[h,if(IsDamage!=0): spellSaveData = json.set(spellSaveData,"DamageModifier",spellSaveModifierData)]
+}]
 
 [h:sRange=0]
 [h:sRangeUnits=""]
@@ -253,10 +306,10 @@
 [h:disAoESpaces = if(AoEShape=="None","","throwaway|------------------------------------------------------------------------------------------------------------------------| |LABEL|SPAN=TRUE")]
 [h:dissAoESizeScalingAHL = if(AoEShape=="None","","sAoESizeScalingAHL | No Change,Every Level,Every Other Level,Every Three Levels | How Often Does the AoE Size Increase At Higher Levels | LIST | VALUE=STRING")]
 [h:dissAoESizeAHL = if(AoEShape=="None","","sAoESizeAHL |  | How Much the AoE Size Increases When it Changes | ")]
-[h:dissAoENumber = if(AoEShape=="None","","sAoENumber | "+listsLevel+" | Number of Areas of Effect | LIST ")]
+[h:dissAoENumber = if(AoEShape=="None","","sAoENumber | "+list1through9+" | Number of Areas of Effect | LIST ")]
 [h:disRangedAoESpaces = if(and(RangeType=="Ranged",AoEShape!="None"),"throwaway|------------------------------------------------------------------------------------------------------------------------| |LABEL|SPAN=TRUE","")]
 
-[h:disMultiTarget=if(or(AoEShape!="None",RangeType=="Self",IsMissiles==1),"","sMultiTarget | "+listsLevel+" | Maximum Number of Targets |LIST| VALUE=STRING")]
+[h:disMultiTarget=if(or(AoEShape!="None",RangeType=="Self",IsMissiles==1),"","sMultiTarget | "+list1through9+" | Maximum Number of Targets |LIST| VALUE=STRING")]
 [h:disIsTargetsAHL=if(or(AoEShape!="None",RangeType=="Self",IsMissiles==1),"","IsTargetsAHL |  | Targets More At Higher Levels? | Check")]
 [h:disAHLTargetScaling = if(or(AoEShape!="None",RangeType=="Self",IsMissiles==1),"","AHLTargetScaling | Every Level,Every Other Level,Every Three Levels,Other | If Yes, How Often do Targets Increase? | LIST | VALUE=STRING SELECT=0")]
 [h:dissMultiTargetRange = if(or(AoEShape!="None",RangeType=="Self",IsMissiles==1),"","sMultiTargetRange |  | <html><a href='Use 0 if Not Indicated in Spell Text'>If Yes, How Close do Additional Targets Need to Be?</a></html> | ")]
@@ -270,7 +323,7 @@
 [h:disl7Duration=if(and(IsAHLDuration==1,sLevel<7),"AHL7Duration | Instantaneous,1 Round,1 Minute,10 Minutes,1 Hour,8 Hours,24 Hours,10 Days,Until Dispelled | Level 7 Duration | LIST | VALUE=STRING SELECT="+AHLDurationPlacehold+"","")]
 [h:disl8Duration=if(and(IsAHLDuration==1,sLevel<8),"AHL8Duration | Instantaneous,1 Round,1 Minute,10 Minutes,1 Hour,8 Hours,24 Hours,10 Days,Until Dispelled | Level 8 Duration | LIST | VALUE=STRING SELECT="+AHLDurationPlacehold+"","")]
 [h:disl9Duration=if(and(IsAHLDuration==1,sLevel<9),"AHL9Duration | Instantaneous,1 Round,1 Minute,10 Minutes,1 Hour,8 Hours,24 Hours,10 Days,Until Dispelled | Level 9 Duration | LIST | VALUE=STRING SELECT="+AHLDurationPlacehold+"","")]
-[h:dissIsConcentrationLost=if(sIsConcentrationLost,"sConcentrationLost | "+listsLevel+" | Concentration Not Required at Level | LIST | VALUE=STRING SELECT="+sLevel+"","")]
+[h:dissIsConcentrationLost=if(sIsConcentrationLost,"sConcentrationLost | "+list1through9+" | Concentration Not Required at Level | LIST | VALUE=STRING SELECT="+sLevel+"","")]
 	
 [h:mCompItems=""]
 [h:mCompConsumed=""]
@@ -437,14 +490,14 @@
 
 [h:disIsSummon=if(IsSummon=="No","","throwaway|--------------------------------------------------- Data for Summons ---------------------------------------------------| |LABEL|SPAN=TRUE")]
 [h:dissSummonType=if(IsSummon=="No","","sSummonType | Spell Effect,Abberation,Beast,Celestial,Construct,Demon,Devil,Dragon,Elemental,Fey,Fiend,Giant,Monstrosity,Ooze,Plant,Undead,Special List | Type of Creature Summoned |LIST| VALUE=STRING")]
-[h:dissSummonCR=if(IsSummon=="Single","sSummonCR | "+listsLevel+" | Max CR of Summon |LIST| VALUE=STRING","")]
-[h:dissSummonNumber=if(IsSummon=="Multiple","sSummonNumber | Standard Table,"+listsLevel+" | <html><a href='Standard Table = Table Used for Conjure Animals, etc.'>Number of Creatures Summoned</a></html> |LIST","")]
+[h:dissSummonCR=if(IsSummon=="Single","sSummonCR | "+list1through9+" | Max CR of Summon |LIST| VALUE=STRING","")]
+[h:dissSummonNumber=if(IsSummon=="Multiple","sSummonNumber | Standard Table,"+list1through9+" | <html><a href='Standard Table = Table Used for Conjure Animals, etc.'>Number of Creatures Summoned</a></html> |LIST","")]
 [h:disAHLSummonSpaces = if(and(IsSummon!="No",IsAHLSummon!=0),"throwaway|----------------------------------------------------------------------------------------------------------------------------------| |LABEL|SPAN=TRUE","")]
 [h:disAHLSummonNumScaling = if(and(IsSummon!="No",or(IsAHLSummon==1,IsAHLSummon==3)),"AHLSummonNumScaling | Every Level,Every Other Level,Every Three Levels,Other | How Often Does the Number of Creatures Increase At Higher Levels? | LIST | VALUE=STRING SELECT=1","")]
-[h:disAHLSummonNumAdditive = if(and(IsSummon!="No",or(IsAHLSummon==1,IsAHLSummon==3)),"AHLSummonNumAdditive | No,"+listsLevel+" | Does the Number of Creatures Increase By a Set Amount Each Level? | LIST | VALUE=STRING SELECT=0","")]
+[h:disAHLSummonNumAdditive = if(and(IsSummon!="No",or(IsAHLSummon==1,IsAHLSummon==3)),"AHLSummonNumAdditive | No,"+list1through9+" | Does the Number of Creatures Increase By a Set Amount Each Level? | LIST | VALUE=STRING SELECT=0","")]
 [h:disAHLSummonNumMultiplier = if(and(IsSummon!="No",or(IsAHLSummon==1,IsAHLSummon==3)),"AHLSummonNumMultiplier | No,Doubled,Tripled,Quadrupled,Quintupled | <html><a href='From Base Value, e.g. Doubled = 2x then 3x, Tripled = 3x then 6x, etc.'>Does the Number of Creatures Increase Multiplicatively?</a></html> | LIST | VALUE=STRING SELECT=0","")]
 [h:disAHLSummonCRScaling = if(and(IsSummon!="No",or(IsAHLSummon==2,IsAHLSummon==3)),"AHLSummonCRScaling | Every Level,Every Other Level,Every Three Levels,Other | How Often Does CR Increase At Higher Levels? | LIST | VALUE=STRING SELECT=1","")]
-[h:disAHLSummonCRAdditive = if(and(IsSummon!="No",or(IsAHLSummon==2,IsAHLSummon==3)),"AHLSummonCRAdditive | No"+listsLevel+" | Does CR Increase By a Set Amount Each Level? | LIST | VALUE=STRING SELECT=0","")]
+[h:disAHLSummonCRAdditive = if(and(IsSummon!="No",or(IsAHLSummon==2,IsAHLSummon==3)),"AHLSummonCRAdditive | No"+list1through9+" | Does CR Increase By a Set Amount Each Level? | LIST | VALUE=STRING SELECT=0","")]
 [h:disAHLSummonCRMultiplier = if(and(IsSummon!="No",or(IsAHLSummon==2,IsAHLSummon==3)),"AHLSummonCRMultiplier | No,Doubled,Tripled,Quadrupled,Quintupled | <html><a href='From Base Value, e.g. Doubled = 2x then 3x, Tripled = 3x then 6x, etc.'>Does CR Increase Multiplicatively?</a></html> | LIST | VALUE=STRING SELECT=0","")]
 
 [h: SpellSummons=input(

@@ -6,7 +6,7 @@
 [h:RangeType = json.get(macro.args,"RangeType")]
 [h:AoEShape = json.get(macro.args,"AoEShape")]
 [h:sDuration = json.get(macro.args,"sDuration")]
-[h:DurationString = json.get(sDuration,"Value")+" "+json.get(sDuration,"Units")]
+[h:sCastTime = json.get(macro.args,"CastTime")]
 [h:sSchool = json.get(macro.args,"sSchool")]
 [h:IsSummon = json.get(macro.args,"IsSummon")]
 [h:IsAHLSummon = json.get(macro.args,"IsAHLSummon")]
@@ -24,21 +24,25 @@
 [h:list1through9 = json.append("","1","2","3","4","5","6","7","8","9")]
 [h:listsLevel = json.merge(json.append("","Cantrip"),list1through9)]
 
-[h:listCastTime = json.append("","Action","Bonus Action","Reaction","Round","Minute","Hour","Day","Custom")]
+[h,if(json.get(sCastTime,"Value")==""),CODE:{
+	[h:CastTimeString = ""]
+};{
+	[h:CastTimeString = json.get(sCastTime,"Value")+" "+json.get(sCastTime,"Units")+if(json.get(sCastTime,"Value")==1,"","s")]
+}]
+[h:listCastTime = json.append("","Action","Bonus Action","Reaction","1 Minute","10 Minutes","1 Hour","8 Hours","12 Hours","24 Hours","Custom")]
+[h,if(CastTimeString!="" && !json.contains(listCastTime,CastTimeString)): listCastTime = json.append(listCastTime,CastTimeString)]
 
+[h,if(json.get(sDuration,"Value")==""),CODE:{
+	[h:DurationString = ""]
+};{
+	[h:DurationString = json.get(sDuration,"Value")+" "+json.get(sDuration,"Units")+if(json.get(sDuration,"Value")==1,"","s")]
+}]
 [h:listDuration = json.append("","Instantaneous","1 Round","1 Minute","10 Minutes","1 Hour","8 Hours","24 Hours","10 Days","Until Dispelled","Custom")]
-[h,if(DurationString!=" " && !json.contains(listDuration,DurationString)): listDuration = json.append(listDuration,DurationString)]
+[h,if(DurationString!="" && !json.contains(listDuration,DurationString)): listDuration = json.append(listDuration,DurationString)]
 
 [h:listSchools = pm.GetSpellSchools("DisplayName","json")]
 
 [h:SaveType = "None"]
-[h:DmgType = ""]
-[h:DmgDieNumber = "0"]
-[h:DmgDieSize = "0"]
-[h:DmgType2 = ""]
-[h:DmgDie2Number = "0"]
-[h:DmgDie2Size = "0"]
-[h:CastTimeUnits = ""]
 [h:EffectName = "All Effect Rules"]
 [h:disMultiEffectsName = if(FirstPassTest,"","EffectName | Name | Effect Name")]
 [h:disIsMultiEffects = if(FirstPassTest,"sMultiEffects | "+list1through9+" | <html><a href='Increase ONLY for effects where multiple portions of the spell change together, for example Plant Growth, Control Winds, etc. Do NOT use for spells where just the damage type, creature summoned, etc. changes. On the first passthrough, input only features of the spell common to all effects.'>Number of Effects to Choose From</a></html> | LIST | VALUE=STRING ","")]
@@ -48,24 +52,21 @@
 [h:"<!-- Need to update CastTime/Duration tracking throughout -->"]
 [h:abort(input(
 	"sName | "+sName+" | Spell Name ",
-	""+disMultiEffectsName+"",
+	disMultiEffectsName,
 	if(sLevel==0,"","sLevel | "+listsLevel+" | Spell Level | LIST | DELIMITER=JSON SELECT="+max(0,json.indexOf(listsLevel,sLevel))+""),
-	"CastTime |  | Casting Time ",
-	"CastTimeUnits | "+listCastTime+" | Casting Time Units |LIST|VALUE=STRING",
+	"sSchool | "+listSchools+" | School | LIST | VALUE=STRING DELIMITER=JSON SELECT="+max(0,json.indexOf(listSchools,sSchool))+"",
+	"CastTime | "+listCastTime+" | Casting Time | LIST | VALUE=STRING DELIMITER=JSON SELECT="+max(0,json.indexOf(listCastTime,CastTimeString)),
 	if(sLevel==0,"","Ritual |  | Ritual Spell | Check"),
-	"RangeType | Self,Touch,Ranged | Range |LIST| VALUE=STRING SELECT="+if(RangeType=="Self",0,if(RangeType=="Touch",1,2))+"",
-	"AoEShape | None,Cone,Cube,Cylinder,Line,Sphere | Area of Effect |LIST| VALUE=STRING SELECT="+if(AoEShape=="None",0,if(AoEShape=="Cone",1,if(AoEShape=="Cube",2,if(AoEShape=="Cylinder",3,if(AoEShape=="Line",4,5)))))+"",
+	"junkVar|-----------------------------------------------------------------------------------------------------------------------||LABEL|SPAN=TRUE",
+	"sDuration | "+listDuration+" | Duration | LIST | VALUE=STRING DELIMITER=JSON SELECT="+max(0,json.indexOf(listDuration,DurationString)),
+	"IsAHLDuration |  | Increased Duration at Higher levels | Check ",
+	"sConcentration |  | Concentration | Check",
+	"sIsConcentrationLost |  | Concentration Not Required at Higher Level | CHECK ",
 	"junkVar|-----------------------------------------------------------------------------------------------------------------------||LABEL|SPAN=TRUE",
 	"vComp |  | Verbal Components | Check",
 	"sComp |  | Somatic Components | Check",
 	"mComp |  | Material Components | Check",
 	"IsSight |  | Requires Seeing Target | Check ",
-	"junkVar|-----------------------------------------------------------------------------------------------------------------------||LABEL|SPAN=TRUE",
-	"sDuration | "+listDuration+" | Duration | LIST | VALUE=STRING SELECT="+max(0,json.indexOf(listDuration,DurationString))+"",
-	"IsAHLDuration |  | Increased Duration at Higher levels | Check ",
-	"sConcentration |  | Concentration | Check",
-	"sIsConcentrationLost |  | Concentration Not Required at Higher Level | CHECK ",
-	"sSchool | "+listSchools+" | School | LIST | VALUE=STRING DELIMITER=JSON SELECT="+max(0,json.indexOf(listSchools,sSchool))+"",
 	"junkVar|-----------------------------------------------------------------------------------------------------------------------||LABEL|SPAN=TRUE",
 	"IsAttack |  | Attack Roll | Check ",
 	"IsSave |  | Save Required | Check ",
@@ -133,10 +134,54 @@
 	}
 ]
 
+[h:castTimeInfo = "{}"]
+[h,switch(CastTime),CODE:
+	case "Action":{
+		[h:castTimeInfo = json.set("","Value",1,"Units","Action")]
+	};
+	case "Bonus Action":{
+		[h:castTimeInfo = json.set("","Value",1,"Units","Bonus Action")]
+	};
+	case "Reaction":{
+		[h:castTimeInfo = json.set("","Value",1,"Units","Reaction")]
+	};
+	case "1 Minute":{
+		[h:castTimeInfo = json.set("","Value",1,"Units","Minute")]
+	};
+	case "10 Minutes":{
+		[h:castTimeInfo = json.set("","Value",10,"Units","Minute")]
+	};
+	case "1 Hour":{
+		[h:castTimeInfo = json.set("","Value",1,"Units","Hour")]
+	};
+	case "8 Hours":{
+		[h:castTimeInfo = json.set("","Value",8,"Units","Hour")]
+	};
+	case "12 Hours":{
+		[h:castTimeInfo = json.set("","Value",12,"Units","Hour")]
+	};
+	case "24 Hours":{
+		[h:castTimeInfo = json.set("","Value",24,"Units","Hour")]
+	};
+	case "Custom":{
+		[h:abort(input(
+			" throwaway | -------------- Custom Casting Time Info -------------- |  | LABEL | SPAN=TRUE",
+			" castTimeValue |  | Casting Time ",
+			" castTimeUnits | Action,Bonus Action,Reaction,Round,Minute,Hour,Day,Year | Casting Time Units | LIST | SELECT=1 "
+		))]
+		[h:castTimeInfo = json.set("","Value",durationValue,"Units",durationUnits)]
+	};
+	default:{
+		[h:castTimeInfo = sDuration]
+	}
+]
+
 [h:thisSpellEffectData = json.set("",
 	"Name",pm.RemoveSpecial(sName),
 	"DisplayName",sName,
-	"Level",sLevel
+	"Level",sLevel,
+	"Duration",durationInfo,
+	"CastTime",CastTime,
 )]
 
 [h:sMultiEffects = number(sMultiEffects)]
@@ -155,7 +200,6 @@
 	case "Until Dispelled":{[h:AHLDurationPlacehold="8"]}
 ]
 
-[h:SaveType=""]
 [h:sBaseMissiles=1]
 [h:sAHLMissiles=0]
 [h:sCritThresh=0]

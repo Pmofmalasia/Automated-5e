@@ -50,7 +50,7 @@
 [h:SaveType = "None"]
 [h:EffectName = "All Effect Rules"]
 [h:disMultiEffectsName = if(FirstPassTest,"","EffectName | Name | Effect Name")]
-[h:disIsMultiEffects = if(FirstPassTest,"sMultiEffects | "+list1through9+" | <html><a href='Increase ONLY for effects where multiple portions of the spell change together, for example Plant Growth, Control Winds, etc. Do NOT use for spells where just the damage type, creature summoned, etc. changes. On the first passthrough, input only features of the spell common to all effects.'>Number of Effects to Choose From</a></html> | LIST | VALUE=STRING ","")]
+[h:disIsMultiEffects = if(FirstPassTest,"sMultiEffects | "+list1through9+" | <html><span title='Increase ONLY for effects where multiple portions of the spell change together, for example Plant Growth, Control Winds, etc. Do NOT use for spells where just the damage type, creature summoned, etc. changes. On the first passthrough, input only features of the spell common to all effects.'>Number of Effects to Choose From</span></html> | LIST | VALUE=STRING ","")]
 [h:disRandomEffects = if(FirstPassTest,"IsRandomEffect |  | If Yes, is the Effect Random | Check ","")]
 [h:disIsMultiSubEffects=if(FirstPassTest,"sMultiSubEffects | "+list1through9+" | <html><span title='Increase for a Single Spell Effect that Has Different Parts for Different Targets - e.g. Ice Knife initial attack + AoE, Vampiric Touch damages target and heals self, etc.'>Number of Sub-Effects to Choose From</span></html> | LIST | VALUE=STRING ","")]
 
@@ -187,7 +187,10 @@
 	"DisplayName",sName,
 	"Level",sLevel,
 	"Duration",durationInfo,
-	"CastTime",CastTime,
+	"CastTime",castTimeInfo,
+	"Concentration",sConcentration,
+	"VComp",vComp,
+	"SComp",sComp
 )]
 
 [h:sMultiEffects = number(sMultiEffects)]

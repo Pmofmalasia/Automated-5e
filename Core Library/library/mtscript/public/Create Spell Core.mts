@@ -45,9 +45,9 @@
 [h:SaveType = "None"]
 [h:EffectName = "All Effect Rules"]
 [h:disMultiEffectsName = if(FirstPassTest,"","EffectName | Name | Effect Name")]
-[h:disIsMultiEffects = if(FirstPassTest,"sMultiEffects | "+list1through9+" | <html><a href='Increase ONLY for effects where multiple portions of the spell change together, for example Plant Growth, Control Winds, etc. Do NOT use for spells where just the damage type, creature summoned, etc. changes. On the first passthrough, input only features of the spell common to all effects.'>Number of Effects to Choose From</a></html> | LIST | VALUE=STRING ","")]
+[h:disIsMultiEffects = if(FirstPassTest,"sMultiEffects | "+list1through9+" | <html><a href='Increase ONLY for effects where multiple portions of the spell change together, for example Plant Growth, Control Winds, etc. Do NOT use for spells where just the damage type, creature summoned, etc. changes. On the first passthrough, input only features of the spell common to all effects.'>Number of Effects to Choose From</a></html> | LIST | VALUE=STRING DELIMITER=JSON ","")]
 [h:disRandomEffects = if(FirstPassTest,"IsRandomEffect |  | If Yes, is the Effect Random | Check ","")]
-[h:disIsMultiSubEffects=if(FirstPassTest,"sMultiSubEffects | "+list1through9+" | <html><span title='Increase for a Single Spell Effect that Has Different Parts for Different Targets - e.g. Ice Knife initial attack + AoE, Vampiric Touch damages target and heals self, etc.'>Number of Sub-Effects to Choose From</span></html> | LIST | VALUE=STRING ","")]
+[h:disIsMultiSubEffects=if(FirstPassTest,"sMultiSubEffects | "+list1through9+" | <html><span title='Increase for a Single Spell Effect that Has Different Parts for Different Targets - e.g. Ice Knife initial attack + AoE, Vampiric Touch damages target and heals self, etc.'>Number of Sub-Effects to Choose From</span></html> | LIST | VALUE=STRING DELIMITER=JSON","")]
 
 [h:"<!-- Need to update CastTime/Duration tracking throughout -->"]
 [h:abort(input(
@@ -79,55 +79,56 @@
 	"IsSummon | No,Single,Multiple | Summons Tokens | LIST | VALUE=STRING ",
 	"IsAHLSummon MOVE THIS TO LATER | No Change,Increase Number,Increase CR,Both | If Yes, How Do the Summons Change at Higher Levels | LIST | SELECT="+IsAHLSummon+"",
 	"junkVar| --------------------------------------- Advanced Options --------------------------------------- ||LABEL|SPAN=TRUE",
-	""+disIsMultiEffects+"",
-	""+disRandomEffects+"",
+	disIsMultiEffects,
+	disRandomEffects,
 	disIsMultiSubEffects
 ))]
 
 [h:durationInfo = "{}"]
 [h,switch(sDuration),CODE:
 	case "Instantaneous":{
-		[h:AHLDurationPlacehold="0"]
+		[h:DurationString = "Instantaneous"]
 	};
 	case "1 Round":{
-		[h:AHLDurationPlacehold="1"]
 		[h:durationInfo = json.set("","Value",1,"Units","Round")]
+		[h:DurationString = json.get(durationInfo,"Value")+" "+json.get(durationInfo,"Units")+if(json.get(durationInfo,"Value")==1,"","s")]
 	};
 	case "1 Minute":{
-		[h:AHLDurationPlacehold="2"]
 		[h:durationInfo = json.set("","Value",1,"Units","Minute")]
+		[h:DurationString = json.get(durationInfo,"Value")+" "+json.get(durationInfo,"Units")+if(json.get(durationInfo,"Value")==1,"","s")]
 	};
 	case "10 Minutes":{
-		[h:AHLDurationPlacehold="3"]
 		[h:durationInfo = json.set("","Value",10,"Units","Minute")]
+		[h:DurationString = json.get(durationInfo,"Value")+" "+json.get(durationInfo,"Units")+if(json.get(durationInfo,"Value")==1,"","s")]
 	};
 	case "1 Hour":{
-		[h:AHLDurationPlacehold="4"]
 		[h:durationInfo = json.set("","Value",1,"Units","Hour")]
+		[h:DurationString = json.get(durationInfo,"Value")+" "+json.get(durationInfo,"Units")+if(json.get(durationInfo,"Value")==1,"","s")]
 	};
 	case "8 Hours":{
-		[h:AHLDurationPlacehold="5"]
 		[h:durationInfo = json.set("","Value",8,"Units","Hour")]
+		[h:DurationString = json.get(durationInfo,"Value")+" "+json.get(durationInfo,"Units")+if(json.get(durationInfo,"Value")==1,"","s")]
 	};
 	case "24 Hours":{
-		[h:AHLDurationPlacehold="6"]
 		[h:durationInfo = json.set("","Value",24,"Units","Hour")]
+		[h:DurationString = json.get(durationInfo,"Value")+" "+json.get(durationInfo,"Units")+if(json.get(durationInfo,"Value")==1,"","s")]
 	};
 	case "10 Days":{
-		[h:AHLDurationPlacehold="7"]
 		[h:durationInfo = json.set("","Value",10,"Units","Day")]
+		[h:DurationString = json.get(durationInfo,"Value")+" "+json.get(durationInfo,"Units")+if(json.get(durationInfo,"Value")==1,"","s")]
 	};
 	case "Until Dispelled":{
-		[h:AHLDurationPlacehold="8"]
+		[h:DurationString = "Until Dispelled"]
 	};
 	case "Custom":{
-		[h:AHLDurationPlacehold="0"]
 		[h:abort(input(
 			" throwaway | -------------- Custom Duration Info -------------- |  | LABEL | SPAN=TRUE",
 			" durationValue |  | Duration ",
-			" durationUnits | Turn,Round,Minute,Hour,Day,Year | Duration Units | LIST | SELECT=1 "
+			" durationUnits | Turn,Round,Minute,Hour,Day,Year | Duration Units | LIST "
 		))]
 		[h:durationInfo = json.set("","Value",durationValue,"Units",durationUnits)]
+		[h:DurationString = json.get(durationInfo,"Value")+" "+json.get(durationInfo,"Units")+if(json.get(durationInfo,"Value")==1,"","s")]
+		[h:listDuration = json.append(listDuration,DurationString)]
 	};
 	default:{
 		[h:durationInfo = sDuration]
@@ -167,7 +168,7 @@
 		[h:abort(input(
 			" throwaway | -------------- Custom Casting Time Info -------------- |  | LABEL | SPAN=TRUE",
 			" castTimeValue |  | Casting Time ",
-			" castTimeUnits | Action,Bonus Action,Reaction,Round,Minute,Hour,Day,Year | Casting Time Units | LIST | SELECT=1 "
+			" castTimeUnits | Action,Bonus Action,Reaction,Round,Minute,Hour,Day,Year | Casting Time Units | LIST "
 		))]
 		[h:castTimeInfo = json.set("","Value",durationValue,"Units",durationUnits)]
 	};
@@ -186,19 +187,6 @@
 
 [h:sMultiEffects = number(sMultiEffects)]
 [h:sMultiEffects = if(or(FirstPassTest==0,sMultiEffects==1),sMultiEffects,sMultiEffects+1)]
-
-[h:sLevel = number(sLevel)]
-[h,switch(sDuration),CODE:
-	case "Instantaneous":{[h:AHLDurationPlacehold="0"]};
-	case "1 Round":{[h:AHLDurationPlacehold="1"]};
-	case "1 Minute":{[h:AHLDurationPlacehold="2"]};
-	case "10 Minutes":{[h:AHLDurationPlacehold="3"]};
-	case "1 Hour":{[h:AHLDurationPlacehold="4"]};
-	case "8 Hours":{[h:AHLDurationPlacehold="5"]};
-	case "24 Hours":{[h:AHLDurationPlacehold="6"]};
-	case "10 Days":{[h:AHLDurationPlacehold="7"]};
-	case "Until Dispelled":{[h:AHLDurationPlacehold="8"]}
-]
 
 [h:sBaseMissiles=1]
 [h:sAHLMissiles=0]
@@ -416,14 +404,14 @@
 [h:dissMultiTargetRange = if(or(AoEShape!="None",RangeType=="Self",IsMissiles==1),"","sMultiTargetRange |  | <html><a href='Use 0 if Not Indicated in Spell Text'>If Yes, How Close do Additional Targets Need to Be?</a></html> | ")]
 
 [h:disAHLDuration=if(or(IsAHLDuration==1,sIsConcentrationLost),"throwaway|-------------------------------- Data for Spell Duration at Higher Levels --------------------------------|  |LABEL|SPAN=TRUE","")]
-[h:disl2Duration=if(and(IsAHLDuration==1,sLevel<2),"AHL2Duration | Instantaneous,1 Round,1 Minute,10 Minutes,1 Hour,8 Hours,24 Hours,10 Days,Until Dispelled | Level 2 Duration | LIST | VALUE=STRING SELECT="+AHLDurationPlacehold+"","")]
-[h:disl3Duration=if(and(IsAHLDuration==1,sLevel<3),"AHL3Duration | Instantaneous,1 Round,1 Minute,10 Minutes,1 Hour,8 Hours,24 Hours,10 Days,Until Dispelled | Level 3 Duration | LIST | VALUE=STRING SELECT="+AHLDurationPlacehold+"","")]
-[h:disl4Duration=if(and(IsAHLDuration==1,sLevel<4),"AHL4Duration | Instantaneous,1 Round,1 Minute,10 Minutes,1 Hour,8 Hours,24 Hours,10 Days,Until Dispelled | Level 4 Duration | LIST | VALUE=STRING SELECT="+AHLDurationPlacehold+"","")]
-[h:disl5Duration=if(and(IsAHLDuration==1,sLevel<5),"AHL5Duration | Instantaneous,1 Round,1 Minute,10 Minutes,1 Hour,8 Hours,24 Hours,10 Days,Until Dispelled | Level 5 Duration | LIST | VALUE=STRING SELECT="+AHLDurationPlacehold+"","")]
-[h:disl6Duration=if(and(IsAHLDuration==1,sLevel<6),"AHL6Duration | Instantaneous,1 Round,1 Minute,10 Minutes,1 Hour,8 Hours,24 Hours,10 Days,Until Dispelled | Level 6 Duration | LIST | VALUE=STRING SELECT="+AHLDurationPlacehold+"","")]
-[h:disl7Duration=if(and(IsAHLDuration==1,sLevel<7),"AHL7Duration | Instantaneous,1 Round,1 Minute,10 Minutes,1 Hour,8 Hours,24 Hours,10 Days,Until Dispelled | Level 7 Duration | LIST | VALUE=STRING SELECT="+AHLDurationPlacehold+"","")]
-[h:disl8Duration=if(and(IsAHLDuration==1,sLevel<8),"AHL8Duration | Instantaneous,1 Round,1 Minute,10 Minutes,1 Hour,8 Hours,24 Hours,10 Days,Until Dispelled | Level 8 Duration | LIST | VALUE=STRING SELECT="+AHLDurationPlacehold+"","")]
-[h:disl9Duration=if(and(IsAHLDuration==1,sLevel<9),"AHL9Duration | Instantaneous,1 Round,1 Minute,10 Minutes,1 Hour,8 Hours,24 Hours,10 Days,Until Dispelled | Level 9 Duration | LIST | VALUE=STRING SELECT="+AHLDurationPlacehold+"","")]
+[h:disl2Duration=if(and(IsAHLDuration==1,sLevel<2),"AHL2Duration | "+listDuration+" | Level 2 Duration | LIST | VALUE=STRING SELECT="+AHLDurationPlacehold+"","")]
+[h:disl3Duration=if(and(IsAHLDuration==1,sLevel<3),"AHL3Duration | "+listDuration+" | Level 3 Duration | LIST | VALUE=STRING SELECT="+AHLDurationPlacehold+"","")]
+[h:disl4Duration=if(and(IsAHLDuration==1,sLevel<4),"AHL4Duration | "+listDuration+" | Level 4 Duration | LIST | VALUE=STRING SELECT="+AHLDurationPlacehold+"","")]
+[h:disl5Duration=if(and(IsAHLDuration==1,sLevel<5),"AHL5Duration | "+listDuration+" | Level 5 Duration | LIST | VALUE=STRING SELECT="+AHLDurationPlacehold+"","")]
+[h:disl6Duration=if(and(IsAHLDuration==1,sLevel<6),"AHL6Duration | "+listDuration+" | Level 6 Duration | LIST | VALUE=STRING SELECT="+AHLDurationPlacehold+"","")]
+[h:disl7Duration=if(and(IsAHLDuration==1,sLevel<7),"AHL7Duration | "+listDuration+" | Level 7 Duration | LIST | VALUE=STRING SELECT="+AHLDurationPlacehold+"","")]
+[h:disl8Duration=if(and(IsAHLDuration==1,sLevel<8),"AHL8Duration | "+listDuration+" | Level 8 Duration | LIST | VALUE=STRING SELECT="+AHLDurationPlacehold+"","")]
+[h:disl9Duration=if(and(IsAHLDuration==1,sLevel<9),"AHL9Duration | "+listDuration+" | Level 9 Duration | LIST | VALUE=STRING SELECT="+AHLDurationPlacehold+"","")]
 [h:dissIsConcentrationLost=if(sIsConcentrationLost,"sConcentrationLost | "+list1through9+" | Concentration Not Required at Level | LIST | VALUE=STRING SELECT="+sLevel+"","")]
 	
 [h:mCompItems=""]

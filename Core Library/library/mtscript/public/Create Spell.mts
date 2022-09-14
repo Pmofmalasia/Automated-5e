@@ -3,7 +3,7 @@
 [h:IsRandomEffect=0]
 [h:sName=""]
 [h:sLevel=1]
-[h:CastTime=""]
+[h:CastTime="{}"]
 [h:IsOngoing=0]
 [h:IsOngoingRandom=0]
 [h:sList="{}"]
@@ -13,7 +13,7 @@
 [h:sName = "Name"]
 [h:RangeType = "Self"]
 [h:AoEShape = "None"]
-[h:sDuration = "Instantaneous"]
+[h:sDuration = "{}"]
 [h:sSchool = "abjuration"]
 [h:IsSummon = "No"]
 [h:IsAHLSummon = 1]
@@ -22,9 +22,9 @@
 
 [h,while(EffectsCounter<sMultiEffects),CODE:{
 	[h:FirstPassTest = if(EffectsCounter==0,1,0)]
-	[h:MasterSpellInputData = json.set("","FirstPass",FirstPassTest,"EffectNumber",sMultiEffects,"IsRandomEffect",IsRandomEffect,"sDescriptionTT",sDescriptionTT,"sName",sName,"RangeType",RangeType,"AoEShape",AoEShape,"sDuration",sDuration,"sSchool",sSchool,"IsSummon",IsSummon,"IsAHLSummon",IsAHLSummon,"sList",sList,"sLevel",sLevel)]
+	[h:MasterSpellInputData = json.set("","FirstPass",FirstPassTest,"EffectNumber",sMultiEffects,"IsRandomEffect",IsRandomEffect,"sDescriptionTT",sDescriptionTT,"sName",sName,"RangeType",RangeType,"AoEShape",AoEShape,"sDuration",sDuration,"sSchool",sSchool,"IsSummon",IsSummon,"IsAHLSummon",IsAHLSummon,"sList",sList,"sLevel",sLevel,"CastTime",CastTime)]
 
-	[MACRO("Leveled Spell Loop@Lib:Complete Spellbook"):MasterSpellInputData]
+	[MACRO("Create Spell Core@Lib:pm.a5e.Core"):MasterSpellInputData]
 	
 	[h:sMultiEffects=json.get(macro.return,"EffectNumber")]
 	[h:IsRandomEffect=json.get(macro.return,"IsRandomEffect")]
@@ -51,10 +51,10 @@
 [h:CommandText=CommandText+'
 [r,if(IsTooltip),CODE:{
 	[h:TooltipSpellData = json.get(FinalSpellData,0)]
-	[macro("Spell Macro Tooltip@Lib:Core") : TooltipSpellData]
+	[macro("Spell Macro Tooltip@Lib:pm.a5e.Core") : TooltipSpellData]
 };{
 	[r,if(LibUpdate==0),CODE:{
-		[macro("SpellCasting@Lib:Core") : FinalSpellData]
+		[macro("SpellCasting@Lib:pm.a5e.Core") : FinalSpellData]
 	};{
 		[h,macro("Update Spell Data@Lib:Complete Spellbook"): FinalSpellData]
 	}]')]

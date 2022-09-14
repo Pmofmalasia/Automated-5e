@@ -8,7 +8,7 @@
   "namespace": "pm.a5e.Core",
   "description": "Contains the core library functions for the Automated 5e framework.",
   "shortDescription": "",
-  "allowsUriAccess": false,
+  "allowsUriAccess": true,
   "licenseFile": "",
   "readMeFile": ""
 }

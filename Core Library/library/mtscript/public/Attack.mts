@@ -388,9 +388,6 @@
 	[h:thisAttackCritDmg2Str = json.get(thisAttackDamageInfo2,"CritString")]
 	[h:thisAttackCritDmg2Rules = json.get(thisAttackDamageInfo2,"CritFormula")]
 	
-	[h:"<!-- Will have to create the effect ID during targeting previously so it can find the effect to reroll it. FOR FEATURES, attacks/spells/grapples/anything else with its own targeting will need to create its own targeting. Perhaps create Effect IDs always during targeting, including for features. -->"]
-	[h:broadcast(wa.TargetList)]
-	[h:broadcast(wa.EffectIDs)]
 	[h:wa.AdvRerollLink = macroLinkText("AttackReroll@Lib:pm.a5e.Core","self-gm",json.set(wa.Data,"Advantage",1,"ForcedAdvantage",1,"PreviousRoll",thisAttackd20Rolls,"PreviousDamage",thisAttackAllDamage,"Target",json.get(wa.TargetList,roll.count),"AttackNum",-1,"EffectID",json.get(wa.EffectIDs,roll.count)),ParentToken)]
 	[h:wa.DisRerollLink = macroLinkText("AttackReroll@Lib:pm.a5e.Core","self-gm",json.set(wa.Data,"Advantage",-1,"ForcedAdvantage",1,"PreviousRoll",thisAttackd20Rolls,"PreviousDamage",thisAttackAllDamage,"Target",json.get(wa.TargetList,roll.count),"AttackNum",-1,"EffectID",json.get(wa.EffectIDs,roll.count)),ParentToken)]
 	

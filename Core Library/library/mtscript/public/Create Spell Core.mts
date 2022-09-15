@@ -6,375 +6,350 @@
 [h:RangeType = json.get(macro.args,"RangeType")]
 [h:AoEShape = json.get(macro.args,"AoEShape")]
 [h:sDuration = json.get(macro.args,"sDuration")]
+[h:sCastTime = json.get(macro.args,"CastTime")]
 [h:sSchool = json.get(macro.args,"sSchool")]
 [h:IsSummon = json.get(macro.args,"IsSummon")]
 [h:IsAHLSummon = json.get(macro.args,"IsAHLSummon")]
 [h:sList = json.get(macro.args,"sList")]
 [h:sLevel = json.get(macro.args,"sLevel")]
 
-[h:listDamageTypes = pm.GetDamageTypes("DisplayName")+"Healing,Temp HP,Special"]
-[h:listDamageTypesAHL = listDamageTypes + "Same As Chosen"]
-[h:listDamageTypes = listDamageTypes + "Choose From Multiple"]
-[h:listDamageDieNumber="0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30"]
-[h:listDamageDieSize="0,1,2,4,6,8,10,12"]
-[h:listPrimaryStat = pm.GetAttributes("DisplayName")]
-[h:listsLevel="1,2,3,4,5,6,7,8,9"]
-[h:listCastTime="Action,Bonus Action,Reaction,Round,Minute,Hour,Day,Other"]
-[h:listDuration="Instantaneous,Turn,Round,Minute,Hour,Day,Year,Other"]
-[h:SaveType="None"]
-[h:DmgType=""]
-[h:DmgDieNumber="0"]
-[h:DmgDieSize="0"]
-[h:DmgType2=""]
-[h:DmgDie2Number="0"]
-[h:DmgDie2Size="0"]
-[h:CastTimeUnits=""]
-[h:EffectName="All Effect Rules"]
-[h:disMultiEffectsName=if(FirstPassTest,"","EffectName | Name | Effect Name")]
-[h:disIsMultiEffects=if(FirstPassTest,"sMultiEffects | "+listsLevel+" | <html><a href='Increase ONLY for effects where multiple portions of the spell change together, for example Plant Growth, Control Winds, etc. Do NOT use for spells where just the damage type, creature summoned, etc. changes. On the first passthrough, input only features of the spell common to all effects.'>Number of Effects to Choose From</a></html> | LIST | VALUE=STRING ","")]
-[h:disRandomEffects=if(FirstPassTest,"IsRandomEffect |  | If Yes, is the Effect Random | Check ","")]
+[h:listDamageTypesAHL = json.append(pm.GetDamageTypes("DisplayName","json"),"Healing","Temp HP")]
+[h:listDamageTypes = json.append(listDamageTypesAHL,"Multiple Options")]
+
+[h:listDamageDieNumber = json.append("","0","1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30")]
+[h:listDamageDieSize = json.append("","0","1","2","4","6","8","10","12")]
+
+[h:listPrimaryStat = pm.GetAttributes("DisplayName","json")]
+
+[h:list1through9 = json.append("","1","2","3","4","5","6","7","8","9")]
+[h:listsLevel = json.merge(json.append("","Cantrip"),list1through9)]
+
+[h,if(json.get(sCastTime,"Value")==""),CODE:{
+	[h:CastTimeString = ""]
+};{
+	[h:CastTimeString = json.get(sCastTime,"Value")+" "+json.get(sCastTime,"Units")+if(json.get(sCastTime,"Value")==1,"","s")]
+}]
+[h:listCastTime = json.append("","Action","Bonus Action","Reaction","1 Minute","10 Minutes","1 Hour","8 Hours","12 Hours","24 Hours","Custom")]
+[h,if(CastTimeString!="" && !json.contains(listCastTime,CastTimeString)): listCastTime = json.append(listCastTime,CastTimeString)]
+
+[h,if(json.get(sDuration,"Value")==""),CODE:{
+	[h:DurationString = ""]
+};{
+	[h:DurationString = json.get(sDuration,"Value")+" "+json.get(sDuration,"Units")+if(json.get(sDuration,"Value")==1,"","s")]
+}]
+[h:listDuration = json.append("","Instantaneous","1 Round","1 Minute","10 Minutes","1 Hour","8 Hours","24 Hours","10 Days","Until Dispelled","Custom")]
+[h,if(DurationString!="" && !json.contains(listDuration,DurationString)): listDuration = json.append(listDuration,DurationString)]
+
+[h:listSchools = pm.GetSpellSchools("DisplayName","json")]
+
+[h:SaveType = "None"]
+[h:EffectName = "All Effect Rules"]
+[h:disMultiEffectsName = if(FirstPassTest,"","EffectName | Name | Effect Name")]
+[h:disIsMultiEffects = if(FirstPassTest,"sMultiEffects | "+list1through9+" | <html><a href='Increase ONLY for effects where multiple portions of the spell change together, for example Plant Growth, Control Winds, etc. Do NOT use for spells where just the damage type, creature summoned, etc. changes. On the first passthrough, input only features of the spell common to all effects.'>Number of Effects to Choose From</a></html> | LIST | VALUE=STRING DELIMITER=JSON ","")]
+[h:disRandomEffects = if(FirstPassTest,"IsRandomEffect |  | If Yes, is the Effect Random | Check ","")]
+[h:disIsMultiSubEffects=if(FirstPassTest,"sMultiSubEffects | "+list1through9+" | <html><span title='Increase for a Single Spell Effect that Has Different Parts for Different Targets - e.g. Ice Knife initial attack + AoE, Vampiric Touch damages target and heals self, etc.'>Number of Sub-Effects to Choose From</span></html> | LIST | VALUE=STRING DELIMITER=JSON","")]
 
 [h:"<!-- Need to update CastTime/Duration tracking throughout -->"]
 [h:abort(input(
 	"sName | "+sName+" | Spell Name ",
-	""+disMultiEffectsName+"",
-	if(sLevel==0,"","sLevel | "+listsLevel+" | Spell Level | LIST | VALUE=STRING SELECT="+(number(sLevel)-1)+""),
-	"CastTime |  | Casting Time ",
-	"CastTimeUnits | "+listCastTime+" | Casting Time Units |LIST|VALUE=STRING",
+	disMultiEffectsName,
+	if(sLevel==0,"","sLevel | "+listsLevel+" | Spell Level | LIST | DELIMITER=JSON SELECT="+max(0,json.indexOf(listsLevel,sLevel))+""),
+	"sSchool | "+listSchools+" | School | LIST | VALUE=STRING DELIMITER=JSON SELECT="+max(0,json.indexOf(listSchools,sSchool))+"",
+	"CastTime | "+listCastTime+" | Casting Time | LIST | VALUE=STRING DELIMITER=JSON SELECT="+max(0,json.indexOf(listCastTime,CastTimeString)),
 	if(sLevel==0,"","Ritual |  | Ritual Spell | Check"),
-	"RangeType | Self,Touch,Ranged | Range |LIST| VALUE=STRING SELECT="+if(RangeType=="Self",0,if(RangeType=="Touch",1,2))+"",
-	"AoEShape | None,Cone,Cube,Cylinder,Line,Sphere | Area of Effect |LIST| VALUE=STRING SELECT="+if(AoEShape=="None",0,if(AoEShape=="Cone",1,if(AoEShape=="Cube",2,if(AoEShape=="Cylinder",3,if(AoEShape=="Line",4,5)))))+"",	"junkVar|-----------------------------------------------------------------------------------------------------------------------||LABEL|SPAN=TRUE",
-	"vComp |  | Verbal Components | Check",
-	"sComp |  | Somatic Components | Check",
-	"mComp |  | Material Components | Check",
-	"IsSight |  | Requires Line of Sight | Check ",
-	"junkVar|-----------------------------------------------------------------------------------------------------------------------||LABEL|SPAN=TRUE",
-"sDuration | Instantaneous,1 Round,1 Minute,10 Minutes,1 Hour,8 Hours,24 Hours,10 Days,Until Dispelled | Duration | LIST | VALUE=STRING SELECT="+if(sDuration=="Instantaneous",0,if(sDuration=="1 Round",1,if(sDuration=="1 Minute",2,if(sDuration=="10 Minutes",3,if(sDuration=="1 Hour",4,if(sDuration=="8 Hours",5,if(sDuration=="24 Hours",6,if(sDuration=="10 Days",7,8))))))))+"",
+	"junkVar|-------------------------------------------------------------------------------------------------||LABEL|SPAN=TRUE",
+	"sDuration | "+listDuration+" | Duration | LIST | VALUE=STRING DELIMITER=JSON SELECT="+max(0,json.indexOf(listDuration,DurationString)),
 	"IsAHLDuration |  | Increased Duration at Higher levels | Check ",
 	"sConcentration |  | Concentration | Check",
 	"sIsConcentrationLost |  | Concentration Not Required at Higher Level | CHECK ",
-"sSchool | abjuration,conjuration,divination,enchantment,evocation,illusion,necromancy,transmutation | School | LIST | VALUE=STRING SELECT="+if(sSchool=="abjuration",0,if(sSchool=="conjuration",1,if(sSchool=="divination",2,if(sSchool=="enchantment",3,if(sSchool=="evocation",4,if(sSchool=="illusion",5,if(sSchool=="necromancy",6,7)))))))+"",
-	"junkVar|-----------------------------------------------------------------------------------------------------------------------||LABEL|SPAN=TRUE",
+	"junkVar|-------------------------------------------------------------------------------------------------||LABEL|SPAN=TRUE",
+	"vComp |  | Verbal Components | Check",
+	"sComp |  | Somatic Components | Check",
+	"mComp |  | Material Components | Check",
+	"IsSight |  | Requires Seeing Target | Check ",
+	"junkVar|-------------------------------------------------------------------------------------------------||LABEL|SPAN=TRUE",
 	"IsAttack |  | Attack Roll | Check ",
 	"IsSave |  | Save Required | Check ",
 	"IsDamage |  | Heals or Deals Damage | Check ",
 	"IsAHL |  | Increased Healing or Damage at Higher Levels | Check ",
-	"IsMissiles | |<html><span title='(Magic Missiles, Scorching Ray)'>Is it a Missile Attack</span></html> | Check",
-"junkVar|-----------------------------------------------------------------------------------------------------------------------||LABEL|SPAN=TRUE",
-	"IsBuffDebuff |  | Sets a Buff or Debuff | Check ",
-	"IsCheck | No,Spellcasting Ability,Strength,Dexterity,Constitution,Intelligence,Wisdom,Charisma,Acrobatics,Animal Handling,Arcana,Athletics,Deception,History,Insight,Intimidation,Investigation,Medicine,Nature,Perception,Performance,Persuasion,Religion,Sleight of Hand,Stealth,Survival | Makes an Ability Check When Cast | LIST | VALUE=STRING ",
+	"IsMissiles | |<html><span title='(Magic Missiles, Scorching Ray)'>Is it a Missile Spell</span></html> | Check",
+	"junkVar|-------------------------------------------------------------------------------------------------||LABEL|SPAN=TRUE",
+	"IsBuffDebuff |  | Sets a Condition on Target or Self | Check ",
+	"IsCheck | No,Spellcasting Ability,"+pm.GetAttributes("DisplayName")+","+pm.GetSkills("DisplayName")+" | Makes an Ability Check When Cast | LIST | VALUE=STRING ",
 	"IsSummon | No,Single,Multiple | Summons Tokens | LIST | VALUE=STRING ",
 	"IsAHLSummon MOVE THIS TO LATER | No Change,Increase Number,Increase CR,Both | If Yes, How Do the Summons Change at Higher Levels | LIST | SELECT="+IsAHLSummon+"",
-"junkVar|-----------------------------------------------------------------------------------------------------------------------||LABEL|SPAN=TRUE",
-	"IsOngoing | 0,"+listsLevel+" | <html><span title='e.g. Moonbeam, Smite Spells, etc.'>Number of Effects After Casting</span></html> | LIST ",
-	"IsOngoingRandom |  | Is the above effect chosen randomly after the initial casting | CHECK ",
-	""+disIsMultiEffects+"",
-	""+disRandomEffects+""
+	"junkVar| --------------------------------------- Advanced Options --------------------------------------- ||LABEL|SPAN=TRUE",
+	disIsMultiEffects,
+	disRandomEffects,
+	disIsMultiSubEffects
 ))]
 
-[h:sMultiEffects=number(sMultiEffects)]
-[h:sMultiEffects=if(or(FirstPassTest==0,sMultiEffects==1),sMultiEffects,sMultiEffects+1)]
-
-[h:sLevel=number(sLevel)]
+[h:durationInfo = "{}"]
 [h,switch(sDuration),CODE:
-	case "Instantaneous":{[h:AHLDurationPlacehold="0"]};
-	case "1 Round":{[h:AHLDurationPlacehold="1"]};
-	case "1 Minute":{[h:AHLDurationPlacehold="2"]};
-	case "10 Minutes":{[h:AHLDurationPlacehold="3"]};
-	case "1 Hour":{[h:AHLDurationPlacehold="4"]};
-	case "8 Hours":{[h:AHLDurationPlacehold="5"]};
-	case "24 Hours":{[h:AHLDurationPlacehold="6"]};
-	case "10 Days":{[h:AHLDurationPlacehold="7"]};
-	case "Until Dispelled":{[h:AHLDurationPlacehold="8"]}
-	]
+	case "Instantaneous":{
+		[h:DurationString = "Instantaneous"]
+	};
+	case "1 Round":{
+		[h:durationInfo = json.set("","Value",1,"Units","Round")]
+		[h:DurationString = json.get(durationInfo,"Value")+" "+json.get(durationInfo,"Units")+if(json.get(durationInfo,"Value")==1,"","s")]
+	};
+	case "1 Minute":{
+		[h:durationInfo = json.set("","Value",1,"Units","Minute")]
+		[h:DurationString = json.get(durationInfo,"Value")+" "+json.get(durationInfo,"Units")+if(json.get(durationInfo,"Value")==1,"","s")]
+	};
+	case "10 Minutes":{
+		[h:durationInfo = json.set("","Value",10,"Units","Minute")]
+		[h:DurationString = json.get(durationInfo,"Value")+" "+json.get(durationInfo,"Units")+if(json.get(durationInfo,"Value")==1,"","s")]
+	};
+	case "1 Hour":{
+		[h:durationInfo = json.set("","Value",1,"Units","Hour")]
+		[h:DurationString = json.get(durationInfo,"Value")+" "+json.get(durationInfo,"Units")+if(json.get(durationInfo,"Value")==1,"","s")]
+	};
+	case "8 Hours":{
+		[h:durationInfo = json.set("","Value",8,"Units","Hour")]
+		[h:DurationString = json.get(durationInfo,"Value")+" "+json.get(durationInfo,"Units")+if(json.get(durationInfo,"Value")==1,"","s")]
+	};
+	case "24 Hours":{
+		[h:durationInfo = json.set("","Value",24,"Units","Hour")]
+		[h:DurationString = json.get(durationInfo,"Value")+" "+json.get(durationInfo,"Units")+if(json.get(durationInfo,"Value")==1,"","s")]
+	};
+	case "10 Days":{
+		[h:durationInfo = json.set("","Value",10,"Units","Day")]
+		[h:DurationString = json.get(durationInfo,"Value")+" "+json.get(durationInfo,"Units")+if(json.get(durationInfo,"Value")==1,"","s")]
+	};
+	case "Until Dispelled":{
+		[h:DurationString = "Until Dispelled"]
+	};
+	case "Custom":{
+		[h:abort(input(
+			" throwaway | -------------- Custom Duration Info -------------- |  | LABEL | SPAN=TRUE",
+			" durationValue |  | Duration ",
+			" durationUnits | Turn,Round,Minute,Hour,Day,Year | Duration Units | LIST "
+		))]
+		[h:durationInfo = json.set("","Value",durationValue,"Units",durationUnits)]
+		[h:DurationString = json.get(durationInfo,"Value")+" "+json.get(durationInfo,"Units")+if(json.get(durationInfo,"Value")==1,"","s")]
+		[h:listDuration = json.append(listDuration,DurationString)]
+	};
+	default:{
+		[h:durationInfo = sDuration]
+	}
+]
 
-[h:SaveType=""]
+[h:castTimeInfo = "{}"]
+[h,switch(CastTime),CODE:
+	case "Action":{
+		[h:castTimeInfo = json.set("","Value",1,"Units","Action")]
+	};
+	case "Bonus Action":{
+		[h:castTimeInfo = json.set("","Value",1,"Units","Bonus Action")]
+	};
+	case "Reaction":{
+		[h:castTimeInfo = json.set("","Value",1,"Units","Reaction")]
+	};
+	case "1 Minute":{
+		[h:castTimeInfo = json.set("","Value",1,"Units","Minute")]
+	};
+	case "10 Minutes":{
+		[h:castTimeInfo = json.set("","Value",10,"Units","Minute")]
+	};
+	case "1 Hour":{
+		[h:castTimeInfo = json.set("","Value",1,"Units","Hour")]
+	};
+	case "8 Hours":{
+		[h:castTimeInfo = json.set("","Value",8,"Units","Hour")]
+	};
+	case "12 Hours":{
+		[h:castTimeInfo = json.set("","Value",12,"Units","Hour")]
+	};
+	case "24 Hours":{
+		[h:castTimeInfo = json.set("","Value",24,"Units","Hour")]
+	};
+	case "Custom":{
+		[h:abort(input(
+			" throwaway | -------------- Custom Casting Time Info -------------- |  | LABEL | SPAN=TRUE",
+			" castTimeValue |  | Casting Time ",
+			" castTimeUnits | Action,Bonus Action,Reaction,Round,Minute,Hour,Day,Year | Casting Time Units | LIST "
+		))]
+		[h:castTimeInfo = json.set("","Value",durationValue,"Units",durationUnits)]
+	};
+	default:{
+		[h:castTimeInfo = sDuration]
+	}
+]
+
+[h:thisSpellEffectData = json.set("",
+	"Name",pm.RemoveSpecial(sName),
+	"DisplayName",sName,
+	"Level",sLevel,
+	"Duration",durationInfo,
+	"CastTime",CastTime,
+	"Concentration",sConcentration,
+	"VComp",vComp,
+	"SComp",sComp,
+	
+)]
+
+[h:sMultiEffects = number(sMultiEffects)]
+[h:sMultiEffects = if(or(FirstPassTest==0,sMultiEffects==1),sMultiEffects,sMultiEffects+1)]
+
 [h:sBaseMissiles=1]
 [h:sAHLMissiles=0]
-[h:DmgType=""]
-[h:DmgDieNumber=0]
-[h:DmgDieSize=0]
-[h:DmgDieFlatBonus=0]
-[h:DmgDieMODBonus=0]
-[h:DmgType2=""]
-[h:DmgDie2Number=0]
-[h:DmgDie2Size=0]
-[h:DmgDie2FlatBonus=0]
-[h:DmgDie2MODBonus=0]
-[h:DmgHalved=0]
 [h:sCritThresh=0]
 
 [h:disIsSave = if(IsSave==0,"","throwaway|---------------------------------- Data for Saving Throws ----------------------------------| |LABEL|SPAN=TRUE")]
-[h:disSaveType = if(IsSave==0,"","SaveType | "+listPrimaryStat+" | Ability Save Type |LIST|VALUE=STRING")]
-[h:disDmgHalved = if(or(IsDamage==0,IsSave==0),"","DmgHalved |  | Is Damage Halved on a Success |CHECK")]
+[h:disSaveType = if(IsSave==0,"","SaveType | "+listPrimaryStat+" | Save Type |LIST|VALUE=STRING DELIMITER=JSON")]
+[h:disDmgHalved = if(or(IsDamage==0,IsSave==0),"","DmgHalved | Not Reduced,Halved,No Damage | Damage on Successful Save | Damage Reduction on Successful Save |LIST ")]
+[h:disDmgAffectedSave = if(or(IsDamage==0,IsSave==0),"","DmgAffectedSave | 1 | Reduce All Damage Types As Above | CHECK ")]
 
 [h:disIsAttack = if(IsAttack==0,"","throwaway|--------------------------------------- Data for Attacks ---------------------------------------| |LABEL|SPAN=TRUE")]
-[h:dissCritThresh = if(IsAttack==0,"","sCritThresh | 20,19,18,17,16,15 | Critical Hit Threshhold |LIST")]
-[h:dissBaseMissiles = if(IsMissiles==0,"","sBaseMissiles | "+listsLevel+" | Choose Base Number of Missiles | LIST | VALUE=STRING SELECT=0")]
-[h:dissAHLMissiles = if(IsMissiles==0,"","sAHLMissiles | "+listsLevel+" | How Many More Missiles per Level | LIST | VALUE=STRING SELECT=0")]
+[h:dissCritThresh = if(IsAttack==0,"","sCritThresh | 20,19,18,17,16,15 | Critical Hit Threshhold | LIST")]
+[h:dissBaseMissiles = if(IsMissiles==0,"","sBaseMissiles | "+list1through9+" | Choose Base Number of Missiles | LIST | VALUE=STRING SELECT=0")]
+[h:dissAHLMissiles = if(IsMissiles==0,"","sAHLMissiles | "+list1through9+" | How Many More Missiles per Level | LIST | VALUE=STRING SELECT=0")]
 
-[h:disIsDamage = if(IsDamage==0,"","throwaway|-------------------------------------- Data for Damage ---------------------------------------| |LABEL|SPAN=TRUE")]
-[h:disDmgType = if(IsDamage==0,"","DmgType | "+listDamageTypes+" | Damage Type | LIST | VALUE=STRING SELECT=3")]
-[h:disDmgDieNumber = if(IsDamage==0,"","DmgDieNumber | "+listDamageDieNumber+" | Number of Damage Dice | LIST | VALUE=STRING SELECT=1")]
-[h:disDmgDieSize = if(IsDamage==0,"","DmgDieSize | "+listDamageDieSize+" | Damage Die Size (d4, d6, d8, etc.) | LIST | VALUE=STRING SELECT=1")]
-[h:disDmgDieFlatBonus = if(IsDamage==0,"","DmgDieFlatBonus |   | Flat Damage Bonus")]
-[h:disDmgDieMODBonus = if(IsDamage==0,"","DmgDieMODBonus |   | Add Spellcasting Modifier to Damage | CHECK")]
-[h:disDmgSpaces = if(IsDamage==0,"","throwaway|-------------------------------------------------------------------------------------------------------| |LABEL|SPAN=TRUE")]
-[h:disDmgType2 = if(IsDamage==0,"","DmgType2 | "+listDamageTypes+" | Second Damage Type | LIST | VALUE=STRING SELECT=3")]
-[h:disDmgDie2Number = if(IsDamage==0,"","DmgDie2Number | "+listDamageDieNumber+" | Number of Second Damage Dice | LIST | VALUE=STRING SELECT=0")]
-[h:disDmgDie2Size = if(IsDamage==0,"","DmgDie2Size | "+listDamageDieSize+" | Second Damage Die Size (d4, d6, d8, etc.) | LIST | VALUE=STRING SELECT=1")]
-[h:disDmgDie2FlatBonus = if(IsDamage==0,"","DmgDie2FlatBonus |   | Second Flat Damage Bonus")]
-[h:disDmgDie2MODBonus = if(IsDamage==0,"","DmgDie2MODBonus |   | Add Spellcasting Modifier to Damage | CHECK")]
-
-[h: SpellDamage=input(
+[h:abort(input(
 	""+disIsSave+"",
 	""+disSaveType+"",
-	""+disDmgHalved+"",
+	disDmgHalved,
+	disDmgAffectedSave,
 	""+disIsAttack+"",
 	""+dissCritThresh+"",
 	""+dissBaseMissiles+"",
-	""+dissAHLMissiles+"",
-	""+disIsDamage+"",
-	""+disDmgType+"",
-	""+disDmgDieNumber+"",
-	""+disDmgDieSize+"",
-	""+disDmgDieMODBonus+"",
-	""+disDmgDieFlatBonus+"",
-	""+disDmgSpaces+"",
-	""+disDmgType2+"",
-	""+disDmgDie2Number+"",
-	""+disDmgDie2Size+"",
-	""+disDmgDie2MODBonus+"",
-	""+disDmgDie2FlatBonus+""
-	)]
-[h: abort(SpellDamage)]
+	""+dissAHLMissiles+""
+))]
 
-[h:isRandomType=0]
-[h:DmgTypeListBludgeoning=0]
-[h:DmgTypeListPiercing=0]
-[h:DmgTypeListSlashing=0]
-[h:DmgTypeListAcid=0]
-[h:DmgTypeListCold=0]
-[h:DmgTypeListFire=0]
-[h:DmgTypeListForce=0]
-[h:DmgTypeListLightning=0]
-[h:DmgTypeListNecrotic=0]
-[h:DmgTypeListPoison=0]
-[h:DmgTypeListPsychic=0]
-[h:DmgTypeListRadiant=0]
-[h:DmgTypeListThunder=0]
-[h:isRandomType2=0]
-[h:DmgType2ListBludgeoning=0]
-[h:DmgType2ListPiercing=0]
-[h:DmgType2ListSlashing=0]
-[h:DmgType2ListAcid=0]
-[h:DmgType2ListCold=0]
-[h:DmgType2ListFire=0]
-[h:DmgType2ListForce=0]
-[h:DmgType2ListLightning=0]
-[h:DmgType2ListNecrotic=0]
-[h:DmgType2ListPoison=0]
-[h:DmgType2ListPsychic=0]
-[h:DmgType2ListRadiant=0]
-[h:DmgType2ListThunder=0]
-
-[h:disDamageTypeChoices=if(DmgType=="Choose From Multiple","junkVar | Check the Damage Types You Can Choose From | | LABEL | SPAN=TRUE","")]
-[h:disDamageTypeChoicesRandom=if(DmgType=="Choose From Multiple","isRandomType |  | Randomly Choose From the Options | CHECK ","")]
-[h:disDamageTypeChoiceBludgeoning=if(DmgType=="Choose From Multiple","DmgTypeListBludgeoning | | Bludgeoning | CHECK","")]
-[h:disDamageTypeChoicePiercing=if(DmgType=="Choose From Multiple","DmgTypeListPiercing | | Piercing | CHECK","")]
-[h:disDamageTypeChoiceSlashing=if(DmgType=="Choose From Multiple","DmgTypeListSlashing | | Slashing | CHECK","")]
-[h:disDamageTypeChoiceAcid=if(DmgType=="Choose From Multiple","DmgTypeListAcid | | Acid | CHECK","")]
-[h:disDamageTypeChoiceCold=if(DmgType=="Choose From Multiple","DmgTypeListCold | | Cold | CHECK","")]
-[h:disDamageTypeChoiceFire=if(DmgType=="Choose From Multiple","DmgTypeListFire | | Fire | CHECK","")]
-[h:disDamageTypeChoiceForce=if(DmgType=="Choose From Multiple","DmgTypeListForce | | Force | CHECK","")]
-[h:disDamageTypeChoiceLightning=if(DmgType=="Choose From Multiple","DmgTypeListLightning | | Lightning | CHECK","")]
-[h:disDamageTypeChoiceNecrotic=if(DmgType=="Choose From Multiple","DmgTypeListNecrotic | | Necrotic | CHECK","")]
-[h:disDamageTypeChoicePoison=if(DmgType=="Choose From Multiple","DmgTypeListPoison | | Poison | CHECK","")]
-[h:disDamageTypeChoicePsychic=if(DmgType=="Choose From Multiple","DmgTypeListPsychic | | Psychic | CHECK","")]
-[h:disDamageTypeChoiceRadiant=if(DmgType=="Choose From Multiple","DmgTypeListRadiant | | Radiant | CHECK","")]
-[h:disDamageTypeChoiceThunder=if(DmgType=="Choose From Multiple","DmgTypeListThunder | | Thunder | CHECK","")]
-
-[h:disDamageType2Choices=if(DmgType2=="Choose From Multiple","junkVar | "+if(DmgType=="Choose From Multiple","Repeat for Second Damage Type","Check the Damage Types You Can Choose From")+" | | LABEL | SPAN=TRUE","")]
-[h:disDamageType2ChoicesRandom=if(DmgType2=="Choose From Multiple","isRandomType2 |  | Randomly Choose From the Options | CHECK ","")]
-[h:disDamageType2ChoiceBludgeoning=if(DmgType2=="Choose From Multiple","DmgType2ListBludgeoning | | Bludgeoning | CHECK","")]
-[h:disDamageType2ChoicePiercing=if(DmgType2=="Choose From Multiple","DmgType2ListPiercing | | Piercing | CHECK","")]
-[h:disDamageType2ChoiceSlashing=if(DmgType2=="Choose From Multiple","DmgType2ListSlashing | | Slashing | CHECK","")]
-[h:disDamageType2ChoiceAcid=if(DmgType2=="Choose From Multiple","DmgType2ListAcid | | Acid | CHECK","")]
-[h:disDamageType2ChoiceCold=if(DmgType2=="Choose From Multiple","DmgType2ListCold | | Cold | CHECK","")]
-[h:disDamageType2ChoiceFire=if(DmgType2=="Choose From Multiple","DmgType2ListFire | | Fire | CHECK","")]
-[h:disDamageType2ChoiceForce=if(DmgType2=="Choose From Multiple","DmgType2ListForce | | Force | CHECK","")]
-[h:disDamageType2ChoiceLightning=if(DmgType2=="Choose From Multiple","DmgType2ListLightning | | Lightning | CHECK","")]
-[h:disDamageType2ChoiceNecrotic=if(DmgType2=="Choose From Multiple","DmgType2ListNecrotic | | Necrotic | CHECK","")]
-[h:disDamageType2ChoicePoison=if(DmgType2=="Choose From Multiple","DmgType2ListPoison | | Poison | CHECK","")]
-[h:disDamageType2ChoicePsychic=if(DmgType2=="Choose From Multiple","DmgType2ListPsychic | | Psychic | CHECK","")]
-[h:disDamageType2ChoiceRadiant=if(DmgType2=="Choose From Multiple","DmgType2ListRadiant | | Radiant | CHECK","")]
-[h:disDamageType2ChoiceThunder=if(DmgType2=="Choose From Multiple","DmgType2ListThunder | | Thunder | CHECK","")]
-
-[h:ChooseDamageTypeOptions=input(
-	""+disDamageTypeChoices+"",
-	""+disDamageTypeChoicesRandom+"",
-	""+disDamageTypeChoiceBludgeoning+"",
-	""+disDamageTypeChoicePiercing+"",
-	""+disDamageTypeChoiceSlashing+"",
-	""+disDamageTypeChoiceAcid+"",
-	""+disDamageTypeChoiceCold+"",
-	""+disDamageTypeChoiceFire+"",
-	""+disDamageTypeChoiceForce+"",
-	""+disDamageTypeChoiceLightning+"",
-	""+disDamageTypeChoiceNecrotic+"",
-	""+disDamageTypeChoicePoison+"",
-	""+disDamageTypeChoicePsychic+"",
-	""+disDamageTypeChoiceRadiant+"",
-	""+disDamageTypeChoiceThunder+"",
-	""+disDamageType2Choices+"",
-	""+disDamageType2ChoicesRandom+"",
-	""+disDamageType2ChoiceBludgeoning+"",
-	""+disDamageType2ChoicePiercing+"",
-	""+disDamageType2ChoiceSlashing+"",
-	""+disDamageType2ChoiceAcid+"",
-	""+disDamageType2ChoiceCold+"",
-	""+disDamageType2ChoiceFire+"",
-	""+disDamageType2ChoiceForce+"",
-	""+disDamageType2ChoiceLightning+"",
-	""+disDamageType2ChoiceNecrotic+"",
-	""+disDamageType2ChoicePoison+"",
-	""+disDamageType2ChoicePsychic+"",
-	""+disDamageType2ChoiceRadiant+"",
-	""+disDamageType2ChoiceThunder+""
+[h,if(IsSave==0),CODE:{
+	[h:saveQuestionTest = 0]
+	[h:spellSaveData = "{}"]
+};{
+	[h:spellSaveData = json.set("",
+		"SaveType",SaveType
 	)]
 
-	[h:DmgTypeOptions=""]
-	[h:DmgTypeOptions=if(DmgTypeListBludgeoning,listAppend(DmgTypeOptions,"Bludgeoning"),DmgTypeOptions)]
-	[h:DmgTypeOptions=if(DmgTypeListPiercing,listAppend(DmgTypeOptions,"Piercing"),DmgTypeOptions)]
-	[h:DmgTypeOptions=if(DmgTypeListSlashing,listAppend(DmgTypeOptions,"Slashing"),DmgTypeOptions)]
-	[h:DmgTypeOptions=if(DmgTypeListAcid,listAppend(DmgTypeOptions,"Acid"),DmgTypeOptions)]
-	[h:DmgTypeOptions=if(DmgTypeListCold,listAppend(DmgTypeOptions,"Cold"),DmgTypeOptions)]
-	[h:DmgTypeOptions=if(DmgTypeListFire,listAppend(DmgTypeOptions,"Fire"),DmgTypeOptions)]
-	[h:DmgTypeOptions=if(DmgTypeListForce,listAppend(DmgTypeOptions,"Force"),DmgTypeOptions)]
-	[h:DmgTypeOptions=if(DmgTypeListLightning,listAppend(DmgTypeOptions,"Lightning"),DmgTypeOptions)]
-	[h:DmgTypeOptions=if(DmgTypeListNecrotic,listAppend(DmgTypeOptions,"Necrotic"),DmgTypeOptions)]
-	[h:DmgTypeOptions=if(DmgTypeListPoison,listAppend(DmgTypeOptions,"Poison"),DmgTypeOptions)]
-	[h:DmgTypeOptions=if(DmgTypeListPsychic,listAppend(DmgTypeOptions,"Psychic"),DmgTypeOptions)]
-	[h:DmgTypeOptions=if(DmgTypeListRadiant,listAppend(DmgTypeOptions,"Radiant"),DmgTypeOptions)]
-	[h:DmgTypeOptions=if(DmgTypeListThunder,listAppend(DmgTypeOptions,"Thunder"),DmgTypeOptions)]
-	[h:DmgType2Options=""]
-	[h:DmgType2Options=if(DmgType2ListBludgeoning,listAppend(DmgType2Options,"Bludgeoning"),DmgType2Options)]
-	[h:DmgType2Options=if(DmgType2ListPiercing,listAppend(DmgType2Options,"Piercing"),DmgType2Options)]
-	[h:DmgType2Options=if(DmgType2ListSlashing,listAppend(DmgType2Options,"Slashing"),DmgType2Options)]
-	[h:DmgType2Options=if(DmgType2ListAcid,listAppend(DmgType2Options,"Acid"),DmgType2Options)]
-	[h:DmgType2Options=if(DmgType2ListCold,listAppend(DmgType2Options,"Cold"),DmgType2Options)]
-	[h:DmgType2Options=if(DmgType2ListFire,listAppend(DmgType2Options,"Fire"),DmgType2Options)]
-	[h:DmgType2Options=if(DmgType2ListForce,listAppend(DmgType2Options,"Force"),DmgType2Options)]
-	[h:DmgType2Options=if(DmgType2ListLightning,listAppend(DmgType2Options,"Lightning"),DmgType2Options)]
-	[h:DmgType2Options=if(DmgType2ListNecrotic,listAppend(DmgType2Options,"Necrotic"),DmgType2Options)]
-	[h:DmgType2Options=if(DmgType2ListPoison,listAppend(DmgType2Options,"Poison"),DmgType2Options)]
-	[h:DmgType2Options=if(DmgType2ListPsychic,listAppend(DmgType2Options,"Psychic"),DmgType2Options)]
-	[h:DmgType2Options=if(DmgType2ListRadiant,listAppend(DmgType2Options,"Radiant"),DmgType2Options)]
-	[h:DmgType2Options=if(DmgType2ListThunder,listAppend(DmgType2Options,"Thunder"),DmgType2Options)]
+	[h,if(IsDamage==0),CODE:{
+		[h:saveQuestionTest = 0]
+	};{
+		[h:saveQuestionTest = !DmgAffectedSave]
+		[h:saveTypesInclusive = "[]"]
+		[h,if(saveQuestionTest):
+			spellSaveModifierData = json.set("","DamageHalved",DmgHalved);
+			spellSaveModifierData = json.set("","DamageHalved",DmgHalved,"TypesInclusive","All")
+		]
+	}]
+}]
 
-[h:DmgTypePlacehold="0"]
-[h:DmgType2Placehold="0"]
+[h:spellDamageData = "[]"]
+[h:moreDamageTypes = 1]
+[h,while(IsDamage && moreDamageTypes),CODE:{
+	[h:abort(input(
+		"throwaway | --------------------- Data for Damage --------------------- | |LABEL|SPAN=TRUE",
+		"DmgType | "+listDamageTypes+" | Damage Type | LIST | VALUE=STRING DELIMITER=JSON SELECT=3",
+		"DmgDieNumber | "+listDamageDieNumber+" | Number of Damage Dice | LIST | VALUE=STRING DELIMITER=JSON SELECT=1",
+		"DmgDieSize | "+listDamageDieSize+" | Damage Die Size | LIST | VALUE=STRING DELIMITER=JSON SELECT=1",
+		"DmgDieFlatBonus |   | Flat Damage Bonus",
+		"DmgDieMODBonus |   | Add Spellcasting Modifier to Damage | CHECK",
+		if(saveQuestionTest," saveDamageInclusive |   | Damaged Reduced on Successful Save | CHECK",""),
+		"moreDamageTypes |   | Add Additional Damage Type | CHECK"
+	))]
 
-[h,switch(DmgDieSize),CODE:
-	case "0":{[h:DmgDieSizePlacehold="0"]};
-	case "1":{[h:DmgDieSizePlacehold="1"]};
-	case "2":{[h:DmgDieSizePlacehold="2"]};
-	case "4":{[h:DmgDieSizePlacehold="3"]};
-	case "6":{[h:DmgDieSizePlacehold="4"]};
-	case "8":{[h:DmgDieSizePlacehold="5"]};
-	case "10":{[h:DmgDieSizePlacehold="6"]};
-	case "12":{[h:DmgDieSizePlacehold="7"]}
-	]
-	
-[h,switch(DmgDie2Size),CODE:
-	case "0":{[h:DmgDie2SizePlacehold="0"]};
-	case "1":{[h:DmgDie2SizePlacehold="1"]};
-	case "2":{[h:DmgDie2SizePlacehold="2"]};
-	case "4":{[h:DmgDie2SizePlacehold="3"]};
-	case "6":{[h:DmgDie2SizePlacehold="4"]};
-	case "8":{[h:DmgDie2SizePlacehold="5"]};
-	case "10":{[h:DmgDie2SizePlacehold="6"]};
-	case "12":{[h:DmgDie2SizePlacehold="7"]}
-	]
-	
-[h,switch(DmgType),CODE:
-	case "":{};
-	case "Slashing":{[h:DmgTypePlacehold="0"]};
-	case "Piercing":{[h:DmgTypePlacehold="1"]};
-	case "Bludgeoning":{[h:DmgTypePlacehold="2"]};
-	case "Acid":{[h:DmgTypePlacehold="3"]};
-	case "Cold":{[h:DmgTypePlacehold="4"]};
-	case "Fire":{[h:DmgTypePlacehold="5"]};
-	case "Force":{[h:DmgTypePlacehold="6"]};
-	case "Healing":{[h:DmgTypePlacehold="7"]};
-	case "Lightning":{[h:DmgTypePlacehold="8"]};
-	case "Necrotic":{[h:DmgTypePlacehold="9"]};
-	case "Poison":{[h:DmgTypePlacehold="10"]};
-	case "Psychic":{[h:DmgTypePlacehold="11"]};
-	case "Radiant":{[h:DmgTypePlacehold="12"]};
-	case "Thunder":{[h:DmgTypePlacehold="13"]};
-	case "Temp HP":{[h:DmgTypePlacehold="14"]};
-	case "Special":{[h:DmgTypePlacehold="15"]};
-	case "Choose From Multiple":{[h:DmgTypePlacehold="16"]}
-	]
-
-[h,switch(DmgType2),CODE:
-	case "":{};
-	case "Slashing":{[h:DmgType2Placehold="1"]};
-	case "Piercing":{[h:DmgType2Placehold="2"]};
-	case "Bludgeoning":{[h:DmgType2Placehold="3"]};
-	case "Acid":{[h:DmgType2Placehold="4"]};
-	case "Cold":{[h:DmgType2Placehold="5"]};
-	case "Fire":{[h:DmgType2Placehold="6"]};
-	case "Force":{[h:DmgType2Placehold="7"]};
-	case "Healing":{[h:DmgType2Placehold="8"]};
-	case "Lightning":{[h:DmgType2Placehold="9"]};
-	case "Necrotic":{[h:DmgType2Placehold="10"]};
-	case "Poison":{[h:DmgType2Placehold="11"]};
-	case "Psychic":{[h:DmgType2Placehold="12"]};
-	case "Radiant":{[h:DmgType2Placehold="13"]};
-	case "Thunder":{[h:DmgType2Placehold="14"]};
-	case "Temp HP":{[h:DmgType2Placehold="15"]};
-	case "Special":{[h:DmgTypePlacehold="16"]};
-	case "Choose From Multiple":{[h:DmgTypePlacehold="17"]}
-	]
-	
-[h:AHLScaling=""]
-[h:AHLDmgType=""]
-[h:AHLDamageNumber=0]
-[h:AHLDmgDieSize=0]
-[h:AHLFlatBonus=0]
-[h:AHLDmgType2=""]
-[h:AHLDmgDie2Number=0]
-[h:AHLDmgDie2Size=0]
-[h:AHL2FlatBonus=0]
-
-[h:disIsAHL = if(IsAHL==0,"","throwaway|<html><b>KEEP TYPES CONSISTENT WITH 1 OR 2</b></html>|Data for damage at higher levels|LABEL")]
-[h:disAHLScaling = if(IsAHL==0,"","AHLScaling | Every Level,Every Other Level,Every Three Levels,Other | How Often Does AHL Damage Increase? | LIST | VALUE=STRING SELECT=0")]
-[h:disAHLDmgType = if(IsAHL==0,"","AHLDmgType | "+listDamageTypesAHL+" | AHL Damage Type | LIST | VALUE=STRING SELECT="+DmgTypePlacehold+"")]
-[h:disAHLDamageNumber = if(IsAHL==0,"","AHLDamageNumber | "+listDamageDieNumber+" | AHL Damage Number | LIST | VALUE=STRING SELECT=1")]
-[h:disAHLDieSize = if(IsAHL==0,"","AHLDmgDieSize | "+listDamageDieSize+" | Damage Die Size (d4, d6, d8, etc.) | LIST | VALUE=STRING SELECT="+DmgDieSizePlacehold+"")]
-[h:disAHLFlatBonus = if(IsAHL==0,"","AHLFlatBonus |   | Flat Damage Bonus")]
-[h:disAHLSpaces = if(IsAHL==0,"","throwaway|------------------------------------------------------------------------------------------------------------------------| |LABEL|SPAN=TRUE")]
-[h:disAHLType2 = if(IsAHL==0,"","AHLDmgType2 | None,"+listDamageTypes+" | Second Damage Type AHL | LIST | VALUE=STRING SELECT="+DmgType2Placehold+"")]
-[h:disAHLDie2Number = if(IsAHL==0,"","AHLDmgDie2Number | "+listDamageDieNumber+" | Number of Second Damage Dice AHL | LIST | VALUE=STRING SELECT=0")]
-[h:disAHLDie2Size = if(IsAHL==0,"","AHLDmgDie2Size | "+listDamageDieSize+" | Second Damage Die Size (d4, d6, d8, etc.) | LIST | VALUE=STRING SELECT="+DmgDie2SizePlacehold+"")]
-[h:disAHL2FlatBonus = if(IsAHL==0,"","AHL2FlatBonus |   | Second Flat Damage Bonus")]
-
-[h: SpellAHLDamage=input(
-	""+disIsAHL+"",
-	""+disAHLScaling+"",
-	""+disAHLDmgType+"",
-	""+disAHLDamageNumber+"",
-	""+disAHLDieSize+"",
-	""+disAHLFlatBonus+"",
-	""+disAHLSpaces+"",
-	""+disAHLType2+"",
-	""+disAHLDie2Number+"",
-	""+disAHLDie2Size+"",
-	""+disAHL2FlatBonus+""
+	[h:thisDamageData = json.set("",
+		"Number",DmgDieNumber,
+		"Size",DmgDieSize,
+		"Bonus",DmgDieFlatBonus,
+		"UseModifier",DmgDieMODBonus,
+		"tempIndex",roll.count
 	)]
-[h: abort(SpellAHLDamage)]
+
+	[h,if(saveQuestionTest): saveTypesInclusive = if(saveDamageInclusive,json.append(saveTypesInclusive,DmgType),saveTypesInclusive)]
+
+	[h,if(DmgType == "Multiple Options"),CODE:{
+		[h:disDamageTypeChoices = "junkVar | ------- Select Damage Type Options ------- | | LABEL | SPAN=TRUE ## isRandomType |  | Choice is Random | CHECK "]
+		[h,foreach(damageType,listDamageTypes): disDamageTypeChoices = listAppend(disDamageTypeChoices," "+pm.RemoveSpecial(damageType)+"choice |  | "+damageType+" | CHECK "," ## ")]
+
+		[h:abort(input(disDamageTypeChoices))]
+
+		[h:damageTypeOptions = "[]"]
+		[h,foreach(damageType,listDamageTypes): damageTypeOptions = if(eval(pm.RemoveSpecial(damageType)+"choice"),json.append(damageTypeOptions,pm.RemoveSpecial(damageType)),damageTypeOptions)]
+		
+		[h:thisDamageData = json.set(thisDamageData,
+			"TypeOptions",damageTypeOptions,
+			"RandomType",isRandomType
+		)]
+	};{
+		[h:thisDamageData = json.set(thisDamageData,
+			"Type",DmgType
+		)]
+	}]
+
+	[h:spellDamageData = json.append(spellDamageData,thisDamageData)]
+}]
+
+[h:spellAHLDamageData = "[]"]
+[h:moreAHLDamageTypes = 1]
+[h:safeCounter = 0]
+[h,while(IsAHL && moreAHLDamageTypes),CODE:{
+	[h,if(safeCounter==0),CODE:{
+		[h:disAHLDamageTypes = "throwaway | --------------------- Damage At Higher Levels --------------------- | |LABEL|SPAN=TRUE ## junkVar | Set Die Number to 0 for No AHL Damage | Note | LABEL "]
+		[h,foreach(damageInstance,spellDamageData): disAHLDamageTypes = listAppend(disAHLDamageTypes,"
+			dmgAHLScaling"+json.get(damageInstance,"tempIndex")+" | Every Level,Every Other Level,Every Three Levels | How Often Damage Increases | LIST ##
+			dmgAHLType"+json.get(damageInstance,"tempIndex")+" | "+if(json.get(damageInstance,"Type")=="","Same As Chosen Option",json.get(damageInstance,"Type"))+" | Damage Type | LABEL | VALUE=STRING ##
+			dmgAHLNumber"+json.get(damageInstance,"tempIndex")+" | "+listDamageDieNumber+" | Number of Dice Added | LIST | DELIMITER=JSON ##
+			dmgAHLSize"+json.get(damageInstance,"tempIndex")+" | "+listDamageDieSize+" | Damage Die Size | LIST | VALUE=STRING DELIMITER=JSON SELECT="+json.indexOf(listDamageDieSize,DmgDieSize)+" ##
+			dmgAHLFlatBonus"+json.get(damageInstance,"tempIndex")+" |  | Flat Damage Bonus Added ##
+			throwaway|-------------------------------------------------------------------------------------------------------------| |LABEL|SPAN=TRUE
+		","##")]
+		[h:disAHLDamageTypes = listAppend(disAHLDamageTypes,"moreAHLDamageTypes |  | Add different type | CHECK "," ## ")]
+
+		[h:abort(input(disAHLDamageTypes))]
+
+		[h,foreach(damageInstance,spellDamageData): spellAHLDamageData = if(eval("dmgAHLNumber"+json.get(damageInstance,"tempIndex"))==0,spellAHLDamageData,json.append(spellAHLDamageData,if(eval("dmgAHLType"+json.get(damageInstance,"tempIndex"))=="Same As Chosen Option",
+			json.set("",
+				"Number",eval("dmgAHLNumber"+json.get(damageInstance,"tempIndex")),
+				"Size",eval("dmgAHLSize"+json.get(damageInstance,"tempIndex")),
+				"Bonus",eval("dmgAHLFlatBonus"+json.get(damageInstance,"tempIndex")),
+				"Scaling",eval("dmgAHLScaling"+json.get(damageInstance,"tempIndex")),
+				"MatchedTypeIndex",json.get(damageInstance,"tempIndex"),
+				"Type","Same As Chosen"
+			)
+			json.set("",
+				"Number",eval("dmgAHLNumber"+json.get(damageInstance,"tempIndex")),
+				"Size",eval("dmgAHLSize"+json.get(damageInstance,"tempIndex")),
+				"Bonus",eval("dmgAHLFlatBonus"+json.get(damageInstance,"tempIndex")),
+				"Scaling",eval("dmgAHLScaling"+json.get(damageInstance,"tempIndex")),
+				"Type",eval("dmgAHLType"+json.get(damageInstance,"tempIndex"))
+			)
+		)))]
+	};{
+		[h:abort(input(
+			"throwaway | --------------------- Damage At Higher Levels --------------------- | |LABEL|SPAN=TRUE",
+			"junkVar | Set Die Number to 0 for No AHL Damage | Note | LABEL ",
+			"dmgAHLScaling | Every Level,Every Other Level,Every Three Levels | How Often Damage Increases | LIST ##
+			dmgAHLType | "+listDamageTypesAHL+" | Damage Type | LABEL | VALUE=STRING ##
+			dmgAHLNumber | "+listDamageDieNumber+" | Number of Dice Added | LIST | DELIMITER=JSON ##
+			dmgAHLSize | "+listDamageDieSize+" | Damage Die Size | LIST | VALUE=STRING DELIMITER=JSON SELECT="+json.indexOf(listDamageDieSize,DmgDieSize)+" ##
+			dmgAHLFlatBonus |  | Flat Damage Bonus Added ##
+			throwaway|-------------------------------------------------------------------------------------------------------------| |LABEL|SPAN=TRUE",
+			if(saveQuestionTest," saveDamageInclusive |   | Damaged Reduced on Successful Save | CHECK",""),
+			"moreAHLDamageTypes |  | Add additional type | CHECK "
+		))]
+
+		[h,if(dmgAHLNumber>0):spellAHLDamageData = json.append(spellAHLDamageData,json.set("",
+			"Number",dmgAHLNumber,
+			"Size",dmgAHLSize,
+			"Bonus",dmgAHLFlatBonus,
+			"Scaling",dmgAHLScaling,
+			"Type",dmgAHLType
+		))]
+
+		[h,if(saveQuestionTest): saveTypesInclusive = if(saveDamageInclusive,json.append(saveTypesInclusive,dmgAHLType),saveTypesInclusive)]
+	}]
+
+	[h:safeCounter = safeCounter + 1]
+}]
+
+[h,if(IsSave==0),CODE:{};{
+	[h,if(saveQuestionTest): spellSaveModifierData = json.set(spellSaveModifierData,"TypesInclusive",saveTypesInclusive)]
+	[h,if(IsDamage!=0): spellSaveData = json.set(spellSaveData,"DamageModifier",spellSaveModifierData)]
+}]
 
 [h:sRange=0]
 [h:sRangeUnits=""]
@@ -424,24 +399,24 @@
 [h:disAoESpaces = if(AoEShape=="None","","throwaway|------------------------------------------------------------------------------------------------------------------------| |LABEL|SPAN=TRUE")]
 [h:dissAoESizeScalingAHL = if(AoEShape=="None","","sAoESizeScalingAHL | No Change,Every Level,Every Other Level,Every Three Levels | How Often Does the AoE Size Increase At Higher Levels | LIST | VALUE=STRING")]
 [h:dissAoESizeAHL = if(AoEShape=="None","","sAoESizeAHL |  | How Much the AoE Size Increases When it Changes | ")]
-[h:dissAoENumber = if(AoEShape=="None","","sAoENumber | "+listsLevel+" | Number of Areas of Effect | LIST ")]
+[h:dissAoENumber = if(AoEShape=="None","","sAoENumber | "+list1through9+" | Number of Areas of Effect | LIST ")]
 [h:disRangedAoESpaces = if(and(RangeType=="Ranged",AoEShape!="None"),"throwaway|------------------------------------------------------------------------------------------------------------------------| |LABEL|SPAN=TRUE","")]
 
-[h:disMultiTarget=if(or(AoEShape!="None",RangeType=="Self",IsMissiles==1),"","sMultiTarget | "+listsLevel+" | Maximum Number of Targets |LIST| VALUE=STRING")]
+[h:disMultiTarget=if(or(AoEShape!="None",RangeType=="Self",IsMissiles==1),"","sMultiTarget | "+list1through9+" | Maximum Number of Targets |LIST| VALUE=STRING")]
 [h:disIsTargetsAHL=if(or(AoEShape!="None",RangeType=="Self",IsMissiles==1),"","IsTargetsAHL |  | Targets More At Higher Levels? | Check")]
 [h:disAHLTargetScaling = if(or(AoEShape!="None",RangeType=="Self",IsMissiles==1),"","AHLTargetScaling | Every Level,Every Other Level,Every Three Levels,Other | If Yes, How Often do Targets Increase? | LIST | VALUE=STRING SELECT=0")]
 [h:dissMultiTargetRange = if(or(AoEShape!="None",RangeType=="Self",IsMissiles==1),"","sMultiTargetRange |  | <html><a href='Use 0 if Not Indicated in Spell Text'>If Yes, How Close do Additional Targets Need to Be?</a></html> | ")]
 
 [h:disAHLDuration=if(or(IsAHLDuration==1,sIsConcentrationLost),"throwaway|-------------------------------- Data for Spell Duration at Higher Levels --------------------------------|  |LABEL|SPAN=TRUE","")]
-[h:disl2Duration=if(and(IsAHLDuration==1,sLevel<2),"AHL2Duration | Instantaneous,1 Round,1 Minute,10 Minutes,1 Hour,8 Hours,24 Hours,10 Days,Until Dispelled | Level 2 Duration | LIST | VALUE=STRING SELECT="+AHLDurationPlacehold+"","")]
-[h:disl3Duration=if(and(IsAHLDuration==1,sLevel<3),"AHL3Duration | Instantaneous,1 Round,1 Minute,10 Minutes,1 Hour,8 Hours,24 Hours,10 Days,Until Dispelled | Level 3 Duration | LIST | VALUE=STRING SELECT="+AHLDurationPlacehold+"","")]
-[h:disl4Duration=if(and(IsAHLDuration==1,sLevel<4),"AHL4Duration | Instantaneous,1 Round,1 Minute,10 Minutes,1 Hour,8 Hours,24 Hours,10 Days,Until Dispelled | Level 4 Duration | LIST | VALUE=STRING SELECT="+AHLDurationPlacehold+"","")]
-[h:disl5Duration=if(and(IsAHLDuration==1,sLevel<5),"AHL5Duration | Instantaneous,1 Round,1 Minute,10 Minutes,1 Hour,8 Hours,24 Hours,10 Days,Until Dispelled | Level 5 Duration | LIST | VALUE=STRING SELECT="+AHLDurationPlacehold+"","")]
-[h:disl6Duration=if(and(IsAHLDuration==1,sLevel<6),"AHL6Duration | Instantaneous,1 Round,1 Minute,10 Minutes,1 Hour,8 Hours,24 Hours,10 Days,Until Dispelled | Level 6 Duration | LIST | VALUE=STRING SELECT="+AHLDurationPlacehold+"","")]
-[h:disl7Duration=if(and(IsAHLDuration==1,sLevel<7),"AHL7Duration | Instantaneous,1 Round,1 Minute,10 Minutes,1 Hour,8 Hours,24 Hours,10 Days,Until Dispelled | Level 7 Duration | LIST | VALUE=STRING SELECT="+AHLDurationPlacehold+"","")]
-[h:disl8Duration=if(and(IsAHLDuration==1,sLevel<8),"AHL8Duration | Instantaneous,1 Round,1 Minute,10 Minutes,1 Hour,8 Hours,24 Hours,10 Days,Until Dispelled | Level 8 Duration | LIST | VALUE=STRING SELECT="+AHLDurationPlacehold+"","")]
-[h:disl9Duration=if(and(IsAHLDuration==1,sLevel<9),"AHL9Duration | Instantaneous,1 Round,1 Minute,10 Minutes,1 Hour,8 Hours,24 Hours,10 Days,Until Dispelled | Level 9 Duration | LIST | VALUE=STRING SELECT="+AHLDurationPlacehold+"","")]
-[h:dissIsConcentrationLost=if(sIsConcentrationLost,"sConcentrationLost | "+listsLevel+" | Concentration Not Required at Level | LIST | VALUE=STRING SELECT="+sLevel+"","")]
+[h:disl2Duration=if(and(IsAHLDuration==1,sLevel<2),"AHL2Duration | "+listDuration+" | Level 2 Duration | LIST | VALUE=STRING SELECT="+AHLDurationPlacehold+"","")]
+[h:disl3Duration=if(and(IsAHLDuration==1,sLevel<3),"AHL3Duration | "+listDuration+" | Level 3 Duration | LIST | VALUE=STRING SELECT="+AHLDurationPlacehold+"","")]
+[h:disl4Duration=if(and(IsAHLDuration==1,sLevel<4),"AHL4Duration | "+listDuration+" | Level 4 Duration | LIST | VALUE=STRING SELECT="+AHLDurationPlacehold+"","")]
+[h:disl5Duration=if(and(IsAHLDuration==1,sLevel<5),"AHL5Duration | "+listDuration+" | Level 5 Duration | LIST | VALUE=STRING SELECT="+AHLDurationPlacehold+"","")]
+[h:disl6Duration=if(and(IsAHLDuration==1,sLevel<6),"AHL6Duration | "+listDuration+" | Level 6 Duration | LIST | VALUE=STRING SELECT="+AHLDurationPlacehold+"","")]
+[h:disl7Duration=if(and(IsAHLDuration==1,sLevel<7),"AHL7Duration | "+listDuration+" | Level 7 Duration | LIST | VALUE=STRING SELECT="+AHLDurationPlacehold+"","")]
+[h:disl8Duration=if(and(IsAHLDuration==1,sLevel<8),"AHL8Duration | "+listDuration+" | Level 8 Duration | LIST | VALUE=STRING SELECT="+AHLDurationPlacehold+"","")]
+[h:disl9Duration=if(and(IsAHLDuration==1,sLevel<9),"AHL9Duration | "+listDuration+" | Level 9 Duration | LIST | VALUE=STRING SELECT="+AHLDurationPlacehold+"","")]
+[h:dissIsConcentrationLost=if(sIsConcentrationLost,"sConcentrationLost | "+list1through9+" | Concentration Not Required at Level | LIST | VALUE=STRING SELECT="+sLevel+"","")]
 	
 [h:mCompItems=""]
 [h:mCompConsumed=""]
@@ -608,14 +583,14 @@
 
 [h:disIsSummon=if(IsSummon=="No","","throwaway|--------------------------------------------------- Data for Summons ---------------------------------------------------| |LABEL|SPAN=TRUE")]
 [h:dissSummonType=if(IsSummon=="No","","sSummonType | Spell Effect,Abberation,Beast,Celestial,Construct,Demon,Devil,Dragon,Elemental,Fey,Fiend,Giant,Monstrosity,Ooze,Plant,Undead,Special List | Type of Creature Summoned |LIST| VALUE=STRING")]
-[h:dissSummonCR=if(IsSummon=="Single","sSummonCR | "+listsLevel+" | Max CR of Summon |LIST| VALUE=STRING","")]
-[h:dissSummonNumber=if(IsSummon=="Multiple","sSummonNumber | Standard Table,"+listsLevel+" | <html><a href='Standard Table = Table Used for Conjure Animals, etc.'>Number of Creatures Summoned</a></html> |LIST","")]
+[h:dissSummonCR=if(IsSummon=="Single","sSummonCR | "+list1through9+" | Max CR of Summon |LIST| VALUE=STRING","")]
+[h:dissSummonNumber=if(IsSummon=="Multiple","sSummonNumber | Standard Table,"+list1through9+" | <html><a href='Standard Table = Table Used for Conjure Animals, etc.'>Number of Creatures Summoned</a></html> |LIST","")]
 [h:disAHLSummonSpaces = if(and(IsSummon!="No",IsAHLSummon!=0),"throwaway|----------------------------------------------------------------------------------------------------------------------------------| |LABEL|SPAN=TRUE","")]
 [h:disAHLSummonNumScaling = if(and(IsSummon!="No",or(IsAHLSummon==1,IsAHLSummon==3)),"AHLSummonNumScaling | Every Level,Every Other Level,Every Three Levels,Other | How Often Does the Number of Creatures Increase At Higher Levels? | LIST | VALUE=STRING SELECT=1","")]
-[h:disAHLSummonNumAdditive = if(and(IsSummon!="No",or(IsAHLSummon==1,IsAHLSummon==3)),"AHLSummonNumAdditive | No,"+listsLevel+" | Does the Number of Creatures Increase By a Set Amount Each Level? | LIST | VALUE=STRING SELECT=0","")]
+[h:disAHLSummonNumAdditive = if(and(IsSummon!="No",or(IsAHLSummon==1,IsAHLSummon==3)),"AHLSummonNumAdditive | No,"+list1through9+" | Does the Number of Creatures Increase By a Set Amount Each Level? | LIST | VALUE=STRING SELECT=0","")]
 [h:disAHLSummonNumMultiplier = if(and(IsSummon!="No",or(IsAHLSummon==1,IsAHLSummon==3)),"AHLSummonNumMultiplier | No,Doubled,Tripled,Quadrupled,Quintupled | <html><a href='From Base Value, e.g. Doubled = 2x then 3x, Tripled = 3x then 6x, etc.'>Does the Number of Creatures Increase Multiplicatively?</a></html> | LIST | VALUE=STRING SELECT=0","")]
 [h:disAHLSummonCRScaling = if(and(IsSummon!="No",or(IsAHLSummon==2,IsAHLSummon==3)),"AHLSummonCRScaling | Every Level,Every Other Level,Every Three Levels,Other | How Often Does CR Increase At Higher Levels? | LIST | VALUE=STRING SELECT=1","")]
-[h:disAHLSummonCRAdditive = if(and(IsSummon!="No",or(IsAHLSummon==2,IsAHLSummon==3)),"AHLSummonCRAdditive | No"+listsLevel+" | Does CR Increase By a Set Amount Each Level? | LIST | VALUE=STRING SELECT=0","")]
+[h:disAHLSummonCRAdditive = if(and(IsSummon!="No",or(IsAHLSummon==2,IsAHLSummon==3)),"AHLSummonCRAdditive | No"+list1through9+" | Does CR Increase By a Set Amount Each Level? | LIST | VALUE=STRING SELECT=0","")]
 [h:disAHLSummonCRMultiplier = if(and(IsSummon!="No",or(IsAHLSummon==2,IsAHLSummon==3)),"AHLSummonCRMultiplier | No,Doubled,Tripled,Quadrupled,Quintupled | <html><a href='From Base Value, e.g. Doubled = 2x then 3x, Tripled = 3x then 6x, etc.'>Does CR Increase Multiplicatively?</a></html> | LIST | VALUE=STRING SELECT=0","")]
 
 [h: SpellSummons=input(
@@ -772,14 +747,14 @@
 [h:sBaseMissiles='+sBaseMissiles+']
 [h:sAHLMissiles='+sAHLMissiles+']
 [h:IsDamage='+IsDamage+']
-[h:DmgTypeOptions="'+DmgTypeOptions+'"]
+[h:DmgTypeOptions="'+damageTypeOptions+'"]
 [h:isRandomType='+isRandomType+']
 [h:DmgType="'+DmgType+'"]
 [h:DmgDieNumber='+DmgDieNumber+']
 [h:DmgDieSize='+DmgDieSize+']
 [h:DmgDieFlatBonus="'+DmgDieFlatBonus+'"]
 [h:DmgDieMODBonus="'+DmgDieMODBonus+'"]
-[h:DmgType2Options="'+DmgType2Options+'"]
+[h:DmgType2Options="'+damageTypeOptions+'"]
 [h:isRandomType2='+isRandomType2+']
 [h:DmgType2="'+DmgType2+'"]
 [h:DmgDie2Number='+DmgDie2Number+']

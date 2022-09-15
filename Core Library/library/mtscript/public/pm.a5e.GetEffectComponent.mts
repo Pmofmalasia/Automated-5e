@@ -50,7 +50,7 @@
             };
             case "SpellLevel":{
                 [h,if(json.isEmpty(resourceData)):
-                    macro.return = 0;
+                    macro.return = 1;
                     macro.return = if(json.get(resourceData,"SpellLevel")=="",0,json.get(resourceData,"SpellLevel"))
                 ]
             };

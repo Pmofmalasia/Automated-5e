@@ -1,5 +1,5 @@
 [h:resolveAllTest = 0]
-[h:broadcast("HI")]
+[h:broadcast(currentToken())]
 [h:resolveHow = json.get(macro.args,"ResolveHow")]
 [h:chosenEffect = json.get(macro.args,"Effect")]
 [h:EffectDisplay = json.get(macro.args,"DisplayName")]
@@ -7,7 +7,7 @@
 [h,switch(resolveAllTest),CODE:
 	case 0:{
 		[h,switch(resolveHow),CODE:
-			case "NoMods":{
+			case "NoMod":{
 				[h,MACRO("Resolve Effects@Lib:pm.a5e.Core"): json.get(getLibProperty("gd.Effects","Lib:pm.a5e.Core"),chosenEffect)]
 			};
 			case "Mods":{

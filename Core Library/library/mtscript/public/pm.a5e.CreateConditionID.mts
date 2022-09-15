@@ -1,12 +1,13 @@
+[h:ParentToken = arg(0)]
 [h,if(argCount()>1):
 	targetTokens = if(json.type(arg(1))=="ARRAY",arg(1),json.append("",arg(1)));
 	targetTokens = ""
 ]
-[h:pm.a5e.AllTokens = json.append(targetTokens,arg(0))]
+[h:pm.a5e.AllTokens = json.append(targetTokens,ParentToken)]
 [h:"<!-- Should be adding SetBy token to list of targets -->"]
 
 [h:pm.a5e.OccupiedIDs = ""]
-[h,foreach(target,pm.a5e.AllTokens): pm.a5e.OccupiedIDs = json.merge(pm.a5e.OccupiedIDs,json.merge(json.path.read(ConditionGroups,"[*]['GroupID']"),json.path.read(ConditionsSet,"[*]['GroupID']")))]
+[h,foreach(target,pm.a5e.AllTokens): pm.a5e.OccupiedIDs = json.merge(pm.a5e.OccupiedIDs,json.merge(json.path.read(getProperty("ConditionGroups",ParentToken),"[*]['GroupID']"),json.path.read(getProperty("ConditionsSet",ParentToken),"[*]['GroupID']")))]
 
 [h:pm.a5e.OccupiedIDs = json.unique(pm.a5e.OccupiedIDs)]
 

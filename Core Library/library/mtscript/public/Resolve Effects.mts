@@ -175,6 +175,8 @@
 	[h:setLibProperty("gd.Effects",json.path.delete(getLibProperty("gd.Effects","Lib:pm.a5e.Core"),"[*][?(@.ID=="+effID+")]"),"Lib:pm.a5e.Core")]
 }]
 
+[h,MACRO("OpenEffectsFrame@Lib:pm.a5e.Core"): ""]
+
 [h,if(ParentToken!=""): switchToken(ParentToken)]
 
 [h,if(json.length(effTargets)==1): titleAddon = " on "+getName(json.get(effTargets,0)); titleAddon = ""]

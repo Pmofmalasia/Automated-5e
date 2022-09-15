@@ -3,3 +3,5 @@
 [h,foreach(effect,pm.a5e.EffectData),CODE:{
 	[h,if(json.get(effect,"ToResolve")!=""): setLibProperty("gd.Effects",json.append(getLibProperty("gd.Effects","Lib:pm.a5e.Core"),effect),"Lib:pm.a5e.Core")]
 }]
+
+[h,MACRO("OpenEffectsFrame@Lib:pm.a5e.Core"): ""]

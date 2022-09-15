@@ -359,6 +359,7 @@
 [h:"<!-- Perhaps set up separate loops for attack and damage rolls with different tables, which are assembled separately depending on the condensed vs. expanded approach -->"]
 [h:abilityTable = ""]
 [h,count(AttackCount),CODE:{
+	[h:thisAttackTarget = json.get(wa.TargetList,roll.count)]
 	[h:thisAttackd20Rolls = json.get(json.get(AllAttacksToHit,roll.count),"d20Rolls")]
 	[h:thisAttackFinalRoll = json.get(json.get(AllAttacksToHit,roll.count),"FinalRoll")]
 	[h:thisAttackAdvDis = json.get(json.get(AllAttacksToHit,roll.count),"Advantage")]
@@ -456,7 +457,8 @@
 			"ToHit",thisAttackToHit,
 			"CritTest",thisAttackCrit,
 			"CritFailTest",thisAttackCritFail),
-		"Damage",thisAttackAllDamage
+		"Damage",thisAttackAllDamage,
+		"Targets",json.append("",thisAttackTarget)
 	))]
 
 	[h:WhichAttack = WhichAttack + 1]

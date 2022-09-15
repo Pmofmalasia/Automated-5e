@@ -183,6 +183,10 @@
 	"Level",sLevel,
 	"Duration",durationInfo,
 	"CastTime",CastTime,
+	"Concentration",sConcentration,
+	"VComp",vComp,
+	"SComp",sComp,
+	
 )]
 
 [h:sMultiEffects = number(sMultiEffects)]

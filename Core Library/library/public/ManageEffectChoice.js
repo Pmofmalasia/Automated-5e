@@ -1,5 +1,7 @@
+console.log("hello from js");
 async function doEffect(ename) {
-    let request = await fetch("macro:ManageEffectChoice@pm.a5e.Core", {method: "POST", data: "ename"});
+    console.log("doing effect");
+    let request = await fetch("macro:ManageEffectChoice@pm.a5e.core", {method: "POST", data: "ename"});
     let result = await request.json();
 }
 

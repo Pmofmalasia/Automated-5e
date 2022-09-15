@@ -34,4 +34,4 @@
 }]
 [h:broadcast(em.TableLines)]
 
-[html.frame5("Effect Management", "lib://pm.a5e.Core/ManageEffectsFrame.html", "value="+em.TableLines)]
+[html.frame5("Effect Management", "lib://pm.a5e.core/ManageEffectsFrame.html", "value="+em.TableLines)]

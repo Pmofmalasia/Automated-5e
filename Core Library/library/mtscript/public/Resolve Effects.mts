@@ -86,7 +86,17 @@
 			[h:SaveResult = macro.return]
 			[h:effSavesMadeData = json.set(effSavesMadeData,targetToken,SaveResult)]
 			[h:abilityTable = json.merge(abilityTable,json.get(SaveResult,"Table"))]
-			[h:needsFurtherResolution = 1]
+
+			[h:autoResultTest = !isNumber(json.get(SaveResult,"Value"))]
+			[h,if(autoResultTest):
+				passedSave = (json.get(SaveResult,"Value")=="AutoSuccess");
+				passedSave = 0
+			]
+			[h,switch(autoResultTest+""+passedSave):
+				case "11": pm.a5e.ResolveDC(json.set("","DCData",thisTokenSaveDCData));
+				case "10": "";
+				case "00": needsFurtherResolution = 1
+			]
 		};
 		case "10":{
 			[h:SaveResult = json.get(effSavesMadeData,targetToken)]
@@ -123,7 +133,17 @@
 			[h:CheckResult = macro.return]
 			[h:effChecksMadeData = json.set(effChecksMadeData,targetToken,CheckResult)]
 			[h:abilityTable = json.merge(abilityTable,json.get(CheckResult,"Table"))]
-			[h:needsFurtherResolution = 1]
+			
+			[h:autoResultTest = !isNumber(json.get(CheckResult,"Value"))]
+			[h,if(autoResultTest):
+				passedCheck = (json.get(CheckResult,"Value")=="AutoSuccess");
+				passedCheck = 0
+			]
+			[h,switch(autoResultTest+""+passedCheck):
+				case "11": pm.a5e.ResolveDC(json.set("","DCData",thisTokenCheckDCData));
+				case "10": "";
+				case "00": needsFurtherResolution = 1
+			]
 		};
 		case "10":{
 			[h:"<!-- Separate storage format for contested checks is so that it can be recognized on the effect filtering side of things as a contested check -->"]

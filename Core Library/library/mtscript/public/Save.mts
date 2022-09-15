@@ -8,15 +8,32 @@
 [h:d20ID = json.get(d20Data,"ID")]
 [h:d20Data = json.set(d20Data,"OverallType","Save")]
 
-[h:pm.a5e.d20Roll(d20Data,"Save")]
-
-[h:pm.a5e.SaveBonusTotal(d20Data)]
-
+[h:CurrentSaveDisplay = json.get(d20Data,"Save")]
 [h:DamageColor = pm.DamageColor()]
 [h:HealingColor = pm.HealingColor()]
 [h:CritColor = pm.CritColor()]
 [h:CritFailColor = pm.CritFailColor()]
 [h:LinkColor = pm.LinkColor()]
+
+[h:d20AutoFail = 0]
+[h:d20AutoSuccess = 0]
+[h:pm.PassiveFunction("SaveSuccess")]
+
+[h,if(or(d20AutoSuccess,d20AutoFail)),CODE:{
+	[h:rerollData = json.set(d20Data,"Value",if(d20AutoSuccess,"AutoSuccess","AutoFailure"))]
+	[h:abilityTable = json.append("",json.set("",
+		"ShowIfCondensed",1,
+		"Header",CurrentSaveDisplay,
+		"FullContents",if(d20AutoSuccess,"<span style='color: "+HealingColor+"; font-size:1.25em'>Automatic Success</span>","<span style='color: "+DamageColor+"; font-size:1.25em'>Automatic Failure</span>"),
+		"DisplayOrder","['Rules','Roll','Full']"
+	))]
+
+	[h:return(0,json.set(rerollData,"Table",abilityTable))]
+};{}]
+
+[h:pm.a5e.d20Roll(d20Data,"Save")]
+
+[h:pm.a5e.SaveBonusTotal(d20Data)]
 
 [h:rollFormula = if(PrimeStat=="None",""," + "+substring(PrimeStat,0,3))+if(ProfTypeStr=="",""," + "+ProfTypeStr)+MiscBonusFormula]
 [h:rollString = pm.PlusMinus(AtrBonus,1)+pm.PlusMinus(ProfBonus,0)+if(MiscBonusStr=="",""," + "+MiscBonusStr)]

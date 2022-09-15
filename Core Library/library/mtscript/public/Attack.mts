@@ -103,7 +103,6 @@
 	[h,count(AttackCount): wa.TargetList = json.merge(wa.TargetList,json.get(wa.AllTargets,roll.count))]
 }]
 
-[h:CritTest = 0]
 [h:AllAttacksToHit = "[]"]
 [h:AllAttacksDmg = "[]"]
 [h:AllAttacksDmg2 = "[]"]
@@ -199,8 +198,7 @@
 		}
 	]
 	
-	[h:CritTest=if(effectiveRoll>=wa.FinalCritRange,CritTest+1,CritTest)]
-	[h:CritTestEach=if(effectiveRoll>=wa.FinalCritRange,1,0)]
+	[h:CritTest=if(effectiveRoll>=wa.FinalCritRange,1,0)]
 	[h:CritFailTest=if(effectiveRoll==1,1,0)]
 	
 	[h:wa.ToHit = effectiveRoll+wa.PrimeStatBonus+if(wa.ProfTest,Proficiency,0)+wa.MagicBonus]
@@ -212,7 +210,7 @@
 	[h:pm.PassiveFunction("AttackBonusTargeted",json.set("","ParentToken",thisAttackTarget))]
 	[h:pm.PassiveFunction("WeaponAttackBonusTargeted",json.set("","ParentToken",thisAttackTarget))]
 	
-	[h:AllAttacksToHit=json.append(AllAttacksToHit,json.set("","d20Rolls",thisAttackd20Rolls,"FinalRoll",effectiveRoll,"Advantage",wa.AdvDis,"ToHit",wa.ToHit,"ToHitStr",wa.ToHitStr,"RulesStr",wa.ToHitRulesStr,"CritTest",CritTestEach,"CritFailTest",CritFailTest))]
+	[h:AllAttacksToHit=json.append(AllAttacksToHit,json.set("","d20Rolls",thisAttackd20Rolls,"FinalRoll",effectiveRoll,"Advantage",wa.AdvDis,"ToHit",wa.ToHit,"ToHitStr",wa.ToHitStr,"RulesStr",wa.ToHitRulesStr,"CritTest",CritTest,"CritFailTest",CritFailTest))]
 
 	[h:"<!-- An array is created with the size of the dice for regular damage, crits, and flat damage. Variables are created for passive functions to use. -->"]
 	[h:"<!-- The array is created so that later passive functions that reroll dice have a reference for the original die size - since added dice may be of a different size. -->"]

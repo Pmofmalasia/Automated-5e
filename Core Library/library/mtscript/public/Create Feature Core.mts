@@ -751,7 +751,7 @@
 		" ab.AttackAdv | 0 | Grants (Dis)Advantage on Attacks | CHECK ",
 		" ab.AttackBonus | 0 | Grants Bonus to Attack Rolls | CHECK ",
 		" ab.AttackStat | 0 | Modifies Attack Primary Stat | CHECK ",
-		" ab.AttackCritThresh | 0 | Affects Critical Hit Threshhold | CHECK ",
+		" ab.AttackCrit | 0 | Affects Critical Hits | CHECK ",
 		" junkVar | ------------------------------------------------------------ | 0 | LABEL | SPAN=TRUE ",
 		" ab.AttackNumber | 0 | <html><span title='Specifically for effects like Extra Attack - Does not apply to effects that let you make an attack as a bonus action, etc.'>Increases number of attacks granted at once</span></html> | CHECK ",
 		" ab.AttackProps | 0 | <html><span title='Making weapons count as magical, count as monk weapons, etc.'>Modifies properties of weapons</span></html> | CHECK ",	" ab.AttackOptions | 0 | <html><span title='e.g. Feat - Great Weapons Master'>Has an optional effect which must be chosen before attacking</span></html>| CHECK ",
@@ -761,14 +761,13 @@
 		" ab.AttackRoll | 0 | <html><span title='Effects that change the value of the die, adding dice to the roll, using max damage, etc. (e.g. Great Weapon Fighting rerolling 1s and 2s, Barbarian - Brutal Critical, Tempest Cleric - Destructive Wrath)'>Modifies dice rolled for damage</span></html> | CHECK ",
 		" junkVar | ------------------------------------------------------------ | 0 | LABEL | SPAN=TRUE ",
 		" ab.AfterAttack | 0 | <html><span title='Catch-all for effects that operate independently of the attack itself. Can deal damage, force saving throws, force a condition upon an enemy, just display a message, and more. (e.g. Cleric - Divine Strike, Assassin - Death Strike, Eldritch Knight - Eldritch Strike, and Tempest Cleric - Thunderbolt Strike, respectively)'>Effect occurs after attacks</span></html> | CHECK ",
-		" ab.AfterEachAttack | 0 | <html><span title='Same as above, but triggers on every attack instead of once per turn.'>Effect occurs after every attack</span></html> | CHECK ",
-		" ab.AttackCrit | 0 | <html><span title='Same as above, but triggers only on critical hits.'>Effect occurs after critical hits</span></html> | CHECK "
+		" ab.AfterEachAttack | 0 | <html><span title='Same as above, but triggers on every attack instead of once per turn.'>Effect occurs after every attack</span></html> | CHECK "
 	))]
 
 	[h,if(ab.AttackAdv): ab.Final = json.set(ab.Final,"CallAttackAdv",ab.AttackAdv)]
 	[h,if(ab.AttackBonus): ab.Final = json.set(ab.Final,"CallAttackBonus",ab.AttackBonus)]
 	[h,if(ab.AttackStat): ab.Final = json.set(ab.Final,"CallAttackStat",ab.AttackStat)]
-	[h,if(ab.AttackCritThresh): ab.Final = json.set(ab.Final,"CallAttackCritThresh",ab.AttackCritThresh)]
+	[h,if(ab.AttackCrit): ab.Final = json.set(ab.Final,"CallAttackCrit",ab.AttackCrit)]
 	[h,if(ab.AttackNumber): ab.Final = json.set(ab.Final,"CallAttackNumber",ab.AttackNumber)]
 	[h,if(ab.AttackProps): ab.Final = json.set(ab.Final,"CallAttackProps",ab.AttackProps)]
 	[h,if(ab.AttackOptions): ab.Final = json.set(ab.Final,"CallAttackOptions",ab.AttackOptions)]
@@ -786,7 +785,7 @@
 		" ab.WeaponAttackAdv | 0 | Grants (Dis)Advantage on Weapon Attacks | CHECK ",
 		" ab.WeaponAttackBonus | 0 | Grants Bonus to Weapon Attack Rolls | CHECK ",
 		" ab.WeaponAttackStat | 0 | Modifies Weapon Attack Primary Stat | CHECK ",
-		" ab.WeaponAttackCritThresh | 0 | Affects Critical Hit Threshhold | CHECK ",
+		" ab.WeaponAttackCrit | 0 | Affects Critical Hits | CHECK ",
 		" junkVar | ------------------------------------------------------------ | 0 | LABEL | SPAN=TRUE ",
 		" ab.WeaponAttackNumber | 0 | <html><span title='Specifically for effects like Extra Attack - Does not apply to effects that let you make an attack as a bonus action, etc.'>Increases number of attacks granted by the Attack action</span></html> | CHECK ",
 		" ab.WeaponAttackProps | 0 | <html><span title='Making weapons count as magical, count as monk weapons, etc.'>Modifies properties of weapons</span></html> | CHECK ",
@@ -803,7 +802,7 @@
 	[h,if(ab.WeaponAttackAdv): ab.Final = json.set(ab.Final,"CallWeaponAttackAdv",ab.WeaponAttackAdv)]
 	[h,if(ab.WeaponAttackBonus): ab.Final = json.set(ab.Final,"CallWeaponAttackBonus",ab.WeaponAttackBonus)]
 	[h,if(ab.WeaponAttackStat): ab.Final = json.set(ab.Final,"CallWeaponAttackStat",ab.WeaponAttackStat)]
-	[h,if(ab.WeaponAttackCritThresh): ab.Final = json.set(ab.Final,"CallWeaponAttackCritThresh",ab.WeaponAttackCritThresh)]
+	[h,if(ab.WeaponAttackCrit): ab.Final = json.set(ab.Final,"CallWeaponAttackCrit",ab.WeaponAttackCrit)]
 	[h,if(ab.WeaponAttackNumber): ab.Final = json.set(ab.Final,"CallWeaponAttackNumber",ab.WeaponAttackNumber)]
 	[h,if(ab.WeaponAttackProps): ab.Final = json.set(ab.Final,"CallWeaponAttackProps",ab.WeaponAttackProps)]
 	[h,if(ab.WeaponAttackOptions): ab.Final = json.set(ab.Final,"CallWeaponAttackOptions",ab.WeaponAttackOptions)]
@@ -826,8 +825,7 @@
 		" junkVar | ------------------------------------------------------------ | 0 | LABEL | SPAN=TRUE ",
 		" ab.SpellAdv | 0 | Grants (Dis)Advantage on Spell Attacks | CHECK ",
 		" ab.SpellBonus | 0 | Grants Bonus to Spell Attack Rolls | CHECK ",
-		" ab.SpellCritThresh | 0 | Affects Spell Critical Hit Threshhold | CHECK ",
-		" ab.SpellCrit | 0 | <html><span title='See &#39;Event occurs after spells&#39; below, but triggers only on critical hits.'>Effect occurs after critical hits</span></html> | CHECK ",
+		" ab.SpellCrit | 0 | Affects Spell Critical Hits | CHECK ",
 		" junkVar | ------------------------------------------------------------ | 0 | LABEL | SPAN=TRUE ",
 		" ab.SpellDamage | 0 | <html><span title='Use for effects that grant a damage bonus based on the damage of the spell. (e.g. Cleric - Disciple of Life, Potent Spellcasting) For effects that grant damage independent of the spell&#39;s damage type, use effect after attack or after each attack (whichever is appropriate)'>Grants Flat Bonus to Spell Damage or Healing</span></html> | CHECK ",
 		" ab.SpellRoll | 0 | <html><span title='Effects that change the value of the die, adding dice to the roll, using max damage, etc. (e.g. Elemental Adept feat setting 1s to 2s, Life Cleric - Supreme Healing)'>Modifies dice rolled for weapon damage</span></html> | CHECK ",
@@ -840,7 +838,6 @@
 	[h,if(ab.SpellStat): ab.Final = json.set(ab.Final,"CallSpellStat",ab.SpellStat)]
 	[h,if(ab.SpellAdv): ab.Final = json.set(ab.Final,"CallSpellAdv",ab.SpellAdv)]
 	[h,if(ab.SpellBonus): ab.Final = json.set(ab.Final,"CallSpellBonus",ab.SpellBonus)]
-	[h,if(ab.SpellCritThresh): ab.Final = json.set(ab.Final,"CallSpellCritThresh",ab.SpellCritThresh)]
 	[h,if(ab.SpellCrit): ab.Final = json.set(ab.Final,"CallSpellCrit",ab.SpellCrit)]
 	[h,if(ab.SpellDamage): ab.Final = json.set(ab.Final,"CallSpellDamage",ab.SpellDamage)]
 	[h,if(ab.SpellRoll): ab.Final = json.set(ab.Final,"CallSpellRoll",ab.SpellRoll)]

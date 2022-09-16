@@ -41,7 +41,7 @@
         [h:rollFormula = json.get(d20Data,"Formula") + pm.PlusMinus(newBonus,1)]
     };{
         [h:newBonus = json.get(isNewBonus,"Value")]
-        [h:rollFormula = json.get(d20Data,"Formula") + " + "+json.get(isNewBonus,"Formula")]
+        [h:rollFormula = json.get(d20Data,"Formula")+" + "+json.get(isNewBonus,"Formula")]
     }]
 	[h:rollString = json.get(d20Data,"RollString") + pm.PlusMinus(newBonus,1)]
 	[h:TotalBonus = json.get(d20Data,"TotalBonus") + newBonus]

@@ -9,6 +9,13 @@
 [h:d20Data = json.set(d20Data,"OverallType","Save")]
 
 [h:CurrentSaveDisplay = json.get(d20Data,"Save")]
+[h,SWITCH(d20Type):
+	case "Save": PrimeStat = CurrentSave;
+	case "Concentration": PrimeStat = "Constitution";
+	case "Death": PrimeStat = "None";
+	default: PrimeStat = "None"
+]
+
 [h:DamageColor = pm.DamageColor()]
 [h:HealingColor = pm.HealingColor()]
 [h:CritColor = pm.CritColor()]

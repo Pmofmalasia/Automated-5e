@@ -4,12 +4,6 @@
 [h:CurrentSave = pm.RemoveSpecial(CurrentSaveDisplay)]
 
 [h:d20Type = json.get(d20Data,"Type")]
-[h,SWITCH(d20Type):
-	case "Save": PrimeStat = CurrentSave;
-	case "Concentration": PrimeStat = "Constitution";
-	case "Death": PrimeStat = "None";
-	default: PrimeStat = "None"
-]
 
 [h,SWITCH(d20Type):
 	case "Save": ProfType = json.get(Saves,CurrentSave);

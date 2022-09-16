@@ -39,6 +39,7 @@
 	[h:thisTokenConditionInfo = effConditionInfo]
     [h:thisTokenConditionsApplied = effAllConditionIdentifiers]
 	[h:switchToken(targetToken)]
+
 	[h,if(json.length(effTargets)>1):
 		abilityTable = json.append(abilityTable,json.set("",
 		"ShowIfCondensed",1,
@@ -50,12 +51,12 @@
 		"DisplayOrder","['Rules','Roll','Full']"
 		))
 	]
+
 	[h,if(thisTokenAttackData!=""),CODE:{
 		[h:attackToHit = json.get(thisTokenAttackData,"ToHit")]
 		[h:attackCrit = json.get(thisTokenAttackData,"CritTest")]
 		[h:attackCritFail = json.get(thisTokenAttackData,"CritFailTest")]
-		[h:hitTarget = or(attackCrit,and(!attackCritFail,attackToHit >= AC))]
-		[h,if(attackCrit): thisTokenDamageDealt = json.get(thisTokenAttackData,"CritDamage")]
+		[h:hitTarget = and(!attackCritFail,or(attackCrit,attackToHit >= AC))]
 	};{
 		[h:hitTarget = 1]
 	}]

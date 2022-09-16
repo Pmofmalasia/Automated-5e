@@ -82,14 +82,6 @@
 [h:wa.DmgDieNum = number(substring(wa.DmgDie,0,indexOf(wa.DmgDie,"d")))]
 [h:wa.DmgDie2Num = number(substring(wa.DmgDie2,0,1))]
 
-[h,if(AttackNum<0),CODE:{
-	[h:AttackCount = abs(AttackNum)]
-};{
-	[h:AttackCount = AttackNum]
-	[h:pm.PassiveFunction("AttackNum")]
-	[h:pm.PassiveFunction("WeaponAttackNum")]
-}]
-
 [h:wa.TargetOptions = pm.a5e.TargetCreatureFiltering(json.set("","ParentToken",ParentToken,"Number",1,"Allegiance",json.set("","NotSelf",1),"Origin",wa.TargetOrigin,"Range",json.set("","Value",if(wa.MeleeRanged=="Ranged",wa.Range,wa.Reach),"Units","Feet")),"{}")]
 [h:wa.AllTargets = pm.a5e.TargetCreatureTargeting(wa.TargetOptions,1,AttackCount)]
 [h,if(AttackCount==1),CODE:{
@@ -391,8 +383,8 @@
 	[h:thisAttackCritDmg2Str = json.get(thisAttackDamageInfo2,"CritString")]
 	[h:thisAttackCritDmg2Rules = json.get(thisAttackDamageInfo2,"CritFormula")]
 	
-	[h:wa.AdvRerollLink = macroLinkText("Modify Attack Border@Lib:pm.a5e.Core","self-gm",json.set(wa.Data,"Advantage",1,"ForcedAdvantage",1,"PreviousRoll",thisAttackd20Rolls,"PreviousDamage",thisAttackAllDamage,"Target",json.get(wa.TargetList,roll.count),"AttackNum",-1,"EffectID",json.get(wa.EffectIDs,roll.count)),ParentToken)]
-	[h:wa.DisRerollLink = macroLinkText("Modify Attack Border@Lib:pm.a5e.Core","self-gm",json.set(wa.Data,"Disadvantage",1,"ForcedAdvantage",1,"PreviousRoll",thisAttackd20Rolls,"PreviousDamage",thisAttackAllDamage,"Target",thisAttackTarget,"AttackNum",-1,"EffectID",json.get(wa.EffectIDs,roll.count)),ParentToken)]
+	[h:wa.AdvRerollLink = macroLinkText("AttackReroll@Lib:pm.a5e.Core","self-gm",json.set(wa.Data,"Advantage",1,"ForcedAdvantage",1,"PreviousRoll",thisAttackd20Rolls,"PreviousDamage",thisAttackAllDamage,"Target",json.get(wa.TargetList,roll.count),"AttackNum",-1,"EffectID",json.get(wa.EffectIDs,roll.count)),ParentToken)]
+	[h:wa.DisRerollLink = macroLinkText("AttackReroll@Lib:pm.a5e.Core","self-gm",json.set(wa.Data,"Advantage",-1,"ForcedAdvantage",1,"PreviousRoll",thisAttackd20Rolls,"PreviousDamage",thisAttackAllDamage,"Target",json.get(wa.TargetList,roll.count),"AttackNum",-1,"EffectID",json.get(wa.EffectIDs,roll.count)),ParentToken)]
 	
 	[h:ToHitTableLine = json.set("",
 		"ShowIfCondensed",1,
@@ -465,28 +457,9 @@
 
 	[h:WhichAttack = WhichAttack + 1]
 }]
-
 [h:pm.PassiveFunction("AfterAttack")]
 [h:pm.PassiveFunction("AfterWeaponAttack")]
 [h:pm.PassiveFunction("AfterAttackTargeted",json.set("","ParentToken",thisAttackTarget))]
 [h:pm.PassiveFunction("AfterWeaponAttackTargeted",json.set("","ParentToken",thisAttackTarget))]
-
-[h:pm.RemovedConditions = "[]"]
-[h,foreach(group,json.path.read(ConditionGroups,"[*]['EndTriggers'][?(@.AfterAttack != null)]","DEFAULT_PATH_LEAF_TO_NULL")),CODE:{
-	[h,macro("EndCondition@Lib:pm.a5e.Core"): json.set("","GroupID",json.get(group,"GroupID"),"ParentToken",ParentToken)]
-	[h:pm.RemovedConditions = json.merge(pm.RemovedConditions,json.get(macro.return,"Table"))]
-}]
-
-[h,if(!json.isEmpty(pm.RemovedConditions)): 
-	abilityTable = json.append(abilityTable,json.set("",
-		"ShowIfCondensed",1,
-		"Header","Conditions Removed",
-		"FalseHeader","",
-		"FullContents","",
-		"RulesContents",json.toList(json.path.read(pm.RemovedConditions,"[*]['DisplayName']"),", "),
-		"RollContents","",
-		"DisplayOrder","['Rules','Roll','Full']")
-	)
-]
 
 [h:macro.return = json.set("","Table",abilityTable,"Effect",pm.a5e.EffectData)]

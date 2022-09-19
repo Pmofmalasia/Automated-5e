@@ -3,6 +3,10 @@
     d20PassivePrefixes = if(json.type(arg(1))=="UNKNOWN",json.append("",arg(1)),arg(1));
     d20PassivePrefixes = "[]"
 ]
+[h,if(argCount()>2): 
+    d20Target = arg(2);
+    d20Target = ""
+]
 
 [h:d20AllRolls = if(json.get(d20Data,"PreviousRoll")=="","[]",json.get(d20Data,"PreviousRoll"))]
 [h:d20ExtraRolls = if(json.get(d20Data,"ExtraRolls")=="",0,json.get(d20Data,"ExtraRolls"))]
@@ -13,7 +17,10 @@
 [h:d20RolledNum = 1 + d20ExtraRolls]
 
 [h,if(d20ForcedAdvantage==0),CODE:{
-    [h,foreach(prefix,d20PassivePrefixes): pm.PassiveFunction(prefix+"Adv")]
+    [h,foreach(prefix,d20PassivePrefixes),CODE:{
+        [h:pm.PassiveFunction(prefix+"Adv")]
+        [h,if(d20Target != ""): pm.PassiveFunction(prefix+"AdvTargeted",d20Target)]  
+    }]
     [h:d20AdvantageBalance = if(or(and(d20Disadvantage == 0,d20Advantage == 0),and(d20Disadvantage !=0,d20Advantage != 0)),0,if(d20Disadvantage == 0,1,-1))]
     [h:d20RolledNum = if(d20AdvantageBalance!=0,d20RolledNum + 1,d20RolledNum)]
 };{

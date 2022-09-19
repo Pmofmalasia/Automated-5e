@@ -1,0 +1,12 @@
+[h:setName(CharName)]
+[h,foreach(TempAttribute,AttributeList): baseAttributes = json.set(baseAttributes,json.get(TempAttribute,"Name"),eval(json.get(TempAttribute,"Name")+"Choice"))]
+[h:Race=json.get(json.get(RaceArray,RaceSelection),"DisplayName")]
+[h:Deity=DeitySelection]
+[h:Alignment=json.set("","Morality",MoralitySelection,"Order",OrderSelection)]
+[h:whichTeam=if(PC.Ally.Enemy==2,2,if(PC.Ally.Enemy==3,0,1))]
+
+[h,macro("Race Selection@Lib:pm.a5e.Core"): json.get(RaceArray,RaceSelection)]
+[h:lu.NewAbilities = macro.return]
+[macro("Background Selection@Lib:pm.a5e.Core"):""]
+[h:lu.NewAbilities = json.append(lu.NewAbilities,macro.return)]
+[macro("Level Up@Lib:pm.a5e.Core"):lu.NewAbilities]

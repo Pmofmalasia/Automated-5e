@@ -1,5 +1,4 @@
 [h:resolveAllTest = 0]
-[h:broadcast(currentToken())]
 [h:resolveHow = json.get(macro.args,"ResolveHow")]
 [h:chosenEffect = json.get(macro.args,"Effect")]
 [h:EffectDisplay = json.get(macro.args,"DisplayName")]

@@ -1,6 +1,8 @@
 [h:d20Data = arg(0)]
 [h:d20Type = json.get(d20Data,"Type")]
 
+[h:CurrentSkill = pm.RemoveSpecial(json.get(d20Data,"Skill"))]
+
 [h,if(CurrentSkill == "NoSkillSelected"),CODE:{
 	[h:ProfType = 0]
 	[h:ProfBonus = 0]
@@ -28,7 +30,7 @@
 [h,if(PrimeStat=="None"): AtrBonus = 0; AtrBonus = json.get(AtrMods,PrimeStat)]
 [h:MiscBonus = if(json.get(d20Data,"Bonus")=="",0,json.get(d20Data,"Bonus"))]
 [h:MiscBonusStr = json.get(d20Data,"Bonus")]
-[h:MiscBonusFormula = if(json.get(d20Data,"Bonus")=="","",pm.PlusMinus(json.get(d20Data,"Bonus"),0))]
+[h,if(json.get(d20Data,"Bonus")==""): MiscBonusFormula = ""; MiscBonusFormula = pm.PlusMinus(json.get(d20Data,"Bonus"),0)]
 
 [h:pm.PassiveFunction("CheckBonus")]
 

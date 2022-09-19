@@ -39,7 +39,6 @@
 	};
 	case "Contested":{
 		[h:CheckInfo = pm.a5e.FeatureCheck(currentFeatureInfo,pm.DCInfo)]
-		[h:pm.DC = json.get(CheckInfo,"Value")]
 	};
 	default:{}
 ]
@@ -73,25 +72,27 @@
 [h:conditionsResistedInclusive = json.get(pm.CheckModifiers,"ConditionsInclusive")]
 [h:conditionsResistedExclusive = json.get(pm.CheckModifiers,"ConditionsExclusive")]
 
-[h:"<!-- Temporary for future magic item/passive influence -->"]
-[h:pm.DCFinal = pm.DC]
-
 [h:"<!-- Need to decide between getting what is currently CheckType from its own arg still, or getting from arg(1) and setting during switch() (likely). Make arg(2) the type of check forced. -->"]
 [h,if(DCMethod == "Contested"),CODE:{
-	[h:checkDCTable = json.get(CheckInfo,"Table")]
+	[h:checkDCTable = json.get(abilityTable,json.length(abilityTable)-1)]
 	[h,if(IsTooltip),CODE:{
-		[h:tableLinetoEdit = json.get(checkDCTable,0)]
-		[h:tableLinetoEdit = json.set(tableLinetoEdit,
+		[h:checkDCTable = json.set(checkDCTable,
 			"Header","Contested Check",
 			"FullContents",pm.ForcedSkillDisplay,
-			"RulesContents"," vs. "+json.get(tableLinetoEdit,"RulesContents"),
+			"RulesContents"," vs. "+json.get(checkDCTable,"Header")+"; "+json.get(checkDCTable,"RulesContents"),
 			"DisplayOrder","['Full','Rules','Roll']"
 		)]
-		[h:checkDCTable = json.set(checkDCTable,0,tableLinetoEdit)]
+
+		[h:abilityTable = json.set(abilityTable,json.length(abilityTable)-1,checkDCTable)]
+
+		[h:return(0)]
 	};{
-		[h:finalDCInfo = json.remove(CheckInfo,"Table")]
+		[h:CheckDataFinal = json.set("","DC",json.set(CheckInfo,"Contested",1)]
 	}]
 };{
+	[h:"<!-- Temporary for future magic item/passive influence -->"]
+	[h:pm.DCFinal = pm.DC]
+
 	[h:checkDCTable = json.append("",json.set("",
 		"ShowIfCondensed",1,
 		"Header","Forced Check",
@@ -102,11 +103,10 @@
 		"DisplayOrder","['Full','Rules','Roll']"
 	))]
 
-	[h:finalDCInfo = json.set("","Value",pm.DCFinal)]
+	[h:CheckDataFinal = json.set("","DC",pm.DCFinal)]
 }]
 
-[h:CheckDataFinal = json.set("",
-	"DC",pm.DCFinal,
+[h:CheckDataFinal = json.set(CheckDataFinal,
 	"CheckType",pm.ForcedCheckInfo,
 	"DamageModifier",json.set("",
 		"DamageHalved",isDamageHalved,

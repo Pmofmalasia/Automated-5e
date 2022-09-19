@@ -60,7 +60,7 @@
 
 [h:grappleTable = json.get(macro.return,"Table")]
 [h:gr.ContestedCheckData = json.set("",
-    "DC",json.get(gr.CheckReturnData,"Value"),
+    "DC",json.set(gr.CheckReturnData,"Contested",1),
     "CheckType",json.append("",
         json.set("",
             "Skill","Athletics",

@@ -127,6 +127,7 @@
 [h:defineFunction("pm.a5e.GenerateEffectID","pm.a5e.GenerateEffectID@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.a5e.d20TestRerollDataProcessing","pm.a5e.d20TestRerollDataProcessing@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.a5e.TargetEffectFiltering","pm.a5e.TargetEffectFiltering@Lib:pm.a5e.Core")]
+[h:defineFunction("pm.a5e.TargetEffectTargeting","pm.a5e.TargetEffectTargeting@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.a5e.BuildEffectMergeConditions","pm.a5e.BuildEffectMergeConditions@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.a5e.BuildEffectMergeDamage","pm.a5e.BuildEffectMergeDamage@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.a5e.GetEffectComponent","pm.a5e.GetEffectComponent@Lib:pm.a5e.Core")]
@@ -145,6 +146,8 @@
 [h:"<!-- Functions for Leveling -->"]
 [h:defineFunction("pm.SubclassSelection","pm.SubclassSelection@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.a5e.CheckFeaturePrereqs","pm.a5e.CheckFeaturePrereqs@Lib:pm.a5e.Core")]
+[h:defineFunction("pm.a5e.GetSizeChange","pm.a5e.GetSizeChange@Lib:pm.a5e.Core")]
+[h:defineFunction("pm.a5e.CompareSizes","pm.a5e.CompareSizes@Lib:pm.a5e.Core")]
 
 [h:"<!-- Functions for Getting Data from Sourcebook Library Tokens -->"]
 [h:defineFunction("pm.GetAttributes","pm.GetAttributes@Lib:pm.a5e.Core")]
@@ -201,15 +204,15 @@
 [h:defineFunction("pm.SpellFilterDisplay","pm.SpellFilterDisplay@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.SpellStdVars","pm.SpellStdVars@Lib:pm.a5e.Core",0,0)]
 
-[h:"<!-- Functions for Checks -->"]
+[h:"<!-- Functions for Checks and Saves -->"]
 [h:defineFunction("pm.a5e.d20Roll","pm.a5e.d20Roll@Lib:pm.a5e.Core",0,0)]
+[h:defineFunction("pm.a5e.CheckProperties","pm.a5e.CheckProperties@Lib:pm.a5e.Core",0,0)]
 [h:defineFunction("pm.a5e.CheckBonusTotal","pm.a5e.CheckBonusTotal@Lib:pm.a5e.Core",0,0)]
+[h:defineFunction("pm.a5e.SaveProperties","pm.a5e.SaveProperties@Lib:pm.a5e.Core",0,0)]
 [h:defineFunction("pm.a5e.SaveBonusTotal","pm.a5e.SaveBonusTotal@Lib:pm.a5e.Core",0,0)]
-[h:defineFunction("pm.a5e.GetSizeChange","pm.a5e.GetSizeChange@Lib:pm.a5e.Core")]
-[h:defineFunction("pm.a5e.CompareSizes","pm.a5e.CompareSizes@Lib:pm.a5e.Core")]
 
 [h:"<!-- Functions for Trusted Bypass -->"]
 [h:defineFunction("pm.SwitchToken","pm.SwitchToken@Lib:pm.a5e.Core",0,0)]
 
-[h,MACRO("Gather Sourcebook Information@Lib:pm.a5e.Core"):""]
 [h:broadcast("Startup Initialization Complete.")]
+[h,MACRO("Gather Sourcebook Information@Lib:pm.a5e.Core"):""]

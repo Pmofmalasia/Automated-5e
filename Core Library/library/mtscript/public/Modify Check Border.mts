@@ -31,7 +31,10 @@
 [h:effectID = json.get(CheckData,"ID")]
 [h,if(effectID==""),CODE:{};{
 	[h:"<!-- TODO: Add contested check data from the token setting the DC to the effect data -->"]
-	[h:rerolledEffect = json.path.set(getLibProperty("gd.Effects","Lib:pm.a5e.Core"),"[*][?(@.ID=="+effectID+")]['ToResolve']['CheckDC']['ChecksMade']['"+ParentToken+"']",json.remove(CheckData,"EffectID"))]
+	[h,if(json.get(CheckData,"Contested")==1): 
+		rerolledEffect = json.path.set(getLibProperty("gd.Effects","Lib:pm.a5e.Core"),"[*][?(@.ID=="+effectID+")]['ToResolve']['CheckDC']['DC']",json.remove(CheckData,"EffectID"));
+		rerolledEffect = json.path.set(getLibProperty("gd.Effects","Lib:pm.a5e.Core"),"[*][?(@.ID=="+effectID+")]['ToResolve']['CheckDC']['ChecksMade']['"+ParentToken+"']",json.remove(CheckData,"EffectID"))
+	]
 	[h:setLibProperty("gd.Effects",rerolledEffect,"Lib:pm.a5e.Core")]
 }]
 

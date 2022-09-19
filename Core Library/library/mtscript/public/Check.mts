@@ -8,19 +8,7 @@
 [h:d20ID = json.get(d20Data,"ID")]
 [h:d20Data = json.set(d20Data,"OverallType","Check")]
 
-[h:CurrentSkillDisplay = json.get(d20Data,"Skill")]
-[h:CurrentSkill = pm.RemoveSpecial(CurrentSkillDisplay)]
-[h,if(json.get(d20Data,"Alternate")==""),CODE:{
-	[h,SWITCH(d20Type):
-		case "Ability Score": PrimeStat = CurrentSkill;
-		case "Skill": PrimeStat = json.get(json.path.read(getLibProperty("sb.Skills","Lib:pm.a5e.Core"),"[?(@.Name=='"+CurrentSkill+"')]['Attribute']"),0);
-		case "Tool": PrimeStat = json.get(json.path.read(getLibProperty("sb.Tools","Lib:pm.a5e.Core"),"[?(@.Name=='"+CurrentSkill+"')]['Attribute']"),0);
-		case "Initiative": PrimeStat = "Dexterity";
-		default: PrimeStat = "None"
-	]
-};{
-	[h:PrimeStat = pm.RemoveSpecial(json.get(d20Data,"Alternate"))]
-}]
+[h:pm.a5e.CheckProperties(d20Data)]
 
 [h:DamageColor = pm.DamageColor()]
 [h:HealingColor = pm.HealingColor()]

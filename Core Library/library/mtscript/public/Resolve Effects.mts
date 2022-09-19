@@ -147,7 +147,7 @@
 			]
 		};
 		case "10":{
-			[h:"<!-- Separate storage format for contested checks is so that it can be recognized on the effect filtering side of things as a contested check -->"]
+			[h:"<!-- Separate storage format for contested checks is so that it can be recognized on the effect filtering side of things as a contested check; as well as retain data needed to modify the check setting the DC -->"]
 			[h:CheckResult = json.get(effChecksMadeData,targetToken)]
 			[h:ContestedCheckTest = json.type(json.get(thisTokenCheckDCData,"DC")) == "OBJECT"]
 			[h,if(ContestedCheckTest):

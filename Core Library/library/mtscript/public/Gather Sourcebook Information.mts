@@ -20,7 +20,7 @@
 [h:pm.CastingAbilities = "{}"]
 [h:pm.SpellSchools = ""]
 
-[H:"<!-- Since languages may be setting specific, may want to add a function for DMs to exclude languages from certain sourcebooks. Can use this macro as the gate for blocking those books. -->"]
+[h:"<!-- Since languages may be setting specific, may want to add a function for DMs to exclude languages from certain sourcebooks. Can use this macro as the gate for blocking those books. -->"]
 [h,foreach(book,pm.SourcebookLibs),CODE:{
 	[h,if(getLibProperty("sb.Attributes","Lib:"+book)!=""): pm.Attributes = if(or(json.get(getLibProperty("AttributeSourcebooks","Lib:pm.a5e.Core"),book)==1,json.get(getLibProperty("AttributeSourcebooks","Lib:pm.a5e.Core"),book)==""),json.merge(pm.Attributes,getLibProperty("sb.Attributes","Lib:"+book)),pm.Attributes)]
 	[h,if(getLibProperty("sb.Classes","Lib:"+book)!=""): pm.Classes = json.merge(pm.Classes,getLibProperty("sb.Classes","Lib:"+book))]

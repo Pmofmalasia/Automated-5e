@@ -104,16 +104,19 @@
 [h,count(AttackCount),code:{
 	[h,if(json.length(wa.EffectIDs)-1 < roll.count): wa.EffectIDs = json.append(wa.EffectIDs,pm.a5e.GenerateEffectID())]
 	[h:thisAttackTarget = json.get(wa.TargetList,roll.count)]
+
+	[h:pm.a5e.d20Roll(wa.Data,json.append("","AttackAdv","WeaponAttackAdv"),thisAttackTarget)]
+
 	[h:d20RolledNum = 1]
 	[h:thisAttackd20Rolls = if(json.get(wa.Data,"PreviousRoll")=="","[]",json.get(wa.Data,"PreviousRoll"))]
 	[h:d20RolledNum = d20RolledNum - json.length(thisAttackd20Rolls)]
 		
 	[h,SWITCH(json.get(wa.Data,"Advantage")+""+json.get(wa.Data,"ForcedAdvantage")),CODE:
 		case "-11": {
-			[h:pm.PassiveFunction("AttackAdv")]
-			[h:pm.PassiveFunction("WeaponAttackAdv")]
-			[h:pm.PassiveFunction("AttackAdvTargeted",json.set("","ParentToken",thisAttackTarget))]
-			[h:pm.PassiveFunction("WeaponAttackAdvTargeted",json.set("","ParentToken",thisAttackTarget))]
+			[h:pm.PassiveFunction("")]
+			[h:pm.PassiveFunction("")]
+			[h:pm.PassiveFunction("",json.set("","ParentToken",thisAttackTarget))]
+			[h:pm.PassiveFunction("",json.set("","ParentToken",thisAttackTarget))]
 			[h:wa.AdvDis = -1]
 			[h:d20RolledNum = d20RolledNum + 1]
 			};

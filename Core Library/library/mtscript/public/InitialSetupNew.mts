@@ -28,7 +28,18 @@
     [h:charCreationHTML = charCreationHTML + "</select></td></tr>"]
 }]
 
-[h:charCreationHTML = charCreationHTML + "<tr><th><label for='sizeChoice'>Size:</label></th><td><input type='hidden' id='sizeChoice' name='sizeChoice'></td></tr><tr><th><label for='orderChoice'>Order:</label></th><td>
+[h:charCreationHTML = charCreationHTML + "<tr><th><label for='sizeChoice'>Size:</label></th><td>"]
+[h:firstRaceTraits = json.get(json.get(RaceArray,0),"Traits")]
+[h:firstRaceSizeOptions = json.get(firstRaceTraits,"SizeOption")]
+[h,if(firstRaceSizeOptions==""),CODE:{
+    [h:charCreationHTML = charCreationHTML + "<selected style='display:none' id='sizeChoice' name='sizeChoice' value='"+json.get(firstRaceTraits,"Size")+"'></td></tr>"]
+};{
+    [h:sizeOptions = ""]
+    [h,foreach(tempSize,firstRaceSizeOptions): sizeOptions = sizeOptions + "<option value='"+tempSize+"'>"+tempSize+"</option>"]
+    [h:charCreationHTML = charCreationHTML + "<selected style='display:block' id='sizeChoice' name='sizeChoice'>"+sizeOptions+"</td></tr>"]
+}]
+
+[h:charCreationHTML = charCreationHTML + "<tr><th><label for='orderChoice'>Order:</label></th><td>
     <select id='orderChoice' name='orderChoice'>
         <option value='Lawful' "+if(json.get(previousSelection,"orderChoice")=="Lawful","selected","")+">Lawful</option>
         <option value='Neutral' "+if(json.get(previousSelection,"orderChoice")=="Neutral","selected","")+">Neutral</option>

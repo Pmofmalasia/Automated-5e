@@ -16,11 +16,12 @@ async function refreshSubraces() {
     
     if(newSubraceOptions.hasSizeChoice==1) {
         document.getElementById('sizeChoice').innerHTML = newSubraceOptions.SizeOptions;
-        document.getElementById('sizeChoice').outerHTML = "<select name='sizeChoice'></select>";
+        document.getElementById('sizeChoice').style.display = "inline";
     }
     else {
         document.getElementById('sizeChoice').innerHTML = "";
-        document.getElementById('sizeChoice').outerHTML = newSubraceOptions.Size;
+        document.getElementById('sizeChoice').style.display = "hidden";
+        document.getElementById('sizeChoice').value = newSubraceOptions.Size;
     }
 
 }

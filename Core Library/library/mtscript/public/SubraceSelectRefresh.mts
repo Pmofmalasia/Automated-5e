@@ -3,7 +3,7 @@
 
 [h:SubraceArray = pm.GetSubraces(json.get(RaceData,"Name"))]
 [h,if(json.isEmpty(SubraceArray)),CODE:{
-    [h:subraceOptions = "<option value=0>No Subrace</option>"]
+    [h:subraceOptions = "<option value='0'>No Subrace</option>"]
 
     [h:subraceData = json.set("","isDisabled",1,"Options",subraceOptions)]
 };{
@@ -20,8 +20,7 @@
     [h:subraceData = json.set(subraceData,"hasSizeChoice",0,"Size","<input type='hidden' name='sizeChoice' value='"+json.get(RaceTraits,"Size")+"'>")]
 };{
     [h:sizeOptions = ""]
-    [h,foreach(tempSize,json.get(RaceTraits,"SizeOptions")):
-sizeOptions = sizeOptions + "<option value='"+tempSize+"'>"+tempSize+"</option>"]
+    [h,foreach(tempSize,json.get(RaceTraits,"SizeOptions")): sizeOptions = sizeOptions + "<option value='"+tempSize+"'>"+tempSize+"</option>"]
     [h:subraceData = json.set(subraceData,"hasSizeChoice",0,"SizeOptions",sizeOptions)]
 }]
 

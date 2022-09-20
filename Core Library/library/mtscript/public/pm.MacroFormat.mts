@@ -2,7 +2,7 @@
 [h:abilityName = json.get(arg(0),"Name")]
 [h:abilityDisplayName = if(json.get(arg(0),"DisplayName")=="",abilityName,json.get(arg(0),"DisplayName"))]
 [h:Flavor = json.get(arg(0),"Flavor")]
-[h:DMOnly=json.get(arg(0),"DMOnly")]
+[h:DMOnly = json.get(arg(0),"DMOnly")]
 [h:ColorSubtype = json.get(arg(0),"ColorSubtype")]
 [h:BorderColorOverride=json.get(arg(0),"BorderColorOverride")]
 [h:TitleColorOverride=json.get(arg(0),"TitleFontColorOverride")]
@@ -26,9 +26,9 @@
 }]
 
 [h,if(currentToken()!=""),CODE:{
-	[h:outputTest.NoRules = if(DMOnly,if(or(and(number(getLibProperty("HideEnemyMacros","Lib:pm.a5e.Core"))<1,PC.Ally.Enemy==2),and(number(getLibProperty("HideAllyMacros","Lib:pm.a5e.Core"))<1,PC.Ally.Enemy==1)),0,1),0)]
-	[h:outputTest.NoRolls = if(DMOnly,if(or(and(number(getLibProperty("HideEnemyMacros","Lib:pm.a5e.Core"))<2,PC.Ally.Enemy==2),and(number(getLibProperty("HideAllyMacros","Lib:pm.a5e.Core"))<2,PC.Ally.Enemy==1)),0,1),0)]
-	[h:outputTest.NoFullMacro = if(DMOnly,if(or(and(number(getLibProperty("HideEnemyMacros","Lib:pm.a5e.Core"))<3,PC.Ally.Enemy==2),and(number(getLibProperty("HideAllyMacros","Lib:pm.a5e.Core"))<3,PC.Ally.Enemy==1)),if(and(OnlyRules,outputTest.NoRules),1,0),1),0)]
+	[h:outputTest.NoRules = if(DMOnly,if(or(and(number(getLibProperty("HideEnemyMacros","Lib:pm.a5e.Core"))<1,getProperty("stat.Allegiance")==2),and(number(getLibProperty("HideAllyMacros","Lib:pm.a5e.Core"))<1,getProperty("stat.Allegiance")==1)),0,1),0)]
+	[h:outputTest.NoRolls = if(DMOnly,if(or(and(number(getLibProperty("HideEnemyMacros","Lib:pm.a5e.Core"))<2,getProperty("stat.Allegiance")==2),and(number(getLibProperty("HideAllyMacros","Lib:pm.a5e.Core"))<2,getProperty("stat.Allegiance")==1)),0,1),0)]
+	[h:outputTest.NoFullMacro = if(DMOnly,if(or(and(number(getLibProperty("HideEnemyMacros","Lib:pm.a5e.Core"))<3,getProperty("stat.Allegiance")==2),and(number(getLibProperty("HideAllyMacros","Lib:pm.a5e.Core"))<3,getProperty("stat.Allegiance")==1)),if(and(OnlyRules,outputTest.NoRules),1,0),1),0)]
 };{
 	[h:outputTest.NoRules = DMOnly]
 	[h:outputTest.NoRolls = DMOnly]

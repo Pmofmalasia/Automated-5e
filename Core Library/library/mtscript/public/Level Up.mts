@@ -1,8 +1,10 @@
+[h:lu.NewAbilities = json.get(macro.args,"Abilities")][h:ParentToken = json.get(macro.args,"ParentToken")]
+[h:switchToken(ParentToken)]
 [h:lu.ClassArray = pm.GetClasses()]
 [h:lu.ClassOptions = ""]
 [h:lu.FinalClassArray = ""]
 [h:lu.FinalClassOptions = ""]
-[h:lu.NewAbilities = macro.args]
+[h:lu.NewAbilities = json.get(macro.args,"Abilities")]
 [h:lu.SourcebookLibs = pm.GetBookInfo("Library","json")] 
 
 [h:lu.AttrPrereqList = pm.GetAttributes("Name","json")]
@@ -230,7 +232,7 @@
 [h:ClassFeatureData = json.set("",
 	"Flavor",token.name+" suddenly feels empowered by experience!",
 	"ParentToken",getSelected(),
-	"DMOnly",if(PC.Ally.Enemy==0,0,1),
+	"DMOnly",if(getProperty("stat.Allegiance")==0,0,1),
 	"BorderColorOverride","",
 	"TitleFontColorOverride","",
 	"AccentBackgroundOverride","",

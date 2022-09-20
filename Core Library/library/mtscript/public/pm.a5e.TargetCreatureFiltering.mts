@@ -73,9 +73,9 @@
 		[h,if(json.get(pm.TargetAllegiance,"NotSelf")==1 && json.get(pm.TargetAllegiance,"Any")!=1): pm.AllegianceTest = target != ParentToken; pm.AllegianceTest = 1]
 	};{
 		[h:pm.AllegianceTest = 0]
-		[h,if(json.get(pm.TargetAllegiance,"Neutral")==1): pm.AllegianceTest = if(getProperty("whichTeam",target) == 0,1,pm.AllegianceTest)]
-		[h,if(json.get(pm.TargetAllegiance,"Ally")==1): pm.AllegianceTest = if(getProperty("whichTeam",target) == getProperty("whichTeam"),1,pm.AllegianceTest)]
-		[h,if(json.get(pm.TargetAllegiance,"Foe")==1): pm.AllegianceTest = if(and(getProperty("whichTeam",target) != getProperty("whichTeam"),getProperty("whichTeam",target) != 0),1,pm.AllegianceTest)]
+		[h,if(json.get(pm.TargetAllegiance,"Neutral")==1): pm.AllegianceTest = if(getProperty("stat.whichTeam",target) == 0,1,pm.AllegianceTest)]
+		[h,if(json.get(pm.TargetAllegiance,"Ally")==1): pm.AllegianceTest = if(getProperty("stat.whichTeam",target) == getProperty("stat.whichTeam"),1,pm.AllegianceTest)]
+		[h,if(json.get(pm.TargetAllegiance,"Foe")==1): pm.AllegianceTest = if(and(getProperty("stat.whichTeam",target) != getProperty("stat.whichTeam"),getProperty("stat.whichTeam",target) != 0),1,pm.AllegianceTest)]
 	}]
 	
 	[h,if(json.type(pm.TargetSize) == "UNKNOWN"):

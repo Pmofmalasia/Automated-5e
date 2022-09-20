@@ -1,7 +1,7 @@
 [h:InitData = macro.args]
 [h:Flavor=json.get(InitData,"Flavor")]
 [h:ParentToken=json.get(InitData,"ParentToken")]
-[h:outputTargets = if(PC.Ally.Enemy == 2,"none","not-gm")]
+[h:outputTargets = if(getProperty("stat.Allegiance") == 2,"none","not-gm")]
 
 [h:ClassFeatureData = json.set("",
 	"Flavor",Flavor,

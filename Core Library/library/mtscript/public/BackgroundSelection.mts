@@ -1,8 +1,10 @@
+[h:ParentToken = macro.args]
+[h:switchToken(ParentToken)]
 [h:bg.Array = getLibProperty("sb.Backgrounds","Lib:pm.a5e.Core")]
 [h:bg.Options = listSort(json.toList(json.path.read(bg.Array,"[*].DisplayName")),"A+")]
 [h:abort(input(
 	" bg.Choice | Choose Two Proficiencies,"+bg.Options+" | Choose a background | RADIO "
-	))]
+))]
 
 [h,if(bg.Choice==0),CODE:{
 	[h:bg.Custom = json.set("","Name","CustomBackground","DisplayName","Custom Background","Class","Background","Subclass","","Level",1,"GainOnLevel",1)]

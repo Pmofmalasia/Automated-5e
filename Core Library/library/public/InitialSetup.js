@@ -15,19 +15,26 @@ async function refreshSubraces() {
     document.getElementById('subraceChoice').innerHTML = newSubraceOptions.Options;
     
     if(newSubraceOptions.hasSizeChoice==1) {
-        document.getElementById('sizeChoice').innerHTML = newSubraceOptions.SizeOptions;
-        document.getElementById('sizeChoice').style.display = "inline";
+        document.getElementById('sizeChoice').removeAttribute('disabled','');
     }
     else {
-        document.getElementById('sizeChoice').innerHTML = "";
-        document.getElementById('sizeChoice').style.display = "hidden";
+        document.getElementById('sizeChoice').setAttribute('disabled','');
         document.getElementById('sizeChoice').value = newSubraceOptions.Size;
     }
 
+    document.getElementById('sizeChoice').innerHTML = newSubraceOptions.SizeOptions;
 }
 
 async function loadUserData() {
     let userdata = atob(await MapTool.getUserData());
     document.getElementById('characterCreationTable').innerHTML = userdata;
+}
+
+async function submitSetupData() {
+    let submitData = Object.fromEntries(new FormData(characterCreation));
+    console.log("HI");
+    console.log(JSON.stringify(submitData));
+    let request = fetch("macro:InitialSetupProcessing@lib:pm.a5e.Core", {method: "POST", body: JSON.stringify(submitData)});
+    let result = await request.json();
 }
 setTimeout(loadUserData, 1);

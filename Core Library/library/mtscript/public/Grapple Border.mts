@@ -1,7 +1,7 @@
 [h:GrappleData = macro.args]
 [h:Flavor = json.get(GrappleData,"Flavor")]
 [h:ParentToken = json.get(GrappleData,"ParentToken")]
-[h:outputTargets = if(PC.Ally.Enemy == 2,"none","not-gm")]
+[h:outputTargets = if(getProperty("stat.Allegiance") == 2,"none","not-gm")]
 [h:pm.a5e.EffectData = "[]"]
 
 [h:ClassFeatureData = json.set("",

@@ -1,4 +1,6 @@
-[h:sk.ValidSkills = macro.args]
+[h:sk.ValidSkills = json.get(macro.args,"Skills")]
+[h:ParentToken = json.get(macro.args,"ParentToken")]
+[h:switchToken(ParentToken)]
 [h:sk.GainedProf = if(json.isEmpty(json.get(sk.ValidSkills,"NewProf")),"{}",json.get(sk.ValidSkills,"NewProf"))]
 [h:listTraining=json.fromList("Untrained,Proficient,Expertise")]
 

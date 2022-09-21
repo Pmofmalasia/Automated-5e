@@ -1,4 +1,6 @@
 [h:pr.Prereqs = arg(0)]
+[h:ParentToken = json.get(pr.Prereqs,"ParentToken")]
+[h:switchToken(ParentToken)]
 
 [h:pr.ClassTest = if(json.get(pr.Prereqs,"Class")=="",1,0)]
 [h:pr.SubclassTest = if(json.get(pr.Prereqs,"Subclass")=="",1,0)]
@@ -7,7 +9,7 @@
 [h:pr.AttrMetCount = 0]
 [h:pr.FeatureTest = 1]
 
-[h,if(json.get(pr.Prereqs,"Level")==""): pr.LevelTest = 1; pr.LevelTest = if(json.get(pr.Prereqs,"Level")>=Level+pr.IsLevelUp,1,0)]
+[h,if(json.get(pr.Prereqs,"Level")==""): pr.LevelTest = 1; pr.LevelTest = if(json.get(pr.Prereqs,"Level")>=getProperty("Level")+pr.IsLevelUp,1,0)]
 
 [h,if(json.get(pr.Prereqs,"Features")!=""),CODE:{
 	[h:pr.FeatureNum = 0]
@@ -17,7 +19,7 @@
 	[h,if(json.get(pr.Prereqs,"FeatureNum")==0),CODE:{
 		[h:pr.FeatureTest = pr.FeatureNum >= json.length(json.get(pr.Prereqs,"Features"))]
 	};{
-		[h:pr.FeatureTest = pr.FeatureNum >= json.get(pr.Prereqs,"FeatureNum"))]
+		[h:pr.FeatureTest = (pr.FeatureNum >= json.get(pr.Prereqs,"FeatureNum"))]
 	}]
 };{}]
 

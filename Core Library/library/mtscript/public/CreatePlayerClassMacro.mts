@@ -1,4 +1,5 @@
-[h:pm.AbilityList = json.get(arg(0),"AbilityList")]
+[h:pm.AbilityList = json.get(arg(0),"AbilityList")][h:ParentToken = json.get(arg(0),"ParentToken")]
+[h:switchToken(ParentToken)]
 
 [h,foreach(ability,pm.AbilityList),CODE:{
 	[h:pm.CastTimeNote = if(or(json.get(ability,"CastTime")=="",lower(json.get(ability,"CastTime"))=="action"),""," <b>("+json.get(ability,"CastTime")+")</b>")]

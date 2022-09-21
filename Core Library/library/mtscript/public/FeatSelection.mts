@@ -1,6 +1,8 @@
 [h:ft.Array = getLibProperty("sb.Feats","Lib:pm.a5e.Core")]
 [h:ft.UseRestrictions = json.get(macro.args,"Restrictions")]
 [h:ft.IsLevelUp = json.get(macro.args,"LevelUp")]
+[h:ParentToken = json.get(macro.args,"ParentToken")]
+[h:switchToken(ParentToken)]
 [h:ft.Valid = ""]
 
 [h,foreach(feat,ft.Array),CODE:{
@@ -11,7 +13,6 @@
 		[h:ft.Valid = if(macro.return,json.append(ft.Valid,feat),ft.Valid)]
 	}]
 }]
-
 
 [h,if(json.isEmpty(ft.Valid)),CODE:{
 	[h:ft.Options = "No valid feats! Hit cancel to restart leveling."]

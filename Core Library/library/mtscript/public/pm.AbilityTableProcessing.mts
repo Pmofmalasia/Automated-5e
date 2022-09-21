@@ -7,6 +7,7 @@
 [h:BackgroundColor = json.get(arg(1),"BackgroundColor")]
 [h:BackgroundText = json.get(arg(1),"BackgroundText")]
 [h:ShowFullRules = arg(2)]
+[h,if(argCount()>3): switchToken(arg(3))]
 
 [h:TableFormat='padding:3px; '+if(getLibProperty("VerticalDisplay","Lib:pm.a5e.Core")==1,"width:100%",if(getLibProperty("useWidth","Lib:pm.a5e.Core")==2,"",if(getLibProperty("useWidth","Lib:pm.a5e.Core")==1,"max-","")+'width:'+string(getLibProperty("DisplaySize","Lib:pm.a5e.Core"))+'px;'))]
 

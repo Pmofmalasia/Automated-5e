@@ -29,7 +29,7 @@
 
 [h:setProperty("stat.Allegiance",json.get(newCharData,"allegianceChoice"))]
 [h:setProperty("stat.whichTeam",if(getProperty("stat.Allegiance")==2,2,if(getProperty("stat.Allegiance")==3,0,1)))]
-[h:broadcast("HI")]
+
 [macro("BackgroundSelection@Lib:pm.a5e.Core"): ParentToken]
 [h:lu.NewAbilities = json.append(lu.NewAbilities,macro.return)]
-[macro("Level Up@Lib:pm.a5e.Core"): json.set("","ParentToken",ParentToken,"Abilities",lu.NewAbilities)]
+[macro("LevelUp@Lib:pm.a5e.Core"): json.set("","ParentToken",ParentToken,"Abilities",lu.NewAbilities)]

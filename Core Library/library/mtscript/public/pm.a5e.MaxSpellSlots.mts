@@ -1,3 +1,6 @@
+[h,if(argCount()>0),CODE:{
+	[h:switchToken(arg(0))]
+};{}]
 [h:maxSpellLevel = 9]
 [h:SpellSlotDisplay = ""]
 [h,count(maxSpellLevel),CODE:{

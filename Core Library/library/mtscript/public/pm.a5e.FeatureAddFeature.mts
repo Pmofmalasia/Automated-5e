@@ -48,7 +48,7 @@
 	
 	[h:pm.NewAbilities = json.difference(pm.ChosenAbilities,pm.CurrentAbilities)]
 	[h:pm.RemovedAbilities = json.difference(pm.CurrentAbilities,pm.ChosenAbilities)]
-	[h,MACRO("New Ability Processing@Lib:pm.a5e.Core"): json.set("","Abilities",pm.NewAbilities)]
+	[h,MACRO("NewAbilityProcessing@Lib:pm.a5e.Core"): json.set("","Abilities",pm.NewAbilities,"ParentToken",ParentToken)]
 	[h,MACRO("New Ability Addition@Lib:pm.a5e.Core"): macro.return]
 	[h,MACRO("Ability Removal@Lib:pm.a5e.Core"): pm.RemovedAbilities]
 	

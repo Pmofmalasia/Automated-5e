@@ -12,4 +12,4 @@
 	[h:allAbilities = json.path.put(allAbilities,"[?(@.Name=='"+json.get(ability,"Name")+"' && @.Class=='"+json.get(ability,"Class")+"' && @.Subclass=='"+json.get(ability,"Subclass")+"')]","Resource",evalMacro(json.get(ability,"MaxResource")))]
 }]
 
-[h,MACRO("Create Player Class Macro@Lib:pm.a5e.Core"): json.set("","AbilityList",pm.NewButtons)]
+[h,MACRO("CreatePlayerClassMacro@Lib:pm.a5e.Core"): json.set("","AbilityList",pm.NewButtons,"ParentToken",ParentToken)]

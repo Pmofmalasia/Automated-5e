@@ -1,4 +1,6 @@
-[h:pm.SpellList = macro.args]
+[h:pm.SpellList = json.get(macro.args,"Spells")]
+[h:ParentToken = json.get(macro.args,"ParentToken")]
+[h:switchToken(ParentToken)]
 
 [h,foreach(spell,pm.SpellList),CODE:{
 	[h:MainSpellData = json.get(spell,0)]

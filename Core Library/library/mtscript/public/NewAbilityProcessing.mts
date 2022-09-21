@@ -1,9 +1,11 @@
 [h:lu.NewAbilities = json.get(macro.args,"Abilities")]
+[h:ParentToken = json.get(macro.args,"ParentToken")]
+[h:switchToken(ParentToken)]
 
 [h:"<!-- Selection of feats for features that grant them. Separate from class ASIs. -->"]
 [h,if(json.isEmpty(lu.NewAbilities)): lu.FeatChoice = ""; lu.FeatChoice = json.path.read(lu.NewAbilities,"[?(@.FeatChoice==1)]")]
 [h,count(json.length(lu.FeatChoice)),CODE:{
-	[MACRO("Feat Selection@Lib:pm.a5e.Core"): json.set("","LevelUp",1,"Restrictions",if(Level==0,0,1))]
+	[MACRO("FeatSelection@Lib:pm.a5e.Core"): json.set("","LevelUp",1,"Restrictions",if(Level==0,0,1),"ParentToken",ParentToken)]
 	[h:lu.NewAbilities = json.append(lu.NewAbilities,macro.return)]
 }]
 
@@ -147,7 +149,7 @@
 	[h,if(lu.AllSkillsTest==1): lu.ValidSkills = json.merge(json.fromStrProp(pm.GetSkills("Name","=1;")+"=1"),json.get(ability,"SkillOptions")); lu.ValidSkills = json.get(ability,"SkillOptions")]
 	[h:lu.ValidSkills = json.set(lu.ValidSkills,"ChoiceText",json.get(ability,"DisplayName")+": "+json.get(json.get(ability,"SkillOptions"),"ChoiceText"),"ChoiceNum",json.get(json.get(ability,"SkillOptions"),"ChoiceNum"),"NewProf",lu.AllNewSkillProficiencies)]
 	
-	[h,MACRO("Skill Selection@Lib:pm.a5e.Core"): lu.ValidSkills]
+	[h,MACRO("SkillSelection@Lib:pm.a5e.Core"): json.set("","Skills",lu.ValidSkills,"ParentToken",ParentToken)]
 	[h,if(json.get(ability,"Skills")!=""),CODE:{
 		[h:lu.NewSkillProficiencies = json.merge(json.get(ability,"Skills"),json.get(macro.return,"Skills"))]
 		[h:lu.AllNewSkillProficiencies = json.merge(lu.AllNewSkillProficiencies,lu.NewSkillProficiencies)]
@@ -169,7 +171,7 @@
 	[h,foreach(skill,pm.GetSkills("Name","json")): lu.ValidSkills = if(json.get(json.merge(Skills,lu.AllNewSkillProficiencies),skill)==1,json.set(lu.ValidSkills,skill,2),lu.ValidSkills)]
 	[h:lu.ValidSkills = json.set(lu.ValidSkills,"ChoiceText",json.get(ability,"DisplayName")+": "+json.get(json.get(ability,"SkillOptions"),"ChoiceText"),"ChoiceNum",json.get(json.get(ability,"SkillOptions"),"ChoiceNum"),"NewProf",lu.AllNewSkillProficiencies)]
 	
-	[h,MACRO("Skill Selection@Lib:pm.a5e.Core"): lu.ValidSkills]
+	[h,MACRO("SkillSelection@Lib:pm.a5e.Core"): json.set("","Skills",lu.ValidSkills,"ParentToken",ParentToken)]
 	
 	[h,if(json.get(ability,"Skills")!=""),CODE:{
 		[h:lu.NewSkillProficiencies = json.merge(json.get(ability,"Skills"),json.get(macro.return,"Skills"))]
@@ -195,7 +197,7 @@
 	[h,if(lu.AllSavesTest==1): lu.ValidSaves = json.merge(json.fromStrProp(pm.GetAttributes("Name","=1;")+"=1"),json.get(ability,"SaveOptions")); lu.ValidSaves = json.get(ability,"SaveOptions")]
 	[h:lu.ValidSaves = json.set(lu.ValidSaves,"ChoiceText",json.get(ability,"DisplayName")+": "+json.get(json.get(ability,"SkillOptions"),"ChoiceText"),"ChoiceNum",json.get(json.get(ability,"SkillOptions"),"ChoiceNum"),"NewProf",lu.AllNewSaveProficiencies)]
 	
-	[h,MACRO("Skill Selection@Lib:pm.a5e.Core"): lu.ValidSaves]
+	[h,MACRO("SkillSelection@Lib:pm.a5e.Core"): json.set("","Skills",lu.ValidSaves,"ParentToken",ParentToken)]
 	
 	[h,if(json.get(ability,"Saves")!=""): lu.NewAbilities = 
 	json.path.set(lu.NewAbilities,"[?(@.Name == '"+json.get(ability,"Name")+"' && @.Class == '"+json.get(ability,"Class")+"' && @.Subclass == '"+json.get(ability,"Subclass")+"')]['Saves']",json.merge(json.get(ability,"Saves"),json.get(macro.return,"Saves")));
@@ -210,7 +212,7 @@
 		" junkVar | ---------- Primary Stat Selection ---------- |  | LABEL | SPAN=TRUE ",
 		" lu.StatChoice | "+json.fields(json.intersection(json.get(ability,"PrimeStatOptions"),json.fromStrProp(pm.GetAttributes("DisplayName","=1;")+"=1")))+" | Stat Choice for "+json.get(ability,"DisplayName")+" | LIST | VALUE=STRING "
 		))]
-	[h:lu.NewAbilities = json.path.put(lu.NewAbilities,"[?(@.Name == '"+json.get(ability,"Name")+"' && @.Class == '"+json.get(ability,"Class")+"' && @.Subclass == '"+json.get(ability,"Subclass")+"')]","PrimeStat",pm.RemoveSpecial(lu.StatChoice))))]
+	[h:lu.NewAbilities = json.path.put(lu.NewAbilities,"[?(@.Name == '"+json.get(ability,"Name")+"' && @.Class == '"+json.get(ability,"Class")+"' && @.Subclass == '"+json.get(ability,"Subclass")+"')]","PrimeStat",pm.RemoveSpecial(lu.StatChoice))]
 }]
 
 [h:"<!-- Assemble Languages Gained -->"]
@@ -226,9 +228,9 @@
 	[h,if(json.get(ability,"Languages")!=""): 
 		lu.NewAbilities = json.path.set(lu.NewAbilities,"[?(@.Name == '"+json.get(ability,"Name")+"' && @.Class == '"+json.get(ability,"Class")+"' && @.Subclass == '"+json.get(ability,"Subclass")+"')]['Languages']",json.merge(json.get(ability,"Languages"),lu.NewLanguages));
 		lu.NewAbilities = json.path.put(lu.NewAbilities,"[?(@.Name == '"+json.get(ability,"Name")+"' && @.Class == '"+json.get(ability,"Class")+"' && @.Subclass == '"+json.get(ability,"Subclass")+"')]","Languages",lu.NewLanguages)
-	]	
+	][h:broadcast("HI")]
 }]
-
+[h:broadcast("HI")]
 [h:"<!-- Choose Damage Type -->"]
 [h,if(json.isEmpty(lu.NewAbilities)): lu.DamageChoiceAbilities = ""; lu.DamageChoiceAbilities = json.path.read(lu.NewAbilities,"[*][?(@.DamageOptions != null)]","DEFAULT_PATH_LEAF_TO_NULL")]
 [h,foreach(ability,lu.DamageChoiceAbilities),CODE:{
@@ -249,7 +251,7 @@
 	
 	[h:lu.NewAbilities = json.path.put(lu.NewAbilities,"[?(@.Name == '"+json.get(ability,"Name")+"' && @.Class == '"+json.get(ability,"Class")+"' && @.Subclass == '"+json.get(ability,"Subclass")+"')]","DamageType",json.get(json.path.read(lu.DamageOptions,"[?(@.Name=='"+pm.RemoveSpecial(lu.DamageChoice)+"')]['Name']"),0))]
 }]
-
+[h:broadcast("HI")]
 [h:"<!-- Choose Spells -->"]
 [h,if(json.isEmpty(lu.NewAbilities)): lu.SpellChoiceAbilities = ""; lu.SpellChoiceAbilities = json.path.read(lu.NewAbilities,"[*][?(@.SpellOptions != null)]","DEFAULT_PATH_LEAF_TO_NULL")]
 [h,foreach(ability,lu.SpellChoiceAbilities),CODE:{

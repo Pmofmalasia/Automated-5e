@@ -12,17 +12,19 @@
 [h:BodyFont=json.get(arg(0),"BodyFont")]
 [h:FalseName=json.get(arg(0),"FalseName")]
 [h:OnlyRules=json.get(arg(0),"OnlyRules")]
+[h:ParentToken=json.get(arg(0),"ParentToken")]
+[h,if(ParentToken!=""): switchToken(ParentToken)]
 
 [h,if(BorderColorOverride == ""),CODE:{
-	[h:chat.Border=pm.BorderColor(abilityClass,ColorSubtype)]
+	[h:chat.Border = pm.BorderColor(abilityClass,ColorSubtype)]
 };{
-	[h:chat.Border=BorderColorOverride]
+	[h:chat.Border = BorderColorOverride]
 }]
 
 [h,if(TitleColorOverride == ""),CODE:{
-	[h:chat.Title=pm.TitleColor(abilityClass,ColorSubtype)]
+	[h:chat.Title = pm.TitleColor(abilityClass,ColorSubtype)]
 };{
-	[h:chat.Title=TitleColorOverride]
+	[h:chat.Title = TitleColorOverride]
 }]
 
 [h,if(currentToken()!=""),CODE:{

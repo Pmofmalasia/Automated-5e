@@ -1,4 +1,5 @@
-[h:lu.NewAbilities = json.get(macro.args,"Abilities")][h:ParentToken = json.get(macro.args,"ParentToken")]
+[h:lu.NewAbilities = json.get(macro.args,"Abilities")]
+[h:ParentToken = json.get(macro.args,"ParentToken")]
 [h:switchToken(ParentToken)]
 [h:lu.ClassArray = pm.GetClasses()]
 [h:lu.ClassOptions = ""]
@@ -54,7 +55,7 @@
 
 [h:lu.ASITest = json.contains(json.get(json.get(lu.FinalClassArray,lu.ClassChoice),"ASILevels"),lu.NewLevel)]
 [h,if(lu.ASITest),CODE:{
-	[MACRO("Ability Score Increase@Lib:pm.a5e.Core"): json.set("","LevelUp",1,"Restrictions",if(Level==0,0,1))]
+	[MACRO("AbilityScoreIncrease@Lib:pm.a5e.Core"): json.set("","LevelUp",1,"Restrictions",if(Level==0,0,1),"ParentToken",ParentToken)]
 	[h:lu.NewAbilities = json.append(lu.NewAbilities,macro.return)]
 };{}]
 
@@ -68,7 +69,7 @@
 
 [h:tempNewAbilitiesWithPrereqs = json.path.read(tempNewAbilities,"[*][?(@.Prereqs!=null)]","DEFAULT_PATH_LEAF_TO_NULL")]
 [h,foreach(feature,tempNewAbilitiesWithPrereqs),CODE:{
-	[h:pm.a5e.CheckFeaturePrereqs(json.get(feature,"Prereqs"))]
+	[h:pm.a5e.CheckFeaturePrereqs(json.get(feature,"Prereqs"),"ParentToken",ParentToken)]
 	[h,if(!macro.return): tempNewAbilities = json.path.delete(tempNewAbilities,"[*][?(@.Name=='"+json.get(feature,"Name")+"' && @.Class=='"+json.get(feature,"Class")+"' && @.Subclass=='"+json.get(feature,"Subclass")+"')]")]
 }]
 
@@ -77,10 +78,10 @@
 [h:lu.FightingStyleTest = !json.isEmpty(json.path.read(lu.NewAbilities,"[*][?(@.FightingStyleList!=null)]","DEFAULT_PATH_LEAF_TO_NULL"))]
 [h,if(lu.FightingStyleTest),CODE:{
 	[h:needsMacroTest = !json.contains(getMacros("json"),"Manage Fighting Styles")]
-	[h,if(needsMacroTest): createMacro(json.set("","label","Manage Fighting Styles","command",'[MACRO("Manage Fighting Styles@Lib:pm.a5e.Core"): json.set("","LevelUp",0,"Class","'+lu.Class+'","ParentToken",currentToken())]',"group"," New Macros","color",pm.BorderColor("FightingStyle"),"fontColor",pm.TitleColor("FightingStyle"),"applyToSelected",1,"playerEditable",0,"minWidth",89))]
+	[h,if(needsMacroTest): createMacro(json.set("","label","Manage Fighting Styles","command",'[MACRO("ManageFightingStyles@Lib:pm.a5e.Core"): json.set("","LevelUp",0,"Class","'+lu.Class+'","ParentToken",ParentToken)]',"group"," New Macros","color",pm.BorderColor("FightingStyle"),"fontColor",pm.TitleColor("FightingStyle"),"applyToSelected",1,"playerEditable",0,"minWidth",89))]
 };{}]
 
-[h,MACRO("New Ability Processing@Lib:pm.a5e.Core"): json.set("","Abilities",lu.NewAbilities)]
+[h,MACRO("NewAbilityProcessing@Lib:pm.a5e.Core"): json.set("","Abilities",lu.NewAbilities,"ParentToken",ParentToken)]
 [h:lu.NewAbilities = json.get(macro.return,"Abilities")]
 [h:lu.NewButtons = json.get(macro.return,"Buttons")]
 [h:lu.NewSpells = json.get(macro.return,"Spells")]
@@ -144,7 +145,7 @@
 
 [h:abilityTable = json.append(abilityTable,json.set("","ShowIfCondensed",1,"Header","Abilities Gained","FalseHeader","","FullContents","","RulesContents",lu.DisplayNewAbilities,"RollContents","","DisplayOrder","['Rules','Roll','Full']","Value",""))]
 
-[h,MACRO("Create Player Class Macro@Lib:pm.a5e.Core"): json.set("","AbilityList",lu.NewButtons)]
+[h,MACRO("CreatePlayerClassMacro@Lib:pm.a5e.Core"): json.set("","AbilityList",lu.NewButtons,"ParentToken",ParentToken)]
 
 [h:"<!-- Addition of general resources: Happens last because the addition of abilities may change things (e.g. getting more health from a Con increase) -->"]
 
@@ -168,7 +169,7 @@
 		"Header","New Spell Slot Maximum",
 		"FalseHeader","",
 		"FullContents","",
-		"RulesContents",pm.a5e.MaxSpellSlots(),
+		"RulesContents",pm.a5e.MaxSpellSlots(ParentToken),
 		"RollContents","",
 		"DisplayOrder","['Rules','Roll','Full']"
 	))]
@@ -219,19 +220,19 @@
 	]
 	
 	[h,if(lu.NewSpellFilter!=""),CODE:{
-		[h,MACRO("Create Player Spell Macro@Lib:pm.a5e.Core"): json.get(pm.SpellFilter(lu.NewSpellFilter),"Spells")]
+		[h,MACRO("CreatePlayerSpellMacro@Lib:pm.a5e.Core"): json.set("","Spells",json.get(pm.SpellFilter(lu.NewSpellFilter),"Spells"),"ParentToken",ParentToken)]
 	};{}]
 };{}]
 
 [h:"<!-- Adds newly gained spell macros from outside of the regular spell list, e.g. Cleric domain spells, feats, etc. -->"]
 [h,if(!json.isEmpty(lu.NewSpells)),CODE:{
-	[h,MACRO("Create Player Spell Macro@Lib:pm.a5e.Core"): lu.NewSpells]
+	[h,MACRO("CreatePlayerSpellMacro@Lib:pm.a5e.Core"): json.set("","Spells",lu.NewSpells,"ParentToken",ParentToken)]
 }]
 
 [h:"<!-- Start of output creation -->"]
 [h:ClassFeatureData = json.set("",
 	"Flavor",token.name+" suddenly feels empowered by experience!",
-	"ParentToken",getSelected(),
+	"ParentToken",ParentToken,
 	"DMOnly",if(getProperty("stat.Allegiance")==0,0,1),
 	"BorderColorOverride","",
 	"TitleFontColorOverride","",
@@ -243,7 +244,7 @@
 	"Name","Level Up!",
 	"FalseName","",
 	"OnlyRules",0
-	)]
+)]
 
 [h:FormattingData = pm.MacroFormat(ClassFeatureData)]
 

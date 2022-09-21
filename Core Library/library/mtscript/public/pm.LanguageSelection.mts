@@ -1,4 +1,4 @@
-[h:lg.LanguageArray = pm.GetLanguages()]
+[h:lg.LanguageArray = pm.GetLanguages()][h:broadcast("HI")]
 [h,if(argCount()>2): lg.New = arg(2); lg.New = "{}"]
 [h:lg.Known = json.merge(Languages,lg.New)]
 [h:lg.Input = "junkVar | "+arg(1)+": Choose "+arg(0)+" Language"+if(arg(0)>1,"s","")+" |  | LABEL | SPAN=TRUE "]

@@ -3,7 +3,8 @@
 [h:AbilityChoices = ""]
 [h:FeatConditions = macro.args]
 [h:IsTooltip = 0]
-[h:ParentToken = currentToken()]
+[h:ParentToken = json.get(FeatConditions,"ParentToken")]
+[h:switchToken(ParentToken)]
 [h:a5e.UnifiedAbilities = a5e.GatherAbilities(ParentToken)]
 [h:pm.a5e.OverarchingContext = "Stats"]
 
@@ -48,6 +49,6 @@
 	[h:AbilityChoices = json.set(AbilityChoices,json.get(ValidAbilities,AbilityTwo),json.get(AbilityChoices,json.get(ValidAbilities,AbilityTwo))+1)]
 	[h:macro.return = json.set("","Name","AbilityScoreIncrease","DisplayName","Ability Score Increase","Attributes",AbilityChoices)]
 };{
-	[macro("Feat Selection@Lib:pm.a5e.Core"):FeatConditions]
+	[macro("FeatSelection@Lib:pm.a5e.Core"): FeatConditions]
 	[h:macro.return = macro.return]
 }]

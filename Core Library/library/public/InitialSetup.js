@@ -32,8 +32,6 @@ async function loadUserData() {
 
 async function submitSetupData() {
     let submitData = Object.fromEntries(new FormData(characterCreation));
-    console.log("HI");
-    console.log(JSON.stringify(submitData));
     let request = fetch("macro:InitialSetupProcessing@lib:pm.a5e.Core", {method: "POST", body: JSON.stringify(submitData)});
     let result = await request.json();
 }

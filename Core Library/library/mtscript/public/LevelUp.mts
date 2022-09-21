@@ -233,7 +233,7 @@
 [h:ClassFeatureData = json.set("",
 	"Flavor",token.name+" suddenly feels empowered by experience!",
 	"ParentToken",ParentToken,
-	"DMOnly",if(getProperty("stat.Allegiance")==0,0,1),
+	"DMOnly",if(getProperty("stat.Allegiance")=="PC",0,1),
 	"BorderColorOverride","",
 	"TitleFontColorOverride","",
 	"AccentBackgroundOverride","",
@@ -255,20 +255,22 @@
 [h:outputTest.NoFullMacro = json.get(FormattingData,"NoFullMacro")]
 [h:outputTest.NoRolls = json.get(FormattingData,"NoRolls")]
 [h:outputTest.NoRules = json.get(FormattingData,"NoRules")]
-[h:DamageColor=pm.DamageColor()]
-[h:HealingColor=pm.HealingColor()]
-[h:CritColor=pm.CritColor()]
-[h:CritFailColor=pm.CritFailColor()]
-[h:LinkColor=pm.LinkColor()]
+[h:DamageColor = pm.DamageColor()]
+[h:HealingColor = pm.HealingColor()]
+[h:CritColor = pm.CritColor()]
+[h:CritFailColor = pm.CritFailColor()]
+[h:LinkColor = pm.LinkColor()]
 
 [h:output.PC = json.get(json.get(FormattingData,"Output"),"Player")]
 [h:output.GM = json.get(json.get(FormattingData,"Output"),"GM")]
 
-[h:output.Temp = pm.AbilityTableProcessing(abilityTable,FormattingData,1)]
+[h:output.Temp = pm.AbilityTableProcessing(abilityTable,FormattingData,1,ParentToken)]
+
 [h:output.PC = output.PC + json.get(output.Temp,"Player")]
 [h:output.GM = output.GM + json.get(output.Temp,"GM")]
 
 [h:AbilityGainedText = ""]
-[h:output.PC = output.PC + AbilityGainedText]
-[h:output.PC = output.PC + "</div></div>"]
-[h:broadcastAsToken(output.PC)]
+[h:output.PC = output.PC + AbilityGainedText + "</div></div>"]
+[h:output.GM = output.GM + AbilityGainedText + "</div></div>"]
+[h:broadcastAsToken(output.PC,"not-gm")]
+[h:broadcastAsToken(output.GM,"gm")]

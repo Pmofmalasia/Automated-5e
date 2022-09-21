@@ -28,9 +28,9 @@
 }]
 
 [h,if(currentToken()!=""),CODE:{
-	[h:outputTest.NoRules = if(DMOnly,if(or(and(number(getLibProperty("HideEnemyMacros","Lib:pm.a5e.Core"))<1,getProperty("stat.Allegiance")==2),and(number(getLibProperty("HideAllyMacros","Lib:pm.a5e.Core"))<1,getProperty("stat.Allegiance")==1)),0,1),0)]
-	[h:outputTest.NoRolls = if(DMOnly,if(or(and(number(getLibProperty("HideEnemyMacros","Lib:pm.a5e.Core"))<2,getProperty("stat.Allegiance")==2),and(number(getLibProperty("HideAllyMacros","Lib:pm.a5e.Core"))<2,getProperty("stat.Allegiance")==1)),0,1),0)]
-	[h:outputTest.NoFullMacro = if(DMOnly,if(or(and(number(getLibProperty("HideEnemyMacros","Lib:pm.a5e.Core"))<3,getProperty("stat.Allegiance")==2),and(number(getLibProperty("HideAllyMacros","Lib:pm.a5e.Core"))<3,getProperty("stat.Allegiance")==1)),if(and(OnlyRules,outputTest.NoRules),1,0),1),0)]
+	[h:outputTest.NoRules = if(DMOnly,if(or(and(number(getLibProperty("HideEnemyMacros","Lib:pm.a5e.Core"))<1,getProperty("stat.Allegiance")=="Enemy"),and(number(getLibProperty("HideAllyMacros","Lib:pm.a5e.Core"))<1,getProperty("stat.Allegiance")=="Ally")),0,1),0)]
+	[h:outputTest.NoRolls = if(DMOnly,if(or(and(number(getLibProperty("HideEnemyMacros","Lib:pm.a5e.Core"))<2,getProperty("stat.Allegiance")=="Enemy"),and(number(getLibProperty("HideAllyMacros","Lib:pm.a5e.Core"))<2,getProperty("stat.Allegiance")=="Ally")),0,1),0)]
+	[h:outputTest.NoFullMacro = if(DMOnly,if(or(and(number(getLibProperty("HideEnemyMacros","Lib:pm.a5e.Core"))<3,getProperty("stat.Allegiance")=="Enemy"),and(number(getLibProperty("HideAllyMacros","Lib:pm.a5e.Core"))<3,getProperty("stat.Allegiance")=="Ally")),if(and(OnlyRules,outputTest.NoRules),1,0),1),0)]
 };{
 	[h:outputTest.NoRules = DMOnly]
 	[h:outputTest.NoRolls = DMOnly]

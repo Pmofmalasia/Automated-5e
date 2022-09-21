@@ -9,7 +9,7 @@
 
 [h,if(cond.Context!="AfterAbility"): IsTooltip=0]
 [h:cond.Flavor=json.get(cond.DisplayObject,"Flavor")]
-[h:cond.DMOnly=if(json.get(cond.DisplayObject,"DMOnly")=="",if(getProperty("stat.Allegiance")==2,min(number(getLibProperty("HideEnemyMacros","Lib:pm.a5e.Core")),1),if(getProperty("stat.Allegiance")==1,min(number(getLibProperty("HideAllyMacros","Lib:pm.a5e.Core")),1),0)),json.get(cond.DisplayObject,"DMOnly"))]
+[h:cond.DMOnly=if(json.get(cond.DisplayObject,"DMOnly")=="",if(getProperty("stat.Allegiance")=="Enemy",min(number(getLibProperty("HideEnemyMacros","Lib:pm.a5e.Core")),1),if(getProperty("stat.Allegiance")=="Ally",min(number(getLibProperty("HideAllyMacros","Lib:pm.a5e.Core")),1),0)),json.get(cond.DisplayObject,"DMOnly"))]
 [h:cond.BorderColorOverride=json.get(cond.DisplayObject,"BorderColorOverride")]
 [h:cond.TitleFontColorOverride=json.get(cond.DisplayObject,"TitleFontColorOverride")]
 [h:cond.AccentBackgroundOverride=json.get(cond.DisplayObject,"AccentBackgroundOverride")]

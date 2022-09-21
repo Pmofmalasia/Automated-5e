@@ -9,7 +9,7 @@
 }]
 
 [h:pass.Flavor=json.get(pass.DisplayObject,"Flavor")]
-[h:pass.DMOnly=if(json.get(pass.DisplayObject,"DMOnly")=="",if(getProperty("stat.Allegiance")==2,min(number(getLibProperty("HideEnemyMacros","Lib:pm.a5e.Core")),1),if(getProperty("stat.Allegiance")==1,min(number(getLibProperty("HideAllyMacros","Lib:pm.a5e.Core")),1),0)),json.get(pass.DisplayObject,"DMOnly"))]
+[h:pass.DMOnly=if(json.get(pass.DisplayObject,"DMOnly")=="",if(getProperty("stat.Allegiance")=="Enemy",min(number(getLibProperty("HideEnemyMacros","Lib:pm.a5e.Core")),1),if(getProperty("stat.Allegiance")=="Ally",min(number(getLibProperty("HideAllyMacros","Lib:pm.a5e.Core")),1),0)),json.get(pass.DisplayObject,"DMOnly"))]
 [h:pass.BorderColorOverride=json.get(pass.DisplayObject,"BorderColorOverride")]
 [h:pass.TitleFontColorOverride=json.get(pass.DisplayObject,"TitleFontColorOverride")]
 [h:pass.AccentBackgroundOverride=json.get(pass.DisplayObject,"AccentBackgroundOverride")]

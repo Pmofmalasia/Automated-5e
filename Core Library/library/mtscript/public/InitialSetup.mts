@@ -17,7 +17,7 @@
 [h:SubraceArray = pm.GetSubraces(json.get(json.get(RaceArray,0),"Name"))]
 [h,if(json.isEmpty(SubraceArray)),CODE:{
     [h:charCreationHTML = charCreationHTML + "<tr><th><label for='subraceChoice'>Subrace:</label></th><td>
-    <select id='subraceChoice' name='subraceChoice' disabled><option value='None'>No Subrace</option></select></td></tr>"]
+    <select id='subraceChoice' name='subraceChoice' readonly><option value='None'>No Subrace</option></select></td></tr>"]
 };{
     [h:charCreationHTML = charCreationHTML + "<tr><th><label for='subraceChoice'>Subrace:</label></th><td>
     <select id='subraceChoice' name='subraceChoice'>"]
@@ -30,7 +30,7 @@
 [h:firstRaceTraits = json.get(json.get(RaceArray,0),"Traits")]
 [h:firstRaceSizeOptions = json.get(firstRaceTraits,"SizeOptions")]
 [h,if(firstRaceSizeOptions==""),CODE:{
-    [h:charCreationHTML = charCreationHTML + "<select id='sizeChoice' name='sizeChoice' value='"+json.get(firstRaceTraits,"Size")+"' disabled><option value='"+json.get(firstRaceTraits,"Size")+"'>"+json.get(firstRaceTraits,"Size")+"</option></td></tr>"]
+    [h:charCreationHTML = charCreationHTML + "<select id='sizeChoice' name='sizeChoice' value='"+json.get(firstRaceTraits,"Size")+"' readonly><option value='"+json.get(firstRaceTraits,"Size")+"'>"+json.get(firstRaceTraits,"Size")+"</option></td></tr>"]
 };{
     [h:sizeOptions = ""]
     [h,foreach(tempSize,firstRaceSizeOptions): sizeOptions = sizeOptions + "<option value='"+tempSize+"'>"+tempSize+"</option>"]
@@ -59,6 +59,6 @@
         <option value='Enemy'>Enemy</option>
         <option value='Neutral'>Neutral</option>
     </select>
-</td></tr><tr><th text-align='center' colspan='2'><input type='button' id='submitButton' onclick='submitSetupData()' value='Submit'></th></tr><input type='hidden' name='activeToken' id='activeToken' value='"+currentToken()+"'>"]
+</td></tr><tr><th text-align='center' colspan='2'><input type='submit' id='submitButton' value='Submit'></th></tr><input type='hidden' name='activeToken' id='activeToken' value='"+currentToken()+"'>"]
 
-[h:html.dialog5("Character Creation", "lib://pm.a5e.core/InitialSetup.html?cachelib=false","value="+base64.encode(charCreationHTML))]
+[h:html.dialog5("Character Creation","lib://pm.a5e.core/InitialSetup.html?cachelib=false","value="+base64.encode(charCreationHTML))]

@@ -5,13 +5,13 @@
 [h,if(json.isEmpty(SubraceArray)),CODE:{
     [h:subraceOptions = "<option value='None'>No Subrace</option>"]
 
-    [h:subraceData = json.set("","isDisabled",1,"Options",subraceOptions)]
+    [h:subraceData = json.set("","isReadonly",1,"Options",subraceOptions)]
 };{
     [h:subraceOptions = ""]
     [h:tempSubraceOptions = json.path.read(SubraceArray,"[*].DisplayName")]
     [h,foreach(tempSubrace,tempSubraceOptions): subraceOptions = subraceOptions + "<option value='"+roll.count+"'>"+tempSubrace+"</option>"]
 
-    [h:subraceData = json.set("","isDisabled",0,"Options",subraceOptions)]
+    [h:subraceData = json.set("","isReadonly",0,"Options",subraceOptions)]
 }]
 
 [h:RaceTraits = json.get(RaceData,"Traits")]

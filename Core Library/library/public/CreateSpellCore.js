@@ -45,13 +45,11 @@ async function concLost() {
 
         let selectedSpellLevel = document.getElementById("spellLevel").value;
         var concLostLevelOptions = "";
-        console.log("HI");
         for(let i=selectedSpellLevel; i<10; i++){
             concLostLevelOptions = concLostLevelOptions+"<option value='"+i+"'>"+i+"</option>";
         }
-        console.log("HI");
 
-        customDurationRow.innerHTML = "<th><label for='concLostLevel'>Level No Longer Required:</label></th><td><select id='concLostLevel' name=concLostLevel' width:97%>"+concLostLevelOptions+"</selected></td>";
+        customDurationRow.innerHTML = "<th><label for='concLostLevel'>Level No Longer Required:</label></th><td><select id='concLostLevel' name=concLostLevel' style='width:97%'>"+concLostLevelOptions+"</selected></td>";
     }
     else{
         document.getElementById("spellCreationTable").deleteRow(concLostLineIndex+1);
@@ -82,7 +80,21 @@ async function ahlDuration() {
 }
 
 async function mCompInput() {
+    let mCompLineIndex = document.getElementById("MaterialComponents").rowIndex;
+    
+    if(document.getElementById("mComp").checked){
+        let table = document.getElementById("spellCreationTable");
 
+        let mCompList = table.insertRow(mCompLineIndex+1);
+        mCompList.innerHTML = "<th><label for='mComponents'>Material Components:</label></th><td><input type='text' id='mComponents' name=mComponents'></td>";
+
+        let mCompConsumedList = table.insertRow(mCompLineIndex+2);
+        mCompConsumedList.innerHTML = "<th><label for='mComponentsConsumed'>Consumed Material Components:</label></th><td><input type='text' id='mComponentsConsumed' name=mComponentsConsumed'></td>";
+    }
+    else{
+        document.getElementById("spellCreationTable").deleteRow(mCompLineIndex+1);
+        document.getElementById("spellCreationTable").deleteRow(mCompLineIndex+1);
+    }
 }
 
 async function loadUserData() {

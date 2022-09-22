@@ -1,5 +1,12 @@
 [h:SpellCoreData = macro.args]
-[h:json.toVars(SpellCoreData)]
+
+[h,if(getLibProperty("cd.NewSpell","Lib:pm.a5e.Core")==""): setLibProperty("cd.NewSpell","{}","Lib:pm.a5e.Core")]
+
+[h:currentSpellData = getLibProperty("cd.NewSpell","pm.a5e.Core")]
+[h:thisPlayerCurrentSpellData = json.get(currentSpellData,getPlayerName())]
+[h:setLibProperty("cd.NewSpell",json.set(currentSpellData,getPlayerName(),json.append(thisPlayerCurrentSpellData,SpellCoreData)))]
+
+[h,MACRO("CreateSpellSubeffect@Lib:pm.a5e.Core"): ""]
 
 [h:durationInfo = "{}"]
 [h,switch(spellDuration),CODE:

@@ -66,10 +66,9 @@ async function ahlDuration() {
         for(let i=9; i>selectedSpellLevel; i--){
             var thisAHLDurationRow = table.insertRow(isDurationAHLLineIndex+1);
             thisAHLDurationRow.innerHTML = "<th><label for='ahlDurationLevel"+i+"'>Duration at Level "+i+":</label></th><td><select id='ahlDurationLevel"+i+"' name=ahlDurationLevel"+i+"'></selected></td>";
-            let DurationOptions = document.getElementById("spellDuration");
+            let DurationOptions = document.getElementById("spellDuration").innerHTML;
             let thisAHLDurationSelect = document.getElementById("ahlDurationLevel"+i);
             thisAHLDurationSelect.innerHTML = DurationOptions;
-            console.log(DurationOptions);
         }
     }
     else{
@@ -104,7 +103,7 @@ async function loadUserData() {
 
 async function submitSpellData() {
     let submitData = Object.fromEntries(new FormData(spellCreation));
-    let request = fetch("macro:CreateSpellSubeffect@lib:pm.a5e.Core", {method: "POST", body: JSON.stringify(submitData)});
+    let request = fetch("macro:CreateSpellCoreProcessing@lib:pm.a5e.Core", {method: "POST", body: JSON.stringify(submitData)});
     let result = await request.json();
 }
 setTimeout(loadUserData, 1);

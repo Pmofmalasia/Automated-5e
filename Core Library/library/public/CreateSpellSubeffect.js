@@ -198,6 +198,7 @@ async function createRangeTable(){
 }
 
 async function createAoETable(){
+    let table = document.getElementById("SubeffectTable");
     let currentAOESelection = document.getElementById("aoeShape").value;
     let aoeIndex = document.getElementById("AoE").rowIndex;
 
@@ -254,7 +255,13 @@ async function createAoETable(){
 }
 
 async function createTargetTable(){
-    
+    let table = document.getElementById("SubeffectTable");
+    let currentTargetTypeSelection = document.getElementById("targetType").value;
+    let targetTypeIndex = document.getElementById("Target").rowIndex;
+
+    if(currentTargetTypeSelection == "Creature"){
+        
+    }
 }
 
 async function loadUserData() {

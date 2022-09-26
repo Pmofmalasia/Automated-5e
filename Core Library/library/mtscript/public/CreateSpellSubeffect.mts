@@ -12,7 +12,7 @@
 
 <tr id='Missiles'><th><label for='isMissiles'>Is it a Missile Spell?</label></th><td><input type='checkbox' id='isMissiles' name='isMissiles' value=1></td></tr>
 
-<tr id='Range'><th><label for='rangeType'>Range Type:</label></th><td><select id='rangeType' name='rangeType' onchange='createRangeTable()'><option value='Self'>Self</option><option value='SelfRanged'>Self with Range</option><option value='Touch'>Touch</option><option value='Ranged'>Ranged</option></td></tr>
+<tr id='Range'><th><label for='rangeType'>Range Type:</label></th><td><select id='rangeType' name='rangeType' onchange='createRangeTable()'><option value='Self'>Self</option><option value='SelfRanged'>Self with Range</option><option value='Touch'>Touch</option><option value='Ranged'>Ranged</option>"+if(thisSubeffectNum>1,"<option value='PriorTarget'>Based on Prior Subeffect</option>","")+"</td></tr>
 
 <tr id='AoE'><th><label for='aoeShape'>Area of Effect Shape:</label></th><td><select id='aoeShape' name='aoeShape' onchange='createAoETable()'><option value='None'>None</option><option value='Cone'>Cone</option><option value='Cube'>Cube</option><option value='Cylinder'>Cylinder</option><option value='Half Sphere'>Half Sphere</option><option value='Line'>Line</option><option value='Panels'>Panels</option><option value='Sphere'>Sphere</option><option value='Wall'>Wall</option><option value='Choose'>Multiple Options</option></td></tr>
 

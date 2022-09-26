@@ -7,7 +7,7 @@
 
 [h,if(argCount()>1): pm.Delim = arg(1) ; pm.Delim = if(pm.KeyChoice=="","json",",")]
 [h,if(pm.Delim == "json"),CODE:{
-	[h:macro.return = pm.Attributes]
+	[h:return(0,pm.Attributes)]
 };{
-	[h:macro.return = json.toList(pm.Attributes,pm.Delim)]
+	[h:return(0,json.toList(pm.Attributes,pm.Delim))]
 }]

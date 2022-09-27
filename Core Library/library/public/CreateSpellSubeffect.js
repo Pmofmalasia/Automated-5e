@@ -260,7 +260,80 @@ async function createTargetTable(){
     let targetTypeIndex = document.getElementById("Target").rowIndex;
 
     if(currentTargetTypeSelection == "Creature"){
-        
+        let rowAllegiance = table.insertRow(targetTypeIndex+1);
+        rowAllegiance.id = "rowAllegiance";
+        rowAllegiance.innerHTML = "<th><label for='targetAllegiance'>Who Can Be Targeted</label></th><td><select id='targetAllegiance' name='targetAllegiance' onchange='createCreatureTargetTable()'><option value='All'>Anyone</option><option value='Self'>Self Only</option><option value='Allies'>Allies</option><option value='AlliesNonself'>Allies Other Than Self</option><option value='Enemies'>Enemies</option><option value='Nonhostile'>Nonhostile Creatures</option></select></td>";
+    }
+    else if(currentTargetTypeSelection == "Object"){
+
+    }
+    else if(currentTargetTypeSelection == "Effect"){
+
+    }
+    else if(currentTargetTypeSelection == "Object"){
+
+    }
+}
+
+async function createCreatureTargetTable(){
+    let table = document.getElementById("SubeffectTable");
+    let currentTargetTypeSelection = document.getElementById("targetType").value;
+    let rowAllegianceIndex = document.getElementById("rowAllegiance").rowIndex;
+
+    if(document.getElementById("rowAllegiance").value == "Self"){
+        if(currentTargetTypeSelection == "Creature"){
+            let endRowID = ""
+        }
+    }
+    else{
+        let rowCreatureTypes = table.insertRow(rowAllegianceIndex+1);
+        rowCreatureTypes.id = "rowCreatureTypes";
+        rowCreatureTypes.innerHTML = "<th><label for='targetCreatureTypes'>Valid Creature Types:</label></th><td><select id='targetCreatureTypes' name='targetCreatureTypes' onchange='createCreatureTargetTypes()'><option value='All'>All Types</option><option value='Inclusive'>Include Selected Types</option><option value='Exclusive'>Exclude Selected Types</option></select></td>";
+    }
+}
+
+async function createCreatureTargetTypes(){
+    let table = document.getElementById("SubeffectTable");
+    let currentTargetCreatureTypeSelection = document.getElementById("targetCreatureTypes").value;
+    let currentTargetTypeSelection = document.getElementById("targetType").value;
+
+    if(currentTargetCreatureTypeSelection == "All"){
+        if(currentTargetTypeSelection == "Creature"){
+            var endRowID = "FINALTABLEROW";
+        }
+        else if(currentTargetTypeSelection == "Creature or Object"){
+
+        }
+        else if(currentTargetTypeSelection == "Point"){
+
+        }
+        else if(currentTargetTypeSelection == "Effect"){
+
+        }
+        else if(currentTargetTypeSelection == "Free Hand"){
+
+        }
+        clearUnusedTable("rowCreatureTypes",endRowID);
+    }
+    else{
+        let request = await fetch("macro:pm.GetCreatureTypes@lib:pm.a5e.Core", {method: "POST", body: "['DisplayName','json']"});
+        let creatureTypes = await request.json();
+
+        let creatureTypeOptions = "";
+        for(let tempType of creatureTypes){
+            creatureTypeOptions = creatureTypeOptions + "<option value='"+tempType+"'>"+tempType+"</option>";
+        }
+
+        if(currentTargetCreatureTypeSelection == "Inclusive"){
+            var typeHeader = "Included Creature Types:";
+        }
+        else{
+            var typeHeader = "Excluded Creature Types:";
+        }
+
+        let rowSpecificTypes = table.insertRow(targetTypeIndex+1);
+        rowSpecificTypes.id = "rowSpecificTypes";
+        rowSpecificTypes.innerHTML = "<th><label for='creatureTypeOptions'>"+typeHeader+"</th><td><select id='creatureTypeOptions' name='creatureTypeOptions' multiple>"+creatureTypeOptions+"</select></td>"
     }
 }
 

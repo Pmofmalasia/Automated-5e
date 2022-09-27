@@ -254,13 +254,20 @@ async function createAoETable(){
     }
 }
 
-async function createTargetTable(){
+async function createTargetTable(primarySecondary){
     let table = document.getElementById("SubeffectTable");
-    let currentTargetTypeSelection = document.getElementById("targetType").value;
-    let targetTypeIndex = document.getElementById("Target").rowIndex;
+
+    if(primarySecondary == 1){
+        var currentTargetTypeSelection = document.getElementById("targetType").value;
+        var anchorRowIndex = document.getElementById("Target").rowIndex;
+    }
+    else if(primarySecondary == 2){
+        var currentTargetTypeSelection = document.getElementById("secondaryTargetType").value;
+        var anchorRowIndex = document.getElementById("rowSecondaryTarget").rowIndex;
+    }    
 
     if(currentTargetTypeSelection == "Creature"){
-        let rowAllegiance = table.insertRow(targetTypeIndex+1);
+        let rowAllegiance = table.insertRow(anchorRowIndex+1);
         rowAllegiance.id = "rowAllegiance";
         rowAllegiance.innerHTML = "<th><label for='targetAllegiance'>Who Can Be Targeted</label></th><td><select id='targetAllegiance' name='targetAllegiance' onchange='createCreatureTargetTable()'><option value='All'>Anyone</option><option value='Self'>Self Only</option><option value='Allies'>Allies</option><option value='AlliesNonself'>Allies Other Than Self</option><option value='Enemies'>Enemies</option><option value='Nonhostile'>Nonhostile Creatures</option></select></td>";
     }
@@ -270,8 +277,19 @@ async function createTargetTable(){
     else if(currentTargetTypeSelection == "Effect"){
 
     }
-    else if(currentTargetTypeSelection == "Object"){
-
+    else if(currentTargetTypeSelection == "Point"){
+        let rowSecondaryTarget = table.insertRow(anchorRowIndex+1);
+        rowSecondaryTarget.id = "rowSecondaryTarget";
+        let secondaryTargetOptions = document.getElementById("targetType").innerHTML;
+        secondaryTargetOptions = "<option value='None'>None</option>" + secondaryTargetOptions;
+        rowSecondaryTarget.innerHTML = "<th><label for='secondaryTargetType'>Secondary Target Type:</label></th><td><select id='secondaryTargetType' name='secondaryTargetType' onchange='createTargetTable(2)'></select></td>";
+        
+        document.getElementById("secondaryTargetType").innerHTML = secondaryTargetOptions;
+        let secondaryTargetSelection = document.getElementById("secondaryTargetType");
+        //remove Point option
+        secondaryTargetSelection = document.getElementById("secondaryTargetType").remove(8);
+        //remove Free Hand option
+        secondaryTargetSelection = document.getElementById("secondaryTargetType").remove(9);
     }
 }
 
@@ -300,6 +318,7 @@ async function createCreatureTargetTypes(){
     if(currentTargetCreatureTypeSelection == "All"){
         if(currentTargetTypeSelection == "Creature"){
             var endRowID = "FINALTABLEROW";
+            var anchorRowIndex = document.getElementById("rowCreatureTypes").rowIndex;
         }
         else if(currentTargetTypeSelection == "Creature or Object"){
 
@@ -333,7 +352,9 @@ async function createCreatureTargetTypes(){
 
         let rowSpecificTypes = table.insertRow(targetTypeIndex+1);
         rowSpecificTypes.id = "rowSpecificTypes";
-        rowSpecificTypes.innerHTML = "<th><label for='creatureTypeOptions'>"+typeHeader+"</th><td><select id='creatureTypeOptions' name='creatureTypeOptions' multiple>"+creatureTypeOptions+"</select></td>"
+        rowSpecificTypes.innerHTML = "<th><label for='creatureTypeOptions'>"+typeHeader+"</th><td><select id='creatureTypeOptions' name='creatureTypeOptions' multiple>"+creatureTypeOptions+"</select></td>";
+
+        let rowSightRequired = 
     }
 }
 

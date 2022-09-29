@@ -49,13 +49,14 @@ async function createMitigationTable(){
     }
 }
 
-async function clearUnusedTable(anchorRowID,endRowID){
+async function clearUnusedTable(startRowID,endRowID){
     let table = document.getElementById("SubeffectTable");
-    let anchorRowIndex = document.getElementById(anchorRowID).rowIndex;
-    var endRowIndex = document.getElementById(endRowID).rowIndex;
-    while(anchorRowIndex+1 != endRowIndex){
-        table.deleteRow(anchorRowIndex+1);
-        var endRowIndex = document.getElementById(endRowID).rowIndex;
+    let startRowIndex = document.getElementById(startRowID).rowIndex;
+    let endRowIndex = document.getElementById(endRowID).rowIndex;
+    
+    while(startRowIndex+1 != endRowIndex){
+        table.deleteRow(startRowIndex+1);
+        endRowIndex = endRowIndex - 1;
     }
 }
 
@@ -201,7 +202,7 @@ async function createAoETable(){
     let table = document.getElementById("SubeffectTable");
     let currentAOESelection = document.getElementById("aoeShape").value;
     let aoeIndex = document.getElementById("AoE").rowIndex;
-
+    
     if(currentAOESelection == "None"){
         clearUnusedTable("AoE","Target");
     }
@@ -234,7 +235,7 @@ async function createAoETable(){
         let rowPanelDimensions = table.insertRow(aoeIndex+1);
         rowPanelDimensions.id = "rowPanelDimensions";
         rowPanelDimensions.innerHTML = "<th><label for='panelDimensionValue'>Panel Side Length:</label></th><td><input type='number' id='panelDimensionValue' name='panelDimensionValue' min=0 style='width:25px' value=0><select id='panelDimensionUnits' name='panelDimensionUnits'><option value='Feet'>Feet</option><option value='Miles'>Miles</option></select></td>";
-
+    
         let rowPanelNumber = table.insertRow(aoeIndex+2);
         rowPanelNumber.id = "rowPanelNumber";
         rowPanelNumber.innerHTML = "<th><label for='panelNumber'>Number of Panels:</label></th><td><input type='number' id='panelNumber' name='panelNumber' min=0 style='width:25px' value=10></td>";
@@ -256,29 +257,41 @@ async function createAoETable(){
 
 async function createTargetTable(primarySecondary){
     let table = document.getElementById("SubeffectTable");
-
+    console.log("HI");
     if(primarySecondary == 1){
+        console.log("primary");
         var currentTargetTypeSelection = document.getElementById("targetType").value;
-        var anchorRowIndex = document.getElementById("Target").rowIndex;
+        var startRowIndex = document.getElementById("Target").rowIndex;
     }
     else if(primarySecondary == 2){
+        console.log("secondary");
         var currentTargetTypeSelection = document.getElementById("secondaryTargetType").value;
-        var anchorRowIndex = document.getElementById("rowSecondaryTarget").rowIndex;
+        var startRowIndex = document.getElementById("rowSecondaryTarget").rowIndex;
     }    
 
     if(currentTargetTypeSelection == "Creature"){
-        let rowAllegiance = table.insertRow(anchorRowIndex+1);
-        rowAllegiance.id = "rowAllegiance";
-        rowAllegiance.innerHTML = "<th><label for='targetAllegiance'>Who Can Be Targeted</label></th><td><select id='targetAllegiance' name='targetAllegiance' onchange='createCreatureTargetTable()'><option value='All'>Anyone</option><option value='Self'>Self Only</option><option value='Allies'>Allies</option><option value='AlliesNonself'>Allies Other Than Self</option><option value='Enemies'>Enemies</option><option value='Nonhostile'>Nonhostile Creatures</option></select></td>";
+        console.log("creature");
+        createCreatureTargetTable(primarySecondary);
     }
     else if(currentTargetTypeSelection == "Object"){
+        console.log("object");
 
     }
     else if(currentTargetTypeSelection == "Effect"){
+        console.log("effect");
 
     }
     else if(currentTargetTypeSelection == "Point"){
-        let rowSecondaryTarget = table.insertRow(anchorRowIndex+1);
+        console.log("point");
+        let rowPointOnGround = table.insertRow(startRowIndex+1);
+        rowPointOnGround.id = "rowPointOnGround";
+        rowPointOnGround.innerHTML = "<th><label for='pointOnGround'>Point Must Be on the Ground:</label></th><td><input type='checkbox' id='pointOnGround' name='pointOnGround'></td>";
+        
+        let rowLeavesBehindEffect = table.insertRow(startRowIndex+2);
+        rowLeavesBehindEffect.id = "rowLeavesBehindEffect";
+        rowLeavesBehindEffect.innerHTML = "<th><label for='leavesBehindEffect'>Leaves Behind Effect in Space:</label></th><td><input type='checkbox' id='leavesBehindEffect' name='leavesBehindEffect'></td>";
+        
+        let rowSecondaryTarget = table.insertRow(startRowIndex+3);
         rowSecondaryTarget.id = "rowSecondaryTarget";
         let secondaryTargetOptions = document.getElementById("targetType").innerHTML;
         secondaryTargetOptions = "<option value='None'>None</option>" + secondaryTargetOptions;
@@ -286,28 +299,55 @@ async function createTargetTable(primarySecondary){
         
         document.getElementById("secondaryTargetType").innerHTML = secondaryTargetOptions;
         let secondaryTargetSelection = document.getElementById("secondaryTargetType");
-        //remove Point option
+        //removes Point option
         secondaryTargetSelection = document.getElementById("secondaryTargetType").remove(8);
-        //remove Free Hand option
+        //removes Free Hand option
         secondaryTargetSelection = document.getElementById("secondaryTargetType").remove(9);
     }
 }
 
-async function createCreatureTargetTable(){
+async function createCreatureTargetTable(primarySecondary){
     let table = document.getElementById("SubeffectTable");
     let currentTargetTypeSelection = document.getElementById("targetType").value;
-    let rowAllegianceIndex = document.getElementById("rowAllegiance").rowIndex;
 
-    if(document.getElementById("rowAllegiance").value == "Self"){
-        if(currentTargetTypeSelection == "Creature"){
-            let endRowID = ""
-        }
+    if(primarySecondary==1){
+        var startRowID = "Target";
     }
-    else{
-        let rowCreatureTypes = table.insertRow(rowAllegianceIndex+1);
-        rowCreatureTypes.id = "rowCreatureTypes";
-        rowCreatureTypes.innerHTML = "<th><label for='targetCreatureTypes'>Valid Creature Types:</label></th><td><select id='targetCreatureTypes' name='targetCreatureTypes' onchange='createCreatureTargetTypes()'><option value='All'>All Types</option><option value='Inclusive'>Include Selected Types</option><option value='Exclusive'>Exclude Selected Types</option></select></td>";
+    else if(primarySecondary==2){
+        var startRowID = "rowSecondaryTarget";
     }
+
+    let startRowIndex = document.getElementById(startRowID).rowIndex;
+    
+    let rowAllegiance = table.insertRow(startRowIndex+1);
+    rowAllegiance.id = "rowAllegiance";
+    rowAllegiance.innerHTML = "<th><label for='targetAllegiance'>Who Can Be Targeted</label></th><td><select id='targetAllegiance' name='targetAllegiance' onchange='disableCreatureFilteringOptions()'><option value='All'>Anyone</option><option value='Self'>Self Only</option><option value='Allies'>Allies</option><option value='AlliesNonself'>Allies Other Than Self</option><option value='Enemies'>Enemies</option><option value='Nonhostile'>Nonhostile Creatures</option></select></td>";
+
+    //TODO: add function that disables/enables filtering options when 'Self' is the only viable target
+
+    let rowCreatureTypes = table.insertRow(startRowIndex+2);
+    rowCreatureTypes.id = "rowCreatureTypes";
+    rowCreatureTypes.innerHTML = "<th><label for='targetCreatureTypes'>Valid Creature Types:</label></th><td><select id='targetCreatureTypes' name='targetCreatureTypes' onchange='createCreatureTargetTypes()'><option value='All'>All Types</option><option value='Inclusive'>Include Selected Types</option><option value='Exclusive'>Exclude Selected Types</option></select></td>";
+    
+    let rowTargetSenses = table.insertRow(startRowIndex+3);
+    rowTargetSenses.id = "rowTargetSenses";
+    rowTargetSenses.innerHTML = "<th><label for='targetCanSee'>Senses Required by Target:</th><td><input type='checkbox' name='targetCanSee' id='targetCanSee'><label for='targetCanSee'>Target Must See Caster</label><br><input type='checkbox' name='targetCanHear' id='targetCanHear'><label for='targetCanHear'>Target Must Hear Caster</label><br><input type='checkbox' name='targetCanUnderstand' id='targetCanUnderstand'><label for='targetCanUnderstand'>Target Must Understand Caster</label></td>";
+    
+    let rowTargetCover = table.insertRow(startRowIndex+4);
+    rowTargetCover.id = "rowTargetCover";
+    rowTargetCover.innerHTML = "<th><label for='maxCover'>Most Cover Target Can Be Behind:</th><td><select name='maxCover' id='maxCover'><option value='None'>None</option><option value='Half'>Half</option><option value='ThreeQuarters' selected>Three-Quarters</option><option value='Full'>Full</option></select></td>";
+    
+    let rowTargetCondition = table.insertRow(startRowIndex+5);
+    rowTargetCondition.id = "rowTargetCondition";
+    rowTargetCondition.innerHTML = "<th><label for='isCondition'>Condition Requirements on Target:</th><td><select name='isCondition' id='isCondition' onchange='createTargetConditionTable()'><option value='None'>None</option><option value='Inclusive'>Some Conditions Required</option><option value='Exclusive'>Must Not Have Certain Conditions</option><option value='Mixture'>Mixture of Both</option></select></td>";
+    
+    let rowTargetAbilityScore = table.insertRow(startRowIndex+6);
+    rowTargetAbilityScore.id = "rowTargetAbilityScore";
+    rowTargetAbilityScore.innerHTML = "<th><label for='isAbilityScore'>Limit Targeting By Target Ability Scores:</th><td><input type='checkbox' name='isAbilityScore' id='isAbilityScore' onchange='createTargetAbilityScoreTable()'></td>";
+    
+    let rowTargetAlignment = table.insertRow(startRowIndex+7);
+    rowTargetAlignment.id = "rowTargetAlignment";
+    rowTargetAlignment.innerHTML = "<th><label for='isAlignment'>Limit Targeting By Alignment:</th><td><input type='checkbox' name='isAlignment' id='isAlignment' onchange='createTargetAlignmentTable()'></td>";
 }
 
 async function createCreatureTargetTypes(){
@@ -315,10 +355,11 @@ async function createCreatureTargetTypes(){
     let currentTargetCreatureTypeSelection = document.getElementById("targetCreatureTypes").value;
     let currentTargetTypeSelection = document.getElementById("targetType").value;
 
+    //add check here for going from included -> excluded and vice versa, so that extra selections aren't made (or maybe allow for selections of both like in conditions, would future-proof support for multityped creatures)
     if(currentTargetCreatureTypeSelection == "All"){
         if(currentTargetTypeSelection == "Creature"){
-            var endRowID = "FINALTABLEROW";
-            var anchorRowIndex = document.getElementById("rowCreatureTypes").rowIndex;
+            var endRowID = "submitRow";
+            var startRowIndex = document.getElementById("rowCreatureTypes").rowIndex;
         }
         else if(currentTargetTypeSelection == "Creature or Object"){
 
@@ -335,6 +376,8 @@ async function createCreatureTargetTypes(){
         clearUnusedTable("rowCreatureTypes",endRowID);
     }
     else{
+        var startRowIndex = document.getElementById("rowCreatureTypes").rowIndex
+
         let request = await fetch("macro:pm.GetCreatureTypes@lib:pm.a5e.Core", {method: "POST", body: "['DisplayName','json']"});
         let creatureTypes = await request.json();
 
@@ -350,11 +393,159 @@ async function createCreatureTargetTypes(){
             var typeHeader = "Excluded Creature Types:";
         }
 
-        let rowSpecificTypes = table.insertRow(targetTypeIndex+1);
+        let rowSpecificTypes = table.insertRow(startRowIndex+1);
         rowSpecificTypes.id = "rowSpecificTypes";
-        rowSpecificTypes.innerHTML = "<th><label for='creatureTypeOptions'>"+typeHeader+"</th><td><select id='creatureTypeOptions' name='creatureTypeOptions' multiple>"+creatureTypeOptions+"</select></td>";
+        rowSpecificTypes.innerHTML = "<th><label for='creatureTypeOptions'>"+typeHeader+"</label></th><td><select id='creatureTypeOptions' name='creatureTypeOptions' multiple>"+creatureTypeOptions+"</select></td>";
+    }
+}
 
-        let rowSightRequired = 
+async function createTargetConditionTable(){
+    let table = document.getElementById("SubeffectTable");
+    let startRowIndex = document.getElementById("rowTargetCondition").rowIndex;
+    let conditionChoice = document.getElementById("isCondition").value;
+    let nextRowIndex = startRowIndex+1;
+
+    if(conditionChoice == "None"){
+        clearUnusedTable("rowTargetCondition","rowTargetAbilityScore");
+    }
+    else{
+        let request = await fetch("macro:pm.a5e.GetBaseConditions@lib:pm.a5e.Core", {method: "POST", body: ""});
+        let baseConditions = await request.json();
+
+        let conditionOptions = "";
+        for(let tempCondition of baseConditions){
+            conditionOptions = conditionOptions + "<option value='"+tempCondition.Name+"'>"+tempCondition.DisplayName+"</option>";
+        }
+        conditionOptions = conditionOptions + "<option value='NONBASECONDITION'>Non-Base Condition</option>";
+
+        let alreadyInclusiveTest = (table.rows.namedItem("rowInclusiveConditions") != null);
+        let alreadyExclusiveTest = (table.rows.namedItem("rowExclusiveConditions") != null);
+
+        if(conditionChoice == "Inclusive" || conditionChoice == "Mixture"){
+            if(alreadyInclusiveTest){
+                nextRowIndex++;
+                nextRowIndex++;
+            }
+            else{
+                let rowInclusiveConditions = table.insertRow(nextRowIndex);
+                rowInclusiveConditions.id = "rowInclusiveConditions";
+                rowInclusiveConditions.innerHTML = "<th><label for='inclusiveConditions'>Required Conditions:</label></th><td><select id='inclusiveConditions' name='inclusiveConditions' multiple onchange='createClassConditionRow(1)'>"+conditionOptions+"</select></td>";
+                nextRowIndex++;
+                
+                let rowInclusiveSetByCaster = table.insertRow(nextRowIndex);
+                rowInclusiveSetByCaster.id = "rowInclusiveSetByCaster";
+                rowInclusiveSetByCaster.innerHTML = "<th><label for='inclusiveSetBy'>Must Be Inflicted by Caster?</label></th><td><input type='checkbox' id='inclusiveSetBy' name='inclusiveSetBy' value=1></td>";
+                nextRowIndex++;
+            }
+            if(alreadyExclusiveTest && conditionChoice == "Inclusive"){
+                clearUnusedTable("rowInclusiveSetByCaster","rowTargetAbilityScore");
+            }
+        }
+        else if(alreadyInclusiveTest){
+            nextRowIndex++;
+            nextRowIndex++;
+        }
+        
+        if(conditionChoice == "Exclusive" || conditionChoice == "Mixture"){
+            if(!alreadyExclusiveTest){
+                let rowExclusiveConditions = table.insertRow(nextRowIndex);
+                rowExclusiveConditions.id = "rowExclusiveConditions";
+                rowExclusiveConditions.innerHTML = "<th><label for='exclusiveConditions'>Disallowed Conditions:</label></th><td><select id='exclusiveConditions' name='exclusiveConditions' multiple onchange='createClassConditionRow(2)'>"+conditionOptions+"</select></td>";
+                nextRowIndex++;
+                
+                let rowExclusiveSetByCaster = table.insertRow(nextRowIndex);
+                rowExclusiveSetByCaster.id = "rowExclusiveSetByCaster";
+                rowExclusiveSetByCaster.innerHTML = "<th><label for='exclusiveSetBy'>Must Be Inflicted by Caster?</label></th><td><input type='checkbox' id='exclusiveSetBy' name='exclusiveSetBy' value=1></td>";
+                nextRowIndex++;
+            }
+            else{
+                nextRowIndex++;
+                nextRowIndex++;
+            }
+            if(alreadyInclusiveTest && conditionChoice == "Exclusive"){
+                clearUnusedTable("rowTargetCondition","rowExclusiveConditions");
+            }
+        }
+    }
+}
+
+async function createClassConditionRow(inclusiveExclusive){
+    console.log(document.getElementById("exclusiveConditions").value);
+}
+
+async function createTargetAbilityScoreTable(){
+    let table = document.getElementById("SubeffectTable");
+    let startRowIndex = document.getElementById("rowTargetAbilityScore").rowIndex;
+
+    if(document.getElementById("isAbilityScore").checked){
+        let request = await fetch("macro:pm.GetAttributes@lib:pm.a5e.Core", {method: "POST", body: ""});
+        let attributeList = await request.json();
+
+        let i = 1;
+        for(let tempAttribute of attributeList){
+            console.log(tempAttribute);
+            var abilityScoreName = tempAttribute.Name;
+            var abilityScoreDisplayName = tempAttribute.DisplayName;
+
+            var abilityScoreRow = table.insertRow(startRowIndex+i);
+            abilityScoreRow.id = "rowAttribute"+abilityScoreName+"Limits";
+            abilityScoreRow.innerHTML = "<th><label for='is"+abilityScoreName+"Limit'>"+abilityScoreDisplayName+":</label></th><td><select id='is"+abilityScoreName+"Limit' name='is"+abilityScoreName+"Limit' onchange='enableAbilityScoreLimits("+'"'+abilityScoreName+'"'+")'><option value='No'>No Limits</option><option value='Minimum'>Minimum Score</option><option value='Maximum'>Maximum Score</option><option value='Range'>Min-Max Range</option></select> <input type='number' id='min"+abilityScoreName+"' name='min"+abilityScoreName+"' min=0 value=0 style='width:25px' disabled> - <input type='number' id='max"+abilityScoreName+"' name='max"+abilityScoreName+"' min=0 value=30 style='width:25px' disabled></td>";
+
+            i++;
+        }
+    }
+    else{
+        clearUnusedTable("rowTargetAbilityScore","rowTargetAlignment");
+    }
+    
+}
+
+async function enableAbilityScoreLimits(abilityScoreName){
+    var currentAbilityScoreSelection = document.getElementById("is"+abilityScoreName+"Limit").value;
+    let minScoreID = "min"+abilityScoreName;
+    let maxScoreID = "max"+abilityScoreName;
+
+    if(currentAbilityScoreSelection == "No"){
+        document.getElementById(minScoreID).setAttribute('disabled','');
+        document.getElementById(maxScoreID).setAttribute('disabled','');
+    }
+    else if(currentAbilityScoreSelection == "Minimum"){
+        document.getElementById(minScoreID).removeAttribute('disabled','');
+        document.getElementById(maxScoreID).setAttribute('disabled','');
+    }
+    else if(currentAbilityScoreSelection == "Maximum"){
+        document.getElementById(minScoreID).setAttribute('disabled','');
+        document.getElementById(maxScoreID).removeAttribute('disabled','');
+    }
+    else if(currentAbilityScoreSelection == "Range"){
+        document.getElementById(minScoreID).removeAttribute('disabled','');
+        document.getElementById(maxScoreID).removeAttribute('disabled','');
+    }
+}
+
+async function createTargetAlignmentTable(){
+    let table = document.getElementById("SubeffectTable");
+    let startRowIndex = document.getElementById("rowTargetAlignment").rowIndex;
+
+    if(document.getElementById("isAlignment").checked){
+        let rowAlignmentsGood = table.insertRow(startRowIndex+1);
+        rowAlignmentsGood.id = "rowAlignmentsGood";
+        rowAlignmentsGood.innerHTML = "<td><input type='checkbox' id='alignmentLawfulGood' name='alignmentLawfulGood'><label for='alignmentLawfulGood'>Lawful Good</label></td><td><input type='checkbox' id='alignmentNeutralGood' name='alignmentNeutralGood'><label for='alignmentNeutralGood'>Neutral Good</label></td><td><input type='checkbox' id='alignmentChaoticGood' name='alignmentChaoticGood'><label for='alignmentChaoticGood'>Chaotic Good</label></td>";
+
+        let rowAlignmentsNeutral = table.insertRow(startRowIndex+2);
+        rowAlignmentsNeutral.id = "rowAlignmentsNeutral";
+        rowAlignmentsNeutral.innerHTML = "<td><input type='checkbox' id='alignmentLawfulNeutral' name='alignmentLawfulNeutral'><label for='alignmentLawfulNeutral'>Lawful Neutral</label></td><td><input type='checkbox' id='alignmentNeutralNeutral' name='alignmentNeutralNeutral'><label for='alignmentNeutralNeutral'>True Neutral</label></td><td><input type='checkbox' id='alignmentChaoticNeutral' name='alignmentChaoticNeutral'><label for='alignmentChaoticNeutral'>Chaotic Neutral</label></td>";
+
+        let rowAlignmentsEvil = table.insertRow(startRowIndex+3);
+        rowAlignmentsEvil.id = "rowAlignmentsEvil";
+        rowAlignmentsEvil.innerHTML = "<td><input type='checkbox' id='alignmentLawfulEvil' name='alignmentLawfulEvil'><label for='alignmentLawfulEvil'>Lawful Evil</label></td><td><input type='checkbox' id='alignmentNeutralEvil' name='alignmentNeutralEvil'><label for='alignmentNeutralEvil'>Neutral Evil</label></td><td><input type='checkbox' id='alignmentChaoticEvil' name='alignmentChaoticEvil'><label for='alignmentChaoticEvil'>Chaotic Evil</label></td>";
+
+        let rowAlignmentsOther = table.insertRow(startRowIndex+4);
+        rowAlignmentsEvil.id = "rowAlignmentsOther";
+        rowAlignmentsOther.innerHTML = "<td text-align='center' colspan='3'><input type='checkbox' id='alignmentUnaligned' name='alignmentUnaligned'><label for='alignmentUnaligned'>Unaligned</label></td>";
+    }
+    else{
+        clearUnusedTable("rowTargetAlignment","submitRow");
     }
 }
 

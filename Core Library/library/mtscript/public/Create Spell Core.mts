@@ -74,9 +74,20 @@
 	"IsAHL |  | Increased Healing or Damage at Higher Levels | Check ",
 	"IsMissiles | |<html><span title='(Magic Missiles, Scorching Ray)'>Is it a Missile Spell</span></html> | Check",
 	"junkVar|-------------------------------------------------------------------------------------------------||LABEL|SPAN=TRUE",
+
+
+
+
+
 	"IsBuffDebuff |  | Sets a Condition on Target or Self | Check ",
 	"IsCheck | No,Spellcasting Ability,"+pm.GetAttributes("DisplayName")+","+pm.GetSkills("DisplayName")+" | Makes an Ability Check When Cast | LIST | VALUE=STRING ",
 	"IsSummon | No,Single,Multiple | Summons Tokens | LIST | VALUE=STRING ",
+
+
+
+
+
+
 	"IsAHLSummon MOVE THIS TO LATER | No Change,Increase Number,Increase CR,Both | If Yes, How Do the Summons Change at Higher Levels | LIST | SELECT="+IsAHLSummon+"",
 	"junkVar| --------------------------------------- Advanced Options --------------------------------------- ||LABEL|SPAN=TRUE",
 	disIsMultiEffects,
@@ -584,11 +595,21 @@
 [h:disIsSummon=if(IsSummon=="No","","throwaway|--------------------------------------------------- Data for Summons ---------------------------------------------------| |LABEL|SPAN=TRUE")]
 [h:dissSummonType=if(IsSummon=="No","","sSummonType | Spell Effect,Abberation,Beast,Celestial,Construct,Demon,Devil,Dragon,Elemental,Fey,Fiend,Giant,Monstrosity,Ooze,Plant,Undead,Special List | Type of Creature Summoned |LIST| VALUE=STRING")]
 [h:dissSummonCR=if(IsSummon=="Single","sSummonCR | "+list1through9+" | Max CR of Summon |LIST| VALUE=STRING","")]
+
+
+
 [h:dissSummonNumber=if(IsSummon=="Multiple","sSummonNumber | Standard Table,"+list1through9+" | <html><a href='Standard Table = Table Used for Conjure Animals, etc.'>Number of Creatures Summoned</a></html> |LIST","")]
 [h:disAHLSummonSpaces = if(and(IsSummon!="No",IsAHLSummon!=0),"throwaway|----------------------------------------------------------------------------------------------------------------------------------| |LABEL|SPAN=TRUE","")]
+
+
+
 [h:disAHLSummonNumScaling = if(and(IsSummon!="No",or(IsAHLSummon==1,IsAHLSummon==3)),"AHLSummonNumScaling | Every Level,Every Other Level,Every Three Levels,Other | How Often Does the Number of Creatures Increase At Higher Levels? | LIST | VALUE=STRING SELECT=1","")]
 [h:disAHLSummonNumAdditive = if(and(IsSummon!="No",or(IsAHLSummon==1,IsAHLSummon==3)),"AHLSummonNumAdditive | No,"+list1through9+" | Does the Number of Creatures Increase By a Set Amount Each Level? | LIST | VALUE=STRING SELECT=0","")]
 [h:disAHLSummonNumMultiplier = if(and(IsSummon!="No",or(IsAHLSummon==1,IsAHLSummon==3)),"AHLSummonNumMultiplier | No,Doubled,Tripled,Quadrupled,Quintupled | <html><a href='From Base Value, e.g. Doubled = 2x then 3x, Tripled = 3x then 6x, etc.'>Does the Number of Creatures Increase Multiplicatively?</a></html> | LIST | VALUE=STRING SELECT=0","")]
+
+
+
+
 [h:disAHLSummonCRScaling = if(and(IsSummon!="No",or(IsAHLSummon==2,IsAHLSummon==3)),"AHLSummonCRScaling | Every Level,Every Other Level,Every Three Levels,Other | How Often Does CR Increase At Higher Levels? | LIST | VALUE=STRING SELECT=1","")]
 [h:disAHLSummonCRAdditive = if(and(IsSummon!="No",or(IsAHLSummon==2,IsAHLSummon==3)),"AHLSummonCRAdditive | No"+list1through9+" | Does CR Increase By a Set Amount Each Level? | LIST | VALUE=STRING SELECT=0","")]
 [h:disAHLSummonCRMultiplier = if(and(IsSummon!="No",or(IsAHLSummon==2,IsAHLSummon==3)),"AHLSummonCRMultiplier | No,Doubled,Tripled,Quadrupled,Quintupled | <html><a href='From Base Value, e.g. Doubled = 2x then 3x, Tripled = 3x then 6x, etc.'>Does CR Increase Multiplicatively?</a></html> | LIST | VALUE=STRING SELECT=0","")]

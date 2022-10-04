@@ -152,13 +152,15 @@ async function createTypeOptions(damageTypeNumber){
         let damageTypeSelectRow = table.insertRow(damageRowIndex+1);
         damageTypeSelectRow.id = "rowDamageTypeOptions"+damageTypeNumber;
 
-        damageTypeSelectRow.innerHTML = "<th>Damage Type Options:</th><td><select id='DamageTypeOptions"+damageTypeNumber+"' name='DamageTypeOptions"+damageTypeNumber+"' multiple></select></td>";
-
-        let damageTypeOptions = document.getElementById("DamageType"+damageTypeNumber).innerHTML;
-
-        let damageTypeSelect = document.getElementById("DamageTypeOptions"+damageTypeNumber);
-        damageTypeSelect.innerHTML = damageTypeOptions;
-        damageTypeSelect = damageTypeSelect.remove(damageTypeSelect.length-1);
+        let request = await fetch("macro:pm.GetDamageTypes@lib:pm.a5e.Core", {method: "POST", body: ""});
+        let damageTypes = await request.json();
+    
+        let damageTypeOptions = "";
+        for(let tempType of damageTypes){
+            damageTypeOptions = damageTypeOptions + "<label><input type='checkbox' id='DamageTypeOptions"+tempType.Name+damageTypeNumber+"' name='DamageTypeOptions"+tempType.Name+damageTypeNumber+"' value=1><span>"+tempType.DisplayName+"</span></label>";
+        }
+    
+        damageTypeSelectRow.innerHTML = "<th>Damage Type Options:</th><td class='check-multiple'>"+damageTypeOptions+"</td>";
         
         let damageTypeRandomRow = table.insertRow(damageRowIndex+2);
         damageTypeRandomRow.id = "rowDamageTypeRandom"+damageTypeNumber;

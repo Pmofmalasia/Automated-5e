@@ -1,0 +1,20 @@
+.check-multiple {
+  display: inline-block;
+  height: 60px;
+  overflow-y: scroll;
+  border: 1px solid gray;
+}
+.check-multiple input {
+  display: none;
+}
+.check-multiple label {
+  display: block;
+}
+.check-multiple span {
+  display: inline-block;
+  width: 100%;
+}
+.check-multiple input:checked ~ span {
+  background: #03f;
+  color: white;
+}

@@ -160,7 +160,7 @@ async function createTypeOptions(damageTypeNumber){
             damageTypeOptions = damageTypeOptions + "<label><input type='checkbox' id='DamageTypeOptions"+tempType.Name+damageTypeNumber+"' name='DamageTypeOptions"+tempType.Name+damageTypeNumber+"' value=1><span>"+tempType.DisplayName+"</span></label>";
         }
     
-        damageTypeSelectRow.innerHTML = "<th>Damage Type Options:</th><td class='check-multiple'>"+damageTypeOptions+"</td>";
+        damageTypeSelectRow.innerHTML = "<th>Damage Type Options:</th><td><div class='check-multiple'>"+damageTypeOptions+"</div></td>";
         
         let damageTypeRandomRow = table.insertRow(damageRowIndex+2);
         damageTypeRandomRow.id = "rowDamageTypeRandom"+damageTypeNumber;
@@ -209,15 +209,6 @@ async function createConditionTable(){
         clearUnusedTable("rowCondition","rowSummons");
     }
     else{
-        let request = await fetch("macro:pm.a5e.GetBaseConditions@lib:pm.a5e.Core", {method: "POST", body: ""});
-        let baseConditions = await request.json();
-
-        let conditionOptions = "";
-        for(let tempCondition of baseConditions){
-            conditionOptions = conditionOptions + "<option value='"+tempCondition.Name+"'>"+tempCondition.DisplayName+"</option>";
-        }
-        conditionOptions = conditionOptions + "<option value='SpellSpecific'>Spell-Specific Condition</option>";
-
         let alreadyAlwaysSetTest = (table.rows.namedItem("rowConditionsAlwaysSet") != null);
         let alreadyOptionsTest = (table.rows.namedItem("rowConditionOptions") != null);
         let alreadySaveTest = (table.rows.namedItem("rowConditionSave") != null);
@@ -234,9 +225,12 @@ async function createConditionTable(){
                 nextRowIndex = nextRowIndex + (document.getElementById(endRowId).rowIndex - document.getElementById("rowCondition").rowIndex - 1);
             }
             else{
+                let conditionOptions = await createConditionMultipleBoxes("AlwaysSet","");
+                conditionOptions = conditionOptions + "<label><input type='checkbox' id='isAlwaysSetSpellSpecific' name='isAlwaysSetSpellSpecific' value=1 onchange='createSpellConditionRow(1)'><span>Spell-Specific Condition</span></label>";
+
                 let rowConditionsAlwaysSet = table.insertRow(nextRowIndex);
                 rowConditionsAlwaysSet.id = "rowConditionsAlwaysSet";
-                rowConditionsAlwaysSet.innerHTML = "<th><label for='conditionsAlwaysSet'>Set Conditions:</label></th><td><select id='conditionsAlwaysSet' name='conditionsAlwaysSet' multiple onchange='createSpellConditionRow(1)'>"+conditionOptions+"</select></td>";
+                rowConditionsAlwaysSet.innerHTML = "<th><label for='conditionsAlwaysSet'>Set Conditions:</label></th><td><div class='check-multiple'>"+conditionOptions+"</div></td>";
                 nextRowIndex++;
             }
             if(alreadyOptionsTest && conditionChoice == "All"){
@@ -250,9 +244,12 @@ async function createConditionTable(){
         
         if(conditionChoice == "Choose" || conditionChoice == "Mixture"){
             if(!alreadyOptionsTest){
+                let conditionOptions = await createConditionMultipleBoxes("ConditionOption","");
+                conditionOptions = conditionOptions + "<label><input type='checkbox' id='isConditionOptionSpellSpecific' name='isConditionOptionSpellSpecific' value=1 onchange='createSpellConditionRow(2)'><span>Spell-Specific Condition</span></label>";
+
                 let rowConditionOptions = table.insertRow(nextRowIndex);
                 rowConditionOptions.id = "rowConditionOptions";
-                rowConditionOptions.innerHTML = "<th><label for='conditionOptions'>Condition Options:</label></th><td><select id='conditionOptions' name='conditionOptions' multiple onchange='createSpellConditionRow(2)'>"+conditionOptions+"</select></td>";
+                rowConditionOptions.innerHTML = "<th>Condition Options:</th><td><div class='check-multiple'>"+conditionOptions+"</div></td>";
                 nextRowIndex++;
             }
             else{
@@ -270,6 +267,23 @@ async function createConditionTable(){
             rowConditionSave.innerHTML = "<th><label for='conditionSaveEffect'>Conditions Applied on Save:</label></th><select id='conditionSaveEffect' name='conditionSaveEffect' onchange='createConditionSaveTable()'><option value='0'>All Applied</option><option value='1'>Some Applied</option><option value='2' select>None Applied</option><option value='Different'>Different Condition Applied</option></select></td>";
         }
     }
+}
+
+async function createConditionMultipleBoxes(boxNamePrefix,onChangeFunction){
+    let request = await fetch("macro:pm.a5e.GetBaseConditions@lib:pm.a5e.Core", {method: "POST", body: ""});
+    let baseConditions = await request.json();
+
+    let onChangeText = "";
+    if(onChangeFunction != ""){
+        onChangeText = " onchange='"+onChangeFunction+"'";
+    }
+
+    let conditionOptions = "";
+    for(let tempCondition of baseConditions){
+        conditionOptions = conditionOptions + "<label><input type='checkbox' id='"+boxNamePrefix+tempCondition.Name+"' name='"+boxNamePrefix+tempCondition.Name+"' value=1"+onChangeText+"><span>"+tempCondition.DisplayName+"</span></label>";
+    }
+
+    return conditionOptions;
 }
 
 async function createConditionSaveTable(){
@@ -703,9 +717,13 @@ async function createTargetConditionTable(){
                 nextRowIndex++;
             }
             else{
+                //
+                let conditionOptions = await createConditionMultipleBoxes("InclusiveConditions","");
+                conditionOptions = conditionOptions + "<option value='NONBASECONDITION' onchange='createClassConditionRow(1)'>Non-Base Condition</option>";
+
                 let rowInclusiveConditions = table.insertRow(nextRowIndex);
                 rowInclusiveConditions.id = "rowInclusiveConditions";
-                rowInclusiveConditions.innerHTML = "<th><label for='inclusiveConditions'>Required Conditions:</label></th><td><select id='inclusiveConditions' name='inclusiveConditions' multiple onchange='createClassConditionRow(1)'>"+conditionOptions+"</select></td>";
+                rowInclusiveConditions.innerHTML = "<th>Required Conditions:\</th><td><div class='check-multiple'>"+conditionOptions+"</div></td>";
                 nextRowIndex++;
                 
                 let rowInclusiveSetByCaster = table.insertRow(nextRowIndex);
@@ -724,9 +742,11 @@ async function createTargetConditionTable(){
         
         if(conditionChoice == "Exclusive" || conditionChoice == "Mixture"){
             if(!alreadyExclusiveTest){
+                let conditionOptions = await createConditionMultipleBoxes("ExclusiveConditions","createClassConditionRow(2)");
+
                 let rowExclusiveConditions = table.insertRow(nextRowIndex);
                 rowExclusiveConditions.id = "rowExclusiveConditions";
-                rowExclusiveConditions.innerHTML = "<th><label for='exclusiveConditions'>Disallowed Conditions:</label></th><td><select id='exclusiveConditions' name='exclusiveConditions' multiple onchange='createClassConditionRow(2)'>"+conditionOptions+"</select></td>";
+                rowExclusiveConditions.innerHTML = "<th>Disallowed Conditions:</th><td><div class='check-multiple'>"+conditionOptions+"</div></td>";
                 nextRowIndex++;
                 
                 let rowExclusiveSetByCaster = table.insertRow(nextRowIndex);

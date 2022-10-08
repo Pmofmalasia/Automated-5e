@@ -494,55 +494,162 @@ async function createRangeTable(){
     }
 }
 
-async function createAoETable(){
+async function createAoETable(whichShape){
+    //For multiple options - to insert in the correct location, could do a loop starting from the position it should be in, going backwards. Insert either after the first shape reached, or after multiselection if none found.
     let table = document.getElementById("SubeffectTable");
-    let currentAOESelection = document.getElementById("aoeShape").value;
-    let aoeIndex = document.getElementById("AoE").rowIndex;
-    clearUnusedTable("AoE","rowTargetNumber");
-    //TODO: Select multiple AoE options by choice once custom checkbokes are done
-    if(currentAOESelection == "Cone"){
-        let rowConeDimensions = table.insertRow(aoeIndex+1);
-        rowConeDimensions.id = "rowConeDimensions";
-        rowConeDimensions.innerHTML = "<th><label for='coneDimensionValue'>Cone Size:</label></th><td><input type='number' id='coneDimensionValue' name='coneDimensionValue' min=0 style='width:25px' value=0><select id='coneDimensionUnits' name='coneDimensionUnits'><option value='Feet'>Feet</option><option value='Miles'>Miles</option></select></td>";
-    }
-    else if(currentAOESelection == "Cube"){
-        let rowCubeDimensions = table.insertRow(aoeIndex+1);
-        rowCubeDimensions.id = "rowCubeDimensions";
-        rowCubeDimensions.innerHTML = "<th><label for='cubeDimensionValue'>Side Length:</label></th><td><input type='number' id='cubeDimensionValue' name='cubeDimensionValue' min=0 style='width:25px' value=0><select id='cubeDimensionUnits' name='cubeDimensionUnits'><option value='Feet'>Feet</option><option value='Miles'>Miles</option></select></td>";
-    }
-    else if(currentAOESelection == "Cylinder"){
-        let rowCylinderDimensions = table.insertRow(aoeIndex+1);
-        rowCylinderDimensions.id = "rowCylinderDimensions";
-        rowCylinderDimensions.innerHTML = "<th><label for='cylinderRadiusValue'>Cylinder Radius x Height:</label></th><td><input type='number' id='cylinderRadiusValue' name='cylinderRadiusValue' min=0 style='width:25px' value=0><select id='cylinderRadiusUnits' name='cylinderRadiusUnits'><option value='Feet'>Feet</option><option value='Miles'>Miles</option></select> x <input type='number' id='cylinderHeightValue' name='cylinderHeightValue' min=0 style='width:25px' value=0><select id='cylinderHeightUnits' name='cylinderHeightUnits'><option value='Feet'>Feet</option><option value='Miles'>Miles</option></select></td>";
-    }
-    else if(currentAOESelection == "Half Sphere"){
-        let rowHalfSphereDimensions = table.insertRow(aoeIndex+1);
-        rowHalfSphereDimensions.id = "rowHalfSphereDimensions";
-        rowHalfSphereDimensions.innerHTML = "<th><label for='halfSphereDimensionValue'>Half Sphere Radius:</label></th><td><input type='number' id='halfSphereDimensionValue' name='halfSphereDimensionValue' min=0 style='width:25px' value=0><select id='halfSphereDimensionUnits' name='halfSphereDimensionUnits'><option value='Feet'>Feet</option><option value='Miles'>Miles</option></select></td>";
-    }
-    else if(currentAOESelection == "Line"){
-        let rowLineDimensions = table.insertRow(aoeIndex+1);
-        rowLineDimensions.id = "rowLineDimensions";
-        rowLineDimensions.innerHTML = "<th><label for='lineLengthValue'>Line Length x Width:</label></th><td><input type='number' id='lineLengthValue' name='lineLengthValue' min=0 style='width:25px' value=0><select id='lineLengthUnits' name='lineLengthUnits'><option value='Feet'>Feet</option><option value='Miles'>Miles</option></select> x <input type='number' id='lineWidthValue' name='lineWidthValue' min=0 style='width:25px' value=0><select id='lineWidthUnits' name='lineWidthUnits'><option value='Feet'>Feet</option><option value='Miles'>Miles</option></select></td>";
-    }
-    else if(currentAOESelection == "Panels"){
-        let rowPanelDimensions = table.insertRow(aoeIndex+1);
-        rowPanelDimensions.id = "rowPanelDimensions";
-        rowPanelDimensions.innerHTML = "<th><label for='panelDimensionValue'>Panel Number and Side Length:</label></th><td><input type='number' id='panelNumber' name='panelNumber' min=0 style='width:25px' value=10> panels, <input type='number' id='panelDimensionValue' name='panelDimensionValue' min=0 style='width:25px' value=0><select id='panelDimensionUnits' name='panelDimensionUnits'><option value='Feet'>Feet</option><option value='Miles'>Miles</option></select></td>";
-    }
-    else if(currentAOESelection == "Sphere"){
-        let rowSphereDimensions = table.insertRow(aoeIndex+1);
-        rowSphereDimensions.id = "rowSphereDimensions";
-        rowSphereDimensions.innerHTML = "<th><label for='sphereDimensionValue'>Sphere Radius:</label></th><td><input type='number' id='sphereDimensionValue' name='sphereDimensionValue' min=0 style='width:25px' value=0><select id='sphereDimensionUnits' name='sphereDimensionUnits'><option value='Feet'>Feet</option><option value='Miles'>Miles</option></select></td>";
-    }
-    else if(currentAOESelection == "Wall"){
+    let startRowIndex = document.getElementById("AoE").rowIndex + 1;
+    let shapesArray = ["Cone","Cube","Cylinder","Half Sphere","Line","Panels","Sphere","Wall"];
+    let aoeShapeSelction = document.getElementById("aoeShape").value;
+    if(aoeShapeSelction == "None"){
         clearUnusedTable("AoE","rowTargetNumber");
-        let rowWallDimensions = table.insertRow(aoeIndex+1);
-        rowWallDimensions.id = "rowWallDimensions";
-        rowWallDimensions.innerHTML = "<th><label for='wallLengthValue'>Wall Length x Width x Height:</label></th><td><input type='number' id='wallLengthValue' name='wallLengthValue' min=0 style='width:25px' value=0><select id='wallLengthUnits' name='wallLengthUnits'><option value='Feet'>Feet</option><option value='Miles'>Miles</option></select> x <input type='number' id='wallWidthValue' name='wallWidthValue' min=0 style='width:25px' value=0><select id='wallWidthUnits' name='wallWidthUnits'><option value='Feet'>Feet</option><option value='Miles'>Miles</option></select> x <input type='number' id='wallHeightValue' name='wallHeightValue' min=0 style='width:25px' value=0><select id='wallHeightUnits' name='wallHeightUnits'><option value='Feet'>Feet</option><option value='Miles'>Miles</option></select></td>";
     }
-    else if(currentAOESelection == "Choose"){
-        
+    else{
+        if(document.getElementById("rowAoENum") == null){
+            let rowAoENum = table.insertRow(startRowIndex);
+            rowAoENum.id = "rowAoENum";
+            rowAoENum.innerHTML = "<th><label for='AoENum'>Number of AoEs:</label></th><td><input type='number' id='AoENum' name='AoENum' min=1 value=1 style='width:25px'> + <input type='number' id='AoENumAHL' name='AoENumAHL' min=0 value=0 style='width:25px'><select id='AoENumAHLScaling' name='AoENumAHLScaling'><option value='0'>No Increase</option><option value='1'>Every Level</option><option value='2'>Every Other Level</option><option value='3'>Every Three Levels</option></select></td>";
+        }
+
+        if(aoeShapeSelction == "Choose"){
+            if(whichShape==1){
+                let rowMultiAOESelection = table.insertRow(startRowIndex);
+                rowMultiAOESelection.id = "rowMultiAOESelection";
+
+                let multiAOESelectionText = "";
+                for(let tempShape of shapesArray){
+                    let tempShapeNoSpace = tempShape.split(" ").join("");
+                    multiAOESelectionText = multiAOESelectionText + "<label><input type='checkbox' id='is"+tempShapeNoSpace+"AOEMulti' name='is"+tempShapeNoSpace+"AOEMulti' value=1 onchange='createAoETable("+'"'+tempShape+'"'+")'><span>"+tempShape+"</span></label>";
+                }
+
+                rowMultiAOESelection.innerHTML = "<th>AoE Shape Options:</th><td><div class='check-multiple' style='width:100%'>"+multiAOESelectionText+"</div></td>";
+                startRowIndex++;
+
+                for(let tempShape of shapesArray){
+                    tempShape = tempShape.split(" ").join("");
+                    if(document.getElementById("row"+tempShape+"Dimensions") != null){
+                        document.getElementById("is"+tempShape+"AOEMulti").setAttribute("checked",'');
+                    }
+                }
+            }
+            else{
+                if(document.getElementById("is"+whichShape.split(" ").join("")+"AOEMulti").checked){
+                    let earlierShapesArray = shapesArray.slice(0,shapesArray.indexOf(whichShape));
+                    startRowIndex = document.getElementById("rowMultiAOESelection").rowIndex + 1;
+                    for(let tempShape of earlierShapesArray){
+                        //Required for Half Sphere or any other shapes with a space
+                        tempShape = tempShape.split(" ").join("");
+                        if(document.getElementById("row"+tempShape+"Dimensions") != null){
+                            startRowIndex = document.getElementById("row"+tempShape+"Dimensions").rowIndex + 2;
+                        }
+                    }                          
+                }
+                else{
+                    let removalRow = document.getElementById("row"+whichShape.split(" ").join("")+"Dimensions").rowIndex;
+                    table.deleteRow(removalRow);
+                    table.deleteRow(removalRow);
+                    return;
+                }
+            }
+        }
+        else{
+            whichShape = document.getElementById("aoeShape").value;
+            if(document.getElementById("row"+whichShape+"Dimensions") != null){
+                clearUnusedTable("AoE","row"+whichShape+"Dimensions");
+                clearUnusedTable("row"+whichShape+"Dimensions","rowAoENum");
+            }
+            else{
+                clearUnusedTable("AoE","rowAoENum");
+            }
+        }
+
+        if(whichShape == "Cone"){
+            let rowConeDimensions = table.insertRow(startRowIndex);
+            rowConeDimensions.id = "rowConeDimensions";
+            rowConeDimensions.innerHTML = "<th><label for='coneDimensionValue'>Cone Size:</label></th><td><input type='number' id='coneDimensionValue' name='coneDimensionValue' min=0 style='width:25px' value=0><select id='coneDimensionUnits' name='coneDimensionUnits'><option value='Feet'>Feet</option><option value='Miles'>Miles</option></select></td>";
+            startRowIndex++;
+
+            let rowConeDimensionsAHL = table.insertRow(startRowIndex);
+            rowConeDimensionsAHL.id = "rowConeDimensionsAHL";
+            rowConeDimensionsAHL.innerHTML = "<th><label for='coneDimensionValueAHL'>Increased Cone Size AHL:</label></th><td><input type='number' id='coneDimensionValueAHL' name='coneDimensionValueAHL' min=0 style='width:25px' value=0><select id='coneSizeAHLScaling' name='coneSizeAHLScaling'><option value='0'>No Increase</option><option value='1'>Every Level</option><option value='2'>Every Other Level</option><option value='3'>Every Three Levels</option></select></td>";
+            startRowIndex++;
+        }
+        else if(whichShape == "Cube"){
+            let rowCubeDimensions = table.insertRow(startRowIndex);
+            rowCubeDimensions.id = "rowCubeDimensions";
+            rowCubeDimensions.innerHTML = "<th><label for='cubeDimensionValue'>Cube Side Length:</label></th><td><input type='number' id='cubeDimensionValue' name='cubeDimensionValue' min=0 style='width:25px' value=0><select id='cubeDimensionUnits' name='cubeDimensionUnits'><option value='Feet'>Feet</option><option value='Miles'>Miles</option></select></td>";
+            startRowIndex++;
+            
+            let rowCubeDimensionsAHL = table.insertRow(startRowIndex);
+            rowCubeDimensionsAHL.id = "rowCubeDimensionsAHL";
+            rowCubeDimensionsAHL.innerHTML = "<th><label for='cubeDimensionValueAHL'>Increased Side Length AHL:</label></th><td><input type='number' id='cubeDimensionValueAHL' name='cubeDimensionValueAHL' min=0 style='width:25px' value=0><select id='cubeSizeAHLScaling' name='cubeSizeAHLScaling'><option value='0'>No Increase</option><option value='1'>Every Level</option><option value='2'>Every Other Level</option><option value='3'>Every Three Levels</option></select></td>";
+            startRowIndex++;
+        }
+        else if(whichShape == "Cylinder"){
+            let rowCylinderDimensions = table.insertRow(startRowIndex);
+            rowCylinderDimensions.id = "rowCylinderDimensions";
+            rowCylinderDimensions.innerHTML = "<th><label for='cylinderRadiusValue'>Cylinder Radius x Height:</label></th><td><input type='number' id='cylinderRadiusValue' name='cylinderRadiusValue' min=0 style='width:25px' value=0><select id='cylinderRadiusUnits' name='cylinderRadiusUnits'><option value='Feet'>Feet</option><option value='Miles'>Miles</option></select> x <input type='number' id='cylinderHeightValue' name='cylinderHeightValue' min=0 style='width:25px' value=0><select id='cylinderHeightUnits' name='cylinderHeightUnits'><option value='Feet'>Feet</option><option value='Miles'>Miles</option></select></td>";
+            startRowIndex++;
+
+            let rowCylinderDimensionsAHL = table.insertRow(startRowIndex);
+            rowCylinderDimensionsAHL.id = "rowCylinderDimensionsAHL";
+            rowCylinderDimensionsAHL.innerHTML = "<th><label for='cylinderRadiusValueAHL'>Cylinder Dimensions AHL:</label></th><td><input type='number' id='cylinderRadiusValueAHL' name='cylinderRadiusValueAHL' min=0 style='width:25px' value=0> x <input type='number' id='cylinderHeightValueAHL' name='cylinderHeightValueAHL' min=0 style='width:25px' value=0></td>";
+            startRowIndex++;
+        }
+        else if(whichShape == "Half Sphere"){
+            let rowHalfSphereDimensions = table.insertRow(startRowIndex);
+            rowHalfSphereDimensions.id = "rowHalfSphereDimensions";
+            rowHalfSphereDimensions.innerHTML = "<th><label for='halfSphereDimensionValue'>Half Sphere Radius:</label></th><td><input type='number' id='halfSphereDimensionValue' name='halfSphereDimensionValue' min=0 style='width:25px' value=0><select id='halfSphereDimensionUnits' name='halfSphereDimensionUnits'><option value='Feet'>Feet</option><option value='Miles'>Miles</option></select></td>";
+            startRowIndex++;
+            
+            let rowHalfSphereDimensionsAHL = table.insertRow(startRowIndex);
+            rowHalfSphereDimensionsAHL.id = "rowHalfSphereDimensionsAHL";
+            rowHalfSphereDimensionsAHL.innerHTML = "<th><label for='halfSphereDimensionValueAHL'>Increased Radius AHL:</label></th><td><input type='number' id='halfSphereDimensionValueAHL' name='halfSphereDimensionValueAHL' min=0 style='width:25px' value=0><select id='halfSphereSizeAHLScaling' name='halfSphereSizeAHLScaling'><option value='0'>No Increase</option><option value='1'>Every Level</option><option value='2'>Every Other Level</option><option value='3'>Every Three Levels</option></select></td>";
+            startRowIndex++;
+        }
+        else if(whichShape == "Line"){
+            let rowLineDimensions = table.insertRow(startRowIndex);
+            rowLineDimensions.id = "rowLineDimensions";
+            rowLineDimensions.innerHTML = "<th><label for='lineLengthValue'>Line Length x Width:</label></th><td><input type='number' id='lineLengthValue' name='lineLengthValue' min=0 style='width:25px' value=0><select id='lineLengthUnits' name='lineLengthUnits'><option value='Feet'>Feet</option><option value='Miles'>Miles</option></select> x <input type='number' id='lineWidthValue' name='lineWidthValue' min=0 style='width:25px' value=0><select id='lineWidthUnits' name='lineWidthUnits'><option value='Feet'>Feet</option><option value='Miles'>Miles</option></select></td>";
+            startRowIndex++;
+            
+            let rowLineDimensionsAHL = table.insertRow(startRowIndex);
+            rowLineDimensionsAHL.id = "rowLineDimensionsAHL";
+            rowLineDimensionsAHL.innerHTML = "<th><label for='lineLengthValueAHL'>Increased Dimensions AHL:</label></th><td><input type='number' id='lineLengthValueAHL' name='lineLengthValueAHL' min=0 style='width:25px' value=0> x <input type='number' id='lineWidthValueAHL' name='lineWidthValueAHL' min=0 style='width:25px' value=0><select id='lineSizeAHLScaling' name='lineSizeAHLScaling'><option value='0'>No Increase</option><option value='1'>Every Level</option><option value='2'>Every Other Level</option><option value='3'>Every Three Levels</option></select></td>";
+            startRowIndex++;
+        }
+        else if(whichShape == "Panels"){
+            let rowPanelsDimensions = table.insertRow(startRowIndex);
+            rowPanelsDimensions.id = "rowPanelsDimensions";
+            rowPanelsDimensions.innerHTML = "<th><label for='panelsNumber'>Panel Number and Side Length:</label></th><td><input type='number' id='panelsNumber' name='panelsNumber' min=0 style='width:25px' value=10> panels, <input type='number' id='panelsDimensionValue' name='panelsDimensionValue' min=0 style='width:25px' value=0><select id='panelsDimensionUnits' name='panelsDimensionUnits'><option value='Feet'>Feet</option><option value='Miles'>Miles</option></select></td>";
+            startRowIndex++;
+            
+            let rowPanelsDimensionsAHL = table.insertRow(startRowIndex);
+            rowPanelsDimensionsAHL.id = "rowPanelsDimensionsAHL";
+            rowPanelsDimensionsAHL.innerHTML = "<th><label for='panelsNumberAHL'>Increased Panels AHL:</label></th><td><input type='number' id='panelsNumberAHL' name='panelsNumberAHL' min=0 style='width:25px' value=0><select id='panelsNumberAHLScaling' name='panelsNumberAHLScaling'><option value='0'>No Increase</option><option value='1'>Every Level</option><option value='2'>Every Other Level</option><option value='3'>Every Three Levels</option></select></td>";
+            startRowIndex++;
+        }
+        else if(whichShape == "Sphere"){
+            let rowSphereDimensions = table.insertRow(startRowIndex);
+            rowSphereDimensions.id = "rowSphereDimensions";
+            rowSphereDimensions.innerHTML = "<th><label for='sphereDimensionValue'>Sphere Radius:</label></th><td><input type='number' id='sphereDimensionValue' name='sphereDimensionValue' min=0 style='width:25px' value=0><select id='sphereDimensionUnits' name='sphereDimensionUnits'><option value='Feet'>Feet</option><option value='Miles'>Miles</option></select></td>";
+            startRowIndex++;
+            
+            let rowSphereDimensionsAHL = table.insertRow(startRowIndex);
+            rowSphereDimensionsAHL.id = "rowSphereDimensionsAHL";
+            rowSphereDimensionsAHL.innerHTML = "<th><label for='sphereDimensionValueAHL'>Increased Radius AHL:</label></th><td><input type='number' id='sphereDimensionValueAHL' name='sphereDimensionValueAHL' min=0 style='width:25px' value=0><select id='sphereSizeAHLScaling' name='sphereSizeAHLScaling'><option value='0'>No Increase</option><option value='1'>Every Level</option><option value='2'>Every Other Level</option><option value='3'>Every Three Levels</option></select></td>";
+            startRowIndex++;
+        }
+        else if(whichShape == "Wall"){
+            let rowWallDimensions = table.insertRow(startRowIndex);
+            rowWallDimensions.id = "rowWallDimensions";
+            rowWallDimensions.innerHTML = "<th><label for='wallLengthValue'>Wall Length x Width x Height:</label></th><td><input type='number' id='wallLengthValue' name='wallLengthValue' min=0 style='width:25px' value=0><select id='wallLengthUnits' name='wallLengthUnits'><option value='Feet'>Feet</option><option value='Miles'>Miles</option></select> x <input type='number' id='wallWidthValue' name='wallWidthValue' min=0 style='width:25px' value=0><select id='wallWidthUnits' name='wallWidthUnits'><option value='Feet'>Feet</option><option value='Miles'>Miles</option></select> x <input type='number' id='wallHeightValue' name='wallHeightValue' min=0 style='width:25px' value=0><select id='wallHeightUnits' name='wallHeightUnits'><option value='Feet'>Feet</option><option value='Miles'>Miles</option></select></td>";
+            startRowIndex++;
+            
+            let rowWallDimensionsAHL = table.insertRow(startRowIndex);
+            rowWallDimensionsAHL.id = "rowWallDimensionsAHL";
+            rowWallDimensionsAHL.innerHTML = "<th><label for='wallLengthValueAHL'>Increased Dimensions AHL:</label></th><td><input type='number' id='wallLengthValueAHL' name='wallLengthValueAHL' min=0 style='width:25px' value=0> x <input type='number' id='wallWidthValueAHL' name='wallWidthValueAHL' min=0 style='width:25px' value=0> x <input type='number' id='wallHeightValueAHL' name='wallHeightValueAHL' min=0 style='width:25px' value=0><select id='wallSizeAHLScaling' name='wallSizeAHLScaling'><option value='0'>No Increase</option><option value='1'>Every Level</option><option value='2'>Every Other Level</option><option value='3'>Every Three Levels</option></select></td>";
+            startRowIndex++;
+        }
     }
 }
 
@@ -649,13 +756,15 @@ async function createCreatureTargetTypes(){
         clearUnusedTable("rowCreatureTypes","rowTargetSenses");
     }
     else{
-        //change multiple to checkboxes
         let request = await fetch("macro:pm.GetCreatureTypes@lib:pm.a5e.Core", {method: "POST", body: ""});
         let allCreatureTypes = await request.json();
 
-        let creatureTypeOptions = "";
+        let creatureTypeIncludeOptions = "";
+        let creatureTypeExcludeOptions = "";
         for(let tempType of allCreatureTypes){
-            creatureTypeOptions = creatureTypeOptions + "<option value='"+tempType.Name+"'>"+tempType.DisplayName+"</option>";
+            creatureTypeIncludeOptions = creatureTypeIncludeOptions + "<label><input type='checkbox' id='CreatureTypeTargetInclusive"+tempType.Name+"' name='CreatureTypeTargetInclusive"+tempType.Name+"' value=1><span>"+tempType.DisplayName+"</span></label>";
+
+            creatureTypeExcludeOptions = creatureTypeExcludeOptions + "<label><input type='checkbox' id='CreatureTypeTargetExclusive"+tempType.Name+"' name='CreatureTypeTargetExclusive"+tempType.Name+"' value=1><span>"+tempType.DisplayName+"</span></label>";
         }
 
         let alreadyInclusiveTest = (table.rows.namedItem("rowInclusiveCreatureTypes") != null);
@@ -668,7 +777,7 @@ async function createCreatureTargetTypes(){
             else{
                 let rowInclusiveCreatureTypes = table.insertRow(nextRowIndex);
                 rowInclusiveCreatureTypes.id = "rowInclusiveCreatureTypes";
-                rowInclusiveCreatureTypes.innerHTML = "<th><label for='inclusiveCreatureTypes'>Required Creature Types:</label></th><td><select id='inclusiveCreatureTypes' name='inclusiveCreatureTypes' multiple onchange='createClassConditionRow(1)'>"+creatureTypeOptions+"</select></td>";
+                rowInclusiveCreatureTypes.innerHTML = "<th>Required Creature Types:</th><td><div class='check-multiple' style='width:100%'>"+creatureTypeIncludeOptions+"</div></td>";
                 nextRowIndex++;
             }
             if(alreadyExclusiveTest && currentTargetCreatureTypeSelection == "Inclusive"){
@@ -683,7 +792,7 @@ async function createCreatureTargetTypes(){
             if(!alreadyExclusiveTest){
                 let rowExclusiveCreatureTypes = table.insertRow(nextRowIndex);
                 rowExclusiveCreatureTypes.id = "rowExclusiveCreatureTypes";
-                rowExclusiveCreatureTypes.innerHTML = "<th><label for='exclusiveCreatureTypes'>Disallowed Creature Types:</label></th><td><select id='exclusiveCreatureTypes' name='exclusiveCreatureTypes' multiple>"+creatureTypeOptions+"</select></td>";
+                rowExclusiveCreatureTypes.innerHTML = "<th>Disallowed Creature Types:</th><td><div class='check-multiple' style='width:100%'>"+creatureTypeIncludeOptions+"</div></td>";
                 nextRowIndex++;
             }
             else{
@@ -715,6 +824,7 @@ async function createTargetConditionTable(){
                 nextRowIndex++;
             }
             else{
+                //TODO: add onchange function for (In/Ex)clusiveConditions to add/remove them from save prevention multicheckbox selection
                 let conditionOptions = await createConditionMultipleBoxes("InclusiveConditions","");
                 conditionOptions = conditionOptions + "<label><input type='checkbox' id='INCLUDENONBASECONDITION' name='INCLUDENONBASECONDITION' value=1 onchange='createClassConditionRow(1)'><span>Non-Base Condition</span></label>";
 

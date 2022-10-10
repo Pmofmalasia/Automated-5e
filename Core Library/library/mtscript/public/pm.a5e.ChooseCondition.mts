@@ -9,20 +9,20 @@
 [h,switch(pm.ChoiceMethod),CODE:
 	case "All":{
 		[h:pm.ConditionsFinal = json.path.delete(pm.AllConditions,"[*]['AlwaysAdded']")]
-		};
+	};
 	case "Multiple":{
 		[h:pm.ConditionInput = " junkVar | -------- Choose Any Number of Conditions --------- |  | LABEL | SPAN=TRUE "]
 		[h,foreach(condition,pm.AllConditions): pm.ConditionInput = listAppend(pm.ConditionInput,"choice."+json.get(condition,"Name")+json.get(condition,"Class")+json.get(condition,"Subclass")+" |  | "+json.get(condition,"DisplayName")+" | CHECK "," ## ")]
 		[h:abort(input(pm.ConditionInput))]
 		[h,foreach(condition,pm.AllConditions): pm.ConditionsFinal = if(eval("choice."+json.get(condition,"Name")+json.get(condition,"Class")+json.get(condition,"Subclass")),json.append(pm.ConditionsFinal,json.remove(condition,"AlwaysAdded")),pm.ConditionsFinal)]
-		};
+	};
 	case "One":{
 		[h:pm.ConditionOptions = ""]
 		[h,foreach(condition,pm.AllConditions): pm.ConditionOptions = json.append(pm.ConditionOptions,json.get(condition,"DisplayName"))]
 		[h:abort(input(
 			" pm.ConditionChoice | "+pm.ConditionOptions+" | Choose a Condition | RADIO | DELIMITER=JSON "))]
 		[h:pm.ConditionsFinal = json.append("",json.remove(json.get(pm.AllConditions,pm.ConditionChoice),"AlwaysAdded"))]
-		};
+	};
 	case "MixedOne":{
 		[h:pm.ConditionOptions = ""]
 		[h:pm.ConditionOptionsFull = ""]

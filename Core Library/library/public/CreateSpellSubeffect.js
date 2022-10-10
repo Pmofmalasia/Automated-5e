@@ -222,7 +222,7 @@ async function createConditionTable(){
         else{
             var endRowId = "rowSummons";
         }
-
+//TODO: Add onchange function to checkboxes to add/remove them from the 'Save vs. Some' option
         if(conditionChoice == "All" || conditionChoice == "Mixture"){
             if(alreadyAlwaysSetTest){
                 nextRowIndex = nextRowIndex + (document.getElementById(endRowId).rowIndex - document.getElementById("rowCondition").rowIndex - 1);
@@ -495,7 +495,6 @@ async function createRangeTable(){
 }
 
 async function createAoETable(whichShape){
-    //For multiple options - to insert in the correct location, could do a loop starting from the position it should be in, going backwards. Insert either after the first shape reached, or after multiselection if none found.
     let table = document.getElementById("SubeffectTable");
     let startRowIndex = document.getElementById("AoE").rowIndex + 1;
     let shapesArray = ["Cone","Cube","Cylinder","Half Sphere","Line","Panels","Sphere","Wall"];
@@ -555,7 +554,8 @@ async function createAoETable(whichShape){
             whichShape = document.getElementById("aoeShape").value;
             if(document.getElementById("row"+whichShape+"Dimensions") != null){
                 clearUnusedTable("AoE","row"+whichShape+"Dimensions");
-                clearUnusedTable("row"+whichShape+"Dimensions","rowAoENum");
+                clearUnusedTable("row"+whichShape+"DimensionsAHL","rowAoENum");
+                return;
             }
             else{
                 clearUnusedTable("AoE","rowAoENum");
@@ -592,7 +592,7 @@ async function createAoETable(whichShape){
 
             let rowCylinderDimensionsAHL = table.insertRow(startRowIndex);
             rowCylinderDimensionsAHL.id = "rowCylinderDimensionsAHL";
-            rowCylinderDimensionsAHL.innerHTML = "<th><label for='cylinderRadiusValueAHL'>Cylinder Dimensions AHL:</label></th><td><input type='number' id='cylinderRadiusValueAHL' name='cylinderRadiusValueAHL' min=0 style='width:25px' value=0> x <input type='number' id='cylinderHeightValueAHL' name='cylinderHeightValueAHL' min=0 style='width:25px' value=0></td>";
+            rowCylinderDimensionsAHL.innerHTML = "<th><label for='cylinderRadiusValueAHL'>Cylinder Dimensions AHL:</label></th><td><input type='number' id='cylinderRadiusValueAHL' name='cylinderRadiusValueAHL' min=0 style='width:25px' value=0> x <input type='number' id='cylinderHeightValueAHL' name='cylinderHeightValueAHL' min=0 style='width:25px' value=0><select id='cylinderSizeAHLScaling' name='cylinderSizeAHLScaling'><option value='0'>No Increase</option><option value='1'>Every Level</option><option value='2'>Every Other Level</option><option value='3'>Every Three Levels</option></select></td>";
             startRowIndex++;
         }
         else if(whichShape == "Half Sphere"){

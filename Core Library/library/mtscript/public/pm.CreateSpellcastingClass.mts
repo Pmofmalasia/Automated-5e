@@ -6,7 +6,7 @@
 	" sp.HalfFull | Full Caster,Half Caster,Third Caster,Independent Spell Slots | Caster Type | LIST ",
 	" sp.Stat | "+pm.GetAttributes("DisplayName")+" | Primary Casting Stat | LIST | VALUE=STRING ",
 	" sp.Ritual |  | Can Ritual Cast | CHECK ",
-	" sp.MagicSource | Arcane,Divinity | Source of Magic | LIST | VALUE=STRING ",
+	" sp.MagicSource | Arcane,Divine,Primal | Source of Magic | LIST | VALUE=STRING ",
 	" sp.Prepared | Known,Prepared | Knows or Prepares Spells | LIST ",
 	" junkVar | ---------------------------------------------------------------------------------------- |  | LABEL | SPAN=TRUE ",
 	" sp.OtherList |  | Uses the spell list of another class | CHECK "
@@ -23,7 +23,7 @@
 	"Prepared",sp.Prepared,
 	"CallSpellClass",1,
 	"GainOnLevel",1
-))]
+)]
 [h:sp.UpdateLevelOptions = string(sp.LevelGained)]
 [h,count(20-sp.LevelGained): sp.UpdateLevelOptions = listAppend(sp.UpdateLevelOptions,sp.LevelGained+roll.count+1)]
 
@@ -136,8 +136,10 @@
 	[h:sp.SpellcastingAbility = json.set(sp.SpellcastingAbility,
 		"ClassList",pm.RemoveSpecial(sp.ClassList),
 		"ValidSchools",pm.ValidSchools
-		)]
-};{}]
+	)]
+};{
+	[h:sp.SpellcastingAbility = json.set(sp.SpellcastingAbility,"UniqueSpellList",1)]
+}]
 
 [h,if(!json.equals(sp.Updates,sp.NoUpdatesTest)): setLibProperty("sb.AbilityUpdates",json.append(getLibProperty("sb.AbilityUpdates","Lib:"+json.get(sp.Updates,"Library")),sp.Updates),"Lib:"+json.get(sp.Updates,"Library"))]
 [h:setLibProperty("sb.Abilities",json.append(getLibProperty("sb.Abilities","Lib:"+json.get(sp.SpellcastingAbility,"Library")),sp.SpellcastingAbility),"Lib:"+json.get(sp.SpellcastingAbility,"Library"))]

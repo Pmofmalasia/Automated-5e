@@ -9,7 +9,7 @@
 
 [h:spellSubeffectHTML = spellSubeffectHTML + "<input type='hidden' id='spellLevel' name='spellLevel' value="+spellLevel+"><input type='hidden' id='whichEffect' name='whichEffect' value="+thisSubeffectNum+">
 
-<tr id='Mitigation'><th><label for='howMitigate'>Forces Attack, Save, or Neither?</label></th><td><select id='howMitigate' name='howMitigate' onchange='createMitigationTable()'><option value='Attack'>Attack</option><option value='Save'>Save</option><option value='Neither' selected>Neither</option></select></td></tr>
+<tr id='Mitigation'><th><label for='howMitigate'>Make Attack or Force Save?</label></th><td><select id='howMitigate' name='howMitigate' onchange='createMitigationTable()'><option value='Attack'>Make Attack</option><option value='Save'>Force Save</option><option value='Neither' selected>Neither</option></select></td></tr>
 
 <tr id='Damage'><th><label for='isDamage'>Heals or Deals Damage?</label></th><td><input type='checkbox' id='isDamage' name='isDamage' value=1 onchange='createDamageTable()'><input type='hidden' id='differentTypes' name='differentTypes' value=0></td></tr>
 

@@ -657,7 +657,7 @@ async function createTargetTable(primarySecondary){
     let table = document.getElementById("SubeffectTable");
     
     if(primarySecondary == 1){
-        var currentTargetTypeSelection = document.getElementById("targetType").value;
+        var currentTargetTypeSelection = document.getElementById("TargetType").value;
         var startRowIndex = document.getElementById("Target").rowIndex;
     }
     else if(primarySecondary == 2){
@@ -685,7 +685,7 @@ async function createTargetTable(primarySecondary){
         
         let rowSecondaryTarget = table.insertRow(startRowIndex+3);
         rowSecondaryTarget.id = "rowSecondaryTarget";
-        let secondaryTargetOptions = document.getElementById("targetType").innerHTML;
+        let secondaryTargetOptions = document.getElementById("TargetType").innerHTML;
         secondaryTargetOptions = "<option value='None'>None</option>" + secondaryTargetOptions;
         rowSecondaryTarget.innerHTML = "<th><label for='secondaryTargetType'>Secondary Target Type:</label></th><td><select id='secondaryTargetType' name='secondaryTargetType' onchange='createTargetTable(2)'></select></td>";
         
@@ -703,7 +703,7 @@ async function createTargetTable(primarySecondary){
 
 async function createCreatureTargetTable(primarySecondary){
     let table = document.getElementById("SubeffectTable");
-    let currentTargetTypeSelection = document.getElementById("targetType").value;
+    let currentTargetTypeSelection = document.getElementById("TargetType").value;
 
     if(primarySecondary==1){
         var startRowID = "Target";
@@ -716,7 +716,7 @@ async function createCreatureTargetTable(primarySecondary){
     
     let rowAllegiance = table.insertRow(startRowIndex+1);
     rowAllegiance.id = "rowAllegiance";
-    rowAllegiance.innerHTML = "<th><label for='targetAllegiance'>Who Can Be Targeted</label></th><td><select id='targetAllegiance' name='targetAllegiance' onchange='disableCreatureFilteringOptions()'><option value='All'>Anyone</option><option value='Self'>Self Only</option><option value='Allies'>Allies</option><option value='AlliesNonself'>Allies Other Than Self</option><option value='Enemies'>Enemies</option><option value='Nonhostile'>Nonhostile Creatures</option></select></td>";
+    rowAllegiance.innerHTML = "<th><label for='targetAllegiance'>Who Can Be Targeted</label></th><td><select id='targetAllegiance' name='targetAllegiance' onchange='disableCreatureFilteringOptions()'><option value='All'>Anyone</option><option value='Self'>Self Only</option><option value='Allies'>Allies</option><option value='AlliesNonself'>Allies Other Than Self</option><option value='NotSelf'>Anyone Other Than Self</option><option value='Enemies'>Enemies</option><option value='Nonhostile'>Nonhostile Creatures</option><option value='NonhostileNotself'>Nonhostile Creatures, Not Self</option></select></td>";
 
     //TODO: add function that disables/enables filtering options when 'Self' is the only viable target
 

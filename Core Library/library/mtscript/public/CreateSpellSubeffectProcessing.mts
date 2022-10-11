@@ -164,13 +164,73 @@
 ]
 [h:subeffectData = json.remove(subeffectData,"aoeShape")]
 
+[h:targetData = "{}"]
+[h,switch(json.get(subeffectData,"TargetType")),CODE:
+    case "AnyCreature":{
+        
+    };
+    case "AlliedCreature":{
+        [h:targetData = json.set(targetData,"Allegiance",json.set("","Ally",1,"Self",1))]
+    };
+    case "SelfOnly":{
+        [h:targetData = json.set(targetData,"Allegiance",json.set("","Self",1))]
+    };
+    case "EnemyCreature":{
+        [h:targetData = json.set(targetData,"Allegiance",json.set("","Foe",1))]
+    };
+    case "HumanoidCreature":{
+        [h:targetData = json.set(targetData,"TypeInclusive","Humanoid")]
+    };
+    case "Creature":{
+        [h:targetData = "{}"]
+        [h,switch(json.get(subeffectData,"targetAllegiance")),CODE:
+            case "All":{
+                
+            };
+            case "Self":{
+                [h:targetData = json.set(targetData,"Allegiance",json.set("","Self",1))]
+            };
+            case "Allies":{
+                [h:targetData = json.set(targetData,"Allegiance",json.set("","Ally",1,"Self",1))]
+            };
+            case "AlliesNonself":{
+                [h:targetData = json.set(targetData,"Allegiance",json.set("","Ally",1))]
+            };
+            case "NotSelf":{
+                [h:targetData = json.set(targetData,"Allegiance",json.set("","NotSelf",1))]
+            };
+            case "Enemies":{
+                [h:targetData = json.set(targetData,"Allegiance",json.set("","Foe",1))]
+            };
+            case "Nonhostile":{
+                [h:targetData = json.set(targetData,"Allegiance",json.set("","Neutral",1,"Ally",1,"Self",1))]
+            };
+            case "NonhostileNotself":{
+                [h:targetData = json.set(targetData,"Allegiance",json.set("","Neutral",1,"Ally",1))]
+            }
+        ]
+        [h:subeffectData = json.get(subeffectData,"targetAllegiance")]
+    };
+    case "Object":{
+
+    };
+    case "CreatureObject":{
+
+    };
+    case "Point":{
+
+    };
+    case "FreeHand":{
+
+    }
+]
+
 [h:broadcast(json.indent(subeffectData))]
 
 [h:totalSubeffects = json.get(thisPlayerCurrentSpellData,"Total")]
 [h:thisSubeffectNum = json.get(subeffectData,"WhichEffect")]
 [h:spellLevel = json.get(subeffectData,"SpellLevel")]
 [h:setLibProperty("cd.NewSpell",json.set(currentSpellData,getPlayerName(),json.append(thisPlayerCurrentSpellData,SpellCoreData)))]
-
 
 [h,if(thisSubeffectNum>=totalSubeffects),CODE:{
     [h:closeDialog("Spell Creation")]

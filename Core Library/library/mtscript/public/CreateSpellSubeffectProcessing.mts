@@ -143,6 +143,27 @@
     [h:subeffectData = json.set(subeffectData,"Movement",moveTargetData)]
 }]
 
+[h,switch(json.get(subeffectData,"aoeShape")),CODE:
+    case "None":{};
+    case "Choose":{
+        [h:AoEShapes = json.append("","Cone","Cube","Cylinder","Half Sphere","Line","Panels","Sphere","Wall")]
+        [h:AoEShapeOptions = "[]"]
+        [h,foreach(tempShape,AoEShapes),CODE:{
+            [h:isOptionTest = json.contains(subeffectData,"is"+pm.RemoveSpecial(tempShape)+"AOEMulti")]
+            [h,if(isOptionTest): AoEShapeData = ct.a5e.AoESpellDataProcessing(tempShape)]
+            [h,if(isOptionTest): AoEShapeOptions = json.append(AoEShapeOptions,json.set(AoEShapeData,"Shape",pm.RemoveSpecial(tempShape)))]
+        }]
+
+        [h:subeffectData = json.set(subeffectData,"AoEOptions",AoEShapeOptions)]
+    };
+    default:{
+        [h:AoEShapeData = ct.a5e.AoESpellDataProcessing(json.get(subeffectData,"aoeShape"))]
+
+        [h:subeffectData = json.set(subeffectData,"AoE",json.set(AoEShapeData,"Shape",pm.RemoveSpecial(json.get(subeffectData,"aoeShape"))))]
+    }
+]
+[h:subeffectData = json.remove(subeffectData,"aoeShape")]
+
 [h:broadcast(json.indent(subeffectData))]
 
 [h:totalSubeffects = json.get(thisPlayerCurrentSpellData,"Total")]

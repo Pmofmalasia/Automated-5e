@@ -44,10 +44,10 @@
 [h:listDuration = ""]
 [h,foreach(tempDuration,durationOptions): listDuration = listDuration + "<option value='"+tempDuration+"'"+if(DurationString==tempDuration," selected","")+">"+tempDuration+"</option>"]
 
-[h:spellCreationHTML = "<tr><th><label for='spellName'>Spell Name:</label></th><td><input type='text' id='spellName' name='spellName' value='"+sName+"' "+if(FirstPassTest,"","readonly")+" autofocus></td></tr>"]
-[h:spellCreationHTML = spellCreationHTML + if(FirstPassTest,"","<tr><th><label for='spellEffectName'>Effect Name:</label></th><td><input type='text' id='spellEffectName' name='spellEffectName' value='Name'></td></tr>")]
+[h:spellCreationHTML = "<tr><th><label for='SpellName'>Spell Name:</label></th><td><input type='text' id='SpellName' name='SpellName' value='"+sName+"' "+if(FirstPassTest,"","readonly")+" autofocus></td></tr>"]
+[h:spellCreationHTML = spellCreationHTML + if(FirstPassTest,"","<tr><th><label for='SpellEffectName'>Effect Name:</label></th><td><input type='text' id='SpellEffectName' name='SpellEffectName' value='Name'></td></tr>")]
 [h:spellCreationHTML = spellCreationHTML + "<tr><th><label for='SpellLevel'>Spell Level:</label></th><td><select id='SpellLevel' name='SpellLevel' "+if(FirstPassTest,"","readonly")+">"+listSpellLevel+"</select></td></tr>"]
-[h:spellCreationHTML = spellCreationHTML + "<tr><th><label for='spellSchool'>Spell School:</label></th><td><select id='spellSchool' name='spellSchool' "+if(FirstPassTest,"","readonly")+">"+listSchools+"</select></td></tr>"]
+[h:spellCreationHTML = spellCreationHTML + "<tr><th><label for='School'>Spell School:</label></th><td><select id='School' name='School' "+if(FirstPassTest,"","readonly")+">"+listSchools+"</select></td></tr>"]
 [h:spellCreationHTML = spellCreationHTML + "<tr id='rowCastTime'><th><label for='CastTime'>Casting Time:</label></th><td><select id='CastTime' name='CastTime' onchange='customCastTime()'>"+listCastTime+"</select></td></tr>"]
 [h:spellCreationHTML = spellCreationHTML + "<tr id='Ritual'><th><label for='isRitual'>Ritual Spell:</label></th><td style='text-align:center'><input type='checkbox' id='isRitual' name='isRitual' value=1></td></tr>"]
 

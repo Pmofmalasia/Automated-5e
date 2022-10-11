@@ -27,6 +27,7 @@
 [h:defineFunction("pm.WeaponSelectionChoices","pm.WeaponSelectionChoices@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.WeaponSelectionInput","pm.WeaponSelectionInput@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.WeaponSelectionPreset","pm.WeaponSelectionPreset@Lib:pm.a5e.Core")]
+[h:defineFunction("ct.a5e.AoESpellDataProcessing","ct.a5e.AoESpellDataProcessing@Lib:pm.a5e.Core",0,0)]
 
 [h:"<!-- Functions for the character sheet -->"]
 [h:defineFunction("a5e.AC","a5e.AC@Lib:pm.a5e.Core")]

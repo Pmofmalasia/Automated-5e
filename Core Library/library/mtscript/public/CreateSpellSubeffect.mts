@@ -7,7 +7,7 @@
 
 [h:"<!-- May want to send the subeffect number as an argument in some onchange functions -->"]
 
-[h:spellSubeffectHTML = spellSubeffectHTML + "<input type='hidden' id='spellLevel' name='spellLevel' value="+spellLevel+"><input type='hidden' id='whichEffect' name='whichEffect' value="+thisSubeffectNum+">
+[h:spellSubeffectHTML = spellSubeffectHTML + "<input type='hidden' id='SpellLevel' name='SpellLevel' value="+spellLevel+"><input type='hidden' id='whichEffect' name='whichEffect' value="+thisSubeffectNum+">
 
 <tr id='Mitigation'><th><label for='howMitigate'>Make Attack or Force Save?</label></th><td><select id='howMitigate' name='howMitigate' onchange='createMitigationTable()'><option value='Attack'>Make Attack</option><option value='Save'>Force Save</option><option value='Neither' selected>Neither</option></select></td></tr>
 

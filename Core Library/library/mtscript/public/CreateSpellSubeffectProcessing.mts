@@ -125,6 +125,24 @@
     }
 ]
 
+[h,if(json.contains(subeffectData,"isMoveTarget")),CODE:{
+    [h:moveTargetData = json.set("",
+        "Value",json.get(subeffectData,"moveTargetValue"),
+        "Units",json.get(subeffectData,"moveTargetUnits"),
+        "Direction",json.get(subeffectData,"moveTargetDirection")
+    )]
+    [h,if(json.get(subeffectData,"moveTargetAHLScaling") > 0):
+        moveTargetData = json.set(moveTargetData,
+            "AHLScaling",json.get(subeffectData,"moveTargetAHLScaling"),
+            "AHLValue",json.get(subeffectData,"moveTargetAHLValue"));
+        moveTargetData = json.set(moveTargetData,
+            "AHLScaling",0,
+            "AHLValue",0)
+    ]
+
+    [h:subeffectData = json.set(subeffectData,"Movement",moveTargetData)]
+}]
+
 [h:broadcast(json.indent(subeffectData))]
 
 [h:totalSubeffects = json.get(thisPlayerCurrentSpellData,"Total")]

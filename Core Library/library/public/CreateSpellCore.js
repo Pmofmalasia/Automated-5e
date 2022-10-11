@@ -1,6 +1,6 @@
 async function customCastTime() {
-    let currentCastTime = document.getElementById("castTime").value;
-    let castTimeLineIndex = document.getElementById("CastTime").rowIndex;
+    let currentCastTime = document.getElementById("CastTime").value;
+    let castTimeLineIndex = document.getElementById("rowCastTime").rowIndex;
 
     if(currentCastTime=="Custom") {
         if(document.getElementById("Ritual").rowIndex == (castTimeLineIndex+1)){
@@ -19,10 +19,10 @@ async function customCastTime() {
 
 async function customDuration() {
     let currentDuration = document.getElementById("spellDuration").value;
-    let durationLineIndex = document.getElementById("Duration").rowIndex;
+    let durationLineIndex = document.getElementById("rowDuration").rowIndex;
 
     if(currentDuration=="Custom") {
-        if(document.getElementById("DurationAHL").rowIndex == (durationLineIndex+1)){
+        if(document.getElementById("rowDurationAHL").rowIndex == (durationLineIndex+1)){
             let table = document.getElementById("spellCreationTable");
             let customDurationRow = table.insertRow(durationLineIndex+1);
 
@@ -30,7 +30,7 @@ async function customDuration() {
         }
     }
     else {
-        if(document.getElementById("DurationAHL").rowIndex == (durationLineIndex+2)){
+        if(document.getElementById("rowDurationAHL").rowIndex == (durationLineIndex+2)){
             document.getElementById("spellCreationTable").deleteRow(durationLineIndex+1);
         }
     }
@@ -39,11 +39,11 @@ async function customDuration() {
 async function concLost() {
     let concLostLineIndex = document.getElementById("concLost").rowIndex;
 
-    if(document.getElementById("concentrationLost").checked){
+    if(document.getElementById("ConcentrationLost").checked){
         let table = document.getElementById("spellCreationTable");
         let customDurationRow = table.insertRow(concLostLineIndex+1);
 
-        let selectedSpellLevel = document.getElementById("spellLevel").value;
+        let selectedSpellLevel = document.getElementById("SpellLevel").value;
         var concLostLevelOptions = "";
         for(let i=selectedSpellLevel; i<10; i++){
             concLostLevelOptions = concLostLevelOptions+"<option value='"+i+"'>"+i+"</option>";
@@ -58,7 +58,7 @@ async function concLost() {
 
 async function ahlDuration() {
     let isDurationAHLLineIndex = document.getElementById("DurationAHL").rowIndex;
-    let selectedSpellLevel = document.getElementById("spellLevel").value;
+    let selectedSpellLevel = document.getElementById("SpellLevel").value;
 
     if(document.getElementById("AHLDuration").checked){
         let table = document.getElementById("spellCreationTable");

@@ -730,7 +730,7 @@ async function createCreatureTargetTable(primarySecondary){
     
     let rowTargetCover = table.insertRow(startRowIndex+4);
     rowTargetCover.id = "rowTargetCover";
-    rowTargetCover.innerHTML = "<th><label for='maxCover'>Most Cover Target Can Be Behind:</th><td><select name='maxCover' id='maxCover'><option value='None'>None</option><option value='Half'>Half</option><option value='ThreeQuarters' selected>Three-Quarters</option><option value='Full'>Full</option></select></td>";
+    rowTargetCover.innerHTML = "<th><label for='MaxCover'>Most Cover Target Can Be Behind:</th><td><select name='MaxCover' id='MaxCover'><option value='None'>None</option><option value='Half'>Half</option><option value='ThreeQuarters' selected>Three-Quarters</option><option value='Full'>Full</option></select></td>";
     
     let rowTargetCondition = table.insertRow(startRowIndex+5);
     rowTargetCondition.id = "rowTargetCondition";
@@ -830,7 +830,7 @@ async function createTargetConditionTable(){
 
                 let rowInclusiveConditions = table.insertRow(nextRowIndex);
                 rowInclusiveConditions.id = "rowInclusiveConditions";
-                rowInclusiveConditions.innerHTML = "<th>Required Conditions:\</th><td><div class='check-multiple' style='width:100%'>"+conditionOptions+"</div></td>";
+                rowInclusiveConditions.innerHTML = "<th>Required Conditions:</th><td><div class='check-multiple' style='width:100%'>"+conditionOptions+"</div></td>";
                 nextRowIndex++;
                 
                 let rowInclusiveSetByCaster = table.insertRow(nextRowIndex);

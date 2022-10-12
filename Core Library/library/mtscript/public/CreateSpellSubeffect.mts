@@ -37,7 +37,7 @@
 
 <tr id='rowMultitargetMaxDistance'><th><label for='multitargetMaxDistance'>Maximum Distance Between Targets:</label></th><td><input type='number' id='multitargetMaxDistance' name='multitargetMaxDistance' value=5 min=0 style='width:25px'><input type='checkbox' id='multitargetMaxDistanceUnlimited' name='multitargetMaxDistanceUnlimited' value=1>Same as Spell Range</td></tr>
 
-<tr id='rowIsSight'><th><label for='isSight'>Requires Sight on Target:</label></th><td style='text-align:center'><input type='checkbox' id='isSight' name='isSight' value=1></td></tr>
+<tr id='rowIsSight'><th><label for='isSight'>Requires Sight on Target:</label></th><td><input type='checkbox' id='isSight' name='isSight' value=1></td></tr>
 
 <tr id='Target'><th><label for='TargetType'>Target Type:</label></th><td><select id='TargetType' name='TargetType' onchange='createTargetTable(1)'><option value='AnyCreature'>Any Creature</option><option value='AlliedCreature'>Allied Creature</option><option value='SelfOnly'>Self Only</option><option value='EnemyCreature'>Enemy Creature</option><option value='HumanoidCreature'>Humanoid Creature</option><option value='Creature'>Creature (Custom Limits)</option><option value='Object'>Object</option><option value='CreatureObject'>Creature or Object</option><option value='Point'>Point</option><option value='Effect'>Effect</option><option value='FreeHand'>Free Hand</option></td></tr><tr id='submitRow'><th text-align='center' colspan='2'><input type='submit' id='submitButton' value='Submit'></th></tr>"]
 

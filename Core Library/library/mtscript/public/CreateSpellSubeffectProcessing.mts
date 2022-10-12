@@ -152,6 +152,7 @@
             [h:isOptionTest = json.contains(subeffectData,"is"+pm.RemoveSpecial(tempShape)+"AOEMulti")]
             [h,if(isOptionTest): AoEShapeData = ct.a5e.AoESpellDataProcessing(tempShape)]
             [h,if(isOptionTest): AoEShapeOptions = json.append(AoEShapeOptions,json.set(AoEShapeData,"Shape",pm.RemoveSpecial(tempShape)))]
+            [h:subeffectData = json.remove(subeffectData,"is"+pm.RemoveSpecial(tempShape)+"AOEMulti")]
         }]
 
         [h:subeffectData = json.set(subeffectData,"AoEOptions",AoEShapeOptions)]
@@ -170,52 +171,33 @@
         
     };
     case "AlliedCreature":{
-        [h:targetData = json.set(targetData,"Allegiance",json.set("","Ally",1,"Self",1))]
+        [h:targetData = json.set(targetData,"Creature",json.set("","Allegiance",json.set("","Ally",1,"Self",1)))]
     };
     case "SelfOnly":{
-        [h:targetData = json.set(targetData,"Allegiance",json.set("","Self",1))]
+        [h:targetData = json.set(targetData,"Creature",json.set("","Allegiance",json.set("","Self",1)))]
     };
     case "EnemyCreature":{
-        [h:targetData = json.set(targetData,"Allegiance",json.set("","Foe",1))]
+        [h:targetData = json.set(targetData,"Creature",json.set("","Allegiance",json.set("","Foe",1)))]
     };
     case "HumanoidCreature":{
-        [h:targetData = json.set(targetData,"TypeInclusive","Humanoid")]
+        [h:targetData = json.set(targetData,"Creature",json.set("","TypeInclusive","Humanoid"))]
     };
     case "Creature":{
-        [h:targetData = "{}"]
-        [h,switch(json.get(subeffectData,"targetAllegiance")),CODE:
-            case "All":{
-                
-            };
-            case "Self":{
-                [h:targetData = json.set(targetData,"Allegiance",json.set("","Self",1))]
-            };
-            case "Allies":{
-                [h:targetData = json.set(targetData,"Allegiance",json.set("","Ally",1,"Self",1))]
-            };
-            case "AlliesNonself":{
-                [h:targetData = json.set(targetData,"Allegiance",json.set("","Ally",1))]
-            };
-            case "NotSelf":{
-                [h:targetData = json.set(targetData,"Allegiance",json.set("","NotSelf",1))]
-            };
-            case "Enemies":{
-                [h:targetData = json.set(targetData,"Allegiance",json.set("","Foe",1))]
-            };
-            case "Nonhostile":{
-                [h:targetData = json.set(targetData,"Allegiance",json.set("","Neutral",1,"Ally",1,"Self",1))]
-            };
-            case "NonhostileNotself":{
-                [h:targetData = json.set(targetData,"Allegiance",json.set("","Neutral",1,"Ally",1))]
-            }
-        ]
-        [h:subeffectData = json.get(subeffectData,"targetAllegiance")]
+        [h:CreatureTargetingData = ct.a5e.CreatureTargetingLimitProcessing(subeffectData,targetData)]
+        [h:subeffectData = json.get(CreatureTargetingData,"Subeffect")]
+        [h:creatureData = json.get(CreatureTargetingData,"Creature")]
+        [h:targetData = json.set(targetData,"Creature",creatureData)]
+        [h:subeffectData = json.remove(subeffectData,"MaxCover")]
     };
     case "Object":{
 
     };
     case "CreatureObject":{
-
+        [h:CreatureTargetingData = ct.a5e.CreatureTargetingLimitProcessing(subeffectData,targetData)]
+        [h:subeffectData = json.get(CreatureTargetingData,"Subeffect")]
+        [h:creatureData = json.get(CreatureTargetingData,"Creature")]
+        [h:targetData = json.set(targetData,"Creature",creatureData)]
+        [h:subeffectData = json.remove(subeffectData,"MaxCover")]
     };
     case "Point":{
 
@@ -224,6 +206,7 @@
 
     }
 ]
+[h:subeffectData = json.remove(subeffectData,"MaxCover")]
 
 [h:broadcast(json.indent(subeffectData))]
 

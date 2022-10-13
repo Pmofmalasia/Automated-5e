@@ -1,0 +1,2 @@
+[h:completeSpellData = json.get(getLibProperty("ct.NewSpell","Lib:pm.a5e.Core")]
+[h:setLibProperty("ct.NewSpell",json.set(currentSpellData,getPlayerName(),json.append(thisPlayerCurrentSpellData,SpellCoreData)))]

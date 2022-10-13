@@ -1,8 +1,8 @@
 [h:SpellCoreData = macro.args]
 
-[h:currentSpellData = getLibProperty("cd.NewSpell","pm.a5e.Core")]
+[h:currentSpellData = getLibProperty("ct.NewSpell","pm.a5e.Core")]
 [h:thisPlayerCurrentSpellData = json.get(currentSpellData,getPlayerName())]
-[h:setLibProperty("cd.NewSpell",json.set(currentSpellData,getPlayerName(),json.append(thisPlayerCurrentSpellData,SpellCoreData)))]
+[h:setLibProperty("ct.NewSpell",json.set(currentSpellData,getPlayerName(),json.append(thisPlayerCurrentSpellData,SpellCoreData)))]
 
 [h:closeDialog("Spell Creation")]
 

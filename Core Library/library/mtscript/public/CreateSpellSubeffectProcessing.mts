@@ -1,5 +1,5 @@
 [h:subeffectData = macro.args]
-[h:currentSpellData = getLibProperty("cd.NewSpell","pm.a5e.Core")]
+[h:currentSpellData = getLibProperty("ct.NewSpell","pm.a5e.Core")]
 [h:thisPlayerCurrentSpellData = json.get(currentSpellData,getPlayerName())]
 
 [h:howMitigate = json.get(subeffectData,"howMitigate")]
@@ -219,7 +219,11 @@
 [h:totalSubeffects = json.get(thisPlayerCurrentSpellData,"Total")]
 [h:thisSubeffectNum = json.get(subeffectData,"WhichEffect")]
 [h:spellLevel = json.get(subeffectData,"SpellLevel")]
-[h:setLibProperty("cd.NewSpell",json.set(currentSpellData,getPlayerName(),json.append(thisPlayerCurrentSpellData,SpellCoreData)))]
+
+[h:thisEffectSubeffectData = json.get(thisPlayerCurrentSpellData,"Subeffects")]
+[h:thisEffectSubeffectData = json.append(thisEffectSubeffectData,subeffectData)]
+[h:thisPlayerCurrentSpellData = json.set(thisPlayerCurrentSpellData,"Subeffects",thisEffectSubeffectData)]
+[h:setLibProperty("ct.NewSpell",json.set(currentSpellData,getPlayerName(),thisPlayerCurrentSpellData),"Lib:pm.a5e.Core")]
 
 [h,if(thisSubeffectNum>=totalSubeffects),CODE:{
     [h:closeDialog("Spell Creation")]

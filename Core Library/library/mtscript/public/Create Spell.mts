@@ -20,8 +20,8 @@
 [h:DmgType=""]
 [h:DmgType2=""]
 
-[h,if(getLibProperty("cd.NewSpell","Lib:pm.a5e.Core")==""): setLibProperty("cd.NewSpell","{}","Lib:pm.a5e.Core")]
-[h:setLibProperty("cd.NewSpell",json.remove(getLibProperty("cd.NewSpell","Lib:pm.a5e.Core"),getPlayerName()),"Lib:pm.a5e.Core")]
+[h,if(getLibProperty("ct.NewSpell","Lib:pm.a5e.Core")==""): setLibProperty("ct.NewSpell","{}","Lib:pm.a5e.Core")]
+[h:setLibProperty("ct.NewSpell",json.remove(getLibProperty("ct.NewSpell","Lib:pm.a5e.Core"),getPlayerName()),"Lib:pm.a5e.Core")]
 [h:MasterSpellInputData = json.set("","FirstPass",1,"EffectNumber",sMultiEffects,"IsRandomEffect",IsRandomEffect,"sDescriptionTT",sDescriptionTT,"sName",sName,"RangeType",RangeType,"AoEShape",AoEShape,"sDuration",sDuration,"sSchool",sSchool,"IsSummon",IsSummon,"IsAHLSummon",IsAHLSummon,"sList",sList,"sLevel",sLevel,"CastTime",CastTime)]
 
 [h,MACRO("CreateSpellCore@Lib:pm.a5e.Core"): MasterSpellInputData]

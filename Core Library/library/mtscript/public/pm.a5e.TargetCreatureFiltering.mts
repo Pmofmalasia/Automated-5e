@@ -1,7 +1,6 @@
 [h:ParentToken = json.get(arg(0),"ParentToken")]
 [h:switchToken(ParentToken)]
 [h:pm.TargetNum = json.get(arg(0),"Number")]
-[h:pm.TargetAllegiance = if(json.get(arg(0),"Allegiance")=="",json.set("","Any",1),json.get(arg(0),"Allegiance"))]
 [h:pm.TargetOrigin = json.get(arg(0),"Origin")]
 
 [h:rangeData = json.get(arg(0),"Range")]
@@ -36,6 +35,7 @@
 	[h:pm.AoEUnits2 = ""]
 }]
 
+[h:pm.TargetAllegiance = if(json.get(arg(1),"Allegiance")=="",json.set("","Any",1),json.get(arg(1),"Allegiance"))]
 [h:pm.TargetSize = json.get(arg(1),"Size")]
 [h:pm.TargetSizeMax = json.get(arg(1),"SizeMax")]
 [h:pm.TargetSizeMin = json.get(arg(1),"SizeMin")]

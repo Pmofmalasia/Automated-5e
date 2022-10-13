@@ -202,11 +202,17 @@
     case "Point":{
 
     };
+    case "Effect":{
+
+    };
     case "FreeHand":{
 
     }
 ]
+[h:subeffectData = json.set(subeffectData,"TargetLimits",targetData)]
 [h:subeffectData = json.remove(subeffectData,"MaxCover")]
+
+[h:subeffectData = pm.a5e.KeyStringsToNumbers(subeffectData,json.append("","whichEffect","TargetNumber","targetNumberAHL","targetNumberAHLScaling","multitargetMaxDistance"))]
 
 [h:broadcast(json.indent(subeffectData))]
 

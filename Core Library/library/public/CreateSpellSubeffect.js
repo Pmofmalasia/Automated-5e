@@ -692,9 +692,9 @@ async function createTargetTable(primarySecondary){
         document.getElementById("secondaryTargetType").innerHTML = secondaryTargetOptions;
         let secondaryTargetSelection = document.getElementById("secondaryTargetType");
         //removes Point option
-        secondaryTargetSelection = document.getElementById("secondaryTargetType").remove(8);
-        //removes Free Hand option
         secondaryTargetSelection = document.getElementById("secondaryTargetType").remove(9);
+        //removes Free Hand option
+        secondaryTargetSelection = document.getElementById("secondaryTargetType").remove(10);
     }
     else{
         clearUnusedTable("Target","submitRow");
@@ -713,34 +713,30 @@ async function createCreatureTargetTable(primarySecondary){
     }
 
     let startRowIndex = document.getElementById(startRowID).rowIndex;
-    
+
     let rowAllegiance = table.insertRow(startRowIndex+1);
     rowAllegiance.id = "rowAllegiance";
-    rowAllegiance.innerHTML = "<th><label for='targetAllegiance'>Who Can Be Targeted</label></th><td><select id='targetAllegiance' name='targetAllegiance' onchange='disableCreatureFilteringOptions()'><option value='All'>Anyone</option><option value='Self'>Self Only</option><option value='Allies'>Allies</option><option value='AlliesNonself'>Allies Other Than Self</option><option value='NotSelf'>Anyone Other Than Self</option><option value='Enemies'>Enemies</option><option value='Nonhostile'>Nonhostile Creatures</option><option value='NonhostileNotself'>Nonhostile Creatures, Not Self</option></select></td>";
+    rowAllegiance.innerHTML = "<th><label for='targetAllegiance'>Allegiance of Target:</label></th><td><select id='targetAllegiance' name='targetAllegiance' onchange='disableCreatureFilteringOptions()'><option value='All'>Anyone</option><option value='Self'>Self Only</option><option value='Allies'>Allies</option><option value='AlliesNonself'>Allies Other Than Self</option><option value='NotSelf'>Anyone Other Than Self</option><option value='Enemies'>Enemies</option><option value='Nonhostile'>Nonhostile Creatures</option><option value='NonhostileNotself'>Nonhostile Creatures, Not Self</option></select></td>";
 
     //TODO: add function that disables/enables filtering options when 'Self' is the only viable target
 
     let rowCreatureTypes = table.insertRow(startRowIndex+2);
     rowCreatureTypes.id = "rowCreatureTypes";
     rowCreatureTypes.innerHTML = "<th><label for='targetCreatureTypes'>Valid Creature Types:</label></th><td><select id='targetCreatureTypes' name='targetCreatureTypes' onchange='createCreatureTargetTypes()'><option value='All'>All Types</option><option value='Inclusive'>Must Be Specific Type(s)</option><option value='Exclusive'>Cannot Be Specific Type(s)</option><option value='Mixture'>Mixture of Both Above</option></select></td>";
-    
+
     let rowTargetSenses = table.insertRow(startRowIndex+3);
     rowTargetSenses.id = "rowTargetSenses";
     rowTargetSenses.innerHTML = "<th><label for='targetCanSee'>Senses Required by Target:</th><td><input type='checkbox' name='targetCanSee' id='targetCanSee'><label for='targetCanSee'>Target Must See Caster</label><br><input type='checkbox' name='targetCanHear' id='targetCanHear'><label for='targetCanHear'>Target Must Hear Caster</label><br><input type='checkbox' name='targetCanUnderstand' id='targetCanUnderstand'><label for='targetCanUnderstand'>Target Must Understand Caster</label></td>";
-    
-    let rowTargetCover = table.insertRow(startRowIndex+4);
-    rowTargetCover.id = "rowTargetCover";
-    rowTargetCover.innerHTML = "<th><label for='MaxCover'>Most Cover Target Can Be Behind:</th><td><select name='MaxCover' id='MaxCover'><option value='None'>None</option><option value='Half'>Half</option><option value='ThreeQuarters' selected>Three-Quarters</option><option value='Full'>Full</option></select></td>";
-    
-    let rowTargetCondition = table.insertRow(startRowIndex+5);
+
+    let rowTargetCondition = table.insertRow(startRowIndex+4);
     rowTargetCondition.id = "rowTargetCondition";
     rowTargetCondition.innerHTML = "<th><label for='isTargetCondition'>Condition Requirements on Target:</th><td><select name='isTargetCondition' id='isTargetCondition' onchange='createTargetConditionTable()'><option value='None'>None</option><option value='Inclusive'>Must Have Certain Conditions</option><option value='Exclusive'>Cannot Have Certain Conditions</option><option value='Mixture'>Mixture of Both Above</option></select></td>";
     
-    let rowTargetAbilityScore = table.insertRow(startRowIndex+6);
+    let rowTargetAbilityScore = table.insertRow(startRowIndex+5);
     rowTargetAbilityScore.id = "rowTargetAbilityScore";
     rowTargetAbilityScore.innerHTML = "<th><label for='isAbilityScore'>Limit Targeting By Target Ability Scores:</th><td><input type='checkbox' name='isAbilityScore' id='isAbilityScore' onchange='createTargetAbilityScoreTable()'></td>";
     
-    let rowTargetAlignment = table.insertRow(startRowIndex+7);
+    let rowTargetAlignment = table.insertRow(startRowIndex+6);
     rowTargetAlignment.id = "rowTargetAlignment";
     rowTargetAlignment.innerHTML = "<th><label for='isAlignment'>Limit Targeting By Alignment:</th><td><input type='checkbox' name='isAlignment' id='isAlignment' onchange='createTargetAlignmentTable()'></td>";
 }
@@ -792,7 +788,7 @@ async function createCreatureTargetTypes(){
             if(!alreadyExclusiveTest){
                 let rowExclusiveCreatureTypes = table.insertRow(nextRowIndex);
                 rowExclusiveCreatureTypes.id = "rowExclusiveCreatureTypes";
-                rowExclusiveCreatureTypes.innerHTML = "<th>Disallowed Creature Types:</th><td><div class='check-multiple' style='width:100%'>"+creatureTypeIncludeOptions+"</div></td>";
+                rowExclusiveCreatureTypes.innerHTML = "<th>Disallowed Creature Types:</th><td><div class='check-multiple' style='width:100%'>"+creatureTypeExcludeOptions+"</div></td>";
                 nextRowIndex++;
             }
             else{
@@ -824,7 +820,6 @@ async function createTargetConditionTable(){
                 nextRowIndex++;
             }
             else{
-                //TODO: add onchange function for (In/Ex)clusiveConditions to add/remove them from save prevention multicheckbox selection
                 let conditionOptions = await createConditionMultipleBoxes("InclusiveConditions","");
                 conditionOptions = conditionOptions + "<label><input type='checkbox' id='INCLUDENONBASECONDITION' name='INCLUDENONBASECONDITION' value=1 onchange='createClassConditionRow(1)'><span>Non-Base Condition</span></label>";
 

@@ -25,8 +25,6 @@
 
 <tr id='rowIsWeaponAttack'><th><label for='isWeaponAttack'>Makes a Weapon Attack?</label></th><td><input type='checkbox' id='isWeaponAttack' name='isWeaponAttack' value=1 onchange='createWeaponAttackTable()'></td></tr>
 
-<tr id='Missiles'><th><label for='isMissiles'>Is it a Missile Spell?</label></th><td><input type='checkbox' id='isMissiles' name='isMissiles' value=1></td></tr>
-
 <tr id='Range'><th><label for='RangeType'>Range Type:</label></th><td><select id='RangeType' name='RangeType' onchange='createRangeTable()'><option value='Self'>Self</option><option value='SelfRanged'>Self with Range</option><option value='Touch'>Touch</option><option value='Ranged'>Ranged</option>"+if(thisSubeffectNum>1,"<option value='PriorTarget'>Based on Prior Subeffect</option>","")+"</td></tr>
 
 <tr id='AoE'><th><label for='aoeShape'>Area of Effect Shape:</label></th><td><select id='aoeShape' name='aoeShape' onchange='createAoETable(1)'><option value='None'>None</option><option value='Cone'>Cone</option><option value='Cube'>Cube</option><option value='Cylinder'>Cylinder</option><option value='Half Sphere'>Half Sphere</option><option value='Line'>Line</option><option value='Panels'>Panels</option><option value='Sphere'>Sphere</option><option value='Wall'>Wall</option><option value='Choose'>Multiple Options</option></td></tr>
@@ -36,6 +34,10 @@
 <tr id='rowTargetNumberAHL'><th><label for='targetNumberAHL'>Increased Target Number AHL:</label></th><td><input type='number' id='targetNumberAHL' name='targetNumberAHL' value=0 min=0 style='width:25px'><select id='targetNumberAHLScaling' name='targetNumberAHLScaling'><option value='0'>No Increase</option><option value='1'>Every Level</option><option value='2'>Every Other Level</option><option value='3'>Every Three Levels</option></select></td></tr>
 
 <tr id='rowMultitargetMaxDistance'><th><label for='multitargetMaxDistance'>Maximum Distance Between Targets:</label></th><td><input type='number' id='multitargetMaxDistance' name='multitargetMaxDistance' value=5 min=0 style='width:25px'><input type='checkbox' id='multitargetMaxDistanceUnlimited' name='multitargetMaxDistanceUnlimited' value=1>Same as Spell Range</td></tr>
+
+<tr id='Missiles'><th><label for='isMissiles'>Is it a Missile Spell?</label></th><td><input type='checkbox' id='isMissiles' name='isMissiles' value=1></td></tr>
+
+<tr id='rowTargetCover'><th><label for='MaxCover'>Most Cover Target Can Be Behind:</th><td><select name='MaxCover' id='MaxCover'><option value='None'>None</option><option value='Half'>Half</option><option value='ThreeQuarters' selected>Three-Quarters</option><option value='Full'>Full</option></select></td></tr>
 
 <tr id='rowIsSight'><th><label for='isSight'>Requires Sight on Target:</label></th><td><input type='checkbox' id='isSight' name='isSight' value=1></td></tr>
 

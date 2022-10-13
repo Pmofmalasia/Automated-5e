@@ -29,6 +29,21 @@
 ]
 [h:subeffectData = json.remove(subeffectData,"targetAllegiance")]
 
+[h,if(json.get(subeffectData,"targetCreatureTypes") != "All"),CODE:{
+    [h:creatureTypeList = pm.GetCreatureTypes("Name","json")]
+    [h:inclusiveCreatures = "[]"]
+    [h:exclusiveCreatures = "[]"]
+    [h,foreach(tempCreature,creatureTypeList),CODE:{
+        [h,if(json.contains(subeffectData,"CreatureTypeTargetInclusive"+tempCreature)): inclusiveCreatures = json.append(inclusiveCreatures,tempCreature)]
+        [h,if(json.contains(subeffectData,"CreatureTypeTargetExclusive"+tempCreature)): exclusiveCreatures = json.append(exclusiveCreatures,tempCreature)]
+        [h:subeffectData = json.remove(subeffectData,"CreatureTypeTargetInclusive"+tempCreature)]
+        [h:subeffectData = json.remove(subeffectData,"CreatureTypeTargetExclusive"+tempCreature)]
+    }]
+    [h:creatureTargetData = json.set(creatureTargetData,"TypeInclusive",inclusiveCreatures)]
+    [h:creatureTargetData = json.set(creatureTargetData,"TypeExclusive",exclusiveCreatures)]
+    [h:subeffectData = json.remove(subeffectData,"targetCreatureTypes")]
+}]
+
 [h,if(json.contains(subeffectData,"targetCanSee")),CODE:{
     [h:creatureTargetData = json.set(creatureTargetData,"Sight",1)]
     [h:subeffectData = json.remove(subeffectData,"targetCanSee")]
@@ -42,14 +57,19 @@
     [h:subeffectData = json.remove(subeffectData,"targetCanUnderstand")]
 }]
 
-[h:creatureTargetData = json.set(creatureTargetData,"MaxCover",json.get(subeffectData,"MaxCover"))]
-
-[h,if(json.get(subeffectData,"targetCreatureTypes") == "Inclusive" || json.get(subeffectData,"targetCreatureTypes") == "Mixture"),CODE:{
-    
-}]
-
-[h,if(json.get(subeffectData,"isTargetCondition") == "Inclusive" || json.get(subeffectData,"isTargetCondition") == "Mixture"),CODE:{
-    
+[h,if(json.get(subeffectData,"isTargetCondition") != "None"),CODE:{
+    [h:baseConditionList = pm.a5e.GetBaseConditions("Name","json")]
+    [h:inclusiveConditions = "[]"]
+    [h:exclusiveConditions = "[]"]
+    [h,foreach(tempCondition,baseConditionList),CODE:{
+        [h,if(json.contains(subeffectData,"InclusiveConditions"+tempCondition)): inclusiveConditions = json.append(inclusiveConditions,json.set("","Name",tempCondition,"Class","Condition"))]
+        [h,if(json.contains(subeffectData,"ExclusiveConditions"+tempCondition)): exclusiveConditions = json.append(exclusiveConditions,json.set("","Name",tempCondition,"Class","Condition"))]
+        [h:subeffectData = json.remove(subeffectData,"InclusiveConditions"+tempCondition)]
+        [h:subeffectData = json.remove(subeffectData,"ExclusiveConditions"+tempCondition)]
+    }]
+    [h,if(!json.isEmpty(inclusiveConditions)): creatureTargetData = json.set(creatureTargetData,"TargetConditionsInclusive",inclusiveConditions)]
+    [h,if(!json.isEmpty(exclusiveConditions)): creatureTargetData = json.set(creatureTargetData,"TargetConditionsExclusive",exclusiveConditions)]
+    [h:subeffectData = json.remove(subeffectData,"isTargetCondition")]
 }]
 
 [h,if(json.contains(subeffectData,"isAbilityScore")),CODE:{
@@ -93,5 +113,7 @@
     [h:subeffectData = json.remove(subeffectData,"alignmentChaoticEvil")]
     [h:subeffectData = json.remove(subeffectData,"alignmentUnaligned")]
 }]
+
+[h:creatureTargetData = json.set(creatureTargetData,"MaxCover",json.get(subeffectData,"MaxCover"))]
 
 [h:macro.return = json.set("","Subeffect",subeffectData,"Creature",creatureTargetData)]

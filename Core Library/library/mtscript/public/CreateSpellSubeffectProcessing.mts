@@ -214,8 +214,6 @@
 
 [h:subeffectData = pm.a5e.KeyStringsToNumbers(subeffectData,json.append("","whichEffect","TargetNumber","targetNumberAHL","targetNumberAHLScaling","multitargetMaxDistance"))]
 
-[h:broadcast(json.indent(subeffectData))]
-
 [h:totalSubeffects = json.get(thisPlayerCurrentSpellData,"Total")]
 [h:thisSubeffectNum = json.get(subeffectData,"WhichEffect")]
 [h:spellLevel = json.get(subeffectData,"SpellLevel")]
@@ -223,11 +221,18 @@
 [h:thisEffectSubeffectData = json.get(thisPlayerCurrentSpellData,"Subeffects")]
 [h:thisEffectSubeffectData = json.append(thisEffectSubeffectData,subeffectData)]
 [h:thisPlayerCurrentSpellData = json.set(thisPlayerCurrentSpellData,"Subeffects",thisEffectSubeffectData)]
+[h:broadcast(json.indent(thisPlayerCurrentSpellData))]
 [h:setLibProperty("ct.NewSpell",json.set(currentSpellData,getPlayerName(),thisPlayerCurrentSpellData),"Lib:pm.a5e.Core")]
 
 [h,if(thisSubeffectNum>=totalSubeffects),CODE:{
     [h:closeDialog("Spell Creation")]
-    [h,MACRO("CreateSpellEnd@Lib:pm.a5e.Core"): ""]
+    [h:baseSpellData = json.get(thisPlayerCurrentSpellData,0)]
+    [h,if(json.length(thisPlayerCurrentSpellData) >= json.get(baseSpellData,"multiEffects")),CODE:{
+        [h:baseSpellData = json.set(json.get(thisPlayerCurrentSpellData,0),"FirstPass",0)]
+        [h,MACRO("CreateSpellSubeffect@Lib:pm.a5e.Core"): ]
+    };{
+        [h,MACRO("CreateSpellEnd@Lib:pm.a5e.Core"): ""]
+    }]
 };{
     [h,MACRO("CreateSpellSubeffect@Lib:pm.a5e.Core"): json.set("","Total",totalSubeffects,"WhichEffect",thisSubeffectNum+1,"SpellLevel",json.get(SpellCoreData,"spellLevel"))]
 }]

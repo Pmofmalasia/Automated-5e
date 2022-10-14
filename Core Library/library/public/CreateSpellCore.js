@@ -1,3 +1,7 @@
+async function updateSpellLevel(){
+    //TODO: Create function to update things like Duration AHL to adjust options when the spell level is changed
+}
+
 async function customCastTime() {
     let currentCastTime = document.getElementById("CastTime").value;
     let castTimeLineIndex = document.getElementById("rowCastTime").rowIndex;
@@ -57,7 +61,7 @@ async function concLost() {
 }
 
 async function ahlDuration() {
-    let isDurationAHLLineIndex = document.getElementById("DurationAHL").rowIndex;
+    let isDurationAHLLineIndex = document.getElementById("rowDurationAHL").rowIndex;
     let selectedSpellLevel = document.getElementById("SpellLevel").value;
 
     if(document.getElementById("AHLDuration").checked){

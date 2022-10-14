@@ -1,28 +1,13 @@
-[h:CommandText='[h:pm.SpellStdVars(macro.args)]']
-[h:sMultiEffects=1]
-[h:IsRandomEffect=0]
-[h:sName=""]
-[h:sLevel=1]
-[h:CastTime="{}"]
-[h:IsOngoing=0]
-[h:IsOngoingRandom=0]
-[h:sList="{}"]
-[h:EffectsCounter=0]
-[h:sDescription = ""]
-[h:sDescriptionTT=""]
-[h:sName = "Name"]
-[h:RangeType = "Self"]
-[h:AoEShape = "None"]
-[h:sDuration = "{}"]
-[h:sSchool = "abjuration"]
-[h:IsSummon = "No"]
-[h:IsAHLSummon = 1]
-[h:DmgType=""]
-[h:DmgType2=""]
-
 [h,if(getLibProperty("ct.NewSpell","Lib:pm.a5e.Core")==""): setLibProperty("ct.NewSpell","{}","Lib:pm.a5e.Core")]
 [h:setLibProperty("ct.NewSpell",json.remove(getLibProperty("ct.NewSpell","Lib:pm.a5e.Core"),getPlayerName()),"Lib:pm.a5e.Core")]
-[h:MasterSpellInputData = json.set("","FirstPass",1,"EffectNumber",sMultiEffects,"IsRandomEffect",IsRandomEffect,"sDescriptionTT",sDescriptionTT,"sName",sName,"RangeType",RangeType,"AoEShape",AoEShape,"sDuration",sDuration,"sSchool",sSchool,"IsSummon",IsSummon,"IsAHLSummon",IsAHLSummon,"sList",sList,"sLevel",sLevel,"CastTime",CastTime)]
+[h:MasterSpellInputData = json.set("",
+	"FirstPass",1,
+	"SpellName","",
+	"Duration","{}",
+	"School","",
+	"SpellLevel",1,
+	"CastTime","{}"
+)]
 
 [h,MACRO("CreateSpellCore@Lib:pm.a5e.Core"): MasterSpellInputData]
 

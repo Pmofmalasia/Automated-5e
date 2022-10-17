@@ -87,6 +87,18 @@ async function clearUnusedTable(startRowID,endRowID){
     }
 }
 
+async function createAHLSelect(ahlSelectID){
+    let ahlSelectHTML = "";
+    if(document.getElementById("SpellLevel").value == "0"){
+        ahlSelectHTML = "<select id='"+ahlSelectID+"' name='"+ahlSelectID+"'><option value='0'>No Increase</option><option value='1'>Every Interval</option><option value='2'>Every Other Interval</option><option value='3'>Every Three Intervals</option></select>";
+    }
+    else{
+        ahlSelectHTML = "<select id='"+ahlSelectID+"' name='"+ahlSelectID+"'><option value='0'>No Increase</option><option value='1'>Every Level</option><option value='2'>Every Other Level</option><option value='3'>Every Three Levels</option></select>";
+    }
+
+    return ahlSelectHTML;
+}
+
 async function createDamageTable(){
     if(document.getElementById("isDamage").checked){
         let table = document.getElementById("SubeffectTable");
@@ -222,14 +234,14 @@ async function createConditionTable(){
         else{
             var endRowId = "rowSummons";
         }
-//TODO: Add onchange function to checkboxes to add/remove them from the 'Save vs. Some' option
+
         if(conditionChoice == "All" || conditionChoice == "Mixture"){
             if(alreadyAlwaysSetTest){
                 nextRowIndex = nextRowIndex + (document.getElementById(endRowId).rowIndex - document.getElementById("rowCondition").rowIndex - 1);
             }
             else{
-                let conditionOptions = await createConditionMultipleBoxes("AlwaysSet","");
-                conditionOptions = conditionOptions + "<label><input type='checkbox' id='isAlwaysSetSpellSpecific' name='isAlwaysSetSpellSpecific' value=1 onchange='createSpellConditionRow(1)'><span>Spell-Specific Condition</span></label>";
+                let conditionOptions = await createConditionMultipleBoxes("AlwaysSet","createConditionSaveTable()");
+                conditionOptions = conditionOptions + "<label><input type='checkbox' id='AlwaysSetSpellSpecific' name='AlwaysSetSpellSpecific' value=1 onchange='createSpellConditionRow(1)'><span>Spell-Specific Condition</span></label>";
 
                 let rowConditionsAlwaysSet = table.insertRow(nextRowIndex);
                 rowConditionsAlwaysSet.id = "rowConditionsAlwaysSet";
@@ -247,12 +259,19 @@ async function createConditionTable(){
         
         if(conditionChoice == "Choose" || conditionChoice == "Mixture"){
             if(!alreadyOptionsTest){
-                let conditionOptions = await createConditionMultipleBoxes("ConditionOption","");
-                conditionOptions = conditionOptions + "<label><input type='checkbox' id='isConditionOptionSpellSpecific' name='isConditionOptionSpellSpecific' value=1 onchange='createSpellConditionRow(2)'><span>Spell-Specific Condition</span></label>";
+                let conditionOptions = await createConditionMultipleBoxes("ConditionOption","createConditionSaveTable()");
+                conditionOptions = conditionOptions + "<label><input type='checkbox' id='ConditionOptionSpellSpecific' name='ConditionOptionSpellSpecific' value=1 onchange='createSpellConditionRow(2)'><span>Spell-Specific Condition</span></label>";
 
                 let rowConditionOptions = table.insertRow(nextRowIndex);
                 rowConditionOptions.id = "rowConditionOptions";
                 rowConditionOptions.innerHTML = "<th>Condition Options:</th><td><div class='check-multiple' style='width:100%'>"+conditionOptions+"</div></td>";
+                nextRowIndex++;
+
+                let conditionAHLScalingSelect = await createAHLSelect("conditionOptionsNumberAHLScaling");
+
+                let rowConditionOptionsNumber = table.insertRow(nextRowIndex);
+                rowConditionOptionsNumber.id = "rowConditionOptionsNumber";
+                rowConditionOptionsNumber.innerHTML = "<th><label  for='conditionOptionsNumber'>Number of Options to Choose:</label></th><td><input type='number' id='conditionOptionsNumber' name='conditionOptionsNumber' min=1 value=1 style='width:25px'> + <input type='number' id='conditionOptionsNumberAHL' name='conditionOptionsNumberAHL' min=0 value=0 style='width:25px'>"+conditionAHLScalingSelect+"</td>";
                 nextRowIndex++;
             }
             else{
@@ -289,42 +308,121 @@ async function createConditionMultipleBoxes(boxNamePrefix,onChangeFunction){
     return conditionOptions;
 }
 
+async function createSpellConditionRow(whichStartingPosition){
+    let table = document.getElementById("SubeffectTable");
+    let nextRowIndex = 0;
+    let conditionPrefix = "";
+
+    if(whichStartingPosition==1){
+        nextRowIndex = document.getElementById("rowConditionsAlwaysSet").rowIndex + 1;
+        conditionPrefix = "AlwaysSet";
+    }
+    else if(whichStartingPosition==2){
+        nextRowIndex = document.getElementById("rowConditionOptions").rowIndex + 1;
+        conditionPrefix = "ConditionOption";
+    }
+
+    if(document.getElementById(conditionPrefix+"SpellSpecific").checked){
+        let rowIsSpellSpecificMulti = table.insertRow(nextRowIndex);
+        rowIsSpellSpecificMulti.id = "rowIsSpellSpecificMulti"+conditionPrefix;
+        rowIsSpellSpecificMulti.innerHTML = "<th><label for='isSpellSpecific"+conditionPrefix+"Multiple'>Multiple Spell Conditions?</label></th><input type='checkbox' id='isSpellSpecific"+conditionPrefix+"Multiple' name='isSpellSpecific"+conditionPrefix+"Multiple' onchange='createMultiSpellConditionRow("+'"'+conditionPrefix+'"'+")'></td>";
+    }
+    else{
+        table.deleteRow(document.getElementById("rowIsSpellSpecificMulti"+conditionPrefix).rowIndex);
+        if(document.getElementById("rowSpellSpecificMultiNames"+conditionPrefix) != null){
+            table.deleteRow(document.getElementById("rowSpellSpecificMultiNames"+conditionPrefix).rowIndex);
+        }
+    }
+    
+    createConditionSaveTable();
+}
+
+async function createMultiSpellConditionRow(conditionPrefix){
+    let table = document.getElementById("SubeffectTable");
+    let nextRowIndex = document.getElementById("rowIsSpellSpecificMulti"+conditionPrefix).rowIndex + 1;
+
+    if(document.getElementById("isSpellSpecific"+conditionPrefix+"Multiple").checked){
+        let rowSpellSpecificMultiNames = table.insertRow(nextRowIndex);
+        rowSpellSpecificMultiNames.id = "rowSpellSpecificMultiNames"+conditionPrefix;
+        rowSpellSpecificMultiNames.innerHTML = "<th><label for='"+conditionPrefix+"SpellSpecificNames'>Enter One Name Per Line:</label></th><textarea id='"+conditionPrefix+"SpellSpecificNames' name='"+conditionPrefix+"SpellSpecificNames' rows='5'></textarea></td>";
+    }
+    else{
+        table.deleteRow(document.getElementById("rowSpellSpecificMultiNames"+conditionPrefix).rowIndex);
+    }
+}
+
 async function createConditionSaveTable(){
+    if(document.getElementById("howMitigate").value != "Save"){
+        return;
+    }
+
     let table = document.getElementById("SubeffectTable");
     let nextRowIndex = document.getElementById("rowConditionSave").rowIndex + 1;
     let conditionSaveEffect = document.getElementById("conditionSaveEffect").value;
 
-    clearUnusedTable("rowConditionSave","rowSummons");
     if(conditionSaveEffect == 1){
         let request = await fetch("macro:pm.a5e.GetBaseConditions@lib:pm.a5e.Core", {method: "POST", body: ""});
         let baseConditions = await request.json();
-
         let conditionOptions = "";
         for(let tempCondition of baseConditions){
             let isSelectedTest = 0;
-            if(table.rows.namedItem("rowConditionsAlwaysSet") != null){
+            if(document.getElementById("rowConditionsAlwaysSet") != null){
                 if(document.getElementById("AlwaysSet"+tempCondition.Name).checked){
                     isSelectedTest++;
                 }
             }
-            if(table.rows.namedItem("rowConditionOptions") != null){
+            if(document.getElementById("rowConditionOptions") != null){
                 if(document.getElementById("ConditionOption"+tempCondition.Name).checked){
                     isSelectedTest++;
                 }
             }
             if(isSelectedTest>0){
-                conditionOptions = conditionOptions + "<label><input type='checkbox' id='SaveNullify"+tempCondition.Name+"' name='SaveNullify"+tempCondition.Name+"' value=1><span>"+tempCondition.DisplayName+"</span></label>"
+                let alreadyNullifiedText = "";
+                if(document.getElementById("SaveNullify"+tempCondition.Name)!=null){
+                    if(document.getElementById("SaveNullify"+tempCondition.Name).checked){
+                        alreadyNullifiedText = " checked";
+                    }
+                }
+                conditionOptions = conditionOptions + "<label><input type='checkbox' id='SaveNullify"+tempCondition.Name+"' name='SaveNullify"+tempCondition.Name+"' value=1"+alreadyNullifiedText+"><span>"+tempCondition.DisplayName+"</span></label>";
             }
         }
+
+        let spellSpecificSelected = 0;
+        if(document.getElementById("rowConditionsAlwaysSet") != null){
+            if(document.getElementById("AlwaysSetSpellSpecific").checked){
+                spellSpecificSelected++;
+            }
+        }
+        if(document.getElementById("rowConditionOptions") != null){
+            if(document.getElementById("ConditionOptionSpellSpecific").checked){
+                spellSpecificSelected++;
+            }
+        }
+        if(spellSpecificSelected>0){
+            let alreadyNullifiedText = "";
+            if(document.getElementById("SaveNullifySpellSpecific")!=null){
+                if(document.getElementById("SaveNullifySpellSpecific").checked){
+                    alreadyNullifiedText = " checked";
+                }
+            }
+            conditionOptions = conditionOptions + "<label><input type='checkbox' id='SaveNullifySpellSpecific' name='SaveNullifySpellSpecific' value=1"+alreadyNullifiedText+"><span>Spell-Specific Condition</span></label>";
+        }
+
+        clearUnusedTable("rowConditionSave","rowSummons");
 
         let rowConditionsNullified = table.insertRow(nextRowIndex);
         rowConditionsNullified.id = "rowConditionsNullified";
         rowConditionsNullified.innerHTML = "<th>Conditions Nullified:</th><td><div id='SaveConditionNullify' class='check-multiple' style='width:100%'>"+conditionOptions+"</div></td>";
     }
     else if(conditionSaveEffect == "Different"){
+        clearUnusedTable("rowConditionSave","rowSummons");
+
         let rowConditionSave = table.insertRow(nextRowIndex);
         rowConditionSave.id = "rowConditionSave";
         rowConditionSave.innerHTML = "<th><label for='alternateConditions'>Alternate Conditions:</label></th><td>I don't wanna right now thanks. TODO later.</td>";
+    }
+    else{
+        clearUnusedTable("rowConditionSave","rowSummons");
     }
 }
 
@@ -358,10 +456,12 @@ async function createSummonTable(){
             rowSummonCrMax.id = "rowSummonCrMax";
             rowSummonCrMax.innerHTML = "<th><label for='summonCrMax'>Maximum CR of Creature:</th><td><input type='number' id='summonCrMax' name='summonCrMax' min=0 value=2 style='width:25px'></td>";
             nextRowIndex++;
-            
+
+            let summonCrMaxAHLScalingSelect = await createAHLSelect("summonCrMaxAHLScaling");
+
             let rowSummonCrAHL = table.insertRow(nextRowIndex);
             rowSummonCrAHL.id = "rowSummonCrAHL";
-            rowSummonCrAHL.innerHTML = "<th><label for='summonCrMaxAHL'>CR Increase AHL:</th><td><select id='summonCrMaxAHLScaleHow' name='summonCrMaxAHLScaleHow'><option value='Add'>Add</option><option value='Multiply'>Multiply</option></select><input type='number' id='summonCrMaxAHLNum' name='summonCrMaxAHLNum' min=0 value=1  style='width:25px'><select id='summonCrMaxAHLScaling' name='summonCrMaxAHLScaling'><option value='0'>No Increase</option><option value='1'>Every Level</option><option value='2'>Every Other Level</option><option value='3'>Every Three Levels</option></select></td>";
+            rowSummonCrAHL.innerHTML = "<th><label for='summonCrMaxAHL'>CR Increase AHL:</th><td><select id='summonCrMaxAHLScaleHow' name='summonCrMaxAHLScaleHow'><option value='Add'>Add</option><option value='Multiply'>Multiply</option></select><input type='number' id='summonCrMaxAHLNum' name='summonCrMaxAHLNum' min=0 value=1 style='width:25px'>"+summonCrMaxAHLScalingSelect+"</td>";
             nextRowIndex++;
 
             let request = await fetch("macro:pm.GetCreatureTypes@lib:pm.a5e.Core", {method: "POST", body: ""});
@@ -391,10 +491,12 @@ async function createSummonTable(){
             rowSummonNumber.id = "rowSummonNumber";
             rowSummonNumber.innerHTML = "<th><label for='summonNumber'>Number of Summons:</th><td>"+summonNumberOptions+"</td>";
             nextRowIndex++;
-                
+            
+            let summonNumberAHLScalingSelect = await createAHLSelect("summonNumberAHLScaling");
+
             let rowSummonNumberAHL = table.insertRow(nextRowIndex);
             rowSummonNumberAHL.id = "rowSummonNumberAHL";
-            rowSummonNumberAHL.innerHTML = "<th><label for='summonNumberAHLScaleHow'>Increased Number AHL:</th><td><select id='summonNumberAHLScaleHow' name='summonNumberAHLScaleHow'><option value='Add'>Add</option><option value='Multiply'>Multiply</option></select><input type='number' id='summonNumberAHL' name='summonNumberAHL' min='0' style='width:25px' value=0><select id='summonNumberAHLScaling' name='summonNumberAHLScaling'><option value='0'>No Increase</option><option value='1'>Every Level</option><option value='2'>Every Other Level</option><option value='3'>Every Three Levels</option></select></td>";
+            rowSummonNumberAHL.innerHTML = "<th><label for='summonNumberAHLScaleHow'>Increased Number AHL:</th><td><select id='summonNumberAHLScaleHow' name='summonNumberAHLScaleHow'><option value='Add'>Add</option><option value='Multiply'>Multiply</option></select><input type='number' id='summonNumberAHL' name='summonNumberAHL' min='0' style='width:25px' value=0>"+summonNumberAHLScalingSelect+"</td>";
             nextRowIndex++;            
         }
     }
@@ -418,9 +520,11 @@ async function createMoveTargetTable(){
         rowMoveTargetInfo.id = "rowMoveTargetInfo";
         rowMoveTargetInfo.innerHTML = "<th><label for='moveTargetValue'>Distance Target Moved:</label></th><input type='number' id='moveTargetValue' name='moveTargetValue' min=0 value=10 style='width:25px'><select id='moveTargetUnits' name='moveTargetUnits'><option value='Feet'>Feet</option><option value='Miles'>Miles</option></select><select id='moveTargetDirection' name='moveTargetDirection'><option value='Away'>Away From Caster</option><option value='Towards'>Towards Caster</option><option value='Choice'>Caster's Choice</option><option value='Random4'>Random, 4 Directions</option><option value='Random8'>Random, 8 Directions</option></select></td></tr>";
 
+        let moveTargetAHLScalingSelect = await createAHLSelect("moveTargetAHLScaling");
+
         let rowMoveTargetAHLInfo = table.insertRow(startRowIndex+2);
         rowMoveTargetAHLInfo.id = "rowMoveTargetAHLInfo";
-        rowMoveTargetAHLInfo.innerHTML = "<th><label for='moveTargetAHLValue'>Increased Distance AHL:</label></th><input type='number' id='moveTargetAHLValue' name='moveTargetAHLValue' min=0 value=0 style='width:25px'><select id='moveTargetAHLUnits' name='moveTargetAHLUnits'><option value='Feet'>Feet</option><option value='Miles'>Miles</option></select><select id='moveTargetAHLScaling' name='moveTargetAHLScaling'><option value='0'>No Increase</option><option value='1'>Every Level</option><option value='2'>Every Other Level</option><option value='3'>Every Three Levels</option></select></td></tr>";
+        rowMoveTargetAHLInfo.innerHTML = "<th><label for='moveTargetAHLValue'>Increased Distance AHL:</label></th><input type='number' id='moveTargetAHLValue' name='moveTargetAHLValue' min=0 value=0 style='width:25px'>"+moveTargetAHLScalingSelect+"</td></tr>";
 
         if(document.getElementById("howMitigate").value == "Save"){
             let rowSavePreventMove = table.insertRow(startRowIndex+3);
@@ -437,9 +541,14 @@ async function createCreateObjectTable(){
     let table = document.getElementById("SubeffectTable");
     let startRowIndex = document.getElementById("rowIsCreateObject").rowIndex;
 
-    let rowCreateObjectInfo = table.insertRow(startRowIndex+1);
-    rowCreateObjectInfo.id = "rowCreateObjectInfo";
-    rowCreateObjectInfo.innerHTML = "<th style='colspan:2'>Note: There is currently no data collection for what type of objects are created by spells.</th>";
+    if(document.getElementById("isCreateObject").checked){
+        let rowCreateObjectInfo = table.insertRow(startRowIndex+1);
+        rowCreateObjectInfo.id = "rowCreateObjectInfo";
+        rowCreateObjectInfo.innerHTML = "<th style='colspan:2'>Note: There is currently no data collection for what type of objects are created by spells.</th>";
+    }
+    else{
+        clearUnusedTable("rowIsCreateObject","rowLightType");
+    }
 }
 
 async function createLightTable(){
@@ -460,7 +569,11 @@ async function createLightTable(){
     else if(lightSelection == "BrightDim"){
         let rowLightInfo = table.insertRow(startRowIndex+1);
         rowLightInfo.id = "rowLightInfo";
-        rowLightInfo.innerHTML = "<th><label for='lightDistanceValue'>Size of Light/Dim Light:</label></th><td><input type='number' id='lightDistanceValue' name='lightDistanceValue' min=0 value=30 style='width:25px'><select id='lightDistanceUnits' name='lightDistanceUnits'><option value='Feet'>Feet</option><option value='Miles'>Miles</option></select> bright <b>/</b> <input type='number' id='secondaryLightDistanceValue' name='secondaryLightDistanceValue' min=0 value=30 style='width:25px'><select id='secondaryLightDistanceUnits' name='secondaryLightDistanceUnits'><option value='Feet'>Feet</option><option value='Miles'>Miles</option></select> dim</td>";
+        rowLightInfo.innerHTML = "<th><label for='lightDistanceValue'>Size of Light/Dim Light:</label></th><td><input type='number' id='lightDistanceValue' name='lightDistanceValue' min=0 value=30 style='width:25px'><select id='lightDistanceUnits' name='lightDistanceUnits'><option value='Feet'>Feet</option><option value='Miles'>Miles</option></select> bright <b>/</b> <input type='number' id='secondaryLightDistanceValue' name='secondaryLightDistanceValue' min=0 value=30 style='width:25px'> dim</td>";
+
+        let rowIsSunlight = table.insertRow(startRowIndex+2);
+        rowIsSunlight.id = "rowIsSunlight";
+        rowIsSunlight.innerHTML = "<th><label for='isSunlight'>Counts as Sunlight:</label></th><td><input type='checkbox' id='isSunlight' name='isSunlight' value=1></td>";
     }
     else if(lightSelection == "Obscure"){
         let rowLightInfo = table.insertRow(startRowIndex+1);
@@ -471,6 +584,10 @@ async function createLightTable(){
         let rowLightInfo = table.insertRow(startRowIndex+1);
         rowLightInfo.id = "rowLightInfo";
         rowLightInfo.innerHTML = "<th><label for='lightDistanceValue'>Size of Light:</label></th><td><input type='number' id='lightDistanceValue' name='lightDistanceValue' min=0 value=30 style='width:25px'><select id='lightDistanceUnits' name='lightDistanceUnits'><option value='Feet'>Feet</option><option value='Miles'>Miles</option></select></td>";
+
+        let rowIsSunlight = table.insertRow(startRowIndex+2);
+        rowIsSunlight.id = "rowIsSunlight";
+        rowIsSunlight.innerHTML = "<th><label for='isSunlight'>Counts as Sunlight:</label></th><td><input type='checkbox' id='isSunlight' name='isSunlight' value=1></td>";
     }
 }
 
@@ -484,9 +601,11 @@ async function createRangeTable(){
             rangeDistanceRow.id = "rowRangeDistance";
             rangeDistanceRow.innerHTML = "<th>Range:</th><td><input type='number' id='RangeValue' name='RangeValue' min=0 style='width:25px' value=0><select id='RangeUnits' name='RangeUnits'><option value='Feet'>Feet</option><option value='Miles'>Miles</option></select></td>";
             
+            let RangeScalingAHLSelect = await createAHLSelect("RangeScalingAHL");
+
             let rangeDistanceAHLRow = table.insertRow(RangeRowIndex+2);
             rangeDistanceAHLRow.id = "rowRangeDistanceAHL";
-            rangeDistanceAHLRow.innerHTML = "<th>Range Increase AHL:</th><td><input type='number' id='RangeValueAHL' name='RangeValueAHL' min=0 style='width:25px' value=0><select id='RangeUnits' name='RangeUnitsAHL'><option value='Feet'>Feet</option><option value='Miles'>Miles</option></select><select id='RangeScaling' name='RangeScaling'><option value='0'>No Increase</option><option value='1'>Every Level</option><option value='2'>Every Other Level</option><option value='3'>Every Three Levels</option></select></td>";
+            rangeDistanceAHLRow.innerHTML = "<th>Range Increase AHL:</th><td><input type='number' id='RangeValueAHL' name='RangeValueAHL' min=0 style='width:25px' value=0>"+RangeScalingAHLSelect+"</td>";
         }
     }
     else if(RangeRowIndex+1 != document.getElementById("AoE").rowIndex){
@@ -503,10 +622,12 @@ async function createAoETable(whichShape){
         clearUnusedTable("AoE","rowTargetNumber");
     }
     else{
-        if(document.getElementById("rowAoENum") == null){
+        if(document.getElementById("rowAoENum") == null){   
+            let AoENumAHLScalingSelect = await createAHLSelect("AoENumAHLScaling");
+
             let rowAoENum = table.insertRow(startRowIndex);
             rowAoENum.id = "rowAoENum";
-            rowAoENum.innerHTML = "<th><label for='AoENum'>Number of AoEs:</label></th><td><input type='number' id='AoENum' name='AoENum' min=1 value=1 style='width:25px'> + <input type='number' id='AoENumAHL' name='AoENumAHL' min=0 value=0 style='width:25px'><select id='AoENumAHLScaling' name='AoENumAHLScaling'><option value='0'>No Increase</option><option value='1'>Every Level</option><option value='2'>Every Other Level</option><option value='3'>Every Three Levels</option></select></td>";
+            rowAoENum.innerHTML = "<th><label for='AoENum'>Number of AoEs:</label></th><td><input type='number' id='AoENum' name='AoENum' min=1 value=1 style='width:25px'> + <input type='number' id='AoENumAHL' name='AoENumAHL' min=0 value=0 style='width:25px'>"+AoENumAHLScalingSelect+"</td>";
         }
 
         if(aoeShapeSelction == "Choose"){
@@ -568,9 +689,11 @@ async function createAoETable(whichShape){
             rowConeDimensions.innerHTML = "<th><label for='coneDimensionValue'>Cone Size:</label></th><td><input type='number' id='coneDimensionValue' name='coneDimensionValue' min=0 style='width:25px' value=0><select id='coneDimensionUnits' name='coneDimensionUnits'><option value='Feet'>Feet</option><option value='Miles'>Miles</option></select></td>";
             startRowIndex++;
 
+            let coneSizeAHLScalingSelect = await createAHLSelect("coneSizeAHLScaling");
+
             let rowConeDimensionsAHL = table.insertRow(startRowIndex);
             rowConeDimensionsAHL.id = "rowConeDimensionsAHL";
-            rowConeDimensionsAHL.innerHTML = "<th><label for='coneDimensionValueAHL'>Increased Cone Size AHL:</label></th><td><input type='number' id='coneDimensionValueAHL' name='coneDimensionValueAHL' min=0 style='width:25px' value=0><select id='coneSizeAHLScaling' name='coneSizeAHLScaling'><option value='0'>No Increase</option><option value='1'>Every Level</option><option value='2'>Every Other Level</option><option value='3'>Every Three Levels</option></select></td>";
+            rowConeDimensionsAHL.innerHTML = "<th><label for='coneDimensionValueAHL'>Increased Cone Size AHL:</label></th><td><input type='number' id='coneDimensionValueAHL' name='coneDimensionValueAHL' min=0 style='width:25px' value=0>"+coneSizeAHLScalingSelect+"</td>";
             startRowIndex++;
         }
         else if(whichShape == "Cube"){
@@ -578,10 +701,12 @@ async function createAoETable(whichShape){
             rowCubeDimensions.id = "rowCubeDimensions";
             rowCubeDimensions.innerHTML = "<th><label for='cubeDimensionValue'>Cube Side Length:</label></th><td><input type='number' id='cubeDimensionValue' name='cubeDimensionValue' min=0 style='width:25px' value=0><select id='cubeDimensionUnits' name='cubeDimensionUnits'><option value='Feet'>Feet</option><option value='Miles'>Miles</option></select></td>";
             startRowIndex++;
-            
+
+            let cubeSizeAHLScalingSelect = await createAHLSelect("cubeSizeAHLScaling");
+
             let rowCubeDimensionsAHL = table.insertRow(startRowIndex);
             rowCubeDimensionsAHL.id = "rowCubeDimensionsAHL";
-            rowCubeDimensionsAHL.innerHTML = "<th><label for='cubeDimensionValueAHL'>Increased Side Length AHL:</label></th><td><input type='number' id='cubeDimensionValueAHL' name='cubeDimensionValueAHL' min=0 style='width:25px' value=0><select id='cubeSizeAHLScaling' name='cubeSizeAHLScaling'><option value='0'>No Increase</option><option value='1'>Every Level</option><option value='2'>Every Other Level</option><option value='3'>Every Three Levels</option></select></td>";
+            rowCubeDimensionsAHL.innerHTML = "<th><label for='cubeDimensionValueAHL'>Increased Side Length AHL:</label></th><td><input type='number' id='cubeDimensionValueAHL' name='cubeDimensionValueAHL' min=0 style='width:25px' value=0>"+cubeSizeAHLScalingSelect+"</td>";
             startRowIndex++;
         }
         else if(whichShape == "Cylinder"){
@@ -590,9 +715,11 @@ async function createAoETable(whichShape){
             rowCylinderDimensions.innerHTML = "<th><label for='cylinderRadiusValue'>Cylinder Radius x Height:</label></th><td><input type='number' id='cylinderRadiusValue' name='cylinderRadiusValue' min=0 style='width:25px' value=0><select id='cylinderRadiusUnits' name='cylinderRadiusUnits'><option value='Feet'>Feet</option><option value='Miles'>Miles</option></select> x <input type='number' id='cylinderHeightValue' name='cylinderHeightValue' min=0 style='width:25px' value=0><select id='cylinderHeightUnits' name='cylinderHeightUnits'><option value='Feet'>Feet</option><option value='Miles'>Miles</option></select></td>";
             startRowIndex++;
 
+            let cylinderSizeAHLScalingSelect = await createAHLSelect("cylinderSizeAHLScaling");
+
             let rowCylinderDimensionsAHL = table.insertRow(startRowIndex);
             rowCylinderDimensionsAHL.id = "rowCylinderDimensionsAHL";
-            rowCylinderDimensionsAHL.innerHTML = "<th><label for='cylinderRadiusValueAHL'>Cylinder Dimensions AHL:</label></th><td><input type='number' id='cylinderRadiusValueAHL' name='cylinderRadiusValueAHL' min=0 style='width:25px' value=0> x <input type='number' id='cylinderHeightValueAHL' name='cylinderHeightValueAHL' min=0 style='width:25px' value=0><select id='cylinderSizeAHLScaling' name='cylinderSizeAHLScaling'><option value='0'>No Increase</option><option value='1'>Every Level</option><option value='2'>Every Other Level</option><option value='3'>Every Three Levels</option></select></td>";
+            rowCylinderDimensionsAHL.innerHTML = "<th><label for='cylinderRadiusValueAHL'>Cylinder Dimensions AHL:</label></th><td><input type='number' id='cylinderRadiusValueAHL' name='cylinderRadiusValueAHL' min=0 style='width:25px' value=0> x <input type='number' id='cylinderHeightValueAHL' name='cylinderHeightValueAHL' min=0 style='width:25px' value=0>"+cylinderSizeAHLScalingSelect+"</td>";
             startRowIndex++;
         }
         else if(whichShape == "Half Sphere"){
@@ -600,10 +727,12 @@ async function createAoETable(whichShape){
             rowHalfSphereDimensions.id = "rowHalfSphereDimensions";
             rowHalfSphereDimensions.innerHTML = "<th><label for='halfSphereDimensionValue'>Half Sphere Radius:</label></th><td><input type='number' id='halfSphereDimensionValue' name='halfSphereDimensionValue' min=0 style='width:25px' value=0><select id='halfSphereDimensionUnits' name='halfSphereDimensionUnits'><option value='Feet'>Feet</option><option value='Miles'>Miles</option></select></td>";
             startRowIndex++;
-            
+
+            let halfSphereSizeAHLScalingSelect = await createAHLSelect("halfSphereSizeAHLScaling");
+
             let rowHalfSphereDimensionsAHL = table.insertRow(startRowIndex);
             rowHalfSphereDimensionsAHL.id = "rowHalfSphereDimensionsAHL";
-            rowHalfSphereDimensionsAHL.innerHTML = "<th><label for='halfSphereDimensionValueAHL'>Increased Radius AHL:</label></th><td><input type='number' id='halfSphereDimensionValueAHL' name='halfSphereDimensionValueAHL' min=0 style='width:25px' value=0><select id='halfSphereSizeAHLScaling' name='halfSphereSizeAHLScaling'><option value='0'>No Increase</option><option value='1'>Every Level</option><option value='2'>Every Other Level</option><option value='3'>Every Three Levels</option></select></td>";
+            rowHalfSphereDimensionsAHL.innerHTML = "<th><label for='halfSphereDimensionValueAHL'>Increased Radius AHL:</label></th><td><input type='number' id='halfSphereDimensionValueAHL' name='halfSphereDimensionValueAHL' min=0 style='width:25px' value=0>"+halfSphereSizeAHLScalingSelect+"</td>";
             startRowIndex++;
         }
         else if(whichShape == "Line"){
@@ -611,10 +740,12 @@ async function createAoETable(whichShape){
             rowLineDimensions.id = "rowLineDimensions";
             rowLineDimensions.innerHTML = "<th><label for='lineLengthValue'>Line Length x Width:</label></th><td><input type='number' id='lineLengthValue' name='lineLengthValue' min=0 style='width:25px' value=0><select id='lineLengthUnits' name='lineLengthUnits'><option value='Feet'>Feet</option><option value='Miles'>Miles</option></select> x <input type='number' id='lineWidthValue' name='lineWidthValue' min=0 style='width:25px' value=0><select id='lineWidthUnits' name='lineWidthUnits'><option value='Feet'>Feet</option><option value='Miles'>Miles</option></select></td>";
             startRowIndex++;
-            
+
+            let lineSizeAHLScalingSelect = await createAHLSelect("lineSizeAHLScaling");
+
             let rowLineDimensionsAHL = table.insertRow(startRowIndex);
             rowLineDimensionsAHL.id = "rowLineDimensionsAHL";
-            rowLineDimensionsAHL.innerHTML = "<th><label for='lineLengthValueAHL'>Increased Dimensions AHL:</label></th><td><input type='number' id='lineLengthValueAHL' name='lineLengthValueAHL' min=0 style='width:25px' value=0> x <input type='number' id='lineWidthValueAHL' name='lineWidthValueAHL' min=0 style='width:25px' value=0><select id='lineSizeAHLScaling' name='lineSizeAHLScaling'><option value='0'>No Increase</option><option value='1'>Every Level</option><option value='2'>Every Other Level</option><option value='3'>Every Three Levels</option></select></td>";
+            rowLineDimensionsAHL.innerHTML = "<th><label for='lineLengthValueAHL'>Increased Dimensions AHL:</label></th><td><input type='number' id='lineLengthValueAHL' name='lineLengthValueAHL' min=0 style='width:25px' value=0> x <input type='number' id='lineWidthValueAHL' name='lineWidthValueAHL' min=0 style='width:25px' value=0>"+lineSizeAHLScalingSelect+"</td>";
             startRowIndex++;
         }
         else if(whichShape == "Panels"){
@@ -622,10 +753,12 @@ async function createAoETable(whichShape){
             rowPanelsDimensions.id = "rowPanelsDimensions";
             rowPanelsDimensions.innerHTML = "<th><label for='panelsNumber'>Panel Number and Side Length:</label></th><td><input type='number' id='panelsNumber' name='panelsNumber' min=0 style='width:25px' value=10> panels, <input type='number' id='panelsDimensionValue' name='panelsDimensionValue' min=0 style='width:25px' value=0><select id='panelsDimensionUnits' name='panelsDimensionUnits'><option value='Feet'>Feet</option><option value='Miles'>Miles</option></select></td>";
             startRowIndex++;
-            
+
+            let panelsNumberAHLScalingSelect = await createAHLSelect("panelsNumberAHLScaling");
+
             let rowPanelsDimensionsAHL = table.insertRow(startRowIndex);
             rowPanelsDimensionsAHL.id = "rowPanelsDimensionsAHL";
-            rowPanelsDimensionsAHL.innerHTML = "<th><label for='panelsNumberAHL'>Increased Panels AHL:</label></th><td><input type='number' id='panelsNumberAHL' name='panelsNumberAHL' min=0 style='width:25px' value=0><select id='panelsNumberAHLScaling' name='panelsNumberAHLScaling'><option value='0'>No Increase</option><option value='1'>Every Level</option><option value='2'>Every Other Level</option><option value='3'>Every Three Levels</option></select></td>";
+            rowPanelsDimensionsAHL.innerHTML = "<th><label for='panelsNumberAHL'>Increased Panels AHL:</label></th><td><input type='number' id='panelsNumberAHL' name='panelsNumberAHL' min=0 style='width:25px' value=0>"+panelsNumberAHLScalingSelect+"</td>";
             startRowIndex++;
         }
         else if(whichShape == "Sphere"){
@@ -633,10 +766,12 @@ async function createAoETable(whichShape){
             rowSphereDimensions.id = "rowSphereDimensions";
             rowSphereDimensions.innerHTML = "<th><label for='sphereDimensionValue'>Sphere Radius:</label></th><td><input type='number' id='sphereDimensionValue' name='sphereDimensionValue' min=0 style='width:25px' value=0><select id='sphereDimensionUnits' name='sphereDimensionUnits'><option value='Feet'>Feet</option><option value='Miles'>Miles</option></select></td>";
             startRowIndex++;
-            
+
+            let sphereSizeAHLScalingSelect = await createAHLSelect("sphereSizeAHLScaling");
+
             let rowSphereDimensionsAHL = table.insertRow(startRowIndex);
             rowSphereDimensionsAHL.id = "rowSphereDimensionsAHL";
-            rowSphereDimensionsAHL.innerHTML = "<th><label for='sphereDimensionValueAHL'>Increased Radius AHL:</label></th><td><input type='number' id='sphereDimensionValueAHL' name='sphereDimensionValueAHL' min=0 style='width:25px' value=0><select id='sphereSizeAHLScaling' name='sphereSizeAHLScaling'><option value='0'>No Increase</option><option value='1'>Every Level</option><option value='2'>Every Other Level</option><option value='3'>Every Three Levels</option></select></td>";
+            rowSphereDimensionsAHL.innerHTML = "<th><label for='sphereDimensionValueAHL'>Increased Radius AHL:</label></th><td><input type='number' id='sphereDimensionValueAHL' name='sphereDimensionValueAHL' min=0 style='width:25px' value=0>"+sphereSizeAHLScalingSelect+"</td>";
             startRowIndex++;
         }
         else if(whichShape == "Wall"){
@@ -644,12 +779,43 @@ async function createAoETable(whichShape){
             rowWallDimensions.id = "rowWallDimensions";
             rowWallDimensions.innerHTML = "<th><label for='wallLengthValue'>Wall Length x Width x Height:</label></th><td><input type='number' id='wallLengthValue' name='wallLengthValue' min=0 style='width:25px' value=0><select id='wallLengthUnits' name='wallLengthUnits'><option value='Feet'>Feet</option><option value='Miles'>Miles</option></select> x <input type='number' id='wallWidthValue' name='wallWidthValue' min=0 style='width:25px' value=0><select id='wallWidthUnits' name='wallWidthUnits'><option value='Feet'>Feet</option><option value='Miles'>Miles</option></select> x <input type='number' id='wallHeightValue' name='wallHeightValue' min=0 style='width:25px' value=0><select id='wallHeightUnits' name='wallHeightUnits'><option value='Feet'>Feet</option><option value='Miles'>Miles</option></select></td>";
             startRowIndex++;
-            
+
+            let wallSizeAHLScalingSelect = await createAHLSelect("wallSizeAHLScaling");
+
             let rowWallDimensionsAHL = table.insertRow(startRowIndex);
             rowWallDimensionsAHL.id = "rowWallDimensionsAHL";
-            rowWallDimensionsAHL.innerHTML = "<th><label for='wallLengthValueAHL'>Increased Dimensions AHL:</label></th><td><input type='number' id='wallLengthValueAHL' name='wallLengthValueAHL' min=0 style='width:25px' value=0> x <input type='number' id='wallWidthValueAHL' name='wallWidthValueAHL' min=0 style='width:25px' value=0> x <input type='number' id='wallHeightValueAHL' name='wallHeightValueAHL' min=0 style='width:25px' value=0><select id='wallSizeAHLScaling' name='wallSizeAHLScaling'><option value='0'>No Increase</option><option value='1'>Every Level</option><option value='2'>Every Other Level</option><option value='3'>Every Three Levels</option></select></td>";
+            rowWallDimensionsAHL.innerHTML = "<th><label for='wallLengthValueAHL'>Increased Dimensions AHL:</label></th><td><input type='number' id='wallLengthValueAHL' name='wallLengthValueAHL' min=0 style='width:25px' value=0> x <input type='number' id='wallWidthValueAHL' name='wallWidthValueAHL' min=0 style='width:25px' value=0> x <input type='number' id='wallHeightValueAHL' name='wallHeightValueAHL' min=0 style='width:25px' value=0>"+wallSizeAHLScalingSelect+"</td>";
             startRowIndex++;
         }
+    }
+}
+
+async function createTargetNumberToggle(){
+    let table = document.getElementById("SubeffectTable");
+
+    if(document.getElementById("isTargetNumberUnlimited").checked){
+        table.deleteRow(document.getElementById("rowTargetNumberAHL").rowIndex);
+
+        document.getElementById("TargetNumber").setAttribute("disabled","");
+    }
+    else{
+        let TargetNumberAHLScalingSelect = await createAHLSelect("TargetNumberAHLScaling");
+
+        let rowTargetNumberAHL = table.insertRow(document.getElementById("rowTargetNumber").rowIndex + 1);
+        rowTargetNumberAHL.id = "rowTargetNumberAHL";
+        rowTargetNumberAHL.innerHTML = "<th><label for='TargetNumberAHL'>Increased Target Number AHL:</label></th><td><input type='number' id='TargetNumberAHL' name='TargetNumberAHL' value=0 min=0 style='width:25px'>"+TargetNumberAHLScalingSelect+"</td>";
+
+        document.getElementById("TargetNumber").removeAttribute("disabled","");
+    }
+}
+
+async function createMultitargetDistanceToggle(){
+    let table = document.getElementById("SubeffectTable");
+    if(document.getElementById("isMultitargetDistanceUnlimited").checked){
+        document.getElementById("MultitargetDistance").setAttribute("disabled","");
+    }
+    else{
+        document.getElementById("MultitargetDistance").removeAttribute("disabled","");
     }
 }
 
@@ -678,12 +844,8 @@ async function createTargetTable(primarySecondary){
         let rowPointOnGround = table.insertRow(startRowIndex+1);
         rowPointOnGround.id = "rowPointOnGround";
         rowPointOnGround.innerHTML = "<th><label for='pointOnGround'>Point Must Be on the Ground:</label></th><td><input type='checkbox' id='pointOnGround' name='pointOnGround'></td>";
-        
-        let rowLeavesBehindEffect = table.insertRow(startRowIndex+2);
-        rowLeavesBehindEffect.id = "rowLeavesBehindEffect";
-        rowLeavesBehindEffect.innerHTML = "<th><label for='leavesBehindEffect'>Leaves Behind Effect in Space:</label></th><td><input type='checkbox' id='leavesBehindEffect' name='leavesBehindEffect'></td>";
-        
-        let rowSecondaryTarget = table.insertRow(startRowIndex+3);
+
+        let rowSecondaryTarget = table.insertRow(startRowIndex+2);
         rowSecondaryTarget.id = "rowSecondaryTarget";
         let secondaryTargetOptions = document.getElementById("TargetType").innerHTML;
         secondaryTargetOptions = "<option value='None'>None</option>" + secondaryTargetOptions;
@@ -718,7 +880,7 @@ async function createCreatureTargetTable(primarySecondary){
     rowAllegiance.id = "rowAllegiance";
     rowAllegiance.innerHTML = "<th><label for='targetAllegiance'>Allegiance of Target:</label></th><td><select id='targetAllegiance' name='targetAllegiance' onchange='disableCreatureFilteringOptions()'><option value='All'>Anyone</option><option value='Self'>Self Only</option><option value='Allies'>Allies</option><option value='AlliesNonself'>Allies Other Than Self</option><option value='NotSelf'>Anyone Other Than Self</option><option value='Enemies'>Enemies</option><option value='Nonhostile'>Nonhostile Creatures</option><option value='NonhostileNotself'>Nonhostile Creatures, Not Self</option></select></td>";
 
-    //TODO: add function that disables/enables filtering options when 'Self' is the only viable target
+    //Previously considered: function that disables/enables filtering options when 'Self' is the only viable target. Will not do because defaults are not limiting and it would allow for creation of spells only usable by certain creature types maybe? But also because nah.
 
     let rowCreatureTypes = table.insertRow(startRowIndex+2);
     rowCreatureTypes.id = "rowCreatureTypes";

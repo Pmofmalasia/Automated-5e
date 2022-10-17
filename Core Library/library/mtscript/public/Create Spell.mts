@@ -1,7 +1,7 @@
 [h,if(getLibProperty("ct.NewSpell","Lib:pm.a5e.Core")==""): setLibProperty("ct.NewSpell","{}","Lib:pm.a5e.Core")]
 [h:setLibProperty("ct.NewSpell",json.remove(getLibProperty("ct.NewSpell","Lib:pm.a5e.Core"),getPlayerName()),"Lib:pm.a5e.Core")]
 [h:MasterSpellInputData = json.set("",
-	"FirstPass",1,
+	"WhichEffect",1,
 	"SpellName","",
 	"Duration","{}",
 	"School","",

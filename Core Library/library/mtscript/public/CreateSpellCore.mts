@@ -1,4 +1,5 @@
-[h:FirstPassTest = json.get(macro.args,"FirstPass")]
+[h:WhichEffect = number(json.get(macro.args,"WhichEffect"))]
+[h:FirstPassTest = (WhichEffect == 1)]
 [h:sName = json.get(macro.args,"SpellName")]
 [h:sDuration = json.get(macro.args,"Duration")]
 [h:sCastTime = json.get(macro.args,"CastTime")]

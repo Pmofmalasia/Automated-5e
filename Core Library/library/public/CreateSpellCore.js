@@ -11,7 +11,7 @@ async function customCastTime() {
             let table = document.getElementById("spellCreationTable");
             let customCastTimeRow = table.insertRow(castTimeLineIndex+1);
 
-            customCastTimeRow.innerHTML = "<th><label for='customCastTime'>Custom Casting Time:</label></th><td><input type='number' id='customCastTimeValue' name='customCastTimeValue' min='1'><select id='customCastTimeUnits' name='customCastTimeUnits'><option value='Action'>Action</option><option value='Bonus Action'>Bonus Action</option><option value='Reaction'>Reaction</option><option value='Round'>Round</option><option value='Minute'>Minute</option><option value='Hour'>Hour</option><option value='Day'>Day</option><option value='Year'>Year</option></select></td></tr></td>";
+            customCastTimeRow.innerHTML = "<th><label for='customCastTime'>Custom Casting Time:</label></th><td><input type='number' id='customCastTimeValue' name='customCastTimeValue' min='1' style='width:25%'><select id='customCastTimeUnits' name='customCastTimeUnits'><option value='Action'>Action</option><option value='Bonus Action'>Bonus Action</option><option value='Reaction'>Reaction</option><option value='Round'>Round</option><option value='Minute'>Minute</option><option value='Hour'>Hour</option><option value='Day'>Day</option><option value='Year'>Year</option></select></td></tr></td>";
         }
     }
     else {
@@ -22,7 +22,7 @@ async function customCastTime() {
 }
 
 async function customDuration() {
-    let currentDuration = document.getElementById("spellDuration").value;
+    let currentDuration = document.getElementById("Duration").value;
     let durationLineIndex = document.getElementById("rowDuration").rowIndex;
 
     if(currentDuration=="Custom") {
@@ -30,7 +30,7 @@ async function customDuration() {
             let table = document.getElementById("spellCreationTable");
             let customDurationRow = table.insertRow(durationLineIndex+1);
 
-            customDurationRow.innerHTML = "<th><label for='customDuration'>Custom Duration:</label></th><td><input type='number' id='customDurationValue' name='customDurationValue' min='1'><select id='customDurationUnits' name='customDurationUnits'><option value='Turn'>Turn</option><option value='Round'>Round</option><option value='Minute'>Minute</option><option value='Hour'>Hour</option><option value='Day'>Day</option><option value='Year'>Year</option></select></td></tr></td>";
+            customDurationRow.innerHTML = "<th><label for='customDuration'>Custom Duration:</label></th><td><input type='number' id='customDurationValue' name='customDurationValue' min='1' style='width:25%'><select id='customDurationUnits' name='customDurationUnits'><option value='Turn'>Turn</option><option value='Round'>Round</option><option value='Minute'>Minute</option><option value='Hour'>Hour</option><option value='Day'>Day</option><option value='Year'>Year</option></select></td></tr></td>";
         }
     }
     else {
@@ -41,7 +41,7 @@ async function customDuration() {
 }
 
 async function concLost() {
-    let concLostLineIndex = document.getElementById("concLost").rowIndex;
+    let concLostLineIndex = document.getElementById("rowConcLost").rowIndex;
 
     if(document.getElementById("ConcentrationLost").checked){
         let table = document.getElementById("spellCreationTable");
@@ -53,7 +53,7 @@ async function concLost() {
             concLostLevelOptions = concLostLevelOptions+"<option value='"+i+"'>"+i+"</option>";
         }
 
-        customDurationRow.innerHTML = "<th><label for='concLostLevel'>Level No Longer Required:</label></th><td><select id='concLostLevel' name=concLostLevel' style='width:97%'>"+concLostLevelOptions+"</selected></td>";
+        customDurationRow.innerHTML = "<th><label for='concLostLevel'>Level No Longer Required:</label></th><td><select id='concLostLevel' name=concLostLevel'>"+concLostLevelOptions+"</selected></td>";
     }
     else{
         document.getElementById("spellCreationTable").deleteRow(concLostLineIndex+1);

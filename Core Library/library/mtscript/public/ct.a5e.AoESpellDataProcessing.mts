@@ -15,7 +15,7 @@
                 "AHLScaling",0
             );
         ]
-        [h:macro.return = coneDimensions]
+        [h:shapeDimensions = coneDimensions]
         [h:subeffectData = json.remove(subeffectData,"coneDimensionValue")]
         [h:subeffectData = json.remove(subeffectData,"coneDimensionUnits")]
         [h:subeffectData = json.remove(subeffectData,"coneDimensionValueAHL")]
@@ -37,7 +37,7 @@
                 "AHLScaling",0
             );
         ]
-        [h:macro.return = cubeDimensions]
+        [h:shapeDimensions = cubeDimensions]
         [h:subeffectData = json.remove(subeffectData,"cubeDimensionValue")]
         [h:subeffectData = json.remove(subeffectData,"cubeDimensionUnits")]
         [h:subeffectData = json.remove(subeffectData,"cubeDimensionValueAHL")]
@@ -62,7 +62,7 @@
                 "AHLScaling",0
             );
         ]
-        [h:macro.return = cylinderDimensions]
+        [h:shapeDimensions = cylinderDimensions]
         [h:subeffectData = json.remove(subeffectData,"cylinderRadiusValue")]
         [h:subeffectData = json.remove(subeffectData,"cylinderRadiusUnits")]
         [h:subeffectData = json.remove(subeffectData,"cylinderHeightValue")]
@@ -87,7 +87,7 @@
                 "AHLScaling",0
             );
         ]
-        [h:macro.return = halfSphereDimensions]
+        [h:shapeDimensions = halfSphereDimensions]
         [h:subeffectData = json.remove(subeffectData,"halfSphereDimensionValue")]
         [h:subeffectData = json.remove(subeffectData,"halfSphereDimensionUnits")]
         [h:subeffectData = json.remove(subeffectData,"halfSphereDimensionValueAHL")]
@@ -112,7 +112,7 @@
                 "AHLScaling",0
             );
         ]
-        [h:macro.return = lineDimensions]
+        [h:shapeDimensions = lineDimensions]
         [h:subeffectData = json.remove(subeffectData,"lineLengthValue")]
         [h:subeffectData = json.remove(subeffectData,"lineLengthUnits")]
         [h:subeffectData = json.remove(subeffectData,"lineWidthValue")]
@@ -138,7 +138,7 @@
                 "AHLScaling",0
             );
         ]
-        [h:macro.return = panelsDimensions]
+        [h:shapeDimensions = panelsDimensions]
         [h:subeffectData = json.remove(subeffectData,"panelsNumber")]
         [h:subeffectData = json.remove(subeffectData,"panelsDimensionValue")]
         [h:subeffectData = json.remove(subeffectData,"panelsDimensionUnits")]
@@ -161,7 +161,7 @@
                 "AHLScaling",0
             );
         ]
-        [h:macro.return = sphereDimensions]
+        [h:shapeDimensions = sphereDimensions]
         [h:subeffectData = json.remove(subeffectData,"sphereDimensionValue")]
         [h:subeffectData = json.remove(subeffectData,"sphereDimensionUnits")]
         [h:subeffectData = json.remove(subeffectData,"sphereDimensionValueAHL")]
@@ -189,7 +189,7 @@
                 "AHLScaling",0
             );
         ]
-        [h:macro.return = wallDimensions]
+        [h:shapeDimensions = wallDimensions]
         [h:subeffectData = json.remove(subeffectData,"wallLengthValue")]
         [h:subeffectData = json.remove(subeffectData,"wallLengthUnits")]
         [h:subeffectData = json.remove(subeffectData,"wallWidthValue")]
@@ -202,3 +202,15 @@
         [h:subeffectData = json.remove(subeffectData,"wallSizeAHLScaling")]
     }
 ]
+
+[h:shapeDimensions = json.set(shapeDimensions,
+    "AoENum",json.get(subeffectData,"AoENum"),
+    "AoENumAHL",json.get(subeffectData,"AoENumAHL"),
+    "AoENumAHLScaling",json.get(subeffectData,"AoENumAHLScaling")
+)]
+
+[h:subeffectData = json.remove(subeffectData,"AoENum")]
+[h:subeffectData = json.remove(subeffectData,"AoENumAHL")]
+[h:subeffectData = json.remove(subeffectData,"AoENumAHLScaling")]
+
+[h:macro.return = shapeDimensions]

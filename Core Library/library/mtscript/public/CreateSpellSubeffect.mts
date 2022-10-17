@@ -1,13 +1,14 @@
 [h:subeffectData = macro.args]
-[h:totalSubeffects = json.get(subeffectData,"Total")]
-[h:thisSubeffectNum = json.get(subeffectData,"WhichEffect")]
+[h:broadcast("why am i here again")]
+[h:totalSubeffects = json.get(subeffectData,"TotalSubeffects")]
+[h:thisSubeffectNum = json.get(subeffectData,"WhichSubeffect")]
 [h:spellLevel = json.get(subeffectData,"SpellLevel")]
 
 [h,if(totalSubeffects==1): spellSubeffectHTML = ""; spellSubeffectHTML = "<tr><th text-align='center' colspan='2'>Subeffect #"+thisSubeffectNum+"</th></tr>"]
 
 [h:"<!-- May want to send the subeffect number as an argument in some onchange functions -->"]
 
-[h:spellSubeffectHTML = spellSubeffectHTML + "<input type='hidden' id='SpellLevel' name='SpellLevel' value="+spellLevel+"><input type='hidden' id='whichEffect' name='whichEffect' value="+thisSubeffectNum+">
+[h:spellSubeffectHTML = spellSubeffectHTML + "<input type='hidden' id='SpellLevel' name='SpellLevel' value="+spellLevel+"><input type='hidden' id='TotalSubeffects' name='TotalSubeffects' value="+totalSubeffects+"><input type='hidden' id='WhichSubeffect' name='WhichSubeffect' value="+thisSubeffectNum+">
 
 <tr id='Mitigation'><th><label for='howMitigate'>Make Attack or Force Save?</label></th><td><select id='howMitigate' name='howMitigate' onchange='createMitigationTable()'><option value='Attack'>Make Attack</option><option value='Save'>Force Save</option><option value='Neither' selected>Neither</option></select></td></tr>
 
@@ -31,9 +32,9 @@
 
 <tr id='rowTargetNumber'><th><label for='TargetNumber'>Maximum Number of Targets:</label></th><td><input type='number' id='TargetNumber' name='TargetNumber' value=1 min=1 style='width:25px'><input type='checkbox' id='isTargetNumberUnlimited' name='isTargetNumberUnlimited' value=1 onchange='createTargetNumberToggle()'>Unlimited</td></tr>
 
-<tr id='rowTargetNumberAHL'><th><label for='targetNumberAHL'>Increased Target Number AHL:</label></th><td><input type='number' id='targetNumberAHL' name='targetNumberAHL' value=0 min=0 style='width:25px'><select id='targetNumberAHLScaling' name='targetNumberAHLScaling'><option value='0'>No Increase</option><option value='1'>Every Level</option><option value='2'>Every Other Level</option><option value='3'>Every Three Levels</option></select></td></tr>
+<tr id='rowTargetNumberAHL'><th><label for='TargetNumberAHL'>Increased Target Number AHL:</label></th><td><input type='number' id='TargetNumberAHL' name='TargetNumberAHL' value=0 min=0 style='width:25px'><select id='TargetNumberAHLScaling' name='TargetNumberAHLScaling'><option value='0'>No Increase</option><option value='1'>Every Level</option><option value='2'>Every Other Level</option><option value='3'>Every Three Levels</option></select></td></tr>
 
-<tr id='rowMultitargetMaxDistance'><th><label for='multitargetMaxDistance'>Maximum Distance Between Targets:</label></th><td><input type='number' id='multitargetMaxDistance' name='multitargetMaxDistance' value=5 min=0 style='width:25px'><input type='checkbox' id='multitargetMaxDistanceUnlimited' name='multitargetMaxDistanceUnlimited' value=1>Same as Spell Range</td></tr>
+<tr id='rowMultitargetDistance'><th><label for='MultitargetDistance'>Maximum Distance Between Targets:</label></th><td><input type='number' id='MultitargetDistance' name='MultitargetDistance' value=5 min=0 style='width:25px' disabled><input type='checkbox' id='isMultitargetDistanceUnlimited' name='isMultitargetDistanceUnlimited' value=1 checked onchange='createMultitargetDistanceToggle()'>Same as Spell Range</td></tr>
 
 <tr id='Missiles'><th><label for='isMissiles'>Is it a Missile Spell?</label></th><td><input type='checkbox' id='isMissiles' name='isMissiles' value=1></td></tr>
 

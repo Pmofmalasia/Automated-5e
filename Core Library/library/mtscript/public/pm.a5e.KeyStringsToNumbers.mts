@@ -1,5 +1,5 @@
 [h:jsonToModify = arg(0)]
-[h:keysToConvert = arg(1)]
+[h:keysToConvert = json.fields(jsonToModify)]
 
 [h,foreach(tempKey,keysToConvert),CODE:{
     [h:isNumberTest = isNumber(json.get(jsonToModify,tempKey))]

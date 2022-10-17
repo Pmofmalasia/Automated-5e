@@ -95,16 +95,24 @@
     [h,foreach(tempClass,classList),CODE:{
         [h:onListTest = json.contains(SpellCoreData,"is"+json.get(tempClass,"Name"))]
         [h,if(onListTest): classesWithSpell = json.append(classesWithSpell,json.get(tempClass,"Name"))]
+        [h:SpellCoreData = json.remove(SpellCoreData,"is"+json.get(tempClass,"Name"))]
     }]
     [h:SpellCoreData = json.set(SpellCoreData,"ClassesWithSpell",classesWithSpell)]
+    [h:SpellCoreData = json.set(SpellCoreData,"Description",base64.encode(pm.EvilChars(json.get(SpellCoreData,"Description"))))]
 };{
     [h:baseSpellData = json.get(thisPlayerCurrentSpellData,0)]
     [h:SpellCoreData = json.set(SpellCoreData,"Description",json.get(baseSpellData,"Description"))]
 }]
 
+[h:SpellCoreData = json.remove(SpellCoreData,"WhichEffect")]
+[h:TotalSubeffects = json.get(SpellCoreData,"multiSubeffects")]
+[h:SpellCoreData = json.remove(SpellCoreData,"multiSubeffects")]
 
-[h:setLibProperty("ct.NewSpell",json.set(currentSpellData,getPlayerName(),json.append(thisPlayerCurrentSpellData,SpellCoreData)))]
+[h:SpellCoreData = pm.a5e.KeyStringsToNumbers(SpellCoreData)]
+
+[h:newSpellData = json.set(currentSpellData,getPlayerName(),json.append(thisPlayerCurrentSpellData,SpellCoreData))]
+[h:setLibProperty("ct.NewSpell",newSpellData,"Lib:pm.a5e.Core")]
 
 [h:closeDialog("Spell Creation")]
 
-[h,MACRO("CreateSpellSubeffect@Lib:pm.a5e.Core"): json.set("","Total",json.get(SpellCoreData,"multiSubeffects"),"WhichEffect",1,"SpellLevel",json.get(SpellCoreData,"SpellLevel"))]
+[h,MACRO("CreateSpellSubeffect@Lib:pm.a5e.Core"): json.set("","TotalSubeffects",TotalSubeffects,"WhichSubeffect",1,"WhichEffect",1,"SpellLevel",json.get(SpellCoreData,"SpellLevel"),"SpellName",json.get(SpellCoreData,"SpellName"))]

@@ -11,7 +11,7 @@
 
 [h:thisSpellData = json.set(thisSpellData,0,baseSpellData)]
 [h,foreach(tempClass,classesWithSpell),CODE:{
-    [h:"<!-- Add name to casting ability here -->"]
+    [h:"<!-- Add name to casting ability here. May not want to remove classes key from spell since it is used for filtering - can either filter via the class feature or combine on the spell somehow? Former would be preferable if reliable. -->"]
 }]
 [h:setLibProperty("sb.Spells",json.append(getLibProperty("sb.Spells","Lib:"+spellSourcebook),thisSpellData),"Lib:"+spellSourcebook)]
 [h:setLibProperty("ct.NewSpell",json.remove(getLibProperty("ct.NewSpell","Lib:pm.a5e.Core"),getPlayerName()),"Lib:pm.a5e.Core")]

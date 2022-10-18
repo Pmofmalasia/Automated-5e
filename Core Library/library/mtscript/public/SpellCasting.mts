@@ -1,48 +1,54 @@
+[h:SpellData = json.get(macro.args,"SpellData")]
+[h:NonSpellData = json.remove(macro.args,"SpellData")]
+
 [h:SpellData = macro.args]
+[h:BaseSpellData = json.get(SpellData,0)]
 [h:IsTooltip = 0]
-[h:ParentToken=json.get(json.get(SpellData,0),"ParentToken")]
-[h:ForcedClass=json.get(json.get(SpellData,0),"ForcedClass")]
-[h:ForcedLevel=json.get(json.get(SpellData,0),"ForcedLevel")]
-[h:FreeCasting=json.get(json.get(SpellData,0),"FreeCasting")]
-[h:SpellName=json.get(json.get(SpellData,0),"SpellName")]
-[h:SpellSource=json.get(json.get(SpellData,0),"SpellSource")]
-[h:sList=json.get(json.get(SpellData,0),"sList")]
-[h:sLevel=json.get(json.get(SpellData,0),"sLevel")]
-[h:Ritual=json.get(json.get(SpellData,0),"Ritual")]
-[h:sSchool=json.get(json.get(SpellData,0),"sSchool")]
-[h:IsSight=json.get(json.get(SpellData,0),"IsSight")]
-[h:mCompConsumed=json.get(json.get(SpellData,0),"mCompConsumed")]
-[h:vComp=json.get(json.get(SpellData,0),"vComp")]
-[h:sConcentration=json.get(json.get(SpellData,0),"sConcentration")]
-[h:sConcentrationLost=json.get(json.get(SpellData,0),"sConcentrationLost")]
-[h:InnateCast=json.get(json.get(SpellData,0),"InnateCast")]
-[h:MonsterCast=json.get(json.get(SpellData,0),"MonsterCast")]
-[h:IsCantrip = if(sLevel==0,1,0)]
-[h:NeedsBorder = if(json.get(json.get(SpellData,0),"NeedsBorder")=="",1,json.get(json.get(SpellData,0),"NeedsBorder"))]
+[h:ParentToken = json.get(NonSpellData,"ParentToken")]
+[h:ForcedClass = json.get(NonSpellData,"ForcedClass")]
+[h:ForcedLevel = json.get(NonSpellData,"ForcedLevel")]
+[h:FreeCasting = json.get(NonSpellData,"FreeCasting")]
+[h:SpellSource = json.get(NonSpellData,"SpellSource")]
+[h:InnateCast = json.get(NonSpellData,"InnateCast")]
+[h:MonsterCast = json.get(NonSpellData,"MonsterCast")]
+[h:NeedsBorder = if(json.get(NonSpellData,"NeedsBorder")=="",1,json.get(NonSpellData,"NeedsBorder"))]
+
+[h:SpellName = json.get(BaseSpellData,"SpellName")]
+[h:SpellDisplayName = json.get(BaseSpellData,"SpellDisplayName")]
+[h:SpellLevel = json.get(BaseSpellData,"SpellLevel")]
+[h:Ritual = json.get(BaseSpellData,"Ritual")]
+[h:School = json.get(BaseSpellData,"School")]
+
+[h:mCompConsumed = json.get(BaseSpellData,"mCompConsumed")]
+[h:vComp = json.get(BaseSpellData,"vComp")]
+[h:sConcentration = json.get(BaseSpellData,"Concentration")]
+[h:ConcentrationLost = json.get(BaseSpellData,"ConcentrationLost")]
+
+[h:IsCantrip = if(SpellLevel==0,1,0)]
 
 [h:switchToken(ParentToken)]
 [h:a5e.UnifiedAbilities = a5e.GatherAbilities(ParentToken)]
 [h:pm.a5e.OverarchingContext = "Spell"]
 
-[h:sSpellChoice=0]
-[h:MultiEffectChoiceTest=0]
-[h:SpellEffectOptions=""]
+[h:sSpellChoice = 0]
+[h:MultiEffectChoiceTest = 0]
+[h:SpellEffectOptions = ""]
 
 [h,if(json.length(SpellData)==1),CODE:{
-	[h:FinalSpellData=json.get(SpellData,0)]
+	[h:FinalSpellData = BaseSpellData]
 };{
-	[h:RandomEffectTest=json.get(json.get(SpellData,0),"RandomEffect")]
+	[h:RandomEffectTest = json.get(BaseSpellData,"RandomEffect")]
 	[h,if(RandomEffectTest==1),CODE:{
-		[h:SpellEffectOptions=(json.length(SpellData)-1)]
-		[h:SpellEffectChoice=(eval("1d"+SpellEffectOptions)+1)]
+		[h:SpellEffectOptionsNum = (json.length(SpellData)-1)]
+		[h:sSpellChoice = eval("1d"+SpellEffectOptionsNum)]
 	};{
-		[h:MultiEffectChoiceTest=1]
-		[h,foreach(SpellEffect,SpellData): SpellEffectOptions=listAppend(SpellEffectOptions,json.get(SpellEffect,"EffectName"))]
+		[h:MultiEffectChoiceTest = 1]
+		[h,foreach(SpellEffect,SpellData): SpellEffectOptions = listAppend(SpellEffectOptions,json.get(SpellEffect,"EffectName"))]
 	}]
 }]
 
-[h:BaseLink="https://www.dndbeyond.com/spells/"]
-[h:CompendiumLink=concat('<a href=',BaseLink,replace(SpellName,' ','-'),'>',SpellName,'</a>')]
+[h:BaseLink = "https://www.dndbeyond.com/spells/"]
+[h:CompendiumLink = concat('<a href=',BaseLink,replace(SpellDisplayName,' ','-'),'>',SpellDisplayName,'</a>')]
 
 [h:"<!--- Dialogue --->"]
 [h:sClassSelect=""]
@@ -55,6 +61,7 @@
 	
 	[h:ClassOptions = ""]
 	[h,foreach(castingClass,ClassOptionsArray),CODE:{
+		[h:"<!-- TODO: isClassTest will not work for any class feature that casts spells that count as another class's (e.g. eldritch knight) -->"]
 		[h:isClassTest = json.contains(classList,json.get(castingClass,"Class"))]
 		[h,if(isClassTest):
 			ClassOptions = json.append(ClassOptions,pm.GetDisplayName(json.get(castingClass,"Class"),"sb.Classes"));
@@ -78,8 +85,8 @@
 		[h:LevelOptionData = "[]"]
 	}]
 	[h,count(MaxSpellLevel),CODE:{
-		[h,if((1+roll.count)>=sLevel && json.get(SpellSlots,roll.count+1)>0): LevelOptions = json.append(LevelOptions,if(roll.count==0,"1st",if(roll.count==1,"2nd",if(roll.count==2,"3rd",(roll.count+1)+"th")))+" Level")]
-		[h,if(roll.count<sLevel && json.get(SpellSlots,roll.count+1)>0): json.append(LevelOptionData,json.set("","Name",(roll.count+1),"ResourceType","Spell Slots"))]
+		[h,if((1+roll.count)>=SpellLevel && json.get(SpellSlots,roll.count+1)>0): LevelOptions = json.append(LevelOptions,if(roll.count==0,"1st",if(roll.count==1,"2nd",if(roll.count==2,"3rd",(roll.count+1)+"th")))+" Level")]
+		[h,if(roll.count<SpellLevel && json.get(SpellSlots,roll.count+1)>0): json.append(LevelOptionData,json.set("","Name",(roll.count+1),"ResourceType","Spell Slots"))]
 	}]
 	
 	[h:resourcesAsSpellSlot = json.path.read(allAbilities,"[*][?(@.ResourceAsSpellSlot==1)]")]
@@ -114,7 +121,7 @@
 	[h:chosenLevel = 0]
 }]
 
-[h:dissConcentration=if(or(sConcentration==0,sLevel>=sConcentrationLost),"",if(Concentration=="","","junkVar|<html><span style='font-size:1.2em';>Casting <span style='color:#2222AA'><i>"+SpellName+"</i></span> will cancel concentration on <span style='color:#AA2222'><i>"+Concentration+".</i></span></span></html>|<html><span style='color:#AA2222; font-size:1.2em'><b>sp.NING</b></span></html>|LABEL"))]
+[h:dissConcentration=if(or(sConcentration==0,SpellLevel>=sConcentrationLost),"",if(Concentration=="","","junkVar|<html><span style='font-size:1.2em';>Casting <span style='color:#2222AA'><i>"+SpellName+"</i></span> will cancel concentration on <span style='color:#AA2222'><i>"+Concentration+".</i></span></span></html>|<html><span style='color:#AA2222; font-size:1.2em'><b>sp.NING</b></span></html>|LABEL"))]
 [h:disIsSilenced=if(or(getState("Silence")==0,vComp==0),"","junkVar|<html><span style='font-size:1.2em';><span style='color:#AA2222'><i><b>NOTE: You are currently silenced and attempting to cast a spell with verbal components!</b></i></span></span></html>| |LABEL|SPAN=TRUE")]
 [h:disIsBlinded=if(or(getState("Blinded")==0,IsSight==0),"","junkVar|<html><span style='font-size:1.2em';><span style='color:#AA2222'><i><b>NOTE: You are currently blinded and this spell requires sight!</b></i></span></span></html>| |LABEL|SPAN=TRUE")]
 [h:disCompConsumed=if(or(mCompConsumed=="0",mCompConsumed==""),"","junkVar|"+mCompConsumed+"|Consumed Components|LABEL")]
@@ -150,7 +157,7 @@
 		dissConcentration,
 		disIsSilenced,
 		disIsBlinded,
-		"junkVar|"+SpellName+" ("+sLevel+") "+sSchool+"|Spell|LABEL",
+		"junkVar|"+SpellName+" ("+SpellLevel+") "+sSchool+"|Spell|LABEL",
 		disSpellClassSelect,
 		disSpellLevelSelect,
 		"sRulesShow| "+(getLibProperty("FullSpellRules","Lib:pm.a5e.Core"))+" |Show Full Spell Rules|CHECK|",
@@ -189,18 +196,18 @@
 		[h,if(FreeCasting!=1): allAbilities = json.path.set(allAbilities,"[*][?(@.Name=='"+json.get(sLevelSelectData,"Name")+"' && @.Class=='"+json.get(sLevelSelectData,"Class")+"' && @.Subclass=='"+json.get(sLevelSelectData,"Subclass")+"')]['Resource']",json.get(sLevelSelectData,"Resource")-1)]
 	};
 	case "Ritual":{
-		[h:eLevel = sLevel]
+		[h:eLevel = SpellLevel]
 		[h:RitualTest = 1]
 	};
 	case "Cantrip":{
 		[h:eLevel=0+if(Level>=5,1,0)+if(Level>=11,1,0)+if(Level>=17,1,0]
 	};
 	default:{
-		[h:eLevel = sLevel]
+		[h:eLevel = SpellLevel]
 	}
 ]
 
-[h:FinalSpellData=json.get(SpellData,sSpellChoice)]
+[h:FinalSpellData = json.get(SpellData,sSpellChoice)]
 [h:"<!--- Dialogue --->"]
 
 [h:"<!-- Setting values after the effect has been chosen -->"]
@@ -226,12 +233,19 @@
 [h:BodyFont=json.get(FinalSpellData,"BodyFont")]
 [h:CritMessage=json.get(FinalSpellData,"CritMessage")]
 [h:CritFailMessage=json.get(FinalSpellData,"CritFailMessage")]
+
+
+
+
 [h:SpellName=json.get(FinalSpellData,"SpellName")]
 [h:sList=json.get(FinalSpellData,"sList")]
-[h:sLevel=json.get(FinalSpellData,"sLevel")]
+[h:SpellLevel=json.get(FinalSpellData,"SpellLevel")]
 [h:Ritual=json.get(FinalSpellData,"Ritual")]
 [h:sSchool=json.get(FinalSpellData,"sSchool")]
-[h:CastTime=json.get(FinalSpellData,"CastTime")]
+
+[h:CastTime = json.get(FinalSpellData,"CastTime")]
+[h:SpellSubeffects = json.get(FinalSpellData,"Subeffects")]
+
 [h:RangeType=json.get(FinalSpellData,"RangeType")]
 [h:Range=json.get(FinalSpellData,"sRange")]
 [h:sRangeUnits=json.get(FinalSpellData,"sRangeUnits")]
@@ -253,29 +267,7 @@
 [h:IsMissiles=json.get(FinalSpellData,"IsMissiles")]
 [h:sBaseMissiles=json.get(FinalSpellData,"sBaseMissiles")]
 [h:sAHLMissiles=json.get(FinalSpellData,"sAHLMissiles")]
-[h:DmgType=json.get(FinalSpellData,"DmgType")]
-[h:isRandomType=json.get(FinalSpellData,"isRandomType")]
-[h:DmgTypeOptions=json.get(FinalSpellData,"DmgTypeOptions")]
-[h:DmgDieNum=json.get(FinalSpellData,"DmgDieNum")]
-[h:DmgDieSize=json.get(FinalSpellData,"DmgDieSize")]
-[h:DmgDieFlatBonus=json.get(FinalSpellData,"DmgDieFlatBonus")]
-[h:DmgDieMODBonus=json.get(FinalSpellData,"DmgDieMODBonus")]
-[h:isRandomType2=json.get(FinalSpellData,"isRandomType2")]
-[h:DmgType2Options=json.get(FinalSpellData,"DmgType2Options")]
-[h:DmgType2=json.get(FinalSpellData,"DmgType2")]
-[h:DmgDie2Num=json.get(FinalSpellData,"DmgDie2Num")]
-[h:DmgDie2Size=json.get(FinalSpellData,"DmgDie2Size")]
-[h:DmgDie2FlatBonus=json.get(FinalSpellData,"DmgDie2FlatBonus")]
-[h:DmgDie2MODBonus=json.get(FinalSpellData,"DmgDie2MODBonus")]
-[h:AHLScaling=json.get(FinalSpellData,"AHLScaling")]
-[h:AHLDmgType=json.get(FinalSpellData,"AHLDmgType")]
-[h:AHLDamageNumber=json.get(FinalSpellData,"AHLDamageNumber")]
-[h:AHLDmgDieSize=json.get(FinalSpellData,"AHLDmgDieSize")]
-[h:AHLFlatBonus=json.get(FinalSpellData,"AHLFlatBonus")]
-[h:AHLDmgType2=json.get(FinalSpellData,"AHLDmgType2")]
-[h:AHLDmgDie2Num=json.get(FinalSpellData,"AHLDmgDie2Num")]
-[h:AHLDmgDie2Size=json.get(FinalSpellData,"AHLDmgDie2Size")]
-[h:AHL2FlatBonus=json.get(FinalSpellData,"AHL2FlatBonus")]
+[h:SpellDamage = json.get(FinalSpellData,"Damage")]
 [h:sMultiTarget=json.get(FinalSpellData,"sMultiTarget")]
 [h:IsTargetsAHL=json.get(FinalSpellData,"IsTargetsAHL")]
 [h:AHLTargetScaling=json.get(FinalSpellData,"AHLTargetScaling")]
@@ -287,43 +279,10 @@
 [h:AHL7Duration=json.get(FinalSpellData,"AHL7Duration")]
 [h:AHL8Duration=json.get(FinalSpellData,"AHL8Duration")]
 [h:AHL9Duration=json.get(FinalSpellData,"AHL9Duration")]
-[h:AuraSize=json.get(FinalSpellData,"AuraSize")]
-[h:sStatusName=json.get(FinalSpellData,"sStatusName")]
-[h:sStatus=json.get(FinalSpellData,"sStatus")]
-[h:sBlind=json.get(FinalSpellData,"sBlind")]
-[h:sCharmed=json.get(FinalSpellData,"sCharmed")]
-[h:sConfused=json.get(FinalSpellData,"sConfused")]
-[h:sDeafened=json.get(FinalSpellData,"sDeafened")]
-[h:sFrightened=json.get(FinalSpellData,"sFrightened")]
-[h:sGrappled=json.get(FinalSpellData,"sGrappled")]
-[h:sIncapacitated=json.get(FinalSpellData,"sIncapacitated")]
-[h:sParalyzed=json.get(FinalSpellData,"sParalyzed")]
-[h:sPetrified=json.get(FinalSpellData,"sPetrified")]
-[h:sPoisoned=json.get(FinalSpellData,"sPoisoned")]
-[h:sProne=json.get(FinalSpellData,"sProne")]
-[h:sRestrained=json.get(FinalSpellData,"sRestrained")]
-[h:sStunned=json.get(FinalSpellData,"sStunned")]
-[h:sUnconscious=json.get(FinalSpellData,"sUnconscious")]
-[h:sReactionUsed=json.get(FinalSpellData,"sReactionUsed")]
-[h:DebuffsList=json.get(FinalSpellData,"DebuffsList")]
-[h:BuffsList=json.get(FinalSpellData,"BuffsList")]
-[h:sDescription=json.get(FinalSpellData,"sDescription")]
-[h:IsBuff=json.get(FinalSpellData,"IsBuff")]
-[h:IsDebuff=json.get(FinalSpellData,"IsDebuff")]
-[h:sSpellSave=json.get(FinalSpellData,"sSpellSave")]
+[h:SpellDescription = json.get(FinalSpellData,"Description")]
+[h:SaveData = json.get(FinalSpellData,"SaveData")]
 [h:Duration=json.get(FinalSpellData,"sDuration")]
-[h:IsSummon=json.get(FinalSpellData,"IsSummon")]
-[h:IsAHLSummon=json.get(FinalSpellData,"IsAHLSummon")]
-[h:sSummonType=json.get(FinalSpellData,"sSummonType")]
-[h:sSummonList=json.get(FinalSpellData,"sSummonList")]
-[h:AHLSummonCRScaling=json.get(FinalSpellData,"AHLSummonCRScaling")]
-[h:AHLSummonCRMultiplier=json.get(FinalSpellData,"AHLSummonCRMultiplier")]
-[h:AHLSummonCRAdditive=json.get(FinalSpellData,"AHLSummonCRAdditive")]
-[h:AHLSummonNumScaling=json.get(FinalSpellData,"AHLSummonNumScaling")]
-[h:AHLSummonNumMultiplier=json.get(FinalSpellData,"AHLSummonNumMultiplier")]
-[h:AHLSummonNumAdditive=json.get(FinalSpellData,"AHLSummonNumAdditive")]
-[h:sSummonCR=json.get(FinalSpellData,"sSummonCR")]
-[h:sSummonNumber=json.get(FinalSpellData,"sSummonNumber")]
+[h:SummonData = json.get(FinalSpellData,"Summon")]
 [h:sSpellAttack=json.get(FinalSpellData,"sSpellAttack")]
 [h:sCritThresh=json.get(FinalSpellData,"sCritThresh")]
 [h:IsDamage=json.get(FinalSpellData,"IsDamage")]
@@ -404,7 +363,7 @@
 }]
 
 [h:CastTime=if(RitualTest,CastTime+" + 10 minutes (ritual)",CastTime)]
-[h:AHL=eLevel-sLevel]
+[h:AHL=eLevel-SpellLevel]
 
 [h,if(json.type(sClassSelectData)=="UNKNOWN"): 
 	PrimeStat = json.get(getLibProperty("sb.CastingAbilities","Lib:pm.a5e.Core"),sClassSelect);
@@ -454,7 +413,7 @@
 [h:sRerollLink=macroLinkText("SpellCasting@Lib:pm.a5e.Core","gm-self",RerollSpellData,ParentToken)]
 
 [h:abilityClass = sClassSelect]
-[h:abilityDisplayName = "<b>"+CompendiumLink+"</b> ("+sLevel+") <i>"+if(RitualTest," (ritual)","")+"</i>"]
+[h:abilityDisplayName = "<b>"+CompendiumLink+"</b> ("+SpellLevel+") <i>"+if(RitualTest," (ritual)","")+"</i>"]
 [h:abilityFalseName = "Spellcasting"]
 [h:abilityOnlyRules = 0]
 
@@ -904,7 +863,7 @@
 	[h:output.GM = output.GM + json.get(output.Temp,"GM")]
 
 	[h:sDescriptionLink = macroLinkText("spellDescription@Lib:pm.a5e.Core",if(DMOnly,"gm","all"),RerollSpellData,ParentToken)]
-	[h:SpellDescriptionFinal = if(sRulesShow==0,"<a style='color:"+LinkColor+";' href='"+sDescriptionLink+"'>Click to show full spell text</a>",sDescription)]
+	[h:SpellDescriptionFinal = if(sRulesShow==0,"<a style='color:"+LinkColor+";' href='"+sDescriptionLink+"'>Click to show full spell text</a>",SpellDescription)]
 
 	[h:output.PC = output.PC + if(DMOnly,"",SpellDescriptionFinal)+"</div></div>"]
 	[h:output.GM = output.GM + SpellDescriptionFinal+"</div></div>"]
@@ -913,7 +872,7 @@
 	[h:broadcastAsToken(output.PC,"not-gm")]
 };{
 	[h:sDescriptionLink = macroLinkText("spellDescription@Lib:pm.a5e.Core",if(DMOnly,"gm","all"),RerollSpellData,ParentToken)]
-	[h:SpellDescriptionFinal = if(sRulesShow==0,"<a style='color:"+LinkColor+";' href='"+sDescriptionLink+"'>Click to show full spell text</a>",sDescription)]
+	[h:SpellDescriptionFinal = if(sRulesShow==0,"<a style='color:"+LinkColor+";' href='"+sDescriptionLink+"'>Click to show full spell text</a>",SpellDescription)]
 }]
 
 [h:ReturnData = json.set("{}","Slot",if(IsCantrip,"Cantrip",eLevel),"Class",sClassSelect,"DmgType",DmgType,"DmgType2",DmgType2,"Table",abilityTable,"Effect",SpellDescriptionFinal,"ChaosTest",SpellName=="Chaos Bolt")]

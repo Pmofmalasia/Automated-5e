@@ -1,5 +1,4 @@
 [h:subeffectData = macro.args]
-[h:broadcast("why am i here again")]
 [h:totalSubeffects = json.get(subeffectData,"TotalSubeffects")]
 [h:thisSubeffectNum = json.get(subeffectData,"WhichSubeffect")]
 [h:spellLevel = json.get(subeffectData,"SpellLevel")]

@@ -254,7 +254,7 @@
 		[h:wa.AddedFlatDamage2 = "[]"]		
 	}]
    
-	[h:pm.PassiveFunction("WeaponDamage")]
+	[h:pm.PassiveFunction("AttackDamage")]
 	[h:pm.PassiveFunction("WeaponAttackDamage")]
 	[h:pm.PassiveFunction("AttackDamageTargeted",json.set("","ParentToken",thisAttackTarget))]
 	[h:pm.PassiveFunction("WeaponAttackDamageTargeted",json.set("","ParentToken",thisAttackTarget))]
@@ -299,6 +299,7 @@
 		"NoModification",0,
 		"IsWeapon",1,
 		"IsSpell",0,
+		"IsAttack",1,
 		"Modifier",1
 	)]
 
@@ -341,6 +342,7 @@
 			"NoModification",0,
 			"IsWeapon",1,
 			"IsSpell",0,
+			"IsAttack",1,
 			"Modifier",1
 		)]
 	}]

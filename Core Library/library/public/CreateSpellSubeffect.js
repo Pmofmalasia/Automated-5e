@@ -25,11 +25,12 @@ async function createMitigationTable(){
 
         if(document.getElementById("isDamage").checked){
             for(let i=1; i <= document.getElementById("differentTypes").value; i++){
+                let rowPrefix = "";
                 if(document.getElementById("isAHL"+i).value == "0"){
-                    var rowPrefix = "rowIsAHL";
+                    rowPrefix = "rowIsAHL";
                 }
                 else{
-                    var rowPrefix = "rowAHLFlatBonus";
+                    rowPrefix = "rowAHLFlatBonus";
                 }
                 let rowToReplaceIndex = document.getElementById(rowPrefix+i).rowIndex;
                 let newSaveMitigationRow = table.insertRow(rowToReplaceIndex+1);

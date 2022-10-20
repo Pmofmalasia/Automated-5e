@@ -55,9 +55,10 @@
 		"RulesContents",pm.SpellSlots(),
 		"RollContents","",
 		"DisplayOrder","['Rules','Roll','Full']"
-		))]
-			
-[h:Concentration=""]
+	))
+]
+
+[h:setProperty("stat.Concentration","")]
 
 [h:OldExhaustion = Exhaustion]
 [h:Exhaustion=Max(Exhaustion-1,0)]

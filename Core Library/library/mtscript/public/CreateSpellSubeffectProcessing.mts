@@ -10,6 +10,16 @@
     [h:subeffectData = json.remove(subeffectData,"SaveType")]
 }]
 
+[h,if(howMitigate == "Attack"),CODE:{
+    [h:AttackData = json.set("",
+        "MeleeRanged",json.get(subeffectData,"MeleeRanged"),
+        "CritThresh",json.get(subeffectData,"CritThresh")
+    )]
+    [h:subeffectData = json.remove(subeffectData,"MeleeRanged")]
+    [h:subeffectData = json.remove(subeffectData,"CritThresh")]
+    [h:subeffectData = json.set(subeffectData,"Attack",AttackData)]
+}]
+
 [h:damageTypeNumber = max(0,number(json.get(subeffectData,"differentTypes")))]
 [h:subeffectData = json.remove(subeffectData,"isDamage")]
 [h:subeffectData = json.remove(subeffectData,"differentTypes")]
@@ -18,11 +28,20 @@
     [h:whichType = roll.count + 1]
     [h:thisDamageTypeInfo = json.set("",
         "DamageType",json.get(subeffectData,"DamageType"+whichType),
-        "DamageDieNum",number(json.get(subeffectData,"DamageDieNum"+whichType)),
+        "DamageDieNumber",number(json.get(subeffectData,"DamageDieNum"+whichType)),
         "DamageDieSize",number(json.get(subeffectData,"DamageDieSize"+whichType)),
         "DamageFlatBonus",number(json.get(subeffectData,"DamageFlatBonus"+whichType)),
-        "ModBonus",json.contains(subeffectData,"ModBonus"+whichType)
+        "IsModBonus",json.contains(subeffectData,"ModBonus"+whichType)
     )]
+
+    [h,if(json.get(subeffectData,"DamageType"+whichType) == "Multiple Options"),CODE:{
+        [h:thisDamageTypeInfo = json.remove(thisDamageTypeInfo,"DamageType")]
+        [h:allDamageTypes = pm.GetDamageTypes("Name","json")]
+        [h:DamageTypeOptions = "[]"]
+        [h,foreach(tempType,allDamageTypes): DamageTypeOptions = if(json.contains(subeffectData,"DamageTypeOptions"+tempType+whichType),json.append(DamageTypeOptions,tempType),DamageTypeOptions)]
+        [h,foreach(tempType,DamageTypeOptions): subeffectData = json.remove(subeffectData,"DamageTypeOptions"+tempType+whichType)]
+        [h:thisDamageTypeInfo = json.set(thisDamageTypeInfo,"DamageTypeOptions",DamageTypeOptions)]
+    }]
 
     [h,if(json.get(subeffectData,"isAHL"+whichType)!=0):
         thisDamageTypeInfo = json.set(thisDamageTypeInfo,
@@ -57,7 +76,7 @@
     [h:damageInfo = json.append(damageInfo,thisDamageTypeInfo)]
 }]
 
-[h:subeffectData = json.set(subeffectData,"Damage",damageInfo)]
+[h,if(!json.isEmpty(damageInfo)): subeffectData = json.set(subeffectData,"Damage",damageInfo)]
 
 [h:isCondition = json.get(subeffectData,"isCondition")]
 [h:subeffectData = json.remove(subeffectData,"isCondition")]

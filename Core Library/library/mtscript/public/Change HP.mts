@@ -206,7 +206,7 @@
 	))
 ]
 
-[h,if(Concentration!="" && hp.Damage>0),CODE:{
+[h,if(getProperty("stat.Concentration")!="" && hp.Damage>0),CODE:{
 	[h:hp.ConcDC = max(10,floor(hp.Damage/2))]
 	[h,MACRO("Save@Lib:pm.a5e.Core"): 
 	json.set(hp.Data,

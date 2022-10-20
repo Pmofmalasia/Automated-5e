@@ -16,7 +16,7 @@
 	"RollContents","",
 	"DisplayOrder","['Rules','Roll','Full']",
 	"Value",""
-	))]
+))]
 	
 [h,if(json.get(LClass,"Warlock")!=""):SpellSlots = json.set(SpellSlots,"W",1+if(json.get(LClass,"Warlock")>1,1,0)+if(json.get(LClass,"Warlock")>10,1,0)+if(json.get(LClass,"Warlock")>16,1,0))]
 
@@ -30,9 +30,10 @@
 		"RollContents","",
 		"DisplayOrder","['Rules','Roll','Full']",
 		"Value",""
-		))]
-			
-[h:Concentration=""]
+	))
+]
+
+[h:setProperty("stat.Concentration","")]
 
 [h,if(Exhaustion == 0): exhaustionMessage = "Exhaustion fully recovered."; exhaustionMessage = "Disadvantage on ability checks"+if(Exhaustion>=2 && Exhaustion<5,", speed halved","")+if(Exhaustion>=3,", disadvantage on attack rolls and saving throws","")+if(Exhaustion>=4,", hit point maximum halved","")+if(Exhaustion>=5,", speed reduced to 0","")]
 	

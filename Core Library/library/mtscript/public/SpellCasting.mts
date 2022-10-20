@@ -21,7 +21,7 @@
 
 [h:mCompConsumed = json.get(BaseSpellData,"mCompConsumed")]
 [h:vComp = json.get(BaseSpellData,"vComp")]
-[h:sConcentration = json.get(BaseSpellData,"Concentration")]
+[h:isConcentration = json.get(BaseSpellData,"isConcentration")]
 [h:ConcentrationLost = json.get(BaseSpellData,"ConcentrationLost")]
 
 [h:IsCantrip = if(SpellLevel==0,1,0)]
@@ -121,7 +121,7 @@
 	[h:chosenLevel = 0]
 }]
 
-[h:dissConcentration=if(or(sConcentration==0,SpellLevel>=sConcentrationLost),"",if(Concentration=="","","junkVar|<html><span style='font-size:1.2em';>Casting <span style='color:#2222AA'><i>"+SpellName+"</i></span> will cancel concentration on <span style='color:#AA2222'><i>"+Concentration+".</i></span></span></html>|<html><span style='color:#AA2222; font-size:1.2em'><b>sp.NING</b></span></html>|LABEL"))]
+[h:dissConcentration=if(or(isConcentration==0,SpellLevel>=isConcentration),"",if(Concentration=="","","junkVar|<html><span style='font-size:1.2em';>Casting <span style='color:#2222AA'><i>"+SpellName+"</i></span> will cancel concentration on <span style='color:#AA2222'><i>"+Concentration+".</i></span></span></html>|<html><span style='color:#AA2222; font-size:1.2em'><b>sp.NING</b></span></html>|LABEL"))]
 [h:disIsSilenced=if(or(getState("Silence")==0,vComp==0),"","junkVar|<html><span style='font-size:1.2em';><span style='color:#AA2222'><i><b>NOTE: You are currently silenced and attempting to cast a spell with verbal components!</b></i></span></span></html>| |LABEL|SPAN=TRUE")]
 [h:disIsBlinded=if(or(getState("Blinded")==0,IsSight==0),"","junkVar|<html><span style='font-size:1.2em';><span style='color:#AA2222'><i><b>NOTE: You are currently blinded and this spell requires sight!</b></i></span></span></html>| |LABEL|SPAN=TRUE")]
 [h:disCompConsumed=if(or(mCompConsumed=="0",mCompConsumed==""),"","junkVar|"+mCompConsumed+"|Consumed Components|LABEL")]
@@ -279,6 +279,7 @@
 [h:AHL7Duration=json.get(FinalSpellData,"AHL7Duration")]
 [h:AHL8Duration=json.get(FinalSpellData,"AHL8Duration")]
 [h:AHL9Duration=json.get(FinalSpellData,"AHL9Duration")]
+
 [h:SpellDescription = json.get(FinalSpellData,"Description")]
 [h:SaveData = json.get(FinalSpellData,"SaveData")]
 [h:Duration=json.get(FinalSpellData,"sDuration")]
@@ -291,8 +292,8 @@
 [h:IsOngoing=json.get(FinalSpellData,"IsOngoing")]
 [h:IsCheck=json.get(FinalSpellData,"IsCheck")]
 [h:IsSight=json.get(FinalSpellData,"IsSight")]
-[h:sConcentration=json.get(FinalSpellData,"sConcentration")]
-[h:sConcentrationLost=json.get(FinalSpellData,"sConcentrationLost")]
+[h:isConcentration = json.get(FinalSpellData,"isConcentration")]
+[h:isConcentrationLost=json.get(FinalSpellData,"isConcentrationLost")]
 
 [h:CastTime=if(CastTime=="Action","Action",CastTime)]
 [h:CastTime=if(CastTime=="BONUS","Bonus Action",CastTime)]
@@ -312,22 +313,21 @@
 [h:TextColor = json.get(DefaultDisplayData,"Title")]
 
 [h:"<!--- Cancel Old Spell Notice --->"]
-[h,if(getState("Concentrating") && sConcentration==1 && eLevel<sConcentrationLost),CODE:{
-
+[h,if(getState("Concentrating") && isConcentration==1 && eLevel<isConcentrationLost),CODE:{
 	[h:FlavorData = json.set("",
 		"Flavor",Flavor,
-		"ParentToken",ParentToken)]
+		"ParentToken",ParentToken
+	)]
 	
-	[MACRO("End Concentration@Lib:Spellbook"):FlavorData]
+	[MACRO("End Concentration@Lib:Spellbook"): FlavorData]
 };{}]
 
 [h:"<!--- Cancel Old Spell Notice --->"]
 
 [h,if(DmgType2Options=="" && DmgTypeOptions==""),CODE:{};{
-	
 	[h:disDmgTypeOptions=""]
 	[h:disDmgType2Options=""]
-	
+
 	[h,if(isRandomType),CODE:{
 		[h:DmgTypeOptions=if(DmgTypeOptions=="",DmgType,DmgTypeOptions)]
 		[h:dmgTypeRoll=eval("1d"+listCount(DmgTypeOptions))]
@@ -336,7 +336,7 @@
 	};{
 		[h:disDmgTypeOptions=if(DmgTypeOptions=="","","DmgType | "+DmgTypeOptions+" | Choose a Damage Type | LIST | VALUE=STRING ")]
 	}]
-	
+
 	[h,if(isRandomType2),CODE:{
 		[h:DmgType2Options=if(DmgType2Options=="",DmgType2,DmgType2Options)]
 		[h:dmgType2Roll=eval("1d"+listCount(DmgType2Options))]
@@ -354,12 +354,11 @@
 			""+disCancelCheck+"",
 			""+disDmgTypeOptions+"",
 			""+disDmgType2Options+""
-			)]
+		)]
 		[h:DamageCancelCheck=1]
 		[h:AHLDmgType=if(disDmgTypeOptions=="",AHLDmgType,DmgType)]
 		[h:AHLDmgType2=if(disDmgType2Options=="",AHLDmgType2,DmgType2)]
 	}]
-	
 }]
 
 [h:CastTime=if(RitualTest,CastTime+" + 10 minutes (ritual)",CastTime)]
@@ -375,8 +374,8 @@
 
 [h:MissileCount=sBaseMissiles+(AHL*sAHLMissiles)]
 
-[h:setState("Concentrating",if(and(eLevel<sConcentrationLost,sConcentration==1),1,getState("Concentrating")))]
-[h:Concentration=if(and(eLevel<sConcentrationLost,sConcentration==1),SpellName,Concentration)]
+[h:setState("Concentrating",if(and(eLevel<isConcentrationLost,isConcentration==1),1,getState("Concentrating")))]
+[h,if(and(eLevel<isConcentrationLost,isConcentration==1)): setProperty("stat.Concentration",SpellName)]
 
 [h:CompendiumLink=concat('<a style="color:'+TextColor+';" href=',BaseLink,replace(SpellName,' ','-'),'>',SpellName,'</a>')]
 

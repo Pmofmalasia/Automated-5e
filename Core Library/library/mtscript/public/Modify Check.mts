@@ -54,7 +54,6 @@
 [h:LinkColor = pm.LinkColor()]
 
 [h,if(d20AdvantageBalance == 0),CODE:{
-	[h:"<!-- Will need to add concentration to the list, once the updated macro is made -->"]
 	[h:FinalRoll = json.get(d20AllRolls,0)]
 
 	[h:rerollData = json.set(d20Data,"Value",FinalRoll+TotalBonus,"FinalRoll",FinalRoll,"PreviousRoll",d20AllRolls,"Advantage",d20Advantage,"Disadvantage",d20Disadvantage,"TotalBonus",TotalBonus,"Formula",rollFormula,"RollString",rollString)]

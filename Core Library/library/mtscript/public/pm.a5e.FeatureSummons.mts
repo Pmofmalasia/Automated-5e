@@ -10,10 +10,10 @@
 [h:ParentToken=json.get(summonParams,"ParentToken")]
 
 [h:summonCosmetics = arg(2)]
-[h:pm.ForcedSummonName=json.get(summonCosmetics,"Name")]
-[h:pm.ForcedSummonImage=json.get(summonCosmetics,"Image")]
-[h:pm.ForcedSummonPortrait=json.get(summonCosmetics,"Portrait")]
-[h:pm.ForcedSummonHandout=json.get(summonCosmetics,"Handout")]
+[h:pm.ForcedSummonName=json.get(summonCosmetics,"ForcedName")]
+[h:pm.ForcedSummonImage=json.get(summonCosmetics,"ForcedImage")]
+[h:pm.ForcedSummonPortrait=json.get(summonCosmetics,"ForcedPortrait")]
+[h:pm.ForcedSummonHandout=json.get(summonCosmetics,"ForcedHandout")]
 
 [h:pm.SummonOptions=""]
 [h:pm.SummonIDs=""]
@@ -59,5 +59,5 @@
 	}]
 	[h:abilityTable = json.append(abilityTable,summonTable)]
 };{
-	[h:pm.Summons(currentFeatureInfo,summonParams,summonCosmetics)]
+	[h:pm.Summons(summonParams,summonCosmetics)]
 }]

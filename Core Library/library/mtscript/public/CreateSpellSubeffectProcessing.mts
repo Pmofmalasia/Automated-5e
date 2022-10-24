@@ -160,17 +160,23 @@
 ]
 [h:subeffectData = json.remove(subeffectData,"conditionSaveEffect")]
 
-[h:summonData = json.get(subeffectData,"isSummons")]
+[h:isSummons = json.get(subeffectData,"isSummons")]
 [h:subeffectData = json.remove(subeffectData,"isSummons")]
-[h,switch(summonData),CODE:
+[h,switch(isSummons),CODE:
     case "SpellEffect":{
-
+        
     };
     case "Single":{
-
+        [h:SummonData = json.set("",
+            "SummonName",json.get(subeffectData,"singleSummon")
+        )]
+        [h:subeffectData = json.remove(subeffectData,"singleSummon")]
     };
     case "Options":{
-
+        [h:SummonOptions = json.fromList(encode(json.get(subeffectData,"summonOptions")),"%0A")]
+        [h:SummonData = json.set("",
+            "SummonOptions",SummonOptions
+        )]
     };
     case "Criteria":{
 

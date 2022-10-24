@@ -67,7 +67,7 @@
 	[h:spell.TargetOrigin = ParentToken]
 }]
 
-[h:"<!-- TODO: Need a 'Must affect all valid targets' option -->"]
+[h:"<!-- TODO: Need a 'Must affect all valid targets' option, likely trigger input based on whether 'unlimited' targets is checked -->"]
 [h:MissileCount = 1]
 [h:"<!-- TODO: Need better solution for missiles - missiles loop should create new effects, allow for target selection all in one step. Multiple AoEs should NOT be treated as missiles, since they use the same damage rolls. -->"]
 
@@ -228,14 +228,14 @@
 		"Multiplier",summonNumMultiplierAHL,
 		"Bonus",summonNumAddedAHL,
 		"ParentToken",ParentToken
-		)]
+	)]
 
 	[h:SummonCustomization = json.set("",
-		"Name",ForcedSummonName,
-		"Image",ForcedImage,
-		"Portrait",ForcedPortrait,
-		"Handout",ForcedHandout
-		)]
+		"ForcedName",ForcedSummonName,
+		"ForcedImage",ForcedImage,
+		"ForcedPortrait",ForcedPortrait,
+		"ForcedHandout",ForcedHandout
+	)]
 	[h,if(IsSummon=="No"),CODE:{};{
 		[h:pm.Summons(json.set("","Name",SpellName,"Class",sClassSelect),SummonData,SummonCustomization)]
 	}]

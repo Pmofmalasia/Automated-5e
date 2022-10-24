@@ -172,6 +172,7 @@
 [h:defineFunction("pm.GetTools","pm.GetTools@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.GetToolTypes","pm.GetToolTypes@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.GetLanguages","pm.GetLanguages@Lib:pm.a5e.Core")]
+[h:defineFunction("pm.a5e.GetSpecificSpell","pm.a5e.GetSpecificSpell@Lib:pm.a5e.Core")]
 
 [h:"<!-- Functions for Formatting -->"]
 [h:defineFunction("broadcastAsToken","broadcastAsToken@Lib:pm.a5e.Core")]
@@ -208,6 +209,7 @@
 [h:defineFunction("pm.SpellStdVars","pm.SpellStdVars@Lib:pm.a5e.Core",0,0)]
 [h:defineFunction("pm.a5e.SpellcastingSubeffect","pm.a5e.SpellcastingSubeffect@Lib:pm.a5e.Core",0,0)]
 [h:defineFunction("pm.a5e.DamageRoll","pm.a5e.DamageRoll@Lib:pm.a5e.Core",0,0)]
+[h:defineFunction("pm.a5e.AttackRoll","pm.a5e.AttackRoll@Lib:pm.a5e.Core",0,0)]
 
 [h:"<!-- Functions for Checks and Saves -->"]
 [h:defineFunction("pm.a5e.d20Roll","pm.a5e.d20Roll@Lib:pm.a5e.Core",0,0)]

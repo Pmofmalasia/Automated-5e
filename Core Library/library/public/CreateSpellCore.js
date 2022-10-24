@@ -47,13 +47,13 @@ async function concLost() {
         let table = document.getElementById("spellCreationTable");
         let customDurationRow = table.insertRow(concLostLineIndex+1);
 
-        let selectedSpellLevel = document.getElementById("SpellLevel").value;
+        let selectedSpellLevel = document.getElementById("Level").value;
         var concLostLevelOptions = "";
         for(let i=selectedSpellLevel; i<10; i++){
             concLostLevelOptions = concLostLevelOptions+"<option value='"+i+"'>"+i+"</option>";
         }
 
-        customDurationRow.innerHTML = "<th><label for='concLostLevel'>Level No Longer Required:</label></th><td><select id='concLostLevel' name=concLostLevel'>"+concLostLevelOptions+"</selected></td>";
+        customDurationRow.innerHTML = "<th><label for='ConcentrationLostLevel'>Level No Longer Required:</label></th><td><select id='ConcentrationLostLevel' name=ConcentrationLostLevel'>"+concLostLevelOptions+"</selected></td>";
     }
     else{
         document.getElementById("spellCreationTable").deleteRow(concLostLineIndex+1);
@@ -62,21 +62,29 @@ async function concLost() {
 
 async function ahlDuration() {
     let isDurationAHLLineIndex = document.getElementById("rowDurationAHL").rowIndex;
-    let selectedSpellLevel = document.getElementById("SpellLevel").value;
+    let selectedSpellLevel = document.getElementById("Level").value;
+    let maxSpellLevel = 0;
+
+    if(selectedSpellLevel == 0){
+        maxSpellLevel = 3;
+    }
+    else{
+        maxSpellLevel = 9;
+    }
 
     if(document.getElementById("AHLDuration").checked){
         let table = document.getElementById("spellCreationTable");
 
-        for(let i=9; i>selectedSpellLevel; i--){
+        for(let i=maxSpellLevel; i>selectedSpellLevel; i--){
             var thisAHLDurationRow = table.insertRow(isDurationAHLLineIndex+1);
-            thisAHLDurationRow.innerHTML = "<th><label for='ahlDurationLevel"+i+"'>Duration at Level "+i+":</label></th><td><select id='ahlDurationLevel"+i+"' name=ahlDurationLevel"+i+"'></selected></td>";
+            thisAHLDurationRow.innerHTML = "<th><label for='AHLDurationLevel"+i+"'>Duration at Level "+i+":</label></th><td><select id='AHLDurationLevel"+i+"' name=AHLDurationLevel"+i+"'></selected></td>";
             let DurationOptions = document.getElementById("spellDuration").innerHTML;
-            let thisAHLDurationSelect = document.getElementById("ahlDurationLevel"+i);
+            let thisAHLDurationSelect = document.getElementById("AHLDurationLevel"+i);
             thisAHLDurationSelect.innerHTML = DurationOptions;
         }
     }
     else{
-        for(let i=selectedSpellLevel; i<9; i++){
+        for(let i=selectedSpellLevel; i<maxSpellLevel; i++){
             document.getElementById("spellCreationTable").deleteRow(isDurationAHLLineIndex+1);
         }
     }

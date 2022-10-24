@@ -8,7 +8,7 @@
     d20Target = ""
 ]
 
-[h:d20AllRolls = if(json.get(d20Data,"PreviousRoll")=="","[]",json.get(d20Data,"PreviousRoll"))]
+[h:d20AllRolls = if(json.get(d20Data,"d20Rolls")=="","[]",json.get(d20Data,"d20Rolls"))]
 [h:d20ExtraRolls = if(json.get(d20Data,"ExtraRolls")=="",0,json.get(d20Data,"ExtraRolls"))]
 [h:d20ForcedAdvantage = if(json.get(d20Data,"ForcedAdvantage")=="",0,json.get(d20Data,"ForcedAdvantage"))]
 [h:d20Advantage = if(json.get(d20Data,"Advantage")=="",0,json.get(d20Data,"Advantage"))]
@@ -19,7 +19,7 @@
 [h,if(d20ForcedAdvantage==0),CODE:{
     [h,foreach(prefix,d20PassivePrefixes),CODE:{
         [h:pm.PassiveFunction(prefix+"Adv")]
-        [h,if(d20Target != ""): pm.PassiveFunction(prefix+"AdvTargeted",d20Target)]  
+        [h,if(d20Target != ""): pm.PassiveFunction(prefix+"AdvTargeted",json.set("","ParentToken",d20Target))]  
     }]
     [h:d20AdvantageBalance = if(or(and(d20Disadvantage == 0,d20Advantage == 0),and(d20Disadvantage !=0,d20Advantage != 0)),0,if(d20Disadvantage == 0,1,-1))]
     [h:d20RolledNum = if(d20AdvantageBalance!=0,d20RolledNum + 1,d20RolledNum)]

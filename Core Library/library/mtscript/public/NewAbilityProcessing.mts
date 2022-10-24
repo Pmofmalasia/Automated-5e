@@ -228,9 +228,9 @@
 	[h,if(json.get(ability,"Languages")!=""): 
 		lu.NewAbilities = json.path.set(lu.NewAbilities,"[?(@.Name == '"+json.get(ability,"Name")+"' && @.Class == '"+json.get(ability,"Class")+"' && @.Subclass == '"+json.get(ability,"Subclass")+"')]['Languages']",json.merge(json.get(ability,"Languages"),lu.NewLanguages));
 		lu.NewAbilities = json.path.put(lu.NewAbilities,"[?(@.Name == '"+json.get(ability,"Name")+"' && @.Class == '"+json.get(ability,"Class")+"' && @.Subclass == '"+json.get(ability,"Subclass")+"')]","Languages",lu.NewLanguages)
-	][h:broadcast("HI")]
+	]
 }]
-[h:broadcast("HI")]
+
 [h:"<!-- Choose Damage Type -->"]
 [h,if(json.isEmpty(lu.NewAbilities)): lu.DamageChoiceAbilities = ""; lu.DamageChoiceAbilities = json.path.read(lu.NewAbilities,"[*][?(@.DamageOptions != null)]","DEFAULT_PATH_LEAF_TO_NULL")]
 [h,foreach(ability,lu.DamageChoiceAbilities),CODE:{
@@ -251,7 +251,7 @@
 	
 	[h:lu.NewAbilities = json.path.put(lu.NewAbilities,"[?(@.Name == '"+json.get(ability,"Name")+"' && @.Class == '"+json.get(ability,"Class")+"' && @.Subclass == '"+json.get(ability,"Subclass")+"')]","DamageType",json.get(json.path.read(lu.DamageOptions,"[?(@.Name=='"+pm.RemoveSpecial(lu.DamageChoice)+"')]['Name']"),0))]
 }]
-[h:broadcast("HI")]
+
 [h:"<!-- Choose Spells -->"]
 [h,if(json.isEmpty(lu.NewAbilities)): lu.SpellChoiceAbilities = ""; lu.SpellChoiceAbilities = json.path.read(lu.NewAbilities,"[*][?(@.SpellOptions != null)]","DEFAULT_PATH_LEAF_TO_NULL")]
 [h,foreach(ability,lu.SpellChoiceAbilities),CODE:{

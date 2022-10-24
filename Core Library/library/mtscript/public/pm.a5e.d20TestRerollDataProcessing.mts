@@ -35,8 +35,8 @@
     [h:"<!-- 1 = replace all rolls; 2 = keep only the final roll; anything else = keep all rolls -->"]
 
     [h,switch(json.get(RerollInfo,"ReplacePrevious")):
-        case 1: OldRollData = json.set(OldRollData,"PreviousRoll","");
-        case 2: OldRollData = json.set(OldRollData,"PreviousRoll",json.append("",json.get(OldRollData,"FinalRoll")));
+        case 1: OldRollData = json.set(OldRollData,"d20Rolls","");
+        case 2: OldRollData = json.set(OldRollData,"d20Rolls",json.append("",json.get(OldRollData,"FinalRoll")));
         default: ""
     ]
 

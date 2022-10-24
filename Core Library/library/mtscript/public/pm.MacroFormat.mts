@@ -16,8 +16,10 @@
 [h,if(ParentToken!=""): switchToken(ParentToken)]
 
 [h,if(BorderColorOverride == ""),CODE:{
+	[h:broadcast(abilityClass+"<br>"+ColorSubtype)]
 	[h:chat.Border = pm.BorderColor(abilityClass,ColorSubtype)]
 };{
+	[h:broadcast("Override")]
 	[h:chat.Border = BorderColorOverride]
 }]
 

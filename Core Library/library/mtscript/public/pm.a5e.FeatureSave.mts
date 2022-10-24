@@ -1,6 +1,6 @@
 [h:SaveOptions = json.get(arg(1),"Save")]
 [h:SaveAdvantage = json.get(arg(1),"Advantage")]
-[h:SavePreviousRoll = json.get(arg(1),"PreviousRoll")]
+[h:SavePreviousRoll = json.get(arg(1),"d20Rolls")]
 [h:SaveType = if(json.get(arg(1),"Type")=="","Save",json.get(arg(1),"Type"))]
 [h:SaveBonus = json.get(arg(1),"Bonus")]
 [h:pm.a5e.FeatureComponentStdVars(arg(0))]
@@ -56,7 +56,7 @@
 		"Save",SaveSelection,
 		"Type",SaveType,
 		"Advantage",SaveAdvantage,
-		"PreviousRoll",SavePreviousRoll,
+		"d20Rolls",SavePreviousRoll,
 		"ParentToken",ParentToken
 	)]
 

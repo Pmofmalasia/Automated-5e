@@ -19,6 +19,7 @@
 [h:pm.DamageTypes = ""]
 [h:pm.CastingAbilities = "{}"]
 [h:pm.SpellSchools = ""]
+[h:pm.Spells = ""]
 
 [h:"<!-- Since languages may be setting specific, may want to add a function for DMs to exclude languages from certain sourcebooks. Can use this macro as the gate for blocking those books. -->"]
 [h,foreach(book,pm.SourcebookLibs),CODE:{
@@ -42,6 +43,7 @@
 	[h,if(getLibProperty("sb.DamageTypes","Lib:"+book)!=""): pm.DamageTypes = json.merge(pm.DamageTypes,getLibProperty("sb.DamageTypes","Lib:"+book))]
 	[h,if(getLibProperty("sb.CastingAbilities","Lib:"+book)!=""): pm.CastingAbilities = json.merge(pm.CastingAbilities,getLibProperty("sb.CastingAbilities","Lib:"+book))]
 	[h,if(getLibProperty("sb.SpellSchools","Lib:"+book)!=""): pm.SpellSchools = json.merge(pm.SpellSchools,getLibProperty("sb.SpellSchools","Lib:"+book))]
+	[h,if(getLibProperty("sb.Spells","Lib:"+book)!=""): pm.Spells = json.merge(pm.Spells,getLibProperty("sb.Spells","Lib:"+book))]
 }]
 
 [h,foreach(ability,pm.AbilitiesToMerge),CODE:{
@@ -68,4 +70,6 @@
 [h:setLibProperty("sb.DamageTypes",pm.DamageTypes,"Lib:pm.a5e.Core")]
 [h:setLibProperty("sb.CastingAbilities",pm.CastingAbilities,"Lib:pm.a5e.Core")]
 [h:setLibProperty("sb.SpellSchools",json.sort(pm.SpellSchools,"a","DisplayName"),"Lib:pm.a5e.Core")]
+[h:setLibProperty("sb.Spells",pm.Spells,"Lib:pm.a5e.Core")]
+[h:"<!-- TODO: See if there's a way to sort spells by name/level, since they're a level deep in an array -->"]
 [h:broadcast("Sourcebook Data has been moved to the core library.")]

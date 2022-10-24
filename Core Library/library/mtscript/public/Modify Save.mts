@@ -16,7 +16,7 @@
 
 [h,if(ForcedRoll == ""),CODE:{
     [h,if(RerollData == ""),CODE:{
-		[h:d20AllRolls = json.get(d20Data,"PreviousRoll")]
+		[h:d20AllRolls = json.get(d20Data,"d20Rolls")]
 		[h:d20TotalRolled = json.length(d20AllRolls)]
 		[h:d20Advantage = json.get(d20Data,"Advantage")]
 		[h:d20Disadvantage = json.get(d20Data,"Disadvantage")]
@@ -57,7 +57,7 @@
 	[h:"<!-- Will need to add concentration to the list, once the updated macro is made -->"]
 	[h:FinalRoll = json.get(d20AllRolls,0)]
 
-	[h:rerollData = json.set(d20Data,"Value",FinalRoll+TotalBonus,"FinalRoll",FinalRoll,"PreviousRoll",d20AllRolls,"Advantage",d20Advantage,"Disadvantage",d20Disadvantage,"TotalBonus",TotalBonus,"Formula",rollFormula,"RollString",rollString)]
+	[h:rerollData = json.set(d20Data,"Value",FinalRoll+TotalBonus,"FinalRoll",FinalRoll,"d20Rolls",d20AllRolls,"Advantage",d20Advantage,"Disadvantage",d20Disadvantage,"TotalBonus",TotalBonus,"Formula",rollFormula,"RollString",rollString)]
 	
 	[h,SWITCH(d20Type),CODE:
 		case "Death":{
@@ -96,7 +96,7 @@
 };{
 	[h:FinalRoll = if(d20AdvantageBalance == 1,math.arrayMax(d20AllRolls),math.arrayMin(d20AllRolls))]
 
-	[h:rerollData = json.set(d20Data,"Value",FinalRoll+TotalBonus,"FinalRoll",FinalRoll,"PreviousRoll",d20AllRolls,"Advantage",d20Advantage,"Disadvantage",d20Disadvantage,"TotalBonus",TotalBonus,"Formula",rollFormula,"RollString",rollString)]
+	[h:rerollData = json.set(d20Data,"Value",FinalRoll+TotalBonus,"FinalRoll",FinalRoll,"d20Rolls",d20AllRolls,"Advantage",d20Advantage,"Disadvantage",d20Disadvantage,"TotalBonus",TotalBonus,"Formula",rollFormula,"RollString",rollString)]
 
 	[h:extraRollsDisplay = ""]
 	[h,foreach(tempRoll,d20AllRolls),CODE:{

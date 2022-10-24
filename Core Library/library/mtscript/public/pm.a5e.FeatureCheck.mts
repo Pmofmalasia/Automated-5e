@@ -2,7 +2,7 @@
 [h:SkillOptions = json.get(d20Data,"Skill")]
 [h:SkillAdvantage = json.get(d20Data,"Advantage")]
 [h:SkillDisadvantage = json.get(d20Data,"Disadvantage")]
-[h:SkillPreviousRoll = json.get(d20Data,"PreviousRoll")]
+[h:SkillPreviousRoll = json.get(d20Data,"d20Rolls")]
 [h:d20Type = json.get(d20Data,"Type")]
 [h:SkillBonus = json.get(d20Data,"Bonus")]
 [h:pm.a5e.FeatureComponentStdVars(arg(0))]
@@ -50,7 +50,7 @@
 		"Type",d20Type,
 		"Advantage",SkillAdvantage,
 		"Disadvantage",SkillDisadvantage,
-		"PreviousRoll",SkillPreviousRoll,
+		"d20Rolls",SkillPreviousRoll,
 		"ParentToken",ParentToken
 	)]
 

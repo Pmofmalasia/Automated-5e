@@ -32,7 +32,7 @@
 [h:pm.a5e.BaseEffectData = json.set("",
 	"Class","zzWeaponAttack",
 	"DisplayName",json.get(WeaponData,"Name")+" Attack",
-	"Type","Attack",
+	"Type","WeaponAttack",
 	"ID",pm.a5e.GenerateEffectID(),
 	"ParentToken",ParentToken
 )]

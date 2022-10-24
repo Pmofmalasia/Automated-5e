@@ -1,6 +1,6 @@
 [h:pm.ConditionNames = json.get(arg(1),"Conditions")]
 [h:pm.ConditionNum = json.length(pm.ConditionNames)]
-[h:pm.ChoiceMethod = if(json.get(arg(1),"Choice")=="","All",json.get(arg(1),"Choice"))]
+[h:pm.ChoiceNumber = if(json.get(arg(1),"ChoiceNumber")=="",0,json.get(arg(1),"ChoiceNumber"))]
 
 [h:pm.IsToggle = json.get(arg(2),"Toggle")]
 [h:pm.Duration = json.get(arg(2),"Value")]
@@ -52,7 +52,7 @@
 			))]
 		};
 		case "00":{
-			[h:pm.ConditionInfo = pm.a5e.ChooseCondition(pm.ConditionNames,pm.ChoiceMethod)]
+			[h:pm.ConditionInfo = pm.a5e.ChooseCondition(pm.ConditionNames,pm.ChoiceNumber)]
 			[h:pm.GroupID = pm.a5e.CreateConditionID(ParentToken)]
 			[h,MACRO("ApplyCondition@Lib:pm.a5e.Core"): json.set("",
 				"Conditions",pm.ConditionInfo,

@@ -1,9 +1,8 @@
 [h:ParentToken = json.get(arg(0),"ParentToken")]
 [h:switchToken(ParentToken)]
-[h:pm.TargetNum = json.get(arg(0),"Number")]
 [h:pm.TargetOrigin = json.get(arg(0),"Origin")]
-
 [h:rangeData = json.get(arg(0),"Range")]
+
 [h,if(json.type(rangeData)=="OBJECT"),CODE:{
 	[h:pm.RangeNum = json.get(json.get(arg(0),"Range"),"Value")]
 	[h:pm.RangeUnits = pm.StandardRange(json.get(json.get(arg(0),"Range"),"Units"))]
@@ -16,6 +15,7 @@
 	case "": pm.RangeNumFinal = "";
 	default: pm.RangeNumFinal = if(pm.RangeUnits=="Other","",if(pm.RangeUnits=="Miles",pm.RangeNum*5280,pm.RangeNum))
 ]
+
 [h:pm.AoEInfo = json.get(arg(0),"AoE")]
 [h:pm.MultiTargetRange = json.get(arg(0),"MultiTargetRange")]
 

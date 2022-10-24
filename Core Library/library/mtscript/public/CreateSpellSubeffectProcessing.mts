@@ -2,6 +2,7 @@
 [h:currentSpellData = getLibProperty("ct.NewSpell","pm.a5e.Core")]
 [h:thisPlayerCurrentSpellData = json.get(currentSpellData,getPlayerName())]
 [h:currentEffectData = json.get(thisPlayerCurrentSpellData,json.length(thisPlayerCurrentSpellData)-1)]
+[h:subeffectData = pm.a5e.KeyStringsToNumbers(subeffectData)]
 
 [h:howMitigate = json.get(subeffectData,"howMitigate")]
 [h:subeffectData = json.remove(subeffectData,"howMitigate")]
@@ -13,7 +14,7 @@
 [h,if(howMitigate == "Attack"),CODE:{
     [h:AttackData = json.set("",
         "MeleeRanged",json.get(subeffectData,"MeleeRanged"),
-        "CritThresh",json.get(subeffectData,"CritThresh")
+        "CritThresh",number(json.get(subeffectData,"CritThresh"))
     )]
     [h:subeffectData = json.remove(subeffectData,"MeleeRanged")]
     [h:subeffectData = json.remove(subeffectData,"CritThresh")]
@@ -243,7 +244,7 @@
 
 [h,if(json.get(subeffectData,"RangeType") == "SelfRanged" || json.get(subeffectData,"RangeType") == "Ranged"),CODE:{
     [h:rangeData = json.set("",
-        "Value",json.get(subeffectData,"RangeValue"),
+        "Value",number(json.get(subeffectData,"RangeValue")),
         "Units",json.get(subeffectData,"RangeUnits")
     )]
     [h,if(json.get(subeffectData,"RangeScalingAHL") != "0"):
@@ -328,7 +329,7 @@
     }
 ]
 [h:subeffectData = json.remove(subeffectData,"TargetType")]
-
+[h:"<!-- TODO: Incorporate isSight (can you see the target) into targetData -->"]
 [h:subeffectData = json.set(subeffectData,"TargetLimits",targetData)]
 [h:subeffectData = json.remove(subeffectData,"MaxCover")]
 

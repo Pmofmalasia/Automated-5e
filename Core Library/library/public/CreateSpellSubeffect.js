@@ -268,11 +268,11 @@ async function createConditionTable(){
                 rowConditionOptions.innerHTML = "<th>Condition Options:</th><td><div class='check-multiple' style='width:100%'>"+conditionOptions+"</div></td>";
                 nextRowIndex++;
 
-                let conditionAHLScalingSelect = await createAHLSelect("conditionOptionsNumberAHLScaling");
+                let conditionAHLScalingSelect = await createAHLSelect("ConditionOptionsNumberAHLScaling");
 
                 let rowConditionOptionsNumber = table.insertRow(nextRowIndex);
                 rowConditionOptionsNumber.id = "rowConditionOptionsNumber";
-                rowConditionOptionsNumber.innerHTML = "<th><label  for='conditionOptionsNumber'>Number of Options to Choose:</label></th><td><input type='number' id='conditionOptionsNumber' name='conditionOptionsNumber' min=1 value=1 style='width:25px'> + <input type='number' id='conditionOptionsNumberAHL' name='conditionOptionsNumberAHL' min=0 value=0 style='width:25px'>"+conditionAHLScalingSelect+"</td>";
+                rowConditionOptionsNumber.innerHTML = "<th><label  for='ConditionOptionsNumber'>Number of Options to Choose:</label></th><td><input type='number' id='ConditionOptionsNumber' name='ConditionOptionsNumber' min=1 value=1 style='width:25px'> + <input type='number' id='ConditionOptionsNumberAHL' name='ConditionOptionsNumberAHL' min=0 value=0 style='width:25px'>"+conditionAHLScalingSelect+"</td>";
                 nextRowIndex++;
             }
             else{

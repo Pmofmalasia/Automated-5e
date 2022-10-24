@@ -38,9 +38,9 @@
 [h:listDuration = ""]
 [h,foreach(tempDuration,durationOptions): listDuration = listDuration + "<option value='"+tempDuration+"'"+if(DurationString==tempDuration," selected","")+">"+tempDuration+"</option>"]
 
-[h:spellCreationHTML = "<tr><th><label for='SpellDisplayName'>Spell Name:</label></th><td><input type='text' id='SpellDisplayName' name='SpellDisplayName' value='"+sName+"' "+if(FirstPassTest,"","readonly")+" autofocus></td></tr>"]
+[h:spellCreationHTML = "<tr><th><input type='hidden' id='WhichEffect' name='WhichEffect' value='"+WhichEffect+"'><label for='DisplayName'>Spell Name:</label></th><td><input type='text' id='DisplayName' name='DisplayName' value='"+sName+"' "+if(FirstPassTest,"","readonly")+" autofocus></td></tr>"]
 [h:spellCreationHTML = spellCreationHTML + if(FirstPassTest,"","<tr><th><label for='SpellEffectName'>Effect Name:</label></th><td><input type='text' id='SpellEffectName' name='SpellEffectName' value='Name'></td></tr>")]
-[h:spellCreationHTML = spellCreationHTML + "<tr><th><label for='SpellLevel'>Spell Level:</label></th><td><select id='SpellLevel' name='SpellLevel' "+if(FirstPassTest,"","readonly")+" onchange='updateSpellLevel()'>"+listSpellLevel+"</select></td></tr>"]
+[h:spellCreationHTML = spellCreationHTML + "<tr><th><label for='Level'>Spell Level:</label></th><td><select id='Level' name='Level' "+if(FirstPassTest,"","readonly")+" onchange='updateSpellLevel()'>"+listSpellLevel+"</select></td></tr>"]
 [h:spellCreationHTML = spellCreationHTML + "<tr><th><label for='School'>Spell School:</label></th><td><select id='School' name='School' "+if(FirstPassTest,"","readonly")+">"+listSchools+"</select></td></tr>"]
 [h:spellCreationHTML = spellCreationHTML + "<tr id='rowCastTime'><th><label for='CastTime'>Casting Time:</label></th><td><select id='CastTime' name='CastTime' onchange='customCastTime()'>"+listCastTime+"</select>"+if(previousCustomCastTimeTest,"<input type='hidden' id='previousCustomCastTimeValue' name='previousCustomCastTimeValue' value='"+json.get(sCastTime,"Value")+"'><input type='hidden' id='previousCustomCastTimeUnits' name='previousCustomCastTimeUnits' value='"+json.get(sCastTime,"Units")+"'>","")+"</td></tr>"]
 [h:spellCreationHTML = spellCreationHTML + "<tr id='Ritual'><th><label for='isRitual'>Ritual Spell:</label></th><td><input type='checkbox' id='isRitual' name='isRitual' value=1></td></tr>"]

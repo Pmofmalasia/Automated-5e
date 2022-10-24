@@ -16,7 +16,7 @@
 [h:output.PC = json.get(json.get(FormattingData,"Output"),"Player")]
 [h:output.GM = json.get(json.get(FormattingData,"Output"),"GM")]
 
-[macro("Attack@Lib:pm.a5e.Core") : AttackData]
+[macro("ModifyAttack@Lib:pm.a5e.Core"): AttackData]
 [h:abilityTable = json.get(macro.return,"Table")]
 [h:pm.a5e.EffectData = json.path.put(json.get(macro.return,"Effect"),"[*]","Class","zzWeaponAttack")]
 

@@ -1,9 +1,12 @@
 [h:SpellCoreData = macro.args]
 [h:currentSpellData = getLibProperty("ct.NewSpell","pm.a5e.Core")]
 [h:thisPlayerCurrentSpellData = json.get(currentSpellData,getPlayerName())]
+[h:SpellCoreData = pm.a5e.KeyStringsToNumbers(SpellCoreData)]
 
-[h:SpellCoreData = json.set(SpellCoreData,"SpellDisplayName",pm.EvilChars(json.get(SpellCoreData,"SpellDisplayName")))]
-[h:SpellCoreData = json.set(SpellCoreData,"SpellName",pm.RemoveSpecial(json.get(SpellCoreData,"SpellDisplayName")))]
+[h:SpellCoreData = json.set(SpellCoreData,"DisplayName",pm.EvilChars(json.get(SpellCoreData,"DisplayName")))]
+[h:SpellCoreData = json.set(SpellCoreData,"Name",pm.RemoveSpecial(json.get(SpellCoreData,"DisplayName")))]
+
+[h,if(!json.contains(SpellCoreData,"isConcentration")): SpellCoreData = json.set(SpellCoreData,"isConcentration",0)]
 
 [h,switch(json.get(SpellCoreData,"CastTime")),CODE:
     case "Action":{
@@ -88,6 +91,27 @@
 [h:SpellCoreData = json.remove(SpellCoreData,"previousCustomDurationValue")]
 [h:SpellCoreData = json.remove(SpellCoreData,"previousCustomDurationUnits")]
 
+[h:AHLDurationCountAmount = if(json.contains(SpellCoreData,"AHLDuration"),10,0)]
+[h,count(AHLDurationCountAmount),CODE:{
+    [h,if(json.contains(SpellCoreData,"AHLDurationLevel"+roll.count)),CODE:{
+        [h:tempAHLDuration = "{}"]
+        [h,switch(json.get(SpellCoreData,"AHLDurationLevel"+roll.count)):
+            case "Instantaneous": "";
+            case "1 Round": tempAHLDuration = json.set("","Value",1,"Units","Round");
+            case "1 Minute": tempAHLDuration = json.set("","Value",1,"Units","Minute");
+            case "10 Minutes": tempAHLDuration = json.set("","Value",10,"Units","Minute");
+            case "1 Hour": tempAHLDuration = json.set("","Value",1,"Units","Hour");
+            case "8 Hours": tempAHLDuration = json.set("","Value",8,"Units","Hour");
+            case "24 Hours": tempAHLDuration = json.set("","Value",24,"Units","Hour");
+            case "10 Days": tempAHLDuration = json.set("","Value",10,"Units","Day");
+            case "Until Dispelled": "";
+            default tempAHLDuration = durationInfo
+        ]
+
+        [h:SpellCoreData = json.set(SpellCoreData,"AHLDurationLevel"+roll.count,tempAHLDuration)]
+    }]
+}]
+
 [h:FirstPassTest = (thisPlayerCurrentSpellData == "")]
 [h,if(FirstPassTest),CODE:{
     [h:classList = pm.GetClasses()]
@@ -98,21 +122,22 @@
         [h:SpellCoreData = json.remove(SpellCoreData,"is"+json.get(tempClass,"Name"))]
     }]
     [h:SpellCoreData = json.set(SpellCoreData,"ClassesWithSpell",classesWithSpell)]
-    [h:SpellCoreData = json.set(SpellCoreData,"Description",base64.encode(pm.EvilChars(json.get(SpellCoreData,"Description"))))]
+
+    [h:tempDescription = pm.EvilChars(json.get(SpellCoreData,"Description"))]
+    [h:tempDescription = replace(encode(tempDescription),"%0A","<br>")]
+    [h:tempDescription = decode(tempDescription)]
+    [h:SpellCoreData = json.set(SpellCoreData,"Description",base64.encode(tempDescription))]
 };{
     [h:baseSpellData = json.get(thisPlayerCurrentSpellData,0)]
     [h:SpellCoreData = json.set(SpellCoreData,"Description",json.get(baseSpellData,"Description"))]
 }]
 
-[h:SpellCoreData = json.remove(SpellCoreData,"WhichEffect")]
 [h:TotalSubeffects = json.get(SpellCoreData,"multiSubeffects")]
 [h:SpellCoreData = json.remove(SpellCoreData,"multiSubeffects")]
-
-[h:SpellCoreData = pm.a5e.KeyStringsToNumbers(SpellCoreData)]
 
 [h:newSpellData = json.set(currentSpellData,getPlayerName(),json.append(thisPlayerCurrentSpellData,SpellCoreData))]
 [h:setLibProperty("ct.NewSpell",newSpellData,"Lib:pm.a5e.Core")]
 
 [h:closeDialog("Spell Creation")]
 
-[h,MACRO("CreateSpellSubeffect@Lib:pm.a5e.Core"): json.set("","TotalSubeffects",TotalSubeffects,"WhichSubeffect",1,"WhichEffect",1,"SpellLevel",json.get(SpellCoreData,"SpellLevel"),"SpellName",json.get(SpellCoreData,"SpellName"))]
+[h,MACRO("CreateSpellSubeffect@Lib:pm.a5e.Core"): json.set("","TotalSubeffects",TotalSubeffects,"WhichSubeffect",1,"WhichEffect",json.get(SpellCoreData,"WhichEffect"),"SpellLevel",json.get(SpellCoreData,"Level"),"SpellName",json.get(SpellCoreData,"Name"))]

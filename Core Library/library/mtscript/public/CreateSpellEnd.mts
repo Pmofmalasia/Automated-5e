@@ -3,7 +3,6 @@
 [h:classesWithSpell = json.get(baseSpellData,"ClassesWithSpell")]
 [h:spellSourcebook = json.get(baseSpellData,"spellSourcebook")]
 
-[h:baseSpellData = json.remove(baseSpellData,"ClassesWithSpell")]
 [h:baseSpellData = json.remove(baseSpellData,"spellSourcebook")]
 [h:baseSpellData = json.remove(baseSpellData,"multiEffects")]
 
@@ -11,7 +10,7 @@
 
 [h:thisSpellData = json.set(thisSpellData,0,baseSpellData)]
 [h,foreach(tempClass,classesWithSpell),CODE:{
-    [h:"<!-- Add name to casting ability here. May not want to remove classes key from spell since it is used for filtering - can either filter via the class feature or combine on the spell somehow? Former would be preferable if reliable. -->"]
+    [h:"<!-- If spell sourcebook is same as class spell feature sourcebook, add spell name directly to class spell feature SpellList key. Else, create/check for a feature on spell sourcebook that updates the class spell feature. Will need to ensure that update feature does not interfere with marked 'MainSpellcastingClass' feature key or whatever it is -->"]
 }]
 [h:setLibProperty("sb.Spells",json.append(getLibProperty("sb.Spells","Lib:"+spellSourcebook),thisSpellData),"Lib:"+spellSourcebook)]
 [h:setLibProperty("ct.NewSpell",json.remove(getLibProperty("ct.NewSpell","Lib:pm.a5e.Core"),getPlayerName()),"Lib:pm.a5e.Core")]

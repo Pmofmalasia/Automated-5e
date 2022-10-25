@@ -242,6 +242,7 @@
 		"SummonName",json.get(spell.SummonData,"SummonName"),
 		"SummonOptions",json.get(spell.SummonData,"SummonOptions"),
 		"SummonCRMax",spell.SummonCRMax,
+		"SummonNumberCRBased",json.get(spell.SummonData,"SummonNumberCRBased")
 		"SummonNumber",json.get(spell.SummonData,"SummonNumber"),
 		"SummonNumberMultiplier",spell.SummonNumberMultiplierAHL,
 		"SummonNumberBonus",spell.SummonNumberBonusAHL,

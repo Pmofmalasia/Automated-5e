@@ -3,6 +3,7 @@
 [h:thisPlayerCurrentSpellData = json.get(currentSpellData,getPlayerName())]
 [h:currentEffectData = json.get(thisPlayerCurrentSpellData,json.length(thisPlayerCurrentSpellData)-1)]
 [h:subeffectData = pm.a5e.KeyStringsToNumbers(subeffectData)]
+[h:SpellName = json.get(currentEffectData,"SpellName")]
 
 [h:howMitigate = json.get(subeffectData,"howMitigate")]
 [h:subeffectData = json.remove(subeffectData,"howMitigate")]
@@ -84,7 +85,6 @@
 [h:allBaseConditions = pm.a5e.GetBaseConditions("Name","json")]
 [h:conditionsAlwaysSet = "[]"]
 [h:spellSpecificConditions = "[]"]
-[h:spellName = json.get(currentEffectData,"SpellName")]
 [h,if(isCondition == "All" || isCondition == "Mixture"),CODE:{
     [h:conditionsAlwaysSet = "[]"]
     [h,foreach(tempCondition,allBaseConditions),CODE:{
@@ -94,13 +94,13 @@
     
     [h,switch(json.contains(subeffectData,"AlwaysSetSpellSpecific")+""+json.contains(subeffectData,"isSpellSpecificAlwaysSetMultiple")),CODE:
         case "10":{
-            [h:conditionsAlwaysSet = json.append(conditionsAlwaysSet,json.set("","Name",spellName,"Class","Spell","Subclass",spellName))]
-            [h:spellSpecificConditions = json.append(spellSpecificConditions,json.set("","Name",spellName,"Class","Spell","Subclass",spellName))]
+            [h:conditionsAlwaysSet = json.append(conditionsAlwaysSet,json.set("","Name",SpellName,"Class","Spell","Subclass",SpellName))]
+            [h:spellSpecificConditions = json.append(spellSpecificConditions,json.set("","Name",SpellName,"Class","Spell","Subclass",SpellName))]
         };
         case "11":{
             [h:conditionNames = json.fromList(encode(json.get(subeffectData,"AlwaysSetSpellSpecificNames")),"%0A")]
-            [h,foreach(tempCondition,conditionNames): conditionsAlwaysSet = json.append(conditionsAlwaysSet,json.set("","Name",tempCondition,"Class","Spell","Subclass",spellName))]
-            [h,foreach(tempCondition,conditionNames): spellSpecificConditions = json.append(spellSpecificConditions,json.set("","Name",tempCondition,"Class","Spell","Subclass",spellName))]
+            [h,foreach(tempCondition,conditionNames): conditionsAlwaysSet = json.append(conditionsAlwaysSet,json.set("","Name",tempCondition,"Class","Spell","Subclass",SpellName))]
+            [h,foreach(tempCondition,conditionNames): spellSpecificConditions = json.append(spellSpecificConditions,json.set("","Name",tempCondition,"Class","Spell","Subclass",SpellName))]
             [h:subeffectData = json.remove(subeffectData,"isSpellSpecificAlwaysSetMultiple")]
             [h:subeffectData = json.remove(subeffectData,"AlwaysSetSpellSpecificNames")]
         };
@@ -118,13 +118,13 @@
 
     [h,switch(json.contains(subeffectData,"ConditionOptionSpellSpecific")+""+json.contains(subeffectData,"isSpellSpecificConditionOptionMultiple")),CODE:
         case "10":{
-            [h:conditionOptions = json.append(conditionOptions,json.set("","Name",spellName,"Class","Spell","Subclass",spellName))]
-            [h:spellSpecificConditions = json.append(spellSpecificConditions,json.set("","Name",spellName,"Class","Spell","Subclass",spellName))]
+            [h:conditionOptions = json.append(conditionOptions,json.set("","Name",SpellName,"Class","Spell","Subclass",SpellName))]
+            [h:spellSpecificConditions = json.append(spellSpecificConditions,json.set("","Name",SpellName,"Class","Spell","Subclass",SpellName))]
         };
         case "11":{
             [h:conditionNames = json.fromList(encode(json.get(subeffectData,"ConditionOptionSpellSpecificNames")),"%0A")]
-            [h,foreach(tempCondition,conditionNames): conditionOptions = json.append(conditionOptions,json.set("","Name",tempCondition,"Class","Spell","Subclass",spellName))]
-            [h,foreach(tempCondition,conditionNames): spellSpecificConditions = json.append(spellSpecificConditions,json.set("","Name",tempCondition,"Class","Spell","Subclass",spellName))]
+            [h,foreach(tempCondition,conditionNames): conditionOptions = json.append(conditionOptions,json.set("","Name",tempCondition,"Class","Spell","Subclass",SpellName))]
+            [h,foreach(tempCondition,conditionNames): spellSpecificConditions = json.append(spellSpecificConditions,json.set("","Name",tempCondition,"Class","Spell","Subclass",SpellName))]
             [h:subeffectData = json.remove(subeffectData,"isSpellSpecificConditionOptionMultiple")]
             [h:subeffectData = json.remove(subeffectData,"ConditionOptionSpellSpecificNames")]
         };
@@ -162,29 +162,69 @@
 
 [h:isSummons = json.get(subeffectData,"isSummons")]
 [h:subeffectData = json.remove(subeffectData,"isSummons")]
-[h,switch(isSummons),CODE:
-    case "SpellEffect":{
-        
-    };
-    case "Single":{
-        [h:SummonData = json.set("",
-            "SummonName",json.get(subeffectData,"singleSummon")
-        )]
-        [h:subeffectData = json.remove(subeffectData,"singleSummon")]
-    };
-    case "Options":{
-        [h:SummonOptions = json.fromList(encode(json.get(subeffectData,"summonOptions")),"%0A")]
-        [h:SummonData = json.set("",
-            "SummonOptions",SummonOptions
-        )]
-    };
-    case "Criteria":{
+[h,if(isSummons != "No"),CODE:{
+    [h,switch(isSummons),CODE:
+        case "SpellEffect":{
+            [h:SummonData = json.set("",
+                "SummonName",SpellName
+            )]
+        };
+        case "Single":{
+            [h:SummonData = json.set("",
+                "SummonName",json.get(subeffectData,"singleSummon")
+            )]
+            [h:subeffectData = json.remove(subeffectData,"singleSummon")]
+            [h:subeffectData = json.remove(subeffectData,"singleSummon")]
+        };
+        case "Options":{
+            [h:SummonOptions = json.fromList(encode(json.get(subeffectData,"summonOptions")),"%0A")]
+            [h:SummonData = json.set("",
+                "SummonOptions",SummonOptions
+            )]
+            [h:subeffectData = json.remove(subeffectData,"summonOptions")]
+        };
+        case "Criteria":{
+            [h:CreatureTypeNameArray = pm.GetCreatureTypes("Name","json")]
+            [h:summonCreatureTypesAllowed = ""]
+            [h,foreach(tempCreatureType,CreatureTypeNameArray): summonCreatureTypesAllowed = if(json.contains(subeffectData,"summonCreatureType"+tempCreatureType),json.append(summonCreatureTypesAllowed,tempCreatureType),summonCreatureTypesAllowed)]
 
-    };
-    default:{
+            [h:"<!-- TODO: Add processing of creature subtypes when finished -->"]
 
-    }
-]
+            [h:SummonData = json.set("",
+                "SummonCRMax",json.get(subeffectData,"summonCrMax"),
+                "SummonCRMaxAHL",json.get(subeffectData,"summonCrMaxAHLNum"),
+                "SummonCRMaxAHLScaling",json.get(subeffectData,"summonCrMaxAHLScaling"),
+                "SummonCRMaxAHLScalingMethod",json.get(subeffectData,"summonCrMaxAHLScaleHow"),
+                "SummonCreatureType",summonCreatureTypesAllowed
+            )]
+
+            [h,foreach(tempCreatureType,CreatureTypeNameArray): subeffectData = json.remove(subeffectData,"summonCreatureType"+tempCreatureType)]
+            [h:subeffectData = json.remove(subeffectData,"summonCrMax")]
+            [h:subeffectData = json.remove(subeffectData,"summonCrMaxAHLNum")]
+            [h:subeffectData = json.remove(subeffectData,"summonCrMaxAHLScaling")]
+            [h:subeffectData = json.remove(subeffectData,"summonCrMaxAHLScaleHow")]
+        };
+        default:{[h:SummonData = "{}"]}
+    ]
+
+    [h,if(json.contains(subeffectData,"summonNumber")):
+        SummonData = json.set(SummonData,"SummonNumber",json.get(subeffectData,"summonNumber"));
+        SummonData = json.set(SummonData,"SummonNumberCRBased",1)
+    ]
+    [h:subeffectData = json.remove(subeffectData,"summonNumber")]
+    [h:subeffectData = json.remove(subeffectData,"summonNumberCRBased")]
+
+    [h:SummonData = json.set(SummonData,
+        "SummonNumberAHL",json.get(subeffectData,"summonNumberAHL"),
+        "SummonNumberAHLScaling",json.get(subeffectData,"summonNumberAHLScaling"),
+        "SummonNumberScalingMethod",json.get(subeffectData,"summonNumberAHLScaleHow")
+    )]
+    [h:subeffectData = json.remove(subeffectData,"summonNumberAHL")]
+    [h:subeffectData = json.remove(subeffectData,"summonNumberAHLScaling")]
+    [h:subeffectData = json.remove(subeffectData,"summonNumberAHLScaleHow")]
+
+    [h:subeffectData = json.set(subeffectData,"Summon",SummonData)]
+};{}]
 
 [h,if(json.contains(subeffectData,"isMoveTarget")),CODE:{
     [h:moveTargetData = json.set("",
@@ -364,7 +404,7 @@
         [h:tempAllConditions = json.path.read(json.get(getLibProperty("ct.NewSpell","Lib:pm.a5e.Core"),getPlayerName()),"[*]['Subeffects'][*][?(@.Conditions!=null)]['Conditions']","DEFAULT_PATH_LEAF_TO_NULL")]
         [h:allConditions = "[]"]
         [h,foreach(tempConditions,tempAllConditions): allConditions = json.merge(allConditions,tempConditions)]
-        [h,if(!json.isEmpty(allConditions)): SpellConditions = json.path.read(allConditions,"[?(@.Name=='"+spellName+"' && @.Class=='Spell')]"); SpellConditions = "[]"]
+        [h,if(!json.isEmpty(allConditions)): SpellConditions = json.path.read(allConditions,"[?(@.Name=='"+SpellName+"' && @.Class=='Spell')]"); SpellConditions = "[]"]
         [h:closeDialog("Spell Creation")]
         [h,if(json.length(SpellConditions)<=1),CODE:{
             [h,MACRO("CreateSpellEnd@Lib:pm.a5e.Core"): ""]

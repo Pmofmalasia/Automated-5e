@@ -208,25 +208,44 @@
 }]
 
 [h,if(json.contains(SpellSubeffectData,"Summon")),CODE:{
-	[h:AHLSummonNumAdditive=if(AHLSummonNumAdditive=="No",0,AHLSummonNumAdditive)]
+	[h:spell.SummonData = json.get(SpellSubeffectData,"Summon")]
+	
+	[h:spell.SummonCRMax = json.get(spell.SummonData,"SummonCRMax")]
+	[h:spell.SummonCRMaxAHLScaling = json.get(spell.SummonData,"SummonCRMaxAHLScaling")]
 
-	[h:summonCRscaling=if(AHLSummonCRScaling=="Every Level",AHL,if(AHLSummonCRScaling=="Every Other Level",floor(AHL/2),if(AHLSummonCRScaling=="Every Three Levels",floor(AHL/3),0)))]
-	[h:summonCRmax=sSummonCR+if(and(AHL>0,IsAHLSummon=="Yes"),summonCRscaling,0)]
+	[h,if(spell.SummonCRMaxAHLScaling > 0),CODE:{
+		[h:spell.SummonCRMaxAHL = json.get(spell.SummonData,"SummonCRMaxAHL")]
+		[h:spell.SummonCRMaxAHLScalingMethod = json.get(spell.SummonData,"SummonCRMaxAHLScalingMethod")]
+		[h,if(spell.SummonCRMaxAHLScalingMethod=="Add"):
+			spell.SummonCRMax = spell.SummonCRMax + (spell.SummonCRMaxAHL * floor(spell.AHL/spell.SummonCRMaxAHLScaling));
+			spell.SummonCRMax = spell.SummonCRMax * (spell.SummonCRMaxAHL + floor(spell.AHL/spell.SummonCRMaxAHLScaling))
+		]
+	}]
+	
+	[h:spell.SummonNumber = json.get(spell.SummonData,"SummonNumber")]
+	[h:spell.SummonNumberAHLScaling = json.get(spell.SummonData,"SummonNumberAHLScaling")]
 
-	[h:summonNumScaling=if(AHLSummonNumScaling=="Every Level",AHL,if(AHLSummonNumScaling=="Every Other Level",floor(AHL/2),if(AHLSummonNumScaling=="Every Three Levels",floor(AHL/3),0)))]
-	[h:summonNumAddedAHL=(summonNumScaling*number(AHLSummonNumAdditive))]
-	[h:summonNumMultiplier=if(AHLSummonNumMultiplier=="Doubled",1,if(AHLSummonNumMultiplier=="Tripled",2,if(AHLSummonNumMultiplier=="Quadrupled",3,0)))]
-	[h:summonNumMultiplierAHL=max(1,summonNumScaling+summonNumMultiplier)]
+	[h,if(spell.SummonNumberAHLScaling > 0),CODE:{
+		[h:spell.SummonNumberAHL = json.get(spell.SummonData,"SummonNumberAHL")]
+		[h:spell.SummonNumberAHLScalingMethod = json.get(spell.SummonData,"SummonNumberAHLScalingMethod")]
 
-	[h:sSummonNumber = if(IsSummon=="Single",1,sSummonNumber)]
+		[h:spell.SummonNumberMultiplierAHL = 1]
+		[h:spell.SummonNumberBonusAHL = 0]
 
-	[h:SummonData = json.set("",
-		"Type",sSummonType,
-		"Number",sSummonNumber,
-		"CR",summonCRmax,
-		"List",sSummonList,
-		"Multiplier",summonNumMultiplierAHL,
-		"Bonus",summonNumAddedAHL,
+		[h,if(spell.SummonNumberAHLScalingMethod=="Add"):
+			spell.SummonNumberBonusAHL = spell.SummonNumberAHL * floor(spell.AHL/spell.SummonNumberAHLScaling);
+			spell.SummonNumberMultiplierAHL = spell.SummonNumberAHL + floor(spell.AHL/spell.SummonNumberAHLScaling)
+		]
+	}]
+
+	[h:spell.SummonData = json.set("",
+		"SummonName",json.get(spell.SummonData,"SummonName"),
+		"SummonOptions",json.get(spell.SummonData,"SummonOptions"),
+		"SummonCRMax",spell.SummonCRMax,
+		"SummonNumber",json.get(spell.SummonData,"SummonNumber"),
+		"SummonNumberMultiplier",spell.SummonNumberMultiplierAHL,
+		"SummonNumberBonus",spell.SummonNumberBonusAHL,
+		"SummonCreatureType",json.get(spell.SummonData,"SummonCreatureType"),
 		"ParentToken",ParentToken
 	)]
 
@@ -236,9 +255,8 @@
 		"ForcedPortrait",ForcedPortrait,
 		"ForcedHandout",ForcedHandout
 	)]
-	[h,if(IsSummon=="No"),CODE:{};{
-		[h:pm.Summons(json.set("","Name",SpellName,"Class",sClassSelect),SummonData,SummonCustomization)]
-	}]
+	
+	[h:pm.Summons(spell.SummonData,SummonCustomization)]
 }]
 
 [h:pm.a5e.EffectData = json.append(pm.a5e.EffectData,thisEffectData)]

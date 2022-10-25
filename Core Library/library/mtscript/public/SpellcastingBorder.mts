@@ -5,8 +5,7 @@
 [h:SpellName = json.get(AllSpellData,"Spell")]
 [h:SpellData = pm.a5e.GetSpecificSpell(SpellName)]
 [h:pm.a5e.EffectData = "[]"]
-
-[r:json.path.read(getLibProperty("sb.Spells","Lib:pm.a5e.Core"),"[*][*][?(@.Name=='FireBolt')]")]
+[h:DMOnly = 0]
 
 [h:AllSpellData = json.set(AllSpellData,"SpellData",SpellData)]
 [h,macro("Spellcasting@Lib:pm.a5e.Core"): AllSpellData]
@@ -20,7 +19,7 @@
 [h:ClassFeatureData = json.set("",
     "Flavor",Flavor,
     "ParentToken",ParentToken,
-    "DMOnly",0,
+    "DMOnly",DMOnly,
     "Class","zzSpell"+SpellSource,
     "ColorSubtype",SpellSlot,
     "Name",json.get(json.get(SpellData,0),"DisplayName"),
@@ -37,8 +36,10 @@
 [h:output.GM = output.GM + json.get(output.Temp,"GM")]
 
 [h:pm.a5e.BaseEffectData = json.set("",
-	"Class","Spell",
+    "Class","Spell",
+    "ClassForDisplay","zzSpell"+SpellSource,
 	"DisplayName",json.get(json.get(SpellData,0),"DisplayName"),
+    "ColorSubtype",SpellSlot,
     "FalseName","Spellcasting",
 	"Type","Spell",
 	"ID",pm.a5e.GenerateEffectID(),

@@ -143,7 +143,14 @@ async function addDamageTypeRows(){
     
     let isAHLRow = table.insertRow(buttonRowIndex+2);
     isAHLRow.id = "rowIsAHL"+damageTypeNumber;
-    isAHLRow.innerHTML = "<th>Damage Increases AHL:</th><td><select id='isAHL"+damageTypeNumber+"' name='isAHL"+damageTypeNumber+"' onchange='createAHLDamage("+damageTypeNumber+")'><option value='0'>No Increase</option><option value='1'>Every Level</option><option value='2'>Every Other Level</option><option value='3'>Every Three Levels</option></select></td>";
+    
+    if(document.getElementById("SpellLevel").value == "0"){
+        isAHLRow.innerHTML = "<th>Damage Increases AHL:</th><td><select id='isAHL"+damageTypeNumber+"' name='isAHL"+damageTypeNumber+"' onchange='createAHLDamage("+damageTypeNumber+")'><option value='0'>No Increase</option><option value='1'>Every Interval</option><option value='2'>Every Other Interval</option><option value='3'>Every Three Intervals</option></select></td>";
+    }
+    else{
+        isAHLRow.innerHTML = "<th>Damage Increases AHL:</th><td><select id='isAHL"+damageTypeNumber+"' name='isAHL"+damageTypeNumber+"' onchange='createAHLDamage("+damageTypeNumber+")'><option value='0'>No Increase</option><option value='1'>Every Level</option><option value='2'>Every Other Level</option><option value='3'>Every Three Levels</option></select></td>";
+    }
+   
 
     if(document.getElementById("howMitigate").value == "Save"){
         let saveMitigationRow = table.insertRow(buttonRowIndex+3);
@@ -462,7 +469,7 @@ async function createSummonTable(){
 
             let rowSummonCrAHL = table.insertRow(nextRowIndex);
             rowSummonCrAHL.id = "rowSummonCrAHL";
-            rowSummonCrAHL.innerHTML = "<th><label for='summonCrMaxAHL'>CR Increase AHL:</th><td><select id='summonCrMaxAHLScaleHow' name='summonCrMaxAHLScaleHow'><option value='Add'>Add</option><option value='Multiply'>Multiply</option></select><input type='number' id='summonCrMaxAHLNum' name='summonCrMaxAHLNum' min=0 value=1 style='width:25px'>"+summonCrMaxAHLScalingSelect+"</td>";
+            rowSummonCrAHL.innerHTML = "<th><label for='summonCrMaxAHLNum'>CR Increase AHL:</th><td><select id='summonCrMaxAHLScaleHow' name='summonCrMaxAHLScaleHow'><option value='Add'>Add</option><option value='Multiply'>Multiply</option></select><input type='number' id='summonCrMaxAHLNum' name='summonCrMaxAHLNum' min=0 value=1 style='width:25px'>"+summonCrMaxAHLScalingSelect+"</td>";
             nextRowIndex++;
 
             let request = await fetch("macro:pm.GetCreatureTypes@lib:pm.a5e.Core", {method: "POST", body: ""});
@@ -470,21 +477,28 @@ async function createSummonTable(){
 
             let creatureTypeOptions = "";
             for(let tempType of allCreatureTypes){
-                creatureTypeOptions = creatureTypeOptions + "<option value='"+tempType.Name+"'>"+tempType.DisplayName+"</option>";
+                creatureTypeOptions = creatureTypeOptions + "<label><input type='checkbox' id='summonCreatureType"+tempType.Name+"' name='summonCreatureType"+tempType.Name+"' value=1 onchange='createSummonCreatureSubtypeTable("+'"'+tempType.Name+'"'+")'><span>"+tempType.DisplayName+"</span></label>";
             }
             
             let rowSummonCreatureType = table.insertRow(nextRowIndex);
             rowSummonCreatureType.id = "rowSummonCreatureType";
-            rowSummonCreatureType.innerHTML = "<th><label for='summonCreatureType'>Creature Type Required:</th><td><select id='summonCreatureType' name='summonCreatureType' onchange='createSummonCreatureSubtypeTable()'><option value='None'>None</option>"+creatureTypeOptions+"</select><input type='checkbox' id='isSummonCreatureSubtype' name='isSummonCreatureSubtype' onchange='createSummonCreatureSubtypeTable()'> Use subtype of creature selected?</td>";
+            rowSummonCreatureType.innerHTML = "<th><label for='summonCreatureType'>Creature Type Required:</th><td><div class='check-multiple' style='width:100%'>"+creatureTypeOptions+"</div></td>";
+            nextRowIndex++;
+            
+            let rowIsSummonCreatureSubtype = table.insertRow(nextRowIndex);
+            rowIsSummonCreatureSubtype.id = "rowIsSummonCreatureSubtype";
+            rowIsSummonCreatureSubtype.innerHTML = "<th><label for='isSummonCreatureSubtype'>Must be subtype of creature selected?</label></th><td><input type='checkbox' id='isSummonCreatureSubtype' name='isSummonCreatureSubtype' onchange='createSummonCreatureSubtypeTable(1)'></td>";
             nextRowIndex++;
             //TODO: Add selection of creature subtypes (e.g. devils)
         }
 
+        let summonNumberOptions = "";
+
         if(summonsSelection == "SpellEffect"){
-            var summonNumberOptions = "<input type='number' id='summonNumber' name='summonNumber' min='1' style='width:25px' value=1>";
+            summonNumberOptions = "<input type='number' id='summonNumber' name='summonNumber' min='1' style='width:25px' value=1>";
         }
         else{
-            var summonNumberOptions = "<input type='number' id='summonNumber' name='summonNumber' min='1' style='width:25px' value=1> OR <input type='checkbox' id='summonNumberCRBased' name='summonNumberCRBased' onchange='toggleSummonNumber()'> Based on Summon CR";
+            summonNumberOptions = "<input type='number' id='summonNumber' name='summonNumber' min='1' style='width:25px' value=1> OR <input type='checkbox' id='summonNumberCRBased' name='summonNumberCRBased' onchange='toggleSummonNumber()'> Based on Summon CR";
         }
 
         if(!hadPriorSummonType){
@@ -492,7 +506,7 @@ async function createSummonTable(){
             rowSummonNumber.id = "rowSummonNumber";
             rowSummonNumber.innerHTML = "<th><label for='summonNumber'>Number of Summons:</th><td>"+summonNumberOptions+"</td>";
             nextRowIndex++;
-            
+
             let summonNumberAHLScalingSelect = await createAHLSelect("summonNumberAHLScaling");
 
             let rowSummonNumberAHL = table.insertRow(nextRowIndex);
@@ -510,6 +524,10 @@ async function toggleSummonNumber(){
     else{
         document.getElementById("summonNumber").removeAttribute('disabled','');
     }
+}
+
+async function createSummonCreatureSubtypeTable(thisCreatureType){
+
 }
 
 async function createMoveTargetTable(){

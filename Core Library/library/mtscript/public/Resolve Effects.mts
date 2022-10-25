@@ -1,8 +1,11 @@
 [h:effFull = macro.args]
 [h:effToResolve = json.get(effFull,"ToResolve")]
 
+[h:"<!-- ColorSubtype is optional - for classes with multiple border colors stored in an object (denotes key to get from that object, mostly for spells) -->"]
 [h:effID = json.get(effFull,"ID")]
 [h:effClass = json.get(effFull,"Class")]
+[h:effClassForDisplay = json.get(effFull,"ClassForDisplay")]
+[h:effColorSubtype = json.get(effFull,"ColorSubtype")]
 [h:ParentToken = json.get(effFull,"ParentToken")]
 [h:effTargets = json.get(effFull,"Targets")]
 [h:effConditionGroupID = pm.a5e.CreateConditionID(ParentToken,effTargets)]
@@ -205,7 +208,8 @@
 	"Flavor","",
 	"ParentToken",ParentToken,
 	"DMOnly",0,
-	"Class",if(effClass=="","zzChecksAndSaves",effClass),
+	"Class",if(effClassForDisplay=="",if(effClass=="","zzChecksAndSaves",effClass),effClassForDisplay),
+	"ColorSubtype",effColorSubtype,
 	"Name","Resolve Effects"+titleAddon,
 	"FalseName","",
 	"OnlyRules",0

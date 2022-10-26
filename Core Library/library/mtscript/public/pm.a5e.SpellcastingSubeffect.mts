@@ -212,6 +212,7 @@
 	
 	[h:spell.SummonCRMax = json.get(spell.SummonData,"SummonCRMax")]
 	[h:spell.SummonCRMaxAHLScaling = json.get(spell.SummonData,"SummonCRMaxAHLScaling")]
+	[h,if(spell.SummonCRMaxAHLScaling==""): spell.SummonCRMaxAHLScaling = 0]
 
 	[h,if(spell.SummonCRMaxAHLScaling > 0),CODE:{
 		[h:spell.SummonCRMaxAHL = json.get(spell.SummonData,"SummonCRMaxAHL")]
@@ -224,13 +225,13 @@
 	
 	[h:spell.SummonNumber = json.get(spell.SummonData,"SummonNumber")]
 	[h:spell.SummonNumberAHLScaling = json.get(spell.SummonData,"SummonNumberAHLScaling")]
+	[h,if(spell.SummonNumberAHLScaling==""): spell.SummonNumberAHLScaling = 0]
+	[h:spell.SummonNumberMultiplierAHL = 1]
+	[h:spell.SummonNumberBonusAHL = 0]
 
 	[h,if(spell.SummonNumberAHLScaling > 0),CODE:{
 		[h:spell.SummonNumberAHL = json.get(spell.SummonData,"SummonNumberAHL")]
 		[h:spell.SummonNumberAHLScalingMethod = json.get(spell.SummonData,"SummonNumberAHLScalingMethod")]
-
-		[h:spell.SummonNumberMultiplierAHL = 1]
-		[h:spell.SummonNumberBonusAHL = 0]
 
 		[h,if(spell.SummonNumberAHLScalingMethod=="Add"):
 			spell.SummonNumberBonusAHL = spell.SummonNumberAHL * floor(spell.AHL/spell.SummonNumberAHLScaling);
@@ -242,7 +243,7 @@
 		"SummonName",json.get(spell.SummonData,"SummonName"),
 		"SummonOptions",json.get(spell.SummonData,"SummonOptions"),
 		"SummonCRMax",spell.SummonCRMax,
-		"SummonNumberCRBased",json.get(spell.SummonData,"SummonNumberCRBased")
+		"SummonNumberCRBased",json.get(spell.SummonData,"SummonNumberCRBased"),
 		"SummonNumber",json.get(spell.SummonData,"SummonNumber"),
 		"SummonNumberMultiplier",spell.SummonNumberMultiplierAHL,
 		"SummonNumberBonus",spell.SummonNumberBonusAHL,

@@ -30,7 +30,7 @@
 [h:SpellName = json.get(BaseSpellData,"Name")]
 [h:SpellDisplayName = json.get(BaseSpellData,"DisplayName")]
 [h:SpellLevel = json.get(BaseSpellData,"Level")]
-[h:Ritual = json.get(BaseSpellData,"Ritual")]
+[h:isRitual = json.get(BaseSpellData,"isRitual")]
 [h:School = json.get(BaseSpellData,"School")]
 
 [h:mCompConsumed = json.get(BaseSpellData,"mCompConsumed")]
@@ -92,7 +92,7 @@
 
 [h,if(ForcedLevel==""),CODE:{
 	[h:MaxSpellLevel = 9]
-	[h,if(Ritual==1),CODE:{
+	[h,if(isRitual==1),CODE:{
 		[h:LevelOptions = json.append("","Ritual")]
 		[h:LevelOptionData = json.append("",json.set("","Name","Ritual","ResourceType","Ritual"))]
 	};{
@@ -101,7 +101,7 @@
 	}]
 	[h,count(MaxSpellLevel),CODE:{
 		[h,if((1+roll.count)>=SpellLevel && json.get(SpellSlots,roll.count+1)>0): LevelOptions = json.append(LevelOptions,if(roll.count==0,"1st",if(roll.count==1,"2nd",if(roll.count==2,"3rd",(roll.count+1)+"th")))+" Level")]
-		[h,if(roll.count<SpellLevel && json.get(SpellSlots,roll.count+1)>0): json.append(LevelOptionData,json.set("","Name",(roll.count+1),"ResourceType","Spell Slots"))]
+		[h,if((1+roll.count)>=SpellLevel && json.get(SpellSlots,roll.count+1)>0): LevelOptionData = json.append(LevelOptionData,json.set("","Name",(roll.count+1),"ResourceType","Spell Slots"))]
 	}]
 	
 	[h:resourcesAsSpellSlot = json.path.read(allAbilities,"[*][?(@.ResourceAsSpellSlot==1)]")]
@@ -135,6 +135,7 @@
 	};{}]
 	[h:chosenLevel = 0]
 }]
+[h:broadcast(LevelOptionData)]
 
 [h:dissConcentration = if(or(isConcentration==0,SpellLevel>=isConcentration),"",if(getProperty("stat.Concentration")=="","","junkVar|<html><span style='font-size:1.2em';>Casting <span style='color:#2222AA'><i>"+SpellName+"</i></span> will cancel concentration on <span style='color:#AA2222'><i>"+getProperty("stat.Concentration")+".</i></span></span></html>|<html><span style='color:#AA2222; font-size:1.2em'><b>WARNING</b></span></html>|LABEL"))]
 [h:disIsSilenced = if(or(getState("Silence")==0,vComp==0),"","junkVar|<html><span style='font-size:1.2em';><span style='color:#AA2222'><i><b>NOTE: You are currently silenced and attempting to cast a spell with verbal components!</b></i></span></span></html>| |LABEL|SPAN=TRUE")]
@@ -201,14 +202,16 @@
 	sClassSelect = json.get(sClassSelectData,"Class")
 ]
 
-[h:RitualTest = 0]
+[h:CastAsRitual = 0]
 [h:sLevelSelectData = json.get(LevelOptionData,chosenLevel)]
+[h:broadcast(sLevelSelectData)]
 [h,if(IsCantrip),CODE:{
 	[h:eLevel = 0+if(Level>=5,1,0)+if(Level>=11,1,0)+if(Level>=17,1,0)]
 };{
 	[h,switch(json.get(sLevelSelectData,"ResourceType")),CODE:
 		case "Spell Slots":{
 			[h:eLevel = number(json.get(sLevelSelectData,"Name"))]
+			[h:broadcast("Slots")]
 			[h,if(FreeCasting!=1): SpellSlots = json.set(SpellSlots,eLevel,json.get(SpellSlots,eLevel)-1)]
 		};
 		case "FeatureSpell":{
@@ -217,9 +220,10 @@
 		};
 		case "Ritual":{
 			[h:eLevel = SpellLevel]
-			[h:RitualTest = 1]
+			[h:CastAsRitual = 1]
 		};
 		default:{
+			[h:broadcast("Free")]
 			[h:eLevel = SpellLevel]
 		}
 	]
@@ -272,7 +276,7 @@
 [h:CastTimeValue = json.get(CastTime,"Value")]
 [h:CastTimeUnits = json.get(CastTime,"Units")]
 [h:CastingTimeString = CastTimeValue+" "+CastTimeUnits+if(CastTimeValue==1,"","s")]
-[h,if(RitualTest): CastingTimeString = CastingTimeString+" + 10 minutes (ritual)"]
+[h,if(CastAsRitual): CastingTimeString = CastingTimeString+" + 10 minutes (ritual)"]
 
 [h:"<!-- TODO: Set up spell source types - should be in NonSpellData. Source temporarily set to always be Arcane -->"]
 [h:sSource = "Arcane"]
@@ -308,7 +312,7 @@
 [h:CompendiumLink=concat('<a style="color:'+TextColor+';" href=',BaseLink,replace(SpellDisplayName,' ','-'),'>',SpellDisplayName,'</a>')]
 
 [h:abilityClass = sClassSelect]
-[h:abilityDisplayName = "<b>"+CompendiumLink+"</b> ("+if(IsCantrip,"Cantrip",SpellLevel)+") <i>"+if(RitualTest," (ritual)","")+"</i>"]
+[h:abilityDisplayName = "<b>"+CompendiumLink+"</b> ("+if(IsCantrip,"Cantrip",SpellLevel)+") <i>"+if(CastAsRitual," (ritual)","")+"</i>"]
 [h:abilityFalseName = "Spellcasting"]
 [h:abilityOnlyRules = 0]
 
@@ -324,7 +328,7 @@
 	"Header","Spell Class and Level",
 	"FalseHeader","",
 	"FullContents","",
-	"RulesContents",if(IsCantrip,sClassSelect+" Cantrip","Level "+eLevel+if(RitualTest," Ritual","")+" "+sClassSelect+" Spell"),
+	"RulesContents",if(IsCantrip,sClassSelect+" Cantrip","Level "+eLevel+if(CastAsRitual," Ritual","")+" "+sClassSelect+" Spell"),
 	"RollContents","",
 	"DisplayOrder","['Rules','Roll','Full']",
 	"LinkText","",

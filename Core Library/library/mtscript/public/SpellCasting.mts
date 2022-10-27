@@ -330,10 +330,7 @@
 	"FullContents","",
 	"RulesContents",if(IsCantrip,sClassSelect+" Cantrip","Level "+eLevel+if(CastAsRitual," Ritual","")+" "+sClassSelect+" Spell"),
 	"RollContents","",
-	"DisplayOrder","['Rules','Roll','Full']",
-	"LinkText","",
-	"Link","",
-	"Value",""
+	"DisplayOrder","['Rules','Roll','Full']"
 ))]
 	
 [h:abilityTable = json.append(abilityTable,json.set("",
@@ -343,10 +340,7 @@
 	"FullContents","",
 	"RulesContents",upper(School,1),
 	"RollContents","",
-	"DisplayOrder","['Rules','Roll','Full']",
-	"LinkText","",
-	"Link","",
-	"Value",""
+	"DisplayOrder","['Rules','Roll','Full']"
 ))]
 
 [h:abilityTable = json.append(abilityTable,json.set("",
@@ -356,37 +350,32 @@
 	"FullContents","",
 	"RulesContents",CastingTimeString,
 	"RollContents","",
-	"DisplayOrder","['Rules','Roll','Full']",
-	"LinkText","",
-	"Link","",
-	"Value",""
+	"DisplayOrder","['Rules','Roll','Full']"
 ))]
+
+[h:componentsDisplay = if(vComp,"V","")]
+[h:componentsDisplay = if(sComp,listAppend(componentsDisplay,"S",", "),componentsDisplay)]
+[h:componentsDisplay = if(mComp,listAppend(componentsDisplay,"M"+if(mComponents=="",""," ("+mComponents+")"),", "),componentsDisplay)]
 
 [h:abilityTable = json.append(abilityTable,json.set("",
 	"ShowIfCondensed",0,
 	"Header","Components",
 	"FalseHeader","",
 	"FullContents","",
-	"RulesContents",if(or(vComp,SComp,MComp),if(vComp,"V","")+if(and(vComp,sComp),", ","")+if(sComp,"S","")+if(or(and(sComp,mComp),and(vComp,mComp,sComp==0)),", ","")+if(mComp,"M ("+mComponents+")",""),""),
+	"RulesContents",componentsDisplay,
 	"RollContents","",
-	"DisplayOrder","['Rules','Roll','Full']",
-	"LinkText","",
-	"Link","",
-	"Value",""
+	"DisplayOrder","['Rules','Roll','Full']"
 ))]
 
-[h,if(mCompConsumed == ""),CODE:{};{
+[h,if(mComponentsConsumed == ""),CODE:{};{
 	[h:abilityTable = json.append(abilityTable,json.set("",
 		"ShowIfCondensed",0,
 		"Header","Consumed Components",
 		"FalseHeader","",
 		"FullContents","",
-		"RulesContents",mCompConsumed,
+		"RulesContents",mComponentsConsumed,
 		"RollContents","",
-		"DisplayOrder","['Rules','Roll','Full']",
-		"LinkText","",
-		"Link","",
-		"Value",""
+		"DisplayOrder","['Rules','Roll','Full']"
 	))]
 }]
 
@@ -397,10 +386,7 @@
 	"FullContents","",
 	"RulesContents",DurationString,
 	"RollContents","",
-	"DisplayOrder","['Rules','Roll','Full']",
-	"LinkText","",
-	"Link","",
-	"Value",""
+	"DisplayOrder","['Rules','Roll','Full']"
 ))]
 
 [h:pm.a5e.EffectData = "[]"]

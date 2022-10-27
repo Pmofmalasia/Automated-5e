@@ -405,7 +405,9 @@
         [h:allConditions = "[]"]
         [h,foreach(tempConditions,tempAllConditions): allConditions = json.merge(allConditions,tempConditions)]
         [h,if(!json.isEmpty(allConditions)): SpellConditions = json.path.read(allConditions,"[?(@.Name=='"+SpellName+"' && @.Class=='Spell')]"); SpellConditions = "[]"]
+
         [h:closeDialog("Spell Creation")]
+
         [h,if(json.length(SpellConditions)<=1),CODE:{
             [h,MACRO("CreateSpellEnd@Lib:pm.a5e.Core"): ""]
         };{

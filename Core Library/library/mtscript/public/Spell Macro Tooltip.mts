@@ -193,11 +193,8 @@
 	"FullContents","",
 	"RulesContents",SpellName+": Level "+sLevel+" "+upper(sSchool,1)+" Spell",
 	"RollContents","",
-	"DisplayOrder","['Rules','Roll','Full']",
-	"LinkText","",
-	"Link","",
-	"Value",""
-	))]
+	"DisplayOrder","['Rules','Roll','Full']"
+))]
 	
 [h:abilityTable = json.append(abilityTable,json.set("",
 	"ShowIfCondensed",1,
@@ -206,11 +203,8 @@
 	"FullContents","",
 	"RulesContents",ttCastTime,
 	"RollContents","",
-	"DisplayOrder","['Rules','Roll','Full']",
-	"LinkText","",
-	"Link","",
-	"Value",""
-	))]
+	"DisplayOrder","['Rules','Roll','Full']"
+))]
 
 [h:abilityTable = json.append(abilityTable,json.set("",
 	"ShowIfCondensed",1,
@@ -219,11 +213,8 @@
 	"FullContents","",
 	"RulesContents",if(sConcentration,"Yes","No"),
 	"RollContents","",
-	"DisplayOrder","['Rules','Roll','Full']",
-	"LinkText","",
-	"Link","",
-	"Value",""
-	))]
+	"DisplayOrder","['Rules','Roll','Full']"
+))]
 
 [h:abilityTable = json.append(abilityTable,json.set("",
 	"ShowIfCondensed",1,
@@ -232,11 +223,8 @@
 	"FullContents","",
 	"RulesContents",if(RangeType=="Ranged",Range+" "+sRangeUnits,RangeType)+if(AoEShape=="None","",", "+AoESize+if(or(AoEShape=="Line",AoEShape=="Cylinder"),"x"+AoeSize2,"")+" "+AoEShape),
 	"RollContents","",
-	"DisplayOrder","['Rules','Roll','Full']",
-	"LinkText","",
-	"Link","",
-	"Value",""
-	))]
+	"DisplayOrder","['Rules','Roll','Full']"
+))]
 	
 [h:ComponentsRequired = if(vComp,"V","")]
 [h,if(sComp): ComponentsRequired = listAppend(ComponentsRequired,"S",", ")]
@@ -250,11 +238,8 @@
 	"FullContents","",
 	"RulesContents",ComponentsRequired,
 	"RollContents","",
-	"DisplayOrder","['Rules','Roll','Full']",
-	"LinkText","",
-	"Link","",
-	"Value",""
-	))]
+	"DisplayOrder","['Rules','Roll','Full']"
+))]
 
 [h,if(mCompConsumed!="" && mCompConsumed!="0" && mCompConsumed!=0): abilityTable = json.append(abilityTable,json.set("",
 	"ShowIfCondensed",1,
@@ -263,11 +248,8 @@
 	"FullContents","",
 	"RulesContents",mCompConsumed,
 	"RollContents","",
-	"DisplayOrder","['Rules','Roll','Full']",
-	"LinkText","",
-	"Link","",
-	"Value",""
-	))]
+	"DisplayOrder","['Rules','Roll','Full']"
+))]
 
 [h:abilityTable = json.append(abilityTable,json.set("",
 	"ShowIfCondensed",1,
@@ -276,11 +258,8 @@
 	"FullContents","",
 	"RulesContents",if(IsSight,"Yes","No"),
 	"RollContents","",
-	"DisplayOrder","['Rules','Roll','Full']",
-	"LinkText","",
-	"Link","",
-	"Value",""
-	))]
+	"DisplayOrder","['Rules','Roll','Full']"
+))]
 
 [h:abilityTable = json.append(abilityTable,json.set("",
 	"ShowIfCondensed",1,
@@ -289,11 +268,8 @@
 	"FullContents","",
 	"RulesContents",Duration,
 	"RollContents","",
-	"DisplayOrder","['Rules','Roll','Full']",
-	"LinkText","",
-	"Link","",
-	"Value",""
-	))]
+	"DisplayOrder","['Rules','Roll','Full']"
+))]
 
 [h,if(sSpellAttack): abilityTable = json.append(abilityTable,json.set("",
 	"ShowIfCondensed",1,
@@ -302,11 +278,8 @@
 	"FullContents","",
 	"RulesContents",ToHitOutput,
 	"RollContents","",
-	"DisplayOrder","['Rules','Roll','Full']",
-	"LinkText","",
-	"Link","",
-	"Value",""
-	))]
+	"DisplayOrder","['Rules','Roll','Full']"
+))]
 
 [h,if(sSpellSave!=0): abilityTable = json.append(abilityTable,json.set("",
 	"ShowIfCondensed",1,
@@ -315,11 +288,8 @@
 	"FullContents","",
 	"RulesContents",sSaveType+", DC "+DCOutput,
 	"RollContents","",
-	"DisplayOrder","['Rules','Roll','Full']",
-	"LinkText","",
-	"Link","",
-	"Value",""
-	))]
+	"DisplayOrder","['Rules','Roll','Full']"
+))]
 
 [h,if(DmgDieNumber!=0): abilityTable = json.append(abilityTable,json.set("",
 	"ShowIfCondensed",1,
@@ -328,11 +298,8 @@
 	"FullContents","",
 	"RulesContents",DmgDieNumber+"d"+DmgDieSize+if(DmgDieFlatBonus==0,""," + "+DmgDieFlatBonus)+if(DmgDieMODBonus==0,""," + MOD")+if(DmgHalved,", Halved on Save",""),
 	"RollContents","",
-	"DisplayOrder","['Rules','Roll','Full']",
-	"LinkText","",
-	"Link","",
-	"Value",""
-	))]
+	"DisplayOrder","['Rules','Roll','Full']"
+))]
 
 [h,if(DmgDie2Number!=0): abilityTable = json.append(abilityTable,json.set("",
 	"ShowIfCondensed",1,
@@ -341,11 +308,8 @@
 	"FullContents","",
 	"RulesContents",DmgDie2Number+"d"+DmgDie2Size+if(DmgDie2FlatBonus==0,""," + "+DmgDie2FlatBonus)+if(DmgDie2MODBonus==0,""," + MOD")+if(DmgHalved,", Halved on Save",""),
 	"RollContents","",
-	"DisplayOrder","['Rules','Roll','Full']",
-	"LinkText","",
-	"Link","",
-	"Value",""
-	))]
+	"DisplayOrder","['Rules','Roll','Full']"
+))]
 
 [h:abilityEffect = sDescription+if(or(sDescriptionAHL=="",sDescriptionAHL=="0"),"","<br><br>"+sDescriptionAHL)]
 

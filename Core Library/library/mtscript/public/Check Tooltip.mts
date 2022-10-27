@@ -8,10 +8,7 @@
 	"FullContents","",
 	"RulesContents",pm.PlusMinus(json.get(AtrMods,json.get(TempSkill,"Attribute"))+(json.get(Skills,json.get(TempSkill,"Name"))*Proficiency),1),
 	"RollContents","",
-	"DisplayOrder","['Rules','Roll','Full']",
-	"LinkText","",
-	"Link","",
-	"Value",""
+	"DisplayOrder","['Rules','Roll','Full']"
 ))]
 
 [h,foreach(TempAttribute,pm.GetAttributes()): abilityTable = json.append(abilityTable,json.set("",
@@ -21,10 +18,7 @@
 	"FullContents","",
 	"RulesContents",pm.PlusMinus(json.get(AtrMods,json.get(TempAttribute,"Name")),1),
 	"RollContents","",
-	"DisplayOrder","['Rules','Roll','Full']",
-	"LinkText","",
-	"Link","",
-	"Value",""
+	"DisplayOrder","['Rules','Roll','Full']"
 ))]
 
 [h:ClassFeatureData = json.set("",

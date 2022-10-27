@@ -32,10 +32,7 @@
 	"FullContents","",
 	"RulesContents",spell.RangeDisplay,
 	"RollContents","",
-	"DisplayOrder","['Rules','Roll','Full']",
-	"LinkText","",
-	"Link","",
-	"Value",""
+	"DisplayOrder","['Rules','Roll','Full']"
 ))]
 
 [h,if(json.contains(SpellSubeffectData,"isTargetNumberUnlimited")),CODE:{
@@ -157,10 +154,7 @@
 		"FullContents",pm.GetDisplayName("sb.Attributes",json.get(json.get(SpellSubeffectData,"Save"),"SaveType")),
 		"RulesContents","DC "+spell.SaveDC+" ",
 		"RollContents","",
-		"DisplayOrder","['Rules','Roll','Full']",
-		"LinkText","",
-		"Link","",
-		"Value",""
+		"DisplayOrder","['Rules','Roll','Full']"
 	))]
 }]
 

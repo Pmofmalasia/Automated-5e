@@ -114,13 +114,15 @@
 
 [h:FirstPassTest = (thisPlayerCurrentSpellData == "")]
 [h,if(FirstPassTest),CODE:{
-    [h:classList = pm.GetClasses()]
     [h:classesWithSpell = "[]"]
-    [h,foreach(tempClass,classList),CODE:{
-        [h:onListTest = json.contains(SpellCoreData,"is"+json.get(tempClass,"Name"))]
-        [h,if(onListTest): classesWithSpell = json.append(classesWithSpell,json.get(tempClass,"Name"))]
-        [h:SpellCoreData = json.remove(SpellCoreData,"is"+json.get(tempClass,"Name"))]
-    }]
+	[h:UniqueSpellListFeatures = json.path.read(getLibProperty("sb.Abilities","Lib:pm.a5e.Core"),"[*][?(@.UniqueSpellList==1)]")]
+
+	[h,foreach(tempFeature,UniqueSpellListFeatures),CODE:{
+        [h:onListTest = json.contains(SpellCoreData,"is"+json.get(tempFeature,"Name")+json.get(tempFeature,"Class")+json.get(tempFeature,"Subclass"))]
+        [h,if(onListTest): classesWithSpell = json.append(classesWithSpell,json.set("","Name",json.get(tempFeature,"Name"),"Class",json.get(tempFeature,"Class"),"Subclass",json.get(tempFeature,"Subclass")))]
+        [h:SpellCoreData = json.remove(SpellCoreData,"is"+json.get(tempFeature,"Name")+json.get(tempFeature,"Class")+json.get(tempFeature,"Subclass"))]
+	}]
+
     [h:SpellCoreData = json.set(SpellCoreData,"ClassesWithSpell",classesWithSpell)]
 
     [h:tempDescription = pm.EvilChars(json.get(SpellCoreData,"Description"))]

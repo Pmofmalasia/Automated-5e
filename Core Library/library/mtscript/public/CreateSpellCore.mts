@@ -60,10 +60,13 @@
 
 [h,if(FirstPassTest),CODE:{
 	[h:spellCreationHTML = spellCreationHTML + "<tr id='rowCastingClasses'><th text-align='center' colspan='2'>Appears on Base Spell List For:</th></tr>"]
-	[h:classList = pm.GetClasses()]
-	[h,foreach(tempClass,classList),CODE:{
-		[h:isCastingClass = !json.isEmpty(json.path.read(getLibProperty("sb.Abilities","Lib:pm.a5e.Core"),"[*][?(@.Class=='"+json.get(tempClass,"Name")+"' && @.UniqueSpellList==1)]","DEFAULT_PATH_LEAF_TO_NULL"))]
-		[h,if(isCastingClass): spellCreationHTML = spellCreationHTML + "<tr id='rowIs"+json.get(tempClass,"Name")+"'><th>"+json.get(tempClass,"DisplayName")+":</th><td><input type='checkbox' id='is"+json.get(tempClass,"Name")+"' name='is"+json.get(tempClass,"Name")+"' value=1></td></tr>"]
+
+	[h:UniqueSpellListFeatures = json.path.read(getLibProperty("sb.Abilities","Lib:pm.a5e.Core"),"[*][?(@.UniqueSpellList==1)]")]
+	[h,foreach(tempFeature,UniqueSpellListFeatures),CODE:{
+		[h:tempClassDisplayName = pm.GetDisplayName(json.get(tempFeature,"Class"),"sb.Classes")]
+		[h:tempSubclassDisplayName = pm.GetDisplayName(json.get(tempFeature,"Subclass"),"sb.Subclasses")]
+
+		[h:spellCreationHTML = spellCreationHTML + "<tr id='rowIs"+json.get(tempFeature,"Name")+json.get(tempFeature,"Class")+json.get(tempFeature,"Subclass")+"'><th><label for='is"+json.get(tempFeature,"Name")+json.get(tempFeature,"Class")+json.get(tempFeature,"Subclass")+"'>"+if(tempSubclassDisplayName=="","",tempSubclassDisplayName+" ")+tempClassDisplayName+" "+json.get(tempFeature,"DisplayName")+":</label></th><td><input type='checkbox' id='is"+json.get(tempFeature,"Name")+json.get(tempFeature,"Class")+json.get(tempFeature,"Subclass")+"' name='is"+json.get(tempFeature,"Name")+json.get(tempFeature,"Class")+json.get(tempFeature,"Subclass")+"' value=1></td></tr>"]
 	}]
 
 	[h:allSourcebooks = pm.GetBookInfo()]

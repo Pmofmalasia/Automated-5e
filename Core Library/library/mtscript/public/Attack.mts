@@ -240,7 +240,7 @@
 [h:pm.PassiveFunction("AfterWeaponAttackTargeted",json.set("","ParentToken",thisAttackTarget))]
 
 [h:pm.RemovedConditions = "[]"]
-[h,foreach(group,json.path.read(ConditionGroups,"[*]['EndTriggers'][?(@.AfterAttack != null)]","DEFAULT_PATH_LEAF_TO_NULL")),CODE:{
+[h,foreach(group,json.path.read(ConditionGroups,"[*]['EndTriggers'][?(@.AfterAttack != null && @.AfterAttack != 0)]","DEFAULT_PATH_LEAF_TO_NULL")),CODE:{
 	[h,macro("EndCondition@Lib:pm.a5e.Core"): json.set("","GroupID",json.get(group,"GroupID"),"ParentToken",ParentToken)]
 	[h:pm.RemovedConditions = json.merge(pm.RemovedConditions,json.get(macro.return,"Table"))]
 }]

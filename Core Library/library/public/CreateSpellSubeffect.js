@@ -232,8 +232,9 @@ async function createConditionTable(){
         clearUnusedTable("rowCondition","rowSummons");
     }
     else{
-        let alreadyAlwaysSetTest = (table.rows.namedItem("rowConditionsAlwaysSet") != null);
+        let alreadyAlwaysAddedTest = (table.rows.namedItem("rowConditionsAlwaysAdded") != null);
         let alreadyOptionsTest = (table.rows.namedItem("rowConditionOptions") != null);
+        let alreadyEndInfoTest = (table.rows.namedItem("rowSameDuration") != null);
         let alreadySaveTest = (table.rows.namedItem("rowConditionSave") != null);
 
         if(alreadySaveTest){
@@ -244,16 +245,16 @@ async function createConditionTable(){
         }
 
         if(conditionChoice == "All" || conditionChoice == "Mixture"){
-            if(alreadyAlwaysSetTest){
+            if(alreadyAlwaysAddedTest){
                 nextRowIndex = nextRowIndex + (document.getElementById(endRowId).rowIndex - document.getElementById("rowCondition").rowIndex - 1);
             }
             else{
-                let conditionOptions = await createConditionMultipleBoxes("AlwaysSet","createConditionSaveTable()");
-                conditionOptions = conditionOptions + "<label><input type='checkbox' id='AlwaysSetSpellSpecific' name='AlwaysSetSpellSpecific' value=1 onchange='createSpellConditionRow(1)'><span>Spell-Specific Condition</span></label>";
+                let conditionOptions = await createConditionMultipleBoxes("AlwaysAdded","createConditionSaveTable()");
+                conditionOptions = conditionOptions + "<label><input type='checkbox' id='AlwaysAddedSpellSpecific' name='AlwaysAddedSpellSpecific' value=1 onchange='createSpellConditionRow(1)'><span>Spell-Specific Condition</span></label>";
 
-                let rowConditionsAlwaysSet = table.insertRow(nextRowIndex);
-                rowConditionsAlwaysSet.id = "rowConditionsAlwaysSet";
-                rowConditionsAlwaysSet.innerHTML = "<th><label for='conditionsAlwaysSet'>Set Conditions:</label></th><td><div class='check-multiple' style='width:100%'>"+conditionOptions+"</div></td>";
+                let rowConditionsAlwaysAdded = table.insertRow(nextRowIndex);
+                rowConditionsAlwaysAdded.id = "rowConditionsAlwaysAdded";
+                rowConditionsAlwaysAdded.innerHTML = "<th><label for='conditionsAlwaysAdded'>Set Conditions:</label></th><td><div class='check-multiple' style='width:100%'>"+conditionOptions+"</div></td>";
                 nextRowIndex++;
             }
             if(alreadyOptionsTest && conditionChoice == "All"){
@@ -285,14 +286,26 @@ async function createConditionTable(){
             else{
                 nextRowIndex = nextRowIndex + (document.getElementById(endRowId).rowIndex - document.getElementById("rowConditionOptions").rowIndex);
             }
-            if(alreadyAlwaysSetTest && conditionChoice == "Choose"){
+            if(alreadyAlwaysAddedTest && conditionChoice == "Choose"){
                 clearUnusedTable("rowCondition","rowConditionOptions");
             }
         }
 
+        if(!alreadyEndInfoTest){
+            let rowSameDuration = table.insertRow(nextRowIndex);
+            rowSameDuration.id = "rowSameDuration";
+            rowSameDuration.innerHTML = "<th><label for='conditionSameDuration'>Duration is Same as Spell's:</label></th><input type='checkbox' id='conditionSameDuration' name='conditionSameDuration' onchange='conditionAlternateDuration()'></td>";
+            nextRowIndex++;
+            //Ending condition on repeat save should not be limited to only if there is a save already. Will need to choose save type though.
+            let rowEndInfo = table.insertRow(nextRowIndex);
+            rowEndInfo.id = "rowEndInfo";
+            rowEndInfo.innerHTML = "<th>Other Instances When Cond</th><input type='checkbox' id='conditionSameDuration' name='conditionSameDuration' onchange='conditionAlternateDuration()'></td>";
+            nextRowIndex++;
+        }
+
         if(document.getElementById("howMitigate").value == "Save" && !alreadySaveTest){
-            let nextRowIndex = document.getElementById("rowSummons").rowIndex;
-            let rowConditionSave = table.insertRow(nextRowIndex);
+            let saveRowIndex = document.getElementById("rowSummons").rowIndex;
+            let rowConditionSave = table.insertRow(saveRowIndex);
             rowConditionSave.id = "rowConditionSave";
             rowConditionSave.innerHTML = "<th><label for='conditionSaveEffect'>Conditions Applied on Save:</label></th><select id='conditionSaveEffect' name='conditionSaveEffect' onchange='createConditionSaveTable()'><option value='0'>All Applied</option><option value='1'>Some Applied</option><option value='2' select>None Applied</option><option value='Different'>Different Condition Applied</option></select></td>";
         }
@@ -322,8 +335,8 @@ async function createSpellConditionRow(whichStartingPosition){
     let conditionPrefix = "";
 
     if(whichStartingPosition==1){
-        nextRowIndex = document.getElementById("rowConditionsAlwaysSet").rowIndex + 1;
-        conditionPrefix = "AlwaysSet";
+        nextRowIndex = document.getElementById("rowConditionsAlwaysAdded").rowIndex + 1;
+        conditionPrefix = "AlwaysAdded";
     }
     else if(whichStartingPosition==2){
         nextRowIndex = document.getElementById("rowConditionOptions").rowIndex + 1;
@@ -374,8 +387,8 @@ async function createConditionSaveTable(){
         let conditionOptions = "";
         for(let tempCondition of baseConditions){
             let isSelectedTest = 0;
-            if(document.getElementById("rowConditionsAlwaysSet") != null){
-                if(document.getElementById("AlwaysSet"+tempCondition.Name).checked){
+            if(document.getElementById("rowConditionsAlwaysAdded") != null){
+                if(document.getElementById("AlwaysAdded"+tempCondition.Name).checked){
                     isSelectedTest++;
                 }
             }
@@ -396,8 +409,8 @@ async function createConditionSaveTable(){
         }
 
         let spellSpecificSelected = 0;
-        if(document.getElementById("rowConditionsAlwaysSet") != null){
-            if(document.getElementById("AlwaysSetSpellSpecific").checked){
+        if(document.getElementById("rowConditionsAlwaysAdded") != null){
+            if(document.getElementById("AlwaysAddedSpellSpecific").checked){
                 spellSpecificSelected++;
             }
         }

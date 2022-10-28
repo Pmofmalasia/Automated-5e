@@ -6,9 +6,9 @@
 [h,if(json.type(pm.ConditionNames)=="OBJECT"): pm.ConditionNames = json.append("",pm.ConditionNames)]
 [h,foreach(condition,pm.ConditionNames): pm.AllConditions = json.append(pm.AllConditions,json.set(pm.a5e.GetSpecificCondition(json.get(condition,"Name"),json.get(condition,"Class"),json.get(condition,"Subclass")),"AlwaysAdded",json.get(condition,"AlwaysAdded")))]
 
-[h:conditionsAlwaysSetArray = json.path.read(pm.AllConditions,"[*][?(@.AlwaysSet==1 || @.AlwaysSet=='')]")]
+[h:conditionsAlwaysAddedArray = json.path.read(pm.AllConditions,"[*][?(@.AlwaysAdded==1 || @.AlwaysAdded=='')]")]
 
-[h:conditionOptionsArray = json.path.read(pm.AllConditions,"[*][?(@.AlwaysSet==0)]")]
+[h:conditionOptionsArray = json.path.read(pm.AllConditions,"[*][?(@.AlwaysAdded==0)]")]
 
 [h,if(pm.ChoiceNumber > 1),CODE:{
 	[h:conditionOptionsChosen = "[]"]
@@ -20,16 +20,16 @@
 
 	[h,foreach(condition,conditionOptionsArray): conditionOptionsChosen = if(eval("choice."+json.get(condition,"Name")+json.get(condition,"Class")+json.get(condition,"Subclass")),json.append(conditionOptionsChosen,json.remove(condition,"AlwaysAdded")),conditionOptionsChosen)]
 
-	[h:pm.ConditionsFinal = json.merge(conditionsAlwaysSetArray,conditionOptionsChosen)]
+	[h:pm.ConditionsFinal = json.merge(conditionsAlwaysAddedArray,conditionOptionsChosen)]
 };{
 	[h,if(pm.ChoiceNumber == 1),CODE:{
 		[h:conditionOptionsDisplay = ""]
 		[h,foreach(condition,conditionOptionsArray): conditionOptionsDisplay = json.append(conditionOptionsDisplay,json.get(condition,"DisplayName"))]
 		[h:abort(input(
 			" pm.ConditionChoice | "+pm.ConditionOptions+" | Choose a Condition | RADIO | DELIMITER=JSON "))]
-		[h:pm.ConditionsFinal = json.append(conditionsAlwaysSetArray,json.remove(json.get(conditionOptionsArray,pm.ConditionChoice),"AlwaysAdded"))]
+		[h:pm.ConditionsFinal = json.append(conditionsAlwaysAddedArray,json.remove(json.get(conditionOptionsArray,pm.ConditionChoice),"AlwaysAdded"))]
 	};{
-		[h:pm.ConditionsFinal = json.path.delete(conditionsAlwaysSet,"[*]['AlwaysAdded']")]
+		[h:pm.ConditionsFinal = json.path.delete(conditionsAlwaysAddedArray,"[*]['AlwaysAdded']")]
 	}]
 }]
 

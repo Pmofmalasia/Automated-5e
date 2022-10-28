@@ -48,6 +48,7 @@
 [h:SpellCoreData = json.set(SpellCoreData,"CastTime",castTimeInfo)]
 [h:SpellCoreData = json.remove(SpellCoreData,"previousCustomCastTimeValue")]
 [h:SpellCoreData = json.remove(SpellCoreData,"previousCustomCastTimeUnits")]
+[h,if(json.contains(SpellCoreData,"ReactionDescription")): json.set(SpellCoreData,"ReactionDescription",base64.encode(json.get(SpellCoreData,"ReactionDescription")))]
 
 [h:durationInfo = "{}"]
 [h,switch(json.get(SpellCoreData,"Duration")),CODE:

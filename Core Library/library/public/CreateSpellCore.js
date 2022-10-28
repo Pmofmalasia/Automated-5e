@@ -3,21 +3,27 @@ async function updateSpellLevel(){
 }
 
 async function customCastTime() {
+    let table = document.getElementById("spellCreationTable");
     let currentCastTime = document.getElementById("CastTime").value;
     let castTimeLineIndex = document.getElementById("rowCastTime").rowIndex;
 
+    if(document.getElementById("Ritual").rowIndex == (castTimeLineIndex+2)){
+        document.getElementById("spellCreationTable").deleteRow(castTimeLineIndex+1);
+    }
+
     if(currentCastTime=="Custom") {
         if(document.getElementById("Ritual").rowIndex == (castTimeLineIndex+1)){
-            let table = document.getElementById("spellCreationTable");
-            let customCastTimeRow = table.insertRow(castTimeLineIndex+1);
+            let rowCustomCastTime = table.insertRow(castTimeLineIndex+1);
 
-            customCastTimeRow.innerHTML = "<th><label for='customCastTime'>Custom Casting Time:</label></th><td><input type='number' id='customCastTimeValue' name='customCastTimeValue' min='1' style='width:25%'><select id='customCastTimeUnits' name='customCastTimeUnits'><option value='Action'>Action</option><option value='Bonus Action'>Bonus Action</option><option value='Reaction'>Reaction</option><option value='Round'>Round</option><option value='Minute'>Minute</option><option value='Hour'>Hour</option><option value='Day'>Day</option><option value='Year'>Year</option></select></td></tr></td>";
+            rowCustomCastTime.id = "rowCustomCastTime";
+            rowCustomCastTime.innerHTML = "<th><label for='customCastTime'>Custom Casting Time:</label></th><td><input type='number' id='customCastTimeValue' name='customCastTimeValue' min='1' style='width:25%'><select id='customCastTimeUnits' name='customCastTimeUnits'><option value='Action'>Action</option><option value='Bonus Action'>Bonus Action</option><option value='Reaction'>Reaction</option><option value='Round'>Round</option><option value='Minute'>Minute</option><option value='Hour'>Hour</option><option value='Day'>Day</option><option value='Year'>Year</option></select></td></tr>";
         }
     }
-    else {
-        if(document.getElementById("Ritual").rowIndex == (castTimeLineIndex+2)){
-            document.getElementById("spellCreationTable").deleteRow(castTimeLineIndex+1);
-        }
+    else if(currentCastTime=="Reaction"){
+        let rowReactionDescription = table.insertRow(castTimeLineIndex+1);
+        rowReactionDescription.id = "rowReactionDescription";
+
+        rowReactionDescription.innerHTML = "<th><label for='ReactionDescription'>Reaction Trigger:</label></th><td><input type='text' id='ReactionDescription' name='ReactionDescription' style='width:100%' value='which you take when'></td></tr>";
     }
 }
 

@@ -135,7 +135,6 @@
 	};{}]
 	[h:chosenLevel = 0]
 }]
-[h:broadcast(LevelOptionData)]
 
 [h:dissConcentration = if(or(isConcentration==0,SpellLevel>=isConcentration),"",if(getProperty("stat.Concentration")=="","","junkVar|<html><span style='font-size:1.2em';>Casting <span style='color:#2222AA'><i>"+SpellName+"</i></span> will cancel concentration on <span style='color:#AA2222'><i>"+getProperty("stat.Concentration")+".</i></span></span></html>|<html><span style='color:#AA2222; font-size:1.2em'><b>WARNING</b></span></html>|LABEL"))]
 [h:disIsSilenced = if(or(getState("Silence")==0,vComp==0),"","junkVar|<html><span style='font-size:1.2em';><span style='color:#AA2222'><i><b>NOTE: You are currently silenced and attempting to cast a spell with verbal components!</b></i></span></span></html>| |LABEL|SPAN=TRUE")]
@@ -204,14 +203,12 @@
 
 [h:CastAsRitual = 0]
 [h:sLevelSelectData = json.get(LevelOptionData,chosenLevel)]
-[h:broadcast(sLevelSelectData)]
 [h,if(IsCantrip),CODE:{
 	[h:eLevel = 0+if(Level>=5,1,0)+if(Level>=11,1,0)+if(Level>=17,1,0)]
 };{
 	[h,switch(json.get(sLevelSelectData,"ResourceType")),CODE:
 		case "Spell Slots":{
 			[h:eLevel = number(json.get(sLevelSelectData,"Name"))]
-			[h:broadcast("Slots")]
 			[h,if(FreeCasting!=1): SpellSlots = json.set(SpellSlots,eLevel,json.get(SpellSlots,eLevel)-1)]
 		};
 		case "FeatureSpell":{
@@ -223,7 +220,6 @@
 			[h:CastAsRitual = 1]
 		};
 		default:{
-			[h:broadcast("Free")]
 			[h:eLevel = SpellLevel]
 		}
 	]
@@ -276,6 +272,7 @@
 [h:CastTimeValue = json.get(CastTime,"Value")]
 [h:CastTimeUnits = json.get(CastTime,"Units")]
 [h:CastingTimeString = CastTimeValue+" "+CastTimeUnits+if(CastTimeValue==1,"","s")]
+[h,if(CastTimeUnits=="Reaction"): CastingTimeString = CastingTimeString+", "+base64.decode(json.get(FinalSpellData,"ReactionDescription"))]
 [h,if(CastAsRitual): CastingTimeString = CastingTimeString+" + 10 minutes (ritual)"]
 
 [h:"<!-- TODO: Set up spell source types - should be in NonSpellData. Source temporarily set to always be Arcane -->"]

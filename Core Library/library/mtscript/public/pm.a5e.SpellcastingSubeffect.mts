@@ -199,6 +199,18 @@
 	}]
 
 	[h:spell.Conditions = pm.a5e.ChooseCondition(json.get(SpellSubeffectData,"Conditions"),spell.ConditionChoiceNumber)]
+	[h:thisEffectData = json.set(thisEffectData,"ConditionInfo",json.set("","Conditions",spell.Conditions,"EndInfo",Duration))]
+		
+	[h:spell.ConditionNames = pm.a5e.CreateDisplayList(json.path.read(spell.Conditions,"[*]['DisplayName']"),"and")]
+	[h:abilityTable = json.append(abilityTable,json.set("",
+		"ShowIfCondensed",1,
+		"Header","Conditions Applied",
+		"FalseHeader","",
+		"FullContents","",
+		"RulesContents",spell.ConditionNames,
+		"RollContents","",
+		"DisplayOrder","['Rules','Roll','Full']"
+	))]
 }]
 
 [h,if(json.contains(SpellSubeffectData,"Summon")),CODE:{

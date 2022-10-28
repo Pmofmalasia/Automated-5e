@@ -3,7 +3,7 @@
 [h:thisPlayerCurrentSpellData = json.get(currentSpellData,getPlayerName())]
 [h:currentEffectData = json.get(thisPlayerCurrentSpellData,json.length(thisPlayerCurrentSpellData)-1)]
 [h:subeffectData = pm.a5e.KeyStringsToNumbers(subeffectData)]
-[h:SpellName = json.get(currentEffectData,"SpellName")]
+[h:SpellName = json.get(json.get(thisPlayerCurrentSpellData,0),"SpellName")]
 
 [h:howMitigate = json.get(subeffectData,"howMitigate")]
 [h:subeffectData = json.remove(subeffectData,"howMitigate")]
@@ -83,30 +83,30 @@
 [h:isCondition = json.get(subeffectData,"isCondition")]
 [h:subeffectData = json.remove(subeffectData,"isCondition")]
 [h:allBaseConditions = pm.a5e.GetBaseConditions("Name","json")]
-[h:conditionsAlwaysSet = "[]"]
+[h:conditionsAlwaysAdded = "[]"]
 [h:spellSpecificConditions = "[]"]
 [h,if(isCondition == "All" || isCondition == "Mixture"),CODE:{
-    [h:conditionsAlwaysSet = "[]"]
+    [h:conditionsAlwaysAdded = "[]"]
     [h,foreach(tempCondition,allBaseConditions),CODE:{
-        [h,if(json.contains(subeffectData,"AlwaysSet"+tempCondition)): conditionsAlwaysSet = json.append(conditionsAlwaysSet,json.set("","Name",tempCondition,"Class","Condition","AlwaysAdded",1))]
-        [h:subeffectData = json.remove(subeffectData,"AlwaysSet"+tempCondition)]
+        [h,if(json.contains(subeffectData,"AlwaysAdded"+tempCondition)): conditionsAlwaysAdded = json.append(conditionsAlwaysAdded,json.set("","Name",tempCondition,"Class","Condition","AlwaysAdded",1))]
+        [h:subeffectData = json.remove(subeffectData,"AlwaysAdded"+tempCondition)]
     }]
     
-    [h,switch(json.contains(subeffectData,"AlwaysSetSpellSpecific")+""+json.contains(subeffectData,"isSpellSpecificAlwaysSetMultiple")),CODE:
+    [h,switch(json.contains(subeffectData,"AlwaysAddedSpellSpecific")+""+json.contains(subeffectData,"isSpellSpecificAlwaysAddedMultiple")),CODE:
         case "10":{
-            [h:conditionsAlwaysSet = json.append(conditionsAlwaysSet,json.set("","Name",SpellName,"Class","Spell","Subclass",SpellName))]
+            [h:conditionsAlwaysAdded = json.append(conditionsAlwaysAdded,json.set("","Name",SpellName,"Class","Spell","Subclass",SpellName))]
             [h:spellSpecificConditions = json.append(spellSpecificConditions,json.set("","Name",SpellName,"Class","Spell","Subclass",SpellName))]
         };
         case "11":{
-            [h:conditionNames = json.fromList(encode(json.get(subeffectData,"AlwaysSetSpellSpecificNames")),"%0A")]
-            [h,foreach(tempCondition,conditionNames): conditionsAlwaysSet = json.append(conditionsAlwaysSet,json.set("","Name",tempCondition,"Class","Spell","Subclass",SpellName))]
+            [h:conditionNames = json.fromList(encode(json.get(subeffectData,"AlwaysAddedSpellSpecificNames")),"%0A")]
+            [h,foreach(tempCondition,conditionNames): conditionsAlwaysAdded = json.append(conditionsAlwaysAdded,json.set("","Name",tempCondition,"Class","Spell","Subclass",SpellName))]
             [h,foreach(tempCondition,conditionNames): spellSpecificConditions = json.append(spellSpecificConditions,json.set("","Name",tempCondition,"Class","Spell","Subclass",SpellName))]
-            [h:subeffectData = json.remove(subeffectData,"isSpellSpecificAlwaysSetMultiple")]
-            [h:subeffectData = json.remove(subeffectData,"AlwaysSetSpellSpecificNames")]
+            [h:subeffectData = json.remove(subeffectData,"isSpellSpecificAlwaysAddedMultiple")]
+            [h:subeffectData = json.remove(subeffectData,"AlwaysAddedSpellSpecificNames")]
         };
         default:{};
     ]
-    [h:subeffectData = json.remove(subeffectData,"AlwaysSetSpellSpecific")]
+    [h:subeffectData = json.remove(subeffectData,"AlwaysAddedSpellSpecific")]
 }]
 
 [h:conditionOptions = "[]"]
@@ -134,7 +134,7 @@
 }]
 
 [h:"<!-- May want to use a different format for options vs. always set instead of just the one key. Don't see any downsides to this method at the moment, though, and it is more consistent with how feature conditions are stored. -->"]
-[h,if(isCondition != "None"): subeffectData = json.set(subeffectData,"Conditions",json.merge(conditionsAlwaysSet,conditionOptions))]
+[h,if(isCondition != "None"): subeffectData = json.set(subeffectData,"Conditions",json.merge(conditionsAlwaysAdded,conditionOptions))]
 
 [h,switch(json.get(subeffectData,"conditionSaveEffect")),CODE:
     case "": {};

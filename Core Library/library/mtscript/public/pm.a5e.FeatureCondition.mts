@@ -90,7 +90,7 @@
 		}
 	]
 };{
-	[h:pm.ConditionInfo = pm.a5e.ChooseCondition(pm.ConditionNames,pm.ChoiceMethod)]
+	[h:pm.ConditionInfo = pm.a5e.ChooseCondition(pm.ConditionNames,pm.ChoiceNumber)]
 	[h:pm.ConditionNames = pm.a5e.CreateDisplayList(json.path.read(pm.ConditionInfo,"[*]['DisplayName']"),"and")]
 	[h,if(IsTooltip),CODE:{
 		[h:oldDataPlacehold = json.set("","ConditionInfo",json.set("","Conditions",pm.ConditionInfo,"EndInfo",pm.ConditionEndInfo),"Toggle",0)]

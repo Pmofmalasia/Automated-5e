@@ -139,19 +139,19 @@
 	[h:attack.CritTest = 0]
 }]
 
-[h,if(json.contains(SpellSubeffectData,"Save")),CODE:{
+[h,if(json.contains(SpellSubeffectData,"SaveData")),CODE:{
 	[h:spell.SaveDC = 8 + getProperty("Proficiency") + PrimeStatMod]
 
 	[h:pm.PassiveFunction("SpellSaveDC")]
 
-	[h:spell.SaveDCData = json.set(json.get(SpellSubeffectData,"Save"),"DC",spell.SaveDC)]
+	[h:spell.SaveDCData = json.set(json.get(SpellSubeffectData,"SaveData"),"DC",spell.SaveDC)]
 	[h:thisEffectData = json.set(thisEffectData,"SaveDC",spell.SaveDCData)]
 	
 	[h:abilityTable = json.append(abilityTable,json.set("",
 		"ShowIfCondensed",1,
 		"Header","Saving Throw",
 		"FalseHeader","",
-		"FullContents",pm.GetDisplayName("sb.Attributes",json.get(json.get(SpellSubeffectData,"Save"),"SaveType")),
+		"FullContents",pm.GetDisplayName(json.get(json.get(SpellSubeffectData,"SaveData"),"SaveType"),"sb.Attributes"),
 		"RulesContents","DC "+spell.SaveDC+" ",
 		"RollContents","",
 		"DisplayOrder","['Rules','Roll','Full']"

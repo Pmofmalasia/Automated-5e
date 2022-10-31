@@ -3,7 +3,7 @@
 [h:thisPlayerCurrentSpellData = json.get(currentSpellData,getPlayerName())]
 [h:currentEffectData = json.get(thisPlayerCurrentSpellData,json.length(thisPlayerCurrentSpellData)-1)]
 [h:subeffectData = pm.a5e.KeyStringsToNumbers(subeffectData)]
-[h:SpellName = json.get(json.get(thisPlayerCurrentSpellData,0),"SpellName")]
+[h:SpellName = json.get(json.get(thisPlayerCurrentSpellData,0),"Name")]
 
 [h:howMitigate = json.get(subeffectData,"howMitigate")]
 [h:subeffectData = json.remove(subeffectData,"howMitigate")]
@@ -26,6 +26,7 @@
 [h:subeffectData = json.remove(subeffectData,"isDamage")]
 [h:subeffectData = json.remove(subeffectData,"differentTypes")]
 [h:damageInfo = "[]"]
+[h:SaveDamageModifier = "{}"]
 [h,count(damageTypeNumber),CODE:{
     [h:whichType = roll.count + 1]
     [h:thisDamageTypeInfo = json.set("",
@@ -55,12 +56,14 @@
     
     [h:"<!-- TODO: This will introduce a disconnect between the input and what happens in the code - need to create the ability to apply DamageHalved to each individual type? As it stands now a spell that halves one type and completely reduces another on save will just have all damage types that are reduced completely nullified. Super low priority because why would you do that anyway. -->"]
     [h,if(howMitigate == "Save"),CODE:{
-        [h,if(roll.count==0):
-            SaveData = json.set(SaveData,"DamageHalved",number(json.get(subeffectData,"saveMitigation"+whichType)));
-            SaveData = json.set(SaveData,"DamageHalved",max(number(json.get(subeffectData,"saveMitigation"+whichType)),json.get(SaveData,"DamageHalved")))
+        [h,if(json.get(SaveDamageModifier,"DamageHalved")==""):
+            SaveDamageModifier = json.set(SaveDamageModifier,"DamageHalved",number(json.get(subeffectData,"saveMitigation"+whichType)));
+            SaveDamageModifier = json.set(SaveDamageModifier,"DamageHalved",max(number(json.get(subeffectData,"saveMitigation"+whichType)),json.get(SaveDamageModifier,"DamageHalved")))
         ]
 
-        [h,if(json.get(subeffectData,"saveMitigation"+whichType)!=0): SaveData = json.set(SaveData,"TypesInclusive",json.append(json.get(SaveData,"TypesInclusive"),json.get(subeffectData,"DamageType"+whichType)))]
+        [h,if(json.get(subeffectData,"saveMitigation"+whichType)!=0): SaveDamageModifier = json.set(SaveDamageModifier,"TypesInclusive",json.append(json.get(SaveDamageModifier,"TypesInclusive"),json.get(subeffectData,"DamageType"+whichType)))]
+
+        [h:SaveData = json.set(SaveData,"DamageModifier",SaveDamageModifier)]
         
         [h:subeffectData = json.remove(subeffectData,"saveMitigation"+whichType)]
     }]
@@ -260,9 +263,9 @@
     case "BrightDim":{
         [h:lightData = json.set("",
             "LightType",json.get(subeffectData,"lightType"),
-            "Value",number(json.get(subeffectData,"lightDistanceValue")),
+            "Value",json.get(subeffectData,"lightDistanceValue"),
             "Units",json.get(subeffectData,"lightDistanceUnits"),
-            "SecondaryValue",number(json.get(subeffectData,"lightDistanceValue")+number(json.get(subeffectData,"secondaryLightDistanceValue")),
+            "SecondaryValue",json.get(subeffectData,"lightDistanceValue")+json.get(subeffectData,"secondaryLightDistanceValue"),
             "IsSunlight",json.contains(subeffectData,"isSunlight")
         )]
 

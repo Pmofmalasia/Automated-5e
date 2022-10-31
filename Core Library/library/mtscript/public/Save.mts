@@ -9,6 +9,7 @@
 [h:d20Data = json.set(d20Data,"OverallType","Save")]
 
 [h:CurrentSaveDisplay = json.get(d20Data,"Save")]
+[h:CurrentSave = pm.RemoveSpecial(CurrentSaveDisplay)]
 [h,SWITCH(d20Type):
 	case "Save": PrimeStat = CurrentSave;
 	case "Concentration": PrimeStat = "Constitution";

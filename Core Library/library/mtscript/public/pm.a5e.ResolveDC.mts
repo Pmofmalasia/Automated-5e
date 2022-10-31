@@ -18,7 +18,7 @@
 [h,if(thisTokenDamageDealt!=""),CODE:{
     [h:thisEffectDamageTypes = json.unique(json.path.read(thisTokenDamageDealt,"[*]['DamageType']"))]
     [h:typesHalvedFinal = json.intersection(typesHalvedFinal,thisEffectDamageTypes)]
-};{}] 
+};{}]
 
 [h,foreach(damageInstance,thisTokenDamageDealt),CODE:{
     [h:thisTypeModifiedTest = (json.contains(typesHalvedFinal,json.get(damageInstance,"DamageType")) && isDamageHalved!=0)]
@@ -28,6 +28,7 @@
 }]
 
 [h:ConditionsResistedInfo = json.get(DCData,"ConditionsResisted")]
+[h,if(ConditionsResistedInfo==""): ConditionsResistedInfo = "{}"]
 [h:conditionsResistedInclusive = json.get(ConditionsResistedInfo,"Inclusive")]
 [h:conditionsResistedExclusive = if(json.get(ConditionsResistedInfo,"Exclusive")=="","[]",json.get(ConditionsResistedInfo,"Exclusive"))]
 

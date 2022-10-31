@@ -294,12 +294,26 @@ async function createConditionTable(){
         if(!alreadyEndInfoTest){
             let rowSameDuration = table.insertRow(nextRowIndex);
             rowSameDuration.id = "rowSameDuration";
-            rowSameDuration.innerHTML = "<th><label for='conditionSameDuration'>Duration is Same as Spell's:</label></th><input type='checkbox' id='conditionSameDuration' name='conditionSameDuration' onchange='conditionAlternateDuration()'></td>";
+            rowSameDuration.innerHTML = "<th><label for='isConditionSameDuration'>Duration is Same as Spell's:</label></th><input type='checkbox' id='isConditionSameDuration' name='isConditionSameDuration' onchange='conditionAlternateDuration()' checked></td>";
             nextRowIndex++;
             //Ending condition on repeat save should not be limited to only if there is a save already. Will need to choose save type though.
+
+            //Internal debate on whether it's better to do multi checkboxes or single checkbox for 'other ending conditions' that leads to multiple rows of instances with selects for 'no/always/with conditions'
+            
+            let rowIsConditionNonDurationEnd = table.insertRow(nextRowIndex);
+            rowIsConditionNonDurationEnd.id = "rowIsConditionNonDurationEnd";
+            rowIsConditionNonDurationEnd.innerHTML = "<th><label for='isConditionNonDurationEnd'></label></th><input type='checkbox' id='isConditionSameDuration' name='isConditionSameDuration' onchange='conditionAlternateDuration()'></td>";
+            nextRowIndex++;
+
+            let endConditionOptions = "";
+            
+            endConditionOptions = endConditionOptions + "<label><input type='checkbox' id='conditionEndsTurnChangeSave' name='conditionEndsTurnChangeSave' value=1 onchange='createTurnChangeSave()'><span>Make Save on Turns</span></label>";
+
+            endConditionOptions = endConditionOptions + "<label><input type='checkbox' id='conditionEndsAfterAttack' name='conditionEndsAfterAttack' value=1><span>After Attacking</span></label>";
+
             let rowEndInfo = table.insertRow(nextRowIndex);
             rowEndInfo.id = "rowEndInfo";
-            rowEndInfo.innerHTML = "<th>Other Instances When Cond</th><input type='checkbox' id='conditionSameDuration' name='conditionSameDuration' onchange='conditionAlternateDuration()'></td>";
+            rowEndInfo.innerHTML = "<th>Other Instances When Condition Ends</th><div id='SaveConditionNullify' class='check-multiple' style='width:100%'></div></td>";
             nextRowIndex++;
         }
 

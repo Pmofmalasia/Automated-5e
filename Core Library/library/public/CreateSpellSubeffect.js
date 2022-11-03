@@ -304,22 +304,17 @@ async function createConditionTable(){
             rowIsConditionNonDurationEnd.id = "rowIsConditionNonDurationEnd";
             rowIsConditionNonDurationEnd.innerHTML = "<th><label for='isConditionNonDurationEnd'></label></th><input type='checkbox' id='isConditionSameDuration' name='isConditionSameDuration' onchange='conditionAlternateDuration()'></td>";
             nextRowIndex++;
+            
+            let rowIsConditionNonDurationEnd = table.insertRow(nextRowIndex);
+            rowIsConditionNonDurationEnd.id = "rowIsConditionNonDurationEnd";
+            rowIsConditionNonDurationEnd.innerHTML = "<th><label for='isConditionNonDurationEnd'></label></th><input type='checkbox' id='isConditionSameDuration' name='isConditionSameDuration' onchange='conditionAlternateDuration()'></td>";
+            nextRowIndex++;
 
             let endConditionOptions = "<option value='No'>No</option><option value='Conditional'>If Condition Met</option><option value='Always'>Always</option>";
 
             let rowEndConditionTurnChange = table.insertRow(nextRowIndex);
             rowEndConditionTurnChange.id = "rowEndConditionTurnChange";
-            rowEndConditionTurnChange.innerHTML = "<th><label for='isEndConditionTurnChange'>Ends at Start/End of Turn?</label></th><select id='isEndConditionTurnChange' name='isEndConditionTurnChange' onchange='endConditionConditions("+'"'+"TurnChange"+'"'+")'>"+endConditionOptions+"</select><select id='isEndConditionTurnChangeSave' name='isEndConditionTurnChangeSave'><option value='0'>Without Save</option><option value='1'>On Successful Save</option></select><select id='endConditionTurnChangeTiming' name='endConditionTurnChangeTiming' disabled><option value='Start'>Start of Turn</option><option value='End' selected>End of Turn</option></select></td>";
-            nextRowIndex++;
-
-            let rowEndConditionAttack = table.insertRow(nextRowIndex);
-            rowEndConditionAttack.id = "rowEndConditionAttack";
-            rowEndConditionAttack.innerHTML = "<th><label for='isEndConditionAttack'>Ends after Attacking?</label></th><select id='isEndConditionAttack' name='isEndConditionAttack' onchange='endConditionConditions("+'"'+"Attack"+'"'+")'>"+endConditionOptions+"</select><select id='isEndConditionAttackSave' name='isEndConditionAttackSave'><option value='0'>Without Save</option><option value='1'>On Successful Save</option></select></td>";
-            nextRowIndex++;
-
-            let rowEndConditionSpell = table.insertRow(nextRowIndex);
-            rowEndConditionSpell.id = "rowEndConditionSpell";
-            rowEndConditionSpell.innerHTML = "<th><label for='isEndConditionSpell'>Ends after Casting Spell?</label></th><select id='isEndConditionSpell' name='isEndConditionSpell' onchange='endConditionConditions("+'"'+"Spell"+'"'+")'>"+endConditionOptions+"</select><select id='isEndConditionSpellSave' name='isEndConditionSpellSave'><option value='0'>Without Save</option><option value='1'>On Successful Save</option></select></td>";
+            rowEndConditionTurnChange.innerHTML = "<th><label for='isEndConditionTurnChange'>Ends at Start/End of Turn?</label></th><select id='isEndConditionTurnChange' name='isEndConditionTurnChange' onchange='endConditionConditions("+'"'+"TurnChange"+'"'+")'>"+endConditionOptions+"</select><select id='isEndConditionTurnChangeSave' name='isEndConditionTurnChangeSave' onchange='endConditionNeedsSave("+'"'+"TurnChange"+'"'+")'><option value='0'>Without Save</option><option value='1'>On Successful Save</option></select><select id='endConditionTurnChangeTiming' name='endConditionTurnChangeTiming' disabled><option value='Start'>Start of Turn</option><option value='End' selected>End of Turn</option></select></td>";
             nextRowIndex++;
 
             let rowEndConditionTempHP = table.insertRow(nextRowIndex);
@@ -327,39 +322,54 @@ async function createConditionTable(){
             rowEndConditionTempHP.innerHTML = "<th><label for='isEndConditionTempHP'>Ends with Temporary HP?</label></th><input type='checkbox' id='isEndConditionTempHP' name='isEndConditionTempHP'></td>";
             nextRowIndex++;
 
-            let rowEndConditionDamage = table.insertRow(nextRowIndex);
-            rowEndConditionDamage.id = "rowEndConditionDamage";
-            rowEndConditionDamage.innerHTML = "<th><label for='isEndConditionDamage'>Ends after Dealing Damage?</label></th><select id='isEndConditionDamage' name='isEndConditionDamage' onchange='endConditionConditions("+'"'+"Damage"+'"'+")'>"+endConditionOptions+"</select><select id='isEndConditionDamageSave' name='isEndConditionDamageSave'><option value='0'>Without Save</option><option value='1'>On Successful Save</option></select></td>";
+            let rowEndConditionAttack = table.insertRow(nextRowIndex);
+            rowEndConditionAttack.id = "rowEndConditionAttack";
+            rowEndConditionAttack.innerHTML = "<th><label for='isEndConditionAttack'>Ends after Attacking?</label></th><select id='isEndConditionAttack' name='isEndConditionAttack' onchange='endConditionConditions("+'"'+"Attack"+'"'+")'>"+endConditionOptions+"</select><select id='isEndConditionAttackSave' name='isEndConditionAttackSave' onchange='endConditionNeedsSave("+'"'+"Attack"+'"'+")'><option value='0'>Without Save</option><option value='1'>On Successful Save</option></select></td>";
             nextRowIndex++;
 
-            let rowEndConditionDamaged = table.insertRow(nextRowIndex);
-            rowEndConditionDamaged.id = "rowEndConditionDamaged";
-            rowEndConditionDamaged.innerHTML = "<th><label for='isEndConditionDamaged'>Ends after Being Damaged?</label></th><select id='isEndConditionDamaged' name='isEndConditionDamaged' onchange='endConditionConditions("+'"'+"Damaged"+'"'+")'>"+endConditionOptions+"</select><select id='isEndConditionDamagedSave' name='isEndConditionDamagedSave'><option value='0'>Without Save</option><option value='1'>On Successful Save</option></select></td>";
-            nextRowIndex++;
-
-            let rowEndConditionMoving = table.insertRow(nextRowIndex);
-            rowEndConditionMoving.id = "rowEndConditionMoving";
-            rowEndConditionMoving.innerHTML = "<th><label for='isEndConditionMoving'>Ends after Moving?</label></th><select id='isEndConditionMoving' name='isEndConditionMoving' onchange='endConditionConditions("+'"'+"Moving"+'"'+")'>"+endConditionOptions+"</select><select id='isEndConditionMovingSave' name='isEndConditionMovingSave'><option value='0'>Without Save</option><option value='1'>On Successful Save</option></select></td>";
+            let rowEndConditionSpell = table.insertRow(nextRowIndex);
+            rowEndConditionSpell.id = "rowEndConditionSpell";
+            rowEndConditionSpell.innerHTML = "<th><label for='isEndConditionSpell'>Ends after Casting Spell?</label></th><select id='isEndConditionSpell' name='isEndConditionSpell' onchange='endConditionConditions("+'"'+"Spell"+'"'+")'>"+endConditionOptions+"</select><select id='isEndConditionSpellSave' name='isEndConditionSpellSave' onchange='endConditionNeedsSave("+'"'+"Spell"+'"'+")'><option value='0'>Without Save</option><option value='1'>On Successful Save</option></select></td>";
             nextRowIndex++;
 
             let rowEndConditionForceSave = table.insertRow(nextRowIndex);
             rowEndConditionForceSave.id = "rowEndConditionForceSave";
-            rowEndConditionForceSave.innerHTML = "<th><label for='isEndConditionForceSave'>Ends after Forcing Save?</label></th><select id='isEndConditionForceSave' name='isEndConditionForceSave' onchange='endConditionConditions("+'"'+"ForceSave"+'"'+")'>"+endConditionOptions+"</select><select id='isEndConditionForceSaveSave' name='isEndConditionForceSaveSave'><option value='0'>Without Save</option><option value='1'>On Successful Save</option></select></td>";
+            rowEndConditionForceSave.innerHTML = "<th><label for='isEndConditionForceSave'>Ends after Forcing Save?</label></th><select id='isEndConditionForceSave' name='isEndConditionForceSave' onchange='endConditionConditions("+'"'+"ForceSave"+'"'+")'>"+endConditionOptions+"</select><select id='isEndConditionForceSaveSave' name='isEndConditionForceSaveSave' onchange='endConditionNeedsSave("+'"'+"ForceSave"+'"'+")'><option value='0'>Without Save</option><option value='1'>On Successful Save</option></select></td>";
+            nextRowIndex++;
+
+            let rowEndConditionDamage = table.insertRow(nextRowIndex);
+            rowEndConditionDamage.id = "rowEndConditionDamage";
+            rowEndConditionDamage.innerHTML = "<th><label for='isEndConditionDamage'>Ends after Dealing Damage?</label></th><select id='isEndConditionDamage' name='isEndConditionDamage' onchange='endConditionConditions("+'"'+"Damage"+'"'+")'>"+endConditionOptions+"</select><select id='isEndConditionDamageSave' name='isEndConditionDamageSave' onchange='endConditionNeedsSave("+'"'+"Damage"+'"'+")'><option value='0'>Without Save</option><option value='1'>On Successful Save</option></select></td>";
+            nextRowIndex++;
+
+            let rowEndConditionMoving = table.insertRow(nextRowIndex);
+            rowEndConditionMoving.id = "rowEndConditionMoving";
+            rowEndConditionMoving.innerHTML = "<th><label for='isEndConditionMoving'>Ends after Moving?</label></th><select id='isEndConditionMoving' name='isEndConditionMoving' onchange='endConditionConditions("+'"'+"Moving"+'"'+")'>"+endConditionOptions+"</select><select id='isEndConditionMovingSave' name='isEndConditionMovingSave' onchange='endConditionNeedsSave("+'"'+"Moving"+'"'+")'><option value='0'>Without Save</option><option value='1'>On Successful Save</option></select></td>";
+            nextRowIndex++;
+
+            let rowEndConditionAttacked = table.insertRow(nextRowIndex);
+            rowEndConditionAttacked.id = "rowEndConditionAttacked";
+            rowEndConditionAttacked.innerHTML = "<th><label for='isEndConditionAttacked'>Ends after Being Attacked?</label></th><select id='isEndConditionAttacked' name='isEndConditionAttacked' onchange='endConditionConditions("+'"'+"Attacked"+'"'+")'>"+endConditionOptions+"</select><select id='isEndConditionAttackedSave' name='isEndConditionAttackedSave' onchange='endConditionNeedsSave("+'"'+"Attacked"+'"'+")'><option value='0'>Without Save</option><option value='1'>On Successful Save</option></select></td>";
+            nextRowIndex++;
+
+            let rowEndConditionDamaged = table.insertRow(nextRowIndex);
+            rowEndConditionDamaged.id = "rowEndConditionDamaged";
+            rowEndConditionDamaged.innerHTML = "<th><label for='isEndConditionDamaged'>Ends after Being Damaged?</label></th><select id='isEndConditionDamaged' name='isEndConditionDamaged' onchange='endConditionConditions("+'"'+"Damaged"+'"'+")'>"+endConditionOptions+"</select><select id='isEndConditionDamagedSave' name='isEndConditionDamagedSave' onchange='endConditionNeedsSave("+'"'+"Damaged"+'"'+")'><option value='0'>Without Save</option><option value='1'>On Successful Save</option></select></td>";
             nextRowIndex++;
 
             let rowEndConditionRest = table.insertRow(nextRowIndex);
             rowEndConditionRest.id = "rowEndConditionRest";
-            rowEndConditionRest.innerHTML = "<th><label for='isEndConditionRest'>Ends after Rest?</label></th><select id='isEndConditionRest' name='isEndConditionRest' onchange='endConditionConditions("+'"'+"Rest"+'"'+")'>"+endConditionOptions+"</select><select id='isEndConditionRestSave' name='isEndConditionRestSave'><option value='0'>Without Save</option><option value='1'>On Successful Save</option></select></td>";
+            rowEndConditionRest.innerHTML = "<th><label for='isEndConditionRest'>Ends after Rest?</label></th><select id='isEndConditionRest' name='isEndConditionRest' onchange='endConditionConditions("+'"'+"Rest"+'"'+")'>"+endConditionOptions+"</select><select id='isEndConditionRestSave' name='isEndConditionRestSave' onchange='endConditionNeedsSave("+'"'+"Rest"+'"'+")'><option value='0'>Without Save</option><option value='1'>On Successful Save</option></select></td>";
             nextRowIndex++;
 
             let rowEndConditionGainOther = table.insertRow(nextRowIndex);
             rowEndConditionGainOther.id = "rowEndConditionGainOther";
-            rowEndConditionGainOther.innerHTML = "<th><label for='isEndConditionGainOther'>Ends after Gaining Another Condition?</label></th><select id='isEndConditionGainOther' name='isEndConditionGainOther' onchange='endConditionConditions("+'"'+"GainOther"+'"'+")'>"+endConditionOptions+"</select><select id='isEndConditionGainOtherSave' name='isEndConditionGainOtherSave'><option value='0'>Without Save</option><option value='1'>On Successful Save</option></select></td>";
+            rowEndConditionGainOther.innerHTML = "<th><label for='isEndConditionGainOther'>Ends after Gaining Another Condition?</label></th><select id='isEndConditionGainOther' name='isEndConditionGainOther' onchange='endConditionConditions("+'"'+"GainOther"+'"'+")'>"+endConditionOptions+"</select><select id='isEndConditionGainOtherSave' name='isEndConditionGainOtherSave' onchange='endConditionNeedsSave("+'"'+"GainOther"+'"'+")'><option value='0'>Without Save</option><option value='1'>On Successful Save</option></select></td>";
             nextRowIndex++;
 
             let rowEndConditionChangeEquipment = table.insertRow(nextRowIndex);
             rowEndConditionChangeEquipment.id = "rowEndConditionChangeEquipment";
-            rowEndConditionChangeEquipment.innerHTML = "<th><label for='isEndConditionChangeEquipment'>Ends after Changing Equipment?</label></th><select id='isEndConditionChangeEquipment' name='isEndConditionChangeEquipment' onchange='endConditionConditions("+'"'+"ChangeEquipment"+'"'+")'>"+endConditionOptions+"</select><select id='isEndConditionChangeEquipmentSave' name='isEndConditionChangeEquipmentSave'><option value='0'>Without Save</option><option value='1'>On Successful Save</option></select></td>";
+            rowEndConditionChangeEquipment.innerHTML = "<th><label for='isEndConditionChangeEquipment'>Ends after Changing Equipment?</label></th><select id='isEndConditionChangeEquipment' name='isEndConditionChangeEquipment' onchange='endConditionConditions("+'"'+"ChangeEquipment"+'"'+")'>"+endConditionOptions+"</select><select id='isEndConditionChangeEquipmentSave' name='isEndConditionChangeEquipmentSave' onchange='endConditionNeedsSave("+'"'+"ChangeEquipment"+'"'+")'><option value='0'>Without Save</option><option value='1'>On Successful Save</option></select></td>";
             nextRowIndex++;
         }
 

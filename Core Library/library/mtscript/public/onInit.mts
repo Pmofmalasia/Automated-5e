@@ -28,6 +28,7 @@
 [h:defineFunction("pm.WeaponSelectionInput","pm.WeaponSelectionInput@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.WeaponSelectionPreset","pm.WeaponSelectionPreset@Lib:pm.a5e.Core")]
 [h:defineFunction("ct.a5e.AoESpellDataProcessing","ct.a5e.AoESpellDataProcessing@Lib:pm.a5e.Core",0,0)]
+[h:defineFunction("ct.a5e.SpellConditionEndTriggerInputProcessing","ct.a5e.SpellConditionEndTriggerInputProcessing@Lib:pm.a5e.Core",0,0)]
 [h:defineFunction("ct.a5e.CreatureTargetingLimitProcessing","ct.a5e.CreatureTargetingLimitProcessing@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.a5e.KeyStringsToNumbers","pm.a5e.KeyStringsToNumbers@Lib:pm.a5e.Core")]
 

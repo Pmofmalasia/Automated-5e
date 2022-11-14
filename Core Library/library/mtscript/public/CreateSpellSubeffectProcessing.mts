@@ -136,8 +136,29 @@
     [h:subeffectData = json.remove(subeffectData,"ConditionOptionSpellSpecific")]
 }]
 
-[h:"<!-- May want to use a different format for options vs. always set instead of just the one key. Don't see any downsides to this method at the moment, though, and it is more consistent with how feature conditions are stored. -->"]
-[h,if(isCondition != "None"): subeffectData = json.set(subeffectData,"Conditions",json.merge(conditionsAlwaysAdded,conditionOptions))]
+[h,if(isCondition != "None"),CODE:{
+    [h,if(json.contains(subeffectData,"isConditionSameDuration")),CODE:{
+        [h:conditionEndInfo = json.set("","UseSpellDuration",1)]
+        [h:subeffectData = json.remove(subeffectData,"isConditionSameDuration")]
+    };{
+        [h:"<!-- TODO: Need separate duration input for conditions, unsure if that's even a thing for any spell condition tho -->"]
+    }]
+    
+    [h:subeffectData = json.remove(subeffectData,"isConditionNonDurationEnd")]
+    [h:"<!-- TODO/Note: The below loop will likely be temporary, as the 'conditional' portion will likely need to be customized to each instance once completed. But for now, it's easier to just loop it. -->"]
+    [h:conditionEndInstances = json.append("","StartTurn","EndTurn","AfterAttack","AfterSpell","AfterForceSave","AfterDamage","AfterMoving","AfterAttacked","AfterDamaged","AfterShortRest","AfterLongRest","AfterGainCondition","AfterEndCondition","AfterChangeEquipment")]
+    [h,foreach(tempInstance,conditionEndInstances): ct.a5e.SpellConditionEndTriggerInputProcessing(tempInstance)]
+
+    [h,if(json.contains(subeffectData,"isEndConditionTempHPLost")): conditionEndInfo = json.set(conditionEndInfo,"TempHPLost")]
+    [h:subeffectData = json.remove(subeffectData,"TempHPLost")]
+
+    [h:allConditionInfo = json.set("",
+        "Conditions",json.merge(conditionsAlwaysAdded,conditionOptions),
+        "EndInfo",conditionEndInfo
+    )]
+    
+    [h:subeffectData = json.set(subeffectData,"ConditionInfo",allConditionInfo)]
+};{}]
 
 [h,switch(json.get(subeffectData,"conditionSaveEffect")),CODE:
     case "": {};

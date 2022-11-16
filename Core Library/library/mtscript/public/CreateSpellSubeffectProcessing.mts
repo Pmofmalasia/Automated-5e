@@ -141,16 +141,18 @@
         [h:conditionEndInfo = json.set("","UseSpellDuration",1)]
         [h:subeffectData = json.remove(subeffectData,"isConditionSameDuration")]
     };{
-        [h:"<!-- TODO: Need separate duration input for conditions, unsure if that's even a thing for any spell condition tho -->"]
+        [h:conditionEndInfo = json.set("","Duration",json.get(subeffectData,"conditionAlternateDuration"),"DurationUnits",json.get(subeffectData,"conditionAlternateDurationUnits"))]
+        [h:subeffectData = json.remove(subeffectData,"conditionAlternateDuration")]
+        [h:subeffectData = json.remove(subeffectData,"conditionAlternateDurationUnits")]
     }]
-    
+
     [h:subeffectData = json.remove(subeffectData,"isConditionNonDurationEnd")]
+    [h,if(json.contains(subeffectData,"isEndConditionTempHPLost")): ConditionEndTriggers = json.set("","TempHPLost",1); ConditionEndTriggers = "{}"]
+    [h:subeffectData = json.remove(subeffectData,"TempHPLost")]
     [h:"<!-- TODO/Note: The below loop will likely be temporary, as the 'conditional' portion will likely need to be customized to each instance once completed. But for now, it's easier to just loop it. -->"]
     [h:conditionEndInstances = json.append("","StartTurn","EndTurn","AfterAttack","AfterSpell","AfterForceSave","AfterDamage","AfterMoving","AfterAttacked","AfterDamaged","AfterShortRest","AfterLongRest","AfterGainCondition","AfterEndCondition","AfterChangeEquipment")]
     [h,foreach(tempInstance,conditionEndInstances): ct.a5e.SpellConditionEndTriggerInputProcessing(tempInstance)]
-
-    [h,if(json.contains(subeffectData,"isEndConditionTempHPLost")): conditionEndInfo = json.set(conditionEndInfo,"TempHPLost")]
-    [h:subeffectData = json.remove(subeffectData,"TempHPLost")]
+    [h:conditionEndInfo = json.set(conditionEndInfo,"EndTriggers",ConditionEndTriggers)]
 
     [h:allConditionInfo = json.set("",
         "Conditions",json.merge(conditionsAlwaysAdded,conditionOptions),

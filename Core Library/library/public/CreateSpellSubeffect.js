@@ -372,6 +372,21 @@ async function createMultiSpellConditionRow(conditionPrefix){
     }
 }
 
+async function conditionAlternateDuration(){
+    let table = document.getElementById("SubeffectTable");
+    let isSameDuration = document.getElementById("isConditionSameDuration").checked;
+    let nextRowIndex = document.getElementById("rowIsConditionSameDuration").rowIndex + 1;
+
+    if(isSameDuration){
+        table.deleteRow(document.getElementById("rowAlternateConditionDuration").rowIndex);
+    }
+    else{
+        let rowAlternateConditionDuration = table.insertRow(nextRowIndex);
+        rowAlternateConditionDuration.id = "rowAlternateConditionDuration";
+        rowAlternateConditionDuration.innerHTML = "<th><label for='conditionAlternateDuration'>Condition Duration:</label></th><input type='number' id='conditionAlternateDuration' name='conditionAlternateDuration' min='1' value='1' width='25px'><select id='conditionAlternateDurationUnits' name='conditionAlternateDurationUnits'><option value='Rounds'>Rounds</option><option value='Minutes'>Minutes</option><option value='Hours' select>Hours</option><option value='Days'>Days</option><option value='Years'>Years</option></select></td>";
+    }
+}
+
 async function createConditionNonDurationEnd(){
     let table = document.getElementById("SubeffectTable");
     let hasOtherEndOptions = document.getElementById("isConditionNonDurationEnd").checked;

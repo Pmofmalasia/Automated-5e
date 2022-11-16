@@ -202,9 +202,9 @@
 	[h:spell.Conditions = pm.a5e.ChooseCondition(json.get(tempConditions,"Conditions"),spell.ConditionChoiceNumber)]
 
 	[h:spell.ConditionEndInfo = json.get(tempConditions,"EndInfo")]
-	[h,if(json.get(spell.ConditionEndInfo,"UseSpellDuration") == 1): spell.ConditionEndInfo = json.get(tempConditions,"EndInfo")]
+	[h,if(json.get(spell.ConditionEndInfo,"UseSpellDuration") == 1): spell.ConditionEndInfo = json.set(spell.ConditionEndInfo,"Duration",DurationValue,"DurationUnits",DurationUnits)]
 
-	[h:thisEffectData = json.set(thisEffectData,"ConditionInfo",json.set("","Conditions",spell.Conditions,"EndInfo",Duration))]
+	[h:thisEffectData = json.set(thisEffectData,"ConditionInfo",json.set("","Conditions",spell.Conditions,"EndInfo",spell.ConditionEndInfo))]
 		
 	[h:spell.ConditionNames = pm.a5e.CreateDisplayList(json.path.read(spell.Conditions,"[*]['DisplayName']"),"and")]
 	[h:abilityTable = json.append(abilityTable,json.set("",

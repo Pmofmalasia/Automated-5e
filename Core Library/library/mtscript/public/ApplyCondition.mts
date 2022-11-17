@@ -78,8 +78,8 @@
 	[h,if(newGroupTest),CODE:{
 		[h:ConditionsSet = json.append(ConditionsSet,json.set(a5e.GroupingInfo,"Targets",json.append("",ParentToken)))]
 	};{
-		[h:NewTargets = json.append(json.get(json.path.read(ConditionsSet,"[*][?(@.GroupID=="+a5e.GroupID+")]"),0),ParentToken)]
-		[h:ConditionsSet = json.path.set(ConditionsSet,"[*][?(@.GroupID=="+a5e.GroupID+")]",NewTargets)]
+		[h:NewTargets = json.append(json.get(json.path.read(ConditionsSet,"[*][?(@.GroupID=="+a5e.GroupID+")]['Targets']"),0),ParentToken)]
+		[h:ConditionsSet = json.path.set(ConditionsSet,"[*][?(@.GroupID=="+a5e.GroupID+")]['Targets']",NewTargets)]
 	}]
 	[h:switchToken(ParentToken)]
 };{}]

@@ -191,7 +191,7 @@
 [h,if(!json.isEmpty(spell.DamageInfo)): thisEffectData = json.set(thisEffectData,"Damage",spell.DamageInfo)]
 
 [h,if(json.contains(SpellSubeffectData,"ConditionInfo")),CODE:{
-	[h:tempConditions = json.get(json.get(SpellSubeffectData,"ConditionInfo"),"Conditions")]
+	[h:tempConditionInfo = json.get(SpellSubeffectData,"ConditionInfo")]
 	[h,if(json.contains(SpellSubeffectData,"ConditionOptionsNumber")),CODE:{
 		[h:spell.ConditionChoiceNumber = json.get(SpellSubeffectData,"ConditionOptionsNumber")]
 		[h,if(json.get(SpellSubeffectData,"ConditionOptionsNumberAHLScaling") > 0): spell.ConditionChoiceNumber = spell.ConditionChoiceNumber + (json.contains(SpellSubeffectData,"ConditionOptionsNumberAHL") * floor(spell.AHL/json.get(SpellSubeffectData,"ConditionOptionsNumberAHLScaling")))]
@@ -199,10 +199,11 @@
 		[h:spell.ConditionChoiceNumber = 0]
 	}]
 
-	[h:spell.Conditions = pm.a5e.ChooseCondition(json.get(tempConditions,"Conditions"),spell.ConditionChoiceNumber)]
+	[h:spell.Conditions = pm.a5e.ChooseCondition(json.get(tempConditionInfo,"Conditions"),spell.ConditionChoiceNumber)]
 
-	[h:spell.ConditionEndInfo = json.get(tempConditions,"EndInfo")]
+	[h:spell.ConditionEndInfo = json.get(tempConditionInfo,"EndInfo")]
 	[h,if(json.get(spell.ConditionEndInfo,"UseSpellDuration") == 1): spell.ConditionEndInfo = json.set(spell.ConditionEndInfo,"Duration",DurationValue,"DurationUnits",DurationUnits)]
+	[h:spell.ConditionEndInfo = json.remove(spell.ConditionEndInfo,"UseSpellDuration")]
 
 	[h:thisEffectData = json.set(thisEffectData,"ConditionInfo",json.set("","Conditions",spell.Conditions,"EndInfo",spell.ConditionEndInfo))]
 		

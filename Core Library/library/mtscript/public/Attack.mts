@@ -240,9 +240,11 @@
 [h:pm.PassiveFunction("AfterWeaponAttackTargeted",json.set("","ParentToken",thisAttackTarget))]
 
 [h:pm.RemovedConditions = "[]"]
-[h,foreach(group,json.path.read(ConditionGroups,"[*]['EndTriggers'][?(@.AfterAttack != null && @.AfterAttack != 0)]","DEFAULT_PATH_LEAF_TO_NULL")),CODE:{
+[h:pm.RemovedConditionsTableLines = "[]"]
+[h,foreach(group,json.path.read(ConditionGroups,"[*][?(@.EndTriggers.AfterAttack != null && @.EndTriggers.AfterAttack != 0)]","DEFAULT_PATH_LEAF_TO_NULL")),CODE:{
 	[h,macro("EndCondition@Lib:pm.a5e.Core"): json.set("","GroupID",json.get(group,"GroupID"),"ParentToken",ParentToken)]
-	[h:pm.RemovedConditions = json.merge(pm.RemovedConditions,json.get(macro.return,"Table"))]
+	[h:pm.RemovedConditions = json.merge(pm.RemovedConditions,json.get(macro.return,"Removed"))]
+	[h:pm.RemovedConditionsTableLines = json.merge(pm.RemovedConditionsTableLines,json.get(macro.return,"Table"))]
 }]
 
 [h,if(!json.isEmpty(pm.RemovedConditions)): 
@@ -256,5 +258,7 @@
 		"DisplayOrder","['Rules','Roll','Full']")
 	)
 ]
+
+[h,if(!json.isEmpty(pm.RemovedConditions)): abilityTable = json.merge(abilityTable,pm.RemovedConditionsTableLines)]
 
 [h:macro.return = json.set("","Table",abilityTable,"Effect",pm.a5e.EffectData)]

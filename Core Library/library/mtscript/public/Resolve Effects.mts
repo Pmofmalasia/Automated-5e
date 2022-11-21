@@ -17,6 +17,7 @@
     case "ARRAY": effConditionInfo = effConditionInfo;
     case "UNKNOWN": effConditionInfo = "[]"
 ]
+[h:effConditionsRemovedInfo = json.get(effToResolve,"ConditionsRemovedInfo")]
 [h:effDamageData = json.get(effToResolve,"Damage")]
 [h:effAttackData = json.get(effToResolve,"Attack")]
 [h:effCheckDCData = json.get(effToResolve,"CheckDC")]
@@ -40,6 +41,7 @@
 	[h:thisTokenCheckDCData = effCheckDCData]
 	[h:thisTokenDamageDealt = effDamageData]
 	[h:thisTokenConditionInfo = effConditionInfo]
+	[h:thisTokenConditionsRemovedInfo = effConditionsRemovedInfo]
     [h:thisTokenConditionsApplied = effAllConditionIdentifiers]
 	[h:switchToken(targetToken)]
 
@@ -97,7 +99,7 @@
 				passedSave = 0
 			]
 			[h,switch(autoResultTest+""+passedSave):
-				case "11": pm.a5e.ResolveDC(json.set("","DCData",thisTokenSaveDCData));
+				case "11": pm.a5e.ResolveSaveDCSuccess(json.set("","DCData",thisTokenSaveDCData));
 				case "10": "";
 				case "00": needsFurtherResolution = 1
 			]
@@ -105,7 +107,7 @@
 		case "10":{
 			[h:SaveResult = json.get(effSavesMadeData,targetToken)]
 			[h:passedSave = json.get(SaveResult,"Value")>=json.get(thisTokenSaveDCData,"DC")]
-			[h,if(passedSave==1): pm.a5e.ResolveDC(json.set("","DCData",thisTokenSaveDCData))]
+			[h,if(passedSave==1): pm.a5e.ResolveSaveDCSuccess(json.set("","DCData",thisTokenSaveDCData))]
 			[h:abilityTable = json.merge(abilityTable,json.get(SaveResult,"Table"))]
 		};
 		default:{}
@@ -144,7 +146,7 @@
 				passedCheck = 0
 			]
 			[h,switch(autoResultTest+""+passedCheck):
-				case "11": pm.a5e.ResolveDC(json.set("","DCData",thisTokenCheckDCData));
+				case "11": pm.a5e.ResolveSaveDCSuccess(json.set("","DCData",thisTokenCheckDCData));
 				case "10": "";
 				case "00": needsFurtherResolution = 1
 			]
@@ -158,7 +160,7 @@
 				DCValue = json.get(thisTokenCheckDCData,"DC")
 			]
 			
-			[h,if(json.get(CheckResult,"Value") >= DCValue): pm.a5e.ResolveDC(json.set("","DCData",thisTokenCheckDCData))]
+			[h,if(json.get(CheckResult,"Value") >= DCValue): pm.a5e.ResolveSaveDCSuccess(json.set("","DCData",thisTokenCheckDCData))]
 			[h:abilityTable = json.merge(abilityTable,json.get(CheckResult,"Table"))]
 		};
 		default:{}

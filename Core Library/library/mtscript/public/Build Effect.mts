@@ -25,6 +25,7 @@
     [h:usageData = json.get(effect,"UseTime")]
     [h:resourceData = json.get(effect,"Resource")]
     [h:conditionData = json.get(effect,"ConditionInfo")]
+    [h:conditionsRemovedData = json.get(effect,"ConditionsRemovedInfo")]
     [h:effectTargetData = json.get(effect,"TargetedEffects")]
     [h:effectTargetOptionData = json.get(effect,"TargetedEffectOptions")]
 
@@ -141,6 +142,25 @@
 		[h,if(noPriorConditionsTest):
             tempToResolve = json.set(tempToResolve,"ConditionInfo",json.append("",conditionData));
             tempToResolve = pm.a5e.BuildEffectMergeConditions(tempToResolve,conditionData)
+        ]
+
+        [h:thisEffect = json.set(thisEffect,"ToResolve",tempToResolve)]
+
+		[h,if(whichEffect >= json.length(currentEffectData)): currentEffectData = json.append(currentEffectData,thisEffect); currentEffectData = json.set(currentEffectData,whichEffect,thisEffect)]
+    };{}]
+    
+    [h,if(conditionsRemovedData!=""),CODE:{
+		[h,if(whichEffect >= json.length(currentEffectData)): thisEffect = json.path.set(baseEffectData,".ID",pm.a5e.GenerateEffectID()); thisEffect = json.get(currentEffectData,whichEffect)]
+		
+        [h:tempToResolve = json.get(thisEffect,"ToResolve")]
+		[h,if(tempToResolve==""):
+            noPriorConditionsRemovedTest = 1;
+            noPriorConditionsRemovedTest = json.isEmpty(json.get(tempToResolve,"ConditionsRemovedInfo"))
+        ]
+
+		[h,if(noPriorConditionsRemovedTest):
+            tempToResolve = json.set(tempToResolve,"ConditionsRemovedInfo",json.append("",conditionsRemovedData));
+            tempToResolve = pm.a5e.BuildEffectMergeConditionsRemoved(tempToResolve,conditionsRemovedData)
         ]
 
         [h:thisEffect = json.set(thisEffect,"ToResolve",tempToResolve)]

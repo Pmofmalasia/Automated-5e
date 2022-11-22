@@ -47,12 +47,13 @@
     [h,if(allResistedTest): tempDeleteCount = tempDeleteCount + 1]
 }]
 
-[h:"<!-- Note: Conditions that require failure to be removed are evaled in success and vice versa, since there are 3 options (success, failure, neither) -->"]
-[h:tempConditionsRemovedSaveInfo = json.get(DCData,"ConditionsRemoved")]
-[h,if(tempConditionsRemovedSaveInfo != ""): ConditionsRemovedOnSuccessInfo = json.get(tempConditionsRemovedSaveInfo,"Success")]
-
-
-
+[h:"<!-- TODO: add corresponding on failure thing Note: Conditions that require failure to be removed are evaled in success and vice versa, since there are 3 options (success, failure, neither) -->"]
+[h:ConditionsRemovedSaveInfo = json.get(DCData,"ConditionsRemoved")]
+[h,if(ConditionsRemovedSaveInfo != ""): 
+    preventConditionRemovalTest = json.get(ConditionsRemovedSaveInfo,"Failure");
+    preventConditionRemovalTest = 0
+]
+[h,if(preventConditionRemovalTest==1): thisTokenConditionsRemovedInfo = "{}"]
 
 [h,if(json.type(effTargetSpecific)=="OBJECT"),CODE:{
     [h:targetSpecificDamage = json.get(effTargetSpecific,targetToken)]

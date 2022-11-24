@@ -179,12 +179,36 @@
 	};{}]
 	
 	[h,foreach(conditionSet,thisTokenConditionInfo),CODE:{
-		[h,MACRO("ApplyCondition@Lib:pm.a5e.Core"):
-			json.set(conditionSet,
+		[h,MACRO("ApplyCondition@Lib:pm.a5e.Core"): json.set(conditionSet,
 			"GroupID",effConditionGroupID,
 			"Target",targetToken,
-			"SetBy",ParentToken)
+			"SetBy",ParentToken
+		)]
+		[h:abilityTable = json.merge(abilityTable,json.get(macro.return,"Table"))]
+	}]
+
+	[h,if(!json.isEmpty(thisTokenConditionsRemovedInfo)),CODE:{
+		[h:tempConditionsRemovedGroups = json.get(thisTokenConditionsRemovedInfo,"Groups")]
+		[h,if(tempConditionsRemovedGroups == ""): tempConditionsRemovedGroups = "[]"]
+		[h,if(json.type(tempConditionsRemovedGroups)=="UNKNOWN" ): tempConditionsRemovedGroups = json.append("",tempConditionsRemovedGroups)]
+
+		[h:tempConditionsRemovedNames = json.get(thisTokenConditionsRemovedInfo,"ConditionNames")]
+		[h,if(tempConditionsRemovedNames == "ARRAY"): 
+			tempConditionsRemovedGroups = json.merge(tempConditionsRemovedGroups,json.unique(json.path.read(getProperty("ConditionList",targetToken),"[*][?(@.Name in "+tempConditionsRemovedNames+")]['GroupID']")));
+			tempConditionsRemovedGroups = json.merge(tempConditionsRemovedGroups,json.path.read(getProperty("ConditionList",targetToken),"[*][?(@.Name == "+tempConditionsRemovedNames+")]['GroupID']"))
 		]
+
+		[h:tempConditionsRemovedTypes = json.get(thisTokenConditionsRemovedInfo,"ConditionTypes")]
+		[h,if(tempConditionsRemovedTypes == "ARRAY"): 
+			tempConditionsRemovedGroups = json.merge(tempConditionsRemovedGroups,json.unique(json.path.read(getProperty("ConditionList",targetToken),"[*][?(@.ConditionType in "+tempConditionsRemovedTypes+")]['GroupID']")));
+			tempConditionsRemovedGroups = json.merge(tempConditionsRemovedGroups,json.path.read(getProperty("ConditionList",targetToken),"[*][?(@.ConditionType == "+tempConditionsRemovedTypes+" && @.ConditionType != '')]['GroupID']"))
+		]
+
+		[h:tempEndConditionData = json.set("",
+			"ParentToken",targetToken,
+			"GroupID",tempConditionsRemovedGroups
+		)]
+		[h,MACRO("EndCondition@Lib:pm.a5e.Core"): tempEndConditionData]
 		[h:abilityTable = json.merge(abilityTable,json.get(macro.return,"Table"))]
 	}]
 }]
@@ -192,7 +216,7 @@
 [h,if(!json.isEmpty(remainingTargetsList)),CODE:{
 	[h:effFull = json.set(effFull,"Targets",remainingTargetsList)]
 
-[h:"<!-- This is awful. I am sorry. I blame CODE block limits. -->"]
+	[h:"<!-- This is awful. I am sorry. I blame CODE block limits. -->"]
 	[h,if(json.get(effToResolve,"SaveDC")!=""): effFull = json.set(effFull,"ToResolve",json.set(json.get(effFull,"ToResolve"),"SaveDC",json.set(json.get(json.get(effFull,"ToResolve"),"SaveDC"),"SavesMade",effSavesMadeData)))]
 	[h,if(json.get(effToResolve,"CheckDC")!=""): effFull = json.set(effFull,"ToResolve",json.set(json.get(effFull,"ToResolve"),"CheckDC",json.set(json.get(json.get(effFull,"ToResolve"),"CheckDC"),"ChecksMade",effChecksMadeData)))]
 

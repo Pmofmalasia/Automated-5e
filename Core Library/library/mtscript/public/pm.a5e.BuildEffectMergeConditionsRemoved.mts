@@ -11,12 +11,6 @@
     [h,if(json.get(newEffect,"Groups")!=""): oldEffectConditionsRemoved = json.set(oldEffectConditionsRemoved,"Groups",json.get(newEffect,"Groups"))]
 }]
 
-[h,if(json.get(oldEffectConditionsRemoved,"ConditionIDs")==""),CODE:{
-    [h:oldEffectConditionsRemoved = json.set(oldEffectConditionsRemoved,"ConditionIDs",json.get(newEffect,"ConditionIDs"))]
-};{
-    [h,if(json.get(newEffect,"ConditionIDs")!=""): oldEffectConditionsRemoved = json.set(oldEffectConditionsRemoved,"ConditionIDs",json.get(newEffect,"ConditionIDs"))]
-}]
-
 [h,if(json.get(oldEffectConditionsRemoved,"ConditionTypes")==""),CODE:{
     [h:oldEffectConditionsRemoved = json.set(oldEffectConditionsRemoved,"ConditionTypes",json.get(newEffect,"ConditionTypes"))]
 };{

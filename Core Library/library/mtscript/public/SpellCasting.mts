@@ -243,7 +243,6 @@
 
 [h:SpellDescription = base64.decode(json.get(FinalSpellData,"Description"))]
 
-
 [h:IsOngoing=json.get(FinalSpellData,"IsOngoing")]
 [h:IsCheck=json.get(FinalSpellData,"IsCheck")]
 [h:isConcentration = json.get(FinalSpellData,"isConcentration")]

@@ -50,4 +50,6 @@
 
 [h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowXR'><th><label for='XR'>XR:</label></th><td><input type='number' id='XR' name='XR' min='0' width='25px'></td></tr>"]
 
+[h:monsterCreationHTML = monsterCreationHTML + "</tr><tr><th text-align='center' colspan='2'><input type='submit' id='submitButton' value='Submit'></th></tr>"]
+
 [h:html.dialog5("Monster Creation","lib://pm.a5e.core/CreateMonster.html?cachelib=false","value="+base64.encode(monsterCreationHTML))]

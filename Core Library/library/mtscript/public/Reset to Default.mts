@@ -7,7 +7,7 @@
 )]
 [h:abort(Confirmation)]
 [h:abort(Answeryn)]
-[h:setPropertyType("Basic")]
+[h:setPropertyType("A5ECreature")]
 
 [h:PropNames=getPropertyNamesRaw("json")]
 

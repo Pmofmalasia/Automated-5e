@@ -25,6 +25,9 @@
     [h:setProperty("Subrace",json.get(chosenSubrace,"DisplayName"))]
 }]
 
+[h:setProperty("stat.Size",json.get(newCharData,"sizeChoice"))]
+[h:setSize(json.get(newCharData,"sizeChoice"))]
+
 [h:setProperty("Deity",json.get(newCharData,"deityName"))]
 [h:setProperty("Alignment",json.set("","Order",json.get(newCharData,"orderChoice"),"Morality",json.get(newCharData,"moralityChoice")))]
 

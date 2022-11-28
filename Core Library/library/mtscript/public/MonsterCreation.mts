@@ -27,7 +27,7 @@
     </select>
 </td></tr>"]
 
-[h:"<!-- TODO: Add natural armor vs. equipment when equipment is set up -->"]
+[h:"<!-- TODO: Add natural armor vs. equipment when equipment is set up; need new way to calculate AC/MaxHP/Speed/Proficiency without using regular calculations -->"]
 [h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowAC'><th><label for='AC'>AC:</label></th><td><input type='number' id='AC' name='AC' min='1' style='width:25px'></td></tr>"]
 
 [h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowMaxHP'><th><label for='MaxHP'>Maximum HP:</label></th><td><input type='number' id='MaxHP' name='MaxHP' min='1' style='width:40px'></td></tr>"]
@@ -65,13 +65,11 @@
 
 [h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowTruesight'><th><label for='Truesight'>Truesight Distance:</label></th><td><input type='number' id='Truesight' name='Truesight' min='0' style='width:25px' value='0'> feet</td></tr>"]
 
-[h:"<!-- TODO: Senses here (sight); make sure to add checkbox for having regular vision -->"]
-
 [h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowProficiency'><th><label for='Proficiency'>Proficiency Bonus:</label></th><td><input type='number' id='Proficiency' name='Proficiency' min='1' style='width:25px' value='2'></td></tr>"]
 
 [h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowCR'><th><label for='CR'>CR:</label></th><td><input type='number' id='CR' name='CR' min='0' style='width:25px'></td></tr>"]
 
-[h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowXR'><th><label for='XR'>XR:</label></th><td><input type='number' id='XR' name='XR' min='0' style='width:25px'></td></tr>"]
+[h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowXP'><th><label for='XP'>XP:</label></th><td><input type='number' id='XP' name='XP' min='0' style='width:25px'></td></tr>"]
 
 [h:monsterCreationHTML = monsterCreationHTML + "</tr><tr><th text-align='center' colspan='2'><input type='submit' id='submitButton' value='Submit'></th></tr>"]
 

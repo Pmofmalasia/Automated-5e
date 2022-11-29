@@ -58,13 +58,18 @@
 	}]
 }]
 
+[h:validConditionEndTriggers = json.path.read(ConditionGroups,"[*][?(@.EndInfo.EndTriggers!=null)]","DEFAULT_PATH_LEAF_TO_NULL")]
+[h,foreach(tempCondition,validConditionEndTriggers),CODE:{
+	
+}]
+
 [h:setConditionsRemoved = json.unique(json.path.read(setConditionsRemoved,"[*]['DisplayName']"))]
 [h,if(!json.isEmpty(setConditionsRemoved)): abilityTable = json.append(abilityTable,json.set("",
 	"ShowIfCondensed",1,
 	"Header","Conditions on Targets Ending",
 	"FalseHeader","",
 	"FullContents","",
-	"RulesContents",json.toList(setConditionsRemoved,", "),
+	"RulesContents",pm.a5e.CreateDisplayList(setConditionsRemoved),
 	"RollContents","",
 	"DisplayOrder","['Rules','Roll','Full']"
 ))]

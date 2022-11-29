@@ -10,7 +10,7 @@
 [h:setOverrideMaxHP = -1]
 
 [h:"<!-- Temporary magic item calculation for current, old magic items -->"]
-[h:setMaxHP = json.get(MagicItemStats,"sMaxHP"))]
+[h:setMaxHP = json.get(MagicItemStats,"sMaxHP")]
 [h:setOverrideMaxHP = json.get(MagicItemStats,"soMaxHP")]
 [h:bonusMaxHP = json.get(MagicItemStats,"bMaxHP")]
 

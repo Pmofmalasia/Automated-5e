@@ -17,10 +17,8 @@
 	"DisplayOrder","['Rules','Roll','Full']",
 	"Value",""
 ))]
-	
-[h,if(json.get(LClass,"Warlock")!=""):SpellSlots = json.set(SpellSlots,"W",1+if(json.get(LClass,"Warlock")>1,1,0)+if(json.get(LClass,"Warlock")>10,1,0)+if(json.get(LClass,"Warlock")>16,1,0))]
 
-[h,if(json.get(MaxSpellSlots,"1")>0 || json.get(MaxSpellSlots,"W")>0):
+[h,if(json.get(MaxSpellSlots,"1")>0):
 	abilityTable = json.append(abilityTable,json.set("",
 		"ShowIfCondensed",1,
 		"Header","Spell Slots",
@@ -86,9 +84,9 @@
 
 [h:pm.PassiveFunction("ShortRest")]
 
-[h:state.Dying=if(HP <= 0, 1, 0)]
-[h:state.Bloodied=if(HP/MaxHP <= 0.5, 1, 0)]
-[h:bar.Health = HP / MaxHP]
+[h:state.Dying=if(getProperty("a5e.stat.HP") <= 0, 1, 0)]
+[h:state.Bloodied=if(getProperty("a5e.stat.HP")/getProperty("a5e.stat.MaxHP") <= 0.5, 1, 0)]
+[h:bar.Health = getProperty("a5e.stat.HP") / getProperty("a5e.stat.MaxHP")]
 
 [h:DeathSaves=json.set("{ }", "Successes",0,"Failures",0)]
 

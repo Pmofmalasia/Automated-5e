@@ -1,7 +1,7 @@
 [h:priorRaceSelection = macro.args]
-[h:RaceData = json.get(pm.GetRaces(),priorRaceSelection)]
+[h:tempRaceData = json.get(pm.GetRaces(),priorRaceSelection)]
 
-[h:SubraceArray = pm.GetSubraces(json.get(RaceData,"Name"))]
+[h:SubraceArray = pm.GetSubraces(json.get(tempRaceData,"Name"))]
 [h,if(json.isEmpty(SubraceArray)),CODE:{
     [h:subraceOptions = "<option value='None'>No Subrace</option>"]
 
@@ -14,7 +14,7 @@
     [h:subraceData = json.set("","isReadonly",0,"Options",subraceOptions)]
 }]
 
-[h:RaceTraits = json.get(RaceData,"Traits")]
+[h:RaceTraits = json.get(tempRaceData,"Traits")]
 [h:RaceSizeOptions = json.get(RaceTraits,"SizeOptions")]
 [h,if(RaceSizeOptions==""),CODE:{
     [h:subraceData = json.set(subraceData,"hasSizeChoice",0,"Size",json.get(RaceTraits,"Size"),"SizeOptions","<option value='"+json.get(RaceTraits,"Size")+"'>"+json.get(RaceTraits,"Size")+"</option>")]

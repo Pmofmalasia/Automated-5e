@@ -12,12 +12,12 @@
 		[h:pm.DCPrimeStat = ""]
 	};{
 		[h:pm.DCPrimeStat = pm.DCInfo]
-		[h:pm.DC = 8 + json.get(AtrMods,pm.DCPrimeStat) + Proficiency]
+		[h:pm.DC = 8 + json.get(getProperty("a5e.stat.AtrMods"),pm.DCPrimeStat) + getProperty("a5e.stat.Proficiency")]
 	}]
 };{
 	[h:pm.baseDC = json.get(pm.DCInfo,"Base")]
 	[h:pm.DCPrimeStat = json.get(pm.DCInfo,"Stat")]
-	[h:pm.DC = pm.baseDC + json.get(AtrMods,pm.DCPrimeStat) + Proficiency]
+	[h:pm.DC = pm.baseDC + json.get(getProperty("a5e.stat.AtrMods"),pm.DCPrimeStat) + getProperty("a5e.stat.Proficiency")]
 }]
 
 [h:isDamageHalved = json.get(pm.SaveModifiers,"DamageHalved")]

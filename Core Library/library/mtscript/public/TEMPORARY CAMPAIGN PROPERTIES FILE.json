@@ -1,0 +1,159 @@
+__CHARACTER__:__________
+a5e.stat.BaseAttributes:{"Strength":10,"Dexterity":10,"Constitution":10,"Intelligence":10,"Wisdom":10,"Charisma":10}
+a5e.stat.Attributes:[r:json.get(a5e.AttributeCalc(),"Attributes")]
+a5e.stat.AtrMods:[r:json.get(a5e.AttributeCalc(),"Modifiers")]
+a5e.stat.Level (Character Level):[r:a5e.TotalLevel()]
+a5e.stat.ClassLevels (Class Levels):{}
+a5e.stat.Proficiency:[r:ceiling(Level/4)+1]
+a5e.stat.Experience:0
+#a5e.stat.Alignment (Alignment):Neutral
+a5e.stat.CreatureType:Humanoid
+a5e.stat.Race:Grue
+a5e.stat.Subrace
+a5e.stat.RaceData:{}
+a5e.stat.Size
+a5e.stat.Deity:Ao
+a5e.stat.Background
+a5e.stat.Languages:[r:a5e.Languages()]
+a5e.stat.Note
+__HEALTH__:__________
+a5e.stat.HP:0
+a5e.stat.BaseMaxHP:0
+a5e.stat.MaxHP:[r:a5e.MaxHP()]
+RolledMaxHP:0
+TempHP:0
+HPDrain:0
+Exhaustion:0
+DeathSaves:{"Successes":0,"Failures":0}
+HitDice:{"1d12":0,"1d10":0,"1d8":0,"1d6":0}
+MaxHitDice:{"1d12":0,"1d10":0,"1d8":0,"1d6":0}
+AllSpeeds:[r:a5e.Speed()]
+Speed:[r:json.get(AllSpeeds,"Walking")]
+BurrowSpeed:[r:json.get(AllSpeeds,"Burrow")]
+ClimbSpeed:[r:json.get(AllSpeeds,"Climb")]
+FlySpeed:[r:json.get(AllSpeeds,"Fly")]
+SwimSpeed:[r:json.get(AllSpeeds,"Swim")]
+SpeedSpecial
+Vision
+__DAMAGE MODIFIERS__:__________
+CritRange:20
+DamageModifiers:[r:pm.a5e.DamageModifiers()]
+Vulnerability:[r:'{"Bludgeoning":0,"Slashing":0,"Piercing":0,"Acid":0,"Cold":0,"Fire":0,"Force":0,"Lightning":0,"Necrotic":0,"Poison":0,"Psychic":0,"Radiant":0,"Thunder":0,"Abjuration":0,"Conjuration":0,"Divination":0,"Enchantment":0,"Evocation":0,"Illusion":0,"Necromancy":0,"Transmutation":0}']
+Resistance:[r:'{"Bludgeoning":0,"Slashing":0,"Piercing":0,"Acid":0,"Cold":0,"Fire":0,"Force":0,"Lightning":0,"Necrotic":0,"Poison":0,"Psychic":0,"Radiant":0,"Thunder":0,"Abjuration":0,"Conjuration":0,"Divination":0,"Enchantment":0,"Evocation":0,"Illusion":0,"Necromancy":0,"Transmutation":0}']
+Immunity:[r:'{"Bludgeoning":0,"Slashing":0,"Piercing":0,"Acid":0,"Cold":0,"Fire":0,"Force":0,"Lightning":0,"Necrotic":0,"Poison":0,"Psychic":0,"Radiant":0,"Thunder":0,"Abjuration":0,"Conjuration":0,"Divination":0,"Enchantment":0,"Evocation":0,"Illusion":0,"Necromancy":0,"Transmutation":0}']
+Absorption:[r:'{"Bludgeoning":0,"Slashing":0,"Piercing":0,"Acid":0,"Cold":0,"Fire":0,"Force":0,"Lightning":0,"Necrotic":0,"Poison":0,"Psychic":0,"Radiant":0,"Thunder":0,"Abjuration":0,"Conjuration":0,"Divination":0,"Enchantment":0,"Evocation":0,"Illusion":0,"Necromancy":0,"Transmutation":0}']
+charDR:[r:'{"Bludgeoning":'+json.get(MagicItemStats,"ibludgDR")+',"Slashing":'+json.get(MagicItemStats,"islashDR")+',"Piercing":'+json.get(MagicItemStats,"ipierceDR")+',"Acid":'+json.get(MagicItemStats,"iacidDR")+',"Cold":'+json.get(MagicItemStats,"icoldDR")+',"Fire":'+json.get(MagicItemStats,"ifireDR")+',"Force":'+json.get(MagicItemStats,"iforceDR")+',"Lightning":'+json.get(MagicItemStats,"ilightDR")+',"Necrotic":'+json.get(MagicItemStats,"inecroDR")+',"Poison":'+json.get(MagicItemStats,"ipoisDR")+',"Psychic":'+json.get(MagicItemStats,"ipsychDR")+',"Radiant":'+json.get(MagicItemStats,"iradDR")+',"Thunder":'+json.get(MagicItemStats,"ithunDR")+',"Abjuration":'+json.get(MagicItemStats,"iabjDR")+',"Conjuration":'+json.get(MagicItemStats,"iconjDR")+',"Divination":'+json.get(MagicItemStats,"idivDR")+',"Enchantment":'+json.get(MagicItemStats,"ienchDR")+',"Evocation":'+json.get(MagicItemStats,"ievocDR")+',"Illusion":'+json.get(MagicItemStats,"iillDR")+',"Necromancy":'+json.get(MagicItemStats,"inecDR")+',"Transmutation":'+json.get(MagicItemStats,"itranDR")+',"Magical Bludgeoning":'+json.get(MagicItemStats,"ibludgDRMag")+',"Magical Slashing":'+json.get(MagicItemStats,"islashDRMag")+',"Magical Piercing":'+json.get(MagicItemStats,"ipierceDRMag")+',"Magical Acid":'+json.get(MagicItemStats,"iacidDRMag")+',"Magical Cold":'+json.get(MagicItemStats,"icoldDRMag")+',"Magical Fire":'+json.get(MagicItemStats,"ifireDRMag")+',"Magical Force":'+json.get(MagicItemStats,"iforceDRMag")+',"Magical Lightning":'+json.get(MagicItemStats,"ilightDRMag")+',"Magical Necrotic":'+json.get(MagicItemStats,"inecroDRMag")+',"Magical Poison":'+json.get(MagicItemStats,"ipoisDRMag")+',"Magical Psychic":'+json.get(MagicItemStats,"ipsychDRMag")+',"Magical Radiant":'+json.get(MagicItemStats,"iradDRMag")+',"Magical Thunder":'+json.get(MagicItemStats,"ithunDRMag")+',"Magical Abjuration":'+json.get(MagicItemStats,"iabjDRMag")+',"Magical Conjuration":'+json.get(MagicItemStats,"iconjDRMag")+',"Magical Divination":'+json.get(MagicItemStats,"idivDRMag")+',"Magical Enchantment":'+json.get(MagicItemStats,"ienchDRMag")+',"Magical Evocation":'+json.get(MagicItemStats,"ievocDRMag")+',"Magical Illusion":'+json.get(MagicItemStats,"iillDRMag")+',"Magical Necromancy":'+json.get(MagicItemStats,"inecDRMag")+',"Magical Transmutation":'+json.get(MagicItemStats,"itranDRMag")+',"Physical Bludgeoning":'+json.get(MagicItemStats,"ibludgDRPhys")+',"Physical Slashing":'+json.get(MagicItemStats,"islashDRPhys")+',"Physical Piercing":'+json.get(MagicItemStats,"ipierceDRPhys")+',"Physical Acid":'+json.get(MagicItemStats,"iacidDRPhys")+',"Physical Cold":'+json.get(MagicItemStats,"icoldDRPhys")+',"Physical Fire":'+json.get(MagicItemStats,"ifireDRPhys")+',"Physical Force":'+json.get(MagicItemStats,"iforceDRPhys")+',"Physical Lightning":'+json.get(MagicItemStats,"ilightDRPhys")+',"Physical Necrotic":'+json.get(MagicItemStats,"inecroDRPhys")+',"Physical Poison":'+json.get(MagicItemStats,"ipoisDRPhys")+',"Physical Psychic":'+json.get(MagicItemStats,"ipsychDRPhys")+',"Physical Radiant":'+json.get(MagicItemStats,"iradDRPhys")+',"Physical Thunder":'+json.get(MagicItemStats,"ithunDRPhys")+',"Physical Abjuration":'+json.get(MagicItemStats,"iabjDRPhys")+',"Physical Conjuration":'+json.get(MagicItemStats,"iconjDRPhys")+',"Physical Divination":'+json.get(MagicItemStats,"idivDRPhys")+',"Physical Enchantment":'+json.get(MagicItemStats,"ienchDRPhys")+',"Physical Evocation":'+json.get(MagicItemStats,"ievocDRPhys")+',"Physical Illusion":'+json.get(MagicItemStats,"iillDRPhys")+',"Physical Necromancy":'+json.get(MagicItemStats,"inecDRPhys")+',"Physical Transmutation":'+json.get(MagicItemStats,"itranDRPhys")+'}']
+ConditionImmunity:[r:'{"Blinded":'+if(json.get(MagicItemStats,"iblindCondImmun")==1,1,0)+',"Charmed":0,"Confused":'+if(json.get(MagicItemStats,"iconfuseCondImmun")==1,1,0)+',"Deafened":'+if(json.get(MagicItemStats,"ideafCondImmun")==1,1,0)+',"Diseased":0,"Frightened":0,"Grappled":'+if(json.get(MagicItemStats,"igrappleCondImmun")==1,1,0)+',"Incapacitated":'+if(json.get(MagicItemStats,"iincapCondImmun")==1,1,0)+',"Paralyzed":'+if(json.get(MagicItemStats,"iparaCondImmun")==1,1,0)+',"Petrified":'+if(json.get(MagicItemStats,"ipetrifyCondImmun")==1,1,0),+'"Poisoned":0,"Prone":'+if(json.get(MagicItemStats,"iproneCondImmun")==1,1,0)+',"Restrained":'+if(json.get(MagicItemStats,"irestrCondImmun")==1,1,0)+',"Stunned":'+if(json.get(MagicItemStats,"istunCondImmun")==1,1,0)+',"Surprised":'+if(json.get(MagicItemStats,"isurpCondImmun")==1,1,0)+',"Turned":'+if(json.get(MagicItemStats,"iturnCondImmun")==1,1,0)+',"Unconscious":'+if(json.get(MagicItemStats,"iunconcCondImmun")==1,1,0)+'}']
+__EQUIPMENT__:__________
+AC:[r:a5e.AC()]
+Armor:[1,{"Name":"None","MagicBonus":0,"Type":"None","ArmorTier":"None","BaseAC":10,"DexMax":99,"StrReq":0,"StealthDis":0,"MagicItem":0,"ItemBuffs":""}]
+Shield:[1,{"Name":"None","MagicBonus":0,"ItemBuffs":""}]
+Weapon:[2,2,{"Name":"Unarmed","MagicBonus":0,"Type":"Unarmed","DamageDie":"1d1","DamageType":"Bludgeoning","SecDamageDie":0,"SecDamageType":"None","MeleeRanged":"Melee","Range":0,"Reach":"5","CritRange":0,"CritMultiplier":0,"SpecialAbility":"","Props":{"Magic":0,"Finesse":0,"Monk":0,"Ammo":0,"Heavy":0,"Light":0,"Loading":0,"Reach":0,"Thrown":0,"Two-Handed":0,"Versatile":0,"IntMod":0,"WisMod":0,"ChaMod":0},"MagicItem":0,"ItemBuffs":""}]
+MagicItemNames:["Default"]
+MagicItemAttuned:[{"reqAttunement":0,"slotAttunement":0}]
+MagicItemActivation:[{"reqActive":0,"isActive":0}]
+MagicItemEquipment:[{"reqEquip":0,"isEquipped":0,"CastingFocus":0}]
+MagicItemVuln:[{"bludgVuln":0,"pierceVuln":0,"slashVuln":0,"acidVuln":0,"coldVuln":0,"fireVuln":0,"forceVuln":0,"lightVuln":0,"necroVuln":0,"poisVuln":0,"psychVuln":0,"radVuln":0,"thunVuln":0,"abjVuln":0,"conjVuln":0,"divVuln":0,"enchVuln":0,"evocVuln":0,"illVuln":0,"necVuln":0,"tranVuln":0}]
+MagicItemRes:[{"bludgRes":0,"pierceRes":0,"slashRes":0,"acidRes":0,"coldRes":0,"fireRes":0,"forceRes":0,"lightRes":0,"necroRes":0,"poisRes":0,"psychRes":0,"radRes":0,"thunRes":0,"abjRes":0,"conjRes":0,"divRes":0,"enchRes":0,"evocRes":0,"illRes":0,"necRes":0,"tranRes":0}]
+MagicItemImmun:[{"bludgImmun":0,"pierceImmun":0,"slashImmun":0,"acidImmun":0,"coldImmun":0,"fireImmun":0,"forceImmun":0,"lightImmun":0,"necroImmun":0,"poisImmun":0,"psychImmun":0,"radImmun":0,"thunImmun":0,"abjImmun":0,"conjImmun":0,"divImmun":0,"enchImmun":0,"evocImmun":0,"illImmun":0,"necImmun":0,"tranImmun":0}]
+MagicItemAbsorb:[{"bludgAbsorb":0,"pierceAbsorb":0,"slashAbsorb":0,"acidAbsorb":0,"coldAbsorb":0,"fireAbsorb":0,"forceAbsorb":0,"lightAbsorb":0,"necroAbsorb":0,"poisAbsorb":0,"psychAbsorb":0,"radAbsorb":0,"thunAbsorb":0,"abjAbsorb":0,"conjAbsorb":0,"divAbsorb":0,"enchAbsorb":0,"evocAbsorb":0,"illAbsorb":0,"necAbsorb":0,"tranAbsorb":0}]
+MagicItemDR:[{"bludgDR":0,"pierceDR":0,"slashDR":0,"acidDR":0,"coldDR":0,"fireDR":0,"forceDR":0,"lightDR":0,"necroDR":0,"poisDR":0,"psychDR":0,"radDR":0,"thunDR":0,"abjDR":0,"conjDR":0,"divDR":0,"enchDR":0,"evocDR":0,"illDR":0,"necDR":0,"tranDR":0}]
+MagicItemDRamnt:[{"bludgDRamnt":0,"pierceDRamnt":0,"slashDRamnt":0,"acidDRamnt":0,"coldDRamnt":0,"fireDRamnt":0,"forceDRamnt":0,"lightDRamnt":0,"necroDRamnt":0,"poisDRamnt":0,"psychDRamnt":0,"radDRamnt":0,"thunDRamnt":0,"abjDRamnt":0,"conjDRamnt":0,"divDRamnt":0,"enchDRamnt":0,"evocDRamnt":0,"illDRamnt":0,"necDRamnt":0,"tranDRamnt":0}]
+MagicItemCondImmun:[{"blindCondImmun":0,"charmCondImmun":0,"confuseCondImmun":0,"deafCondImmun":0,"diseaseCondImmun":0,"frightCondImmun":0,"grappleCondImmun":0,"incapCondImmun":0,"paraCondImmun":0,"petrifyCondImmun":0,"poisCondImmun":0,"proneCondImmun":0,"restrCondImmun":0,"stunCondImmun":0,"surpCondImmun":0,"turnCondImmun":0,"unconcCondImmun":0}]
+MagicItemAttributes:[{"StrBonus":0,"DexBonus":0,"ConBonus":0,"IntBonus":0,"WisBonus":0,"ChaBonus":0,"StrSet":0,"DexSet":0,"ConSet":0,"IntSet":0,"WisSet":0,"ChaSet":0,"StrSetOverride":-1,"DexSetOverride":-1,"ConSetOverride":-1,"IntSetOverride":-1,"WisSetOverride":-1,"ChaSetOverride":-1}]
+MagicItemSaves:[{"StrSaveAdv":0,"DexSaveAdv":0,"ConSaveAdv":0,"IntSaveAdv":0,"WisSaveAdv":0,"ChaSaveAdv":0,"StrSaveDis":0,"DexSaveDis":0,"ConSaveDis":0,"IntSaveDis":0,"WisSaveDis":0,"ChaSaveDis":0,"StrSaveBonus":0,"DexSaveBonus":0,"ConSaveBonus":0,"IntSaveBonus":0,"WisSaveBonus":0,"ChaSaveBonus":0,"StrSaveProf":0,"DexSaveProf":0,"ConSaveProf":0,"IntSaveProf":0,"WisSaveProf":0,"ChaSaveProf":0,"StrSaveMessage":"<br>&#8226; <b>Default:</b> 0","DexSaveMessage":"<br>&#8226; <b>Default:</b> 0","ConSaveMessage":"<br>&#8226; <b>Default:</b> 0","IntSaveMessage":"<br>&#8226; <b>Default:</b> 0","WisSaveMessage":"<br>&#8226; <b>Default:</b> 0","ChaSaveMessage":"<br>&#8226; <b>Default:</b> 0"}]
+MagicItemCheckAdv:[{"StrCheckAdv":0,"DexCheckAdv":0,"ConCheckAdv":0,"IntCheckAdv":0,"WisCheckAdv":0,"ChaCheckAdv":0,"AcbCheckAdv":0,"AnHCheckAdv":0,"ArcCheckAdv":0,"AthCheckAdv":0,"DcpCheckAdv":0,"HstCheckAdv":0,"InsCheckAdv":0,"ImdCheckAdv":0,"InvCheckAdv":0,"MedCheckAdv":0,"NtrCheckAdv":0,"PcpCheckAdv":0,"PfmCheckAdv":0,"PrsCheckAdv":0,"RlgCheckAdv":0,"SoHCheckAdv":0,"StlCheckAdv":0,"SrvCheckAdv":0}]
+MagicItemCheckDis:[{"StrCheckDis":0,"DexCheckDis":0,"ConCheckDis":0,"IntCheckDis":0,"WisCheckDis":0,"ChaCheckDis":0,"AcbCheckDis":0,"AnHCheckDis":0,"ArcCheckDis":0,"AthCheckDis":0,"DcpCheckDis":0,"HstCheckDis":0,"InsCheckDis":0,"ImdCheckDis":0,"InvCheckDis":0,"MedCheckDis":0,"NtrCheckDis":0,"PcpCheckDis":0,"PfmCheckDis":0,"PrsCheckDis":0,"RlgCheckDis":0,"SoHCheckDis":0,"StlCheckDis":0,"SrvCheckDis":0}]
+MagicItemCheckBonus:[{"StrCheckBonus":0,"DexCheckBonus":0,"ConCheckBonus":0,"IntCheckBonus":0,"WisCheckBonus":0,"ChaCheckBonus":0,"AcbCheckBonus":0,"AnHCheckBonus":0,"ArcCheckBonus":0,"AthCheckBonus":0,"DcpCheckBonus":0,"HstCheckBonus":0,"InsCheckBonus":0,"ImdCheckBonus":0,"InvCheckBonus":0,"MedCheckBonus":0,"NtrCheckBonus":0,"PcpCheckBonus":0,"PfmCheckBonus":0,"PrsCheckBonus":0,"RlgCheckBonus":0,"SoHCheckBonus":0,"StlCheckBonus":0,"SrvCheckBonus":0}]
+MagicItemCheckProf:[{"StrCheckProf":0,"DexCheckProf":0,"ConCheckProf":0,"IntCheckProf":0,"WisCheckProf":0,"ChaCheckProf":0,"AcbCheckProf":0,"AnHCheckProf":0,"ArcCheckProf":0,"AthCheckProf":0,"DcpCheckProf":0,"HstCheckProf":0,"InsCheckProf":0,"ImdCheckProf":0,"InvCheckProf":0,"MedCheckProf":0,"NtrCheckProf":0,"PcpCheckProf":0,"PfmCheckProf":0,"PrsCheckProf":0,"RlgCheckProf":0,"SoHCheckProf":0,"StlCheckProf":0,"SrvCheckProf":0}]
+MagicItemCheckMessage:[{"StrCheckMessage":"<tr><td>&#8226;</td><td> <b>Default:</b> 0</td></tr>","DexCheckMessage":"<tr><td>&#8226;</td><td> <b>Default:</b> 0</td></tr>","ConCheckMessage":"<tr><td>&#8226;</td><td> <b>Default:</b> 0</td></tr>","IntCheckMessage":"<tr><td>&#8226;</td><td> <b>Default:</b> 0</td></tr>","WisCheckMessage":"<tr><td>&#8226;</td><td> <b>Default:</b> 0</td></tr>","ChaCheckMessage":"<tr><td>&#8226;</td><td> <b>Default:</b> 0</td></tr>","AcbCheckMessage":"<tr><td>&#8226;</td><td> <b>Default:</b> 0</td></tr>","AnHCheckMessage":"<tr><td>&#8226;</td><td> <b>Default:</b> 0</td></tr>","ArcCheckMessage":"<tr><td>&#8226;</td><td> <b>Default:</b> 0</td></tr>","AthCheckMessage":"<tr><td>&#8226;</td><td> <b>Default:</b> 0</td></tr>","DcpCheckMessage":"<tr><td>&#8226;</td><td> <b>Default:</b> 0</td></tr>","HstCheckMessage":"<tr><td>&#8226;</td><td> <b>Default:</b> 0</td></tr>","InsCheckMessage":"<tr><td>&#8226;</td><td> <b>Default:</b> 0</td></tr>","ImdCheckMessage":"<tr><td>&#8226;</td><td> <b>Default:</b> 0</td></tr>","InvCheckMessage":"<tr><td>&#8226;</td><td> <b>Default:</b> 0</td></tr>","MedCheckMessage":"<tr><td>&#8226;</td><td> <b>Default:</b> 0</td></tr>","NtrCheckMessage":"<tr><td>&#8226;</td><td> <b>Default:</b> 0</td></tr>","PcpCheckMessage":"<tr><td>&#8226;</td><td> <b>Default:</b> 0</td></tr>","PfmCheckMessage":"<tr><td>&#8226;</td><td> <b>Default:</b> 0</td></tr>","PrsCheckMessage":"<tr><td>&#8226;</td><td> <b>Default:</b> 0</td></tr>","RlgCheckMessage":"<tr><td>&#8226;</td><td> <b>Default:</b> 0</td></tr>","SoHCheckMessage":"<tr><td>&#8226;</td><td> <b>Default:</b> 0</td></tr>","StlCheckMessage":"<tr><td>&#8226;</td><td> <b>Default:</b> 0</td></tr>","SrvCheckMessage":"<tr><td>&#8226;</td><td> <b>Default:</b> 0</td></tr>"}]
+MagicItemInit:[{"InitAdv":0,"InitDis":0,"InitBonus":0,"InitProf":0,"InitMessage":"<br>&#8226; <b>Default:</b> 0"}]
+MagicItemDeath:[{"DeathAdv":0,"DeathDis":0,"DeathBonus":0,"DeathProf":0,"DeathMessage":"<br>&#8226; <b>Default:</b> 0"}]
+MagicItemConc:[{"ConcAdv":0,"ConcDis":0,"ConcBonus":0,"ConcProf":0,"ConcMessage":"<br>&#8226; <b>Default:</b> 0"}]
+MagicItemHP:[{"MaxHPBonus":0,"MaxHPSet":0,"MaxHPSetOverride":-1}]
+MagicItemAC:[{"ACBonus":0,"ACSet":0,"ACSetOverride":-1}]
+MagicItemMovement:[{"SpeedBonus":0,"SpeedMultiplier":1,"SpeedSet":0,"SpeedSetOverride":-1,"IsBurrow":0,"BurrowBonus":0,"BurrowMultiplier":1,"BurrowSet":0,"BurrowSetOverride":-1,"IsClimb":0,"ClimbBonus":0,"ClimbMultiplier":1,"ClimbSet":0,"ClimbSetOverride":-1,"IsFly":0,"FlyBonus":0,"FlyMultiplier":1,"FlySet":0,"FlySetOverride":-1,"IsHover":0,"IsSwim":0,"SwimBonus":0,"SwimMultiplier":1,"SwimSet":0,"SwimSetOverride":-1}]
+MagicItemCantrips:[{"CantripAtkBonus":0,"CantripAtkAdv":0,"CantripAtkDis":0,"CantripCritBonusDice":0,"CantripCritBonus":0,"CantripCritBonusStacking":0,"CantripCritEffect":0,"CantripDCBonus":0,"CantripDamageRollNum":0,"CantripDamageRollSize":0,"CantripDamageBonus":0,"CantripDamageBonusType":0,"CantripMessage":0,"allCantrips":1,"BludgeoningCantrips":0,"PiercingCantrips":0,"SlashingCantrips":0,"AcidCantrips":0,"ColdCantrips":0,"FireCantrips":0,"ForceCantrips":0,"LightningCantrips":0,"NecroticCantrips":0,"PoisonCantrips":0,"PsychicCantrips":0,"RadiantCantrips":0,"ThunderCantrips":0,"NoneCantrip":0,"allCantripSchool":1,"abjurationCantripSchool":0,"conjurationCantripSchool":0,"divinationCantripSchool":0,"enchantmentCantripSchool":0,"evocationCantripSchool":0,"illusionCantripSchool":0,"necromancyCantripSchool":0,"transmutationCantripSchool":0}]
+MagicItemSpells:[{"SpellAtkBonus":0,"SpellAtkAdv":0,"SpellAtkDis":0,"SpellCritBonusDice":0,"SpellCritBonus":0,"SpellCritBonusStacking":0,"SpellCritEffect":0,"SpellDCBonus":0,"SpellDamageRollNum":0,"SpellDamageRollSize":0,"SpellDamageBonus":0,"SpellDamageBonusType":0,"SpellMessage":0,"allSpell":1,"BludgeoningSpell":0,"PiercingSpell":0,"SlashingSpell":0,"AcidSpell":0,"ColdSpell":0,"FireSpell":0,"ForceSpell":0,"LightningSpell":0,"NecroticSpell":0,"PoisonSpell":0,"PsychicSpell":0,"RadiantSpell":0,"ThunderSpell":0,"NoneSpell":0,"allSpellSchool":1,"abjurationSpellSchool":0,"conjurationSpellSchool":0,"divinationSpellSchool":0,"enchantmentSpellSchool":0,"evocationSpellSchool":0,"illusionSpellSchool":0,"necromancySpellSchool":0,"transmutationSpellSchool":0}]
+MagicItemWeapons:[{"WeaponAtkBonus":0,"WeaponAdditionalAttacks":0,"WeaponAdditionalAttacksStacking":0,"WeaponAtkAdv":0,"WeaponAtkDis":0,"WeaponCritBonusDice":0,"WeaponCritBonus":0,"WeaponCritBonusStacking":0,"WeaponCritEffect":"","WeaponDamageRollNum":0,"WeaponDamageRollSize":0,"WeaponDamageBonus":0,"WeaponDamageBonusType":"","WeaponMessage":"","allWeapon":1,"BludgeoningWeapon":0,"PiercingWeapon":0,"SlashingWeapon":0,"AcidWeapon":0,"ColdWeapon":0,"FireWeapon":0,"ForceWeapon":0,"LightningWeapon":0,"NecroticWeapon":0,"PoisonWeapon":0,"PsychicWeapon":0,"RadiantWeapon":0,"ThunderWeapon":0,"NoneWeapon":0,"Unarmed":0,"Club":0,"Dagger":0,"Greatclub":0,"Handaxe":0,"Javelin":0,"Light hammer":0,"Mace":0,"Quarterstaff":0,"Sickle":0,"Spear":0,"Light Crossbow":0,"Dart":0,"Shortbow":0,"Sling":0,"Battleaxe":0,"Flail":0,"Glaive":0,"Greataxe":0,"Greatsword":0,"Halberd":0,"Lance":0,"Longsword":0,"Maul":0,"Morningstar":0,"Pike":0,"Rapier":0,"Scimitar":0,"Shortsword":0,"Trident":0,"War Pick":0,"Warhammer":0,"Whip":0,"Blowgun":0,"Hand Crossbow":0,"Heavy Crossbow":0,"Longbow":0,"Net":0,"Custom":0,"Magic":0,"Finesse":0,"Monk":0,"Ammo":0,"Heavy":0,"Light":0,"Loading":0,"Reach":0,"Thrown":0,"Two-Handed":0,"Versatile":0,"IgnoreAmmo":0,"IgnoreFinesse":0,"IgnoreMonk":0,"IgnoreHeavy":0,"IgnoreLight":0,"IgnoreLoad":0,"IgnoreReach":0,"IgnoreThrown":0,"Ignore2h":0,"IgnoreVers":0,"IgnoreMagic":0,"ApplyAmmo":0,"ApplyFinesse":0,"ApplyMonk":0,"ApplyHeavy":0,"ApplyLight":0,"ApplyLoad":0,"ApplyReach":0,"ApplyThrown":0,"Apply2h":0,"ApplyVers":0,"ApplyMagic":0,"AllorOne":1}]
+MagicItemWeaponProf:[{"SimpleWeaponProf":0,"MartialWeaponProf":0,"ClubWeaponProf":0,"DaggerWeaponProf":0,"GreatclubWeaponProf":0,"HandaxeWeaponProf":0,"JavelinWeaponProf":0,"LightHammerWeaponProf":0,"MaceWeaponProf":0,"QuarterstaffWeaponProf":0,"SickleWeaponProf":0,"SpearWeaponProf":0,"LightCrossbowWeaponProf":0,"DartWeaponProf":0,"ShortbowWeaponProf":0,"SlingWeaponProf":0,"BattleaxeWeaponProf":0,"FlailWeaponProf":0,"GlaiveWeaponProf":0,"GreataxeWeaponProf":0,"GreatswordWeaponProf":0,"HalberdWeaponProf":0,"LanceWeaponProf":0,"LongswordWeaponProf":0,"MaulWeaponProf":0,"MorningstarWeaponProf":0,"PikeWeaponProf":0,"RapierWeaponProf":0,"ScimitarWeaponProf":0,"ShortswordWeaponProf":0,"TridentWeaponProf":0,"WarPickWeaponProf":0,"WarhammerWeaponProf":0,"WhipWeaponProf":0,"BlowgunWeaponProf":0,"HandCrossbowWeaponProf":0,"HeavyCrossbowWeaponProf":0,"LongbowWeaponProf":0,"NetWeaponProf":0,"LightArmorProf":0,"MediumArmorProf":0,"HeavyArmorProf":0}]
+MagicItemClassBonuses:[{"IsActive":0,"Ability":"","Class":"","DieSizeBonus":0,"DieSizeSet":-1,"DieNumberBonus":0,"MaxResourceBonus":0,"Message":'',"MessageDieRoll":"","RangeBonus":0,"RangeSet":-1,"DurationBonus":0,"DurationSet":-1,"AttackModBonus":0,"EffectNumBonus":0,"EffectNumSet":-1,"Effect2NumBonus":0,"Effect2NumSet":-1,"DamageTypeChange":"","RemovePrereqs":0,"SaveDCBonus":0,"SaveDCSet":-1}]
+MagicItemStats:{"bStr":0,"bDex":0,"bCon":0,"bInt":0,"bWis":0,"bCha":0,"sStr":0,"sDex":0,"sCon":0,"sInt":0,"sWis":0,"sCha":0,"soStr":-1,"soDex":-1,"soCon":-1,"soInt":-1,"soWis":-1,"soCha":-1,"ibludgVuln":0,"ipierceVuln":0,"islashVuln":0,"iacidVuln":0,"icoldVuln":0,"ifireVuln":0,"iforceVuln":0,"ilightVuln":0,"inecroVuln":0,"ipoisVuln":0,"ipsychVuln":0,"iradVuln":0,"ithunVuln":0,"iabjVuln":0,"iconjVuln":0,"idivVuln":0,"ienchVuln":0,"ievocVuln":0,"iillVuln":0,"inecVuln":0,"itranVuln":0,"ibludgRes":0,"ipierceRes":0,"islashRes":0,"iacidRes":0,"icoldRes":0,"ifireRes":0,"iforceRes":0,"ilightRes":0,"inecroRes":0,"ipoisRes":0,"ipsychRes":0,"iradRes":0,"ithunRes":0,"iabjRes":0,"iconjRes":0,"idivRes":0,"ienchRes":0,"ievocRes":0,"iillRes":0,"inecRes":0,"itranRes":0,"ibludgImmun":0,"ipierceImmun":0,"islashImmun":0,"iacidImmun":0,"icoldImmun":0,"ifireImmun":0,"iforceImmun":0,"ilightImmun":0,"inecroImmun":0,"ipoisImmun":0,"ipsychImmun":0,"iradImmun":0,"ithunImmun":0,"iabjImmun":0,"iconjImmun":0,"idivImmun":0,"ienchImmun":0,"ievocImmun":0,"iillImmun":0,"inecImmun":0,"itranImmun":0,"ibludgAbsorb":0,"ipierceAbsorb":0,"islashAbsorb":0,"iacidAbsorb":0,"icoldAbsorb":0,"ifireAbsorb":0,"iforceAbsorb":0,"ilightAbsorb":0,"inecroAbsorb":0,"ipoisAbsorb":0,"ipsychAbsorb":0,"iradAbsorb":0,"ithunAbsorb":0,"iabjAbsorb":0,"iconjAbsorb":0,"idivAbsorb":0,"ienchAbsorb":0,"ievocAbsorb":0,"iillAbsorb":0,"inecAbsorb":0,"itranAbsorb":0,"ibludgDR":0,"ipierceDR":0,"islashDR":0,"iacidDR":0,"icoldDR":0,"ifireDR":0,"iforceDR":0,"ilightDR":0,"inecroDR":0,"ipoisDR":0,"ipsychDR":0,"iradDR":0,"ithunDR":0,"iabjDR":0,"iconjDR":0,"idivDR":0,"ienchDR":0,"ievocDR":0,"iillDR":0,"inecDR":0,"itranDR":0,"ibludgDRMag":0,"ipierceDRMag":0,"islashDRMag":0,"iacidDRMag":0,"icoldDRMag":0,"ifireDRMag":0,"iforceDRMag":0,"ilightDRMag":0,"inecroDRMag":0,"ipoisDRMag":0,"ipsychDRMag":0,"iradDRMag":0,"ithunDRMag":0,"iabjDRMag":0,"iconjDRMag":0,"idivDRMag":0,"ienchDRMag":0,"ievocDRMag":0,"iillDRMag":0,"inecDRMag":0,"itranDRMag":0,"ibludgDRPhys":0,"ipierceDRPhys":0,"islashDRPhys":0,"iacidDRPhys":0,"icoldDRPhys":0,"ifireDRPhys":0,"iforceDRPhys":0,"ilightDRPhys":0,"inecroDRPhys":0,"ipoisDRPhys":0,"ipsychDRPhys":0,"iradDRPhys":0,"ithunDRPhys":0,"iabjDRPhys":0,"iconjDRPhys":0,"idivDRPhys":0,"ienchDRPhys":0,"ievocDRPhys":0,"iillDRPhys":0,"inecDRPhys":0,"itranDRPhys":0,"iblindCondImmun":0,"icharmCondImmun":0,"iconfuseCondImmun":0,"ideafCondImmun":0,"idiseaseCondImmun":0,"ifrightCondImmun":0,"igrappleCondImmun":0,"iincapCondImmun":0,"iparaCondImmun":0,"ipetrifyCondImmun":0,"ipoisCondImmun":0,"iproneCondImmun":0,"irestrCondImmun":0,"istunCondImmun":0,"isurpCondImmun":0,"iturnCondImmun":0,"iunconcCondImmun":0,"bMaxHP":0,"sMaxHP":0,"soMaxHP":-1,"bAC":0,"sAC":0,"soAC":-1,"iStrCheckAdv":"","iDexCheckAdv":"","iConCheckAdv":"","iIntCheckAdv":"","iWisCheckAdv":"","iChaCheckAdv":"","iAcbCheckAdv":"","iAnHCheckAdv":"","iArcCheckAdv":"","iAthCheckAdv":"","iDcpCheckAdv":"","iHstCheckAdv":"","iInsCheckAdv":"","iImdCheckAdv":"","iInvCheckAdv":"","iMedCheckAdv":"","iNtrCheckAdv":"","iPcpCheckAdv":"","iPfmCheckAdv":"","iPrsCheckAdv":"","iRlgCheckAdv":"","iSoHCheckAdv":"","iStlCheckAdv":"","iSrvCheckAdv":"","iStrCheckDis":"","iDexCheckDis":"","iConCheckDis":"","iIntCheckDis":"","iWisCheckDis":"","iChaCheckDis":"","iAcbCheckDis":"","iAnHCheckDis":"","iArcCheckDis":"","iAthCheckDis":"","iDcpCheckDis":"","iHstCheckDis":"","iInsCheckDis":"","iImdCheckDis":"","iInvCheckDis":"","iMedCheckDis":"","iNtrCheckDis":"","iPcpCheckDis":"","iPfmCheckDis":"","iPrsCheckDis":"","iRlgCheckDis":"","iSoHCheckDis":"","iStlCheckDis":"","iSrvCheckDis":"","iStrCheckBonus":"","iDexCheckBonus":"","iConCheckBonus":"","iIntCheckBonus":"","iWisCheckBonus":"","iChaCheckBonus":"","iAcbCheckBonus":"","iAnHCheckBonus":"","iArcCheckBonus":"","iAthCheckBonus":"","iDcpCheckBonus":"","iHstCheckBonus":"","iInsCheckBonus":"","iImdCheckBonus":"","iInvCheckBonus":"","iMedCheckBonus":"","iNtrCheckBonus":"","iPcpCheckBonus":"","iPfmCheckBonus":"","iPrsCheckBonus":"","iRlgCheckBonus":"","iSoHCheckBonus":"","iStlCheckBonus":"","iSrvCheckBonus":"","iStrCheckProf":0,"iDexCheckProf":0,"iConCheckProf":0,"iIntCheckProf":0,"iWisCheckProf":0,"iChaCheckProf":0,"iAcbCheckProf":0,"iAnHCheckProf":0,"iArcCheckProf":0,"iAthCheckProf":0,"iDcpCheckProf":0,"iHstCheckProf":0,"iInsCheckProf":0,"iImdCheckProf":0,"iInvCheckProf":0,"iMedCheckProf":0,"iNtrCheckProf":0,"iPcpCheckProf":0,"iPfmCheckProf":0,"iPrsCheckProf":0,"iRlgCheckProf":0,"iSoHCheckProf":0,"iStlCheckProf":0,"iSrvCheckProf":0,"iStrCheckMessage":"","iDexCheckMessage":"","iConCheckMessage":"","iIntCheckMessage":"","iWisCheckMessage":"","iChaCheckMessage":"","iAcbCheckMessage":"","iAnHCheckMessage":"","iArcCheckMessage":"","iAthCheckMessage":"","iDcpCheckMessage":"","iHstCheckMessage":"","iInsCheckMessage":"","iImdCheckMessage":"","iInvCheckMessage":"","iMedCheckMessage":"","iNtrCheckMessage":"","iPcpCheckMessage":"","iPfmCheckMessage":"","iPrsCheckMessage":"","iRlgCheckMessage":"","iSoHCheckMessage":"","iStlCheckMessage":"","iSrvCheckMessage":"","iStrSaveAdv":"","iDexSaveAdv":"","iConSaveAdv":"","iIntSaveAdv":"","iWisSaveAdv":"","iChaSaveAdv":"","iStrSaveDis":"","iDexSaveDis":"","iConSaveDis":"","iIntSaveDis":"","iWisSaveDis":"","iChaSaveDis":"","iStrSaveBonus":"","iDexSaveBonus":"","iConSaveBonus":"","iIntSaveBonus":"","iWisSaveBonus":"","iChaSaveBonus":"","iStrSaveProf":0,"iDexSaveProf":0,"iConSaveProf":0,"iIntSaveProf":0,"iWisSaveProf":0,"iChaSaveProf":0,"iStrSaveMessage":"","iDexSaveMessage":"","iConSaveMessage":"","iIntSaveMessage":"","iWisSaveMessage":"","iChaSaveMessage":"","iInitAdv":"","iInitDis":"","iInitBonus":"","iInitProf":0,"iInitMessage":"","iConcAdv":"","iConcDis":"","iConcBonus":"","iConcProf":0,"iConcMessage":"","iDeathAdv":"","iDeathDis":"","iDeathBonus":"","iDeathProf":0,"iDeathMessage":"","iSpeedBonus":0,"iSpeedMultiplier":1,"iSpeedSet":0,"iSpeedSetOverride":-1,"iIsBurrow":0,"iBurrowBonus":0,"iBurrowMultiplier":1,"iBurrowSet":0,"iBurrowSetOverride":-1,"iIsClimb":0,"iClimbBonus":0,"iClimbMultiplier":1,"iClimbSet":0,"iClimbSetOverride":-1,"iIsFly":0,"iFlyBonus":0,"iFlyMultiplier":1,"iFlySet":0,"iFlySetOverride":-1,"iIsHover":0,"iIsSwim":0,"iSwimBonus":0,"iSwimMultiplier":1,"iSwimSet":0,"iSwimSetOverride":-1}
+Attuned:[0,0,0]
+AttunedNumber:0
+__CONSUMABLES__:__________
+*Inspiration:0
+Ammo:0
+HealersKit:0
+HealingPotion:0
+GreaterHealingPotion:0
+__SKILLS__:__________
+stat.BaseSaves:{}
+Saves:[r:a5e.SaveProficiency()]
+stat.BaseSkills:{}
+Skills:[r:a5e.SkillProficiency()]
+WeaponProficiencies:{"Unarmed":1,"Club":0,"Dagger":0,"Greatclub":0,"Handaxe":0,"Javelin":0,"LightHammer":0,"Mace":0,"Quarterstaff":0,"Sickle":0,"Spear":0,"LightCrossbow":0,"Dart":0,"Shortbow":0,"Sling":0,"Battleaxe":0,"Flail":0,"Glaive":0,"Greataxe":0,"Greatsword":0,"Halberd":0,"Lance":0,"Longsword":0,"Maul":0,"Morningstar":0,"Pike":0,"Rapier":0,"Scimitar":0,"Shortsword":0,"Trident":0,"WarPick":0,"Warhammer":0,"Whip":0,"Blowgun":0,"HandCrossbow":0,"HeavyCrossbow":0,"Longbow":0,"Net":0}
+ArmorProficiencies:{"Light":0,"Medium":0,"Heavy":0,"Shield":0}
+Tools:[r:a5e.ToolProficiency()]
+__SPELLS__:__________
+LSpellSlots:[r:a5e.CastingLevel()]
+SpellSlots:{"1":0,"2":0,"3":0,"4":0,"5":0,"6":0,"7":0,"8":0,"9":0,"W":0}
+MaxSpellSlots:{"1":0,"2":0,"3":0,"4":0,"5":0,"6":0,"7":0,"8":0,"9":0,"W":0}
+stat.Concentration
+ActiveSpells:[]
+__DISPLAY DO NOT EDIT__:__________
+dLevel (Race and Class):[r:Race+" | Will insert class levels later | "+Experience+" XP"]
+dHP (HP):{HP}
+dMaxHP (MaxHP):{MaxHP}
+*dHPshown (HP):[r:HP+" / "+MaxHP+if(TempHP>0," | Temp HP: "+TempHP,"")]
+dTemHP (TempHP):{if(TempHP>0,TempHP,"")}
+*dArcaneWard (Arcane Ward):{if(json.get(ArcaneWard,"Active")==1,json.get(ArcaneWard,"HP"),"")}
+*dHitDice (Hit Dice):[r:a5e.HitDieDisplay()]
+*dAC (AC):{AC}
+TempAllDmgModifiers:[r:a5e.DamageMod()]
+*dVulnerability (Vulnerability):[r:a5e.DamageModDisplay(json.get(TempAllDmgModifiers,"Vulnerability"))]
+*dResistance (Resistance):[r:a5e.DamageModDisplay(json.get(TempAllDmgModifiers,"Resistance"))]
+*dImmunity (Immunity):[r:a5e.DamageModDisplay(json.get(TempAllDmgModifiers,"Immunity"))]
+*dAbsorption (Absorption):[r:a5e.DamageModDisplay(json.get(TempAllDmgModifiers,"Absorption"))]
+*dSpeed (Speed):[r:Speed+if(BurrowSpeed==0,"",", "+BurrowSpeed+" Burrowing")+if(ClimbSpeed==0,"",", "+ClimbSpeed+" Climbing")+if(FlySpeed==0,"",", "+FlySpeed+" Flying")+if(SwimSpeed==0,"",", "+SwimSpeed+" Swimming")]
+*dVision (Vision):{Vision}
+*@dLanguages (Languages):[r:a5e.LanguageDisplay()]
+*#dPassivePerception (Passive Perception):{10+json.get(AtrMods,"Wisdom")+(Proficiency*json.get(Skills,"Perception"))}
+*#dPassiveInvestigation (Passive Investigation):{10+json.get(AtrMods,"Intelligence")+(Proficiency*json.get(Skills,"Investigation"))}
+*dConcentration (Concentration):{stat.Concentration}
+*dSpellSlots (Spell Slots):{if(LSpellSlots>0,if(json.get(MaxSpellSlots,"1")>0,"1st: "+json.get(SpellSlots,"1"),"")+if(json.get(MaxSpellSlots,"2")>0," | 2nd: "+json.get(SpellSlots,"2"),"")+if(json.get(MaxSpellSlots,"3")>0," | 3rd: "+json.get(SpellSlots,"3"),"")+if(json.get(MaxSpellSlots,"4")>0," | 4th: "+json.get(SpellSlots,"4"),"")+if(json.get(MaxSpellSlots,"5")>0," | 5th: "+json.get(SpellSlots,"5"),"")+if(json.get(MaxSpellSlots,"6")>0," | 6th: "+json.get(SpellSlots,"6"),"")+if(json.get(MaxSpellSlots,"7")>0," | 7th: "+json.get(SpellSlots,"7"),"")+if(json.get(MaxSpellSlots,"8")>0," | 8th: "+json.get(SpellSlots,"8"),"")+if(json.get(MaxSpellSlots,"9")>0," | 9th: "+json.get(SpellSlots,"9"),""),"")}
+__CLASS ABILITIES__:__________
+allAbilities:[]
+ConditionList:[]
+ConditionGroups:[]
+ConditionsSet:[]
+Subclasses:{"Artificer":"","Barbarian":"","Bard":"","Cleric":"","Druid":"","Fighter":"","Monk":"","Paladin":"","Ranger":"","Rogue":"","Sorcerer":"","Warlock":"","Wizard":""}
+__DRUID__:__________
+*CurShape (Current Shape)
+ShapesKnown
+ShapesData
+WSRetainedStats:{"WildShape":0,"Strength":0,"Dexterity":0,"Constitution":0,"HP":0,"Size":0,"TokenImage":0}
+__WIZARD__:__________
+ArcaneWard:{"HP":0,"Active":0,"Use":0}
+ThirdEye:{"Use":0,"Choice":""}
+*dThirdEye (The Third Eye):{if(json.get(ThirdEye,"Choice")=="","",json.get(ThirdEye,"Choice"))}
+__MISC__:__________
+stat.whichTeam:0
+stat.Allegiance
+Misc1
+Misc2
+Misc3
+Misc4
+Misc5
+*Madness
+*Weight
+*Distance:[r:character.Distances()]
+__SETTINGS__:__________
+TargetingStyle:Input
+FullAbilityRules:0
+FullSpellRules:0
+displaySize:400
+ChatColors:{"DarkBackground":"","DarkText":"","DarkAccentBackground":"","DarkAccentText":"","DarkDamageText":"","DarkHealingText":"","DarkCritText":"","DarkCritFailText":"","DarkLinkColor":"","LightBackground":"","LightText":"","LightAccentBackground":"","LightAccentText":"","LightDamageText":"","LightHealingText":"","LightCritText":"","LightCritFailText":"","LightLinkColor":""}
+chatFonts:{"Title":"","Body":""}
+ClassBorderColors:{"Artificer":"","Barbarian":"","Bard":"","Cleric":"","Druid":"","Fighter":"","Monk":"","Paladin":"","Ranger":"","Rogue":"","Sorcerer":"","Warlock":"","Wizard":"","Innate":"","Feat":""}
+ClassTitleColors:{"Artificer":"","Barbarian":"","Bard":"","Cleric":"","Druid":"","Fighter":"","Monk":"","Paladin":"","Ranger":"","Rogue":"","Sorcerer":"","Warlock":"","Wizard":"","Innate":"","Feat":""}

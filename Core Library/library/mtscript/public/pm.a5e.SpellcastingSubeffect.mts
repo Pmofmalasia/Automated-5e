@@ -140,7 +140,7 @@
 }]
 
 [h,if(json.contains(SpellSubeffectData,"SaveData")),CODE:{
-	[h:spell.SaveDC = 8 + getProperty("Proficiency") + PrimeStatMod]
+	[h:spell.SaveDC = 8 + getProperty("a5e.stat.Proficiency") + PrimeStatMod]
 
 	[h:pm.PassiveFunction("SpellSaveDC")]
 

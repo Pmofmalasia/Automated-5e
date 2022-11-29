@@ -1,5 +1,5 @@
 [h,if(currentToken()!=""),CODE:{
-	[h:TitleKey = if(arg(0)==pm.RemoveSpecial(getProperty("Race")),"Innate",arg(0))]
+	[h:TitleKey = if(arg(0)==pm.RemoveSpecial(getProperty("a5e.stat.Race")),"Innate",arg(0))]
 	[h:IndividualTitleTest = if(json.get(ClassTitleColors,TitleKey)!="",1,0)]
 	[h:MultiTitleTest = json.type(json.get(getLibProperty("ClassTitleColors","Lib:pm.a5e.Core"),TitleKey))=="OBJECT"]
 	[h,if(MultiTitleTest),CODE:{

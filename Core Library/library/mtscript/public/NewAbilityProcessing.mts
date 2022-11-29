@@ -5,7 +5,7 @@
 [h:"<!-- Selection of feats for features that grant them. Separate from class ASIs. -->"]
 [h,if(json.isEmpty(lu.NewAbilities)): lu.FeatChoice = ""; lu.FeatChoice = json.path.read(lu.NewAbilities,"[?(@.FeatChoice==1)]")]
 [h,count(json.length(lu.FeatChoice)),CODE:{
-	[MACRO("FeatSelection@Lib:pm.a5e.Core"): json.set("","LevelUp",1,"Restrictions",if(Level==0,0,1),"ParentToken",ParentToken)]
+	[MACRO("FeatSelection@Lib:pm.a5e.Core"): json.set("","LevelUp",1,"Restrictions",if(getProperty("a5e.stat.Level")==0,0,1),"ParentToken",ParentToken)]
 	[h:lu.NewAbilities = json.append(lu.NewAbilities,macro.return)]
 }]
 

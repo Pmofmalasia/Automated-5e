@@ -8,8 +8,8 @@
 [h:LinkColor = pm.LinkColor()]
 
 [h,if(json.get(DeathData,"PriorDeath")==""),CODE:{};{
-	[h:HP=json.get(DeathData,"PriorHP")]
-	[h:setBar("Health",HP/MaxHP)]
+	[h:setProperty("a5e.stat.HP",json.get(DeathData,"PriorHP"))]
+	[h:setBar("Health",getProperty("a5e.stat.HP")/getProperty("a5e.stat.MaxHP"))]
 	[h:setState("Dying",1)]
 	[h:setState("Unconscious",1)]
 	[h:setState("Dead",0)]
@@ -22,7 +22,7 @@
 	"Type","Death",
 	"ParentToken",ParentToken,
 	"PriorDeath",DeathSaves,
-	"PriorHP",HP
+	"PriorHP",getProperty("a5e.stat.HP")
 )]
 
 [h:ReturnData = macro.return]
@@ -31,8 +31,8 @@
 	[h:DeathSaves = json.set("","Successes",0,"Failures",0)]
 	[h:setState("Dying",0)]
 	[h:setState("Unconscious",0)]
-	[h:HP = max(1,HP)]
-	[h:setBar("Health",HP/MaxHP)]
+	[h:setProperty("a5e.stat.HP",max(1,getProperty("a5e.stat.HP")))]
+	[h:setBar("Health",getProperty("a5e.stat.HP")/getProperty("a5e.stat.MaxHP"))]
 	
 	[h:abilityTable = json.append(abilityTable,json.set("",
 		"ShowIfCondensed",1,

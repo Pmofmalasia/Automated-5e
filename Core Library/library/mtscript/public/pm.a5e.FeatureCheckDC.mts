@@ -13,8 +13,8 @@
 	};
 	case "Ability Score":{
 		[h:pm.DCPrimeStat = json.get(pm.DCInfo,"AbilityScore")]
-		[h:pm.DCbase = json.get(Attributes,pm.DCPrimeStat)]
-		[h:pm.DC = pm.DCBase + (Proficiency * if(json.get(pm.DCInfo,"Proficiency")=="",0,json.get(pm.DCInfo,"Proficiency")))]
+		[h:pm.DCbase = json.get(getProperty("a5e.stat.Attributes"),pm.DCPrimeStat)]
+		[h:pm.DC = pm.DCBase + (getProperty("a5e.stat.Proficiency") * if(json.get(pm.DCInfo,"Proficiency")=="",0,json.get(pm.DCInfo,"Proficiency")))]
 		[h:pm.OriginSkillDisplay = pm.GetDisplayName(pm.DCPrimeStat,"sb.Attributes")]
 	};
 	case "Skill Bonus":{

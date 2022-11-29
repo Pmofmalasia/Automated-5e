@@ -34,8 +34,8 @@
 [h:CritFailTest = if(or(attack.AutoCritFail,d20EffectiveRoll==1),1,0)]
 
 [h:"<!-- TODO: Re-add misc. flat bonuses to the ToHit to the rules string, get PrimeStatBonus, ProfTest, and ToHitBonus into macro -->"]
-[h:attack.ToHit = d20EffectiveRoll+PrimeStatMod+if(attack.ProfTest,getProperty("Proficiency"),0)+attack.ToHitBonus]
-[h:attack.ToHitStr = d20EffectiveRoll+" + "+PrimeStatMod+if(attack.ProfTest," + "+getProperty("Proficiency"),"")+pm.PlusMinus(attack.ToHitBonus,0)]
+[h:attack.ToHit = d20EffectiveRoll+PrimeStatMod+if(attack.ProfTest,getProperty("a5e.stat.Proficiency"),0)+attack.ToHitBonus]
+[h:attack.ToHitStr = d20EffectiveRoll+" + "+PrimeStatMod+if(attack.ProfTest," + "+getProperty("a5e.stat.Proficiency"),"")+pm.PlusMinus(attack.ToHitBonus,0)]
 [h:attack.ToHitRulesStr = attack.ToHitRulesStr+" + "+substring(PrimeStat,0,3)+if(attack.ProfTest," + Prof","")+pm.PlusMinus(attack.ToHitBonus,0)]
 
 [h,foreach(tempPrefix,attack.FunctionPrefixes),CODE:{

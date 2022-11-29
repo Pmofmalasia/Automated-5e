@@ -1,5 +1,5 @@
 [h,if(currentToken()!=""),CODE:{
-	[h:BorderKey = if(arg(0) == pm.RemoveSpecial(getProperty("Race")),"Innate",arg(0))]
+	[h:BorderKey = if(arg(0) == pm.RemoveSpecial(getProperty("a5e.stat.Race")),"Innate",arg(0))]
 	[h:IndividualBorderTest = if(json.get(ClassBorderColors,BorderKey)!="",1,0)]
 	[h:MultiBorderTest = json.type(json.get(getLibProperty("ClassBorderColors","Lib:pm.a5e.Core"),BorderKey))=="OBJECT"]
 	[h,if(MultiBorderTest),CODE:{

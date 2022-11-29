@@ -4,5 +4,5 @@
 [h:ReturnData = macro.return]
 
 [h:addToInitiative()]
-[h:setInitiative(json.get(ReturnData,"Value")+(json.get(AtrMods,"Dexterity")/100))]
+[h:setInitiative(json.get(ReturnData,"Value")+(json.get(getProperty("a5e.stat.AtrMods"),"Dexterity")/100))]
 [h:sortInitiative()]

@@ -38,7 +38,7 @@
 	]
 
 	[h,if(!json.isEmpty(pm.SummonCreatureType)):
-		validCreatureTypeTest = json.contains(pm.SummonCreatureType,getProperty("CreatureType",summon,"z.0 Wild Shapes"));
+		validCreatureTypeTest = json.contains(pm.SummonCreatureType,getProperty("a5e.stat.CreatureType",summon,"z.0 Wild Shapes"));
 		validCreatureTypeTest = 0
 	]
 

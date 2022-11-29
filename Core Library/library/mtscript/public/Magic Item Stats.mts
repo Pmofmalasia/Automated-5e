@@ -89,12 +89,12 @@
     
     [h:GivesBonusTest=if(and(or(json.get(json.get(MagicItemEquipment,roll.count),"reqEquip")==0,json.get(json.get(MagicItemEquipment,roll.count),"isEquipped")==1),or(json.get(json.get(MagicItemActivation,roll.count),"reqActive")==0,json.get(json.get(MagicItemActivation,roll.count),"isActive")==1),or(json.get(json.get(MagicItemAttuned,roll.count),"reqAttunement")==0,json.get(json.get(MagicItemAttuned,roll.count),"slotAttunement")>=1)),1,0)]
     
-    [h:tStrSetOverride=if(GivesBonusTest,if(tStrSetOverride==-1,min(json.get(json.get(MagicItemAttributes,roll.count),"StrSetOverride"),max(json.get(Attributes,"Strength")+tStrBonus,tStrSet)),min(json.get(json.get(MagicItemAttributes,roll.count),"StrSetOverride"),tStrSetOverride)),tStrSetOverride)]
-    [h:tDexSetOverride=if(GivesBonusTest,if(tDexSetOverride==-1,min(json.get(json.get(MagicItemAttributes,roll.count),"DexSetOverride"),max(json.get(Attributes,"Dexterity")+tDexBonus,tDexSet)),min(json.get(json.get(MagicItemAttributes,roll.count),"DexSetOverride"),tDexSetOverride)),tDexSetOverride)]
-    [h:tConSetOverride=if(GivesBonusTest,if(tConSetOverride==-1,min(json.get(json.get(MagicItemAttributes,roll.count),"ConSetOverride"),max(json.get(Attributes,"Constitution")+tConBonus,tConSet)),min(json.get(json.get(MagicItemAttributes,roll.count),"ConSetOverride"),tConSetOverride)),tConSetOverride)]
-    [h:tIntSetOverride=if(GivesBonusTest,if(tIntSetOverride==-1,min(json.get(json.get(MagicItemAttributes,roll.count),"IntSetOverride"),max(json.get(Attributes,"Intelligence")+tIntBonus,tIntSet)),min(json.get(json.get(MagicItemAttributes,roll.count),"IntSetOverride"),tIntSetOverride)),tIntSetOverride)]
-    [h:tWisSetOverride=if(GivesBonusTest,if(tWisSetOverride==-1,min(json.get(json.get(MagicItemAttributes,roll.count),"WisSetOverride"),max(json.get(Attributes,"pWisdom")+tWisBonus,tWisSet)),min(json.get(json.get(MagicItemAttributes,roll.count),"WisSetOverride"),tWisSetOverride)),tWisSetOverride)]
-    [h:tChaSetOverride=if(GivesBonusTest,if(tChaSetOverride==-1,min(json.get(json.get(MagicItemAttributes,roll.count),"ChaSetOverride"),max(json.get(Attributes,"Charisma")+tChaBonus,tChaSet)),min(json.get(json.get(MagicItemAttributes,roll.count),"ChaSetOverride"),tChaSetOverride)),tChaSetOverride)]
+    [h:tStrSetOverride=if(GivesBonusTest,if(tStrSetOverride==-1,min(json.get(json.get(MagicItemAttributes,roll.count),"StrSetOverride"),max(json.get(getProperty("a5e.stat.Attributes"),"Strength")+tStrBonus,tStrSet)),min(json.get(json.get(MagicItemAttributes,roll.count),"StrSetOverride"),tStrSetOverride)),tStrSetOverride)]
+    [h:tDexSetOverride=if(GivesBonusTest,if(tDexSetOverride==-1,min(json.get(json.get(MagicItemAttributes,roll.count),"DexSetOverride"),max(json.get(getProperty("a5e.stat.Attributes"),"Dexterity")+tDexBonus,tDexSet)),min(json.get(json.get(MagicItemAttributes,roll.count),"DexSetOverride"),tDexSetOverride)),tDexSetOverride)]
+    [h:tConSetOverride=if(GivesBonusTest,if(tConSetOverride==-1,min(json.get(json.get(MagicItemAttributes,roll.count),"ConSetOverride"),max(json.get(getProperty("a5e.stat.Attributes"),"Constitution")+tConBonus,tConSet)),min(json.get(json.get(MagicItemAttributes,roll.count),"ConSetOverride"),tConSetOverride)),tConSetOverride)]
+    [h:tIntSetOverride=if(GivesBonusTest,if(tIntSetOverride==-1,min(json.get(json.get(MagicItemAttributes,roll.count),"IntSetOverride"),max(json.get(getProperty("a5e.stat.Attributes"),"Intelligence")+tIntBonus,tIntSet)),min(json.get(json.get(MagicItemAttributes,roll.count),"IntSetOverride"),tIntSetOverride)),tIntSetOverride)]
+    [h:tWisSetOverride=if(GivesBonusTest,if(tWisSetOverride==-1,min(json.get(json.get(MagicItemAttributes,roll.count),"WisSetOverride"),max(json.get(getProperty("a5e.stat.Attributes"),"pWisdom")+tWisBonus,tWisSet)),min(json.get(json.get(MagicItemAttributes,roll.count),"WisSetOverride"),tWisSetOverride)),tWisSetOverride)]
+    [h:tChaSetOverride=if(GivesBonusTest,if(tChaSetOverride==-1,min(json.get(json.get(MagicItemAttributes,roll.count),"ChaSetOverride"),max(json.get(getProperty("a5e.stat.Attributes"),"Charisma")+tChaBonus,tChaSet)),min(json.get(json.get(MagicItemAttributes,roll.count),"ChaSetOverride"),tChaSetOverride)),tChaSetOverride)]
 }]
 }]
 
@@ -1166,7 +1166,7 @@
     
     [h:GivesBonusTest=if(and(or(json.get(json.get(MagicItemEquipment,roll.count),"reqEquip")==0,json.get(json.get(MagicItemEquipment,roll.count),"isEquipped")==1),or(json.get(json.get(MagicItemActivation,roll.count),"reqActive")==0,json.get(json.get(MagicItemActivation,roll.count),"isActive")==1),or(json.get(json.get(MagicItemAttuned,roll.count),"reqAttunement")==0,json.get(json.get(MagicItemAttuned,roll.count),"slotAttunement")>=1)),1,0)]
     
-    [h:tMaxHPSetOverride=if(GivesBonusTest,if(tMaxHPSetOverride==-1,min(json.get(json.get(MagicItemHP,roll.count),"MaxHPSetOverride"),max(baseMaxHP+tMaxHPBonus,tMaxHPSet)),min(json.get(json.get(MagicItemHP,roll.count),"MaxHPSetOverride"),tMaxHPSetOverride)),tMaxHPSetOverride)]
+    [h:tMaxHPSetOverride=if(GivesBonusTest,if(tMaxHPSetOverride==-1,min(json.get(json.get(MagicItemHP,roll.count),"MaxHPSetOverride"),max(getProperty("a5e.stat.BaseMaxHP")+tMaxHPBonus,tMaxHPSet)),min(json.get(json.get(MagicItemHP,roll.count),"MaxHPSetOverride"),tMaxHPSetOverride)),tMaxHPSetOverride)]
 }]
 }]
 

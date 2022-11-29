@@ -37,21 +37,22 @@
     [h:charCreationHTML = charCreationHTML + "<select id='sizeChoice' name='sizeChoice'>"+sizeOptions+"</td></tr>"]
 }]
 
-[h:charCreationHTML = charCreationHTML + "<tr><th><label for='orderChoice'>Order:</label></th><td>
-    <select id='orderChoice' name='orderChoice'>
-        <option value='Lawful'>Lawful</option>
-        <option value='Neutral'>Neutral</option>
-        <option value='Chaotic'>Chaotic</option>
+[h:charCreationHTML = charCreationHTML + "<tr id='rowAlignment'><th><label for='Alignment'>Alignment:</label></th><td>
+    <select id='Alignment' name='Alignment'>
+        <option value='Lawful Good'>Lawful Good</option>
+        <option value='Lawful Neutral'>Lawful Neutral</option>
+        <option value='Lawful Evil'>Lawful Evil</option>
+        <option value='Neutral Good'>Neutral Good</option>
+        <option value='True Neutral'>True Neutral</option>
+        <option value='Neutral Evil'>Neutral Evil</option>
+        <option value='Chaotic Good'>Chaotic Good</option>
+        <option value='Chaotic Neutral'>Chaotic Neutral</option>
+        <option value='Chaotic Evil'>Chaotic Evil</option>
+        <option value='Unaligned'>Unaligned</option>
     </select>
-</td></tr>
-<tr><th><label for='moralityChoice'>Morality:</label></th><td>
-    <select id='moralityChoice' name='moralityChoice'>
-        <option value='Good'>Good</option>
-        <option value='Neutral'>Neutral</option>
-        <option value='Evil'>Evil</option>
-    </select>
-</td></tr>
-<tr><th><label for='deityName'>Deity:</label></th><td><input type='text' id='deityName' name='deityName'></td></tr>
+</td></tr>"]
+
+[h:charCreationHTML = charCreationHTML + "<tr><th><label for='deityName'>Deity:</label></th><td><input type='text' id='deityName' name='deityName'></td></tr>
 <tr><th><label for='allegianceChoice'>Character Allegiance:</label></th><td>
     <select id='allegianceChoice' name='allegianceChoice'>
         <option value='PC'>PC</option>
@@ -59,6 +60,7 @@
         <option value='Enemy'>Enemy</option>
         <option value='Neutral'>Neutral</option>
     </select>
-</td></tr><tr><th text-align='center' colspan='2'><input type='submit' id='submitButton' value='Submit'></th></tr><input type='hidden' name='activeToken' id='activeToken' value='"+currentToken()+"'>"]
+</td></tr>
+<tr><th text-align='center' colspan='2'><input type='submit' id='submitButton' value='Submit'></th></tr><input type='hidden' name='activeToken' id='activeToken' value='"+currentToken()+"'>"]
 
 [h:html.dialog5("Character Creation","lib://pm.a5e.core/InitialSetup.html?cachelib=false","value="+base64.encode(charCreationHTML))]

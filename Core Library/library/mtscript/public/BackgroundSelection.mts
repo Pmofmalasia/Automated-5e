@@ -15,10 +15,10 @@
 	[h,foreach(TempTool,pm.GetTools("Name","json")),CODE:{
 		[h:bg.SkillOptions = json.set(bg.SkillOptions,TempTool,1)]
 	}]
-	[h:Background = "Custom Background"]
+	[h:setProperty("a5e.stat.Background","Custom Background")]
 	[h:macro.return = json.set(bg.Custom,"SkillOptions",json.set(bg.SkillOptions,"ChoiceNum",2,"ChoiceText","Choose any 2 of the following"))]
 };{
 	[h:BackgroundChoice = json.get(bg.Array,bg.Choice-1)]
-	[h:Background = json.get(BackgroundChoice,"DisplayName")]
+	[h:setProperty("a5e.stat.Background",json.get(BackgroundChoice,"DisplayName"))]
 	[h:macro.return = BackgroundChoice]
 }]

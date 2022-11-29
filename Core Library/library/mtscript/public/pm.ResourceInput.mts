@@ -50,11 +50,11 @@
 
 	[h,switch(ab.ResourceType),CODE:
 		case "1": {[h:tempResource = 1]};
-		case "Attribute Based": {[h:tempResource = "max(1,json.get(AtrMods,'"+pm.RemoveSpecial(ab.ResourceChoice)+"')"+if(ab.MultiplierChoice=="1","","*"+ab.MultiplierChoice)+")"]};
+		case "Attribute Based": {[h:tempResource = "max(1,json.get(getProperty('a5e.stat.AtrMods'),'"+pm.RemoveSpecial(ab.ResourceChoice)+"')"+if(ab.MultiplierChoice=="1","","*"+ab.MultiplierChoice)+")"]};
 		case "Other Flat Number": {[h:tempResource = ab.ResourceChoice]};
 		case "Linearly Class Level Based": {[h:tempResource = "floor(pm.GetAbilityLevel(json.set('','Name','"+json.get(ab.ResourceInfo,"Name")+"','Class','"+json.get(ab.ResourceInfo,"Class")+"','Subclass','"+json.get(ab.ResourceInfo,"Subclass")+"'))*"+ab.ResourceChoice+")"]};
 		case "Non-Linearly Class Level Based":{[h:tempResource = eval("tempResource"+ab.Level)]};
-		case "Proficiency Based": {[h:tempResource = "Proficiency*"+ab.ResourceChoice]};
+		case "Proficiency Based": {[h:tempResource = "getProperty('a5e.stat.Proficiency')*"+ab.ResourceChoice]};
 		case "Custom": {[h:tempResource = ab.ResourceChoice]};
 		default: {}
 	]

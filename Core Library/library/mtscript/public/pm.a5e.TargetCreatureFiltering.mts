@@ -92,25 +92,25 @@
 	]
 	
 	[h,if(json.type(pm.TargetTypeInclusive) == "UNKNOWN"):
-		pm.TypeTest = if(or(pm.TargetTypeInclusive==getProperty("CreatureType",target),pm.TargetTypeInclusive=="Any",pm.TargetTypeInclusive==""),1,0);
+		pm.TypeTest = if(or(pm.TargetTypeInclusive==getProperty("a5e.stat.CreatureType",target),pm.TargetTypeInclusive=="Any",pm.TargetTypeInclusive==""),1,0);
 	]
 	
 	[h,if(json.type(pm.TargetSubtypeInclusive) == "UNKNOWN"):
-		pm.SubtypeTest = if(or(pm.TargetSubtypeInclusive==getProperty("Race",target),pm.TargetSubtypeInclusive=="Any",pm.TargetSubtypeInclusive==""),1,0);
-		pm.SubtypeTest = if(json.contains(pm.TargetSubtypeInclusive,pm.RemoveSpecial(getProperty("Race",target))),1,0)
+		pm.SubtypeTest = if(or(pm.TargetSubtypeInclusive==getProperty("a5e.stat.Race",target),pm.TargetSubtypeInclusive=="Any",pm.TargetSubtypeInclusive==""),1,0);
+		pm.SubtypeTest = if(json.contains(pm.TargetSubtypeInclusive,pm.RemoveSpecial(getProperty("a5e.stat.Race",target))),1,0)
 	]
 	 
 	[h,if(json.type(pm.TargetTypeExclusive) == "UNKNOWN"):
-		pm.TypeTest = if(or(pm.TargetTypeExclusive!=getProperty("CreatureType",target),pm.TargetTypeExclusive==""),pm.TypeTest,0);
-		pm.TypeTest = if(json.contains(pm.TargetTypeExclusive,getProperty("CreatureType",target)),0,pm.TypeTest)
+		pm.TypeTest = if(or(pm.TargetTypeExclusive!=getProperty("a5e.stat.CreatureType",target),pm.TargetTypeExclusive==""),pm.TypeTest,0);
+		pm.TypeTest = if(json.contains(pm.TargetTypeExclusive,getProperty("a5e.stat.CreatureType",target)),0,pm.TypeTest)
 	]
 	
 	[h,if(json.type(pm.TargetSubtypeExclusive) == "UNKNOWN"):
-		pm.SubtypeTest = if(or(pm.TargetSubtypeExclusive!=getProperty("Race",target),pm.TargetSubtypeExclusive==""),pm.SubtypeTest,0);
-		pm.SubtypeTest = if(json.contains(pm.TargetSubtypeExclusive,pm.RemoveSpecial(getProperty("Race",target))),0,pm.SubtypeTest)
+		pm.SubtypeTest = if(or(pm.TargetSubtypeExclusive!=getProperty("a5e.stat.Race",target),pm.TargetSubtypeExclusive==""),pm.SubtypeTest,0);
+		pm.SubtypeTest = if(json.contains(pm.TargetSubtypeExclusive,pm.RemoveSpecial(getProperty("a5e.stat.Race",target))),0,pm.SubtypeTest)
 	]
 	 
-	[h:pm.IntTest = if(and(json.get(getProperty("Attributes",target),"Intelligence")>pm.TargetIntMin,json.get(getProperty("Attributes",target),"Intelligence")<pm.TargetIntMax),1,0)]
+	[h:pm.IntTest = if(and(json.get(getProperty("a5e.stat.Attributes",target),"Intelligence")>pm.TargetIntMin,json.get(getProperty("a5e.stat.Attributes",target),"Intelligence")<pm.TargetIntMax),1,0)]
    
 	[h:pm.ValidTargets = if(and(pm.AllegianceTest,pm.TypeTest,pm.SubtypeTest,pm.IntTest,pm.SizeTest),json.append(pm.ValidTargets,target),pm.ValidTargets)]
 }]

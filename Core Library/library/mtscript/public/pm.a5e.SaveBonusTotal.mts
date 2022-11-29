@@ -14,7 +14,7 @@
 
 [h:pm.PassiveFunction("SaveProf")]
 
-[h:ProfBonus = ProfType*Proficiency]
+[h:ProfBonus = ProfType*getProperty("a5e.stat.Proficiency")]
 [h,SWITCH(ProfType+""):
 	case "0.5": ProfTypeStr = "Half Prof";
 	case "1": ProfTypeStr = "Prof";
@@ -22,7 +22,7 @@
 	default: ProfTypeStr = ""
 ]
 
-[h,if(PrimeStat=="None"): AtrBonus = 0; AtrBonus = json.get(AtrMods,PrimeStat)]
+[h,if(PrimeStat=="None"): AtrBonus = 0; AtrBonus = json.get(getProperty("a5e.stat.AtrMods"),PrimeStat)]
 [h:MiscBonus = if(json.get(d20Data,"Bonus")=="",0,json.get(d20Data,"Bonus"))]
 [h:MiscBonusStr = json.get(d20Data,"Bonus")]
 [h,if(json.get(d20Data,"Bonus")==""): 

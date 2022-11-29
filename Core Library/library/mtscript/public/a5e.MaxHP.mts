@@ -3,7 +3,7 @@
 [h:pm.a5e.OverarchingContext = "Stats"]
 [h:IsTooltip = 0]
 
-[h:baseMaxHP = RolledMaxHP+(json.get(AtrMods,"Constitution")*Level)-HPDrain]
+[h:setProperty("a5e.stat.BaseMaxHP",RolledMaxHP+(json.get(getProperty("a5e.stat.AtrMods"),"Constitution")*getProperty("a5e.stat.Level"))-HPDrain)]
 [h:bonusMaxHP = 0]
 [h:multiplierMaxHP = 1]
 [h:setMaxHP = 0]
@@ -16,7 +16,7 @@
 
 [h:pm.PassiveFunction("MaxHP")]
 
-[h:maxHPFinal = (baseMaxHP + bonusMaxHP) * multiplierMaxHP]
+[h:maxHPFinal = (getProperty("a5e.stat.BaseMaxHP") + bonusMaxHP) * multiplierMaxHP]
 [h:maxHPFinal = max(setMaxHP,maxHPFinal)]
 [h,if(setOverrideMaxHP!=-1): maxHPFinal = setOverrideMaxHP]
 

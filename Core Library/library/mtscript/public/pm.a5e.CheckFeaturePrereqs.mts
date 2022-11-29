@@ -9,7 +9,7 @@
 [h:pr.AttrMetCount = 0]
 [h:pr.FeatureTest = 1]
 
-[h,if(json.get(pr.Prereqs,"Level")==""): pr.LevelTest = 1; pr.LevelTest = if(json.get(pr.Prereqs,"Level")>=getProperty("Level")+pr.IsLevelUp,1,0)]
+[h,if(json.get(pr.Prereqs,"Level")==""): pr.LevelTest = 1; pr.LevelTest = if(json.get(pr.Prereqs,"Level")>=getProperty("a5e.stat.Level")+pr.IsLevelUp,1,0)]
 
 [h,if(json.get(pr.Prereqs,"Features")!=""),CODE:{
 	[h:pr.FeatureNum = 0]
@@ -23,11 +23,11 @@
 	}]
 };{}]
 
-[h,foreach(ClassPrereq,json.get(pr.Prereqs,"Class")): pr.ClassTest = if(json.get(LClass,ClassPrereq)==0 || json.get(LClass,ClassPrereq)=="",pr.ClassTest,1)]
+[h,foreach(ClassPrereq,json.get(pr.Prereqs,"Class")): pr.ClassTest = if(json.get(getProperty("a5e.stat.ClassLevels"),ClassPrereq)==0 || json.get(getProperty("a5e.stat.ClassLevels"),ClassPrereq)=="",pr.ClassTest,1)]
 [h:"<!-- Subclass processing subject to change -->"]
 [h,foreach(SubclassPrereq,json.get(pr.Prereqs,"Subclass")): pr.SubclassTest = if(json.get(Subclasses,json.get(SubclassPrereq,"Class"))==json.get(SubclassPrereq,"Subclass"),1,pr.SubclassTest)]
-[h,foreach(RacePrereq,json.get(pr.Prereqs,"Race")): pr.RaceTest = if(Race == RacePrereq,1,pr.RaceTest)]
-[h,foreach(SubracePrereq,json.get(pr.Prereqs,"Subrace")): pr.SubraceTest = if(Subrace == SubracePrereq,1,pr.SubraceTest)]
+[h,foreach(RacePrereq,json.get(pr.Prereqs,"Race")): pr.RaceTest = if(getProperty("a5e.stat.Race") == RacePrereq,1,pr.RaceTest)]
+[h,foreach(SubracePrereq,json.get(pr.Prereqs,"Subrace")): pr.SubraceTest = if(getProperty("a5e.stat.Subrace") == SubracePrereq,1,pr.SubraceTest)]
 [h:"<!-- json.intersection has the dual effect of removing the AllOrOne key from the attribute options AND removing attributes that are not indicated both in the prereqs AND currently enabled on Lib:pm.a5e.Core -->"]
 [h,if(json.get(pr.Prereqs,"Attributes")==""): pr.AttrPrereqOptions = ""; pr.AttrPrereqOptions = json.intersection(json.fields(json.get(pr.Prereqs,"Attributes"),"json"),pm.GetAttributes("Name","json"))]
 [h,foreach(attribute,pr.AttrPrereqOptions): pr.AttrMetCount = if(and(json.get(Attributes,attribute)>=json.get(json.get(pr.Prereqs,"Attributes"),attribute),json.get(json.get(pr.Prereqs,"Attributes"),attribute)>0),pr.AttrMetCount+1,pr.AttrMetCount)]

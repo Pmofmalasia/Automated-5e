@@ -5,9 +5,9 @@
 [h:closeDialog("Monster Creation")]
 
 [h:setName(json.get(MonsterData,"DisplayName"))]
-[h:setProperty("CreatureType",json.get(MonsterData,"CreatureType"))]
-[h:setProperty("Race",json.get(MonsterData,"CreatureSubtype"))]
-[h:setProperty("stat.Size",json.get(MonsterData,"Size"))]
+[h:setProperty("a5e.stat.CreatureType",json.get(MonsterData,"CreatureType"))]
+[h:setProperty("a5e.stat.Race",json.get(MonsterData,"CreatureSubtype"))]
+[h:setProperty("a5e.stat.Size",json.get(MonsterData,"Size"))]
 [h:setSize(json.get(MonsterData,"Size"))]
 
 [h,switch(json.get(MonsterData,"Alignment")),CODE:
@@ -52,9 +52,12 @@
         [h:alignmentMorality = "Unaligned"]
     }
 ]
-[h:setProperty("Alignment",json.set("","Order",alignmentOrder,"Morality",alignmentMorality))]
+[h:setProperty("a5e.stat.Alignment",json.set("","Order",alignmentOrder,"Morality",alignmentMorality))]
 
 [h:"<!-- TODO: AC/HP/Speed stuff here -->"]
 
 [h:AttributeList = pm.GetAttributes()]
-[h,foreach(TempAttribute,AttributeList): setProperty("baseAttributes",json.set(getProperty("baseAttributes"),json.get(TempAttribute,"Name"),json.get(MonsterData,"Attribute"+json.get(TempAttribute,"Name"))))]
+[h,foreach(TempAttribute,AttributeList): setProperty("a5e.stat.BaseAttributes",json.set(getProperty("a5e.stat.BaseAttributes"),json.get(TempAttribute,"Name"),json.get(MonsterData,"Attribute"+json.get(TempAttribute,"Name"))))]
+
+[h:MonsterCR = json.get(MonsterData,"CR")]
+[h,if(!isNumber(MonsterCR)): MonsterCR = eval(MonsterCR)]

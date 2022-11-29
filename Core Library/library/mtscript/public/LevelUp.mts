@@ -13,14 +13,14 @@
 [h:lu.ClassPrereqNum = 0]
 	[h,foreach(PrereqTemp,lu.AttrPrereqList),CODE:{
 		[h:lu.HasPrereqs = json.get(json.get(ClassTemp,"Prereqs"),PrereqTemp)]
-		[h,if(lu.HasPrereqs!="" && json.get(Attributes,PrereqTemp)!=""): lu.ClassPrereqNum = if(and(lu.HasPrereqs>0,json.get(Attributes,PrereqTemp)>=lu.HasPrereqs),lu.ClassPrereqNum+1,lu.ClassPrereqNum)]
+		[h,if(lu.HasPrereqs!="" && json.get(getProperty("a5e.stat.Attributes"),PrereqTemp)!=""): lu.ClassPrereqNum = if(and(lu.HasPrereqs>0,json.get(getProperty("a5e.stat.Attributes"),PrereqTemp)>=lu.HasPrereqs),lu.ClassPrereqNum+1,lu.ClassPrereqNum)]
 	}]
-	[h:lu.FinalClassArray = if(or(Level==0,lu.ClassPrereqNum>=json.get(json.get(ClassTemp,"Prereqs"),"AllOrOne"),json.get(LClass,json.get(ClassTemp,"Name"))!=""),json.append(lu.FinalClassArray,ClassTemp),lu.FinalClassArray)]
-	[h:lu.FinalClassOptions = if(or(Level==0,lu.ClassPrereqNum>=json.get(json.get(ClassTemp,"Prereqs"),"AllOrOne"),json.get(LClass,json.get(ClassTemp,"Name"))!=""),json.append(lu.FinalClassOptions,json.get(ClassTemp,"Name")),lu.FinalClassOptions)]
-	[h:lu.ClassOptions = if(or(Level==0,lu.ClassPrereqNum>=json.get(json.get(ClassTemp,"Prereqs"),"AllOrOne"),json.get(LClass,json.get(ClassTemp,"Name"))!=""),listAppend(lu.ClassOptions,json.get(ClassTemp,"DisplayName")+" - "+if(json.get(LClass,json.get(ClassTemp,"Name"))=="",0,json.get(LClass,json.get(ClassTemp,"Name")))),lu.ClassOptions)]
+	[h:lu.FinalClassArray = if(or(getProperty("a5e.stat.Level")==0,lu.ClassPrereqNum>=json.get(json.get(ClassTemp,"Prereqs"),"AllOrOne"),json.get(getProperty("a5e.stat.ClassLevels"),json.get(ClassTemp,"Name"))!=""),json.append(lu.FinalClassArray,ClassTemp),lu.FinalClassArray)]
+	[h:lu.FinalClassOptions = if(or(getProperty("a5e.stat.Level")==0,lu.ClassPrereqNum>=json.get(json.get(ClassTemp,"Prereqs"),"AllOrOne"),json.get(getProperty("a5e.stat.ClassLevels"),json.get(ClassTemp,"Name"))!=""),json.append(lu.FinalClassOptions,json.get(ClassTemp,"Name")),lu.FinalClassOptions)]
+	[h:lu.ClassOptions = if(or(getProperty("a5e.stat.Level")==0,lu.ClassPrereqNum>=json.get(json.get(ClassTemp,"Prereqs"),"AllOrOne"),json.get(getProperty("a5e.stat.ClassLevels"),json.get(ClassTemp,"Name"))!=""),listAppend(lu.ClassOptions,json.get(ClassTemp,"DisplayName")+" - "+if(json.get(getProperty("a5e.stat.ClassLevels"),json.get(ClassTemp,"Name"))=="",0,json.get(getProperty("a5e.stat.ClassLevels"),json.get(ClassTemp,"Name")))),lu.ClassOptions)]
 }]
 
-[h:HPOption=if(Level==0,"","HowHP | Take Average (1d12=7   1d10=6   1d8=5   1d6=4),Roll HP | New HP | RADIO")]
+[h:HPOption=if(getProperty("a5e.stat.Level")==0,"","HowHP | Take Average (1d12=7   1d10=6   1d8=5   1d6=4),Roll HP | New HP | RADIO")]
 
 [h:abort(input(
 	" junkVar | Level up! |  | LABEL | SPAN=TRUE ",
@@ -29,9 +29,9 @@
 	))]
 [h:lu.Class = json.get(lu.FinalClassOptions,lu.ClassChoice)]
 
-[h:lu.NewLevel = json.get(LClass,lu.Class)+1]
+[h:lu.NewLevel = json.get(getProperty("a5e.stat.ClassLevels"),lu.Class)+1]
 
-[h,if(Level == 0),CODE:{
+[h,if(getProperty("a5e.stat.Level") == 0),CODE:{
 	[h:lu.NewAbilities = json.append(lu.NewAbilities,json.get(json.get(lu.FinalClassArray,lu.ClassChoice),"FullProficiencies"))]
 	[h:lu.HitDieSize = json.get(json.get(lu.FinalClassArray,lu.ClassChoice),"HitDie")]
 	[h:lu.HPIncrease = lu.HitDieSize]
@@ -43,7 +43,7 @@
 
 	[h:lu.HPIncrease = if(HowHP == 0,floor(lu.HitDieSize/2)+1,if(HowHP == 1,eval("1d"+lu.HitDieSize),max(eval("1d"+lu.HitDieSize),floor(lu.HitDieSize/2)+1)))]
 }]
-[h:lu.OldConMod = json.get(AtrMods,"Constitution")]
+[h:lu.OldConMod = json.get(getProperty("a5e.stat.AtrMods"),"Constitution")]
 
 [h:lu.SubclassTest = if(json.get(json.path.read(lu.ClassArray,"[?(@.Name=='"+lu.Class+"')]['SubclassLevel']"),0)==lu.NewLevel,1,0)]
 [h,if(lu.SubclassTest),CODE:{
@@ -55,15 +55,15 @@
 
 [h:lu.ASITest = json.contains(json.get(json.get(lu.FinalClassArray,lu.ClassChoice),"ASILevels"),lu.NewLevel)]
 [h,if(lu.ASITest),CODE:{
-	[MACRO("AbilityScoreIncrease@Lib:pm.a5e.Core"): json.set("","LevelUp",1,"Restrictions",if(Level==0,0,1),"ParentToken",ParentToken)]
+	[MACRO("AbilityScoreIncrease@Lib:pm.a5e.Core"): json.set("","LevelUp",1,"Restrictions",if(getProperty("a5e.stat.Level")==0,0,1),"ParentToken",ParentToken)]
 	[h:lu.NewAbilities = json.append(lu.NewAbilities,macro.return)]
 };{}]
 
 [h:"<!-- Adds abilities based on class, race, and background that are gained on level up, separately since race and background go off of total level -->"]
 
-[h:tempNewAbilities = json.path.read(getLibProperty("sb.Abilities","Lib:pm.a5e.Core"),"[*][?((@.Class=='"+pm.RemoveSpecial(Race)+"' || @.Class=='') && (@.Subclass=='"+pm.RemoveSpecial(Subrace)+"' || @.Subclass=='') && @.Level=="+(Level+1)+" && @.GainOnLevel==1)]")]
+[h:tempNewAbilities = json.path.read(getLibProperty("sb.Abilities","Lib:pm.a5e.Core"),"[*][?((@.Class=='"+pm.RemoveSpecial(getProperty("a5e.stat.Race"))+"' || @.Class=='') && (@.Subclass=='"+pm.RemoveSpecial(getProperty("a5e.stat.Subrace"))+"' || @.Subclass=='') && @.Level=="+(getProperty("a5e.stat.Level")+1)+" && @.GainOnLevel==1)]")]
 
-[h:tempNewAbilities = json.merge(tempNewAbilities,json.path.read(getLibProperty("sb.Abilities","Lib:pm.a5e.Core"),"[*][?(@.Class=='Background' && @.Subclass=='"+pm.RemoveSpecial(Background)+"' && @.Level=="+(Level+1)+" && @.GainOnLevel==1)]"))]
+[h:tempNewAbilities = json.merge(tempNewAbilities,json.path.read(getLibProperty("sb.Abilities","Lib:pm.a5e.Core"),"[*][?(@.Class=='Background' && @.Subclass=='"+pm.RemoveSpecial(getProperty("a5e.stat.Background"))+"' && @.Level=="+(getProperty("a5e.stat.Level")+1)+" && @.GainOnLevel==1)]"))]
 
 [h:tempNewAbilities = json.merge(tempNewAbilities,json.path.read(getLibProperty("sb.Abilities","Lib:pm.a5e.Core"),"[*][?((@.Class=='"+lu.Class+"' || @.Class=='') && (@.Subclass=='"+pm.RemoveSpecial(json.get(Subclasses,lu.Class))+"' || @.Subclass=='') && @.Level=="+lu.NewLevel+" && @.GainOnLevel==1)]"))]
 
@@ -110,12 +110,12 @@
 }]
 
 [h:"<!-- Make setting everything happen last, so that cancelling level up returns to the state prior to starting the macro and not halfway. -->"]
-[h:LClass = json.set(LClass,lu.Class,lu.NewLevel)]
+[h:setProperty("a5e.stat.ClassLevels",json.set(getProperty("a5e.stat.ClassLevels"),lu.Class,lu.NewLevel))]
 
 [h:abilityTable=""]
 [h,foreach(ClassTemp,lu.ClassArray),CODE:{
-	[h:TempClassLevel = if(json.get(LClass,json.get(ClassTemp,"Name"))=="",0,json.get(LClass,json.get(ClassTemp,"Name")))]
-	[h:abilityTable = if(TempClassLevel>0,json.append(abilityTable,json.set("","ShowIfCondensed",1,"Header",json.get(ClassTemp,"Name")+" Level","FalseHeader","","FullContents","","RulesContents",json.get(LClass,json.get(ClassTemp,"Name")),"RollContents","","DisplayOrder","['Rules','Roll','Full']","Value",json.get(LClass,json.get(ClassTemp,"Name")),"Units","")),abilityTable)]
+	[h:TempClassLevel = if(json.get(getProperty("a5e.stat.ClassLevels"),json.get(ClassTemp,"Name"))=="",0,json.get(getProperty("a5e.stat.ClassLevels"),json.get(ClassTemp,"Name")))]
+	[h:abilityTable = if(TempClassLevel>0,json.append(abilityTable,json.set("","ShowIfCondensed",1,"Header",json.get(ClassTemp,"Name")+" Level","FalseHeader","","FullContents","","RulesContents",json.get(getProperty("a5e.stat.ClassLevels"),json.get(ClassTemp,"Name")),"RollContents","","DisplayOrder","['Rules','Roll','Full']","Value",json.get(getProperty("a5e.stat.ClassLevels"),json.get(ClassTemp,"Name")),"Units","")),abilityTable)]
 }]
 
 [h:lu.DisplayNewAbilities = ""]
@@ -149,11 +149,12 @@
 
 [h:"<!-- Addition of general resources: Happens last because the addition of abilities may change things (e.g. getting more health from a Con increase) -->"]
 
-[h:lu.NewConMod = json.get(AtrMods,"Constitution")]
+[h:lu.NewConMod = json.get(getProperty("a5e.stat.AtrMods"),"Constitution")]
 [h:MaxHitDice = json.set(MaxHitDice,"1d"+lu.HitDieSize,json.get(MaxHitDice,"1d"+lu.HitDieSize)+1)]
 [h:HitDice = json.set(HitDice,"1d"+lu.HitDieSize,json.get(HitDice,"1d"+lu.HitDieSize)+1)]
 [h:RolledMaxHP = RolledMaxHP+lu.HPIncrease]
-[h:HP = HP+lu.HPIncrease+json.get(AtrMods,"Constitution")+((lu.NewConMod - lu.OldConMod)*(Level-1))]
+[h:HPCalc = getProperty("a5e.stat.HP")+lu.HPIncrease+json.get(getProperty("a5e.stat.AtrMods"),"Constitution")+((lu.NewConMod - lu.OldConMod)*(getProperty("a5e.stat.Level")-1))]
+[h:setProperty("a5e.stat.HP",HPCalc)]
 
 [h:MaxSpellSlotsOld = MaxSpellSlots]
 [h:MaxSpellSlots = table("Spell Slots",LSpellSlots)]
@@ -175,14 +176,14 @@
 	))]
 };{}]
 
-[h:newProfBonusTest = ceiling(Level/4)+1 != ceiling((Level-1)/4)+1]
+[h:newProfBonusTest = ceiling(getProperty("a5e.stat.Level")/4)+1 != ceiling((getProperty("a5e.stat.Level")-1)/4)+1]
 [h,if(newProfBonusTest):
 	abilityTable = json.append(abilityTable,json.set("",
 		"ShowIfCondensed",1,
 		"Header","Proficiency",
 		"FalseHeader","",
 		"FullContents","",
-		"RulesContents","Your proficiency bonus is now "+Proficiency+".",
+		"RulesContents","Your proficiency bonus is now "+getProperty("a5e.stat.Proficiency")+".",
 		"RollContents","",
 		"DisplayOrder","['Rules','Roll','Full']"
 	))

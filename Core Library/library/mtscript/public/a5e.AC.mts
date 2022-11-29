@@ -19,7 +19,7 @@
 
 [h:pm.PassiveFunction("AC")]
 
-[h:dexBonus = if(dexMax == 0,0,min(dexMax,json.get(AtrMods,"Dexterity")))]
+[h:dexBonus = if(dexMax == 0,0,min(dexMax,json.get(getProperty("a5e.stat.AtrMods"),"Dexterity")))]
 [h:baseACFinal = max(baseAC,setBaseAC)]
 
 [h:ACFinal = baseACFinal + dexBonus + bonusAC + shieldAC]

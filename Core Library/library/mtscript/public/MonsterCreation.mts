@@ -1,6 +1,6 @@
 [h:monsterCreationHTML = "<input type='hidden' name='ParentToken' id='ParentToken' value='"+currentToken()+"'><tr id='rowMonsterName'><th><label for='DisplayName'>Creature Name:</label></th><td><input type='text' id='DisplayName' name='DisplayName' autofocus></td></tr>"]
 
-[h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowSize'><th><label for='Size'>Size:</label></th><td><select id='Size' name='Size'><option value='Tiny'>Tiny</option><option value='Small'>Small</option><option value='Medium'>Medium</option><option value='Large'>Large</option><option value='Huge'>Huge</option><option value='Gargantuan'>Gargantuan</option></td></tr>"]
+[h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowSize'><th><label for='Size'>Size:</label></th><td><select id='Size' name='Size'><option value='Tiny'>Tiny</option><option value='Small'>Small</option><option value='Medium' selected>Medium</option><option value='Large'>Large</option><option value='Huge'>Huge</option><option value='Gargantuan'>Gargantuan</option></td></tr>"]
 
 [h:creatureTypeArray = pm.GetCreatureTypes()]
 [h:creatureTypeOptions = ""]
@@ -34,24 +34,24 @@
 
 [h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowHitDie'><th><label for='HitDieNum'>Total Hit Dice:</label></th><td><input type='number' id='HitDieNum' name='HitDieNum' min='1' style='width:25px'> d <input type='number' id='HitDieSize' name='HitDieSize' min='1' style='width:25px'> + <input type='number' id='HitDieBonus' name='HitDieBonus' min='0' style='width:25px'></td></tr>"]
 
-[h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowSpeedGround'><th><label for='SpeedGround'>Ground Speed:</label></th><td><input type='number' id='SpeedGround' name='SpeedGround' min='0' style='width:25px'></td></tr>"]
+[h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowSpeedGround'><th><label for='SpeedGround'>Ground Speed:</label></th><td><input type='number' id='SpeedGround' name='SpeedGround' min='0' style='width:25px' value='30'></td></tr>"]
 
-[h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowSpeedBurrow'><th><label for='SpeedBurrow'>Burrowing Speed:</label></th><td><input type='number' id='SpeedBurrow' name='SpeedBurrow' min='0' style='width:25px'></td></tr>"]
+[h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowSpeedBurrow'><th><label for='SpeedBurrow'>Burrowing Speed:</label></th><td><input type='number' id='SpeedBurrow' name='SpeedBurrow' min='0' style='width:25px' value='0'></td></tr>"]
 
-[h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowSpeedClimb'><th><label for='SpeedClimb'>Climbing Speed:</label></th><td><input type='number' id='SpeedClimb' name='SpeedClimb' min='0' style='width:25px'></td></tr>"]
+[h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowSpeedClimb'><th><label for='SpeedClimb'>Climbing Speed:</label></th><td><input type='number' id='SpeedClimb' name='SpeedClimb' min='0' style='width:25px' value='0'></td></tr>"]
 
-[h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowSpeedFly'><th><label for='SpeedFly'>Flying Speed:</label></th><td><input type='number' id='SpeedFly' name='SpeedFly' min='0' style='width:25px'> <input type='checkbox' id='isHover' name='isHover'>Hovers?</td></tr>"]
+[h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowSpeedFly'><th><label for='SpeedFly'>Flying Speed:</label></th><td><input type='number' id='SpeedFly' name='SpeedFly' min='0' style='width:25px' value='0'> <input type='checkbox' id='isHover' name='isHover'>Hovers?</td></tr>"]
 
-[h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowSpeedSwim'><th><label for='SpeedSwim'>Swimming Speed:</label></th><td><input type='number' id='SpeedSwim' name='SpeedSwim' min='0' style='width:25px'></td></tr>"]
+[h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowSpeedSwim'><th><label for='SpeedSwim'>Swimming Speed:</label></th><td><input type='number' id='SpeedSwim' name='SpeedSwim' min='0' style='width:25px' value='0'></td></tr>"]
 
 [h:AttributeList = pm.GetAttributes()]
-[h,foreach(tempAttribute,AttributeList): monsterCreationHTML = monsterCreationHTML + "<tr id='rowAttribute"+json.get(tempAttribute,"Name")+"'><th><label for='Attribute"+json.get(tempAttribute,"Name")+"'>"+json.get(tempAttribute,"DisplayName")+":</label></th><td><input type='number' id='Attribute"+json.get(tempAttribute,"Name")+"' name='Attribute"+json.get(tempAttribute,"Name")+"' min='1' style='width:25px'></td></tr>"]
+[h,foreach(tempAttribute,AttributeList): monsterCreationHTML = monsterCreationHTML + "<tr id='rowAttribute"+json.get(tempAttribute,"Name")+"'><th><label for='Attribute"+json.get(tempAttribute,"Name")+"'>"+json.get(tempAttribute,"DisplayName")+" Score:</label></th><td><input type='number' id='Attribute"+json.get(tempAttribute,"Name")+"' name='Attribute"+json.get(tempAttribute,"Name")+"' min='1' style='width:25px'></td></tr>"]
 
-[h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowIsDamageVuln'><th><label for='IsDamageVuln'>Has Damage Vulnerabilities:</label></th><td><input type='checkbox' id='IsDamageVuln' name='IsDamageVuln' onchange='createDamageTypeRows("+'"DamageVuln"'+")'></td></tr>"]
+[h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowIsDamageVuln'><th><label for='IsDamageVuln'>Has Vulnerabilities:</label></th><td><input type='checkbox' id='IsDamageVuln' name='IsDamageVuln' onchange='createDamageTypeRows("+'"DamageVuln"'+")'></td></tr>"]
 
-[h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowIsDamageRes'><th><label for='IsDamageRes'>Has Damage Resistances:</label></th><td><input type='checkbox' id='IsDamageRes' name='IsDamageRes' onchange='createDamageTypeRows("+'"DamageRes"'+")'></td></tr>"]
+[h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowIsDamageRes'><th><label for='IsDamageRes'>Has Resistances:</label></th><td><input type='checkbox' id='IsDamageRes' name='IsDamageRes' onchange='createDamageTypeRows("+'"DamageRes"'+")'></td></tr>"]
 
-[h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowIsDamageImmun'><th><label for='IsDamageImmun'>Has Damage Immunities:</label></th><td><input type='checkbox' id='IsDamageImmun' name='IsDamageImmun' onchange='createDamageTypeRows("+'"DamageImmun"'+")'></td></tr>"]
+[h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowIsDamageImmun'><th><label for='IsDamageImmun'>Has Immunities:</label></th><td><input type='checkbox' id='IsDamageImmun' name='IsDamageImmun' onchange='createDamageTypeRows("+'"DamageImmun"'+")'></td></tr>"]
 
 [h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowIsConditionImmun'><th><label for='IsConditionImmun'>Has Condition Immunities:</label></th><td><input type='checkbox' id='IsConditionImmun' name='IsConditionImmun' onchange='createConditionRows()'></td></tr>"]
 
@@ -67,7 +67,7 @@
 
 [h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowProficiency'><th><label for='Proficiency'>Proficiency Bonus:</label></th><td><input type='number' id='Proficiency' name='Proficiency' min='1' style='width:25px' value='2'></td></tr>"]
 
-[h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowCR'><th><label for='CR'>CR:</label></th><td><input type='number' id='CR' name='CR' min='0' style='width:25px'></td></tr>"]
+[h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowCR'><th><label for='CR'>CR:</label></th><td><input type='text' id='CR' name='CR' style='width:25px'></td></tr>"]
 
 [h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowXP'><th><label for='XP'>XP:</label></th><td><input type='number' id='XP' name='XP' min='0' style='width:25px'></td></tr>"]
 

@@ -62,7 +62,7 @@
 	[h:wa.Class = "Improvised"]
 };{}]
 
-[h:PrimeStat = if(and(json.get(wa.Props,"Finesse")>0,json.get(AtrMods,"Dexterity")>json.get(AtrMods,"Strength")),"Dexterity","Strength")]
+[h:PrimeStat = if(and(json.get(wa.Props,"Finesse")>0,json.get(getProperty("a5e.stat.AtrMods"),"Dexterity")>json.get(getProperty("a5e.stat.AtrMods"),"Strength")),"Dexterity","Strength")]
 [h:PrimeStat = if(wa.MeleeRanged=="Ranged","Dexterity",PrimeStat)]
 [h:PrimeStat = if(json.get(wa.Props,"IntMod")>0,"Intelligence",PrimeStat)]
 [h:PrimeStat = if(json.get(wa.Props,"WisMod")>0,"Wisdom",PrimeStat)]
@@ -71,7 +71,7 @@
 [h:pm.PassiveFunction("AttackStat")]
 [h:pm.PassiveFunction("WeaponAttackStat")]
 
-[h:attack.PrimeStatBonus = json.get(AtrMods,PrimeStat)]
+[h:attack.PrimeStatBonus = json.get(getProperty("a5e.stat.AtrMods"),PrimeStat)]
 
 [h:wa.DmgDieSize = number(substring(wa.DmgDie,indexOf(wa.DmgDie,"d")+1))]
 [h:wa.DmgDie2Size = number(substring(wa.DmgDie2,indexOf(wa.DmgDie2,"d")+1))]

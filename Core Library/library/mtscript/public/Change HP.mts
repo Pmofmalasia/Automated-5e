@@ -99,8 +99,8 @@
 	[h:hp.TempEndTest = (TempHP==0)]
 }]
 
-[h:hp.AlreadyDying = if(HP==0,1,0)]
-[h:HP = min(HP - hp.Damage + hp.Healing,MaxHP)]
+[h:hp.AlreadyDying = if(getProperty("a5e.stat.HP")==0,1,0)]
+[h:setProperty("a5e.stat.HP",min(getProperty("a5e.stat.HP") - hp.Damage + hp.Healing,getProperty("a5e.stat.MaxHP")))]
 
 [h,if(hp.AlreadyDying && hp.Healing!=0),CODE:{
 	[h:DeathSaves = json.set(DeathSaves,"Successes",0,"Failures",0)]
@@ -110,11 +110,11 @@
 	[h:hp.Resuscitated = 0]
 }]
 
-[h,if(HP<1 && hp.Damage!=0),CODE:{
+[h,if(getProperty("a5e.stat.HP")<1 && hp.Damage!=0),CODE:{
 	[h:hp.Resuscitated = 0]
 	[h,if(hp.AlreadyDying): DeathFailures = min(3,json.get(DeathSaves,"Failures")+if(hp.IsCrit,2,1)); DeathFailures = 0]
 	[h:DeathSaves = json.set(DeathSaves,"Failures",DeathFailures)]
-	[h:hp.DeadTest = or(abs(HP)>=MaxHP,DeathFailures==3)]
+	[h:hp.DeadTest = or(abs(getProperty("a5e.stat.HP"))>=getProperty("a5e.stat.MaxHP"),DeathFailures==3)]
 	
 	[h,if(!hp.AlreadyDying),CODE:{
 		[h:setState("Dying",1)]
@@ -125,7 +125,7 @@
 		[h:setState("Dead",1)]
 	};{}]
 	
-	[h:HP = 0]
+	[h:getProperty("a5e.stat.HP") = 0]
 };{
 	[h:hp.DeadTest = 0]
 	[h,if(hp.Resuscitated),CODE:{
@@ -134,7 +134,7 @@
 	};{}]
 }]
 
-[h:setBar("Health",(HP/MaxHP))]
+[h:setBar("Health",(getProperty("a5e.stat.HP")/getProperty("a5e.stat.MaxHP")))]
 
 [h:DamageColor = pm.DamageColor()]
 [h:HealingColor = pm.HealingColor()]

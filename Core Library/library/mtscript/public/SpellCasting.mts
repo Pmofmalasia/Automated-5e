@@ -87,7 +87,7 @@
 };{
 	[h:ClassOptionsArray = json.append("",ForcedClass)]
 	[h,if(ForcedClass!=""): ClassOptionsArray = ForcedClass]
-	[h,if(InnateCast==1): ClassOptions=if(MonsterCast==0,Race,"Monster")]
+	[h,if(InnateCast==1): ClassOptions=if(MonsterCast==0,getProperty("a5e.stat.Race"),"Monster")]
 }]
 
 [h,if(ForcedLevel==""),CODE:{
@@ -185,7 +185,7 @@
 		))]		
 	}]
 };{
-	[h:sClassSelect=if(ForcedClass!="",ForcedClass,if(InnateCast,Race,""))]
+	[h:sClassSelect=if(ForcedClass!="",ForcedClass,if(InnateCast,getProperty("a5e.stat.Race"),""))]
 	[h:sLevelSelect=ForcedLevel]
 	[h,if(IsCantrip): sLevelSelect = "Cantrip"]
 	[h:sRulesShow = getLibProperty("FullSpellRules","Lib:pm.a5e.Core")]
@@ -204,7 +204,7 @@
 [h:CastAsRitual = 0]
 [h:sLevelSelectData = json.get(LevelOptionData,chosenLevel)]
 [h,if(IsCantrip),CODE:{
-	[h:eLevel = 0+if(Level>=5,1,0)+if(Level>=11,1,0)+if(Level>=17,1,0)]
+	[h:eLevel = 0+if(getProperty("a5e.stat.Level")>=5,1,0)+if(getProperty("a5e.stat.Level")>=11,1,0)+if(getProperty("a5e.stat.Level")>=17,1,0)]
 };{
 	[h,switch(json.get(sLevelSelectData,"ResourceType")),CODE:
 		case "Spell Slots":{
@@ -299,7 +299,7 @@
 	PrimeStat = json.get(sClassSelectData,"PrimeStat")
 ]
 [h:PrimeStat = if(PrimeStat=="","None",PrimeStat)]
-[h,if(PrimeStat == "None"): PrimeStatMod = 0; PrimeStatMod = json.get(getProperty("AtrMods"),PrimeStat)]
+[h,if(PrimeStat == "None"): PrimeStatMod = 0; PrimeStatMod = json.get(getProperty("a5e.stat.AtrMods"),PrimeStat)]
 [h:pm.PassiveFunction("SpellStat")]
 
 [h,if(and(isConcentrationLost,isConcentration==1)): setState("Concentrating",1)]

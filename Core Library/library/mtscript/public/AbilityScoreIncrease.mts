@@ -13,11 +13,11 @@
 [h:pm.PassiveFunction("AbilityScoreMax")]
 
 [h,foreach(TempAbilityScore,pm.GetAttributes()),CODE:{
-	[h:HasAttributeTest = (json.get(Attributes,json.get(TempAbilityScore,"Name"))!="")]
+	[h:HasAttributeTest = (json.get(getProperty("a5e.stat.Attributes"),json.get(TempAbilityScore,"Name"))!="")]
 	[h,if(HasAttributeTest),CODE:{
-		[h:AbilityList = if(json.get(Attributes,json.get(TempAbilityScore,"Name"))<json.get(as.MaxStatScores,json.get(TempAbilityScore,"Name")),listAppend(AbilityList,json.get(TempAbilityScore,"DisplayName")+" ("+json.get(Attributes,json.get(TempAbilityScore,"Name"))+")"),AbilityList)]
+		[h:AbilityList = if(json.get(getProperty("a5e.stat.Attributes"),json.get(TempAbilityScore,"Name"))<json.get(as.MaxStatScores,json.get(TempAbilityScore,"Name")),listAppend(AbilityList,json.get(TempAbilityScore,"DisplayName")+" ("+json.get(getProperty("a5e.stat.Attributes"),json.get(TempAbilityScore,"Name"))+")"),AbilityList)]
 		
-		[h:ValidAbilities = if(json.get(Attributes,json.get(TempAbilityScore,"Name"))<json.get(as.MaxStatScores,json.get(TempAbilityScore,"Name")),json.append(ValidAbilities,json.get(TempAbilityScore,"Name")),ValidAbilities)]
+		[h:ValidAbilities = if(json.get(getProperty("a5e.stat.Attributes"),json.get(TempAbilityScore,"Name"))<json.get(as.MaxStatScores,json.get(TempAbilityScore,"Name")),json.append(ValidAbilities,json.get(TempAbilityScore,"Name")),ValidAbilities)]
 		
 		[h:AbilityChoices = json.set(AbilityChoices,json.get(TempAbilityScore,"Name"),0)]
 	};{}]
@@ -40,7 +40,7 @@
 	[h,if(FeatInstead),CODE:{
 		[h:AbilityOverMaxTest = 0]
 	};{
-		[h,if(AbilityOne!=AbilityTwo): AbilityOverMaxTest = 0; AbilityOverMaxTest = (json.get(Attributes,json.get(ValidAbilities,AbilityOne))+2 > json.get(as.MaxStatScores,json.get(ValidAbilities,AbilityOne)))]
+		[h,if(AbilityOne!=AbilityTwo): AbilityOverMaxTest = 0; AbilityOverMaxTest = (json.get(getProperty("a5e.stat.Attributes"),json.get(ValidAbilities,AbilityOne))+2 > json.get(as.MaxStatScores,json.get(ValidAbilities,AbilityOne)))]
 		[h,if(roll.count>0 && AbilityOverMaxTest): AbilityOverMaxTest = !maxOverride]
 	}]
 }]

@@ -13,7 +13,7 @@
 	[h:setState("Dying",1)]
 	[h:setState("Unconscious",1)]
 	[h:setState("Dead",0)]
-	[h:DeathSaves = json.get(DeathData,"PriorDeath")]
+	[h:setProperty("a5e.stat.DeathSaves",json.get(DeathData,"PriorDeath"))]
 }]
 
 [h,MACRO("Save@Lib:pm.a5e.Core"): 
@@ -21,14 +21,14 @@
 	"Save","Death Save",
 	"Type","Death",
 	"ParentToken",ParentToken,
-	"PriorDeath",DeathSaves,
+	"PriorDeath",getProperty("a5e.stat.DeathSaves"),
 	"PriorHP",getProperty("a5e.stat.HP")
 )]
 
 [h:ReturnData = macro.return]
 [h:abilityTable = json.get(ReturnData,"Table")]
 [h,if(json.get(ReturnData,"FinalRoll")==20),CODE:{
-	[h:DeathSaves = json.set("","Successes",0,"Failures",0)]
+	[h:setProperty("a5e.stat.DeathSaves",json.set("","Successes",0,"Failures",0))]
 	[h:setState("Dying",0)]
 	[h:setState("Unconscious",0)]
 	[h:setProperty("a5e.stat.HP",max(1,getProperty("a5e.stat.HP")))]
@@ -44,24 +44,21 @@
 		"DisplayOrder","['Rules','Roll','Full']"
 	))]
 };{
-	[h:SuccessCount = json.get(DeathSaves,"Successes")]
-	[h:FailCount = json.get(DeathSaves,"Failures")]
+	[h:SuccessCount = json.get(getProperty("a5e.stat.DeathSaves"),"Successes")]
+	[h:FailCount = json.get(getProperty("a5e.stat.DeathSaves"),"Failures")]
 	[h,if(json.get(ReturnData,"FinalRoll")==1),CODE:{
-		[h:DeathSaves = json.set(DeathSaves,"Failures",min(3,FailCount+2))]
+		[h:setProperty("a5e.stat.DeathSaves",json.set(getProperty("a5e.stat.DeathSaves"),"Failures",min(3,FailCount+2)))]
 	};{
-		[h:DeathSaves = if(json.get(ReturnData,"Value")<10,
-						json.set(DeathSaves,"Failures",min(3,FailCount+1)),
-						json.set(DeathSaves,"Successes",min(3,SuccessCount+1))
-						)]
+		[h:setProperty("a5e.stat.DeathSaves",if(json.get(ReturnData,"Value")<10,json.set(getProperty("a5e.stat.DeathSaves"),"Failures",min(3,FailCount+1)),json.set(getProperty("a5e.stat.DeathSaves"),"Successes",min(3,SuccessCount+1))))]
 	}]
 	
-	[h:DeathMessage = "Successes: <b><span style='font-size:2em; color:"+HealingColor+"'>"+json.get(DeathSaves,"Successes")+"</span></b> / Failures: <b><span style='font-size:2em; color:"+DamageColor+"'>"+json.get(DeathSaves,"Failures")+"</span></b>"]
-	[h,if(json.get(DeathSaves,"Failures")==3),CODE:{
-		[h:DeathMessage = "Failures: <b><span style='font-size:2em; color:"+DamageColor+"'>"+json.get(DeathSaves,"Failures")+"</span></b>"]
+	[h:DeathMessage = "Successes: <b><span style='font-size:2em; color:"+HealingColor+"'>"+json.get(getProperty("a5e.stat.DeathSaves"),"Successes")+"</span></b> / Failures: <b><span style='font-size:2em; color:"+DamageColor+"'>"+json.get(getProperty("a5e.stat.DeathSaves"),"Failures")+"</span></b>"]
+	[h,if(json.get(getProperty("a5e.stat.DeathSaves"),"Failures")==3),CODE:{
+		[h:DeathMessage = "Failures: <b><span style='font-size:2em; color:"+DamageColor+"'>"+json.get(getProperty("a5e.stat.DeathSaves"),"Failures")+"</span></b>"]
 		[h:setState("Dead",1)]
 	};{}]
-	[h,if(json.get(DeathSaves,"Successes")==3),CODE:{
-		[h:DeathMessage = "Successes: <b><span style='font-size:2em; color:"+HealingColor+"'>"+json.get(DeathSaves,"Successes")+"</span></b>"]
+	[h,if(json.get(getProperty("a5e.stat.DeathSaves"),"Successes")==3),CODE:{
+		[h:DeathMessage = "Successes: <b><span style='font-size:2em; color:"+HealingColor+"'>"+json.get(getProperty("a5e.stat.DeathSaves"),"Successes")+"</span></b>"]
 		[h:setState("Dying",0)]
 	};{}]
 	

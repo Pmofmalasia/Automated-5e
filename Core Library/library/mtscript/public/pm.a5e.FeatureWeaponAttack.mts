@@ -27,7 +27,7 @@
 				"Header","Weapon Options",
 				"FalseHeader","",
 				"FullContents","",
-				"RulesContents",json.get(json.get(Weapon,json.get(Weapon,0)),"Name")+" or "+json.get(json.get(Weapon,json.get(Weapon,1)),"Name"),
+				"RulesContents",json.get(json.get(getProperty("a5e.stat.Weapon"),json.get(getProperty("a5e.stat.Weapon"),0)),"Name")+" or "+json.get(json.get(getProperty("a5e.stat.Weapon"),json.get(getProperty("a5e.stat.Weapon"),1)),"Name"),
 				"RollContents","",
 				"DisplayOrder","['Rules','Roll','Full']"
 			)]
@@ -48,9 +48,9 @@
 		};
 		case "AnyValidEquipped": {
 			[h:abort(input(
-				"choice.Weapon | "+json.get(json.get(Weapon,json.get(Weapon,0)),"Name")+","+json.get(json.get(Weapon,json.get(Weapon,1)),"Name")+" | Choose a Weapon | RADIO "
+				"choice.Weapon | "+json.get(json.get(getProperty("a5e.stat.Weapon"),json.get(getProperty("a5e.stat.Weapon"),0)),"Name")+","+json.get(json.get(getProperty("a5e.stat.Weapon"),json.get(getProperty("a5e.stat.Weapon"),1)),"Name")+" | Choose a Weapon | RADIO "
 				))]
-			[h:WeaponData = json.get(Weapon,json.get(Weapon,choice.Weapon))]
+			[h:WeaponData = json.get(getProperty("a5e.stat.Weapon"),json.get(getProperty("a5e.stat.Weapon"),choice.Weapon))]
 			[h:AttackData = json.set("",
 				"Hand",choice.Weapon,
 				"WeaponData",WeaponData

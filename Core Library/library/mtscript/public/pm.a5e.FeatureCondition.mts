@@ -21,8 +21,8 @@
 	"EndTriggers",pm.ConditionEndTriggers
 )]
 
-[h:pm.GroupIDTest = json.path.read(allAbilities,"[*][?(@.Name == '"+currentFeatureName+"' && @.Class == '"+currentFeatureClass+"' && @.Subclass == '"+currentFeatureSubclass+"' && @.GroupID != null)]['GroupID']","DEFAULT_PATH_LEAF_TO_NULL")]
-[h,if(json.isEmpty(pm.GroupIDTest)): pm.ActiveConditionTest = 0; pm.ActiveConditionTest = !json.isEmpty(json.path.read(ConditionList,"[*][?(@.GroupID == '"+json.get(pm.GroupIDTest,0)+"')]","DEFAULT_PATH_LEAF_TO_NULL"))]
+[h:pm.GroupIDTest = json.path.read(getProperty("a5e.stat.AllFeatures"),"[*][?(@.Name == '"+currentFeatureName+"' && @.Class == '"+currentFeatureClass+"' && @.Subclass == '"+currentFeatureSubclass+"' && @.GroupID != null)]['GroupID']","DEFAULT_PATH_LEAF_TO_NULL")]
+[h,if(json.isEmpty(pm.GroupIDTest)): pm.ActiveConditionTest = 0; pm.ActiveConditionTest = !json.isEmpty(json.path.read(getProperty("a5e.stat.ConditionList"),"[*][?(@.GroupID == '"+json.get(pm.GroupIDTest,0)+"')]","DEFAULT_PATH_LEAF_TO_NULL"))]
 
 [h,if(pm.IsToggle),CODE:{
 	[h,SWITCH(IsTooltip+""+pm.ActiveConditionTest),CODE:
@@ -39,7 +39,7 @@
 			))]
 		};
 		case "11":{
-			[h:pm.CurrentDuration = pm.DurationDisplay(json.get(json.path.read(ConditionList,"[*][?(@.GroupID=="+json.get(pm.GroupIDTest,0)+")]['Duration']"),0))]
+			[h:pm.CurrentDuration = pm.DurationDisplay(json.get(json.path.read(getProperty("a5e.stat.ConditionList"),"[*][?(@.GroupID=="+json.get(pm.GroupIDTest,0)+")]['Duration']"),0))]
 			[h:json.set("","Toggle",1,"IsActive",0)]
 			[h:abilityTable = json.append(abilityTable,json.set("",
 				"ShowIfCondensed",1,
@@ -62,8 +62,8 @@
 				"GroupID",pm.GroupID
 			)]
 			[h,if(json.isEmpty(pm.GroupIDTest)):
-				allAbilities = json.path.put(allAbilities,"[*][?(@.Name == '"+currentFeatureName+"' && @.Class == '"+currentFeatureClass+"' && @.Subclass == '"+currentFeatureSubclass+"')]","GroupID",pm.GroupID);
-				allAbilities = json.path.set(allAbilities,"[*][?(@.Name == '"+currentFeatureName+"' && @.Class == '"+currentFeatureClass+"' && @.Subclass == '"+currentFeatureSubclass+"')]['GroupID']",pm.GroupID)
+				setProperty("a5e.stat.AllFeatures",json.path.put(getProperty("a5e.stat.AllFeatures"),"[*][?(@.Name == '"+currentFeatureName+"' && @.Class == '"+currentFeatureClass+"' && @.Subclass == '"+currentFeatureSubclass+"')]","GroupID",pm.GroupID));
+				setProperty("a5e.stat.AllFeatures",json.path.set(getProperty("a5e.stat.AllFeatures"),"[*][?(@.Name == '"+currentFeatureName+"' && @.Class == '"+currentFeatureClass+"' && @.Subclass == '"+currentFeatureSubclass+"')]['GroupID']",pm.GroupID))
 			]
 			[h:json.set("","ConditionInfo",pm.ConditionInfo,"Toggle",1,"IsActive",1)]
 			[h:abilityTable = json.append(abilityTable,json.set("",
@@ -81,7 +81,7 @@
 			[h,MACRO("EndCondition@Lib:pm.a5e.Core"): json.set("","GroupID",pm.CurrentID,"ParentToken",ParentToken)]
 			[h:pm.CondRemovedList = json.toList(json.path.read(json.get(macro.return,"Removed"),"[*]['DisplayName']"),", ")]
 			[h:abilityTable = json.append(json.get(macro.return,"Table"),json.set("","ShowIfCondensed",1,"Header","Condition"+if(pm.ConditionNum>1,"s","")+" Deactivated","FalseHeader","","FullContents","","RulesContents",pm.CondRemovedList,"RollContents","","DisplayOrder","['Rules','Roll','Full']"))]
-			[h:allAbilities = json.path.delete(allAbilities,"[*][?(@.Name == '"+currentFeatureName+"' && @.Class == '"+currentFeatureClass+"' && @.Subclass == '"+currentFeatureSubclass+"')]['GroupID']")]
+			[h:setProperty("a5e.stat.AllFeatures",json.path.delete(getProperty("a5e.stat.AllFeatures"),"[*][?(@.Name == '"+currentFeatureName+"' && @.Class == '"+currentFeatureClass+"' && @.Subclass == '"+currentFeatureSubclass+"')]['GroupID']"))]
 			[h:abilityEffect=""]
 			[h:pm.a5e.EffectData = json.append("",json.set("","Class",currentFeatureClass))]
 			[h:abilityClass = currentFeatureClass]

@@ -61,7 +61,7 @@
 		[h:attackToHit = json.get(thisTokenAttackData,"ToHit")]
 		[h:attackCrit = json.get(thisTokenAttackData,"CritTest")]
 		[h:attackCritFail = json.get(thisTokenAttackData,"CritFailTest")]
-		[h:hitTarget = and(!attackCritFail,or(attackCrit,attackToHit >= AC))]
+		[h:hitTarget = and(!attackCritFail,or(attackCrit,attackToHit >= getProperty("a5e.stat.AC")))]
 	};{
 		[h:hitTarget = 1]
 	}]
@@ -190,18 +190,18 @@
 	[h,if(!json.isEmpty(thisTokenConditionsRemovedInfo)),CODE:{
 		[h:tempConditionsRemovedGroups = json.get(thisTokenConditionsRemovedInfo,"Groups")]
 		[h,if(tempConditionsRemovedGroups == ""): tempConditionsRemovedGroups = "[]"]
-		[h,if(json.type(tempConditionsRemovedGroups)=="UNKNOWN" ): tempConditionsRemovedGroups = json.append("",tempConditionsRemovedGroups)]
+		[h,if(json.type(tempConditionsRemovedGroups)=="UNKNOWN"): tempConditionsRemovedGroups = json.append("",tempConditionsRemovedGroups)]
 
 		[h:tempConditionsRemovedNames = json.get(thisTokenConditionsRemovedInfo,"ConditionNames")]
 		[h,if(tempConditionsRemovedNames == "ARRAY"): 
-			tempConditionsRemovedGroups = json.merge(tempConditionsRemovedGroups,json.unique(json.path.read(getProperty("ConditionList",targetToken),"[*][?(@.Name in "+tempConditionsRemovedNames+")]['GroupID']")));
-			tempConditionsRemovedGroups = json.merge(tempConditionsRemovedGroups,json.path.read(getProperty("ConditionList",targetToken),"[*][?(@.Name == "+tempConditionsRemovedNames+")]['GroupID']"))
+			tempConditionsRemovedGroups = json.merge(tempConditionsRemovedGroups,json.unique(json.path.read(getProperty("a5e.stat.ConditionList",targetToken),"[*][?(@.Name in "+tempConditionsRemovedNames+")]['GroupID']")));
+			tempConditionsRemovedGroups = json.merge(tempConditionsRemovedGroups,json.path.read(getProperty("a5e.stat.ConditionList",targetToken),"[*][?(@.Name == "+tempConditionsRemovedNames+")]['GroupID']"))
 		]
 
 		[h:tempConditionsRemovedTypes = json.get(thisTokenConditionsRemovedInfo,"ConditionTypes")]
 		[h,if(tempConditionsRemovedTypes == "ARRAY"): 
-			tempConditionsRemovedGroups = json.merge(tempConditionsRemovedGroups,json.unique(json.path.read(getProperty("ConditionList",targetToken),"[*][?(@.ConditionType in "+tempConditionsRemovedTypes+")]['GroupID']")));
-			tempConditionsRemovedGroups = json.merge(tempConditionsRemovedGroups,json.path.read(getProperty("ConditionList",targetToken),"[*][?(@.ConditionType == "+tempConditionsRemovedTypes+" && @.ConditionType != '')]['GroupID']"))
+			tempConditionsRemovedGroups = json.merge(tempConditionsRemovedGroups,json.unique(json.path.read(getProperty("a5e.stat.ConditionList",targetToken),"[*][?(@.ConditionType in "+tempConditionsRemovedTypes+")]['GroupID']")));
+			tempConditionsRemovedGroups = json.merge(tempConditionsRemovedGroups,json.path.read(getProperty("a5e.stat.ConditionList",targetToken),"[*][?(@.ConditionType == "+tempConditionsRemovedTypes+" && @.ConditionType != '')]['GroupID']"))
 		]
 
 		[h:tempEndConditionData = json.set("",

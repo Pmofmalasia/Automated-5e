@@ -1,4 +1,4 @@
-[h:pm.PrimeStatTemp = json.get(json.path.read(allAbilities,"[?(@.Name=='"+json.get(arg(0),"Name")+"' && @.Class=='"+json.get(arg(0),"Class")+"' && @.Subclass=='"+json.get(arg(0),"Subclass")+"' && @.IsActive>0)]['PrimeStat']"),0)]
+[h:pm.PrimeStatTemp = json.get(json.path.read(getProperty("a5e.stat.AllFeatures"),"[?(@.Name=='"+json.get(arg(0),"Name")+"' && @.Class=='"+json.get(arg(0),"Class")+"' && @.Subclass=='"+json.get(arg(0),"Subclass")+"' && @.IsActive>0)]['PrimeStat']"),0)]
 
 [h:"<!-- If PrimeStat is determined by max/min, if multiple are equal it will choose the last one in the array. Shouldn't really matter for anything, so not going to worry about it too much atm. -->"]
 [h,if(json.type(pm.PrimeStatTemp) == "OBJECT"),CODE:{

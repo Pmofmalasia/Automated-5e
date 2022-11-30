@@ -9,8 +9,8 @@
 	[h:ProfTypeStr = ""]
 };{
 	[h,SWITCH(d20Type):
-		case "Skill": ProfType = json.get(Skills,CurrentSkill);
-		case "Tool": ProfType = json.get(Tools,CurrentSkill);
+		case "Skill": ProfType = json.get(getProperty("a5e.stat.Skills"),CurrentSkill);
+		case "Tool": ProfType = json.get(getProperty("a5e.stat.Tools"),CurrentSkill);
 		case "Initiative": ProfType = 0;
 		default: ProfType = 0
 	]

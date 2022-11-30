@@ -11,9 +11,9 @@
 	[h:validConditionGroups = ""]
 	[h:"<!-- Add json.path.read to filter condition groups, then replace the ConditionGroups calls later with that -->"]
 		
-	[h,foreach(condGroup,ConditionGroups),CODE:{
+	[h,foreach(condGroup,getProperty("a5e.stat.ConditionGroups")),CODE:{
 		[h:condOptions = ""]
-		[h:condDisplayNames = json.path.read(ConditionList,"[*][?(@.ConditionID=="+json.get(condGroup,"GroupID")+")]['DisplayName']")]
+		[h:condDisplayNames = json.path.read(getProperty("a5e.stat.ConditionList"),"[*][?(@.ConditionID=="+json.get(condGroup,"GroupID")+")]['DisplayName']")]
 		[h,if(pm.ConditionChoiceNum==1):
 			condOptions = json.append(condOptions,json.toList(condDisplayNames,", "));
 			cn.Input = listAppend(cn.Input," choice"+json.get(condGroup,"GroupID")+" |  | "+json.toList(condDisplayNames,", ")+" | CHECK ","##")
@@ -26,9 +26,9 @@
 	
 	[h:tempConditionsSelected = ""]
 	[h,if(pm.ConditionChoiceNum==1),CODE:{
-		[h:tempConditionsSelected = json.append(tempConditionsSelectedjson.get(json.get(ConditionGroups,choiceCondition),"GroupID"))]
+		[h:tempConditionsSelected = json.append(tempConditionsSelectedjson.get(json.get(getProperty("a5e.stat.ConditionGroups"),choiceCondition),"GroupID"))]
 	};{
-		[h,foreach(condGroup,ConditionGroups): tempConditionsSelected = if(eval("choice"+json.get(condGroup,"GroupID")),json.apppend(tempConditionsSelected,json.get(condGroup,"GroupID")),tempConditionsSelected)]
+		[h,foreach(condGroup,getProperty("a5e.stat.ConditionGroups")): tempConditionsSelected = if(eval("choice"+json.get(condGroup,"GroupID")),json.apppend(tempConditionsSelected,json.get(condGroup,"GroupID")),tempConditionsSelected)]
 	}]
 	
 	[h:conditionsSelected = json.set(conditionsSelected,creature,tempConditionsSelected)]

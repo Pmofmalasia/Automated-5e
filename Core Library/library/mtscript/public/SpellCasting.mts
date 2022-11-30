@@ -100,11 +100,11 @@
 		[h:LevelOptionData = "[]"]
 	}]
 	[h,count(MaxSpellLevel),CODE:{
-		[h,if((1+roll.count)>=SpellLevel && json.get(SpellSlots,roll.count+1)>0): LevelOptions = json.append(LevelOptions,if(roll.count==0,"1st",if(roll.count==1,"2nd",if(roll.count==2,"3rd",(roll.count+1)+"th")))+" Level")]
-		[h,if((1+roll.count)>=SpellLevel && json.get(SpellSlots,roll.count+1)>0): LevelOptionData = json.append(LevelOptionData,json.set("","Name",(roll.count+1),"ResourceType","Spell Slots"))]
+		[h,if((1+roll.count)>=SpellLevel && json.get(getProperty("a5e.stat.SpellSlots"),roll.count+1)>0): LevelOptions = json.append(LevelOptions,if(roll.count==0,"1st",if(roll.count==1,"2nd",if(roll.count==2,"3rd",(roll.count+1)+"th")))+" Level")]
+		[h,if((1+roll.count)>=SpellLevel && json.get(getProperty("a5e.stat.SpellSlots"),roll.count+1)>0): LevelOptionData = json.append(LevelOptionData,json.set("","Name",(roll.count+1),"ResourceType","Spell Slots"))]
 	}]
 	
-	[h:resourcesAsSpellSlot = json.path.read(allAbilities,"[*][?(@.ResourceAsSpellSlot==1)]")]
+	[h:resourcesAsSpellSlot = json.path.read(getProperty("a5e.stat.AllFeatures"),"[*][?(@.ResourceAsSpellSlot==1)]")]
 	[h,foreach(resource,resourcesAsSpellSlot),CODE:{
 		[h,if(json.get(resource,"Resource")>0): LevelOptions = json.append(LevelOptions,json.get(resource,"DisplayName"))]
 		[h,if(json.get(resource,"Resource")>0): LevelOptionData = json.append(LevelOptionData,json.set(resource,"ResourceType","FeatureSpell"))]
@@ -136,7 +136,7 @@
 	[h:chosenLevel = 0]
 }]
 
-[h:dissConcentration = if(or(isConcentration==0,SpellLevel>=isConcentration),"",if(getProperty("stat.Concentration")=="","","junkVar|<html><span style='font-size:1.2em';>Casting <span style='color:#2222AA'><i>"+SpellName+"</i></span> will cancel concentration on <span style='color:#AA2222'><i>"+getProperty("stat.Concentration")+".</i></span></span></html>|<html><span style='color:#AA2222; font-size:1.2em'><b>WARNING</b></span></html>|LABEL"))]
+[h:dissConcentration = if(or(isConcentration==0,SpellLevel>=isConcentration),"",if(getProperty("a5e.stat.Concentration")=="","","junkVar|<html><span style='font-size:1.2em';>Casting <span style='color:#2222AA'><i>"+SpellName+"</i></span> will cancel concentration on <span style='color:#AA2222'><i>"+getProperty("a5e.stat.Concentration")+".</i></span></span></html>|<html><span style='color:#AA2222; font-size:1.2em'><b>WARNING</b></span></html>|LABEL"))]
 [h:disIsSilenced = if(or(getState("Silence")==0,vComp==0),"","junkVar|<html><span style='font-size:1.2em';><span style='color:#AA2222'><i><b>NOTE: You are currently silenced and attempting to cast a spell with verbal components!</b></i></span></span></html>| |LABEL|SPAN=TRUE")]
 [h:disCompConsumed = if(or(mCompConsumed=="0",mCompConsumed==""),"","junkVar|"+mCompConsumed+"|Consumed Components|LABEL")]
 [h:disSpellEffectChoices = if(MultiEffectChoiceTest==1,"sSpellChoice | "+SpellEffectOptions+" | Choose an Effect | RADIO | ","")]
@@ -209,11 +209,11 @@
 	[h,switch(json.get(sLevelSelectData,"ResourceType")),CODE:
 		case "Spell Slots":{
 			[h:eLevel = number(json.get(sLevelSelectData,"Name"))]
-			[h,if(FreeCasting!=1): SpellSlots = json.set(SpellSlots,eLevel,json.get(SpellSlots,eLevel)-1)]
+			[h,if(FreeCasting!=1): setProperty("a5e.stat.SpellSlots",json.set(getProperty("a5e.stat.SpellSlots"),eLevel,json.get(getProperty("a5e.stat.SpellSlots"),eLevel)-1))]
 		};
 		case "FeatureSpell":{
 			[h:eLevel = evalMacro(json.get(sLevelSelectData,"ResourceSpellLevel"))]
-			[h,if(FreeCasting!=1): allAbilities = json.path.set(allAbilities,"[*][?(@.Name=='"+json.get(sLevelSelectData,"Name")+"' && @.Class=='"+json.get(sLevelSelectData,"Class")+"' && @.Subclass=='"+json.get(sLevelSelectData,"Subclass")+"')]['Resource']",json.get(sLevelSelectData,"Resource")-1)]
+			[h,if(FreeCasting!=1): setProperty("a5e.stat.AllFeatures",json.path.set(getProperty("a5e.stat.AllFeatures"),"[*][?(@.Name=='"+json.get(sLevelSelectData,"Name")+"' && @.Class=='"+json.get(sLevelSelectData,"Class")+"' && @.Subclass=='"+json.get(sLevelSelectData,"Subclass")+"')]['Resource']",json.get(sLevelSelectData,"Resource")-1))]
 		};
 		case "Ritual":{
 			[h:eLevel = SpellLevel]
@@ -303,7 +303,7 @@
 [h:pm.PassiveFunction("SpellStat")]
 
 [h,if(and(isConcentrationLost,isConcentration==1)): setState("Concentrating",1)]
-[h,if(and(isConcentrationLost,isConcentration==1)): setProperty("stat.Concentration",SpellName)]
+[h,if(and(isConcentrationLost,isConcentration==1)): setProperty("a5e.stat.Concentration",SpellName)]
 
 [h:CompendiumLink=concat('<a style="color:'+TextColor+';" href=',BaseLink,replace(SpellDisplayName,' ','-'),'>',SpellDisplayName,'</a>')]
 

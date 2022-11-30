@@ -1,7 +1,7 @@
 [h:resourceName = arg(0)]
 [h:resourceUsed = arg(1)]
 
-[h:allMatchingFeatures = json.path.read(allAbilities,"[*][?(@.ResourceName=='"+resourceName+"' || (@.Name=='"+resourceName+"' && @.ResourceName==null))]","DEFAULT_PATH_LEAF_TO_NULL")]
+[h:allMatchingFeatures = json.path.read(getProperty("a5e.stat.AllFeatures"),"[*][?(@.ResourceName=='"+resourceName+"' || (@.Name=='"+resourceName+"' && @.ResourceName==null))]","DEFAULT_PATH_LEAF_TO_NULL")]
 			
 [h:pm.MaxResourceIndex = 0]
 [h,foreach(resource,allMatchingFeatures): pm.MaxResourceIndex = if(evalMacro(json.get(resource,"MaxResource")) > evalMacro(json.get(json.get(allMatchingFeatures,pm.MaxResourceIndex),"MaxResource")),roll.count,pm.MaxResourceIndex)]

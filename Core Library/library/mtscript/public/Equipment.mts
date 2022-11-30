@@ -1,31 +1,31 @@
 [h:Flavor=json.get(macro.args,"Flavor")]
 [h:ParentToken=json.get(macro.args,"ParentToken")]
 
-[h:ArmorEquipped=json.get(Armor,0)]
-[h:OldArmorMagic=json.get(json.get(Armor,json.get(Armor,0)),"MagicItem")]
-[h:OldArmorName=json.get(json.get(Armor,json.get(Armor,0)),"Name")]
+[h:ArmorEquipped=json.get(getProperty("a5e.stat.Armor"),0)]
+[h:OldArmorMagic=json.get(json.get(getProperty("a5e.stat.Armor"),json.get(getProperty("a5e.stat.Armor"),0)),"MagicItem")]
+[h:OldArmorName=json.get(json.get(getProperty("a5e.stat.Armor"),json.get(getProperty("a5e.stat.Armor"),0)),"Name")]
 [h:ArmorList=""]
-[h,count(json.length(Armor)),code:{
+[h,count(json.length(getProperty("a5e.stat.Armor"))),code:{
 	[if(roll.count>0),code:{
-		[ArmorList=ArmorList+json.get(json.get(Armor,roll.count),"Name")+","]
+		[ArmorList=ArmorList+json.get(json.get(getProperty("a5e.stat.Armor"),roll.count),"Name")+","]
 	};{}]
 }]
 
-[h:ShieldEquipped=json.get(Shield,0)]
+[h:ShieldEquipped=json.get(getProperty("a5e.stat.Shield"),0)]
 [h:ShieldList=""]
-[h,count(json.length(Shield)),code:{
+[h,count(json.length(getProperty("a5e.stat.Shield"))),code:{
 	[if(roll.count>1),code:{
-		[ShieldList=ShieldList+json.get(json.get(Shield,roll.count),"Name")+","]
+		[ShieldList=ShieldList+json.get(json.get(getProperty("a5e.stat.Shield"),roll.count),"Name")+","]
 	};{}]
 }]
 
-[h:MainHandEquipped=json.get(Weapon,0)]
+[h:MainHandEquipped=json.get(getProperty("a5e.stat.Weapon"),0)]
 [h:WeaponList=""]
-[h:OldMHMagic=json.get(json.get(Weapon,json.get(Weapon,0)),"MagicItem")]
-[h:OldMHName=json.get(json.get(Weapon,json.get(Weapon,0)),"Name")]
-[h,count(json.length(Weapon)),code:{
+[h:OldMHMagic=json.get(json.get(getProperty("a5e.stat.Weapon"),json.get(getProperty("a5e.stat.Weapon"),0)),"MagicItem")]
+[h:OldMHName=json.get(json.get(getProperty("a5e.stat.Weapon"),json.get(getProperty("a5e.stat.Weapon"),0)),"Name")]
+[h,count(json.length(getProperty("a5e.stat.Weapon"))),code:{
 	[if(roll.count>1),code:{
-		[WeaponList=WeaponList+json.get(json.get(Weapon,roll.count),"Name")+","]
+		[WeaponList=WeaponList+json.get(json.get(getProperty("a5e.stat.Weapon"),roll.count),"Name")+","]
 	};{}]
 }]
 
@@ -67,9 +67,9 @@
 <!-- If I end up adding Arcane Foci, add another layer to the first condition of the shield section denoting that it is not a weapon and not a shield (unarmed as it is now)-->
 [h:MainHandList=WeaponList]
 [h:OffHandList=WeaponList+ShieldList]
-[h:OffHandCurrent=if(json.get(Weapon,1)==2,if(json.get(Shield,0)==1,0,listCount(WeaponList)+json.get(Shield,0)-3),json.get(Weapon,1)-2)]
-[h:OldOHMagic=if(json.get(Weapon,1)==2,if(json.get(Shield,0)==1,0,json.get(json.get(Shield,json.get(Shield,0)),"MagicItem")),json.get(json.get(Weapon,json.get(Weapon,1)),"MagicItem"))]
-[h:OldOHName=if(json.get(Weapon,1)==2,if(json.get(Shield,0)==1,"Unarmed",json.get(json.get(Shield,json.get(Shield,0)),"Name")),json.get(json.get(Weapon,json.get(Weapon,1)),"Name"))]
+[h:OffHandCurrent=if(json.get(getProperty("a5e.stat.Weapon"),1)==2,if(json.get(getProperty("a5e.stat.Shield"),0)==1,0,listCount(WeaponList)+json.get(getProperty("a5e.stat.Shield"),0)-3),json.get(getProperty("a5e.stat.Weapon"),1)-2)]
+[h:OldOHMagic=if(json.get(getProperty("a5e.stat.Weapon"),1)==2,if(json.get(getProperty("a5e.stat.Shield"),0)==1,0,json.get(json.get(getProperty("a5e.stat.Shield"),json.get(getProperty("a5e.stat.Shield"),0)),"MagicItem")),json.get(json.get(getProperty("a5e.stat.Weapon"),json.get(getProperty("a5e.stat.Weapon"),1)),"MagicItem"))]
+[h:OldOHName=if(json.get(getProperty("a5e.stat.Weapon"),1)==2,if(json.get(getProperty("a5e.stat.Shield"),0)==1,"Unarmed",json.get(json.get(getProperty("a5e.stat.Shield"),json.get(getProperty("a5e.stat.Shield"),0)),"Name")),json.get(json.get(getProperty("a5e.stat.Weapon"),json.get(getProperty("a5e.stat.Weapon"),1)),"Name"))]
 [h:disAttunementGap=if(AttunementList=="None","","junkVar | ------------------------------------------------------ | | LABEL | SPAN=TRUE")]
 [h:disAttunement=if(AttunementList=="None","","junkVar | Select Your Attuned Magic Items | | LABEL | SPAN=TRUE")]
 [h:disAttunement1=if(AttunementList=="None","","Attune1 | "+AttunementList+" | Attunement Slot 1 | LIST | SELECT="+AttuneSlot1)]
@@ -101,7 +101,7 @@
 	[assert(if(OffHandSelection==MainHandSelection,0,1),"You cannot equip the same weapon twice!",0)]
 }]
 
-[h:TwoHandedWeaponTest=if(json.get(json.get(json.get(Weapon,MainHandSelection+2),"Props"),"Two-Handed")==1,1,0)]
+[h:TwoHandedWeaponTest=if(json.get(json.get(json.get(getProperty("a5e.stat.Weapon"),MainHandSelection+2),"Props"),"Two-Handed")==1,1,0)]
 
 [h,if(TwoHandedWeaponTest==1),code:{
 	[assert(if(OffHandSelection>0,0,1),"You cannot equip anything in your off hand while wielding a two-handed weapon!",0)]
@@ -110,25 +110,25 @@
 [h:NonLightCount=0]
 [h:DualWieldMessage=""]
 
-[h:NonLightCount=if(json.get(json.get(json.get(Weapon,MainHandSelection+2),"Props"),"Light")==0,NonLightCount+1,NonLightCount)]
+[h:NonLightCount=if(json.get(json.get(json.get(getProperty("a5e.stat.Weapon"),MainHandSelection+2),"Props"),"Light")==0,NonLightCount+1,NonLightCount)]
 
 [h:ShieldTest=if(OffHandSelection>(listCount(WeaponList)-2),1,0)]
 
 [h,if(ShieldTest==1),code:{
-	[Weapon=json.set(Weapon,1,2)]
-	[Shield=json.set(Shield,0,OffHandSelection-listCount(WeaponList)+3)]
-	[NewOHMagic=json.get(json.get(Shield,json.get(Shield,0)),"MagicItem")]
+	[setProperty("a5e.stat.Weapon",json.set(getProperty("a5e.stat.Weapon"),1,2))]
+	[setProperty("a5e.stat.Shield",json.set(getProperty("a5e.stat.Shield"),0,OffHandSelection-listCount(WeaponList)+3))]
+	[NewOHMagic=json.get(json.get(getProperty("a5e.stat.Shield"),json.get(getProperty("a5e.stat.Shield"),0)),"MagicItem")]
 };{
-	[h:NonLightCount=if(json.get(json.get(json.get(Weapon,OffHandSelection+2),"Props"),"Light")==0,NonLightCount+1,NonLightCount)]
-	[Weapon=json.set(Weapon,1,OffHandSelection+2)]
-	[Shield=json.set(Shield,0,1)]
-	[NewOHMagic=json.get(json.get(Weapon,json.get(Weapon,1)),"MagicItem")]
+	[h:NonLightCount=if(json.get(json.get(json.get(getProperty("a5e.stat.Weapon"),OffHandSelection+2),"Props"),"Light")==0,NonLightCount+1,NonLightCount)]
+	[setProperty("a5e.stat.Weapon",json.set(getProperty("a5e.stat.Weapon"),1,OffHandSelection+2))]
+	[setProperty("a5e.stat.Shield",json.set(getProperty("a5e.stat.Shield"),0,1))]
+	[NewOHMagic=json.get(json.get(getProperty("a5e.stat.Weapon"),json.get(getProperty("a5e.stat.Weapon"),1)),"MagicItem")]
 }]
 
-[h:Armor=json.set(Armor,0,ArmorSelection+1)]
-[h:Weapon=json.set(Weapon,0,MainHandSelection+2)]
-[h:NewMHMagic=json.get(json.get(Weapon,json.get(Weapon,0)),"MagicItem")]
-[h:NewArmorMagic=json.get(json.get(Armor,json.get(Armor,0)),"MagicItem")]
+[h:setProperty("a5e.stat.Armor",json.set(getProperty("a5e.stat.Armor"),0,ArmorSelection+1))]
+[h:setProperty("a5e.stat.Weapon",json.set(getProperty("a5e.stat.Weapon"),0,MainHandSelection+2))]
+[h:NewMHMagic=json.get(json.get(getProperty("a5e.stat.Weapon"),json.get(getProperty("a5e.stat.Weapon"),0)),"MagicItem")]
+[h:NewArmorMagic=json.get(json.get(getProperty("a5e.stat.Armor"),json.get(getProperty("a5e.stat.Armor"),0)),"MagicItem")]
 
 [h:MHChangeTest=if(MainHandEquipped==(MainHandSelection+2),0,1)]
 [h:ArmorChangeTest=if(ArmorEquipped==(ArmorSelection+1),0,1)]
@@ -146,8 +146,8 @@
 	
 [h,if(and(MHChangeTest==1,NewMHMagic==1)),CODE:{
 	[h,count(json.length(MagicItemNames)),CODE:{
-		[h:MagicItemEquipment=if(json.get(MagicItemNames,roll.count)==json.get(json.get(Weapon,json.get(Weapon,0)),"Name"),json.path.set(MagicItemEquipment,"["+roll.count+"].isEquipped",1),MagicItemEquipment)]
-		[h:miStatChangeArray=if(json.get(MagicItemNames,roll.count)==json.get(json.get(Weapon,json.get(Weapon,0)),"Name"),json.append(miStatChangeArray,roll.count),miStatChangeArray)]
+		[h:MagicItemEquipment=if(json.get(MagicItemNames,roll.count)==json.get(json.get(getProperty("a5e.stat.Weapon"),json.get(getProperty("a5e.stat.Weapon"),0)),"Name"),json.path.set(MagicItemEquipment,"["+roll.count+"].isEquipped",1),MagicItemEquipment)]
+		[h:miStatChangeArray=if(json.get(MagicItemNames,roll.count)==json.get(json.get(getProperty("a5e.stat.Weapon"),json.get(getProperty("a5e.stat.Weapon"),0)),"Name"),json.append(miStatChangeArray,roll.count),miStatChangeArray)]
 	}]
 };{}]
 	
@@ -160,8 +160,8 @@
 	
 [h,if(and(OHChangeTest==1,NewOHMagic==1)),CODE:{
 	[h,count(json.length(MagicItemNames)),CODE:{
-		[h:MagicItemEquipment=if(json.get(MagicItemNames,roll.count)==json.get(json.get(Weapon,json.get(Weapon,1)),"Name"),json.path.set(MagicItemEquipment,"["+roll.count+"].isEquipped",1),MagicItemEquipment)]
-		[h:miStatChangeArray=if(json.get(MagicItemNames,roll.count)==json.get(json.get(Weapon,json.get(Weapon,1)),"Name"),json.append(miStatChangeArray,roll.count),miStatChangeArray)]
+		[h:MagicItemEquipment=if(json.get(MagicItemNames,roll.count)==json.get(json.get(getProperty("a5e.stat.Weapon"),json.get(getProperty("a5e.stat.Weapon"),1)),"Name"),json.path.set(MagicItemEquipment,"["+roll.count+"].isEquipped",1),MagicItemEquipment)]
+		[h:miStatChangeArray=if(json.get(MagicItemNames,roll.count)==json.get(json.get(getProperty("a5e.stat.Weapon"),json.get(getProperty("a5e.stat.Weapon"),1)),"Name"),json.append(miStatChangeArray,roll.count),miStatChangeArray)]
 	}]
 };{}]
 	
@@ -174,8 +174,8 @@
 	
 [h,if(and(ArmorChangeTest==1,NewArmorMagic==1)),CODE:{
 	[h,count(json.length(MagicItemNames)),CODE:{
-		[h:MagicItemEquipment=if(json.get(MagicItemNames,roll.count)==json.get(json.get(Armor,json.get(Armor,0)),"Name"),json.path.set(MagicItemEquipment,"["+roll.count+"].isEquipped",1),MagicItemEquipment)]
-		[h:miStatChangeArray=if(json.get(MagicItemNames,roll.count)==json.get(json.get(Armor,json.get(Armor,0)),"Name"),json.append(miStatChangeArray,roll.count),miStatChangeArray)]
+		[h:MagicItemEquipment=if(json.get(MagicItemNames,roll.count)==json.get(json.get(getProperty("a5e.stat.Armor"),json.get(getProperty("a5e.stat.Armor"),0)),"Name"),json.path.set(MagicItemEquipment,"["+roll.count+"].isEquipped",1),MagicItemEquipment)]
+		[h:miStatChangeArray=if(json.get(MagicItemNames,roll.count)==json.get(json.get(getProperty("a5e.stat.Armor"),json.get(getProperty("a5e.stat.Armor"),0)),"Name"),json.append(miStatChangeArray,roll.count),miStatChangeArray)]
 	}]
 };{}]
 

@@ -49,7 +49,7 @@
 [h:a5e.Conditions = json.path.put(a5e.Conditions,"[*]","IsActive",1)]
 
 [h:"<!-- The following line sets any previously set conditions of the same name as inactive. The reasoning is based on PHB 205: effects of the same spell cast multiple times don't combine, and the most potent effect applies while they overlap - OR, if equally potent, the most recent effect applies. In lieu of being able to calculate which is more 'potent' ahead of time (which, at times, can be abstract), the latter method is the one used at all times instead. Will continue to think of ways to enforce the more 'potent' effect when possible. For now, the current method should cover the majority of cases, and should add an option to change which is active in the Condition Management macro to cover edge cases. Note: There is a similar ruling on PHB 290 for base conditions, so this is not limited to spells. -->"]
-[h,foreach(tempCondition,a5e.Conditions): ConditionList = json.path.set(ConditionList,"[*][?(@.Name=='"+json.get(tempCondition,"Name")+"')]['IsActive']",0)]
+[h,foreach(tempCondition,a5e.Conditions): setProperty("a5e.stat.ConditionList",json.path.set(getProperty("a5e.stat.ConditionList"),"[*][?(@.Name=='"+json.get(tempCondition,"Name")+"')]['IsActive']",0))]
 
 [h,foreach(condition,a5e.Conditions),CODE:{
 	[h:StateExistsTest = !json.isEmpty(json.path.read(getInfo("campaign"),"states.*.[?(@.name=='"+json.get(condition,"Name")+"')]"))]
@@ -68,18 +68,18 @@
 	"Duration",DurationFinal	
 )]
 
-[h:ConditionList = json.merge(ConditionList,a5e.Conditions)]
-[h:ConditionGroups = json.append(ConditionGroups,json.set(a5e.GroupingInfo,"SetBy",ConditionSetBy))]
+[h:setProperty("a5e.stat.ConditionList",json.merge(getProperty("a5e.stat.ConditionList"),a5e.Conditions))]
+[h:setProperty("a5e.stat.ConditionGroups",json.append(getProperty("a5e.stat.ConditionGroups"),json.set(a5e.GroupingInfo,"SetBy",ConditionSetBy)))]
 
 [h,if(ConditionSetBy!=""),CODE:{
 	[h:switchToken(ConditionSetBy)]
 	[h:"<!-- New group test needs to be done on SetBy token but not target token because group may have already been created by another target going through this macro. -->"]
-	[h:newGroupTest = json.isEmpty(json.path.read(ConditionsSet,"[*][?(@.GroupID=="+a5e.GroupID+")]"))]
+	[h:newGroupTest = json.isEmpty(json.path.read(getProperty("a5e.stat.ConditionsSet"),"[*][?(@.GroupID=="+a5e.GroupID+")]"))]
 	[h,if(newGroupTest),CODE:{
-		[h:ConditionsSet = json.append(ConditionsSet,json.set(a5e.GroupingInfo,"Targets",json.append("",ParentToken)))]
+		[h:setProperty("a5e.stat.ConditionsSet",json.append(getProperty("a5e.stat.ConditionsSet"),json.set(a5e.GroupingInfo,"Targets",json.append("",ParentToken))))]
 	};{
-		[h:NewTargets = json.append(json.get(json.path.read(ConditionsSet,"[*][?(@.GroupID=="+a5e.GroupID+")]['Targets']"),0),ParentToken)]
-		[h:ConditionsSet = json.path.set(ConditionsSet,"[*][?(@.GroupID=="+a5e.GroupID+")]['Targets']",NewTargets)]
+		[h:NewTargets = json.append(json.get(json.path.read(getProperty("a5e.stat.ConditionsSet"),"[*][?(@.GroupID=="+a5e.GroupID+")]['Targets']"),0),ParentToken)]
+		[h:setProperty("a5e.stat.ConditionsSet",json.path.set(getProperty("a5e.stat.ConditionsSet"),"[*][?(@.GroupID=="+a5e.GroupID+")]['Targets']",NewTargets))]
 	}]
 	[h:switchToken(ParentToken)]
 };{}]

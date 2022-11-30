@@ -2,12 +2,12 @@
 [h:pm.a5e.FeatureComponentStdVars(arg(0))]
 
 [h,if(IsTooltip),CODE:{
-	[h:pm.ChosenSpells=json.get(json.path.read(allAbilities,"[?(@.Name=='"+currentFeatureName+"' && @.Class=='"+currentFeatureClass+"' && @.Subclass=='"+currentFeatureSubclass+"')]['SpellList']"),0)]
+	[h:pm.ChosenSpells=json.get(json.path.read(getProperty("a5e.stat.AllFeatures"),"[?(@.Name=='"+currentFeatureName+"' && @.Class=='"+currentFeatureClass+"' && @.Subclass=='"+currentFeatureSubclass+"')]['SpellList']"),0)]
 };{
 	[h:pm.SpellChoiceInput = "junkVar | -------------- Choose Your Spells -------------- | | LABEL | SPAN=TRUE"]
 	[h:filterNum = 0]
 	[h:spellNum = 0]
-	[h:pm.CurrentSpellList=json.get(json.path.read(allAbilities,"[?(@.Name=='"+currentFeatureName+"' && @.Class=='"+currentFeatureClass+"' @.Subclass=='"+currentFeatureSubclass+"')]['SpellList']"),0)]
+	[h:pm.CurrentSpellList=json.get(json.path.read(getProperty("a5e.stat.AllFeatures"),"[?(@.Name=='"+currentFeatureName+"' && @.Class=='"+currentFeatureClass+"' @.Subclass=='"+currentFeatureSubclass+"')]['SpellList']"),0)]
 	[h:pm.CurrentSpellPosition=0]
 
 	[h:pm.AbilityAddSpellInput()]
@@ -16,7 +16,7 @@
 
 	[h,count(spellNum): pm.ChosenSpells = json.append(pm.ChosenSpells,eval("spell"+(roll.count+1)))]
 
-	[h:allAbilities=json.path.set(allAbilities,"[?(@.Name=='"+currentFeatureName+"' && @.Class=='"+currentFeatureClass+"' && @.Subclass=='"+currentFeatureSubclass+"')]['SpellList']",pm.ChosenSpells)]
+	[h:setProperty("a5e.stat.AllFeatures",json.path.set(getProperty("a5e.stat.AllFeatures"),"[?(@.Name=='"+currentFeatureName+"' && @.Class=='"+currentFeatureClass+"' && @.Subclass=='"+currentFeatureSubclass+"')]['SpellList']",pm.ChosenSpells))]
 }]
 
 [h:pm.SpellList = json.toList(pm.ChosenSpells,if(getLibProperty("VerticalFormat","Lib:pm.a5e.Core"),"<br>",", "))]

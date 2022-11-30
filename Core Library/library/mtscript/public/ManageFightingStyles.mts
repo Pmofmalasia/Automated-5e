@@ -27,7 +27,7 @@
 	[h:fs.ThisGroupCurrent = "[]"]
 	[h:"<!-- Change AssociatedClass to StoredValue? No, since can't have 2 subclasses anyway. -->"]
 	[h,foreach(TempFS,thisGroupFSOptions),CODE:{
-		[h:tempIsActiveTest = !json.isEmpty(json.path.read(allAbilities,"[?(@.Name=='"+json.get(TempFS,"Name")+"' && @.Class=='FightingStyle' && @.AssociatedClass=='"+json.get(TempGroup,"Class")+"' && @.IsActive > 0)]"))]
+		[h:tempIsActiveTest = !json.isEmpty(json.path.read(getProperty("a5e.stat.AllFeatures"),"[?(@.Name=='"+json.get(TempFS,"Name")+"' && @.Class=='FightingStyle' && @.AssociatedClass=='"+json.get(TempGroup,"Class")+"' && @.IsActive > 0)]"))]
 		[h,if(tempIsActiveTest): fs.ThisGroupCurrent = json.merge(fs.ThisGroupCurrent,json.path.read(getLibProperty("sb.Abilities","Lib:pm.a5e.Core"),"[?(@.Name=='"+json.get(TempFS,"Name")+"' && @.Class=='FightingStyle' && @.Subclass=='"+json.get(TempFS,"Subclass")+"')]"))]
 		[h:set("pm.Choose"+json.get(TempFS,"Name")+json.get(TempGroup,"Class"),tempIsActiveTest)]
 		[h:fs.Input = listAppend(fs.Input," pm.Choose"+json.get(TempFS,"Name")+json.get(TempGroup,"Class")+" | "+eval("pm.Choose"+json.get(TempFS,"Name")+json.get(TempGroup,"Class"))+" | "+json.get(TempFS,"DisplayName")+" | CHECK ","##")]
@@ -59,14 +59,14 @@
 	[h,MACRO("New Ability Addition@Lib:pm.a5e.Core"): json.path.put(macro.return,"['Abilities'][*]","AssociatedClass",json.get(TempGroup,"Class"))]
 	[h,MACRO("Ability Removal@Lib:pm.a5e.Core"): fs.Removed]
 	
-	[h:fs.ChosenStr = json.toList(json.path.read(allAbilities,"[?(@.Class=='FightingStyle' && @.AssociatedClass=='"+json.get(TempGroup,"Class")+"' && @.IsActive > 0)]['DisplayName']"),if(getLibProperty("VerticalDisplay","Lib:pm.a5e.Core")==1,"<br>",", "))]
+	[h:fs.ChosenStr = json.toList(json.path.read(getProperty("a5e.stat.AllFeatures"),"[?(@.Class=='FightingStyle' && @.AssociatedClass=='"+json.get(TempGroup,"Class")+"' && @.IsActive > 0)]['DisplayName']"),if(getLibProperty("VerticalDisplay","Lib:pm.a5e.Core")==1,"<br>",", "))]
 	
 	[h:TempDisplayName = pm.GetDisplayName(json.get(TempGroup,"Class"),"sb.Classes")]
 	
 	[h:abilityTable = json.append(abilityTable,json.set("","ShowIfCondensed",1,"Header",if(fs.GroupNum==1,"",TempDisplayName+" ")+"Fighting Styles Chosen","FalseHeader","","FullContents","","RulesContents",fs.ChosenStr,"RollContents","","DisplayOrder","['Rules','Roll','Full']","Error",if(fs.ChosenCount>json.get(fs.AllowedChoices,TempGroupName),"Too many "+if(fs.GroupNum==1,"",TempDisplayName+" ")+"fighting styles were chosen!","")))]
 }]
 
-[h:fs.DuplicateTest = json.path.read(allAbilities,"[*][?(@.Class=='FightingStyle')]['Name']")]
+[h:fs.DuplicateTest = json.path.read(getProperty("a5e.stat.AllFeatures"),"[*][?(@.Class=='FightingStyle')]['Name']")]
 [h:fs.Duplicates = json.difference(json.unique(fs.DuplicateTest),fs.DuplicateTest)]
 [h:"<!-- Need a way to display the duplicates as an alert, since they do not have a table row to be linked with by default - and can't insert in other table rows, since there might be duplicates also. May need a mechanism for inserting only an alert without a table. Could probably have the error color change if the header says error also (could choose a different name since error might make it seem like something is wrong, but alert won't work since there's an Alert feature!) -->"]
 [h,if(!json.isEmpty(fs.Duplicates)),CODE:{

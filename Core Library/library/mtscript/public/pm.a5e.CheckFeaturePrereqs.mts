@@ -14,7 +14,7 @@
 [h,if(json.get(pr.Prereqs,"Features")!=""),CODE:{
 	[h:pr.FeatureNum = 0]
 	[h,foreach(feature,json.get(pr.Prereqs,"Features")),CODE:{
-		[h:pr.FeatureNum = pr.FeatureNum + !json.isEmpty(json.path.read(allAbilities,"[*][?(@.Name=='"+json.get(feature,"Name")+"' && @.Class=='"+json.get(feature,"Class")+"' && @.Subclass=='"+json.get(feature,"Subclass")+"')]"))]
+		[h:pr.FeatureNum = pr.FeatureNum + !json.isEmpty(json.path.read(getProperty("a5e.stat.AllFeatures"),"[*][?(@.Name=='"+json.get(feature,"Name")+"' && @.Class=='"+json.get(feature,"Class")+"' && @.Subclass=='"+json.get(feature,"Subclass")+"')]"))]
 	}]
 	[h,if(json.get(pr.Prereqs,"FeatureNum")==0),CODE:{
 		[h:pr.FeatureTest = pr.FeatureNum >= json.length(json.get(pr.Prereqs,"Features"))]
@@ -25,7 +25,7 @@
 
 [h,foreach(ClassPrereq,json.get(pr.Prereqs,"Class")): pr.ClassTest = if(json.get(getProperty("a5e.stat.ClassLevels"),ClassPrereq)==0 || json.get(getProperty("a5e.stat.ClassLevels"),ClassPrereq)=="",pr.ClassTest,1)]
 [h:"<!-- Subclass processing subject to change -->"]
-[h,foreach(SubclassPrereq,json.get(pr.Prereqs,"Subclass")): pr.SubclassTest = if(json.get(Subclasses,json.get(SubclassPrereq,"Class"))==json.get(SubclassPrereq,"Subclass"),1,pr.SubclassTest)]
+[h,foreach(SubclassPrereq,json.get(pr.Prereqs,"Subclass")): pr.SubclassTest = if(json.get(getProperty("a5e.stat.Subclasses"),json.get(SubclassPrereq,"Class"))==json.get(SubclassPrereq,"Subclass"),1,pr.SubclassTest)]
 [h,foreach(RacePrereq,json.get(pr.Prereqs,"Race")): pr.RaceTest = if(getProperty("a5e.stat.Race") == RacePrereq,1,pr.RaceTest)]
 [h,foreach(SubracePrereq,json.get(pr.Prereqs,"Subrace")): pr.SubraceTest = if(getProperty("a5e.stat.Subrace") == SubracePrereq,1,pr.SubraceTest)]
 [h:"<!-- json.intersection has the dual effect of removing the AllOrOne key from the attribute options AND removing attributes that are not indicated both in the prereqs AND currently enabled on Lib:pm.a5e.Core -->"]

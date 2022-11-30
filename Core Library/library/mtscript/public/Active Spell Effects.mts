@@ -1,4 +1,4 @@
-[h:NoSpellsTest=if(json.equals(ActiveSpells,'[]')==1,0,1)]
+[h:NoSpellsTest=if(json.equals(getProperty("a5e.stat.ActiveSpells"),'[]')==1,0,1)]
 
 [h:assert(NoSpellsTest,"<br>You do not have any active spells!",0)]
 
@@ -7,7 +7,7 @@
 [h:
 "<!--Object vs array distinction is because spells with a random ongoing effect need to be put in an array instead of an object-->"]
 
-[h,foreach(spell,ActiveSpells),CODE:{
+[h,foreach(spell,getProperty("a5e.stat.ActiveSpells")),CODE:{
 	[h:MultiEffectTest = json.type(spell)]
 	[h,if(MultiEffectTest == "Object"),CODE:{
 		[h:listSpells=listAppend(listSpells,json.get(spell,"SpellName")+if(json.get(spell,"EffectName")=="",""," - "+json.get(spell,"EffectName")))]
@@ -23,7 +23,7 @@
 	)]
 [h:abort(selectSpell)]
 
-[h:ActiveSpellSend = json.append("",json.get(ActiveSpells,sSelection))]
+[h:ActiveSpellSend = json.append("",json.get(getProperty("a5e.stat.ActiveSpells"),sSelection))]
 
 [r,count(multiCast+1),CODE:{
 	[macro("SpellCasting@Lib:pm.a5e.Core"): ActiveSpellSend]
@@ -31,4 +31,4 @@
 
 [h:deleteTest=if(json.get(macro.return,"ChaosTest")>0,0,if(json.get(macro.return,"ChaosTest")<0,deleteTest,1))]
 
-[h,if(deleteTest),CODE:{[h:ActiveSpells=json.remove(ActiveSpells,sSelection)]};{}]
+[h,if(deleteTest),CODE:{[h:setProperty("a5e.stat.ActiveSpells",json.remove(getProperty("a5e.stat.ActiveSpells"),sSelection))]};{}]

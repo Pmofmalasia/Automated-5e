@@ -44,7 +44,7 @@
 [h:wa.SpecialAbility = json.get(wa.WeaponUsed,"SpecialAbility")]
 [h:wa.Props = json.get(wa.WeaponUsed,"Props")]
 [h:wa.Magical = json.get(wa.WeaponUsed,"MagicItem")]
-[h:attack.ProfTest = if(or(json.get(WeaponProficiencies,wa.WeaponType)==1,json.get(MagicItemStats,wa.WeaponType+"Prof")==1),1,0)]
+[h:attack.ProfTest = if(or(json.get(getProperty("a5e.stat.WeaponProficiencies"),wa.WeaponType)==1,json.get(MagicItemStats,wa.WeaponType+"Prof")==1),1,0)]
 [h:attack.ToHitBonus = wa.MagicBonus]
 [h:wa.ProfTest = 1]
 [h:wa.TargetOrigin = ParentToken]
@@ -52,7 +52,7 @@
 [h:pm.PassiveFunction("AttackProps")]
 [h:pm.PassiveFunction("WeaponAttackProps")]
 
-[h:VersatileTest = if(json.get(wa.Props,"Versatile")>0,if(json.get(Weapon,OtherHand)==2,if(json.get(Shield,0)==1,1,0),0),0)]
+[h:VersatileTest = if(json.get(wa.Props,"Versatile")>0,if(json.get(getProperty("a5e.stat.Weapon"),OtherHand)==2,if(json.get(getProperty("a5e.stat.Shield"),0)==1,1,0),0),0)]
 [h,if(VersatileTest==1),code:{
 	[wa.DmgDie=substring(wa.DmgDie,0,indexOf(wa.DmgDie,"d")+1)+(number(substring(wa.DmgDie,indexOf(wa.DmgDie,"d")+1))+2)]
 };{}]

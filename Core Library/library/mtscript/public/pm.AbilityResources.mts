@@ -29,7 +29,7 @@
 [h:"<!-- 0 = No option for spell usage; 1 = Exclusively spell slot usage; 2 = Use spells when out of resource; 3 = Can use spells or resource at any time -->"]
 
 [h,if(argCount()>5),CODE:{[h:pm.ResourceRestorationSpecial=if(arg(5)=="","",", "+arg(5))]};{[h:pm.ResourceRestorationSpecial=""]}]
-[h:pm.ResourceRestoration = " - Restored on "+if(json.contains(json.path.read(allAbilities,"[?(@.IsActive>0 && @.Name=='"+pm.ResourceVarName+"' && @.Class=='"+pm.Class+"' && (@.Subclass=='"+pm.Subclass+"' || @.Subclass==''))]['RestoreShortRest']"),1),"Short and ","")+"Long Rests"+pm.ResourceRestorationSpecial]
+[h:pm.ResourceRestoration = " - Restored on "+if(json.contains(json.path.read(getProperty("a5e.stat.AllFeatures"),"[?(@.IsActive>0 && @.Name=='"+pm.ResourceVarName+"' && @.Class=='"+pm.Class+"' && (@.Subclass=='"+pm.Subclass+"' || @.Subclass==''))]['RestoreShortRest']"),1),"Short and ","")+"Long Rests"+pm.ResourceRestorationSpecial]
 
 [h:"<!-- The logic here is super obnoxious to avoid hitting 2 levels of CODE blocks. Sorry future self and/or anyone else reading this. -->"]
 [h:"<!-- Basic setup: if it must use spells, then go to the spell select screen. Warlock abilities must use Warlock spells. -->"]
@@ -81,11 +81,11 @@
 	[h:"<!-- Note: math.arraySum to support having the same resource from two separate locations (e.g. having an ability naturally and through a magic item). May swap for math.arrayMax  since technically they should only benefit from an ability once? But the current implementation supports the more likely scenario of users incorrectly adding an ability to gain more resource (though still hopefully also unlikely) -->"]
 
 	[h,if(pm.ResourceKey!=""),CODE:{
-		[h:pm.ResourceAmount = json.get(json.get(json.path.read(allAbilities,"[?(@.IsActive>0 && @.Name=='"+pm.ResourceVarName+"' && @.Class=='"+pm.Class+"' && (@.Subclass=='"+pm.Subclass+"' || @.Subclass==''))]['Resource']"),0),pm.ResourceKey)]
-		[h:pm.MaxResourceBase = json.get(json.get(json.evaluate(json.path.read(allAbilities,"[?(@.IsActive>0 && @.Name=='"+pm.ResourceVarName+"' && @.Class=='"+pm.Class+"' && (@.Subclass=='"+pm.Subclass+"' || @.Subclass==''))]['MaxResource']")),0),pm.ResourceKey)]
+		[h:pm.ResourceAmount = json.get(json.get(json.path.read(getProperty("a5e.stat.AllFeatures"),"[?(@.IsActive>0 && @.Name=='"+pm.ResourceVarName+"' && @.Class=='"+pm.Class+"' && (@.Subclass=='"+pm.Subclass+"' || @.Subclass==''))]['Resource']"),0),pm.ResourceKey)]
+		[h:pm.MaxResourceBase = json.get(json.get(json.evaluate(json.path.read(getProperty("a5e.stat.AllFeatures"),"[?(@.IsActive>0 && @.Name=='"+pm.ResourceVarName+"' && @.Class=='"+pm.Class+"' && (@.Subclass=='"+pm.Subclass+"' || @.Subclass==''))]['MaxResource']")),0),pm.ResourceKey)]
 	};{
-		[h:pm.ResourceAmount = math.arraySum(json.path.read(allAbilities,"[?(@.IsActive>0 && @.Name=='"+pm.ResourceVarName+"' && @.Class=='"+pm.Class+"' && (@.Subclass=='"+pm.Subclass+"' || @.Subclass==''))]['Resource']"))]
-		[h:pm.MaxResourceBase = math.arraySum(json.evaluate(json.path.read(allAbilities,"[?(@.IsActive>0 && @.Name=='"+pm.ResourceVarName+"' && @.Class=='"+pm.Class+"' && (@.Subclass=='"+pm.Subclass+"' || @.Subclass==''))]['MaxResource']")))]
+		[h:pm.ResourceAmount = math.arraySum(json.path.read(getProperty("a5e.stat.AllFeatures"),"[?(@.IsActive>0 && @.Name=='"+pm.ResourceVarName+"' && @.Class=='"+pm.Class+"' && (@.Subclass=='"+pm.Subclass+"' || @.Subclass==''))]['Resource']"))]
+		[h:pm.MaxResourceBase = math.arraySum(json.evaluate(json.path.read(getProperty("a5e.stat.AllFeatures"),"[?(@.IsActive>0 && @.Name=='"+pm.ResourceVarName+"' && @.Class=='"+pm.Class+"' && (@.Subclass=='"+pm.Subclass+"' || @.Subclass==''))]['MaxResource']")))]
 	}]
 
 	[h:miMaxResourceBonus=json.path.read(MagicItemClassBonuses,"[?(@.IsActive>0 && @.Ability=='"+pm.ResourceVarName+"' && @.Class=='"+pm.Class+"' && (@.Subclass=='"+pm.Subclass+"' || @.Subclass=='') && @.MaxResourceBonus!=0)]['MaxResourceBonus']")]
@@ -96,8 +96,8 @@
 		[h:pm.BackupResourceOptions=""]
 		[h:pm.BackupResourceRestoration = ""]
 	};{
-		[h:pm.BackupResourceAmount = math.arraySum(json.path.read(allAbilities,"[?(@.IsActive>0 && @.Name=='"+pm.BackupResource+"' && @.Class=='"+pm.Class+"' && (@.Subclass=='"+pm.Subclass+"' || @.Subclass==''))]['Resource']"))]
-		[h:pm.MaxBackupResourceBase = math.arraySum(json.evaluate(json.path.read(allAbilities,"[?(@.IsActive>0 && @.Name=='"+pm.BackupResource+"' && @.Class=='"+pm.Class+"' && (@.Subclass=='"+pm.Subclass+"' || @.Subclass==''))]['MaxResource']")))]
+		[h:pm.BackupResourceAmount = math.arraySum(json.path.read(getProperty("a5e.stat.AllFeatures"),"[?(@.IsActive>0 && @.Name=='"+pm.BackupResource+"' && @.Class=='"+pm.Class+"' && (@.Subclass=='"+pm.Subclass+"' || @.Subclass==''))]['Resource']"))]
+		[h:pm.MaxBackupResourceBase = math.arraySum(json.evaluate(json.path.read(getProperty("a5e.stat.AllFeatures"),"[?(@.IsActive>0 && @.Name=='"+pm.BackupResource+"' && @.Class=='"+pm.Class+"' && (@.Subclass=='"+pm.Subclass+"' || @.Subclass==''))]['MaxResource']")))]
 
 		[h:miMaxBackupResourceBonus=json.path.read(MagicItemClassBonuses,"[?(@.IsActive>0 && @.Ability=='"+pm.BackupResource+"' && @.Class=='"+pm.Class+"' && (@.Subclass=='"+pm.Subclass+"' || @.Subclass=='') && @.MaxResourceBonus!=0)]['MaxResourceBonus']")]
 		[h,if(json.isEmpty(miMaxBackupResourceBonus)):miMaxBackupResourceBonusFinal=0;miMaxBackupResourceBonusFinal=math.arraySum(miMaxBackupResourceBonus)]
@@ -105,7 +105,7 @@
 		[h:pm.BackupResourceOptions=""]
 		[h:pm.BackupResourceOptionsCount=(min(pm.BackupResourceAmount,pm.ResourceUsedMax)-(pm.ResourceUsed-1))]
 		[h,count(pm.BackupResourceOptionsCount):pm.BackupResourceOptions=pm.BackupResourceOptions+(roll.count+pm.ResourceUsed)+","]
-		[h:pm.BackupResourceRestoration = " - Restored on "+if(json.contains(json.path.read(allAbilities,"[?(@.IsActive>0 && @.Name=='"+pm.BackupResource+"' && @.Class=='"+pm.Class+"' && (@.Subclass=='"+pm.Subclass+"' || @.Subclass==''))]['RestoreShortRest']"),1),"Short and ","")+"Long Rests"]
+		[h:pm.BackupResourceRestoration = " - Restored on "+if(json.contains(json.path.read(getProperty("a5e.stat.AllFeatures"),"[?(@.IsActive>0 && @.Name=='"+pm.BackupResource+"' && @.Class=='"+pm.Class+"' && (@.Subclass=='"+pm.Subclass+"' || @.Subclass==''))]['RestoreShortRest']"),1),"Short and ","")+"Long Rests"]
 	}]
 
 	[h:"<!-- Repeats application of item bonuses if an ability is using the resource provided by another ability - allows bonuses to only Cutting Words and not all of Bardic Insp, etc. Should not work correctly with backup resources yet. -->"]
@@ -186,9 +186,9 @@
 	};{}]
 	[h:pm.ResourceUsed = number(pm.ResourceUsed)]
 	[h:pm.ResourceEnough = if(pm.ResourceAmount-pm.ResourceUsed<0,0,1)]
-	[h,if(pm.ResourceKey==""):pm.ResourceFinal=(pm.ResourceAmount-pm.ResourceUsed);pm.ResourceFinal=json.set(json.get(json.path.read(allAbilities,"[?(@.Name=='"+pm.ResourceVarName+"' && @.IsActive>0 && @.Class=='"+pm.Class+"' && (@.Subclass=='"+pm.Subclass+"' || @.Subclass==''))]['Resource']"),0),pm.ResourceKey,(pm.ResourceAmount-pm.ResourceUsed))]
+	[h,if(pm.ResourceKey==""):pm.ResourceFinal=(pm.ResourceAmount-pm.ResourceUsed);pm.ResourceFinal=json.set(json.get(json.path.read(getProperty("a5e.stat.AllFeatures"),"[?(@.Name=='"+pm.ResourceVarName+"' && @.IsActive>0 && @.Class=='"+pm.Class+"' && (@.Subclass=='"+pm.Subclass+"' || @.Subclass==''))]['Resource']"),0),pm.ResourceKey,(pm.ResourceAmount-pm.ResourceUsed))]
 	[h,if(pm.ResourceEnough),CODE:{
-		[h:allAbilities=json.path.set(allAbilities,"[?(@.Name=='"+pm.ResourceVarName+"' && @.Class=='"+pm.Class+"' && (@.Subclass=='"+pm.Subclass+"' || @.Subclass=='') && @.IsActive>0)]['Resource']",pm.ResourceFinal)]
+		[h:setProperty("a5e.stat.AllFeatures",json.path.set(getProperty("a5e.stat.AllFeatures"),"[?(@.Name=='"+pm.ResourceVarName+"' && @.Class=='"+pm.Class+"' && (@.Subclass=='"+pm.Subclass+"' || @.Subclass=='') && @.IsActive>0)]['Resource']",pm.ResourceFinal))]
 		[h:macro.return = json.set("","ShowIfCondensed",1,"Header",pm.ResourceName+" Remaining","FalseHeader","","FullContents","","RulesContents","<b><span style='font-size:1.25em;'>"+(pm.ResourceAmount-pm.ResourceUsed)+"/"+pm.ResourceMax+"</span></b>"+pm.ResourceRestoration,"RollContents","","DisplayOrder","['Rules','Roll','Full']","Value",pm.ResourceUsed,"Units",1)]
 	};{
 		[h:macro.return = json.set("","ShowIfCondensed",1,"Header",pm.ResourceName+" Remaining","FalseHeader","","FullContents","","RulesContents","<b><span style='font-size:1.25em;'>"+pm.ResourceAmount+"/"+pm.ResourceMax+"</span></b>"+pm.ResourceRestoration,"RollContents","","DisplayOrder","['Rules','Roll','Full']","Value",0,"Units",0)]

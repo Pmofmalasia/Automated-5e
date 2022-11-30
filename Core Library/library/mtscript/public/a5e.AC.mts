@@ -3,10 +3,10 @@
 [h:pm.a5e.OverarchingContext = "Stats"]
 [h:IsTooltip = 0]
 
-[h:baseAC = json.get(json.get(Armor,json.get(Armor,0)),"BaseAC")+json.get(json.get(Armor,json.get(Armor,0)),"MagicBonus")]
-[h:dexMax = json.get(json.get(Armor,json.get(Armor,0)),"DexMax")]
+[h:baseAC = json.get(json.get(getProperty("a5e.stat.Armor"),json.get(getProperty("a5e.stat.Armor"),0)),"BaseAC")+json.get(json.get(getProperty("a5e.stat.Armor"),json.get(getProperty("a5e.stat.Armor"),0)),"MagicBonus")]
+[h:dexMax = json.get(json.get(getProperty("a5e.stat.Armor"),json.get(getProperty("a5e.stat.Armor"),0)),"DexMax")]
 [h:bonusAC = 0]
-[h:shieldAC = if(json.get(json.get(Shield,json.get(Shield,0)),"Name")=="None",0,2)+json.get(json.get(Shield,json.get(Shield,0)),"MagicBonus")]
+[h:shieldAC = if(json.get(json.get(getProperty("a5e.stat.Shield"),json.get(getProperty("a5e.stat.Shield"),0)),"Name")=="None",0,2)+json.get(json.get(getProperty("a5e.stat.Shield"),json.get(getProperty("a5e.stat.Shield"),0)),"MagicBonus")]
 
 [h:setFinalAC = 0]
 [h:setBaseAC = 0]

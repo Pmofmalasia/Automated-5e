@@ -1,7 +1,7 @@
 [h:cn.Input = " junkVar | ------------------- Manage Active Conditions ------------------- |  | LABEL | SPAN=TRUE ## ClearAllTest |  | Remove all active conditions | CHECK "]
 
-[h,foreach(condGroup,ConditionGroups),CODE:{
-	[h:condDisplayNames = json.path.read(ConditionList,"[*][?(@.GroupID=="+json.get(condGroup,"GroupID")+")]['DisplayName']")]
+[h,foreach(condGroup,getProperty("a5e.stat.ConditionGroups")),CODE:{
+	[h:condDisplayNames = json.path.read(getProperty("a5e.stat.ConditionList"),"[*][?(@.GroupID=="+json.get(condGroup,"GroupID")+")]['DisplayName']")]
 	[h:cn.Input = listAppend(cn.Input," choice"+json.get(condGroup,"GroupID")+" |  | Remove "+json.toList(condDisplayNames,", ")+" | CHECK ","##")]
 }]
 
@@ -9,7 +9,7 @@
 
 [h:cn.RemovedList = "[]"]
 
-[h,foreach(condGroup,ConditionGroups),CODE:{
+[h,foreach(condGroup,getProperty("a5e.stat.ConditionGroups")),CODE:{
 	[h:cn.RemovalTest = or(ClearAllTest,eval("choice"+json.get(condGroup,"GroupID")))]
 	[h,if(cn.RemovalTest),CODE:{
 		[h,MACRO("EndCondition@Lib:pm.a5e.Core"): json.set("","ParentToken",currentToken(),"GroupID",json.get(condGroup,"GroupID"))]

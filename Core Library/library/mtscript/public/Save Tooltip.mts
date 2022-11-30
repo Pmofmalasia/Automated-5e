@@ -6,7 +6,7 @@
 	"Header",json.get(TempAttribute,"DisplayName"),
 	"FalseHeader","",
 	"FullContents","",
-	"RulesContents",pm.PlusMinus(json.get(getProperty("a5e.stat.AtrMods"),json.get(TempAttribute,"Name"))+(json.get(Saves,json.get(TempAttribute,"Name"))*getProperty("a5e.stat.Proficiency")),1),
+	"RulesContents",pm.PlusMinus(json.get(getProperty("a5e.stat.AtrMods"),json.get(TempAttribute,"Name"))+(json.get(getProperty("a5e.stat.Saves"),json.get(TempAttribute,"Name"))*getProperty("a5e.stat.Proficiency")),1),
 	"RollContents","",
 	"DisplayOrder","['Rules','Roll','Full']"
 ))]

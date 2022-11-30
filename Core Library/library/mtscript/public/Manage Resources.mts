@@ -1,4 +1,4 @@
-[h:AbilitiesWithResources = json.path.read(allAbilities,"[?(@.Resource>=0)]")]
+[h:AbilitiesWithResources = json.path.read(getProperty("a5e.stat.AllFeatures"),"[?(@.Resource>=0)]")]
 [h:disAbilityResourceSelection = ""]
 [h:temp.AbilityCount = 0]
 [h,foreach(ability,AbilitiesWithResources),CODE:{
@@ -16,5 +16,5 @@
 	))]
 
 [h,foreach(ability,AbilitiesWithResources),CODE:{
-	[h:allAbilities=json.path.set(allAbilities,"[?(@.Name=='"+json.get(ability,"Name")+"')]['Resource']",eval("temp.Resource"+roll.count))]
+	[h:setProperty("a5e.stat.AllFeatures",json.path.set(getProperty("a5e.stat.AllFeatures"),"[?(@.Name=='"+json.get(ability,"Name")+"')]['Resource']",eval("temp.Resource"+roll.count)))]
 }]

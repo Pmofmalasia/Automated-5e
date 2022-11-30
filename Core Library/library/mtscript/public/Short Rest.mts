@@ -18,7 +18,7 @@
 	"Value",""
 ))]
 
-[h,if(json.get(MaxSpellSlots,"1")>0):
+[h,if(json.get(getProperty("a5e.stat.MaxSpellSlots"),"1")>0):
 	abilityTable = json.append(abilityTable,json.set("",
 		"ShowIfCondensed",1,
 		"Header","Spell Slots",
@@ -33,21 +33,21 @@
 
 [h:setProperty("stat.Concentration","")]
 
-[h,if(Exhaustion == 0): exhaustionMessage = "Exhaustion fully recovered."; exhaustionMessage = "Disadvantage on ability checks"+if(Exhaustion>=2 && Exhaustion<5,", speed halved","")+if(Exhaustion>=3,", disadvantage on attack rolls and saving throws","")+if(Exhaustion>=4,", hit point maximum halved","")+if(Exhaustion>=5,", speed reduced to 0","")]
+[h,if(getProperty("a5e.stat.Exhaustion") == 0): exhaustionMessage = "Exhaustion fully recovered."; exhaustionMessage = "Disadvantage on ability checks"+if(getProperty("a5e.stat.Exhaustion")>=2 && getProperty("a5e.stat.Exhaustion")<5,", speed halved","")+if(getProperty("a5e.stat.Exhaustion")>=3,", disadvantage on attack rolls and saving throws","")+if(getProperty("a5e.stat.Exhaustion")>=4,", hit point maximum halved","")+if(getProperty("a5e.stat.Exhaustion")>=5,", speed reduced to 0","")]
 	
-[h,if(Exhaustion>0): abilityTable = json.append(abilityTable,json.set("",
+[h,if(getProperty("a5e.stat.Exhaustion")>0): abilityTable = json.append(abilityTable,json.set("",
 	"ShowIfCondensed",1,
-	"Header","Level "+Exhaustion+" Exhaustion",
+	"Header","Level "+getProperty("a5e.stat.Exhaustion")+" Exhaustion",
 	"FalseHeader","",
 	"FullContents",exhaustionMessage,
 	"RulesContents","",
 	"RollContents","",
 	"DisplayOrder","['Full','Rules','Roll']",
 	"Value",""
-	))]
+))]
 [h:"<!-- For each ability in the abilities array, checks to see if there is a magic item bonus to the max resource, then checks to see if restored on a long rest and sets resource equal to max resource plus any magic item bonuses. Magic item bonuses do not currently work for abilities with multiple resources (therefore stored as objects). -->"]
 
-[h:sr.Resources = json.path.read(allAbilities,"[?(@.IsActive>0 && @.RestoreShortRest==1)]")]
+[h:sr.Resources = json.path.read(getProperty("a5e.stat.AllFeatures"),"[?(@.IsActive>0 && @.RestoreShortRest==1)]")]
 [h,foreach(Ability,sr.Resources),CODE:{
 	[h:miResourceBonus = 0]
 	[h:miResourceBonusItems = json.path.read(MagicItemClassBonuses,"[?(@.IsActive>0 && @.Ability=='"+json.get(Ability,"Name")+"' && @.Class=='"+json.get(Ability,"Class")+"' && @.Subclass=='"+json.get(Ability,"Subclass")+"' && @.MaxResourceBonus!=0)]['MaxResourceBonus']")]
@@ -79,7 +79,7 @@
 			"Value",ResourceRestoredFinal
 			))]
 	}]
-	[h:allAbilities = json.path.set(allAbilities,"[?(@.Name=='"+json.get(Ability,"Name")+"' && @.Class=='"+json.get(Ability,"Class")+"' && @.Subclass=='"+json.get(Ability,"Subclass")+"')]['Resource']",ResourceRestoredFinal)]
+	[h:setProperty("a5e.stat.AllFeatures",json.path.set(getProperty("a5e.stat.AllFeatures"),"[?(@.Name=='"+json.get(Ability,"Name")+"' && @.Class=='"+json.get(Ability,"Class")+"' && @.Subclass=='"+json.get(Ability,"Subclass")+"')]['Resource']",ResourceRestoredFinal))]
 }]
 
 [h:pm.PassiveFunction("ShortRest")]
@@ -88,7 +88,7 @@
 [h:state.Bloodied=if(getProperty("a5e.stat.HP")/getProperty("a5e.stat.MaxHP") <= 0.5, 1, 0)]
 [h:bar.Health = getProperty("a5e.stat.HP") / getProperty("a5e.stat.MaxHP")]
 
-[h:DeathSaves=json.set("{ }", "Successes",0,"Failures",0)]
+[h:getProperty("a5e.stat.DeathSaves",json.set("", "Successes",0,"Failures",0))]
 
 [h:ClassFeatureData = json.set("",
 	"Flavor",Flavor,
@@ -104,7 +104,7 @@
 	"Name","Long Rest",
 	"FalseName","",
 	"OnlyRules",0
-	)]
+)]
 
 [h:FormattingData = pm.MacroFormat(ClassFeatureData)]
 [h:DamageColor=pm.DamageColor()]

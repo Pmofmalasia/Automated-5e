@@ -1,7 +1,7 @@
 [h:abilityDisplayName=abilityName]
 [h:abilityName=pm.RemoveSpecial(abilityName)]
 [h:abilitySubclass=pm.RemoveSpecial(abilitySubclass)]
-[h:DisplayArray = json.path.read(allAbilities,"[?(@.Name=='"+abilityName+"')]['Settings']")]
+[h:DisplayArray = json.path.read(getProperty("a5e.stat.AllFeatures"),"[?(@.Name=='"+abilityName+"')]['Settings']")]
 [h,if(DisplayArray == "[]"),CODE:{
 	[h:DisplayObject = "{}"]
 };{

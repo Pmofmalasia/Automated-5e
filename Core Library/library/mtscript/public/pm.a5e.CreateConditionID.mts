@@ -7,7 +7,7 @@
 [h:"<!-- Should be adding SetBy token to list of targets -->"]
 
 [h:pm.a5e.OccupiedIDs = ""]
-[h,foreach(target,pm.a5e.AllTokens): pm.a5e.OccupiedIDs = json.merge(pm.a5e.OccupiedIDs,json.merge(json.path.read(getProperty("ConditionGroups",ParentToken),"[*]['GroupID']"),json.path.read(getProperty("ConditionsSet",ParentToken),"[*]['GroupID']")))]
+[h,foreach(target,pm.a5e.AllTokens): pm.a5e.OccupiedIDs = json.merge(pm.a5e.OccupiedIDs,json.merge(json.path.read(getProperty("a5e.stat.ConditionGroups",ParentToken),"[*]['GroupID']"),json.path.read(getProperty("a5e.stat.ConditionsSet",ParentToken),"[*]['GroupID']")))]
 
 [h:pm.a5e.OccupiedIDs = json.unique(pm.a5e.OccupiedIDs)]
 

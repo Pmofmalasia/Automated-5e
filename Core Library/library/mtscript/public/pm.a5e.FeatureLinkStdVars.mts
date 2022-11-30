@@ -1,6 +1,6 @@
 [h:abilityName = pm.RemoveSpecial(abilityName)]
 [h:abilitySubclass = pm.RemoveSpecial(abilitySubclass)]
-[h:DisplayArray = json.path.read(allAbilities,"[?(@.Name=='"+abilityName+"')]['Settings']")]
+[h:DisplayArray = json.path.read(getProperty("a5e.stat.AllFeatures"),"[?(@.Name=='"+abilityName+"')]['Settings']")]
 [h,if(DisplayArray == "[]"),CODE:{
 	[h:DisplayObject = "{}"]
 };{
@@ -13,7 +13,7 @@
 [h:abilityContext=json.get(arg(0),"Context")]
 [h:pm.a5e.OverarchingContext=json.get(arg(0),"OverarchingContext")]
 [h:Flavor=json.get(DisplayObject,"Flavor")]
-[h:DMOnly=if(json.get(DisplayObject,"DMOnly")=="",if(getProperty("stat.Allegiance")=="Enemy",min(number(getLibProperty("HideEnemyMacros","Lib:pm.a5e.Core")),1),if(getProperty("stat.Allegiance")=="Ally",min(number(getLibProperty("HideAllyMacros","Lib:pm.a5e.Core")),1),0)),json.get(DisplayObject,"DMOnly"))]
+[h:DMOnly=if(json.get(DisplayObject,"DMOnly")=="",if(getProperty("a5e.stat.Allegiance")=="Enemy",min(number(getLibProperty("HideEnemyMacros","Lib:pm.a5e.Core")),1),if(getProperty("a5e.stat.Allegiance")=="Ally",min(number(getLibProperty("HideAllyMacros","Lib:pm.a5e.Core")),1),0)),json.get(DisplayObject,"DMOnly"))]
 [h:BorderColorOverride=json.get(DisplayObject,"BorderColorOverride")]
 [h:TitleFontColorOverride=json.get(DisplayObject,"TitleFontColorOverride")]
 [h:AccentBackgroundOverride=json.get(DisplayObject,"AccentBackgroundOverride")]

@@ -3,13 +3,13 @@
 
 [h:pm.DisplayNewAbilities = ""]
 [h,foreach(ability,pm.NewAbilities),CODE:{
-	[h:allAbilities = json.append(allAbilities,json.set(ability,"IsDisplayed",1,"IsActive",1,"MagicItemLink","None"))]
+	[h:setProperty("a5e.stat.AllFeatures",json.append(getProperty("a5e.stat.AllFeatures"),json.set(ability,"IsDisplayed",1,"IsActive",1,"MagicItemLink","None")))]
 	[h:pm.DisplayNewAbilities = listAppend(pm.DisplayNewAbilities,json.get(ability,"DisplayName"),"<br>")]
 }]
 
-[h,if(json.isEmpty(allAbilities)): pm.NewResources = ""; pm.NewResources = json.path.read(allAbilities,"[*][?(@.MaxResource != null)]","DEFAULT_PATH_LEAF_TO_NULL")]
+[h,if(json.isEmpty(getProperty("a5e.stat.AllFeatures"))): pm.NewResources = ""; pm.NewResources = json.path.read(getProperty("a5e.stat.AllFeatures"),"[*][?(@.MaxResource != null)]","DEFAULT_PATH_LEAF_TO_NULL")]
 [h,foreach(ability,pm.NewResources),CODE:{
-	[h:allAbilities = json.path.put(allAbilities,"[?(@.Name=='"+json.get(ability,"Name")+"' && @.Class=='"+json.get(ability,"Class")+"' && @.Subclass=='"+json.get(ability,"Subclass")+"')]","Resource",evalMacro(json.get(ability,"MaxResource")))]
+	[h:setProperty("a5e.stat.AllFeatures",json.path.put(getProperty("a5e.stat.AllFeatures"),"[?(@.Name=='"+json.get(ability,"Name")+"' && @.Class=='"+json.get(ability,"Class")+"' && @.Subclass=='"+json.get(ability,"Subclass")+"')]","Resource",evalMacro(json.get(ability,"MaxResource"))))]
 }]
 
 [h,MACRO("CreatePlayerClassMacro@Lib:pm.a5e.Core"): json.set("","AbilityList",pm.NewButtons,"ParentToken",ParentToken)]

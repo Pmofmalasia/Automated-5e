@@ -6,8 +6,8 @@
 [h:d20Type = json.get(d20Data,"Type")]
 
 [h,SWITCH(d20Type):
-	case "Save": ProfType = json.get(Saves,CurrentSave);
-	case "Concentration": ProfType = json.get(Saves,"Constitution");
+	case "Save": ProfType = json.get(getProperty("a5e.stat.Saves"),CurrentSave);
+	case "Concentration": ProfType = json.get(getProperty("a5e.stat.Saves"),"Constitution");
 	case "Death": ProfType = 0;
 	default: ProfType = 0
 ]

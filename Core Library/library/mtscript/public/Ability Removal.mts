@@ -4,7 +4,7 @@
 [h:pm.RemovedButtonsInput = "junkVar | The following buttons will be removed unless unchecked. The ability will still be removed. |  | LABEL | SPAN=TRUE ## junkVar | ------------------------------------------------------------------------------------------------------------------------- |  | LABEL | SPAN=TRUE "]
 
 [h,foreach(ability,pm.RemovedAbilities),CODE:{
-	[h:allAbilities = json.path.delete(allAbilities,"[?(@.Name=='"+json.get(ability,"Name")+"' && @.Class=='"+json.get(ability,"Class")+"' && @.Subclass=='"+json.get(ability,"Subclass")+"')]")]
+	[h:setProperty("a5e.stat.AllFeatures",json.path.delete(getProperty("a5e.stat.AllFeatures"),"[?(@.Name=='"+json.get(ability,"Name")+"' && @.Class=='"+json.get(ability,"Class")+"' && @.Subclass=='"+json.get(ability,"Subclass")+"')]"))]
 }]
 
 [h,if(json.isEmpty(pm.RemovedAbilities)): pm.ButtonsToDeleteTemp = ""; pm.ButtonsToDeleteTemp = json.path.read(pm.RemovedAbilities,"[*][?(@.ButtonInfo != null)]['ButtonInfo']","DEFAULT_PATH_LEAF_TO_NULL")]

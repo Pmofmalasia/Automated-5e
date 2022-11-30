@@ -1,4 +1,4 @@
-[h:pm.ToolProfs = json.path.read(allAbilities,"[?(@.Tools!=null && @.IsActive>0)]['Tools']","DEFAULT_PATH_LEAF_TO_NULL")]
+[h:pm.ToolProfs = json.path.read(getProperty("a5e.stat.AllFeatures"),"[?(@.Tools!=null && @.IsActive>0)]['Tools']","DEFAULT_PATH_LEAF_TO_NULL")]
 [h:pm.FinalProfs = "{}"]
 [h,foreach(tool,pm.GetTools("Name")),CODE:{
 	[h,if(json.isEmpty(pm.ToolProfs)): TempToolProfs = ""; TempToolProfs = json.path.read(pm.ToolProfs,"[?(@."+tool+"!=null)]['"+tool+"']","DEFAULT_PATH_LEAF_TO_NULL")]

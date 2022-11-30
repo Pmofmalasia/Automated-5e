@@ -13,10 +13,10 @@
 [h,if(UseLevelCap),CODE:{
 	[h,if(LevelCapClass==""),CODE:{
 		[h:LevelCap = 0]
-		[h,foreach(TempClass,ClassFilter): LevelCap = max(ceiling(json.get(json.path.read(allAbilities,"[?(@.CasterType!=null && @.SharedSpellSlots == 1 && @.IsActive>0 && @.Class == '"+TempClass+"')]['Level']","DEFAULT_PATH_LEAF_TO_NULL"),0)*json.get(json.path.read(allAbilities,"[?(@.CasterType!=null && @.SharedSpellSlots == 1 && @.IsActive>0 && @.Class == '"+TempClass+"')]['CasterType']","DEFAULT_PATH_LEAF_TO_NULL"),0)),LevelCap)]
+		[h,foreach(TempClass,ClassFilter): LevelCap = max(ceiling(json.get(json.path.read(getProperty("a5e.stat.AllFeatures"),"[?(@.CasterType!=null && @.SharedSpellSlots == 1 && @.IsActive>0 && @.Class == '"+TempClass+"')]['Level']","DEFAULT_PATH_LEAF_TO_NULL"),0)*json.get(json.path.read(getProperty("a5e.stat.AllFeatures"),"[?(@.CasterType!=null && @.SharedSpellSlots == 1 && @.IsActive>0 && @.Class == '"+TempClass+"')]['CasterType']","DEFAULT_PATH_LEAF_TO_NULL"),0)),LevelCap)]
 		[h:LevelCap = if(LevelCap==0,10,LevelCap)]
 	};{
-		[h:LevelCap = max(ceiling(json.get(json.path.read(allAbilities,"[?(@.CasterType!=null && @.SharedSpellSlots == 1 && @.IsActive>0 && @.Class == '"+LevelCapClass+"' && @.Subclass == '"+LevelCapSubclass+"')]['Level']","DEFAULT_PATH_LEAF_TO_NULL"),0)*json.get(json.path.read(allAbilities,"[?(@.CasterType!=null && @.SharedSpellSlots == 1 && @.IsActive>0 && @.Class == '"+LevelCapClass+"' && @.Subclass == '"+LevelCapSubclass+"')]['CasterType']","DEFAULT_PATH_LEAF_TO_NULL"),0)),1)]
+		[h:LevelCap = max(ceiling(json.get(json.path.read(getProperty("a5e.stat.AllFeatures"),"[?(@.CasterType!=null && @.SharedSpellSlots == 1 && @.IsActive>0 && @.Class == '"+LevelCapClass+"' && @.Subclass == '"+LevelCapSubclass+"')]['Level']","DEFAULT_PATH_LEAF_TO_NULL"),0)*json.get(json.path.read(getProperty("a5e.stat.AllFeatures"),"[?(@.CasterType!=null && @.SharedSpellSlots == 1 && @.IsActive>0 && @.Class == '"+LevelCapClass+"' && @.Subclass == '"+LevelCapSubclass+"')]['CasterType']","DEFAULT_PATH_LEAF_TO_NULL"),0)),1)]
 	}]
 	[h:LevelCap = LevelCap+LevelCapBonus]
 };{

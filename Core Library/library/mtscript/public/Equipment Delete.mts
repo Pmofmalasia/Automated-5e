@@ -1,28 +1,28 @@
 [h:Flavor=json.get(macro.args,"Flavor")]
 [h:ParentToken=json.get(macro.args,"ParentToken")]
 
-[h:ShieldEquipped=json.get(Shield,0)]
+[h:ShieldEquipped=json.get(getProperty("a5e.stat.Shield"),0)]
 [h:ShieldList="None,"]
-[h,count(json.length(Shield)),code:{
+[h,count(json.length(getProperty("a5e.stat.Shield"))),code:{
 	[if(roll.count>1),code:{
-		[ShieldList=ShieldList+json.get(json.get(Shield,roll.count),"Name")+","]
+		[ShieldList=ShieldList+json.get(json.get(getProperty("a5e.stat.Shield"),roll.count),"Name")+","]
 	};{}]
 }]
 
-[h:ArmorEquipped=json.get(Armor,0)]
+[h:ArmorEquipped=json.get(getProperty("a5e.stat.Armor"),0)]
 [h:ArmorList="None,"]
-[h,count(json.length(Armor)),code:{
+[h,count(json.length(getProperty("a5e.stat.Armor"))),code:{
 	[if(roll.count>1),code:{
-		[ArmorList=ArmorList+json.get(json.get(Armor,roll.count),"Name")+","]
+		[ArmorList=ArmorList+json.get(json.get(getProperty("a5e.stat.Armor"),roll.count),"Name")+","]
 	};{}]
 }]
 
-[h:MainHandEquipped=json.get(Weapon,0)]
-[h:OffHandEquipped=json.get(Weapon,1)]
+[h:MainHandEquipped=json.get(getProperty("a5e.stat.Weapon"),0)]
+[h:OffHandEquipped=json.get(getProperty("a5e.stat.Weapon"),1)]
 [h:WeaponList="None,"]
-[h,count(json.length(Weapon)),code:{
+[h,count(json.length(getProperty("a5e.stat.Weapon"))),code:{
 	[if(roll.count>2),code:{
-		[WeaponList=WeaponList+json.get(json.get(Weapon,roll.count),"Name")+","]
+		[WeaponList=WeaponList+json.get(json.get(getProperty("a5e.stat.Weapon"),roll.count),"Name")+","]
 	};{}]
 }]
 
@@ -34,26 +34,26 @@
 [h:abort(DeleteSelect)]
 
 [h,if(ShieldSelection==0),code:{};{
-	[Shield=if(ShieldSelection<ShieldEquipped,json.set(Shield,0,json.get(Shield,0)-1),Shield)]
-	[Shield=json.remove(Shield,ShieldSelection+1)]
+	[setProperty("a5e.stat.Shield",if(ShieldSelection<ShieldEquipped,json.set(getProperty("a5e.stat.Shield"),0,json.get(getProperty("a5e.stat.Shield"),0)-1),getProperty("a5e.stat.Shield")))]
+	[setProperty("a5e.stat.Shield",json.remove(getProperty("a5e.stat.Shield"),ShieldSelection+1))]
 }]
 
 [h,if(ArmorSelection==0),code:{};{
-	[Armor=if(ArmorSelection<ArmorEquipped,json.set(Armor,0,json.get(Armor,0)-1),Armor)]
-	[Armor=json.remove(Armor,ArmorSelection+1)]
+	[setProperty("a5e.stat.Armor",if(ArmorSelection<ArmorEquipped,json.set(getProperty("a5e.stat.Armor"),0,json.get(getProperty("a5e.stat.Armor"),0)-1),getProperty("a5e.stat.Armor")))]
+	[setProperty("a5e.stat.Armor",json.remove(getProperty("a5e.stat.Armor"),ArmorSelection+1))]
 }]
 
 [h,if(WeaponSelection==0),code:{};{
-	[Weapon=if(WeaponSelection+1<MainHandEquipped,json.set(Weapon,0,json.get(Weapon,0)-1),Weapon)]
-	[Weapon=if(WeaponSelection+1<OffHandEquipped,json.set(Weapon,1,json.get(Weapon,1)-1),Weapon)]
-	[Weapon=json.remove(Weapon,WeaponSelection+2)]
+	[setProperty("a5e.stat.Weapon",if(WeaponSelection+1<MainHandEquipped,json.set(getProperty("a5e.stat.Weapon"),0,json.get(getProperty("a5e.stat.Weapon"),0)-1),getProperty("a5e.stat.Weapon")))]
+	[setProperty("a5e.stat.Weapon",if(WeaponSelection+1<OffHandEquipped,json.set(getProperty("a5e.stat.Weapon"),1,json.get(getProperty("a5e.stat.Weapon"),1)-1),getProperty("a5e.stat.Weapon")))]
+	[setProperty("a5e.stat.Weapon",json.remove(getProperty("a5e.stat.Weapon"),WeaponSelection+2))]
 }]
 
 [h:DeleteConfirmation=input(
 	"DeleteConfirm|No,Yes|Are you sure you want to delete "+listGet(ShieldList,ShieldSelection)+", "+listGet(ArmorList,ArmorSelection)+", and "+listGet(WeaponList,WeaponSelection)+"?|LIST"
 )]
 [h:abort(DeleteConfirmation)]
-[h:Abort(DeleteConfirm)]
+[h:abort(DeleteConfirm)]
 
 <div style="background-color: #f7ae27; color: #000000; padding-top:2px; padding-bottom:5px; padding-left:8px; padding-right:8px;">
 	<b>Delete Equipment</b>

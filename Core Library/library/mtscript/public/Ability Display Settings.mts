@@ -1,16 +1,16 @@
-[h:MacroOptions = listSort(json.toList(json.path.read(allAbilities,"[?(@.Name!='')]['Name']")),"A+")]
+[h:MacroOptions = listSort(json.toList(json.path.read(getProperty("a5e.stat.AllFeatures"),"[?(@.Name!='')]['Name']")),"A+")]
 
 [h:abort(input(
 	"chosenMacro | "+MacroOptions+" | Which ability would you like to edit | LIST | VALUE=STRING "
 ))]
 
-[h:OldMacroSettings = json.path.read(allAbilities,"[?(@.Name=='"+chosenMacro+"')]['Settings']")]
+[h:OldMacroSettings = json.path.read(getProperty("a5e.stat.AllFeatures"),"[?(@.Name=='"+chosenMacro+"')]['Settings']")]
 [h,if(OldMacroSettings == "[]"): OldMacroSettings="{}";  OldMacroSettings=json.get(OldMacroSettings,0)] 
 
 [h:choice.DM = 0]
 [h:abort(input(
 	"junkVar | -------------- Settings by Button: 0 or Blank to Use Defaults -------------- | | LABEL | SPAN=TRUE ",
-	if(isGM(),"choice.DM | "+if(json.get(OldMacroSettings,"DMOnly")=="",if(getProperty("stat.Allegiance")=="Enemy",1,0),json.get(OldMacroSettings,"DMOnly"))+" | Separate DM and player outputs | CHECK ","")+"",
+	if(isGM(),"choice.DM | "+if(json.get(OldMacroSettings,"DMOnly")=="",if(getProperty("a5e.stat.Allegiance")=="Enemy",1,0),json.get(OldMacroSettings,"DMOnly"))+" | Separate DM and player outputs | CHECK ","")+"",
 	"choice.FullRules | "+json.get(OldMacroSettings,"ShowFullRulesOverride")+" | Show full rules in chat | CHECK ",
 	"choice.Flavor | "+json.get(OldMacroSettings,"Flavor")+" | Ability flavor text ",
 	"choice.BorderColor | "+json.get(OldMacroSettings,"BorderColorOverride")+" | Border Color",
@@ -37,7 +37,7 @@
 	)]
 
 [h,if(OldMacroSettings=="{}"),CODE:{
-	[h:allAbilities = json.path.put(allAbilities,"[?(@.Name=='"+chosenMacro+"')]","Settings",SettingsInfo)]
+	[h:setProperty("a5e.stat.AllFeatures",json.path.put(getProperty("a5e.stat.AllFeatures"),"[?(@.Name=='"+chosenMacro+"')]","Settings",SettingsInfo))]
 };{
-	[h:allAbilities = json.path.set(allAbilities,"[?(@.Name=='"+chosenMacro+"')]['Settings']",SettingsInfo)]
+	[h:setProperty("a5e.stat.AllFeatures",json.path.set(getProperty("a5e.stat.AllFeatures"),"[?(@.Name=='"+chosenMacro+"')]['Settings']",SettingsInfo))]
 }]

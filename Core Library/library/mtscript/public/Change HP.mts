@@ -89,21 +89,21 @@
 }]
 
 [h:"<!-- Things get very funky around simultaneous damage and healing when it comes to crossing the 0 HP threshhold or already being downed. Unlikely to actually come up since simultaneous healing/damage on the same target is rare/nonexistent without homebrew so will add in options later. -->"]
-[h,if(TempHP==0),CODE:{
+[h,if(getProperty("a5e.stat.TempHP")==0),CODE:{
 	[h:hp.TempEndTest = 0]
 };{
-	[h:hp.NewTemp = max(0,TempHP-hp.Damage)]
-	[h:hp.TempDiff = TempHP - hp.NewTemp]
-	[h:TempHP = hp.NewTemp]
+	[h:hp.NewTemp = max(0,getProperty("a5e.stat.TempHP")-hp.Damage)]
+	[h:hp.TempDiff = getProperty("a5e.stat.TempHP") - hp.NewTemp]
+	[h:setProperty("a5e.stat.TempHP",hp.NewTemp)]
 	[h:hp.Damage = hp.Damage-hp.TempDiff]
-	[h:hp.TempEndTest = (TempHP==0)]
+	[h:hp.TempEndTest = (getProperty("a5e.stat.TempHP")==0)]
 }]
 
 [h:hp.AlreadyDying = if(getProperty("a5e.stat.HP")==0,1,0)]
 [h:setProperty("a5e.stat.HP",min(getProperty("a5e.stat.HP") - hp.Damage + hp.Healing,getProperty("a5e.stat.MaxHP")))]
 
 [h,if(hp.AlreadyDying && hp.Healing!=0),CODE:{
-	[h:DeathSaves = json.set(DeathSaves,"Successes",0,"Failures",0)]
+	[h:setProperty("a5e.stat.DeathSaves",json.set(getProperty("a5e.stat.DeathSaves"),"Successes",0,"Failures",0))]
 	[h:hp.AlreadyDying = 0]
 	[h:hp.Resuscitated = 1]
 };{
@@ -112,8 +112,8 @@
 
 [h,if(getProperty("a5e.stat.HP")<1 && hp.Damage!=0),CODE:{
 	[h:hp.Resuscitated = 0]
-	[h,if(hp.AlreadyDying): DeathFailures = min(3,json.get(DeathSaves,"Failures")+if(hp.IsCrit,2,1)); DeathFailures = 0]
-	[h:DeathSaves = json.set(DeathSaves,"Failures",DeathFailures)]
+	[h,if(hp.AlreadyDying): DeathFailures = min(3,json.get(getProperty("a5e.stat.DeathSaves"),"Failures")+if(hp.IsCrit,2,1)); DeathFailures = 0]
+	[h:setProperty("a5e.stat.DeathSaves",json.set(getProperty("a5e.stat.DeathSaves"),"Failures",DeathFailures))]
 	[h:hp.DeadTest = or(abs(getProperty("a5e.stat.HP"))>=getProperty("a5e.stat.MaxHP"),DeathFailures==3)]
 	
 	[h,if(!hp.AlreadyDying),CODE:{
@@ -176,7 +176,7 @@
 	"Header","Death Saves",
 	"FalseHeader","",
 	"FullContents","",
-	"RulesContents",if(json.get(DeathSaves,"Failures")==3,"Failures: <b><span style='font-size:2em; color:"+DamageColor+"'>"+json.get(DeathSaves,"Failures")+"</span></b>","Successes: <b><span style='font-size:2em; color:"+HealingColor+"'>"+json.get(DeathSaves,"Successes")+"</span></b> / Failures: <b><span style='font-size:2em; color:"+DamageColor+"'>"+json.get(DeathSaves,"Failures")+"</span></b>"),
+	"RulesContents",if(json.get(getProperty("a5e.stat.DeathSaves"),"Failures")==3,"Failures: <b><span style='font-size:2em; color:"+DamageColor+"'>"+json.get(getProperty("a5e.stat.DeathSaves"),"Failures")+"</span></b>","Successes: <b><span style='font-size:2em; color:"+HealingColor+"'>"+json.get(getProperty("a5e.stat.DeathSaves"),"Successes")+"</span></b> / Failures: <b><span style='font-size:2em; color:"+DamageColor+"'>"+json.get(getProperty("a5e.stat.DeathSaves"),"Failures")+"</span></b>"),
 	"RollContents","",
 	"DisplayOrder","['Rules','Roll','Full']"
 	))]
@@ -206,7 +206,7 @@
 	))
 ]
 
-[h,if(getProperty("stat.Concentration")!="" && hp.Damage>0),CODE:{
+[h,if(getProperty("a5e.stat.Concentration")!="" && hp.Damage>0),CODE:{
 	[h:hp.ConcDC = max(10,floor(hp.Damage/2))]
 	[h,MACRO("Save@Lib:pm.a5e.Core"): 
 	json.set(hp.Data,

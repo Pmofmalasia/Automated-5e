@@ -120,7 +120,7 @@
 	[h:TempSkillsCount = 0]
 	[h:AlreadyProfTest = json.get(json.get(ability,"Skills"),"AlreadyProf")]
 	[h,while(AlreadyProfTest==1 && TempSkillsCount<json.length(TempSkillsGranted)-1),CODE:{
-		[h:TempSkillProf = json.get(Skills,json.get(TempSkillsGranted,TempSkillsCount))]
+		[h:TempSkillProf = json.get(getProperty("a5e.stat.Skills"),json.get(TempSkillsGranted,TempSkillsCount))]
 		[h,if(isNumber(TempSkillProf)): BackupTest = if(and(TempSkillProf>0,json.get(json.get(ability,"Skills"),json.get(TempSkillsGranted,TempSkillsCount))>0),BackupTest+1,BackupTest)]
 		[h:TempSkillsCount = TempSkillsCount+1]
 	}]
@@ -157,7 +157,7 @@
 	json.path.set(lu.NewAbilities,"[?(@.Name == '"+json.get(ability,"Name")+"' && @.Class == '"+json.get(ability,"Class")+"' && @.Subclass == '"+json.get(ability,"Subclass")+"')]['Skills']",lu.NewSkillProficiencies)]
 	};{
 		[h:lu.AllNewSkillProficiencies = json.merge(lu.AllNewSkillProficiencies,json.get(macro.return,"Skills"))]
-		[h:lu.NewAbilities = json.path.put(lu.NewAbilities,"[?(@.Name == '"+json.get(ability,"Name")+"' && @.Class == '"+json.get(ability,"Class")+"' && @.Subclass == '"+json.get(ability,"Subclass")+"')]","Skills",json.get(macro.return,"Skills")))]
+		[h:lu.NewAbilities = json.path.put(lu.NewAbilities,"[?(@.Name == '"+json.get(ability,"Name")+"' && @.Class == '"+json.get(ability,"Class")+"' && @.Subclass == '"+json.get(ability,"Subclass")+"')]","Skills",json.get(macro.return,"Skills"))]
 	}]
 }]
 
@@ -168,7 +168,7 @@
 	[h:lu.ProftoExpTest = json.get(json.get(ability,"SkillOptions"),"ProftoExp")]
 	[h:lu.ValidSkills = ""]
 	
-	[h,foreach(skill,pm.GetSkills("Name","json")): lu.ValidSkills = if(json.get(json.merge(Skills,lu.AllNewSkillProficiencies),skill)==1,json.set(lu.ValidSkills,skill,2),lu.ValidSkills)]
+	[h,foreach(skill,pm.GetSkills("Name","json")): lu.ValidSkills = if(json.get(json.merge(getProperty("a5e.stat.Skills"),lu.AllNewSkillProficiencies),skill)==1,json.set(lu.ValidSkills,skill,2),lu.ValidSkills)]
 	[h:lu.ValidSkills = json.set(lu.ValidSkills,"ChoiceText",json.get(ability,"DisplayName")+": "+json.get(json.get(ability,"SkillOptions"),"ChoiceText"),"ChoiceNum",json.get(json.get(ability,"SkillOptions"),"ChoiceNum"),"NewProf",lu.AllNewSkillProficiencies)]
 	
 	[h,MACRO("SkillSelection@Lib:pm.a5e.Core"): json.set("","Skills",lu.ValidSkills,"ParentToken",ParentToken)]
@@ -180,7 +180,7 @@
 	json.path.set(lu.NewAbilities,"[?(@.Name == '"+json.get(ability,"Name")+"' && @.Class == '"+json.get(ability,"Class")+"' && @.Subclass == '"+json.get(ability,"Subclass")+"')]['Skills']",lu.NewSkillProficiencies)]
 	};{
 		[h:lu.AllNewSkillProficiencies = json.merge(lu.AllNewSkillProficiencies,json.get(macro.return,"Skills"))]
-		[h:lu.NewAbilities = json.path.put(lu.NewAbilities,"[?(@.Name == '"+json.get(ability,"Name")+"' && @.Class == '"+json.get(ability,"Class")+"' && @.Subclass == '"+json.get(ability,"Subclass")+"')]","Skills",json.get(macro.return,"Skills")))]
+		[h:lu.NewAbilities = json.path.put(lu.NewAbilities,"[?(@.Name == '"+json.get(ability,"Name")+"' && @.Class == '"+json.get(ability,"Class")+"' && @.Subclass == '"+json.get(ability,"Subclass")+"')]","Skills",json.get(macro.return,"Skills"))]
 	}]
 }]
 

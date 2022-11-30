@@ -2,7 +2,7 @@
 [h:resourceUsed = arg(1)]
 [h,if(argCount()>2): pm.ResourceKey = arg(2); pm.ResourceKey = ""]
 
-[h:matchingFeature = json.get(json.path.read(allAbilities,"[*][?(@.Name=='"+json.get(resourceInfo,"Name")+"' && @.Class=='"+json.get(resourceInfo,"Class")+"' && @.Subclass=='"+json.get(resourceInfo,"Subclass")+"')]"),0)]
+[h:matchingFeature = json.get(json.path.read(getProperty("a5e.stat.AllFeatures"),"[*][?(@.Name=='"+json.get(resourceInfo,"Name")+"' && @.Class=='"+json.get(resourceInfo,"Class")+"' && @.Subclass=='"+json.get(resourceInfo,"Subclass")+"')]"),0)]
 			
 [h,if(pm.ResourceKey==""),CODE:{
 	[h:pm.MaxResourceBase = evalMacro(json.get(matchingFeature,"MaxResource"))]

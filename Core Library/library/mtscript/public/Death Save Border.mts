@@ -1,7 +1,7 @@
 [h:DeathData = macro.args]
 [h:Flavor=json.get(DeathData,"Flavor")]
 [h:ParentToken=json.get(DeathData,"ParentToken")]
-[h:outputTargets = if(getProperty("stat.Allegiance") == "Enemy","none","not-gm")]
+[h:outputTargets = if(getProperty("a5e.stat.Allegiance") == "Enemy","none","not-gm")]
 
 [h,MACRO("Death Save@Lib:pm.a5e.Core"): DeathData]
 [h:abilityTable = json.get(macro.return,"Table")]

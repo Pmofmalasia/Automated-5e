@@ -113,14 +113,14 @@
 
 [h:NewWeapon=json.set("","Name",WeaponName,"MagicBonus",MagicBonus,"Type",wType,"DamageDie",wDamageDie,"DamageType",wDamageType,"SecDamageDie",SecDmg,"SecDamageType",SecDmgType,"MeleeRanged",wMeleeRanged,"Range",wRange,"Class",wClass,"Reach",wReach,"CritRange",wCritRange,"CritMultiplier",wCritDie,"SpecialAbility",wSpecial,"Props",Props,"MagicItem",MagicItemTest,"ItemBuffs","[]")]
 
-[h:Weapon=json.append(Weapon,NewWeapon)]
+[h:setProperty("a5e.stat.Weapon",json.append(getProperty("a5e.stat.Weapon"),NewWeapon))]
 
 [h:EquipNew=input(
 	"EquipAnswer|No,Main Hand,Off Hand|Would you like to equip "+WeaponName+"?|LIST"
 )]
 [h:abort(EquipNew)]
 
-[h:Weapon=if(EquipAnswer==1,json.set(Weapon,0,json.length(Weapon)-1),if(EquipAnswer==2,json.set(Weapon,1,json.length(Weapon)-1),Weapon))]
+[h:setProperty("a5e.stat.Weapon",if(EquipAnswer==1,json.set(getProperty("a5e.stat.Weapon"),0,json.length(getProperty("a5e.stat.Weapon"))-1),if(EquipAnswer==2,json.set(getProperty("a5e.stat.Weapon"),1,json.length(getProperty("a5e.stat.Weapon"))-1),getProperty("a5e.stat.Weapon"))))]
 
 <div style="background-color: #f7ae27; color: #000000; padding-top:2px; padding-bottom:5px; padding-left:8px; padding-right:8px;">
 	<b>Add Weapon</b>

@@ -1,7 +1,7 @@
 [h:cond.abilityName = pm.RemoveSpecial(cond.abilityName)]
 [h:cond.abilitySubclass = pm.RemoveSpecial(cond.abilitySubclass)]
 [h:cond.Context = arg(0)]
-[h:cond.Info = json.get(json.path.read(ConditionList,"[?(@.Name=='"+cond.abilityName+"' && @.Class=='"+cond.abilityClass+"' && @.Subclass=='"+cond.abilitySubclass+"' && @.IsActive>0)]"),0)]
+[h:cond.Info = json.get(json.path.read(getProperty("a5e.stat.ConditionList"),"[?(@.Name=='"+cond.abilityName+"' && @.Class=='"+cond.abilityClass+"' && @.Subclass=='"+cond.abilitySubclass+"' && @.IsActive>0)]"),0)]
 [h:cond.Library = json.get(cond.Info,"Library")]
 
 [h:cond.DisplayObject = json.get(cond.Info,"Settings")]
@@ -9,7 +9,7 @@
 
 [h,if(cond.Context!="AfterAbility"): IsTooltip=0]
 [h:cond.Flavor=json.get(cond.DisplayObject,"Flavor")]
-[h:cond.DMOnly=if(json.get(cond.DisplayObject,"DMOnly")=="",if(getProperty("stat.Allegiance")=="Enemy",min(number(getLibProperty("HideEnemyMacros","Lib:pm.a5e.Core")),1),if(getProperty("stat.Allegiance")=="Ally",min(number(getLibProperty("HideAllyMacros","Lib:pm.a5e.Core")),1),0)),json.get(cond.DisplayObject,"DMOnly"))]
+[h:cond.DMOnly=if(json.get(cond.DisplayObject,"DMOnly")=="",if(getProperty("a5e.stat.Allegiance")=="Enemy",min(number(getLibProperty("HideEnemyMacros","Lib:pm.a5e.Core")),1),if(getProperty("a5e.stat.Allegiance")=="Ally",min(number(getLibProperty("HideAllyMacros","Lib:pm.a5e.Core")),1),0)),json.get(cond.DisplayObject,"DMOnly"))]
 [h:cond.BorderColorOverride=json.get(cond.DisplayObject,"BorderColorOverride")]
 [h:cond.TitleFontColorOverride=json.get(cond.DisplayObject,"TitleFontColorOverride")]
 [h:cond.AccentBackgroundOverride=json.get(cond.DisplayObject,"AccentBackgroundOverride")]
@@ -44,13 +44,13 @@
 [h,if(json.contains(cond.NeedsSetByInfo,cond.abilityClass)),CODE:{
 	[h:switchToken(cond.SetBy)]
 	[h:cond.SetByAbilities = a5e.GatherAbilities(cond.SetBy)]
-	[h:cond.abilityLevel = json.get(json.get(json.path.read(allAbilities,"[?(@.Name=='"+cond.abilityName+"' && @.Class=='"+cond.abilityClass+"' && @.Subclass=='"+cond.abilitySubclass+"')]"),0),"Level")]
-	[h,if(json.get(cond.Info,"HasTiers")==1): cond.abilityTier = math.arraySum(json.path.read(ConditionList,"[*][?(@.Name=='"+cond.abilityName+"')]['Level']")); cond.abilityTier = json.get(cond.Info,"Level")]
+	[h:cond.abilityLevel = json.get(json.get(json.path.read(getProperty("a5e.stat.AllFeatures"),"[?(@.Name=='"+cond.abilityName+"' && @.Class=='"+cond.abilityClass+"' && @.Subclass=='"+cond.abilitySubclass+"')]"),0),"Level")]
+	[h,if(json.get(cond.Info,"HasTiers")==1): cond.abilityTier = math.arraySum(json.path.read(getProperty("a5e.stat.ConditionList"),"[*][?(@.Name=='"+cond.abilityName+"')]['Level']")); cond.abilityTier = json.get(cond.Info,"Level")]
 	[h:cond.abilityTier = json.get(cond.Info,"Level")]
 	[h:switchToken(ParentToken)]
 };{
 	[h:cond.abilityLevel = json.get(cond.Info,"Level")]
-	[h,if(json.get(cond.Info,"HasTiers")==1): cond.abilityTier = math.arraySum(json.path.read(ConditionList,"[*][?(@.Name=='"+cond.abilityName+"')]['Level']")); cond.abilityTier = cond.abilityLevel]
+	[h,if(json.get(cond.Info,"HasTiers")==1): cond.abilityTier = math.arraySum(json.path.read(getProperty("a5e.stat.ConditionList"),"[*][?(@.Name=='"+cond.abilityName+"')]['Level']")); cond.abilityTier = cond.abilityLevel]
 	[h:cond.SetByAbilities = "[]"]
 }]
 

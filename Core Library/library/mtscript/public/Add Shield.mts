@@ -13,14 +13,14 @@
 
 [h:NewShield=json.set("","Name",ShieldName,"MagicBonus",MagicBonus,"ItemBuffs","")]
 
-[h:Shield=json.append(Shield,NewShield)]
+[h:setProperty("a5e.stat.Shield",json.append(getProperty("a5e.stat.Shield"),NewShield))]
 
 [h:EquipNew=input(
 	"EquipAnswer|No,Yes|Would you like to equip "+ShieldName+"?|LIST"
 )]
 [h:abort(EquipNew)]
 
-[h:Shield=if(EquipAnswer==1,json.set(Shield,0,json.length(Shield)-1),Shield)]
+[h:setProperty("a5e.stat.Shield",if(EquipAnswer==1,json.set(getProperty("a5e.stat.Shield"),0,json.length(getProperty("a5e.stat.Shield"))-1),getProperty("a5e.stat.Shield")))]
 
 <div style="background-color: #f7ae27; color: #000000; padding-top:2px; padding-bottom:5px; padding-left:8px; padding-right:8px;">
 	<b>Add Shield</b>

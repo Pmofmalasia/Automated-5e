@@ -5,7 +5,7 @@ async function loadUserData() {
 
 async function submitSetupData() {
     let submitData = Object.fromEntries(new FormData(MonsterCreation));
-    let request = fetch("macro:CreateMonsterProcessing@lib:pm.a5e.Core", {method: "POST", body: JSON.stringify(submitData)});
+    let request = fetch("macro:MonsterCreationProcessing@lib:pm.a5e.Core", {method: "POST", body: JSON.stringify(submitData)});
     let result = await request.json();
 }
 setTimeout(loadUserData, 1);

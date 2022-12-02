@@ -2,7 +2,7 @@
 [h:targetNum = arg(1)]
 [h,if(argCount()>2): separateInstances = arg(2); separateInstances = 1]
 
-[h,switch(getProperty("TargetingStyle")),CODE:
+[h,switch(getProperty("a5e.stat.TargetingStyle")),CODE:
 	case "Impersonate":{
 		[h:TargetChoice = pm.a5e.ImpersonatedTargeting(validTargets)]
 	};

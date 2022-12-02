@@ -27,14 +27,14 @@
     </select>
 </td></tr>"]
 
-[h:"<!-- TODO: Add natural armor vs. equipment when equipment is set up; need new way to calculate AC/MaxHP/Speed/Proficiency without using regular calculations -->"]
+[h:"<!-- TODO: Add natural armor vs. equipment when equipment is set up; need new way to calculate AC/Speed/Proficiency without using regular calculations -->"]
 [h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowAC'><th><label for='AC'>AC:</label></th><td><input type='number' id='AC' name='AC' min='1' style='width:25px'></td></tr>"]
 
 [h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowMaxHP'><th><label for='MaxHP'>Maximum HP:</label></th><td><input type='number' id='MaxHP' name='MaxHP' min='1' style='width:40px'></td></tr>"]
 
 [h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowHitDie'><th><label for='HitDieNum'>Total Hit Dice:</label></th><td><input type='number' id='HitDieNum' name='HitDieNum' min='1' style='width:25px'> d <input type='number' id='HitDieSize' name='HitDieSize' min='1' style='width:25px'> + <input type='number' id='HitDieBonus' name='HitDieBonus' min='0' style='width:25px'></td></tr>"]
 
-[h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowSpeedGround'><th><label for='SpeedGround'>Ground Speed:</label></th><td><input type='number' id='SpeedGround' name='SpeedGround' min='0' style='width:25px' value='30'></td></tr>"]
+[h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowSpeedWalking'><th><label for='SpeedWalking'>Walking Speed:</label></th><td><input type='number' id='SpeedWalking' name='SpeedWalking' min='0' style='width:25px' value='30'></td></tr>"]
 
 [h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowSpeedBurrow'><th><label for='SpeedBurrow'>Burrowing Speed:</label></th><td><input type='number' id='SpeedBurrow' name='SpeedBurrow' min='0' style='width:25px' value='0'></td></tr>"]
 

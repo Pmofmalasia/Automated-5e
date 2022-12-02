@@ -22,7 +22,7 @@
 [h:pass.ForcedSummonImage=json.get(pass.DisplayObject,"ForcedSummonImage")]
 [h:pass.ForcedSummonPortrait=json.get(pass.DisplayObject,"ForcedSummonPortrait")]
 [h:pass.ForcedSummonHandout=json.get(pass.DisplayObject,"ForcedSummonHandout")]
-[h:pass.ShowFullRules=if(IsTooltip,1,if(pass.ShowFullRulesOverride=="",if(number(getLibProperty("ChatIndividual","Lib:pm.a5e.Core")),FullAbilityRules,getLibProperty("FullAbilityRules","Lib:pm.a5e.Core")),pass.ShowFullRulesOverride))]
+[h:pass.ShowFullRules=if(IsTooltip,1,if(pass.ShowFullRulesOverride=="",if(number(getLibProperty("ChatIndividual","Lib:pm.a5e.Core")),getProperty("a5e.stat.FullAbilityRules"),getLibProperty("FullAbilityRules","Lib:pm.a5e.Core")),pass.ShowFullRulesOverride))]
 
 [h:pass.abilityInfo=json.set("",
 	"Name",pass.abilityName,

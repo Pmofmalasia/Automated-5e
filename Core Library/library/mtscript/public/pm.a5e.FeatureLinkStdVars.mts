@@ -26,7 +26,7 @@
 [h:ForcedSummonImage=json.get(DisplayObject,"ForcedSummonImage")]
 [h:ForcedSummonPortrait=json.get(DisplayObject,"ForcedSummonPortrait")]
 [h:ForcedSummonHandout=json.get(DisplayObject,"ForcedSummonHandout")]
-[h:ShowFullRules=if(IsTooltip,1,if(ShowFullRulesOverride=="",if(getLibProperty("ChatIndividual","Lib:pm.a5e.Core")==1,FullAbilityRules,getLibProperty("FullAbilityRules","Lib:pm.a5e.Core")),ShowFullRulesOverride))]
+[h:ShowFullRules=if(IsTooltip,1,if(ShowFullRulesOverride=="",if(getLibProperty("ChatIndividual","Lib:pm.a5e.Core")==1,getProperty("a5e.stat.FullAbilityRules"),getLibProperty("FullAbilityRules","Lib:pm.a5e.Core")),ShowFullRulesOverride))]
 [h:abilityTable="[]"]
 
 [h:abilityInfo = json.set("",

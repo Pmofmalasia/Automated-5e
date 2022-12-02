@@ -241,7 +241,7 @@
 
 [h:pm.RemovedConditions = "[]"]
 [h:pm.RemovedConditionsTableLines = "[]"]
-[h,foreach(group,json.path.read(getProperty("a5e.stat.ConditionGroups"),"[*][?(@.EndTriggers.AfterAttack != null && @.EndTriggers.AfterAttack != 0)]","DEFAULT_PATH_LEAF_TO_NULL")),CODE:{
+[h,foreach(group,json.path.read(a5e.stat.ConditionGroups,"[*][?(@.EndTriggers.AfterAttack != null && @.EndTriggers.AfterAttack != 0)]","DEFAULT_PATH_LEAF_TO_NULL")),CODE:{
 	[h,macro("EndCondition@Lib:pm.a5e.Core"): json.set("","GroupID",json.get(group,"GroupID"),"ParentToken",ParentToken)]
 	[h:pm.RemovedConditions = json.merge(pm.RemovedConditions,json.get(macro.return,"Removed"))]
 	[h:pm.RemovedConditionsTableLines = json.merge(pm.RemovedConditionsTableLines,json.get(macro.return,"Table"))]

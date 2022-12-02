@@ -7,6 +7,7 @@
     [h,foreach(target,pm.ValidTargets),CODE:{
         [h:pm.TargetOptions = json.append(pm.TargetOptions,getName(target)+" "+getTokenImage("",target))]
     }]
+    [h:pm.TargetOptions = json.append(pm.TargetOptions,"Target Not on List")]
     
     [h:sameTarget = 1]
     [h:tInput = if(pm.TargetingInstances==1,""," sameTarget | 1 | Use First Target for All Attacks | CHECK ")]
@@ -20,12 +21,21 @@
 
 [h,if(pm.SingleTarget),CODE:{
     [h,if(pm.TargetingInstances==1),CODE:{
-        [h:macro.return = json.append("",json.get(pm.ValidTargets,pm.TargetChoice0))]
-    };{
-        [h:allTargets = ""]
-        [h,count(pm.TargetingInstances): allTargets = json.append(allTargets,json.append("",json.get(pm.ValidTargets,eval("pm.TargetChoice"+if(sameTarget,"0",roll.count)))))]
-        [h:macro.return = allTargets]
-    }]    
+        [h,if(pm.TargetChoice0 >= json.length(pm.ValidTargets)):
+            return(0,json.append("",""));
+            return(0,json.append("",json.get(pm.ValidTargets,pm.TargetChoice0)))
+        ]
+    };{}]
+
+    [h:allTargets = ""]
+    [h,count(pm.TargetingInstances),CODE:{
+        [h:tempChoice = eval("pm.TargetChoice"+if(sameTarget,"0",roll.count))]
+        [h,if(tempChoice >= json.length(pm.ValidTargets)):
+            allTargets = json.append(allTargets,json.append("",""));
+            allTargets = json.append(allTargets,json.append("",json.get(pm.ValidTargets,tempChoice)))
+        ]
+    }]
+    [h:macro.return = allTargets]
 };{
     [h:pm.TargetsChosen = ""]
     [h,foreach(target,pm.ValidTargets): pm.TargetsChosen = if(eval("choice"+target),json.append(pm.TargetsChosen,target),pm.TargetsChosen)]

@@ -7,6 +7,11 @@
 [h,foreach(tempType,creatureTypeArray): creatureTypeOptions = creatureTypeOptions + "<option value='"+json.get(tempType,"Name")+"'>"+json.get(tempType,"DisplayName")+"</option>"]
 [h:creatureTypeOptions = creatureTypeOptions + "<option value='Multiple'>Multiple</option>"]
 
+[h:firstCreatureType = json.get(creatureTypeArray,0)]
+[h:PCRaces = pm.GetRaces()]
+[h:matchingRaces = json.path.read(PCRaces,"[*][?(@.CreatureType=='"+firstCreatureType+"')]['DisplayName']")]
+[h:CreatureSubtypes = pm.GetCreatureSubtypes()]
+[h:matchingSubtypes = json.path.read(CreatureSubtypes,"[*][?(@.CreatureType=='"+firstCreatureType+"')]['DisplayName']")]
 [h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowCreatureType'><th><label for='CreatureType'>Creature Type:</label></th><td><select id='CreatureType' name='CreatureType' onchange='creatureTypeSelectionChanges()'>"+creatureTypeOptions+"</select></td></tr>"]
 
 [h:"<!-- TODO: Add creature subtype selection for first entry of creaturetypeoptions once created -->"]
@@ -47,11 +52,11 @@
 [h:AttributeList = pm.GetAttributes()]
 [h,foreach(tempAttribute,AttributeList): monsterCreationHTML = monsterCreationHTML + "<tr id='rowAttribute"+json.get(tempAttribute,"Name")+"'><th><label for='Attribute"+json.get(tempAttribute,"Name")+"'>"+json.get(tempAttribute,"DisplayName")+" Score:</label></th><td><input type='number' id='Attribute"+json.get(tempAttribute,"Name")+"' name='Attribute"+json.get(tempAttribute,"Name")+"' min='1' style='width:25px'></td></tr>"]
 
-[h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowIsDamageVuln'><th><label for='IsDamageVuln'>Has Vulnerabilities:</label></th><td><input type='checkbox' id='IsDamageVuln' name='IsDamageVuln' onchange='createDamageTypeRows("+'"DamageVuln"'+")'></td></tr>"]
+[h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowIsVulnerability'><th><label for='IsVulnerability'>Has Vulnerabilities:</label></th><td><input type='checkbox' id='IsVulnerability' name='IsVulnerability' onchange='createDamageTypeRows("+'"Vulnerability"'+")'></td></tr>"]
 
-[h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowIsDamageRes'><th><label for='IsDamageRes'>Has Resistances:</label></th><td><input type='checkbox' id='IsDamageRes' name='IsDamageRes' onchange='createDamageTypeRows("+'"DamageRes"'+")'></td></tr>"]
+[h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowIsResistance'><th><label for='IsResistance'>Has Resistances:</label></th><td><input type='checkbox' id='IsResistance' name='IsResistance' onchange='createDamageTypeRows("+'"Resistance"'+")'></td></tr>"]
 
-[h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowIsDamageImmun'><th><label for='IsDamageImmun'>Has Immunities:</label></th><td><input type='checkbox' id='IsDamageImmun' name='IsDamageImmun' onchange='createDamageTypeRows("+'"DamageImmun"'+")'></td></tr>"]
+[h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowIsImmunity'><th><label for='IsImmunity'>Has Immunities:</label></th><td><input type='checkbox' id='IsImmunity' name='IsImmunity' onchange='createDamageTypeRows("+'"Immunity"'+")'></td></tr>"]
 
 [h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowIsConditionImmun'><th><label for='IsConditionImmun'>Has Condition Immunities:</label></th><td><input type='checkbox' id='IsConditionImmun' name='IsConditionImmun' onchange='createConditionRows()'></td></tr>"]
 

@@ -74,3 +74,4 @@
 [h,if(!isNumber(MonsterCR)): MonsterCR = eval(MonsterCR)]
 [h:setProperty("a5e.stat.CR",MonsterCR)]
 [h:setProperty("a5e.stat.XP",json.get(MonsterData,"XP"))]
+[h,MACRO("BaseSkillSelection@Lib:pm.a5e.Core"): json.set("","NextInput","MonsterSpellcastingCreation")]

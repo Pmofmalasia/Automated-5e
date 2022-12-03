@@ -2,7 +2,7 @@
 [h:ParentToken=json.get(macro.args,"ParentToken")]
 
 [h:listDmgTypes="None - Modify Manually,"+pm.GetDamageTypes("DisplayName")]
-[h:listSpellSchools="Not Relevant,"+pm.GetSpellSchools("DisplayName")]
+[h:listSpellSchools="Not A Spell,"+pm.GetSpellSchools("DisplayName")]
 
 [h:targetTokens = getSelected("json")]
 
@@ -25,7 +25,7 @@
 	"junkVar|----------------------------------------------------------------------------------------------------------------| |LABEL|SPAN=TRUE",
 	"hpChange2|0|Damage - Separate Multiple Hits with Commas",
 	"DamageType2|"+listDmgTypes+"|Type of Damage Dealt|LIST|SELECT=0 VALUE=STRING",
-	"DamageType2Magic|  |Is it Magical|CHECK",
+	" DamageType2Magic |  |Is it Magical|CHECK",
 	"junkVar|----------------------------------------------------------------------------------------------------------------| |LABEL|SPAN=TRUE",
 	"spellSource|"+listSpellSchools+"|School of Damaging Spell|LIST|SELECT=0 VALUE=STRING",
 	"junkVar|------------------------------------------- For Concentration -------------------------------------------| |LABEL|SPAN=TRUE",

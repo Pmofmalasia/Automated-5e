@@ -27,7 +27,7 @@
 [h:MiscBonusStr = json.get(d20Data,"Bonus")]
 [h,if(json.get(d20Data,"Bonus")==""): 
 	MiscBonusFormula = "";
-	pm.PlusMinus(json.get(d20Data,"Bonus"),0)
+	MiscBonusFormula = pm.PlusMinus(json.get(d20Data,"Bonus"),0)
 ]
 
 [h:pm.PassiveFunction("SaveBonus")]

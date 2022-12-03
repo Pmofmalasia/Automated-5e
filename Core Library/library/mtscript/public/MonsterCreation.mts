@@ -6,16 +6,17 @@
 [h:creatureTypeOptions = ""]
 [h,foreach(tempType,creatureTypeArray): creatureTypeOptions = creatureTypeOptions + "<option value='"+json.get(tempType,"Name")+"'>"+json.get(tempType,"DisplayName")+"</option>"]
 [h:creatureTypeOptions = creatureTypeOptions + "<option value='Multiple'>Multiple</option>"]
+[h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowCreatureType'><th><label for='CreatureType'>Creature Type:</label></th><td><select id='CreatureType' name='CreatureType' onchange='creatureTypeSelectionChanges()'>"+creatureTypeOptions+"</select></td></tr>"]
 
 [h:firstCreatureType = json.get(creatureTypeArray,0)]
 [h:PCRaces = pm.GetRaces()]
 [h:matchingRaces = json.path.read(PCRaces,"[*][?(@.CreatureType=='"+firstCreatureType+"')]['DisplayName']")]
-[h:CreatureSubtypes = pm.GetCreatureSubtypes()]
+[h:CreatureSubtypes = pm.a5e.GetCreatureSubtypes()]
 [h:matchingSubtypes = json.path.read(CreatureSubtypes,"[*][?(@.CreatureType=='"+firstCreatureType+"')]['DisplayName']")]
-[h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowCreatureType'><th><label for='CreatureType'>Creature Type:</label></th><td><select id='CreatureType' name='CreatureType' onchange='creatureTypeSelectionChanges()'>"+creatureTypeOptions+"</select></td></tr>"]
-
-[h:"<!-- TODO: Add creature subtype selection for first entry of creaturetypeoptions once created -->"]
-[h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowCreatureSubtype'><th><label for='CreatureSubtype'>Creature Subtype/Race:</label></th><td><select id='CreatureSubtype' name='CreatureSubtype'><option value=''>None</option></select></td></tr>"]
+[h:allSubtypes = json.unique(json.merge(matchingRaces,matchingSubtypes))]
+[h:creatureSubtypeOptions = ""]
+[h,foreach(tempSubtype,allSubtypes): creatureSubtypeOptions = creatureSubtypeOptions + "<option value='"+pm.RemoveSpecial(tempSubtype)+"'>"+tempSubtype+"</option>"]
+[h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowCreatureSubtype'><th><label for='CreatureSubtype'>Creature Subtype/Race:</label></th><td><select id='CreatureSubtype' name='CreatureSubtype'><option value=''>None</option>"+creatureSubtypeOptions+"</select></td></tr>"]
 
 [h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowAlignment'><th><label for='Alignment'>Alignment:</label></th><td>
     <select id='Alignment' name='Alignment'>

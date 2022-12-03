@@ -160,6 +160,7 @@
 [h:defineFunction("pm.GetBookInfo","pm.GetBookInfo@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.GetClasses","pm.GetClasses@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.GetCreatureTypes","pm.GetCreatureTypes@Lib:pm.a5e.Core")]
+[h:defineFunction("pm.a5e.GetCreatureSubtypes","pm.a5e.GetCreatureSubtypes@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.a5e.GetBaseConditions","pm.a5e.GetBaseConditions@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.a5e.GetConditions","pm.a5e.GetConditions@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.a5e.GetSpecificCondition","pm.a5e.GetSpecificCondition@Lib:pm.a5e.Core")]

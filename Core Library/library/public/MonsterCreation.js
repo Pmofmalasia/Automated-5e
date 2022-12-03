@@ -29,16 +29,16 @@ async function createDamageTypeRows(damagePrefix){
 async function createConditionRows(){
     let table = document.getElementById("MonsterCreationTable");
     let nextRowIndex = document.getElementById("rowIsConditionImmun").rowIndex + 1;
-
-    let request = await fetch("macro:pm.GetBaseConditions@lib:pm.a5e.Core", {method: "POST", body: ""});
+    
+    let request = await fetch("macro:pm.a5e.GetBaseConditions@lib:pm.a5e.Core", {method: "POST", body: ""});
     let conditionArray = await request.json();
 
     if(document.getElementById("IsConditionImmun").checked){
         for(let tempCondition of conditionArray){
             let tempID = tempCondition.Name+"Immunity";
-            let damageModRow = table.insertRow(nextRowIndex);
-            damageModRow.id = "row"+tempID;
-            damageModRow.innerHTML = "<th><label for='"+tempID+"'>"+tempType.DisplayName+" Immunity:</label></th><td><input type='checkbox' id='"+tempID+"' name='"+tempID+"'>";
+            let conditionImmunRow = table.insertRow(nextRowIndex);
+            conditionImmunRow.id = "row"+tempID;
+            conditionImmunRow.innerHTML = "<th><label for='"+tempID+"'>"+tempCondition.DisplayName+" Immunity:</label></th><td><input type='checkbox' id='"+tempID+"' name='"+tempID+"'>";
             nextRowIndex++;
         }
     }

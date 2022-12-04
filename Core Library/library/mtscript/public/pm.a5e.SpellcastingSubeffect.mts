@@ -205,6 +205,24 @@
 	[h,if(json.get(spell.ConditionEndInfo,"UseSpellDuration") == 1): spell.ConditionEndInfo = json.set(spell.ConditionEndInfo,"Duration",DurationValue,"DurationUnits",DurationUnits)]
 	[h:spell.ConditionEndInfo = json.remove(spell.ConditionEndInfo,"UseSpellDuration")]
 
+	[h:hasSaveDCTest = !json.isEmpty(json.path.read(spell.ConditionEndInfo,"[*][?(@.EndTriggers.*.SaveType!=null)]","DEFAULT_PATH_LEAF_TO_NULL"))]
+
+	[h,if(hasSaveDCTest && !json.contains(SpellSubeffectData,"SaveData")),CODE:{
+		[h:spell.SaveDC = 8 + getProperty("a5e.stat.Proficiency") + PrimeStatMod]
+	
+		[h:pm.PassiveFunction("SpellSaveDC")]
+	};{}]
+		
+	[h,if(hasSaveDCTest): spell.ConditionEndInfo = json.path.put(spell.ConditionEndInfo,"[*]['EndTriggers'][*][?(@.SaveType!=null)]",)]
+
+	[h,if(json.get(spell.ConditionEndInfo,"EndTriggers")==""):
+		conditionEndTriggers = "{}";
+		conditionEndTriggers = json.get(spell.ConditionEndInfo,"EndTriggers")
+	]
+	[h:non]
+
+	EndTriggers.Instance.Object/1
+
 	[h:thisEffectData = json.set(thisEffectData,"ConditionInfo",json.set("","Conditions",spell.Conditions,"EndInfo",spell.ConditionEndInfo))]
 		
 	[h:spell.ConditionNames = pm.a5e.CreateDisplayList(json.path.read(spell.Conditions,"[*]['DisplayName']"),"and")]

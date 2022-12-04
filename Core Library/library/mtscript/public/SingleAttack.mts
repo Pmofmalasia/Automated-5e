@@ -28,7 +28,7 @@
 	"DMOnly",0
 )]
 
-[macro("Attack@Lib:pm.a5e.Core") : AttackData]
+[h,macro("Attack@Lib:pm.a5e.Core"): AttackData]
 [h:abilityTable = json.get(macro.return,"Table")]
 [h:effectsToMerge = json.get(macro.return,"Effect")]
 

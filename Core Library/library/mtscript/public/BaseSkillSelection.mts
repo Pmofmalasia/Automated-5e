@@ -5,10 +5,8 @@
     [h:nextInput = json.get(priorData,"NextInput")]
 }]
 
-[h,if(nextInput==""):
-    skillSelectionHTML = "";
-    skillSelectionHTML = "<input type='hidden' id='NextInput' name='NextInput' value='"+nextInput+"'>"
-]
+[h:skillSelectionHTML = "<input type='hidden' name='ParentToken' id='ParentToken' value='"+currentToken()+"'>"]
+[h,if(nextInput!=""): skillSelectionHTML = skillSelectionHTML + "<input type='hidden' id='NextInput' name='NextInput' value='"+nextInput+"'>"]
 [h,if(currentToken()==""): currentSaves = "{}"; currentSaves = getProperty("a5e.stat.BaseSaves")]
 [h,if(currentToken()==""): currentSkills = "{}"; currentSkills = getProperty("a5e.stat.BaseSkills")]
 

@@ -46,7 +46,7 @@
 			))]
 	
 [h:setProperty("a5e.stat.SpellSlots",getProperty("a5e.stat.MaxSpellSlots"))]
-[h,if(json.get(getProperty("a5e.stat.MaxSpellSlots"),"1")>0):
+[h,if(json.get(a5e.stat.MaxSpellSlots,"1")>0):
 	abilityTable = json.append(abilityTable,json.set("",
 		"ShowIfCondensed",1,
 		"Header","Spell Slots",

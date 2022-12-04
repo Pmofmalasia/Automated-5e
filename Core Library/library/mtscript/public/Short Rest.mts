@@ -18,7 +18,7 @@
 	"Value",""
 ))]
 
-[h,if(json.get(getProperty("a5e.stat.MaxSpellSlots"),"1")>0):
+[h,if(json.get(a5e.stat.MaxSpellSlots,"1")>0):
 	abilityTable = json.append(abilityTable,json.set("",
 		"ShowIfCondensed",1,
 		"Header","Spell Slots",
@@ -65,7 +65,7 @@
 			"RollContents","",
 			"DisplayOrder","['Rules','Roll','Full']",
 			"Value",json.get(ResourceRestoredFinal,tempResource)
-			))]
+		))]
 	};{
 		[h:ResourceRestoredFinal=(ResourceRestored+miResourceBonus)]
 		[h:abilityTable = json.append(abilityTable,json.set("",
@@ -77,7 +77,7 @@
 			"RollContents","",
 			"DisplayOrder","['Rules','Roll','Full']",
 			"Value",ResourceRestoredFinal
-			))]
+		))]
 	}]
 	[h:setProperty("a5e.stat.AllFeatures",json.path.set(getProperty("a5e.stat.AllFeatures"),"[?(@.Name=='"+json.get(Ability,"Name")+"' && @.Class=='"+json.get(Ability,"Class")+"' && @.Subclass=='"+json.get(Ability,"Subclass")+"')]['Resource']",ResourceRestoredFinal))]
 }]

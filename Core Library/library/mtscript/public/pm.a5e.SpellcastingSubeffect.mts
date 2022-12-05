@@ -209,19 +209,10 @@
 
 	[h,if(hasSaveDCTest && !json.contains(SpellSubeffectData,"SaveData")),CODE:{
 		[h:spell.SaveDC = 8 + getProperty("a5e.stat.Proficiency") + PrimeStatMod]
-	
 		[h:pm.PassiveFunction("SpellSaveDC")]
 	};{}]
 		
-	[h,if(hasSaveDCTest): spell.ConditionEndInfo = json.path.put(spell.ConditionEndInfo,"[*]['EndTriggers'][*][?(@.SaveType!=null)]",)]
-
-	[h,if(json.get(spell.ConditionEndInfo,"EndTriggers")==""):
-		conditionEndTriggers = "{}";
-		conditionEndTriggers = json.get(spell.ConditionEndInfo,"EndTriggers")
-	]
-	[h:non]
-
-	EndTriggers.Instance.Object/1
+	[h,if(hasSaveDCTest): spell.ConditionEndInfo = json.path.put(spell.ConditionEndInfo,"[*]['EndTriggers'][*][?(@.SaveType!=null)]","DC",spell.SaveDC)]
 
 	[h:thisEffectData = json.set(thisEffectData,"ConditionInfo",json.set("","Conditions",spell.Conditions,"EndInfo",spell.ConditionEndInfo))]
 		

@@ -13,7 +13,7 @@
 	"RollContents","",
 	"DisplayOrder","['Rules','Roll','Full']"
 ))]
-		
+
 [h:pm.PassiveFunction("EndTurn")]
 
 [h:validAbilities = json.path.read(getProperty("a5e.stat.AllFeatures"),"[*][?(@.Duration.AdvancePoint=='EndofTurn')]")]
@@ -24,6 +24,11 @@
 	[h:newDuration = pm.a5e.AdvanceTime(json.set("","Ability",condition,"Time",1,"TimeUnits","round","ParentToken",ParentToken))]
 	[h:setProperty("a5e.stat.ConditionGroups",json.path.set(getProperty("a5e.stat.ConditionGroups"),"[*][?(@.GroupID=="+json.get(condition,"GroupID")+")]['Duration']",newDuration))]
 	[h:setProperty("a5e.stat.ConditionList",json.path.set(getProperty("a5e.stat.ConditionList"),"[*][?(@.GroupID=="+json.get(condition,"GroupID")+")]['Duration']",newDuration))]
+}]
+
+[h:validConditionEndTriggers = json.path.read(getProperty("a5e.stat.ConditionGroups"),"[*][?(@.EndInfo.EndTriggers!=null)]","DEFAULT_PATH_LEAF_TO_NULL")]
+[h,foreach(tempCondition,validConditionEndTriggers),CODE:{
+	[h:]
 }]
 
 [h:pm.ConditionsExpired = json.unique(json.path.read(getProperty("a5e.stat.ConditionList"),"[*][?(@.Duration.Expired==1)]['GroupID']"))]
@@ -56,11 +61,6 @@
 		[h,MACRO("EndCondition@Lib:pm.a5e.Core"): json.set("","GroupID",pm.ConditionsExpired,"ParentToken",target)]
 		[h:setConditionsRemoved = json.merge(setConditionsRemoved,json.get(macro.return,"Removed"))]
 	}]
-}]
-
-[h:validConditionEndTriggers = json.path.read(getProperty("a5e.stat.ConditionGroups"),"[*][?(@.EndInfo.EndTriggers!=null)]","DEFAULT_PATH_LEAF_TO_NULL")]
-[h,foreach(tempCondition,validConditionEndTriggers),CODE:{
-	
 }]
 
 [h:setConditionsRemoved = json.unique(json.path.read(setConditionsRemoved,"[*]['DisplayName']"))]

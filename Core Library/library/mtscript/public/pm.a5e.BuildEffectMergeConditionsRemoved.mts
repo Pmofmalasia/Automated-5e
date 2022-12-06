@@ -2,8 +2,6 @@
 [h:newEffect = arg(1)]
 [h:oldEffectConditionsRemoved = json.get(oldEffect,"ConditionsRemovedInfo")]
 
-[h:sameGroupTest = -1]
-
 [h,if(json.get(oldEffectConditionsRemoved,"Groups
 ")==""),CODE:{
     [h:oldEffectConditionsRemoved = json.set(oldEffectConditionsRemoved,"Groups",json.get(newEffect,"Groups"))]

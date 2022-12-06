@@ -100,8 +100,8 @@
 		[h:LevelOptionData = "[]"]
 	}]
 	[h,count(MaxSpellLevel),CODE:{
-		[h,if((1+roll.count)>=SpellLevel && json.get(getProperty("a5e.stat.SpellSlots"),roll.count+1)>0): LevelOptions = json.append(LevelOptions,if(roll.count==0,"1st",if(roll.count==1,"2nd",if(roll.count==2,"3rd",(roll.count+1)+"th")))+" Level")]
-		[h,if((1+roll.count)>=SpellLevel && json.get(getProperty("a5e.stat.SpellSlots"),roll.count+1)>0): LevelOptionData = json.append(LevelOptionData,json.set("","Name",(roll.count+1),"ResourceType","Spell Slots"))]
+		[h,if((1+roll.count)>=SpellLevel && json.get(a5e.stat.SpellSlots,roll.count+1)>0): LevelOptions = json.append(LevelOptions,if(roll.count==0,"1st",if(roll.count==1,"2nd",if(roll.count==2,"3rd",(roll.count+1)+"th")))+" Level")]
+		[h,if((1+roll.count)>=SpellLevel && json.get(a5e.stat.SpellSlots,roll.count+1)>0): LevelOptionData = json.append(LevelOptionData,json.set("","Name",(roll.count+1),"ResourceType","Spell Slots"))]
 	}]
 	
 	[h:resourcesAsSpellSlot = json.path.read(getProperty("a5e.stat.AllFeatures"),"[*][?(@.ResourceAsSpellSlot==1)]")]

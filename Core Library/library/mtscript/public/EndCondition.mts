@@ -46,7 +46,7 @@
 	[h:setProperty("a5e.stat.ConditionsSet",json.path.delete(getProperty("a5e.stat.ConditionsSet"),"[*][?("+RemovedGroupFilter+")]['Targets'][?(@=='"+ParentToken+"')]"))]
 	[h:junkVar = json.path.delete(getProperty("a5e.stat.ConditionsSet"),"[*][?(@.Targets == [])]")]
 	[h:tempCounter = json.length(getProperty("a5e.stat.ConditionsSet"))-1]
-	[h,count(json.length(getProperty("a5e.stat.ConditionsSet"))),CODE:{
+	[h,count(json.length(a5e.stat.ConditionsSet)),CODE:{
 		[h:noTargetsTest = json.isEmpty(json.get(json.get(getProperty("a5e.stat.ConditionsSet"),tempCounter),"Targets"))]
 		[h,if(noTargetsTest): setProperty("a5e.stat.ConditionsSet",json.remove(getProperty("a5e.stat.ConditionsSet"),tempCounter))]
 		[h:tempCounter = tempCounter - 1]

@@ -69,7 +69,7 @@
 [h:"<!-- TODO: Need better solution for missiles - missiles loop should create new effects, allow for target selection all in one step. Multiple AoEs should NOT be treated as missiles, since they use the same damage rolls. -->"]
 
 [h:spell.TargetingData = json.get(SpellSubeffectData,"TargetLimits")]
-[h:spell.TargetTypes = json.fields(spell.TargetingData)]
+[h:spell.TargetTypes = json.fields(spell.TargetingData,"json")]
 [h,if(json.contains(spell.TargetTypes,"Creature")),CODE:{
 	[h:spell.TargetCreatureLimits = json.get(spell.TargetingData,"Creature")]
 	[h:spell.TargetOptions = pm.a5e.TargetCreatureFiltering(json.set("","ParentToken",ParentToken,"Origin",spell.TargetOrigin,"Range",spell.RangeData),spell.TargetCreatureLimits)]

@@ -386,7 +386,6 @@
 ))]
 
 [h:pm.a5e.EffectData = "[]"]
-
 [h,foreach(tempSubeffect,SpellSubeffects): pm.a5e.SpellcastingSubeffect(tempSubeffect)]
 
 [h:pm.PassiveFunction("AfterSpell")]

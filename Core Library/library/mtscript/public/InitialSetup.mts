@@ -63,4 +63,4 @@
 </td></tr>
 <tr><th text-align='center' colspan='2'><input type='submit' id='submitButton' value='Submit'></th></tr><input type='hidden' name='activeToken' id='activeToken' value='"+currentToken()+"'>"]
 
-[h:html.dialog5("Character Creation","lib://pm.a5e.core/InitialSetup.html?cachelib=false","value="+base64.encode(charCreationHTML))]
+[h:html.dialog5("Character Creation","lib://pm.a5e.core/InitialSetup.html?cachelib=false","value="+base64.encode(charCreationHTML)+"; closebutton=0; width=375; height=500")]

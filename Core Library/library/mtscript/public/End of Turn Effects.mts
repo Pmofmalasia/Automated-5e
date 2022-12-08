@@ -28,14 +28,10 @@
 }]
 
 [h:pm.ConditionsExpired = json.unique(json.path.read(getProperty("a5e.stat.ConditionList"),"[*][?(@.Duration.Expired==1)]['GroupID']"))]
-[h:broadcast(getProperty("a5e.stat.ConditionGroups"))]
-[h:validConditionEndTriggers = json.path.read(getProperty("a5e.stat.ConditionGroups"),"[*][?(@.EndTriggers.EndTurn!=null)]","DEFAULT_PATH_LEAF_TO_NULL")]
+[h:validConditionEndTriggers = json.path.read(getProperty("a5e.stat.ConditionGroups"),"[*]['EndTriggers'][?(@.EndTurn!=null)]","DEFAULT_PATH_LEAF_TO_NULL")]
 [h:effectConditionsRemoved = ""]
-[h:broadcast(validConditionEndTriggers)]
 [h,foreach(tempConditionGroup,validConditionEndTriggers),CODE:{
 	[h:tempEndTriggers = json.path.read(tempConditionGroup,"EndTriggers.EndTurn")]
-	[h:broadcast(tempEndTriggers)]
-	[h:broadcast("HI")]
 	[h,switch(json.type(tempEndTriggers)),CODE:
 		case "UNKNOWN":{ 
 			[h,if(tempEndTriggers==1): pm.ConditionsExpired = json.append(pm.ConditionsExpired,json.get(tempConditionGroup,"GroupID"))]
@@ -45,10 +41,12 @@
 			[h,if(needsResolutionTest): effectsToMerge = json.append(effectsToMerge,json.set("",
 				"SaveDC",json.set("",
 					"SaveType",json.get(tempEndTriggers,"SaveType"),
-					"Value",json.get(tempEndTriggers,"Value"),
+					"DC",json.get(tempEndTriggers,"DC"),
 					"ConditionsRemoved",json.set("","Success",1)),
 				"ConditionsRemovedInfo",json.set("",
-					"Groups",json.append("",json.get(tempConditionGroup,"GroupID")))
+					"Groups",json.append("",json.get(tempConditionGroup,"GroupID"))),
+				"Targets",json.append("",ParentToken),
+				"ParentToken",json.get(tempConditionGroup,"SetBy")
 			))]
 		};
 		default:{}
@@ -73,6 +71,8 @@
 		[h:targetsAffected = json.append(targetsAffected,target)]
 	}]
 	[h:switchToken(ParentToken)]
+
+	[h:"<!-- TODO: Will need to add the ability to cause saves here as well - unsure how atm -->"]
 }]
 
 [h:setConditionsRemoved = "[]"]

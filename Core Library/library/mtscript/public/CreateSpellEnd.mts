@@ -16,7 +16,7 @@
     [h:onListTest = json.contains(classesWithSpell,json.set("","Name",json.get(tempFeature,"Name"),"Class",json.get(tempFeature,"Class"),"Subclass",json.get(tempFeature,"Subclass")))]
     [h:sameBookTest = (spellSourcebook==json.get(tempFeature,"Library"))]
 
-    [h,switch(onListTest+""+sameBookTest),CODE:
+    [h,switch(onListTest+""+sameBookTest+"TODO: remove this once done testing spells"),CODE:
         case "11":{
             [h:updatedFeature = json.set(tempFeature,"SpellList",json.append(json.get(tempFeature,"SpellList"),SpellName))]
             [h:setLibProperty("sb.Abilities",json.path.set(getLibProperty("sb.Abilities","Lib:"+spellSourcebook),"[*][?(@.Name=='"+json.get(tempFeature,"Name")+"' && @.Class=='"+json.get(tempFeature,"Class")+"' && @.Subclass=='"+json.get(tempFeature,"Subclass")+"')]",updatedFeature),"Lib:"+spellSourcebook)]
@@ -33,7 +33,7 @@
                 setLibProperty("sb.Abilities",json.append(getLibProperty("sb.Abilities","Lib:"+spellSourcebook),updatedFeature),"Lib:"+spellSourcebook)
             ]
         };
-        default:{}
+        default:{[h:broadcast("Spell added to library but not any features for testing purposes.")]}
     ]
 }]
 

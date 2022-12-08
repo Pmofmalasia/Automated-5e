@@ -13,23 +13,24 @@
 [h:hp.DRTypes = json.set(hp.DRTypes,"Healing",0)]
 [h:hp.DRTypes = json.set(hp.DRTypes,"Temp HP",0)]
 
-[h,foreach(modifierInstance,json.get(getProperty("a5e.stat.DamageModifiers"),"Vulnerability")),CODE:{
+[h:tempDamageModifiers = getProperty("a5e.stat.DamageModifiers")]
+[h,foreach(modifierInstance,json.get(tempDamageModifiers,"Vulnerability")),CODE:{
 	[h:hp.VulnerableTypes = json.union(hp.VulnerableTypes,pm.a5e.DamageModCalcStep2(hp.Data,modifierInstance))]
 }]
 
-[h,foreach(modifierInstance,json.get(getProperty("a5e.stat.DamageModifiers"),"Resistance")),CODE:{
+[h,foreach(modifierInstance,json.get(tempDamageModifiers,"Resistance")),CODE:{
 	[h:hp.ResistanceTypes = json.union(hp.ResistanceTypes,pm.a5e.DamageModCalcStep2(hp.Data,modifierInstance))]
 }]
 
-[h,foreach(modifierInstance,json.get(getProperty("a5e.stat.DamageModifiers"),"Immunity")),CODE:{
+[h,foreach(modifierInstance,json.get(tempDamageModifiers,"Immunity")),CODE:{
 	[h:hp.ImmunityTypes = json.union(hp.ImmunityTypes,pm.a5e.DamageModCalcStep2(hp.Data,modifierInstance))]
 }]
 
-[h,foreach(modifierInstance,json.get(getProperty("a5e.stat.DamageModifiers"),"Absorption")),CODE:{
+[h,foreach(modifierInstance,json.get(tempDamageModifiers,"Absorption")),CODE:{
 	[h:hp.AbsorptionTypes = json.union(hp.AbsorptionTypes,pm.a5e.DamageModCalcStep2(hp.Data,modifierInstance))]
 }]
 
-[h,foreach(modifierInstance,json.get(getProperty("a5e.stat.DamageModifiers"),"DR")),CODE:{
+[h,foreach(modifierInstance,json.get(tempDamageModifiers,"DR")),CODE:{
 	[h:hp.DRAmount = json.get(modifierInstance,"Amount")]
 	[h,foreach(damageType,pm.a5e.DamageModCalcStep2(hp.Data,modifierInstance)): hp.DRTypes = json.set(hp.DRTypes,damageType,(hp.DRAmount+json.get(hp.DRTypes,damageType)))]
 }]

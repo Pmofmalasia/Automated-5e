@@ -80,4 +80,4 @@
 
 [h:spellCreationHTML = spellCreationHTML + "</tr><tr><th text-align='center' colspan='2'><input type='submit' id='submitButton' value='Submit'></th></tr>"]
 
-[h:html.dialog5("Spell Creation","lib://pm.a5e.core/CreateSpellCore.html?cachelib=false","value="+base64.encode(spellCreationHTML))]
+[h:html.dialog5("Spell Creation","lib://pm.a5e.core/CreateSpellCore.html?cachelib=false","value="+base64.encode(spellCreationHTML)+"; closebutton=0; width=675; height=1050")]

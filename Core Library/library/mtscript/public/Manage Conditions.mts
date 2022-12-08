@@ -18,7 +18,7 @@
 }]
 
 [h:abilityTable = "[]"]
-[h:abilityEffect = json.toList(cn.RemovedList,", ")+" deactivated."]
+[h:abilityEffect = pm.a5e.CreateDisplayList(cn.RemovedList,"and")+" deactivated."]
 
 [h:ClassFeatureData = json.set("",
 	"Flavor","",

@@ -202,7 +202,7 @@
 	[h:spell.Conditions = pm.a5e.ChooseCondition(json.get(tempConditionInfo,"Conditions"),spell.ConditionChoiceNumber)]
 
 	[h:spell.ConditionEndInfo = json.get(tempConditionInfo,"EndInfo")]
-	[h,if(json.get(spell.ConditionEndInfo,"UseSpellDuration") == 1): spell.ConditionEndInfo = json.set(spell.ConditionEndInfo,"Duration",DurationValue,"DurationUnits",DurationUnits)]
+	[h,if(json.get(spell.ConditionEndInfo,"UseSpellDuration") == 1): spell.ConditionEndInfo = json.set(spell.ConditionEndInfo,"Duration",DurationValue,"DurationUnits",lower(DurationUnits))]
 	[h:spell.ConditionEndInfo = json.remove(spell.ConditionEndInfo,"UseSpellDuration")]
 
 	[h:hasSaveDCTest = !json.isEmpty(json.path.read(spell.ConditionEndInfo,"[*][?(@.EndTriggers.*.SaveType!=null)]","DEFAULT_PATH_LEAF_TO_NULL"))]
@@ -211,11 +211,18 @@
 		[h:spell.SaveDC = 8 + getProperty("a5e.stat.Proficiency") + PrimeStatMod]
 		[h:pm.PassiveFunction("SpellSaveDC")]
 	};{}]
-		
-	[h,if(hasSaveDCTest): spell.ConditionEndInfo = json.path.put(spell.ConditionEndInfo,"[*]['EndTriggers'][*][?(@.SaveType!=null)]","DC",spell.SaveDC)]
+	
+	[h:broadcast(spell.ConditionEndInfo)]
+	[h,if(hasSaveDCTest): spell.ConditionEndInfo = json.path.put(spell.ConditionEndInfo,"['EndTriggers'][*][?(@.SaveType!=null)]","DC",spell.SaveDC)]
+
+	[h:"<!-- TODO: Fix to allow selection of AdvancePoint manually; Temporary solution for now -->"]
+	[h,if(json.get(spell.ConditionEndInfo,"DurationUnits")=="round"):
+		spell.ConditionEndInfo = json.set(spell.ConditionEndInfo,"AdvancePoint","StartofTurn");
+		spell.ConditionEndInfo = json.set(spell.ConditionEndInfo,"AdvancePoint","EndofTurn")
+	]
 
 	[h:thisEffectData = json.set(thisEffectData,"ConditionInfo",json.set("","Conditions",spell.Conditions,"EndInfo",spell.ConditionEndInfo))]
-		
+
 	[h:spell.ConditionNames = pm.a5e.CreateDisplayList(json.path.read(spell.Conditions,"[*]['DisplayName']"),"and")]
 	[h:abilityTable = json.append(abilityTable,json.set("",
 		"ShowIfCondensed",1,

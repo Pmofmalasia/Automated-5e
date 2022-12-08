@@ -13,6 +13,7 @@
         ]
     };{}]
     
+    [h:parentTokenData = json.get(effect,"ParentToken")]
     [h:checkDCData = json.get(effect,"CheckDC")]
     [h:saveDCData = json.get(effect,"SaveDC")]
     [h:attackData = json.get(effect,"Attack")]
@@ -29,6 +30,14 @@
     [h:effectTargetData = json.get(effect,"TargetedEffects")]
     [h:effectTargetOptionData = json.get(effect,"TargetedEffectOptions")]
 
+    [h,if(parentTokenData!=""),CODE:{
+        [h,if(whichEffect >= json.length(currentEffectData)): thisEffect = json.path.set(baseEffectData,".ID",pm.a5e.GenerateEffectID()); thisEffect = json.get(currentEffectData,whichEffect)]
+
+        [h:thisEffect = json.set(thisEffect,"ParentToken",parentTokenData)]
+
+        [h,if(whichEffect >= json.length(currentEffectData)): currentEffectData = json.append(currentEffectData,thisEffect); currentEffectData = json.set(currentEffectData,whichEffect,thisEffect)]
+    };{}]
+    
     [h,if(checkDCData!=""),CODE:{
         [h,if(whichEffect >= json.length(currentEffectData)): thisEffect = json.path.set(baseEffectData,".ID",pm.a5e.GenerateEffectID()); thisEffect = json.get(currentEffectData,whichEffect)]
 
@@ -159,7 +168,7 @@
         ]
 
 		[h,if(noPriorConditionsRemovedTest):
-            tempToResolve = json.set(tempToResolve,"ConditionsRemovedInfo",json.append("",conditionsRemovedData));
+            tempToResolve = json.set(tempToResolve,"ConditionsRemovedInfo",conditionsRemovedData);
             tempToResolve = pm.a5e.BuildEffectMergeConditionsRemoved(tempToResolve,conditionsRemovedData)
         ]
 

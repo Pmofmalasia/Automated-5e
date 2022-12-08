@@ -141,7 +141,7 @@
         [h:conditionEndInfo = json.set("","UseSpellDuration",1)]
         [h:subeffectData = json.remove(subeffectData,"isConditionSameDuration")]
     };{
-        [h:conditionEndInfo = json.set("","Duration",json.get(subeffectData,"conditionAlternateDuration"),"DurationUnits",json.get(subeffectData,"conditionAlternateDurationUnits"))]
+        [h:conditionEndInfo = json.set("","Duration",json.get(subeffectData,"conditionAlternateDuration"),"DurationUnits",lower(json.get(subeffectData,"conditionAlternateDurationUnits")))]
         [h:subeffectData = json.remove(subeffectData,"conditionAlternateDuration")]
         [h:subeffectData = json.remove(subeffectData,"conditionAlternateDurationUnits")]
     }]

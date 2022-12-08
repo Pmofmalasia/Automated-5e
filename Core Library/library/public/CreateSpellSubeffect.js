@@ -700,7 +700,7 @@ async function createMoveTargetTable(){
 async function createCreateObjectTable(){
     let table = document.getElementById("SubeffectTable");
     let startRowIndex = document.getElementById("rowIsCreateObject").rowIndex;
-
+//TODO: Object creation once equipment/item stuff is done
     if(document.getElementById("isCreateObject").checked){
         let rowCreateObjectInfo = table.insertRow(startRowIndex+1);
         rowCreateObjectInfo.id = "rowCreateObjectInfo";

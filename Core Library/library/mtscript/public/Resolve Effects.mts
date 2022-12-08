@@ -67,11 +67,13 @@
 	}]
 	
 	[h,if(!hitTarget),CODE:{
+		[h:broadcast("miss")]
 		[h:thisTokenSaveDCData = ""]
 		[h:thisTokenCheckDCData = ""]
 		[h:thisTokenDamageDealt = ""]
 		[h:thisTokenConditionInfo = "[]"]
 		[h:thisTokenConditionsApplied = json.append("",json.set("","Conditions","[]","EndInfo","{}"))]
+		[h:thisTokenConditionsRemovedInfo = "{}"]
 		[h:abilityTable = json.append(abilityTable,json.set("",
 		"ShowIfCondensed",1,
 		"Header","Attack Missed",
@@ -99,15 +101,18 @@
 				passedSave = 0
 			]
 			[h,switch(autoResultTest+""+passedSave):
-				case "11": pm.a5e.ResolveSaveDCSuccess(json.set("","DCData",thisTokenSaveDCData));
-				case "10": "";
+				case "11": pm.a5e.ResolveDCSuccess(json.set("","DCData",thisTokenSaveDCData));
+				case "10": pm.a5e.ResolveDCFailure(json.set("","DCData",thisTokenSaveDCData));
 				case "00": needsFurtherResolution = 1
 			]
 		};
 		case "10":{
 			[h:SaveResult = json.get(effSavesMadeData,targetToken)]
 			[h:passedSave = json.get(SaveResult,"Value")>=json.get(thisTokenSaveDCData,"DC")]
-			[h,if(passedSave==1): pm.a5e.ResolveSaveDCSuccess(json.set("","DCData",thisTokenSaveDCData))]
+			[h,if(passedSave==1):
+				pm.a5e.ResolveDCSuccess(json.set("","DCData",thisTokenSaveDCData));
+				pm.a5e.ResolveDCFailure(json.set("","DCData",thisTokenSaveDCData))
+			]
 			[h:abilityTable = json.merge(abilityTable,json.get(SaveResult,"Table"))]
 		};
 		default:{}
@@ -146,8 +151,8 @@
 				passedCheck = 0
 			]
 			[h,switch(autoResultTest+""+passedCheck):
-				case "11": pm.a5e.ResolveSaveDCSuccess(json.set("","DCData",thisTokenCheckDCData));
-				case "10": "";
+				case "11": pm.a5e.ResolveDCSuccess(json.set("","DCData",thisTokenCheckDCData));
+				case "10": pm.a5e.ResolveDCFailure(json.set("","DCData",thisTokenCheckDCData));
 				case "00": needsFurtherResolution = 1
 			]
 		};
@@ -160,7 +165,10 @@
 				DCValue = json.get(thisTokenCheckDCData,"DC")
 			]
 			
-			[h,if(json.get(CheckResult,"Value") >= DCValue): pm.a5e.ResolveSaveDCSuccess(json.set("","DCData",thisTokenCheckDCData))]
+			[h,if(json.get(CheckResult,"Value") >= DCValue):
+				pm.a5e.ResolveDCSuccess(json.set("","DCData",thisTokenCheckDCData));
+				pm.a5e.ResolveDCFailure(json.set("","DCData",thisTokenCheckDCData))
+			]
 			[h:abilityTable = json.merge(abilityTable,json.get(CheckResult,"Table"))]
 		};
 		default:{}
@@ -169,6 +177,7 @@
 	[h,if(needsFurtherResolution),CODE:{
 		[h:thisTokenDamageDealt = ""]
 		[h:thisTokenConditionInfo = "[]"]
+		[h:thisTokenConditionsRemovedInfo = "{}"]
 		[h:remainingTargetsList = json.append(remainingTargetsList,targetToken)]
 	};{}]
 	
@@ -195,13 +204,14 @@
 		[h:tempConditionsRemovedNames = json.get(thisTokenConditionsRemovedInfo,"ConditionNames")]
 		[h,if(tempConditionsRemovedNames == "ARRAY"): 
 			tempConditionsRemovedGroups = json.merge(tempConditionsRemovedGroups,json.unique(json.path.read(getProperty("a5e.stat.ConditionList",targetToken),"[*][?(@.Name in "+tempConditionsRemovedNames+")]['GroupID']")));
-			tempConditionsRemovedGroups = json.merge(tempConditionsRemovedGroups,json.path.read(getProperty("a5e.stat.ConditionList",targetToken),"[*][?(@.Name == "+tempConditionsRemovedNames+")]['GroupID']"))
+			tempConditionsRemovedGroups = json.merge(tempConditionsRemovedGroups,json.path.read(getProperty("a5e.stat.ConditionList",targetToken),"[*][?(@.Name == '"+tempConditionsRemovedNames+"')]['GroupID']"))
+		
 		]
 
 		[h:tempConditionsRemovedTypes = json.get(thisTokenConditionsRemovedInfo,"ConditionTypes")]
 		[h,if(tempConditionsRemovedTypes == "ARRAY"): 
 			tempConditionsRemovedGroups = json.merge(tempConditionsRemovedGroups,json.unique(json.path.read(getProperty("a5e.stat.ConditionList",targetToken),"[*][?(@.ConditionType in "+tempConditionsRemovedTypes+")]['GroupID']")));
-			tempConditionsRemovedGroups = json.merge(tempConditionsRemovedGroups,json.path.read(getProperty("a5e.stat.ConditionList",targetToken),"[*][?(@.ConditionType == "+tempConditionsRemovedTypes+" && @.ConditionType != '')]['GroupID']"))
+			tempConditionsRemovedGroups = json.merge(tempConditionsRemovedGroups,json.path.read(getProperty("a5e.stat.ConditionList",targetToken),"[*][?(@.ConditionType == '"+tempConditionsRemovedTypes+"' && @.ConditionType != '')]['GroupID']"))
 		]
 
 		[h:tempEndConditionData = json.set("",
@@ -209,7 +219,17 @@
 			"GroupID",tempConditionsRemovedGroups
 		)]
 		[h,MACRO("EndCondition@Lib:pm.a5e.Core"): tempEndConditionData]
-		[h:abilityTable = json.merge(abilityTable,json.get(macro.return,"Table"))]
+
+		[h:cn.RemovedList = json.path.read(macro.return,"['Removed'][*]['DisplayName']")]
+		[h,if(cn.RemovedList != ""): abilityTable = json.append(abilityTable,json.set("",
+			"ShowIfCondensed",1,
+			"Header","Conditions Removed",
+			"FalseHeader","",
+			"FullContents","",
+			"RulesContents",pm.a5e.CreateDisplayList(cn.RemovedList,"and"),
+			"RollContents","",
+			"DisplayOrder","['Rules','Roll','Full']"
+		))]
 	}]
 }]
 

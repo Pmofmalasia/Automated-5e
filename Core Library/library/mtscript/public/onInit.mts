@@ -136,7 +136,8 @@
 [h:defineFunction("pm.a5e.BuildEffectMergeConditionsRemoved","pm.a5e.BuildEffectMergeConditionsRemoved@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.a5e.BuildEffectMergeDamage","pm.a5e.BuildEffectMergeDamage@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.a5e.GetEffectComponent","pm.a5e.GetEffectComponent@Lib:pm.a5e.Core")]
-[h:defineFunction("pm.a5e.ResolveSaveDCSuccess","pm.a5e.ResolveSaveDCSuccess@Lib:pm.a5e.Core",0,0)]
+[h:defineFunction("pm.a5e.ResolveDCSuccess","pm.a5e.ResolveDCSuccess@Lib:pm.a5e.Core",0,0)]
+[h:defineFunction("pm.a5e.ResolveDCFailure","pm.a5e.ResolveDCFailure@Lib:pm.a5e.Core",0,0)]
 
 [h:"<!-- Functions for general use -->"]
 [h:defineFunction("pm.DieRoller","pm.DieRoller@Lib:pm.a5e.Core")]

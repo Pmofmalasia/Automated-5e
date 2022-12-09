@@ -128,7 +128,7 @@
 		" sp.ClassList | "+pm.GetClasses("DisplayName")+" | Other class list to use | LIST | VALUE=STRING",
 		" allSpellsTest |  | Use all spells from selected class | CHECK ",
 		" junkVar | ------------------ Valid Spell Schools From Class ------------------ |  | LABEL | SPAN=TRUE ",
-		pm.SchoolInput	
+		pm.SchoolInput
 	))]
 
 	[h:pm.ValidSchools = ""]

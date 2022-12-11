@@ -1,6 +1,6 @@
-[h:SpellFilterData = macro.args]
-[h:SpellFilterList = json.get(SpellFilterData,"List")]
-[h,if(SpellFilterList == ""): SpellFilterList = getLibProperty("sb.Spells","Lib:pm.a5e.Core")]
+[h:SpellFilterData = arg(0)]
+[h:FinalSpellList = json.get(SpellFilterData,"List")]
+[h,if(FinalSpellList == ""): FinalSpellList = getLibProperty("sb.Spells","Lib:pm.a5e.Core")]
 [h:SpellFilterParameters = json.get(SpellFilterData,"Parameters")]
 
 [h:ClassFilter = json.get(SpellFilterParameters,"Class")]
@@ -10,14 +10,13 @@
 [h:CastTimeFilter = json.get(SpellFilterParameters,"Time")]
 [h:RitualFilter = json.get(SpellFilterParameters,"Ritual")]
 
-[h:FinalSpellList = "[]"]
 [h,switch(json.type(ClassFilter)),CODE:
     case "Array":{
-        [h:FinalSpellList = json.path.read(SpellFilterList,"[*][?(@.0.ClassesWithSpell.*.Class in "+ClassFilter+")]")]
+        [h:FinalSpellList = json.path.read(FinalSpellList,"[*][?(@.0.ClassesWithSpell.*.Class in "+ClassFilter+")]")]
     };
     case "UNKNOWN":{
-        [h,if(ClassFilter!=""): FinalSpellList = json.path.read(SpellFilterList,"[*][?(@.0.ClassesWithSpell.*.Class == '"+ClassFilter+"')]")]
-    }
+        [h,if(ClassFilter!=""): FinalSpellList = json.path.read(FinalSpellList,"[*][?(@.0.ClassesWithSpell.*.Class == '"+ClassFilter+"')]")]
+    };
     default:{}
 ]
 [h:return(!json.isEmpty(FinalSpellList),FinalSpellList)]
@@ -28,11 +27,11 @@
     };
     case "UNKNOWN":{
         [h,if(SchoolFilter!=""): FinalSpellList = json.path.read(FinalSpellList,"[*][?(@.0.School == '"+SchoolFilter+"')]")]
-    }
+    };
     default:{}
 ]
 [h:return(!json.isEmpty(FinalSpellList),FinalSpellList)]
-
+[h:broadcast(json.path.read(FinalSpellList,"[*][0]['Level']"))]
 [h,if(LevelMaxFilter!=""): FinalSpellList = json.path.read(FinalSpellList,"[*][?(@.0.Level <= '"+LevelMaxFilter+"')]")]
 [h:return(!json.isEmpty(FinalSpellList),FinalSpellList)]
 [h,if(LevelMinFilter!=""): FinalSpellList = json.path.read(FinalSpellList,"[*][?(@.0.Level >= '"+LevelMinFilter+"')]")]
@@ -44,7 +43,7 @@
     };
     case "UNKNOWN":{
         [h,if(CastTimeFilter!=""): FinalSpellList = json.path.read(FinalSpellList,"[*][?(@.*.CastTime.Units == '"+CastTimeFilter+"')]")]
-    }
+    };
     default:{}
 ]
 [h:return(!json.isEmpty(FinalSpellList),FinalSpellList)]

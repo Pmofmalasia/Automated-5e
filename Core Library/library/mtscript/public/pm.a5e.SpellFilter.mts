@@ -12,46 +12,94 @@
 
 [h,switch(json.type(ClassFilter)),CODE:
     case "Array":{
-        [h:FinalSpellList = json.path.read(FinalSpellList,"[*][?(@.0.ClassesWithSpell.*.Class in "+ClassFilter+")]")]
+        [h:FinalSpellList = json.path.read(FinalSpellList,"[*][?(@.ClassesWithSpell.*.Class in "+ClassFilter+")]")]
+        [h:ClassDisplayNames = ""]
+        [h,foreach(tempClass,ClassFilter): ClassDisplayNames = json.append(ClassDisplayNames,pm.GetDisplayName(tempClass,"sb.Class"))]
+        [h:ClassFilterDescription = pm.a5e.CreateDisplayList(ClassDisplayNames,"or")]
     };
     case "UNKNOWN":{
-        [h,if(ClassFilter!=""): FinalSpellList = json.path.read(FinalSpellList,"[*][?(@.0.ClassesWithSpell.*.Class == '"+ClassFilter+"')]")]
+        [h,if(ClassFilter!=""): FinalSpellList = json.path.read(FinalSpellList,"[*][?(@.ClassesWithSpell.*.Class == '"+ClassFilter+"')]")]
+        [h:ClassFilterDescription = pm.GetDisplayName(ClassFilter,"sb.Class")]
     };
-    default:{}
+    default:{[h:ClassFilterDescription = ""]}
 ]
-[h:return(!json.isEmpty(FinalSpellList),FinalSpellList)]
+[h:return(!json.isEmpty(FinalSpellList),json.set("","SpellList","[]","Description",""))]
 
 [h,switch(json.type(SchoolFilter)),CODE:
     case "Array":{
-        [h:FinalSpellList = json.path.read(FinalSpellList,"[*][?(@.0.School in "+SchoolFilter+")]")]
+        [h:FinalSpellList = json.path.read(FinalSpellList,"[*][?(@.School in "+SchoolFilter+")]")]
+        [h:SchoolDisplayNames = ""]
+        [h,foreach(tempSchool,SchoolFilter): SchoolDisplayNames = json.append(SchoolDisplayNames,pm.GetDisplayName(tempSchool,"sb.SpellSchools"))]
+        [h:SchoolFilterDescription = pm.a5e.CreateDisplayList(SchoolDisplayNames,"or")]
     };
     case "UNKNOWN":{
-        [h,if(SchoolFilter!=""): FinalSpellList = json.path.read(FinalSpellList,"[*][?(@.0.School == '"+SchoolFilter+"')]")]
+        [h,if(SchoolFilter!=""): FinalSpellList = json.path.read(FinalSpellList,"[*][?(@.School == '"+SchoolFilter+"')]")]
+        [h:SchoolFilterDescription = pm.GetDisplayName(SchoolFilter,"sb.SpellSchools")]
     };
-    default:{}
+    default:{[h:SchoolFilterDescription = ""]}
 ]
-[h:return(!json.isEmpty(FinalSpellList),FinalSpellList)]
-[h:broadcast(json.path.read(FinalSpellList,"[*][0]['Level']"))]
-[h,if(LevelMaxFilter!=""): FinalSpellList = json.path.read(FinalSpellList,"[*][?(@.0.Level <= '"+LevelMaxFilter+"')]")]
-[h:return(!json.isEmpty(FinalSpellList),FinalSpellList)]
-[h,if(LevelMinFilter!=""): FinalSpellList = json.path.read(FinalSpellList,"[*][?(@.0.Level >= '"+LevelMinFilter+"')]")]
-[h:return(!json.isEmpty(FinalSpellList),FinalSpellList)]
+[h:return(!json.isEmpty(FinalSpellList),json.set("","SpellList","[]","Description",""))]
 
+[h,if(LevelMaxFilter==""),CODE:{
+    [h:MaxSpellLevel = 9]
+};{
+    [h:MaxSpellLevel = LevelMaxFilter]
+    [h:FinalSpellList = json.path.read(FinalSpellList,"[*][?(@.Level <= "+MaxSpellLevel+")]")]
+}] 
+[h:return(!json.isEmpty(FinalSpellList),json.set("","SpellList","[]","Description",""))]
+
+[h,if(LevelMinFilter==""),CODE:{
+    [h:MinSpellLevel = 0]
+};{
+    [h:MinSpellLevel = LevelMinFilter]
+    [h:FinalSpellList = json.path.read(FinalSpellList,"[*][?(@.Level >= "+MinSpellLevel+")]")]
+}]
+[h:return(!json.isEmpty(FinalSpellList),json.set("","SpellList","[]","Description",""))]
+
+[h:LevelFilterDescription = "Spell"]
+[h:LevelFilterDescriptionPreClass = ""]
+[h,if(MaxSpellLevel == MinSpellLevel),CODE:{
+    [h:LevelFilterDescriptionPreClass = "Level "+MaxSpellLevel+" "]
+    [h:LevelFilterDescription = "Spell"]
+};{}] 
+[h,if(MaxSpellLevel == 0),CODE:{
+    [h:LevelFilterDescriptionPreClass = ""]
+    [h:LevelFilterDescription = "Cantrip"]
+};{
+    [h,if(MinSpellLevel != 1 && MaxSpellLevel != 9),CODE:{
+        [h:LevelFilterDescriptionPreClass = "Level "+MinSpellLevel+" - "+MaxSpellLevel+" "]
+        [h:LevelFilterDescription = "Spell"]
+    };{}]
+}]
+
+[h:"<!-- TODO: Enable ability to make something like casting time less than 10 minutes, or specific time values (only value 1 currently) -->"]
 [h,switch(json.type(CastTimeFilter)),CODE:
     case "Array":{
         [h:FinalSpellList = json.path.read(FinalSpellList,"[*][?(@.*.CastTime.Units in "+CastTimeFilter+")]")]
+        [h:CastTimeFilterDescription = " with casting time of 1 "+pm.a5e.CreateDisplayList(CastTimeFilter,"or")]
     };
     case "UNKNOWN":{
         [h,if(CastTimeFilter!=""): FinalSpellList = json.path.read(FinalSpellList,"[*][?(@.*.CastTime.Units == '"+CastTimeFilter+"')]")]
+        [h:CastTimeFilterDescription = " with casting time of 1 "+CastTimeFilter]
     };
     default:{}
 ]
-[h:return(!json.isEmpty(FinalSpellList),FinalSpellList)]
+[h:return(!json.isEmpty(FinalSpellList),json.set("","SpellList","[]","Description",""))]
 
-[h,switch(RitualFilter):
-    case 0: FinalSpellList = json.path.read(FinalSpellList,"[*][?(@.0.isRitual == null)]","DEFAULT_PATH_LEAF_TO_NULL");
-    case 1: FinalSpellList = json.path.read(FinalSpellList,"[*][?(@.0.isRitual == 1)]");
-    default: ""
+[h,switch(RitualFilter),CODE:
+    case 0:{
+        [h:FinalSpellList = json.path.read(FinalSpellList,"[*][?(@.isRitual == null || @.isRitual == 0)]","DEFAULT_PATH_LEAF_TO_NULL")]
+        [h:RitualFilterDescription = "Non-Ritual"]
+    };
+    case 1:{
+        [h:FinalSpellList = json.path.read(FinalSpellList,"[*][?(@.isRitual == 1)]")]
+        [h:RitualFilterDescription = "Ritual"]
+    };
+    default:{[h:RitualFilterDescription = ""]}
 ]
 
-[h:return(0,FinalSpellList)]
+[h:FinalFilterDescription = LevelFilterDescriptionPreClass + if(LevelFilterDescriptionPreClass!=""," ","") + ClassFilterDescription + if(ClassFilterDescription!=""," ","") + RitualFilterDescription + if(RitualFilterDescription!=""," ","") + LevelFilterDescription + CastTimeFilter]
+
+[h:ReturnData = json.set("","SpellList",FinalSpellList,"Description",FinalFilterDescription)]
+
+[h:return(0,ReturnData)]

@@ -8,8 +8,8 @@
 
 [h:SelectionData = json.get(SpellSelectionFeature,"SpellOptions")]
 [h,switch(InputType): 
-    case "Input": SelectionInput = " junkVar |  | --------- "+json.get(SpellSelectionFeature,"DisplayName")+" Spell Selection --------- | LABEL | SPAN=TRUE ";
-    case "Dialog": SelectionInput = "<tr id='row"+json.get(SpellSelectionFeature,"Name")+"Header'><th colspan='2'>"+json.get(SpellSelectionFeature,"DisplayName")+" Spell Selection"+"</th></tr>";
+    case "Input": SelectionInput = " junkVar |  | --------- "+if(json.get(SpellSelectionFeature,"DisplayName")=="Spellcasting",pm.GetDisplayName(json.get(SpellSelectionFeature,"Class"),"sb.Classes")+" ","")+json.get(SpellSelectionFeature,"DisplayName")+" Spell Selection --------- | LABEL | SPAN=TRUE ";
+    case "Dialog": SelectionInput = "<tr id='row"+json.get(SpellSelectionFeature,"Name")+"Header'><th colspan='2'>"+if(json.get(SpellSelectionFeature,"DisplayName")=="Spellcasting",pm.GetDisplayName(json.get(SpellSelectionFeature,"Class"),"sb.Classes")+" ","")+json.get(SpellSelectionFeature,"DisplayName")+" Spell Selection"+"</th></tr>";
     default: ""
 ]
 [h:outerCounter = 0]
@@ -22,26 +22,30 @@
         SelectionList = json.path.read(getLibProperty("sb.Spells","Lib:pm.a5e.Core"),"[*][?(@.Name in "+json.get(SelectionListFeature,0)+")]")
     ]
 [h:"<!-- If I can't get this to work, the solution may be to just send it as is and weed out any duplicates - could solve the issue with it working for spells where only one effect matches as well -->"]
-    [h:broadcast(SelectionList)]
-    [h:broadcast(json.get(selectionInstance,"Filter"))]
-    [h,if(json.get(selectionInstance,"Filter")!=""): SelectionList = pm.a5e.SpellFilter(json.set("","List",SelectionList,"Parameters",json.get(selectionInstance,"Filter")))]
-    [h:broadcast(SelectionList)]
-    [h:FinalSelectionList = json.sort(json.path.read(SelectionList,"[*][0]['DisplayName']"))]
+    [h,if(json.get(selectionInstance,"Filter")!=""),CODE:{
+        [h:FilteredListData = pm.a5e.SpellFilter(json.set("","List",SelectionList,"Parameters",json.get(selectionInstance,"Filter")))]
+        [h:FilteredList = json.get(FilteredListData,"SpellList")]
+        [h:FilterDescription = json.get(FilteredListData,"Description")]
+    };{
+        [h:FilterDescription = "Spell"]
+    }]
+    [h:FinalSelectionList = json.sort(json.path.read(FilteredList,"[*]['DisplayName']"))]
             [h:"<!-- TODO: Add ability to have current spell selections already chosen in input -->"]
     [h,switch(InputType),CODE:
         case "Input":{
-            [h,count(SelectionNumber): SelectionInput = listAppend(SelectionInput," choice"+json.get(SpellSelectionFeature,"Name")+outerCounter+roll.count+" | "+FinalSelectionList+" | Spell #"+(outerCounter+roll.count)+" | LIST | DELIMITER=JSON VALUE=STRING "," ## ")]
+            [h:NoNumberTest = SelectionNumber == 1]
+            [h,count(SelectionNumber): SelectionInput = listAppend(SelectionInput," choice"+json.get(SpellSelectionFeature,"Name")+outerCounter+roll.count+" | "+FinalSelectionList+" | "+FilterDescription+if(NoNumberTest,""," #"+(outerCounter+roll.count+1))+" | LIST | DELIMITER=JSON VALUE=STRING "," ## ")]
         };
         case "Dialog":{
             [h:SpellOptions = ""]
             [h,foreach(tempSpell,FinalSelectionList): SpellOptions = SpellOptions + "<option value='"+pm.RemoveSpecial(tempSpell)+"'>"+tempSpell+"</option>"]
 
-            [h,count(SelectionNumber): SelectionInput = SelectionInput + "<tr><th><label for='choice"+json.get(SpellSelectionFeature,"Name")+outerCounter+roll.count+"'>Spell #"+(outerCounter+roll.count)+":</label></th><td><select id='choice"+json.get(SpellSelectionFeature,"Name")+outerCounter+roll.count+"' name='choice"+json.get(SpellSelectionFeature,"Name")+outerCounter+roll.count+"'>"+SpellOptions+"</select></td></tr>"]
+            [h:NoNumberTest = SelectionNumber == 1]
+            [h,count(SelectionNumber): SelectionInput = SelectionInput + "<tr><th><label for='choice"+json.get(SpellSelectionFeature,"Name")+outerCounter+roll.count+"'>"+FilterDescription+if(NoNumberTest,""," #"+(outerCounter+roll.count+1))+":</label></th><td><select id='choice"+json.get(SpellSelectionFeature,"Name")+outerCounter+roll.count+"' name='choice"+json.get(SpellSelectionFeature,"Name")+outerCounter+roll.count+"'>"+SpellOptions+"</select></td></tr>"]
         };
         default: {}
     ]
 }]
-
 [h:macro.return = SelectionInput]
 
 [h:'<-- for each feature, create X number of entries, where X is number of spells allowed to choose from. for each entry, the list of options should come from:
@@ -53,6 +57,8 @@ b) some entries like in (a), some with limitations (e.g. divination/illusion onl
 c) The above, but with entries on another feature (e.g. Arcane Trickster casting takes from the Wizard entry)
 
 d) any combination of the above, with options coming from a spellbook (which in turn necessitates the ability to add spells to a spellbook)
+
+TODO: Add a "Descriptor" key to each instance that describes the filter - e.g. cantrips only, leveled spells only, x class only. May be able to use pm.SpellFilterDescription instead.
 
 Contents of key "SpellOptions": Array of objects containing number of choices associated + (List of spell names OR object of spell parameters)
 

@@ -34,19 +34,22 @@
     [h,switch(InputType),CODE:
         case "Input":{
             [h:NoNumberTest = SelectionNumber == 1]
-            [h,count(SelectionNumber): SelectionInput = listAppend(SelectionInput," choice"+json.get(SpellSelectionFeature,"Name")+outerCounter+roll.count+" | "+FinalSelectionList+" | "+FilterDescription+if(NoNumberTest,""," #"+(outerCounter+roll.count+1))+" | LIST | DELIMITER=JSON VALUE=STRING "," ## ")]
+            [h,count(SelectionNumber): SelectionInput = listAppend(SelectionInput," choice"+json.get(SpellSelectionFeature,"Name")+json.get(SpellSelectionFeature,"Class")+json.get(SpellSelectionFeature,"Subclass")+outerCounter+roll.count+" | "+FinalSelectionList+" | "+FilterDescription+if(NoNumberTest,""," #"+(roll.count+1))+" | LIST | DELIMITER=JSON VALUE=STRING "," ## ")]
         };
         case "Dialog":{
             [h:SpellOptions = ""]
             [h,foreach(tempSpell,FinalSelectionList): SpellOptions = SpellOptions + "<option value='"+pm.RemoveSpecial(tempSpell)+"'>"+tempSpell+"</option>"]
 
             [h:NoNumberTest = SelectionNumber == 1]
-            [h,count(SelectionNumber): SelectionInput = SelectionInput + "<tr><th><label for='choice"+json.get(SpellSelectionFeature,"Name")+outerCounter+roll.count+"'>"+FilterDescription+if(NoNumberTest,""," #"+(outerCounter+roll.count+1))+":</label></th><td><select id='choice"+json.get(SpellSelectionFeature,"Name")+outerCounter+roll.count+"' name='choice"+json.get(SpellSelectionFeature,"Name")+outerCounter+roll.count+"'>"+SpellOptions+"</select></td></tr>"]
+            [h,count(SelectionNumber): SelectionInput = SelectionInput + "<tr><th><label for='choice"+json.get(SpellSelectionFeature,"Name")+json.get(SpellSelectionFeature,"Class")+json.get(SpellSelectionFeature,"Subclass")+outerCounter+roll.count+"'>"+FilterDescription+if(NoNumberTest,""," #"+(roll.count+1))+":</label></th><td><select id='choice"+json.get(SpellSelectionFeature,"Name")+json.get(SpellSelectionFeature,"Class")+json.get(SpellSelectionFeature,"Subclass")+outerCounter+roll.count+"' name='choice"+json.get(SpellSelectionFeature,"Name")+json.get(SpellSelectionFeature,"Class")+json.get(SpellSelectionFeature,"Subclass")+outerCounter+roll.count+"'>"+SpellOptions+"</select></td></tr>"]
         };
         default: {}
     ]
+    [h:outerCounter = outerCounter + 1]
 }]
 [h:macro.return = SelectionInput]
+
+[h:"<!-- TODO: Add capability to prepare spells from a spellbook - current method is ok to prepare TO a spellbook, but not from spellbook to prep -->"]
 
 [h:'<-- for each feature, create X number of entries, where X is number of spells allowed to choose from. for each entry, the list of options should come from:
 
@@ -57,8 +60,6 @@ b) some entries like in (a), some with limitations (e.g. divination/illusion onl
 c) The above, but with entries on another feature (e.g. Arcane Trickster casting takes from the Wizard entry)
 
 d) any combination of the above, with options coming from a spellbook (which in turn necessitates the ability to add spells to a spellbook)
-
-TODO: Add a "Descriptor" key to each instance that describes the filter - e.g. cantrips only, leveled spells only, x class only. May be able to use pm.SpellFilterDescription instead.
 
 Contents of key "SpellOptions": Array of objects containing number of choices associated + (List of spell names OR object of spell parameters)
 

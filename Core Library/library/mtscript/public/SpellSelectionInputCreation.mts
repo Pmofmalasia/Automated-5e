@@ -22,8 +22,10 @@
         SelectionList = json.path.read(getLibProperty("sb.Spells","Lib:pm.a5e.Core"),"[*][?(@.Name in "+json.get(SelectionListFeature,0)+")]")
     ]
 [h:"<!-- If I can't get this to work, the solution may be to just send it as is and weed out any duplicates - could solve the issue with it working for spells where only one effect matches as well -->"]
-    [h,if(json.get(selectionInstance,"Filter")!=""),CODE:{
-        [h:FilteredListData = pm.a5e.SpellFilter(json.set("","List",SelectionList,"Parameters",json.get(selectionInstance,"Filter")))]
+    [h:SpellFilter = json.get(selectionInstance,"Filter")]
+    [h,if(SpellFilter!=""),CODE:{
+        [h,if(json.get(SpellFilter,"LevelBasedLevelMax")!=""): SpellFilter = json.set(SpellFilter,"LevelBasedLevelMax",ceiling(json.get(SpellSelectionFeature,"Level")*json.get(SpellSelectionFeature,"CasterType")))]
+        [h:FilteredListData = pm.a5e.SpellFilter(json.set("","List",SelectionList,"Parameters",SpellFilter))]
         [h:FilteredList = json.get(FilteredListData,"SpellList")]
         [h:FilterDescription = json.get(FilteredListData,"Description")]
     };{

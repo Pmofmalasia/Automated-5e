@@ -210,7 +210,7 @@
 [h:defineFunction("pm.SpellDataSet","pm.SpellDataSet@Lib:pm.a5e.Core",0,0)]
 [h:defineFunction("pm.SpellFilter","pm.SpellFilter@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.a5e.SpellFilter","pm.a5e.SpellFilter@Lib:pm.a5e.Core")]
-[h:defineFunction("pm.SpellFilterDisplay","pm.SpellFilterDisplay@Lib:pm.a5e.Core")]
+[h:defineFunction("pm.a5e.SpellFilterDisplay","pm.a5e.SpellFilterDisplay@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.SpellStdVars","pm.SpellStdVars@Lib:pm.a5e.Core",0,0)]
 [h:defineFunction("pm.a5e.SpellcastingSubeffect","pm.a5e.SpellcastingSubeffect@Lib:pm.a5e.Core",0,0)]
 [h:defineFunction("pm.a5e.DamageRoll","pm.a5e.DamageRoll@Lib:pm.a5e.Core",0,0)]

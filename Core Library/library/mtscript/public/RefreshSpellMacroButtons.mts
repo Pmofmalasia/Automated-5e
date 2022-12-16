@@ -4,6 +4,9 @@
 [h:MagicSource = json.get(SpellMacroData,"Source")]
 [h:ParentToken = json.get(SpellMacroData,"ParentToken")]
 [h:switchToken(ParentToken)]
+[h,if(NewSpells==""): NewSpells = "[]"]
+[h,if(OldSpells==""): OldSpells = "[]"]
+[h,if(MagicSource==""): MagicSource = "Arcane"]
 
 [h:"<!-- TODO: Make a function to convert casttime to a display -->"]
 [h,foreach(tempSpell,NewSpells),CODE:{

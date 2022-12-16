@@ -149,7 +149,7 @@
 			)]
 		}]
 		
-		[h,if(pm.SpellLevelMin<=1 && pm.SpellLevelMax>=1 && json.get(getProperty("a5e.stat.MaxSpellSlots"),"1")>0),CODE:{
+		[h,if(pm.SpellLevelMin<=1 && pm.SpellLevelMax>=1 && json.get(a5e.stat.MaxSpellSlots,"1")>0),CODE:{
 			[h:ResourceInfo = json.append(ResourceInfo,
 				json.set("",
 				"Name","1",
@@ -158,7 +158,7 @@
 				"TempEnoughResource",json.get(getProperty("a5e.stat.SpellSlots"),"1")>0))
 			]
 		};{}]
-		[h,if(pm.SpellLevelMin<=2 && pm.SpellLevelMax>=2 && json.get(getProperty("a5e.stat.MaxSpellSlots"),"2")>0),CODE:{
+		[h,if(pm.SpellLevelMin<=2 && pm.SpellLevelMax>=2 && json.get(a5e.stat.MaxSpellSlots,"2")>0),CODE:{
 			[h:ResourceInfo = json.append(ResourceInfo,
 				json.set("",
 				"Name","2",
@@ -167,7 +167,7 @@
 				"TempEnoughResource",json.get(getProperty("a5e.stat.SpellSlots"),"2")>0))
 			]
 		};{}]
-		[h,if(pm.SpellLevelMin<=3 && pm.SpellLevelMax>=3 && json.get(getProperty("a5e.stat.MaxSpellSlots"),"3")>0),CODE:{
+		[h,if(pm.SpellLevelMin<=3 && pm.SpellLevelMax>=3 && json.get(a5e.stat.MaxSpellSlots,"3")>0),CODE:{
 			[h:ResourceInfo = json.append(ResourceInfo,
 				json.set("",
 				"Name","3",
@@ -176,7 +176,7 @@
 				"TempEnoughResource",json.get(getProperty("a5e.stat.SpellSlots"),"3")>0))
 			]
 		};{}]
-		[h,if(pm.SpellLevelMin<=4 && pm.SpellLevelMax>=4 && json.get(getProperty("a5e.stat.MaxSpellSlots"),"4")>0),CODE:{
+		[h,if(pm.SpellLevelMin<=4 && pm.SpellLevelMax>=4 && json.get(a5e.stat.MaxSpellSlots,"4")>0),CODE:{
 			[h:ResourceInfo = json.append(ResourceInfo,
 				json.set("",
 				"Name","4",
@@ -185,7 +185,7 @@
 				"TempEnoughResource",json.get(getProperty("a5e.stat.SpellSlots"),"4")>0))
 			]
 		};{}]
-		[h,if(pm.SpellLevelMin<=5 && pm.SpellLevelMax>=5 && json.get(getProperty("a5e.stat.MaxSpellSlots"),"5")>0),CODE:{
+		[h,if(pm.SpellLevelMin<=5 && pm.SpellLevelMax>=5 && json.get(a5e.stat.MaxSpellSlots,"5")>0),CODE:{
 			[h:ResourceInfo = json.append(ResourceInfo,
 				json.set("",
 				"Name","5",
@@ -194,7 +194,7 @@
 				"TempEnoughResource",json.get(getProperty("a5e.stat.SpellSlots"),"5")>0))
 			]
 		};{}]
-		[h,if(pm.SpellLevelMin<=6 && pm.SpellLevelMax>=6 && json.get(getProperty("a5e.stat.MaxSpellSlots"),"6")>0),CODE:{
+		[h,if(pm.SpellLevelMin<=6 && pm.SpellLevelMax>=6 && json.get(a5e.stat.MaxSpellSlots,"6")>0),CODE:{
 			[h:ResourceInfo = json.append(ResourceInfo,
 				json.set("",
 				"Name","6",
@@ -203,7 +203,7 @@
 				"TempEnoughResource",json.get(getProperty("a5e.stat.SpellSlots"),"6")>0))
 			]
 		};{}]
-		[h,if(pm.SpellLevelMin<=7 && pm.SpellLevelMax>=7 && json.get(getProperty("a5e.stat.MaxSpellSlots"),"7")>0),CODE:{
+		[h,if(pm.SpellLevelMin<=7 && pm.SpellLevelMax>=7 && json.get(a5e.stat.MaxSpellSlots,"7")>0),CODE:{
 			[h:ResourceInfo = json.append(ResourceInfo,
 				json.set("",
 				"Name","7",
@@ -212,7 +212,7 @@
 				"TempEnoughResource",json.get(getProperty("a5e.stat.SpellSlots"),"7")>0))
 			]
 		};{}]
-		[h,if(pm.SpellLevelMin<=8 && pm.SpellLevelMax>=8 && json.get(getProperty("a5e.stat.MaxSpellSlots"),"8")>0),CODE:{
+		[h,if(pm.SpellLevelMin<=8 && pm.SpellLevelMax>=8 && json.get(a5e.stat.MaxSpellSlots,"8")>0),CODE:{
 			[h:ResourceInfo = json.append(ResourceInfo,
 				json.set("",
 				"Name","8",
@@ -221,7 +221,7 @@
 				"TempEnoughResource",json.get(getProperty("a5e.stat.SpellSlots"),"8")>0))
 			]
 		};{}]
-		[h,if(pm.SpellLevelMin<=9 && pm.SpellLevelMax>=9 && json.get(getProperty("a5e.stat.MaxSpellSlots"),"9")>0),CODE:{
+		[h,if(pm.SpellLevelMin<=9 && pm.SpellLevelMax>=9 && json.get(a5e.stat.MaxSpellSlots,"9")>0),CODE:{
 			[h:ResourceInfo = json.append(ResourceInfo,
 				json.set("",
 				"Name","9",
@@ -242,7 +242,7 @@
 			)]
 		}]
 		
-		[h,if(pm.SpellLevelMin<=1 && pm.SpellLevelMax>=1 && json.get(getProperty("a5e.stat.MaxSpellSlots"),"1")>0),CODE:{
+		[h,if(pm.SpellLevelMin<=1 && pm.SpellLevelMax>=1 && json.get(a5e.stat.MaxSpellSlots,"1")>0),CODE:{
 			[h:BackupResourceInfo = json.append(BackupResourceInfo,
 				json.set("",
 				"Name","1",
@@ -251,7 +251,7 @@
 				"TempEnoughResource",json.get(getProperty("a5e.stat.SpellSlots"),"1")>0))
 			]
 		};{}]
-		[h,if(pm.SpellLevelMin<=2 && pm.SpellLevelMax>=2 && json.get(getProperty("a5e.stat.MaxSpellSlots"),"2")>0),CODE:{
+		[h,if(pm.SpellLevelMin<=2 && pm.SpellLevelMax>=2 && json.get(a5e.stat.MaxSpellSlots,"2")>0),CODE:{
 			[h:BackupResourceInfo = json.append(BackupResourceInfo,
 				json.set("",
 				"Name","2",
@@ -260,7 +260,7 @@
 				"TempEnoughResource",json.get(getProperty("a5e.stat.SpellSlots"),"2")>0))
 			]
 		};{}]
-		[h,if(pm.SpellLevelMin<=3 && pm.SpellLevelMax>=3 && json.get(getProperty("a5e.stat.MaxSpellSlots"),"3")>0),CODE:{
+		[h,if(pm.SpellLevelMin<=3 && pm.SpellLevelMax>=3 && json.get(a5e.stat.MaxSpellSlots,"3")>0),CODE:{
 			[h:BackupResourceInfo = json.append(BackupResourceInfo,
 				json.set("",
 				"Name","3",
@@ -269,7 +269,7 @@
 				"TempEnoughResource",json.get(getProperty("a5e.stat.SpellSlots"),"3")>0))
 			]
 		};{}]
-		[h,if(pm.SpellLevelMin<=4 && pm.SpellLevelMax>=4 && json.get(getProperty("a5e.stat.MaxSpellSlots"),"4")>0),CODE:{
+		[h,if(pm.SpellLevelMin<=4 && pm.SpellLevelMax>=4 && json.get(a5e.stat.MaxSpellSlots,"4")>0),CODE:{
 			[h:BackupResourceInfo = json.append(BackupResourceInfo,
 				json.set("",
 				"Name","4",
@@ -278,7 +278,7 @@
 				"TempEnoughResource",json.get(getProperty("a5e.stat.SpellSlots"),"4")>0))
 			]
 		};{}]
-		[h,if(pm.SpellLevelMin<=5 && pm.SpellLevelMax>=5 && json.get(getProperty("a5e.stat.MaxSpellSlots"),"5")>0),CODE:{
+		[h,if(pm.SpellLevelMin<=5 && pm.SpellLevelMax>=5 && json.get(a5e.stat.MaxSpellSlots,"5")>0),CODE:{
 			[h:BackupResourceInfo = json.append(BackupResourceInfo,
 				json.set("",
 				"Name","5",
@@ -287,7 +287,7 @@
 				"TempEnoughResource",json.get(getProperty("a5e.stat.SpellSlots"),"5")>0))
 			]
 		};{}]
-		[h,if(pm.SpellLevelMin<=6 && pm.SpellLevelMax>=6 && json.get(getProperty("a5e.stat.MaxSpellSlots"),"6")>0),CODE:{
+		[h,if(pm.SpellLevelMin<=6 && pm.SpellLevelMax>=6 && json.get(a5e.stat.MaxSpellSlots,"6")>0),CODE:{
 			[h:BackupResourceInfo = json.append(BackupResourceInfo,
 				json.set("",
 				"Name","6",
@@ -296,7 +296,7 @@
 				"TempEnoughResource",json.get(getProperty("a5e.stat.SpellSlots"),"6")>0))
 			]
 		};{}]
-		[h,if(pm.SpellLevelMin<=7 && pm.SpellLevelMax>=7 && json.get(getProperty("a5e.stat.MaxSpellSlots"),"7")>0),CODE:{
+		[h,if(pm.SpellLevelMin<=7 && pm.SpellLevelMax>=7 && json.get(a5e.stat.MaxSpellSlots,"7")>0),CODE:{
 			[h:BackupResourceInfo = json.append(BackupResourceInfo,
 				json.set("",
 				"Name","7",
@@ -305,7 +305,7 @@
 				"TempEnoughResource",json.get(getProperty("a5e.stat.SpellSlots"),"7")>0))
 			]
 		};{}]
-		[h,if(pm.SpellLevelMin<=8 && pm.SpellLevelMax>=8 && json.get(getProperty("a5e.stat.MaxSpellSlots"),"8")>0),CODE:{
+		[h,if(pm.SpellLevelMin<=8 && pm.SpellLevelMax>=8 && json.get(a5e.stat.MaxSpellSlots,"8")>0),CODE:{
 			[h:BackupResourceInfo = json.append(BackupResourceInfo,
 				json.set("",
 				"Name","8",
@@ -314,7 +314,7 @@
 				"TempEnoughResource",json.get(getProperty("a5e.stat.SpellSlots"),"8")>0))
 			]
 		};{}]
-		[h,if(pm.SpellLevelMin<=9 && pm.SpellLevelMax>=9 && json.get(getProperty("a5e.stat.MaxSpellSlots"),"9")>0),CODE:{
+		[h,if(pm.SpellLevelMin<=9 && pm.SpellLevelMax>=9 && json.get(a5e.stat.MaxSpellSlots,"9")>0),CODE:{
 			[h:BackupResourceInfo = json.append(BackupResourceInfo,
 				json.set("",
 				"Name","9",
@@ -335,7 +335,7 @@
 	case 1:{
 		[h:pm.HitDiceUsedMaxFinal = 0]
 		[h:pm.BackupHitDiceUsedMaxFinal = 0]
-		[h,if(json.get(getProperty("a5e.stat.MaxHitDice"),"1d6")>0),CODE:{
+		[h,if(json.get(a5e.stat.MaxHitDice,"1d6")>0),CODE:{
 			[h:ResourceInfo = json.append(ResourceInfo,
 				json.set("",
 				"Name","6",
@@ -345,7 +345,7 @@
 			]
 			[h:pm.HitDiceUsedMaxFinal = max(pm.HitDiceUsedMaxFinal,min(pm.HitDiceUsedMax,json.get(getProperty("a5e.stat.HitDice"),"1d6")))]
 		};{}]
-		[h,if(json.get(getProperty("a5e.stat.MaxHitDice"),"1d8")>0),CODE:{
+		[h,if(json.get(a5e.stat.MaxHitDice,"1d8")>0),CODE:{
 			[h:ResourceInfo = json.append(ResourceInfo,
 				json.set("",
 				"Name","8",
@@ -355,7 +355,7 @@
 			]
 			[h:pm.HitDiceUsedMaxFinal = max(pm.HitDiceUsedMaxFinal,min(pm.HitDiceUsedMax,json.get(getProperty("a5e.stat.HitDice"),"1d8")))]
 		};{}]
-		[h,if(json.get(getProperty("a5e.stat.MaxHitDice"),"1d10")>0),CODE:{
+		[h,if(json.get(a5e.stat.MaxHitDice,"1d10")>0),CODE:{
 			[h:ResourceInfo = json.append(ResourceInfo,
 				json.set("",
 				"Name","10",
@@ -365,7 +365,7 @@
 			]
 			[h:pm.HitDiceUsedMaxFinal = max(pm.HitDiceUsedMaxFinal,min(pm.HitDiceUsedMax,json.get(getProperty("a5e.stat.HitDice"),"1d10")))]
 		};{}]
-		[h,if(json.get(getProperty("a5e.stat.MaxHitDice"),"1d12")>0),CODE:{
+		[h,if(json.get(a5e.stat.MaxHitDice,"1d12")>0),CODE:{
 			[h:ResourceInfo = json.append(ResourceInfo,
 				json.set("",
 				"Name","1d12",
@@ -379,7 +379,7 @@
 	case 2:{
 		[h:pm.HitDiceUsedMaxFinal = 0]
 		[h:pm.BackupHitDiceUsedMaxFinal = 0]
-		[h,if(json.get(getProperty("a5e.stat.MaxHitDice"),"1d6")>0),CODE:{
+		[h,if(json.get(a5e.stat.MaxHitDice,"1d6")>0),CODE:{
 			[h:BackupResourceInfo = json.append(BackupResourceInfo,
 				json.set("",
 				"Name","6",
@@ -389,7 +389,7 @@
 			]
 			[h:pm.BackupHitDiceUsedMaxFinal = max(pm.BackupHitDiceUsedMaxFinal,min(pm.HitDiceUsedMax,json.get(getProperty("a5e.stat.HitDice"),"1d6")))]
 		};{}]
-		[h,if(json.get(getProperty("a5e.stat.MaxHitDice"),"1d8")>0),CODE:{
+		[h,if(json.get(a5e.stat.MaxHitDice,"1d8")>0),CODE:{
 			[h:BackupResourceInfo = json.append(BackupResourceInfo,
 				json.set("",
 				"Name","8",
@@ -399,7 +399,7 @@
 			]
 			[h:pm.BackupHitDiceUsedMaxFinal = max(pm.BackupHitDiceUsedMaxFinal,min(pm.HitDiceUsedMax,json.get(getProperty("a5e.stat.HitDice"),"1d8")))]
 		};{}]
-		[h,if(json.get(getProperty("a5e.stat.MaxHitDice"),"1d10")>0),CODE:{
+		[h,if(json.get(a5e.stat.MaxHitDice,"1d10")>0),CODE:{
 			[h:BackupResourceInfo = json.append(BackupResourceInfo,
 				json.set("",
 				"Name","10",
@@ -409,7 +409,7 @@
 			]
 			[h:pm.BackupHitDiceUsedMaxFinal = max(pm.BackupHitDiceUsedMaxFinal,min(pm.HitDiceUsedMax,json.get(getProperty("a5e.stat.HitDice"),"1d10")))]
 		};{}]
-		[h,if(json.get(getProperty("a5e.stat.MaxHitDice"),"1d12")>0),CODE:{
+		[h,if(json.get(a5e.stat.MaxHitDice,"1d12")>0),CODE:{
 			[h:BackupResourceInfo = json.append(BackupResourceInfo,
 				json.set("",
 				"Name","1d12",

@@ -1,12 +1,9 @@
-[h:pass.abilityName=pm.RemoveSpecial(pass.abilityName)]
-[h:pass.abilitySubclass=pm.RemoveSpecial(pass.abilitySubclass)]
+[h:pass.abilityName = pm.RemoveSpecial(pass.abilityName)]
+[h:pass.abilitySubclass = pm.RemoveSpecial(pass.abilitySubclass)]
 [h:pass.Context = arg(0)]
-[h:pass.DisplayArray = json.path.read(getProperty("a5e.stat.AllFeatures"),"[?(@.Name=='"+pass.abilityName+"' && @.Class=='"+pass.abilityClass+"' && @.Subclass=='"+pass.AbilitySubclass+"')]['Settings']")]
-[h,if(pass.DisplayArray == "[]"),CODE:{
-	[h:pass.DisplayObject = "{}"]
-};{
-	[h:pass.DisplayObject = json.get(DisplayArray,0)]
-}]
+[h:pass.FeatureInfo = json.get(json.path.read(getProperty("a5e.stat.AllFeatures"),"[*][?(@.Name=='"+pass.abilityName+"' && @.Class=='"+pass.abilityClass+"' && @.Subclass=='"+pass.AbilitySubclass+"')]"),0)]
+[h:pass.DisplayObject = json.get(pass.FeatureInfo,"Settings")]
+[h,if(pass.DisplayObject == ""): pass.DisplayObject = "{}"]
 
 [h:pass.Flavor=json.get(pass.DisplayObject,"Flavor")]
 [h:pass.DMOnly=if(json.get(pass.DisplayObject,"DMOnly")=="",if(getProperty("a5e.stat.Allegiance")=="Enemy",min(number(getLibProperty("HideEnemyMacros","Lib:pm.a5e.Core")),1),if(getProperty("a5e.stat.Allegiance")=="Ally",min(number(getLibProperty("HideAllyMacros","Lib:pm.a5e.Core")),1),0)),json.get(pass.DisplayObject,"DMOnly"))]
@@ -24,7 +21,7 @@
 [h:pass.ForcedSummonHandout=json.get(pass.DisplayObject,"ForcedSummonHandout")]
 [h:pass.ShowFullRules=if(IsTooltip,1,if(pass.ShowFullRulesOverride=="",if(number(getLibProperty("ChatIndividual","Lib:pm.a5e.Core")),getProperty("a5e.stat.FullAbilityRules"),getLibProperty("FullAbilityRules","Lib:pm.a5e.Core")),pass.ShowFullRulesOverride))]
 
-[h:pass.abilityInfo=json.set("",
+[h:pass.abilityInfo = json.set("",
 	"Name",pass.abilityName,
 	"Class",pass.abilityClass,
 	"Subclass",pass.abilitySubclass,
@@ -39,10 +36,10 @@
 )]
 
 [h:pass.abilityLevel = pm.GetAbilityLevel(pass.abilityInfo)]
-[h:pass.abilityInfo=json.set(pass.abilityInfo,
+[h:pass.abilityInfo = json.set(pass.abilityInfo,
 	"Level",pass.abilityLevel,
 	"Library",ability.json.get(pass.abilityInfo,"Library","",ParentToken)
-	)]
+)]
 
 [h:pass.SummonCustomization = json.set("",
 	"Name",pass.ForcedSummonName,

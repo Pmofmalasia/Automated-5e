@@ -88,7 +88,7 @@
 [h:state.Bloodied=if(getProperty("a5e.stat.HP")/getProperty("a5e.stat.MaxHP") <= 0.5, 1, 0)]
 [h:bar.Health = getProperty("a5e.stat.HP") / getProperty("a5e.stat.MaxHP")]
 
-[h:getProperty("a5e.stat.DeathSaves",json.set("", "Successes",0,"Failures",0))]
+[h:setProperty("a5e.stat.DeathSaves",json.set("","Successes",0,"Failures",0))]
 
 [h:ClassFeatureData = json.set("",
 	"Flavor",Flavor,

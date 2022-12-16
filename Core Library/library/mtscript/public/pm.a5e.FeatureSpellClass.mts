@@ -1,8 +1,25 @@
-[h,if(argCount()>0),CODE:{
-	[h:pass.CastingClass = json.get(arg(0),"Class")]
-};{
-	[h:pass.CastingClass = pass.abilityClass]
-	[h:pass.CastingLevel = pass.abilityLevel]
-}]
+[h,if(argCount()>1):
+	tempCastingClass = json.get(arg(1),"Class");
+	tempCastingClass = "Use_Feature_Data"
+]
+[h:pm.a5e.FeatureComponentStdVars(arg(0))]
 
-[h:ClassOptionsArray = if(and(json.get(sList,pass.CastingClass)>0,pass.CastingLevel>=json.get(sList,pass.CastingClass)),json.append(ClassOptionsArray,pass.abilityInfo),ClassOptionsArray)]
+[h:currentFeatureCastingLevel = ceiling((currentFeatureLevel*json.get(pass.FeatureInfo,"CasterType"))/2)]
+
+[h:currentFeatureSpellsAlwaysActive = json.get(pass.FeatureInfo,"SpellsAlwaysActive")]
+[h,if(currentFeatureSpellsAlwaysActive == ""): currentFeatureSpellsAlwaysActive = "[]"]
+[h:tempSpellsSelected = json.get(pass.FeatureInfo,"SpellsSelected")]
+[h,if(tempSpellsSelected == ""),CODE:{
+	[h:currentFeatureSpellsSelected = "[]"]
+};{
+	[h:currentFeatureSpellsSelected = "[]"]
+	[h,foreach(spellGroup,tempSpellsSelected): currentFeatureSpellsSelected = json.merge(currentFeatureSpellsSelected,spellGroup)]
+}]
+[h:isCastingClass = json.contains(json.merge(currentFeatureSpellsAlwaysActive,currentFeatureSpellsSelected),SpellName)]
+
+[h,if(isCastingClass),CODE:{
+	[h,if(tempCastingClass=="Use_Feature_Data"):
+		ClassOptionsArray = json.append(ClassOptionsArray,pass.FeatureInfo);
+		ClassOptionsArray = json.append(ClassOptionsArray,tempCastingClass)
+	]
+};{}]

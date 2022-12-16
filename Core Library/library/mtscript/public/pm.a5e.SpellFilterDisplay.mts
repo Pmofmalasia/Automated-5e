@@ -2,9 +2,9 @@
 [h:SpellFilterParameters = arg(0)]
 [h:ClassFilter = json.get(SpellFilterParameters,"Class")]
 [h:SchoolFilter = json.get(SpellFilterParameters,"School")]
-[h:LevelBasedLevelMax = json.get(SpellFilterParameters,"LevelBasedMax")]
-[h:LevelMaxFilter = json.get(SpellFilterParameters,"LevelMax")]
-[h:LevelMinFilter = json.get(SpellFilterParameters,"LevelMin")]
+[h:LevelBasedMaxLevel = json.get(SpellFilterParameters,"LevelBasedMax")]
+[h:MaxLevelFilter = json.get(SpellFilterParameters,"MaxLevel")]
+[h:MinLevelFilter = json.get(SpellFilterParameters,"MinLevel")]
 [h:CastTimeFilter = json.get(SpellFilterParameters,"Time")]
 [h:RitualFilter = json.get(SpellFilterParameters,"Ritual")]
 
@@ -32,9 +32,9 @@
     default:{[h:SchoolFilterDescription = ""]}
 ]
 
-[h,if(LevelBasedLevelMax == ""): LevelBasedLevelMax = 9]
-[h,if(LevelMinFilter==""): MinSpellLevel = 0; MinSpellLevel = LevelMinFilter]
-[h,if(LevelMaxFilter==""): MaxSpellLevel = LevelBasedLevelMax; MaxSpellLevel = min(LevelMaxFilter,LevelBasedLevelMax)]
+[h,if(LevelBasedMaxLevel == ""): LevelBasedMaxLevel = 9]
+[h,if(MinLevelFilter==""): MinSpellLevel = 0; MinSpellLevel = MinLevelFilter]
+[h,if(MaxLevelFilter==""): MaxSpellLevel = LevelBasedMaxLevel; MaxSpellLevel = min(MaxLevelFilter,LevelBasedMaxLevel)]
 
 [h:LevelFilterDescription = "Spell"]
 [h:LevelFilterDescriptionPreClass = ""]
@@ -46,7 +46,7 @@
     [h:LevelFilterDescriptionPreClass = ""]
     [h:LevelFilterDescription = "Cantrip"]
 };{
-    [h,if(MinSpellLevel != 1 && MaxSpellLevel != LevelBasedLevelMax && MaxSpellLevel != MinSpellLevel),CODE:{
+    [h,if(MinSpellLevel != 1 && MaxSpellLevel != LevelBasedMaxLevel && MaxSpellLevel != MinSpellLevel),CODE:{
         [h:LevelFilterDescriptionPreClass = "Level "+MinSpellLevel+" - "+MaxSpellLevel+" "]
         [h:LevelFilterDescription = "Spell"]
     };{}]

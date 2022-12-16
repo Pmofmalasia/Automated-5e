@@ -383,36 +383,39 @@
 };{}]
 
 [h,if(ab.Spells),CODE:{
-[h:abort(input(
-	" junkVar | Choose aspects of spells affected | 0 | LABEL | SPAN=TRUE ",
-	" junkVar | ------------------------------------------------------------ | 0 | LABEL | SPAN=TRUE ",
+	[h:abort(input(
+		" junkVar | Choose aspects of spells affected | 0 | LABEL | SPAN=TRUE ",
+		" junkVar | ------------------------------------------------------------ | 0 | LABEL | SPAN=TRUE ",
 
-	" ab.SpellClass | No,Chosen on Level Up,Chosen through Button | <html><span title='Intended for abilities like Domain spells or Arcane Trickster. Effects that use their own resources and cannot use spell slots are intended to operate through a separate mechanism (e.g. NOT for Monk - Way of the Four Elements)'>Allows hardcast use of spells from outside of the regular class list</span></html> | CHECK ",	" ab.SpellParams | 0 | <html><span title='e.g. Duration, range, components, but can also extend to things like if a spell deals half damage on a successful save (Evocation Wizard - Potent Cantrip)'>Affects general parameters of the spell </span></html>| LIST ",	" ab.SpellOptions | 0 | <html><span title='e.g. Evocation Wizard - Overchannel, Sorcerer - Metamagic'>Has an optional effect which must be chosen when cast</span></html>| CHECK ",
-	" ab.SpellStat | 0 | Modifies Spell Primary Stat | CHECK ",
-	" junkVar | ------------------------------------------------------------ | 0 | LABEL | SPAN=TRUE ",
-	" ab.SpellAdv | 0 | Grants (Dis)Advantage on Spell Attacks | CHECK ",
-	" ab.SpellBonus | 0 | Grants Bonus to Spell Attack Rolls | CHECK ",
-	" ab.SpellCritThresh | 0 | Affects Spell Critical Hit Threshhold | CHECK ",
-	" ab.SpellCrit | 0 | <html><span title='See &#39;Event occurs after spells&#39; below, but triggers only on critical hits.'>Effect occurs after critical hits</span></html> | CHECK ",
-	" junkVar | ------------------------------------------------------------ | 0 | LABEL | SPAN=TRUE ",
-	" ab.SpellDamage | 0 | <html><span title='Use for effects that grant a damage bonus based on the damage of the spell. (e.g. Cleric - Disciple of Life, Potent Spellcasting) For effects that grant damage independent of the spell&#39;s damage type, use effect after attack or after each attack (whichever is appropriate)'>Grants Flat Bonus to Spell Damage or Healing</span></html> | CHECK ",
-	" ab.SpellRoll | 0 | <html><span title='Effects that change the value of the die, adding dice to the roll, using max damage, etc. (e.g. Elemental Adept feat setting 1s to 2s, Life Cleric - Supreme Healing)'>Modifies dice rolled for weapon damage</span></html> | CHECK ",
-	" junkVar | ------------------------------------------------------------ | 0 | LABEL | SPAN=TRUE ",
-	" ab.AfterSpell | 0 | <html><span title='Catch-all for effects that operate independently of the spell itself. Can deal damage, force saving throws, force a condition upon an enemy, just display a message, and more. Can still have conditions for types of spells they are triggered by. (e.g. Cleric - Divine Strike, Enchantment Wizard - Alter Memories, Cant find a PHB example, and Eldritch Knight - War Magic, respectively)'>Effect occurs after attacks</span></html> | CHECK "
-))]
-[h:ab.Final = json.set(ab.Final,
-	"CallSpellParams",ab.SpellParams,
-	"CallSpellOptions",ab.SpellOptions,
-	"CallSpellStat",ab.SpellStat,
-	"CallSpellAdv",ab.SpellAdv,
-	"CallSpellBonus",ab.SpellBonus,
-	"CallSpellCritThresh",ab.SpellCritThresh,
-	"CallSpellCrit",ab.SpellCrit
-	"CallSpellDamage",ab.SpellDamage,
-	"CallSpellRoll",ab.SpellRoll,
-	"CallAfterSpell",ab.AfterSpell
-)]
-};{[h:ab.SpellClass=0]}]
+		" ab.SpellClass | No,Chosen on Level Up,Chosen through Button | <html><span title='Intended for abilities like Domain spells or Arcane Trickster. Effects that use their own resources and cannot use spell slots are intended to operate through a separate mechanism (e.g. NOT for Monk - Way of the Four Elements)'>Allows hardcast use of spells from outside of the regular class list</span></html> | CHECK ",	" ab.SpellParams | 0 | <html><span title='e.g. Duration, range, components, but can also extend to things like if a spell deals half damage on a successful save (Evocation Wizard - Potent Cantrip)'>Affects general parameters of the spell </span></html>| LIST ",
+		" ab.SpellOptions | 0 | <html><span title='e.g. Evocation Wizard - Overchannel, Sorcerer - Metamagic'>Has an optional effect which must be chosen when cast</span></html>| CHECK ",
+		" ab.SpellStat | 0 | Modifies Spell Primary Stat | CHECK ",
+		" junkVar | ------------------------------------------------------------ | 0 | LABEL | SPAN=TRUE ",
+		" ab.SpellAdv | 0 | Grants (Dis)Advantage on Spell Attacks | CHECK ",
+		" ab.SpellBonus | 0 | Grants Bonus to Spell Attack Rolls | CHECK ",
+		" ab.SpellCritThresh | 0 | Affects Spell Critical Hit Threshhold | CHECK ",
+		" ab.SpellCrit | 0 | <html><span title='See &#39;Event occurs after spells&#39; below, but triggers only on critical hits.'>Effect occurs after critical hits</span></html> | CHECK ",
+		" junkVar | ------------------------------------------------------------ | 0 | LABEL | SPAN=TRUE ",
+		" ab.SpellDamage | 0 | <html><span title='Use for effects that grant a damage bonus based on the damage of the spell. (e.g. Cleric - Disciple of Life, Potent Spellcasting) For effects that grant damage independent of the spell&#39;s damage type, use effect after attack or after each attack (whichever is appropriate)'>Grants Flat Bonus to Spell Damage or Healing</span></html> | CHECK ",
+		" ab.SpellRoll | 0 | <html><span title='Effects that change the value of the die, adding dice to the roll, using max damage, etc. (e.g. Elemental Adept feat setting 1s to 2s, Life Cleric - Supreme Healing)'>Modifies dice rolled for weapon damage</span></html> | CHECK ",
+		" junkVar | ------------------------------------------------------------ | 0 | LABEL | SPAN=TRUE ",
+		" ab.AfterSpell | 0 | <html><span title='Catch-all for effects that operate independently of the spell itself. Can deal damage, force saving throws, force a condition upon an enemy, just display a message, and more. Can still have conditions for types of spells they are triggered by. (e.g. Cleric - Divine Strike, Enchantment Wizard - Alter Memories, Cant find a PHB example, and Eldritch Knight - War Magic, respectively)'>Effect occurs after attacks</span></html> | CHECK "
+	))]
+	[h:ab.Final = json.set(ab.Final,
+		"CallSpellParams",ab.SpellParams,
+		"CallSpellOptions",ab.SpellOptions,
+		"CallSpellStat",ab.SpellStat,
+		"CallSpellAdv",ab.SpellAdv,
+		"CallSpellBonus",ab.SpellBonus,
+		"CallSpellCritThresh",ab.SpellCritThresh,
+		"CallSpellCrit",ab.SpellCrit
+		"CallSpellDamage",ab.SpellDamage,
+		"CallSpellRoll",ab.SpellRoll,
+		"CallAfterSpell",ab.AfterSpell
+	)]
+};{
+	[h:ab.SpellClass=0]
+}]
 
 [h,if(ab.SpellClass>0),CODE:{
 	[h:ab.SpellList = ""]
@@ -425,24 +428,24 @@
 			ab.disCurrentSpells,
 			ab.disCurrentSpellsBars,
 			" ab.SpellClass | 1 | Add another spell | CHECK "
-			))]
-		[h:ab.SpellList = json.append(ab.SpellList,ab.TempSpellName)]
+		))]
+		[h:ab.SpellList = json.append(ab.SpellList,pm.RemoveSpecial(ab.TempSpellName))]
 		[h:ab.disCurrentSpells = listAppend(ab.disCurrentSpells," junkVar | "+ab.TempSpellName+" |  | LABEL | SPAN = TRUE ","##")]
 	}]
 	[h:ab.Final = json.set(ab.Final,"SpellList",ab.SpellList,"CallSpellClass",1)]
 };{}]
 
 [h,if(ab.Damaged),CODE:{
-[h:abort(input(
-	" junkVar | Choose triggers for an ability after taking damage | 0 | LABEL | SPAN=TRUE ",
-	" junkVar | ------------------------------------------------------------ | 0 | LABEL | SPAN=TRUE ",
-	" ab.AfterDamage | 0 | Triggers after taking damage | CHECK ",
-	" ab.TempHPLost | 0 | <html><span title='Mostly for abilities that end when Temp HP is lost'>Triggers when losing all Temporary Hit Points</span></html> | CHECK "
-))]
-[h:ab.Final = json.set(ab.Final,
-	"CallAfterDamaged",ab.AfterDamage,
-	"CallTempHPLost",ab.TempHPLost
-)]
+	[h:abort(input(
+		" junkVar | Choose triggers for an ability after taking damage | 0 | LABEL | SPAN=TRUE ",
+		" junkVar | ------------------------------------------------------------ | 0 | LABEL | SPAN=TRUE ",
+		" ab.AfterDamage | 0 | Triggers after taking damage | CHECK ",
+		" ab.TempHPLost | 0 | <html><span title='Mostly for abilities that end when Temp HP is lost'>Triggers when losing all Temporary Hit Points</span></html> | CHECK "
+	))]
+	[h:ab.Final = json.set(ab.Final,
+		"CallAfterDamaged",ab.AfterDamage,
+		"CallTempHPLost",ab.TempHPLost
+	)]
 };{}]
 
 [h,if(ab.Rest),CODE:{

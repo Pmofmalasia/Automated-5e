@@ -1,15 +1,15 @@
 [h:SpellFilterData = arg(0)]
 [h:InitialSpellList = json.get(SpellFilterData,"List")]
 [h,if(InitialSpellList == ""): InitialSpellList = getLibProperty("sb.Spells","Lib:pm.a5e.Core")]
-[h:SpellFilterParameters = json.get(SpellFilterData,"Parameters")]
+[h:SpellFilter = json.get(SpellFilterData,"Filter")]
 
-[h:ClassFilter = json.get(SpellFilterParameters,"Class")]
-[h:SchoolFilter = json.get(SpellFilterParameters,"School")]
-[h:LevelBasedLevelMax = json.get(SpellFilterParameters,"LevelBasedLevelMax")]
-[h:LevelMaxFilter = json.get(SpellFilterParameters,"LevelMax")]
-[h:LevelMinFilter = json.get(SpellFilterParameters,"LevelMin")]
-[h:CastTimeFilter = json.get(SpellFilterParameters,"Time")]
-[h:RitualFilter = json.get(SpellFilterParameters,"Ritual")]
+[h:ClassFilter = json.get(SpellFilter,"Class")]
+[h:SchoolFilter = json.get(SpellFilter,"School")]
+[h:LevelBasedMaxLevel = json.get(SpellFilter,"LevelBasedMaxLevel")]
+[h:MaxLevelFilter = json.get(SpellFilter,"MaxLevel")]
+[h:MinLevelFilter = json.get(SpellFilter,"MinLevel")]
+[h:CastTimeFilter = json.get(SpellFilter,"Time")]
+[h:RitualFilter = json.get(SpellFilter,"Ritual")]
 
 [h:SpellFilterString = ""]
 
@@ -33,18 +33,19 @@
     default:{}
 ]
 
-[h,if(LevelBasedLevelMax == ""): LevelBasedLevelMax = 9]
-[h,if(LevelMaxFilter==""),CODE:{
-    [h:MaxSpellLevel = LevelBasedLevelMax]
+[h,if(LevelBasedMaxLevel == ""): LevelBasedMaxLevel = 9]
+[h,if(MaxLevelFilter==""),CODE:{
+    [h:MaxSpellLevel = LevelBasedMaxLevel]
 };{
-    [h:MaxSpellLevel = min(LevelMaxFilter,LevelBasedLevelMax)]
-    [h:SpellFilterString = listAppend(SpellFilterString,"@.Level <= "+MaxSpellLevel," && ")]
+    [h:MaxSpellLevel = min(MaxLevelFilter,LevelBasedMaxLevel)]
 }]
+[h:SpellFilterString = listAppend(SpellFilterString,"@.Level <= "+MaxSpellLevel," && ")]
 
-[h,if(LevelMinFilter==""),CODE:{
+
+[h,if(MinLevelFilter==""),CODE:{
     [h:MinSpellLevel = 0]
 };{
-    [h:MinSpellLevel = LevelMinFilter]
+    [h:MinSpellLevel = MinLevelFilter]
     [h:SpellFilterString = listAppend(SpellFilterString,"@.Level >= "+MinSpellLevel," && ")]
 }]
 
@@ -69,7 +70,7 @@
     default:{}
 ]
 
-[h:FinalFilterDescription = pm.a5e.SpellFilterDisplay(SpellFilterParameters)]
+[h:FinalFilterDescription = pm.a5e.SpellFilterDisplay(SpellFilter)]
 [h:FinalSpellList = json.path.read(InitialSpellList,"[*][?("+SpellFilterString+")]")]
 
 [h:ReturnData = json.set("","SpellList",FinalSpellList,"Description",FinalFilterDescription)]

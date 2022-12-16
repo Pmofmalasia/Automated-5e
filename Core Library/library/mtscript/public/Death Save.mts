@@ -53,11 +53,11 @@
 	}]
 	
 	[h:DeathMessage = "Successes: <b><span style='font-size:2em; color:"+HealingColor+"'>"+json.get(getProperty("a5e.stat.DeathSaves"),"Successes")+"</span></b> / Failures: <b><span style='font-size:2em; color:"+DamageColor+"'>"+json.get(getProperty("a5e.stat.DeathSaves"),"Failures")+"</span></b>"]
-	[h,if(json.get(getProperty("a5e.stat.DeathSaves"),"Failures")==3),CODE:{
+	[h,if(json.get(a5e.stat.DeathSaves,"Failures")==3),CODE:{
 		[h:DeathMessage = "Failures: <b><span style='font-size:2em; color:"+DamageColor+"'>"+json.get(getProperty("a5e.stat.DeathSaves"),"Failures")+"</span></b>"]
 		[h:setState("Dead",1)]
 	};{}]
-	[h,if(json.get(getProperty("a5e.stat.DeathSaves"),"Successes")==3),CODE:{
+	[h,if(json.get(a5e.stat.DeathSaves,"Successes")==3),CODE:{
 		[h:DeathMessage = "Successes: <b><span style='font-size:2em; color:"+HealingColor+"'>"+json.get(getProperty("a5e.stat.DeathSaves"),"Successes")+"</span></b>"]
 		[h:setState("Dying",0)]
 	};{}]

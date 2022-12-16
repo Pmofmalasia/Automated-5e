@@ -11,7 +11,6 @@
 [h:SpellSource = json.get(NonSpellData,"SpellSource")]
 [h:InnateCast = json.get(NonSpellData,"InnateCast")]
 [h:MonsterCast = json.get(NonSpellData,"MonsterCast")]
-[h:NeedsBorder = if(json.get(NonSpellData,"NeedsBorder")=="",1,json.get(NonSpellData,"NeedsBorder"))]
 [h:ForcedSummonName = json.get(NonSpellData,"ForcedSummonName")]
 [h:ForcedImage = json.get(NonSpellData,"ForcedImage")]
 [h:ForcedPortrait = json.get(NonSpellData,"ForcedPortrait")]
@@ -174,7 +173,7 @@
 			"junk|<-- Link to Compendium|<html>"+CompendiumLink+"</html>|LABEL",
 			dissConcentration,
 			disIsSilenced,
-			"junkVar|"+SpellName+" ("+SpellLevel+") "+School+"|Spell|LABEL",
+			"junkVar|"+SpellDisplayName+" ("+SpellLevel+") "+School+"|Spell|LABEL",
 			disSpellClassSelect,
 			disSpellLevelSelect,
 			"sRulesShow| "+(getLibProperty("FullSpellRules","Lib:pm.a5e.Core"))+" |Show Full Spell Rules|CHECK|",

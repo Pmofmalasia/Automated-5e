@@ -3,7 +3,7 @@
 
 [h:ShieldEquipped=json.get(getProperty("a5e.stat.Shield"),0)]
 [h:ShieldList="None,"]
-[h,count(json.length(getProperty("a5e.stat.Shield"))),code:{
+[h,count(json.length(a5e.stat.Shield)),code:{
 	[if(roll.count>1),code:{
 		[ShieldList=ShieldList+json.get(json.get(getProperty("a5e.stat.Shield"),roll.count),"Name")+","]
 	};{}]
@@ -11,7 +11,7 @@
 
 [h:ArmorEquipped=json.get(getProperty("a5e.stat.Armor"),0)]
 [h:ArmorList="None,"]
-[h,count(json.length(getProperty("a5e.stat.Armor"))),code:{
+[h,count(json.length(a5e.stat.Armor)),code:{
 	[if(roll.count>1),code:{
 		[ArmorList=ArmorList+json.get(json.get(getProperty("a5e.stat.Armor"),roll.count),"Name")+","]
 	};{}]
@@ -20,7 +20,7 @@
 [h:MainHandEquipped=json.get(getProperty("a5e.stat.Weapon"),0)]
 [h:OffHandEquipped=json.get(getProperty("a5e.stat.Weapon"),1)]
 [h:WeaponList="None,"]
-[h,count(json.length(getProperty("a5e.stat.Weapon"))),code:{
+[h,count(json.length(a5e.stat.Weapon)),code:{
 	[if(roll.count>2),code:{
 		[WeaponList=WeaponList+json.get(json.get(getProperty("a5e.stat.Weapon"),roll.count),"Name")+","]
 	};{}]

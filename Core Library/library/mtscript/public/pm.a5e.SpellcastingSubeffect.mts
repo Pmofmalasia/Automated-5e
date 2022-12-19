@@ -212,7 +212,6 @@
 		[h:pm.PassiveFunction("SpellSaveDC")]
 	};{}]
 	
-	[h:broadcast(spell.ConditionEndInfo)]
 	[h,if(hasSaveDCTest): spell.ConditionEndInfo = json.path.put(spell.ConditionEndInfo,"['EndTriggers'][*][?(@.SaveType!=null)]","DC",spell.SaveDC)]
 
 	[h:"<!-- TODO: Fix to allow selection of AdvancePoint manually; Temporary solution for now -->"]

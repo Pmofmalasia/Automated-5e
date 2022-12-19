@@ -44,7 +44,7 @@
 [h:pm.a5e.SaveBonusTotal(d20Data)]
 
 [h:rollFormula = if(PrimeStat=="None",""," + "+substring(PrimeStat,0,3))+if(ProfTypeStr=="",""," + "+ProfTypeStr)+MiscBonusFormula]
-[h:rollString = pm.PlusMinus(AtrBonus,1)+pm.PlusMinus(ProfBonus,0)+if(MiscBonusStr=="",""," + "+MiscBonusStr)]
+[h:rollString = pm.PlusMinus(AtrBonus,1)+pm.PlusMinus(ProfBonus,0)+MiscBonusStr]
 
 [h,if(d20AdvantageBalance == 0),CODE:{
 	[h:"<!-- Will need to add concentration to the list, once the updated macro is made -->"]

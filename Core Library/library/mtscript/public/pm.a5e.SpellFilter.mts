@@ -14,7 +14,7 @@
 [h:SpellFilterString = ""]
 
 [h,switch(json.type(ClassFilter)),CODE:
-    case "Array":{
+    case "ARRAY":{
         [h:SpellFilterString = listAppend(SpellFilterString,"@.ClassesWithSpell.*.Class in "+ClassFilter," && ")]
     };
     case "UNKNOWN":{
@@ -24,7 +24,8 @@
 ]
 
 [h,switch(json.type(SchoolFilter)),CODE:
-    case "Array":{
+    case "ARRAY":{
+
         [h:SpellFilterString = listAppend(SpellFilterString,"@.School in "+SchoolFilter," && ")]
     };
     case "UNKNOWN":{
@@ -51,7 +52,7 @@
 
 [h:"<!-- TODO: Enable ability to make something like casting time less than 10 minutes, or specific time values (only value 1 currently) -->"]
 [h,switch(json.type(CastTimeFilter)),CODE:
-    case "Array":{
+    case "ARRAY":{
         [h:SpellFilterString = listAppend(SpellFilterString,"@.*.CastTime.Units in "+CastTimeFilter," && ")]
     };
     case "UNKNOWN":{

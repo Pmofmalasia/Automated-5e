@@ -24,11 +24,8 @@
 
 [h,if(PrimeStat=="None"): AtrBonus = 0; AtrBonus = json.get(getProperty("a5e.stat.AtrMods"),PrimeStat)]
 [h:MiscBonus = if(json.get(d20Data,"Bonus")=="",0,json.get(d20Data,"Bonus"))]
-[h:MiscBonusStr = json.get(d20Data,"Bonus")]
-[h,if(json.get(d20Data,"Bonus")==""): 
-	MiscBonusFormula = "";
-	MiscBonusFormula = pm.PlusMinus(json.get(d20Data,"Bonus"),0)
-]
+[h:MiscBonusStr = pm.PlusMinus(MiscBonus,0)]
+[h:MiscBonusFormula = pm.PlusMinus(MiscBonus,0)]
 
 [h:pm.PassiveFunction("SaveBonus")]
 

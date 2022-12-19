@@ -1,6 +1,6 @@
 [h:MonsterData = macro.args]
 [h:MonsterData = pm.a5e.KeyStringsToNumbers(MonsterData)]
-[h:ParentToken = json.get(macro.args,"ParentToken")]
+[h:ParentToken = json.get(MonsterData,"ParentToken")]
 [h:switchToken(ParentToken)]
 [h:closeDialog("Monster Creation")]
 
@@ -74,4 +74,4 @@
 [h,if(!isNumber(MonsterCR)): MonsterCR = eval(MonsterCR)]
 [h:setProperty("a5e.stat.CR",MonsterCR)]
 [h:setProperty("a5e.stat.XP",json.get(MonsterData,"XP"))]
-[h,MACRO("BaseSkillSelection@Lib:pm.a5e.Core"): json.set("","NextInput","MonsterSpellcastingCreation")]
+[h,MACRO("BaseSkillSelection@Lib:pm.a5e.Core"): json.set("","ParentToken",ParentToken)]

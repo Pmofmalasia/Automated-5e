@@ -12,10 +12,9 @@
 [h,foreach(tempSpell,NewSpells),CODE:{
 	[h:SpellData = pm.a5e.GetSpecificSpell(tempSpell)]
 	[h:MainSpellData = json.get(SpellData,0)]
-	[h:CastTimeUnits = json.get(json.get(MainSpellData,"CastTime"),"Units")]
-	[h:CastTimeValue = json.get(json.get(MainSpellData,"CastTime"),"Value")]
-	[h:pm.CastTimeNote = if(or(CastTimeUnits=="",lower(CastTimeUnits)=="action"),""," <b>("+CastTimeValue+" "+CastTimeUnits+")</b>")]
-	[h:pm.NewMacroLabel = json.get(MainSpellData,"DisplayName")+" ("+json.get(MainSpellData,"Level")+")"+pm.CastTimeNote]
+
+	[h,MACRO("CreateSpellMacroLabel@Lib:pm.a5e.Core"): tempSpell]
+	[h:pm.NewMacroLabel = macro.return]
 	[h:pm.NewMacroCommand = '[h:"<!-- Dont mess with these variables unless you know what they do -->"]
 [h:ForcedClass=""]
 [h:ForcedLevel=""]
@@ -87,7 +86,7 @@
 
 [h,MACRO("SpellcastingBorder@Lib:pm.a5e.Core"): FlavorData]']
 
-	[h:pm.NewMacroTooltip = '[h:Flavor=""][h:BorderColorOverride=""][h:TitleFontColorOverride=""][h:tooltipDisplaySizeOverride=""][h:TitleFont=""][h:BodyFont=""][h:ForcedClass=""][h:DMOnly=0][h:InnateCast=0][h:MonsterCast=0][h:placeholdToAdd=""][h:TooltipData = json.set("","Flavor",Flavor,"Spell","'+tempSpell+'","ParentToken",currentToken(),"BorderColorOverride",BorderColorOverride,"TitleFontColorOverride",TitleFontColorOverride,"tooltipDisplaySizeOverride",tooltipDisplaySizeOverride,"TitleFont",TitleFont,"BodyFont",BodyFont,"ForcedClass",ForcedClass,"DMOnly",DMOnly,"InnateCast",InnateCast,"MonsterCast",MonsterCast,"IsTooltip",1,"placeholdToAdd",placeholdToAdd)][h,MACRO("SpellTooltip@Lib:pm.a5e.Core"): TooltipData]']
+	[h:pm.NewMacroTooltip = '[h:Flavor=""][h:BorderColorOverride=""][h:TitleFontColorOverride=""][h:tooltipDisplaySizeOverride=""][h:TitleFont=""][h:BodyFont=""][h:ForcedClass=""][h:DMOnly=0][h:InnateCast=0][h:MonsterCast=0][h:placeholdToAdd=""][h:TooltipData = json.set("","Flavor",Flavor,"Spell","'+tempSpell+'","ParentToken",currentToken(),"BorderColorOverride",BorderColorOverride,"TitleFontColorOverride",TitleFontColorOverride,"tooltipDisplaySizeOverride",tooltipDisplaySizeOverride,"TitleFont",TitleFont,"BodyFont",BodyFont,"ForcedClass",ForcedClass,"DMOnly",DMOnly,"InnateCast",InnateCast,"MonsterCast",MonsterCast,"IsTooltip",1,"placeholdToAdd",placeholdToAdd)][h,MACRO("SpellTooltipBorder@Lib:pm.a5e.Core"): TooltipData]']
 
 	[h:"<!-- TODO: Source is temporarily set to Arcane permanently until Divine is implemented -->"]
 	[h:DefaultDisplayData = pm.SpellColors(json.set("","Level",string(json.get(MainSpellData,"Level")),"Source",MagicSource))]
@@ -115,12 +114,8 @@
 }]
 
 [h,foreach(tempSpell,OldSpells),CODE:{
-	[h:SpellData = pm.a5e.GetSpecificSpell(tempSpell)]
-	[h:MainSpellData = json.get(SpellData,0)]
-	[h:CastTimeUnits = json.get(json.get(MainSpellData,"CastTime"),"Units")]
-	[h:CastTimeValue = json.get(json.get(MainSpellData,"CastTime"),"Value")]
-	[h:pm.CastTimeNote = if(or(CastTimeUnits=="",lower(CastTimeUnits)=="action"),""," <b>("+CastTimeValue+" "+CastTimeUnits+")</b>")]
-	[h:OldMacroLabel = json.get(MainSpellData,"DisplayName")+" ("+json.get(MainSpellData,"Level")+")"+pm.CastTimeNote]
+	[h,MACRO("CreateSpellMacroLabel@Lib:pm.a5e.Core"): tempSpell]
+	[h:OldMacroLabel = macro.return]
 	
 	[h:OldMacroIndexes = getMacroIndexes(OldMacroLabel,"json")]
 	[h,foreach(index,OldMacroIndexes): removeMacro(index)]

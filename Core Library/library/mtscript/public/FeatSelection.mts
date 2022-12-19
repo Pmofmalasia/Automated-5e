@@ -9,7 +9,7 @@
 	[h,if(json.get(feat,"Prereqs")=="" || ft.UseRestrictions==0),CODE:{
 		[h:ft.Valid = json.append(ft.Valid,feat)]
 	};{
-		[h:pm.a5e.CheckFeaturePrereqs(json.get(feat,"Prereqs"))]
+		[h:pm.a5e.CheckFeaturePrereqs(json.set(json.get(feat,"Prereqs"),"ParentToken",ParentToken))]
 		[h:ft.Valid = if(macro.return,json.append(ft.Valid,feat),ft.Valid)]
 	}]
 }]

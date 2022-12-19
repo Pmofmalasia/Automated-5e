@@ -114,7 +114,7 @@
 	"DamageDieSize",wa.DmgDie2Size,
 	"DamageFlatBonus",0,
 	"IsModBonus",1
-)]
+))]
 
 [h:AllAttacksToHit = "[]"]
 [h:AllAttacksDmg = "[]"]

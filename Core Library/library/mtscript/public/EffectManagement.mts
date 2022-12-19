@@ -28,7 +28,8 @@
 [h:abort(input(
 	" junkVar | ------------------------------ All Incomplete Effects ------------------------------ | | LABEL | SPAN=TRUE ",
 	" resolveAllTest | No,Yes,No - Clear all effects | Resolve all effects at once? | RADIO ",
-	if(em.Options==""," junkVar | ---------------------------- There are no active effects! ---------------------------- |  | LABEL | SPAN=TRUE "," em.Choice | "+em.Options+" | Choose an effect to resolve | LIST | DELIMITER=JSON "),
+	if(em.Options==""," junkVar | ---------------------------- There are no active effects! ---------------------------- |  | LABEL | SPAN=TRUE ",
+	" em.Choice | "+em.Options+" | Choose an effect to resolve | LIST | DELIMITER=JSON "),
 	" resolveHow | No Modifications, With Modifications, Remove Effect | How do you want to resolve this effect? | LIST "
 ))]
 [h:abort(em.Choice!=-1)]

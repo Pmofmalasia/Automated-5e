@@ -173,6 +173,8 @@
 [h:defineFunction("pm.GetSpellSchools","pm.GetSpellSchools@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.GetSubclasses","pm.GetSubclasses@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.GetSubraces","pm.GetSubraces@Lib:pm.a5e.Core")]
+[h:defineFunction("pm.a5e.GetBaseSpellData","pm.a5e.GetBaseSpellData@Lib:pm.a5e.Core")]
+[h:defineFunction("pm.a5e.GetSpells","pm.a5e.GetSpells@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.GetTools","pm.GetTools@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.GetToolTypes","pm.GetToolTypes@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.GetLanguages","pm.GetLanguages@Lib:pm.a5e.Core")]

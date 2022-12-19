@@ -98,7 +98,7 @@
 			"RollContents","",
 			"DisplayOrder","['Rules','Roll','Full']",
 			"Value",json.get(ResourceRestoredFinal,tempResource)
-			))]
+		))]
 	};{
 		[h:ResourceRestoredFinal=(ResourceRestored+miResourceBonus)]
 		[h:abilityTable = json.append(abilityTable,json.set("",

@@ -7,16 +7,21 @@
 
 [h:incompleteEffects = getLibProperty("gd.Effects","Lib:pm.a5e.Core")]
 [h:em.TableLines = ""]
+[h:secureCounter = 0]
 [h,foreach(effect,incompleteEffects),CODE:{
 	[h,if(json.get(effect,"ToResolve")==""),CODE:{};{
-		[h:targetList = json.get(effect,"Targets")]
+		[h:tempTargetList = json.get(effect,"Targets")]
+		[h:targetList = json.path.delete(tempTargetList,"[?(@=='')]")]
+		[h:UnlistedTargetTest = json.length(tempTargetList) != json.length(targetList)]
 		[h:targetName = ""]
-		[h,switch(json.length(targetList)):
-			case 1: targetName = getName(json.get(targetList,0));
-			case 2: targetName = getName(json.get(targetList,0))+" and "+getName(json.get(targetList,1));
-			case 3: targetName = getName(json.get(targetList,0))+", "+getName(json.get(targetList,1))+", and "+getName(json.get(targetList,2));
-			default: targetName = "Multiple Targets"
-		]
+
+		[h:TargetNameArray = "[]"]
+		[h,foreach(tempTarget,targetList): TargetNameArray = json.append(TargetNameArray,if(json.get(effect,"ParentToken") == tempTarget,"Self",getName(tempTarget)))]
+
+		[h,if(UnlistedTargetTest): TargetNameArray = json.append(TargetNameArray,"Unspecified Target")]
+
+		[h:targetName = pm.a5e.CreateDisplayList(TargetNameArray,"and")]
+		[h,if(length(targetName) > 40): targetName = "Multiple Targets"]
 		
 		[h,if(json.get(effect,"ParentToken")==""):
 			parentName = "World";
@@ -28,11 +33,13 @@
 		[h,if(json.get(effectsToResolve,"SaveDC")!=""): em.SecondPassDisplay = if(!json.isEmpty(json.get(json.get(effectsToResolve,"SaveDC"),"SavesMade")),listAppend(em.SecondPassDisplay,"Saves"),em.SecondPassDisplay)]
 		[h:em.SecondPassDisplay = pm.a5e.CreateDisplayList(em.SecondPassDisplay,"and")]
 		[h,if(em.SecondPassDisplay!=""): em.SecondPassDisplay = ": "+em.SecondPassDisplay+" Made"]
-		
-		[h:em.EffectDisplay = parentName+" vs. "+targetName+em.SecondPassDisplay]
 
-		[h:em.TableLines = em.TableLines + "<tr><th style = '"+FrameAccentFormat+"'>"+em.EffectDisplay+"</th><td style='padding-left:4px'><input type='button' onclick='doEffect("+json.set("","Effect",roll.count,"ResolveHow","NoMod","DisplayName",em.EffectDisplay)+")' value='Resolve Effect'></td><td style='padding-left:4px'><input type='button' onclick='doEffect("+json.set("","Effect",roll.count,"ResolveHow","Mods","DisplayName",em.EffectDisplay)+")' value='With Modifications'></td><td style='padding-left:4px'><input type='button' onclick='doEffect("+json.set("","Effect",roll.count,"ResolveHow","Remove","DisplayName",em.EffectDisplay)+")' value='Remove Effect'></td></tr>"]
+		[h:InvolvedTokensDisplay = if(targetName=="Self",parentName+" (self)",parentName+" vs. "+targetName)]
+		[h:em.EffectDisplay = InvolvedTokensDisplay+em.SecondPassDisplay]
+
+		[h:em.TableLines = em.TableLines + "<tr><th style = '"+FrameAccentFormat+"'>"+em.EffectDisplay+"</th><td style='padding-left:4px'><input type='button' onclick='doEffect("+json.set("","Effect",secureCounter,"ResolveHow","NoMod","DisplayName",em.EffectDisplay)+")' value='Resolve Effect'></td><td style='padding-left:4px'><input type='button' onclick='doEffect("+json.set("","Effect",secureCounter,"ResolveHow","Mods","DisplayName",em.EffectDisplay)+")' value='With Modifications'></td><td style='padding-left:4px'><input type='button' onclick='doEffect("+json.set("","Effect",secureCounter,"ResolveHow","Remove","DisplayName",em.EffectDisplay)+")' value='Remove Effect'></td></tr>"]
 	}]
+	[h:secureCounter = secureCounter + 1]
 }]
 
 [h:html.frame5("Effect Management", "lib://pm.a5e.core/ManageEffectsFrame.html", "value="+base64.encode(em.TableLines))]

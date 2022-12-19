@@ -8,28 +8,30 @@
 [h:CastTimeFilter = json.get(SpellFilterParameters,"Time")]
 [h:RitualFilter = json.get(SpellFilterParameters,"Ritual")]
 
+[h:ClassFilterDescription = ""]
 [h,switch(json.type(ClassFilter)),CODE:
-    case "Array":{
+    case "ARRAY":{
         [h:ClassDisplayNames = ""]
-        [h,foreach(tempClass,ClassFilter): ClassDisplayNames = json.append(ClassDisplayNames,pm.GetDisplayName(tempClass,"sb.Class"))]
+        [h,foreach(tempClass,ClassFilter): ClassDisplayNames = json.append(ClassDisplayNames,pm.GetDisplayName(tempClass,"sb.Classes"))]
         [h:ClassFilterDescription = pm.a5e.CreateDisplayList(ClassDisplayNames,"or")]
     };
     case "UNKNOWN":{
-        [h:ClassFilterDescription = pm.GetDisplayName(ClassFilter,"sb.Class")]
+        [h,if(ClassFilter!=""): ClassFilterDescription = pm.GetDisplayName(ClassFilter,"sb.Classes")]
     };
-    default:{[h:ClassFilterDescription = ""]}
+    default:{}
 ]
 
+[h:SchoolFilterDescription = ""]
 [h,switch(json.type(SchoolFilter)),CODE:
-    case "Array":{
+    case "ARRAY":{
         [h:SchoolDisplayNames = ""]
         [h,foreach(tempSchool,SchoolFilter): SchoolDisplayNames = json.append(SchoolDisplayNames,pm.GetDisplayName(tempSchool,"sb.SpellSchools"))]
         [h:SchoolFilterDescription = pm.a5e.CreateDisplayList(SchoolDisplayNames,"or")]
     };
     case "UNKNOWN":{
-        [h:SchoolFilterDescription = pm.GetDisplayName(SchoolFilter,"sb.SpellSchools")]
+        [h,if(SchoolFilter!=""): SchoolFilterDescription = pm.GetDisplayName(SchoolFilter,"sb.SpellSchools")]
     };
-    default:{[h:SchoolFilterDescription = ""]}
+    default:{}
 ]
 
 [h,if(LevelBasedMaxLevel == ""): LevelBasedMaxLevel = 9]
@@ -53,14 +55,15 @@
 }]
 
 [h:"<!-- TODO: Enable ability to make something like casting time less than 10 minutes, or specific time values (only value 1 currently) -->"]
+[h:CastTimeFilterDescription = ""]
 [h,switch(json.type(CastTimeFilter)),CODE:
-    case "Array":{
+    case "ARRAY":{
         [h:CastTimeFilterDescription = " with casting time of 1 "+pm.a5e.CreateDisplayList(CastTimeFilter,"or")]
     };
     case "UNKNOWN":{
-        [h:CastTimeFilterDescription = " with casting time of 1 "+CastTimeFilter]
+        [h,if(CastTimeFilter!=""): CastTimeFilterDescription = " with casting time of 1 "+CastTimeFilter]
     };
-    default:{[h:CastTimeFilterDescription = ""]}
+    default:{}
 ]
 
 [h,switch(RitualFilter):
@@ -69,6 +72,6 @@
     default: RitualFilterDescription = ""
 ]
 
-[h:FinalFilterDescription = LevelFilterDescriptionPreClass + if(LevelFilterDescriptionPreClass!=""," ","") + ClassFilterDescription + if(ClassFilterDescription!=""," ","") + RitualFilterDescription + if(RitualFilterDescription!=""," ","") + LevelFilterDescription + CastTimeFilter]
+[h:FinalFilterDescription = LevelFilterDescriptionPreClass + if(LevelFilterDescriptionPreClass!=""," ","") + ClassFilterDescription + if(ClassFilterDescription!=""," ","") + SchoolFilterDescription + if(SchoolFilterDescription!=""," ","") + RitualFilterDescription + if(RitualFilterDescription!=""," ","") + LevelFilterDescription + CastTimeFilterDescription]
 
 [h:macro.return = FinalFilterDescription]

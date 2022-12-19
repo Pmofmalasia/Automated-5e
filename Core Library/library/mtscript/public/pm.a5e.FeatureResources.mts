@@ -68,7 +68,7 @@
 		[h:pm.FeatureResourceUsedMaxFinal = min(json.get(featureResourceData,"Resource"),pm.FeatureResourceUsedMax)]
 	};
 	case "1OBJECT":{
-		[h:pm.ResourceKey = json.get(pm.FeatureResource,"ResourceKey")]
+		[h:pm.ResourceKey = json.get(pm.FeatureResourceData,"ResourceKey")]
 		[h:featureResourceData = pm.a5e.SpecificFeatureResourceOptions(pm.FeatureResource,pm.FeatureResourceUsed,pm.ResourceKey)]
         
 		[h:ResourceInfo = json.append(ResourceInfo,featureResourceData)]
@@ -106,7 +106,7 @@
 		[h:pm.FeatureBackupResourceUsedMaxFinal = min(json.get(featureBackupResourceData,"Resource"),pm.FeatureBackupResourceUsedMax)]
 	};
 	case "1OBJECT":{
-		[h:pm.ResourceKey = json.get(pm.FeatureBackupResource,"ResourceKey")]
+		[h:pm.ResourceKey = json.get(pm.FeatureBackupResourceData,"ResourceKey")]
 		[h:featureBackupResourceData = pm.a5e.SpecificFeatureResourceOptions(pm.FeatureBackupResource,pm.FeatureBackupResourceUsed,pm.ResourceKey)]
 		[h:BackupResourceInfo = json.append(BackupResourceInfo,featureBackupResourceData)]
 		
@@ -455,7 +455,7 @@
 	
 	[h:featureBackupResourceTable = "[]"]
 	[h,foreach(resource,BackupResourceInfo),CODE:{
-		[h,if(json.get(resource,"ResourceKey")==""):
+		[h,if(json.get(pm.FeatureBackupResourceData,"ResourceKey")==""):
 			featureBackupResourceTable = json.append(featureBackupResourceTable,json.set("",
 			"ShowIfCondensed",1,
 			"Header",json.get(resource,"TempResourceDisplayName")+" Remaining",
@@ -470,7 +470,7 @@
 			"Header",json.get(resource,"TempResourceDisplayName")+" Remaining",
 			"FalseHeader","",
 			"FullContents","",
-			"RulesContents","<b><span style='font-size:1.25em;'>"+json.get(json.get(resource,"Resource"),json.get(resource,"ResourceKey"))+"/"+json.get(evalMacro(json.get(resource,"MaxResource")),json.get(resource,"ResourceKey"))+"</span></b> - Restored on "+if(json.get(resource,"RestoreShortRest")==1,"Short and ","")+"Long Rests",
+			"RulesContents","<b><span style='font-size:1.25em;'>"+json.get(json.get(resource,"Resource"),json.get(pm.FeatureBackupResourceData,"ResourceKey"))+"/"+json.get(evalMacro(json.get(resource,"MaxResource")),json.get(pm.FeatureBackupResourceData,"ResourceKey"))+"</span></b> - Restored on "+if(json.get(resource,"RestoreShortRest")==1,"Short and ","")+"Long Rests",
 			"RollContents","",
 			"DisplayOrder","['Rules','Roll','Full']"
 			))
@@ -513,7 +513,7 @@
 	
 	[h:featureResourceTable = "[]"]
 	[h,foreach(resource,ResourceInfo),CODE:{
-		[h,if(json.get(resource,"ResourceKey")==""):
+		[h,if(json.get(pm.FeatureResourceData,"ResourceKey")==""):
 			featureResourceTable = json.append(featureResourceTable,json.set("",
 			"ShowIfCondensed",1,
 			"Header",json.get(resource,"TempResourceDisplayName")+" Remaining",
@@ -528,7 +528,7 @@
 			"Header",json.get(resource,"TempResourceDisplayName")+" Remaining",
 			"FalseHeader","",
 			"FullContents","",
-			"RulesContents","<b><span style='font-size:1.25em;'>"+json.get(json.get(resource,"Resource"),json.get(resource,"ResourceKey"))+" / "+json.get(evalMacro(json.get(resource,"MaxResource")),json.get(resource,"ResourceKey"))+"</span></b> - Restored on "+if(json.get(resource,"RestoreShortRest")==1,"Short and ","")+"Long Rests",
+			"RulesContents","<b><span style='font-size:1.25em;'>"+json.get(json.get(resource,"Resource"),json.get(pm.FeatureResourceData,"ResourceKey"))+" / "+json.get(evalMacro(json.get(resource,"MaxResource")),json.get(pm.FeatureResourceData,"ResourceKey"))+"</span></b> - Restored on "+if(json.get(resource,"RestoreShortRest")==1,"Short and ","")+"Long Rests",
 			"RollContents","",
 			"DisplayOrder","['Rules','Roll','Full']"
 			))
@@ -702,7 +702,7 @@
 				"Header",json.get(ResourceSelected,"TempResourceDisplayName")+" Remaining",
 				"FalseHeader","",
 				"FullContents","",
-				"RulesContents","<b><span style='font-size:1.25em;'>"+ResourceAmount+"/"+evalMacro(json.get(ResourceSelected,"MaxResource"))+"</span></b>",
+				"RulesContents","<b><span style='font-size:1.25em;'>"+ResourceAmount+"/"+json.get(evalMacro(json.get(ResourceSelected,"MaxResource")),json.get(ResourceSelected,"TempResourceKey"))+"</span></b>",
 				"RollContents","",
 				"DisplayOrder","['Rules','Roll','Full']"
 			))]

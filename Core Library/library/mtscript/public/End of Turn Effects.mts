@@ -28,10 +28,11 @@
 }]
 
 [h:pm.ConditionsExpired = json.unique(json.path.read(getProperty("a5e.stat.ConditionList"),"[*][?(@.Duration.Expired==1)]['GroupID']"))]
-[h:validConditionEndTriggers = json.path.read(getProperty("a5e.stat.ConditionGroups"),"[*]['EndTriggers'][?(@.EndTurn!=null)]","DEFAULT_PATH_LEAF_TO_NULL")]
+[h:validConditionEndTriggers = json.path.read(getProperty("a5e.stat.ConditionGroups"),"[*][?(@.EndTriggers!='')]","DEFAULT_PATH_LEAF_TO_NULL")]
+[h:validConditionEndTriggers = json.path.read(validConditionEndTriggers,"[*][?(@.EndTriggers.EndTurn!=null)]","DEFAULT_PATH_LEAF_TO_NULL")]
 [h:effectConditionsRemoved = ""]
 [h,foreach(tempConditionGroup,validConditionEndTriggers),CODE:{
-	[h:tempEndTriggers = json.path.read(tempConditionGroup,"EndTriggers.EndTurn")]
+	[h:tempEndTriggers = json.get(json.get(tempConditionGroup,"EndTriggers"),"EndTurn")]
 	[h,switch(json.type(tempEndTriggers)),CODE:
 		case "UNKNOWN":{ 
 			[h,if(tempEndTriggers==1): pm.ConditionsExpired = json.append(pm.ConditionsExpired,json.get(tempConditionGroup,"GroupID"))]

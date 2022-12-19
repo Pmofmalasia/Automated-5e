@@ -2,6 +2,7 @@
 	abilityClass = json.get(arg(0),"Class");
 	abilityClass = if(json.get(arg(0),"Class")==getProperty("a5e.stat.Race"),"Innate",json.get(arg(0),"Class"))
 ]
+[h:ColorSubtype = json.get(arg(0),"ColorSubtype")]
 [h:abilityName = json.get(arg(0),"Name")]
 [h:abilityDisplayName = if(json.get(arg(0),"DisplayName")=="",abilityName,json.get(arg(0),"DisplayName"))]
 [h:abilityEffect=json.get(arg(0),"Effect")]
@@ -17,15 +18,15 @@
 [h:FalseName=json.get(arg(0),"FalseName")]
 [h:OnlyRules=json.get(arg(0),"OnlyRules")]
 
-[h:tooltip.Border=pm.BorderColor(abilityClass)]
-[h:tooltip.Title=pm.TitleColor(abilityClass)]
+[h:tooltip.Border = pm.BorderColor(abilityClass,ColorSubtype)]
+[h:tooltip.Title = pm.TitleColor(abilityClass,ColorSubtype)]
 			
 [h,if(BorderColorOverride == ""),CODE:{};{
-	[h:tooltip.Border=if(isOwner(getPlayerName()),BorderColorOverride,tooltip.Border)]
+	[h:tooltip.Border = if(isOwner(getPlayerName()),BorderColorOverride,tooltip.Border)]
 }]
 	
 [h,if(TitleColorOverride == ""),CODE:{};{
-	[h:tooltip.Title=if(isOwner(getPlayerName()),TitleColorOverride,tooltip.Title)]
+	[h:tooltip.Title = if(isOwner(getPlayerName()),TitleColorOverride,tooltip.Title)]
 }]
 
 [h:pm.TooltipVars()]

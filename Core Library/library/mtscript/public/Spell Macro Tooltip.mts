@@ -161,16 +161,6 @@
 [h:ToHitOutput=substring(ToHitOutput,1)]
 [h:DCOutput=substring(DCOutput,1)]
 
-[h:ttCastTime=if(CastTime=="Action","Action",CastTime)]
-[h:ttCastTime=if(CastTime=="BONUS","Bonus Action",ttCastTime)]
-[h:ttCastTime=if(CastTime=="REACTION","Reaction",ttCastTime)]
-[h:ttCastTime=if(CastTime=="1 MIN","1 minute",ttCastTime)]
-[h:ttCastTime=if(CastTime=="10 MIN","10 Minutes",ttCastTime)]
-[h:ttCastTime=if(CastTime=="1 HOUR","1 Hour",ttCastTime)]
-[h:ttCastTime=if(CastTime=="8 HOURS","8 Hours",ttCastTime)]
-[h:ttCastTime=if(CastTime=="12 HOURS","12 Hours",ttCastTime)]
-[h:ttCastTime=if(CastTime=="24 HOURS","12 Hours",ttCastTime)]
-
 [h,switch(sLevel),code: 
 	case 1: {[BorderColor="#fd2a19"][TextColor="#FFFFFF"]};
 	case 2: {[BorderColor="#f7ae27"][TextColor="#000000"]};
@@ -186,67 +176,12 @@
 
 [h:abilityTable = ""]
 
-[h,if(NeedsBorder==0): abilityTable = json.append(abilityTable,json.set("",
-	"ShowIfCondensed",1,
-	"Header","Spell Name, Level, and School",
-	"FalseHeader","",
-	"FullContents","",
-	"RulesContents",SpellName+": Level "+sLevel+" "+upper(sSchool,1)+" Spell",
-	"RollContents","",
-	"DisplayOrder","['Rules','Roll','Full']"
-))]
-	
-[h:abilityTable = json.append(abilityTable,json.set("",
-	"ShowIfCondensed",1,
-	"Header","Casting Time",
-	"FalseHeader","",
-	"FullContents","",
-	"RulesContents",ttCastTime,
-	"RollContents","",
-	"DisplayOrder","['Rules','Roll','Full']"
-))]
-
-[h:abilityTable = json.append(abilityTable,json.set("",
-	"ShowIfCondensed",1,
-	"Header","Requires Concentration",
-	"FalseHeader","",
-	"FullContents","",
-	"RulesContents",if(sConcentration,"Yes","No"),
-	"RollContents","",
-	"DisplayOrder","['Rules','Roll','Full']"
-))]
-
 [h:abilityTable = json.append(abilityTable,json.set("",
 	"ShowIfCondensed",1,
 	"Header","Range",
 	"FalseHeader","",
 	"FullContents","",
 	"RulesContents",if(RangeType=="Ranged",Range+" "+sRangeUnits,RangeType)+if(AoEShape=="None","",", "+AoESize+if(or(AoEShape=="Line",AoEShape=="Cylinder"),"x"+AoeSize2,"")+" "+AoEShape),
-	"RollContents","",
-	"DisplayOrder","['Rules','Roll','Full']"
-))]
-	
-[h:ComponentsRequired = if(vComp,"V","")]
-[h,if(sComp): ComponentsRequired = listAppend(ComponentsRequired,"S",", ")]
-[h,if(mComp): ComponentsRequired = listAppend(ComponentsRequired,"M",", ")]
-[h,if(mCompItems!=""): ComponentsRequired + "("+mCompItems+")"]
-
-[h:abilityTable = json.append(abilityTable,json.set("",
-	"ShowIfCondensed",1,
-	"Header","Components",
-	"FalseHeader","",
-	"FullContents","",
-	"RulesContents",ComponentsRequired,
-	"RollContents","",
-	"DisplayOrder","['Rules','Roll','Full']"
-))]
-
-[h,if(mCompConsumed!="" && mCompConsumed!="0" && mCompConsumed!=0): abilityTable = json.append(abilityTable,json.set("",
-	"ShowIfCondensed",1,
-	"Header","Components Consumed",
-	"FalseHeader","",
-	"FullContents","",
-	"RulesContents",mCompConsumed,
 	"RollContents","",
 	"DisplayOrder","['Rules','Roll','Full']"
 ))]
@@ -257,16 +192,6 @@
 	"FalseHeader","",
 	"FullContents","",
 	"RulesContents",if(IsSight,"Yes","No"),
-	"RollContents","",
-	"DisplayOrder","['Rules','Roll','Full']"
-))]
-
-[h:abilityTable = json.append(abilityTable,json.set("",
-	"ShowIfCondensed",1,
-	"Header","Duration",
-	"FalseHeader","",
-	"FullContents","",
-	"RulesContents",Duration,
 	"RollContents","",
 	"DisplayOrder","['Rules','Roll','Full']"
 ))]
@@ -300,17 +225,6 @@
 	"RollContents","",
 	"DisplayOrder","['Rules','Roll','Full']"
 ))]
-
-[h,if(DmgDie2Number!=0): abilityTable = json.append(abilityTable,json.set("",
-	"ShowIfCondensed",1,
-	"Header",DmgType2+" "+if(or(DmgType2=="Healing",DmgType2=="Temp HP",DmgType2=="Special"),"","Damage"),
-	"FalseHeader","",
-	"FullContents","",
-	"RulesContents",DmgDie2Number+"d"+DmgDie2Size+if(DmgDie2FlatBonus==0,""," + "+DmgDie2FlatBonus)+if(DmgDie2MODBonus==0,""," + MOD")+if(DmgHalved,", Halved on Save",""),
-	"RollContents","",
-	"DisplayOrder","['Rules','Roll','Full']"
-))]
-
 [h:abilityEffect = sDescription+if(or(sDescriptionAHL=="",sDescriptionAHL=="0"),"","<br><br>"+sDescriptionAHL)]
 
 [h,if(NeedsBorder),CODE:{
@@ -325,7 +239,7 @@
 		"DisplayName","<b>"+SpellName+"</b>: Level "+sLevel+" "+upper(sSchool,1)+" Spell",
 		"Effect",abilityEffect,
 		"abilityTable",abilityTable
-		)]
+	)]
 	[r:pm.TooltipOutput(ClassFeatureData)]
 };{
 	[h:macro.return = json.set("","Table",abilityTable,"Effect",abilityEffect)]

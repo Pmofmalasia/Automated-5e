@@ -3,17 +3,18 @@
 [h:chosenEffect = json.get(macro.args,"Effect")]
 [h:EffectDisplay = json.get(macro.args,"DisplayName")]
 
+[h:incompleteEffects = getLibProperty("gd.Effects","Lib:pm.a5e.Core")]
 [h,switch(resolveAllTest),CODE:
 	case 0:{
 		[h,switch(resolveHow),CODE:
 			case "NoMod":{
-				[h,MACRO("Resolve Effects@Lib:pm.a5e.Core"): json.get(getLibProperty("gd.Effects","Lib:pm.a5e.Core"),chosenEffect)]
+				[h,MACRO("Resolve Effects@Lib:pm.a5e.Core"): json.get(incompleteEffects,chosenEffect)]
 			};
 			case "Mods":{
 				[h:broadcast("This feature does not exist yet!")]
 			};
 			case "Remove":{
-				[h:setLibProperty("gd.Effects",json.remove(getLibProperty("gd.Effects","Lib:pm.a5e.Core"),chosenEffect),"Lib:pm.a5e.Core")]
+				[h:setLibProperty("gd.Effects",json.remove(incompleteEffects,chosenEffect),"Lib:pm.a5e.Core")]
 				[h,MACRO("OpenEffectsFrame@Lib:pm.a5e.Core"): ""]
 				[h:broadcast("Effect "+EffectDisplay+" removed.","gm")]
 			}

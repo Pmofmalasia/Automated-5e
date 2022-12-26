@@ -58,7 +58,7 @@ async function addInnateSpellRow(){
         nextRowIndex++;
         nextInnateNumber++;
     }
-    
+
     let response = await fetch("macro:pm.a5e.GetBaseSpellData@lib:pm.a5e.Core", {method: "POST", body: ""});
     let SpellList = await response.json();
 

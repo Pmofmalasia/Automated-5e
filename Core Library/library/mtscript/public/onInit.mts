@@ -107,7 +107,6 @@
 [h:defineFunction("pm.Summons","pm.Summons@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.a5e.FeatureSummons","pm.a5e.FeatureSummons@Lib:pm.a5e.Core",0,0)]
 [h:defineFunction("pm.a5e.FeatureSummonsProcessing","pm.a5e.FeatureSummonsProcessing@Lib:pm.a5e.Core",0,0)]
-[h:defineFunction("pm.a5e.FeatureSpellClass","pm.a5e.FeatureSpellClass@Lib:pm.a5e.Core",0,0)]
 [h:defineFunction("pm.a5e.FeatureCheck","pm.a5e.FeatureCheck@Lib:pm.a5e.Core",0,0)]
 [h:defineFunction("pm.a5e.FeatureCheckProcessing","pm.a5e.FeatureCheckProcessing@Lib:pm.a5e.Core",0,0)]
 [h:defineFunction("pm.a5e.FeatureCheckDC","pm.a5e.FeatureCheckDC@Lib:pm.a5e.Core",0,0)]
@@ -115,6 +114,11 @@
 [h:defineFunction("pm.a5e.FeatureComponentStdVars","pm.a5e.FeatureComponentStdVars@Lib:pm.a5e.Core",0,0)]
 [h:defineFunction("pm.a5e.FeatureGrapple","pm.a5e.FeatureGrapple@Lib:pm.a5e.Core",0,0)]
 [h:defineFunction("pm.a5e.FeatureGrappleProcessing","pm.a5e.FeatureGrappleProcessing@Lib:pm.a5e.Core",0,0)]
+
+[h:"<!-- Functions for Passive Features -->"]
+[h:defineFunction("pm.a5e.FeatureSpellClass","pm.a5e.FeatureSpellClass@Lib:pm.a5e.Core",0,0)]
+[h:defineFunction("pm.a5e.GrantAdvantage","pm.a5e.GrantAdvantage@Lib:pm.a5e.Core",0,0)]
+[h:defineFunction("pm.a5e.GrantDisadvantage","pm.a5e.GrantDisadvantage@Lib:pm.a5e.Core",0,0)]
 
 [h:"<!-- Functions for resolving effects on targets -->"]
 [h:defineFunction("pm.a5e.AdvanceTime","pm.a5e.AdvanceTime@Lib:pm.a5e.Core")]
@@ -224,6 +228,9 @@
 [h:defineFunction("pm.a5e.CheckBonusTotal","pm.a5e.CheckBonusTotal@Lib:pm.a5e.Core",0,0)]
 [h:defineFunction("pm.a5e.SaveProperties","pm.a5e.SaveProperties@Lib:pm.a5e.Core",0,0)]
 [h:defineFunction("pm.a5e.SaveBonusTotal","pm.a5e.SaveBonusTotal@Lib:pm.a5e.Core",0,0)]
+
+[h:"<!-- Functions for Conditions -->"]
+[h:defineFunction("pm.a5e.HasConditions","pm.a5e.HasConditions@Lib:pm.a5e.Core")]
 
 [h:"<!-- Functions for Trusted Bypass -->"]
 [h:defineFunction("pm.SwitchToken","pm.SwitchToken@Lib:pm.a5e.Core",0,0)]

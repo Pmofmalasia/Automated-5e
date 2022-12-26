@@ -8,6 +8,7 @@
 [h:incompleteEffects = getLibProperty("gd.Effects","Lib:pm.a5e.Core")]
 [h:em.TableLines = ""]
 [h:secureCounter = 0]
+[h:"<!-- TODO: Change removal of blank string so that targets can be selected by the DM on resolution -->"]
 [h,foreach(effect,incompleteEffects),CODE:{
 	[h,if(json.get(effect,"ToResolve")==""),CODE:{};{
 		[h:tempTargetList = json.get(effect,"Targets")]

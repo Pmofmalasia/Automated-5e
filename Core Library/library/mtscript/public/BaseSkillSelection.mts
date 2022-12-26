@@ -2,11 +2,13 @@
 [h,if(priorData==""),CODE:{
     [h:nextInput = ""]
     [h:nextInputData = ""]
-    [h:skillSelectionHTML = "<input type='hidden' name='ParentToken' id='ParentToken' value='"+currentToken()+"'>"]
+    [h:ParentToken = currentToken()]
+    [h:skillSelectionHTML = "<input type='hidden' name='ParentToken' id='ParentToken' value='"+ParentToken+"'>"]
 };{
     [h:nextInput = json.get(priorData,"NextInput")]
     [h:nextInputData = json.get(priorData,"NextInputData")]
-    [h:skillSelectionHTML = "<input type='hidden' name='ParentToken' id='ParentToken' value='"+json.get(priorData,"ParentToken")+"'>"]
+    [h:ParentToken = json.get(priorData,"ParentToken")]
+    [h:skillSelectionHTML = "<input type='hidden' name='ParentToken' id='ParentToken' value='"+ParentToken+"'>"]
     [h:switchToken(ParentToken)]
 }]
 

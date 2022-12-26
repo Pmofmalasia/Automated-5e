@@ -54,10 +54,20 @@
 ]
 [h:setProperty("a5e.stat.Alignment",json.set("","Order",alignmentOrder,"Morality",alignmentMorality))]
 
+[h:AttributeList = pm.GetAttributes()]
+[h,foreach(TempAttribute,AttributeList): setProperty("a5e.stat.BaseAttributes",json.set(getProperty("a5e.stat.BaseAttributes"),json.get(TempAttribute,"Name"),json.get(MonsterData,"Attribute"+json.get(TempAttribute,"Name"))))]
+
 [h:"<!-- TODO: Update AC after updates to equipment -->"]
 [h:setProperty("a5e.stat.Armor",json.append("",1,json.set("","Name","None","MagicBonus",0,"Type","None","ArmorTier","None","BaseAC",json.get(MonsterData,"AC"),"DexMax",0,"StrReq",0,"StealthDis",0,"MagicItem",0,"ItemBuffs","")))]
 
-[h:setProperty("a5e.stat.RolledMaxHP",json.get(MonsterData,"MaxHP"))]
+[h:tempHitDieObject = json.set("","1d6",0,"1d8",0,"1d10",0,"1d12",0)]
+[h:HitDieNum = json.get(MonsterData,"HitDieNum")]
+[h:setProperty("a5e.stat.MaxHitDice",json.set(tempHitDieObject,"1d"+json.get(MonsterData,"HitDieSize"),HitDieNum))]
+
+[h:HPFromCon = HitDieNum * getProperty("a5e.stat.AtrMods","Constitution")]
+
+[h:setProperty("a5e.stat.RolledMaxHP",json.get(MonsterData,"MaxHP") - HPFromCon)]
+[h:setProperty("a5e.stat.HP",json.get(MonsterData,"MaxHP"))]
 
 [h:setProperty("a5e.stat.BaseSpeed",json.get(MonsterData,"SpeedWalking"))]
 [h:setProperty("a5e.stat.BaseBurrowSpeed",json.get(MonsterData,"SpeedBurrow"))]
@@ -65,10 +75,9 @@
 [h:setProperty("a5e.stat.BaseFlySpeed",json.get(MonsterData,"SpeedFly"))]
 [h:setProperty("a5e.stat.BaseSwimSpeed",json.get(MonsterData,"SpeedSwim"))]
 
-[h:AttributeList = pm.GetAttributes()]
-[h,foreach(TempAttribute,AttributeList): setProperty("a5e.stat.BaseAttributes",json.set(getProperty("a5e.stat.BaseAttributes"),json.get(TempAttribute,"Name"),json.get(MonsterData,"Attribute"+json.get(TempAttribute,"Name"))))]
-
 [h:setProperty("a5e.stat.Proficiency",json.get(MonsterData,"Proficiency"))]
+
+[h:"<-- TODO: Currently missing damage resistances, condition immunities, senses/vision, language (not in input either) -->"]
 
 [h:MonsterCR = json.get(MonsterData,"CR")]
 [h,if(!isNumber(MonsterCR)): MonsterCR = eval(MonsterCR)]

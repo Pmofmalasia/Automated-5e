@@ -1,31 +1,35 @@
 [h:hp.Data = macro.args]
 [h:Flavor = json.get(hp.Data,"Flavor")]
 [h:ParentToken = json.get(hp.Data,"ParentToken")]
-[h:hp.Source = json.get(hp.Data,"SourceType")]
-[h:hp.IsCrit = json.get(hp.Data,"IsCrit")]
-[h:hp.IsCrit = if(hp.IsCrit=="",0,hp.IsCrit)]
-[h:hp.DamageDealt = json.get(hp.Data,"DamageDealt")]
 [h:switchToken(ParentToken)]
 [h:IsTooltip = 0]
 [h:a5e.UnifiedAbilities = a5e.GatherAbilities(ParentToken)]
 [h:pm.a5e.EffectData = "[]"]
 [h:pm.a5e.OverarchingContext = "Damage"]
 
-[h:"<!-- Temporary adjustment to data from the Change HP Input macro -->"]
-[h:tempDamageDealt = ""]
-[h,if(json.type(hp.DamageDealt)=="OBJECT"),CODE:{
-	[h,foreach(damageType,json.fields(hp.DamageDealt)): tempDamageDealt = json.append(tempDamageDealt,json.set(json.get(hp.DamageDealt,damageType),"DamageType",damageType))]
-	[h:hp.DamageDealt = tempDamageDealt]
-};{}]
+[h:hp.DamageDealt = json.get(hp.Data,"DamageDealt")]
+[h:hp.Source = json.get(hp.Data,"SourceType")]
+[h:hp.IsCrit = json.get(hp.Data,"IsCrit")]
+[h:hp.IsCrit = if(hp.IsCrit=="",0,hp.IsCrit)]
+[h,if(json.get(hp.Data,"BypassConc")==""): 
+	hp.BypassConc = 0;
+	hp.BypassConc = json.get(hp.Data,"BypassConc")
+]
+[h,if(json.get(hp.Data,"ConcSaveBonus")==""): 
+	hp.ConcSaveBonus = 0;
+	hp.ConcSaveBonus = json.get(hp.Data,"ConcSaveBonus")
+]
 
-[h:hp.TypesDealt = json.intersection(json.append(pm.GetDamageTypes("Name","json"),"None - Modify Manually","Healing","TempHP"),json.unique(json.path.read(hp.DamageDealt,"[*]['DamageType']")))]
+[h:hp.TypesDealt = json.intersection(json.append(pm.GetDamageTypes("Name","json"),"None","Healing","TempHP"),json.unique(json.path.read(hp.DamageDealt,"[*]['DamageType']")))]
 [h:hp.DmgModData = pm.a5e.DamageModCalc(hp.Data)]
 
 [h:hp.FinalDamageDealt = json.set("","Healing",0)]
 [h:hp.DamageDealtString = ""]
 [h,foreach(damagetype,hp.TypesDealt),CODE:{
-	[h,if(damagetype == "None - Modify Manually"),CODE:{
-		[h:hp.FinalDamageDealt = json.set(hp.FinalDamageDealt,"Untyped",json.get(hp.DamageDealt,damagetype))]
+	[h,if(damagetype == "None"),CODE:{
+		[h:thisDamageTypeInfo = json.path.read(hp.DamageDealt,"[*][?(@.DamageType=='"+damagetype+"')]['Total']")]
+
+		[h:hp.FinalDamageDealt = json.set(hp.FinalDamageDealt,"Untyped",math.arraySum(thisDamageTypeInfo))]
 	};{
 		[h:hp.VulnTest = json.contains(json.get(hp.DmgModData,"Vulnerability"),damagetype)]
 		[h:hp.ResTest = json.contains(json.get(hp.DmgModData,"Resistance"),damagetype)]
@@ -206,7 +210,7 @@
 	))
 ]
 
-[h,if(getProperty("a5e.stat.Concentration")!="" && hp.Damage>0),CODE:{
+[h,if(getProperty("a5e.stat.Concentration")!="" && hp.Damage>0 && !hp.BypassConc),CODE:{
 	[h:hp.ConcDC = max(10,floor(hp.Damage/2))]
 	[h,MACRO("Save@Lib:pm.a5e.Core"): 
 	json.set(hp.Data,

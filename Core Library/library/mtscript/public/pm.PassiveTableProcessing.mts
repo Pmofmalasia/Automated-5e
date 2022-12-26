@@ -1,4 +1,4 @@
-[h:pm.AbilityTable=arg(0)]
+[h:pm.AbilityTable = arg(0)]
 
 [h:AccentFormat="text-align:center; background-color:"+AccentColor+"; color:"+AccentText+";"+if(number(getLibProperty("VerticalDisplay","Lib:pm.a5e.Core")),""," width:20%;")]
 

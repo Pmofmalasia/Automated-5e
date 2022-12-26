@@ -1,5 +1,7 @@
 [h:pm.NewAbilities = json.get(macro.args,"Abilities")]
 [h:pm.NewButtons = json.get(macro.args,"Buttons")]
+[h:ParentToken = json.get(macro.args,"ParentToken")]
+[h:switchToken(ParentToken)]
 
 [h:pm.DisplayNewAbilities = ""]
 [h,foreach(ability,pm.NewAbilities),CODE:{

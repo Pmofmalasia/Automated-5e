@@ -3,7 +3,12 @@
 [h:pm.a5e.OverarchingContext = "Stats"]
 [h:IsTooltip = 0]
 
-[h:setProperty("a5e.stat.BaseMaxHP",getProperty("a5e.stat.RolledMaxHP")+(json.get(getProperty("a5e.stat.AtrMods"),"Constitution")*getProperty("a5e.stat.Level"))-getProperty("a5e.stat.HPDrain"))]
+[h:"<!-- Note: HD are used as a stand-in for level when determining the bonus from CON as NPCs use this method. Should be fine for PCs but might break if items that give bonuses to HD number are used. -->"]
+[h:totalHD = 0]
+[h:HDObject = getProperty("a5e.stat.MaxHitDice")]
+[h,foreach(tempHDSize,json.fields(HDObject)): totalHD = totalHD + json.get(HDObject,tempHDSize)]
+
+[h:setProperty("a5e.stat.BaseMaxHP",getProperty("a5e.stat.RolledMaxHP")+(json.get(getProperty("a5e.stat.AtrMods"),"Constitution")*totalHD)-getProperty("a5e.stat.HPDrain"))]
 [h:bonusMaxHP = 0]
 [h:multiplierMaxHP = 1]
 [h:setMaxHP = 0]

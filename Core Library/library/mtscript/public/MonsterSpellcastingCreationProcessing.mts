@@ -38,8 +38,8 @@
         [h:BorderColor = json.get(DefaultDisplayData,"Border")]
         [h:TextColor = json.get(DefaultDisplayData,"Title")]
 
-        [h:SpellMacroCommand = '[h,MACRO("'+thisSpellName+' ### Monster@this"): json.set("","ParentToken",currentToken(),"IsTooltip",0)]']
-        [h:SpellMacroTooltip = '[h,MACRO("'+thisSpellName+' ### Monster@this"): json.set("","ParentToken",currentToken(),"IsTooltip",1)]']
+        [h:SpellMacroCommand = '[h,MACRO("InnateSpellcasting ### Monster@Lib:SRD"): json.set("","ParentToken",currentToken(),"IsTooltip",0,"Spell","'+thisSpellName+'","Level","'+json.get(MonsterData,"InnateSpell"+roll.count+"Level")+'")]']
+        [h:SpellMacroTooltip = '[h,MACRO("InnateSpellcasting ### Monster@Lib:SRD"): json.set("","ParentToken",currentToken(),"IsTooltip",1,"Spell","'+thisSpellName+'","Level","'+json.get(MonsterData,"InnateSpell"+roll.count+"Level")+'")]']
 
         [h:SpellMacroProps = json.set("",
             "applyToSelected",0,
@@ -59,38 +59,6 @@
             "delim","json"
         )]
         [h:createMacro(SpellMacroProps)]
-
-        [h:InnateFeatureCommand = '[h:SpellData = macro.args]
-[h:abilityName = "Innate Spellcasting"]
-[h:abilityDisplayName = "'+thisSpellDisplayName+'"]
-[h:abilityClass = "Monster"]
-[h:abilitySubclass = ""]
-[h:abilityFalseName = "Class Feature"]
-[h:abilityFullEffect = ""]
-[h:abilityAbridgedEffect = ""]
-[h:pm.a5e.FeatureStdVars(SpellData)]
-
-[h:SpellData = json.set("","Spell","'+thisSpellName+'","FreeCasting",1,"InnateCast",1,"ForcedLevel",'+json.get(MonsterData,"InnateSpell"+roll.count+"Level")+',"DMOnly",DMOnly)]
-[h:pm.a5e.FeatureSpell(abilityInfo,SpellData,abilityEffect)]
-
-[h:pm.a5e.FeatureResources(abilityInfo,json.set("","Feature",json.set("","Resource",abilityInfo,"ResourceUsed",1)))]
-
-[h:pm.a5e.StdFeatureEnd()]
-
-[r,if(IsTooltip),CODE:{
-    [r:pm.a5e.FeatureTooltipCall()]
-};{
-    [h:pm.a5e.FeatureFormatCall()]
-}]']
-
-        [h:InnateFeatureProps = json.set(SpellMacroProps,
-            "command",InnateFeatureCommand,
-            "group","zzzzProgramFunctions",
-            "label",thisSpellName+" ### Monster",
-            "minWidth",2,
-            "tooltip",""
-        )]
-        [h:createMacro(InnateFeatureProps)]
     }]
 
     [h,if(ShortRestRestoreTest): InnateMonsterCast = json.set(InnateMonsterCast,"RestoreShortRest",1)]
@@ -115,15 +83,17 @@
         "PrimeStat",json.get(MonsterData,"SlotStat"),
         "MagicSource","Arcane",
         "CallSpellClass",1,
-        "CasterType",(1/json.get(MonsterData,"CasterType"))
+        "CasterType",(1/json.get(MonsterData,"CasterType")),
+        "SharedSpellSlots",1,
+        "IsActive",1
     )]
-
+    
     [h,if(json.get(MonsterData,"SlotClass")!=""): json.set(SlotMonsterCast,"ClassCountsAs",json.get(MonsterData,"SlotClass"))]
 
     [h:SlotSpellList = "[]"]
     [h,count(json.get(MonsterData,"SlotSpellNumber")+1),CODE:{
         [h:thisSpellSelected = json.get(MonsterData,"SlotSpell"+roll.count)]
-        [h:SlotSpellList = json.append(SlotSpellList,json.get(thisSpellSelected,"Name"))]
+        [h:SlotSpellList = json.append(SlotSpellList,thisSpellSelected)]
     }]
 
     [h:SlotMonsterCast = json.set(SlotMonsterCast,

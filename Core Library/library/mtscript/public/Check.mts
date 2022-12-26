@@ -42,7 +42,7 @@
 [h,if(d20AdvantageBalance == 0),CODE:{
 	[h:FinalRoll = json.get(d20AllRolls,0)]
 
-	[h:rerollData = json.set(d20Data,"Value",FinalRoll+TotalBonus,"FinalRoll",FinalRoll,"d20Rolls",d20AllRolls,"Advantage",d20Advantage,"Disadvantage",d20Disadvantage,"TotalBonus",TotalBonus,"Formula",rollFormula,"RollString",rollString)]
+	[h:rerollData = json.set(d20Data,"Value",FinalRoll+TotalBonus,"FinalRoll",FinalRoll,"d20Rolls",d20AllRolls,"Advantage",d20Advantage,"Disadvantage",d20Disadvantage,"AdvantageMessageArray",d20AdvantageMessageArray,"TotalBonus",TotalBonus,"Formula",rollFormula,"RollString",rollString)]
 
 	[h,SWITCH(d20Type),CODE:
 		case "Initiative":{
@@ -69,7 +69,7 @@
 		"Header",CurrentSkillDisplay,
 		"FalseHeader","",
 		"FullContents","<b><span style='"+if(FinalRoll==20,"font-size:2em; color:"+CritColor,if(FinalRoll==1,"font-size:2em; color:"+CritFailColor,"font-size:1.5em"))+"'>"+(FinalRoll+TotalBonus)+"</span></b>",
-		"RulesContents",d20TotalRolled+"d20"+if(d20TotalRolled>1," choose one ","")+rollFormula+" = ",
+		"RulesContents","<span "+if(!json.isEmpty(d20AdvantageMessageArray),"title='"+pm.a5e.CreateDisplayList(d20AdvantageMessageArray,"and")+"'","")+">"+d20TotalRolled+"d20"+if(d20TotalRolled>1," choose one ","")+rollFormula+"</span> = ",
 		"RollContents",FinalRoll+rollString+" = ",
 		"DisplayOrder","['Rules','Roll','Full']",
 		"BonusSectionNum",1,
@@ -80,7 +80,7 @@
 };{
 	[h:FinalRoll = if(d20AdvantageBalance == 1,math.arrayMax(d20AllRolls),math.arrayMin(d20AllRolls))]
 
-	[h:rerollData = json.set(d20Data,"Value",FinalRoll+TotalBonus,"FinalRoll",FinalRoll,"d20Rolls",d20AllRolls,"Advantage",d20Advantage,"Disadvantage",d20Disadvantage,"TotalBonus",TotalBonus,"Formula",rollFormula,"RollString",rollString)]
+	[h:rerollData = json.set(d20Data,"Value",FinalRoll+TotalBonus,"FinalRoll",FinalRoll,"d20Rolls",d20AllRolls,"Advantage",d20Advantage,"Disadvantage",d20Disadvantage,"AdvantageMessageArray",d20AdvantageMessageArray,"TotalBonus",TotalBonus,"Formula",rollFormula,"RollString",rollString)]
 
 	[h:extraRollsDisplay = ""]
 	[h,foreach(tempRoll,d20AllRolls),CODE:{
@@ -94,7 +94,7 @@
 		"Header",CurrentSkillDisplay,
 		"FalseHeader","",
 		"FullContents","<b><span style='"+if(FinalRoll==20,"font-size:2em; color:"+CritColor,if(FinalRoll==1,"font-size:2em; color:"+CritFailColor,"font-size:1.5em"))+"'>"+(FinalRoll+TotalBonus)+"</span></b>",
-		"RulesContents","1d20 <span style='color:"+if(d20AdvantageBalance==1,HealingColor+"'>with Adv",DamageColor+"'>with Dis")+"</span>"+rollFormula+" = ",
+		"RulesContents","1d20 <span"+if(!json.isEmpty(d20AdvantageMessageArray)," title='"+pm.a5e.CreateDisplayList(d20AdvantageMessageArray,"and")+"'","")+" style='color:"+if(d20AdvantageBalance==1,HealingColor+"'>with Adv",DamageColor+"'>with Dis")+"</span>"+rollFormula+" = ",
 		"RollContents",FinalRoll+rollString+" = ",
 		"DisplayOrder","['Rules','Roll','Full']",
 		"BonusSectionNum",1,

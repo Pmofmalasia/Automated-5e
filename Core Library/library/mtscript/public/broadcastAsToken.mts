@@ -1,5 +1,7 @@
 [h,if(arg(0)==""): return(0)]
-[h,if(argCount()>=4): switchToken(arg(3))]
+[h,if(argCount()>=4),CODE:{
+  [h,if(arg(3)!=""): switchToken(arg(3))]
+};{}]
 [h, if(currentToken() != ""), code:
   { [h: broadcastAsToken_image = strformat("<img src='%s'>", getTokenImage(44))]
     [h: broadcastAsToken_name = token.name]

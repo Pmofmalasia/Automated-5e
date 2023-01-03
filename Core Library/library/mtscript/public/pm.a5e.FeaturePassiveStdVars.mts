@@ -48,4 +48,4 @@
 	"Handout",pass.ForcedSummonHandout
 )]
 
-[h:pass.abilityEffect = if(pass.ShowFullRules,pass.abilityFullEffect,pass.abilityAbridgedEffect)]
+[h:pass.abilityEffect = if(pass.ShowFullRules,pass.FeatureFullDescription,pass.FeatureAbridgedDescription)]

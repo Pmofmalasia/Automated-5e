@@ -177,9 +177,15 @@
 
 	[h:tempDamageType = json.get(thisDamageTypeInfo,"DamageType")]
 
+	[h,switch(tempDamageType):
+		case "Healing": DamageTypeDisplay = "Healing";
+		case "TempHP": DamageTypeDisplay = "Temporary HP";
+		default: DamageTypeDisplay = pm.GetDisplayName(tempDamageType,"sb.DamageTypes")
+	]
+	
 	[h:abilityTable = json.append(abilityTable,json.set("",
 		"ShowIfCondensed",1,
-		"Header",tempDamageType+if(or(tempDamageType=="Healing",tempDamageType=="Temp HP"),""," Damage"),
+		"Header",DamageTypeDisplay+if(or(tempDamageType=="Healing",tempDamageType=="TempHP"),""," Damage"),
 		"FalseHeader","",
 		"FullContents","<span style='"+if(attack.CritTest,"font-size:2em; color:"+CritColor,"font-size:1.5em")+"'>"+if(attack.CritTest,json.get(thisDamageTypeInfo,"CritTotal"),json.get(thisDamageTypeInfo,"Total"))+"</span>",
 		"RulesContents",if(attack.CritTest,json.get(thisDamageTypeInfo,"CritFormula"),json.get(thisDamageTypeInfo,"Formula"))+" = ",

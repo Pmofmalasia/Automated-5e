@@ -13,6 +13,7 @@
         "Level",1,
         "PrimeStat",json.get(MonsterData,"InnateStat"),
         "MagicSource","Arcane",
+        "IsActive",1,
         "CallSpellClass",1,
         "RestoreLongRest",1
     )]
@@ -21,25 +22,26 @@
     [h:ResourceDisplayData = "{}"]
     [h:InnateSpellList = "[]"]
     [h:ShortRestRestoreTest = 0]
+    [h:SafeCounter = 0]
     [h,count(json.get(MonsterData,"InnateSpellNumber")+1),CODE:{
-        [h:thisSpellName = json.get(MonsterData,"InnateSpell"+roll.count)]
+        [h:thisSpellName = json.get(MonsterData,"InnateSpell"+SafeCounter)]
         [h:SpellData = pm.a5e.GetSpecificSpell(thisSpellName)]
         [h:MainSpellData = json.get(SpellData,0)]
         [h:thisSpellDisplayName = json.get(MainSpellData,"DisplayName")]
 
-        [h:ResourceData = ResourceData + ",'thisSpellName','"+json.get(MonsterData,"InnateSpell"+roll.count+"Resource")+"'"]
+        [h:ResourceData = ResourceData + ",'"+thisSpellName+"',"+json.get(MonsterData,"InnateSpell"+SafeCounter+"Resource")]
         [h:ResourceDisplayData = json.set(ResourceDisplayData,thisSpellName,thisSpellDisplayName)]
         [h:InnateSpellList = json.append(InnateSpellList,thisSpellName)]
-        [h,if(json.get(MonsterData,"InnateSpell"+roll.count+"Restoration")=="Short"): ShortRestRestoreTest = 1]
+        [h,if(json.get(MonsterData,"InnateSpell"+SafeCounter+"Restoration")=="Short"): ShortRestRestoreTest = 1]
 
         [h,MACRO("CreateSpellMacroLabel@Lib:pm.a5e.Core"): thisSpellName]
         [h:SpellMacroLabel = macro.return]
         [h:DefaultDisplayData = pm.SpellColors(json.set("","Level",string(json.get(MainSpellData,"Level")),"Source","Arcane"))]
         [h:BorderColor = json.get(DefaultDisplayData,"Border")]
         [h:TextColor = json.get(DefaultDisplayData,"Title")]
-
-        [h:SpellMacroCommand = '[h,MACRO("InnateSpellcasting ### Monster@Lib:SRD"): json.set("","ParentToken",currentToken(),"IsTooltip",0,"Spell","'+thisSpellName+'","Level","'+json.get(MonsterData,"InnateSpell"+roll.count+"Level")+'")]']
-        [h:SpellMacroTooltip = '[h,MACRO("InnateSpellcasting ### Monster@Lib:SRD"): json.set("","ParentToken",currentToken(),"IsTooltip",1,"Spell","'+thisSpellName+'","Level","'+json.get(MonsterData,"InnateSpell"+roll.count+"Level")+'")]']
+        [h:CastAtLevel = json.get(MonsterData,"InnateSpell"+SafeCounter+"Level")]
+        [h:SpellMacroCommand = '[h,MACRO("InnateSpellcasting ### Monster@Lib:SRD"): json.set("","ParentToken",currentToken(),"IsTooltip",0,"Spell","'+thisSpellName+'","Level","'+CastAtLevel+'")]']
+        [h:SpellMacroTooltip = '[h,MACRO("InnateSpellcasting ### Monster@Lib:SRD"): json.set("","ParentToken",currentToken(),"IsTooltip",1,"Spell","'+thisSpellName+'","Level","'+CastAtLevel+'")]']
 
         [h:SpellMacroProps = json.set("",
             "applyToSelected",0,
@@ -59,6 +61,7 @@
             "delim","json"
         )]
         [h:createMacro(SpellMacroProps)]
+        [h:SafeCounter = SafeCounter + 1]
     }]
 
     [h,if(ShortRestRestoreTest): InnateMonsterCast = json.set(InnateMonsterCast,"RestoreShortRest",1)]

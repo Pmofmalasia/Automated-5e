@@ -16,26 +16,14 @@
     [h:onListTest = json.contains(classesWithSpell,json.set("","Name",json.get(tempFeature,"Name"),"Class",json.get(tempFeature,"Class"),"Subclass",json.get(tempFeature,"Subclass")))]
     [h:sameBookTest = (spellSourcebook==json.get(tempFeature,"Library"))]
 
-    [h,switch(onListTest+""+sameBookTest+"TODO: remove this once done testing spells"),CODE:
-        case "11":{
-            [h:updatedFeature = json.set(tempFeature,"SpellList",json.append(json.get(tempFeature,"SpellList"),SpellName))]
-            [h:setLibProperty("sb.Abilities",json.path.set(getLibProperty("sb.Abilities","Lib:"+spellSourcebook),"[*][?(@.Name=='"+json.get(tempFeature,"Name")+"' && @.Class=='"+json.get(tempFeature,"Class")+"' && @.Subclass=='"+json.get(tempFeature,"Subclass")+"')]",updatedFeature),"Lib:"+spellSourcebook)]
-        };
-        case "10":{
-            [h:spellLibPriorUpdateFeature = json.path.read(getLibProperty("sb.Abilities","Lib:"+spellSourcebook),"[*][?(@.Name=='"+json.get(tempFeature,"Name")+"' && @.Class=='"+json.get(tempFeature,"Class")+"' && @.Subclass=='"+json.get(tempFeature,"Subclass")+"' && @.CreatedForMerging==1)]")]
-            [h:spellLibHasPriorUpdate = !json.isEmpty(spellLibPriorUpdateFeature)]
-            [h,if(spellLibHasPriorUpdate):
-                updatedFeature = json.set(json.get(spellLibPriorUpdateFeature,0),"SpellList",json.append(json.get(json.get(spellLibPriorUpdateFeature,0),"SpellList"),SpellName));
-                updatedFeature = json.set("","Name",json.get(tempFeature,"Name"),"Class",json.get(tempFeature,"Class"),"Subclass",json.get(tempFeature,"Subclass"),"SpellList",json.append("",SpellName),"CreatedForMerging",1)
-            ]
-            [h,if(spellLibHasPriorUpdate): 
-                setLibProperty("sb.Abilities",json.path.set(getLibProperty("sb.Abilities","Lib:"+spellSourcebook),"[*][?(@.Name=='"+json.get(tempFeature,"Name")+"' && @.Class=='"+json.get(tempFeature,"Class")+"' && @.Subclass=='"+json.get(tempFeature,"Subclass")+"')]",updatedFeature),"Lib:"+spellSourcebook);
-                setLibProperty("sb.Abilities",json.append(getLibProperty("sb.Abilities","Lib:"+spellSourcebook),updatedFeature),"Lib:"+spellSourcebook)
-            ]
-        };
-        default:{[h:broadcast("Spell added to library but not any features for testing purposes.")]}
-    ]
+    [h,if(onListTest),CODE:{
+        [h:CurrentList = json.get(getLibProperty("sb.SpellLists","Lib:"+spellSourcebook),json.get(tempFeature,"Class")+json.get(tempFeature,"Subclass"))]
+        [h:NewList = json.sort(json.unique(json.append(CurrentList,SpellName)))]
+        [h:setLibProperty("sb.SpellLists",json.set(getLibProperty("sb.SpellLists","Lib:"+json.get(tempFeature,"Library")),json.get(tempFeature,"Class")+json.get(tempFeature,"Subclass"),NewList),"Lib:"+spellSourcebook)]
+    };{}]
 }]
 
 [h:setLibProperty("sb.Spells",json.append(getLibProperty("sb.Spells","Lib:"+spellSourcebook),thisSpellData),"Lib:"+spellSourcebook)]
 [h:setLibProperty("ct.NewSpell",json.remove(getLibProperty("ct.NewSpell","Lib:pm.a5e.Core"),getPlayerName()),"Lib:pm.a5e.Core")]
+
+[h:broadcast("Spell "+json.get(baseSpellData,"DisplayName")+" created.")]

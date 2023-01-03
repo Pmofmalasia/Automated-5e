@@ -11,7 +11,7 @@
 [h:hp.AbsorptionTypes = "[]"]
 [h:hp.DRTypes = json.fromStrProp(pm.GetDamageTypes("Name","=0;")+"=0")]
 [h:hp.DRTypes = json.set(hp.DRTypes,"Healing",0)]
-[h:hp.DRTypes = json.set(hp.DRTypes,"Temp HP",0)]
+[h:hp.DRTypes = json.set(hp.DRTypes,"TempHP",0)]
 
 [h:tempDamageModifiers = getProperty("a5e.stat.DamageModifiers")]
 [h,foreach(modifierInstance,json.get(tempDamageModifiers,"Vulnerability")),CODE:{

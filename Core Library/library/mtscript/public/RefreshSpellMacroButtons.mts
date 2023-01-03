@@ -19,8 +19,6 @@
 [h:ForcedClass=""]
 [h:ForcedLevel=""]
 [h:DMOnly=0]
-[h:InnateCast=0]
-[h:MonsterCast=0]
 
 [h:"<!-- The following are customization options to personalize your macros! They wont actually affect calculations or anything -->"]
 
@@ -69,8 +67,6 @@
 	"SummonPortrait",SummonPortrait,
 	"SummonHandout",SummonHandout,
 	"DMOnly",DMOnly,
-	"InnateCast",InnateCast,
-	"MonsterCast",MonsterCast,
 	"AuraColor",AuraColor,
 	"BorderColorOverride",BorderColorOverride,
 	"TitleFontColorOverride",TitleFontColorOverride,
@@ -86,7 +82,7 @@
 
 [h,MACRO("SpellcastingBorder@Lib:pm.a5e.Core"): FlavorData]']
 
-	[h:pm.NewMacroTooltip = '[h:Flavor=""][h:BorderColorOverride=""][h:TitleFontColorOverride=""][h:tooltipDisplaySizeOverride=""][h:TitleFont=""][h:BodyFont=""][h:ForcedClass=""][h:DMOnly=0][h:InnateCast=0][h:MonsterCast=0][h:placeholdToAdd=""][h:TooltipData = json.set("","Flavor",Flavor,"Spell","'+tempSpell+'","ParentToken",currentToken(),"BorderColorOverride",BorderColorOverride,"TitleFontColorOverride",TitleFontColorOverride,"tooltipDisplaySizeOverride",tooltipDisplaySizeOverride,"TitleFont",TitleFont,"BodyFont",BodyFont,"ForcedClass",ForcedClass,"DMOnly",DMOnly,"InnateCast",InnateCast,"MonsterCast",MonsterCast,"IsTooltip",1,"placeholdToAdd",placeholdToAdd)][h,MACRO("SpellTooltipBorder@Lib:pm.a5e.Core"): TooltipData]']
+	[h:pm.NewMacroTooltip = '[h:Flavor=""][h:BorderColorOverride=""][h:TitleFontColorOverride=""][h:tooltipDisplaySizeOverride=""][h:TitleFont=""][h:BodyFont=""][h:ForcedClass=""][h:DMOnly=0][h:placeholdToAdd=""][h:TooltipData = json.set("","Flavor",Flavor,"Spell","'+tempSpell+'","ParentToken",currentToken(),"BorderColorOverride",BorderColorOverride,"TitleFontColorOverride",TitleFontColorOverride,"tooltipDisplaySizeOverride",tooltipDisplaySizeOverride,"TitleFont",TitleFont,"BodyFont",BodyFont,"ForcedClass",ForcedClass,"DMOnly",DMOnly,"IsTooltip",1,"placeholdToAdd",placeholdToAdd)][h,MACRO("SpellTooltipBorder@Lib:pm.a5e.Core"): TooltipData]']
 
 	[h:"<!-- TODO: Source is temporarily set to Arcane permanently until Divine is implemented -->"]
 	[h:DefaultDisplayData = pm.SpellColors(json.set("","Level",string(json.get(MainSpellData,"Level")),"Source",MagicSource))]

@@ -13,37 +13,23 @@
 [h:setProperty("a5e.stat.TempHP",0)]
 [h:LongRestTest=1]
 
-[h:Twelve=json.get(getProperty("a5e.stat.HitDice"),"1d12")]
-[h:MTwelve=json.get(getProperty("a5e.stat.MaxHitDice"),"1d12")]
-[h:Ten=json.get(getProperty("a5e.stat.HitDice"),"1d10")]
-[h:MTen=json.get(getProperty("a5e.stat.MaxHitDice"),"1d10")]
-[h:Eight=json.get(getProperty("a5e.stat.HitDice"),"1d8")]
-[h:MEight=json.get(getProperty("a5e.stat.MaxHitDice"),"1d8")]
-[h:Six=json.get(getProperty("a5e.stat.HitDice"),"1d6")]
-[h:MSix=json.get(getProperty("a5e.stat.MaxHitDice"),"1d6")]
+[h:HitDieSizes = json.fields(getProperty("a5e.stat.MaxHitDice"))]
+[h,foreach(DieSize,HitDieSizes),CODE:{
+	[h:CurrentHD = if(json.get(getProperty("a5e.stat.HitDice"),+DieSize)=="",0,json.get(getProperty("a5e.stat.HitDice"),DieSize))]
+	[h:HDRecharge = max(1,floor(json.get(getProperty("a5e.stat.MaxHitDice"),DieSize)/2))]
+	[h:HDNewTotal = min(json.get(getProperty("a5e.stat.MaxHitDice"),DieSize),CurrentHD+HDRecharge)]
+	[h:setProperty("a5e.stat.HitDice",json.set(getProperty("a5e.stat.HitDice"),DieSize,HDNewTotal))]
+}]
 
-[h:HDRecharge=max(1,floor(getProperty("a5e.stat.Level")/2))]
-
-[h:DifTwelve=MTwelve-Twelve]
-[h:DifTen=MTen-Ten]
-[h:DifEight=MEight-Eight]
-[h:DifSix=MSix-Six]
-
-[h:Twelve=Twelve+min(DifTwelve,HDRecharge)][h:HDRecharge=max(HDRecharge-DifTwelve,0)]
-[h:Ten=Ten+min(DifTen,HDRecharge)][h:HDRecharge=max(HDRecharge-DifTen,0)]
-[h:Eight=Eight+min(DifEight,HDRecharge)][h:HDRecharge=max(HDRecharge-DifEight,0)]
-[h:Six=Six+min(DifSix,HDRecharge)][h:HDRecharge=max(HDRecharge-DifSix,0)]
-
-[h:setProperty("a5e.stat.HitDice",json.set("","1d12",Twelve,"1d10",Ten,"1d8",Eight,"1d6",Six))]
 [h:abilityTable = json.append(abilityTable,json.set("",
-			"ShowIfCondensed",1,
-			"Header","Hit Dice",
-			"FalseHeader","",
-			"FullContents","",
-			"RulesContents",a5e.HitDieDisplay(),
-			"RollContents","",
-			"DisplayOrder","['Rules','Roll','Full']"
-			))]
+	"ShowIfCondensed",1,
+	"Header","Hit Dice",
+	"FalseHeader","",
+	"FullContents","",
+	"RulesContents",a5e.HitDieDisplay(),
+	"RollContents","",
+	"DisplayOrder","['Rules','Roll','Full']"
+))]
 	
 [h:setProperty("a5e.stat.SpellSlots",getProperty("a5e.stat.MaxSpellSlots"))]
 [h,if(json.get(a5e.stat.MaxSpellSlots,"1")>0):
@@ -110,9 +96,14 @@
 			"RollContents","",
 			"DisplayOrder","['Rules','Roll','Full']",
 			"Value",ResourceRestoredFinal
-			))]
+		))]
 	}]
-	[h:setProperty("a5e.stat.AllFeatures",json.path.set(getProperty("a5e.stat.AllFeatures"),"[?(@.Name=='"+json.get(Ability,"Name")+"' && @.Class=='"+json.get(Ability,"Class")+"' && @.Subclass=='"+json.get(Ability,"Subclass")+"')]['Resource']",ResourceRestoredFinal))]
+
+	[h:needsPutTest = !json.isEmpty(json.path.read(getProperty("a5e.stat.AllFeatures"),"[?("+pm.a5e.PathFeatureFilter(Ability)+" && @.Resource==null)]","DEFAULT_PATH_LEAF_TO_NULL"))]
+	[h,if(needsPutTest):
+		setProperty("a5e.stat.AllFeatures",json.path.put(getProperty("a5e.stat.AllFeatures"),"[?("+pm.a5e.PathFeatureFilter(Ability)+")]","Resource",ResourceRestoredFinal));
+		setProperty("a5e.stat.AllFeatures",json.path.set(getProperty("a5e.stat.AllFeatures"),"[?("+pm.a5e.PathFeatureFilter(Ability)+")]['Resource']",ResourceRestoredFinal))
+	]
 }]
 
 [h:pm.PassiveFunction("LongRest")]

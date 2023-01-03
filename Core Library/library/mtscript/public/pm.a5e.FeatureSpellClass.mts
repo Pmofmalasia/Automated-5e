@@ -1,10 +1,9 @@
-[h,if(argCount()>1):
-	tempCastingClass = json.get(arg(1),"Class");
-	tempCastingClass = "Use_Feature_Data"
-]
+[h,if(argCount()>1),CODE:{
+	[h:tempCastingClass = if(json.get(arg(1),"Class")=="","Use_Feature_Data",json.get(arg(1),"Class"))]
+};{
+	[h:tempCastingClass = "Use_Feature_Data"]
+}]
 [h:pm.a5e.FeatureComponentStdVars(arg(0))]
-
-[h:currentFeatureCastingLevel = ceiling((currentFeatureLevel*json.get(pass.FeatureInfo,"CasterType"))/2)]
 
 [h:currentFeatureSpellsAlwaysActive = json.get(pass.FeatureInfo,"SpellsAlwaysActive")]
 [h,if(currentFeatureSpellsAlwaysActive == ""): currentFeatureSpellsAlwaysActive = "[]"]
@@ -20,6 +19,6 @@
 [h,if(isCastingClass),CODE:{
 	[h,if(tempCastingClass=="Use_Feature_Data"):
 		ClassOptionsArray = json.append(ClassOptionsArray,pass.FeatureInfo);
-		ClassOptionsArray = json.append(ClassOptionsArray,tempCastingClass)
+		ClassOptionsArray = json.append(ClassOptionsArray,json.set(pass.FeatureInfo,"CastAsClass",tempCastingClass))
 	]
 };{}]

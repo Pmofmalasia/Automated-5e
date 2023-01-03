@@ -28,6 +28,11 @@
 	"Library",ab.SourceLib
 )]
 
+[h,if(ab.IsUnique):
+    ab.Final = json.set(ab.Final,"Subclass",pm.RemoveSpecial(getName()));
+    ab.Final = json.set(ab.Final,"Subclass","")
+]
+
 [h,if(ab.LegendaryAction),CODE:{
     [h:NeedsLegendaryAction =json.isEmpty(json.path.read(getProperty("a5e.stat.AllFeatures"),"[*][?(@.Name=='LegendaryActions' && @.Class=='Monster')]"))]
     [h,if(NeedsLegendaryAction),CODE:{
@@ -44,7 +49,7 @@
             "GainOnLevel",0,
             "Optional",0,
             "MultiFeature",0,
-            "Library","Lib:SRD",
+            "Library","SRD",
             "Resource",LegendaryActionNumber,
             "MaxResource","[r:"+LegendaryActionNumber+"]"
         )]
@@ -54,11 +59,6 @@
 
     [h:json.set(ab.Final,"Master","LegendaryActions")]
 };{}]
-
-[h,if(ab.IsUnique):
-    ab.Final = json.set(ab.Final,"Subclass",pm.RemoveSpecial(getName()));
-    ab.Final = json.set(ab.Final,"Subclass","")
-]
 
 [h,macro("Create Feature Core@Lib:pm.a5e.Core"): json.set("","Feature",ab.Final,"PrereqsTest",0)]
 

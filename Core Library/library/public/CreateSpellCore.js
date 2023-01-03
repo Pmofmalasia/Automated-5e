@@ -103,10 +103,10 @@ async function mCompInput() {
         let table = document.getElementById("spellCreationTable");
 
         let mCompList = table.insertRow(mCompLineIndex+1);
-        mCompList.innerHTML = "<th><label for='mComponents'>Material Components:</label></th><td><input type='text' id='mComponents' name=mComponents'></td>";
+        mCompList.innerHTML = "<th><label for='mComponents'>Material Components:</label></th><td><input type='text' id='mComponents' name='mComponents'></td>";
 
         let mCompConsumedList = table.insertRow(mCompLineIndex+2);
-        mCompConsumedList.innerHTML = "<th><label for='mComponentsConsumed'>Consumed Material Components:</label></th><td><input type='text' id='mComponentsConsumed' name=mComponentsConsumed'></td>";
+        mCompConsumedList.innerHTML = "<th><label for='mComponentsConsumed'>Consumed Material Components:</label></th><td><input type='text' id='mComponentsConsumed' name='mComponentsConsumed'></td>";
     }
     else{
         document.getElementById("spellCreationTable").deleteRow(mCompLineIndex+1);

@@ -12,7 +12,7 @@
 	[h:set("ab.UpdateLevel"+(ab.Level+roll.count+1),if(ab.MultiResourceTest,"[r:json.set(''","[r:"))]
 }]
 
-[h:"<!-- Might be nice to have an option to have the name of the resource be equivalent to a choice made (usually a spell afaik) for display purposes. -->"]
+[h:"<!-- TODO: Might be nice to have an option to have the name of the resource be equivalent to a choice made (usually a spell afaik) for display purposes. -->"]
 
 [h,while(ab.ContinueLoopTest==1),CODE:{
 	[h,if(ab.MultiResourceTest == 1),CODE:{

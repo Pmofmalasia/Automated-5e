@@ -28,6 +28,8 @@
     "Class",json.get(MonsterWeaponData,"WeaponClass"),
     "DamageDie",json.get(MonsterWeaponData,"WeaponDamageNumber")+"d"+json.get(MonsterWeaponData,"WeaponDamageDie"),
     "DamageType",json.get(MonsterWeaponData,"WeaponDamageType"),
+    "SecDamageDie",if(json.get(MonsterWeaponData,"WeaponDamageNumber2")==0,"0",json.get(MonsterWeaponData,"WeaponDamageNumber2")+"d"+json.get(MonsterWeaponData,"WeaponDamageDie2")),
+    "SecDamageType",json.get(MonsterWeaponData,"WeaponDamageType2"),
     "Type",json.get(MonsterWeaponData,"WeaponType"),
     "MeleeRanged",if(json.get(MonsterWeaponData,"WeaponMeleeRanged")=="Ranged","Ranged","Melee"),
     "Type",json.get(MonsterWeaponData,"WeaponType"),
@@ -57,7 +59,7 @@
     "maxWidth","",
     "minWidth",89,
     "playerEditable",0,
-    "tooltip","",
+    "tooltip",'[h:TooltipData=json.set("","tooltipDisplaySizeOverride",200,"WeaponData",'+"'"+NewWeaponData+"'"+')][MACRO("Attack Macro Tooltip@Lib:pm.a5e.Core"):TooltipData]',
     "delim","json"
 )]
 

@@ -75,7 +75,9 @@
 
 	[h:spellCreationHTML = spellCreationHTML + "<tr id='rowSourcebook'><th><label for='spellSourcebook'>Spell Sourcebook:</label></th><td><select id='spellSourcebook' name='spellSourcebook'>"+sourcebookOptions+"</select></td></tr>
 
-	<tr id='rowDescription'><th text-align='center' colspan='2'><label for='Description'>Full Spell Description:</label></th colspan='2'></th></tr><tr id='rowSpellTextArea'><th><textarea id='Description' name='Description' rows='10' style='width:177%'></textarea></th>"]
+	<tr id='rowDescription'><th text-align='center' colspan='2'><label for='Description'>Full Spell Description:</label></th colspan='2'></th></tr><tr id='rowSpellTextArea'><th><textarea id='Description' name='Description' rows='10' style='width:177%'></textarea></th>
+
+	<tr id='rowAHLDescription'><th text-align='center' colspan='2'><label for='AHLDescription'>At Higher Levels:</label></th colspan='2'></th></tr><tr id='rowAHLSpellTextArea'><th><textarea id='AHLDescription' name='AHLDescription' rows='3' style='width:177%'></textarea></th>"]
 }]
 
 [h:spellCreationHTML = spellCreationHTML + "</tr><tr><th text-align='center' colspan='2'><input type='submit' id='submitButton' value='Submit'></th></tr>"]

@@ -16,7 +16,11 @@
 [h:SpellSchool = json.get(BaseSpellData,"School")]
 [h:ForcedClass = json.get(NonSpellData,"ForcedClass")]
 [h:isRitualTest = json.contains(json.path.read(SpellData,"[*]['isRitual']"),1)]
-[h:SpellTitle = SpellDisplayName+": Level "+SpellLevel+" "+pm.GetDisplayName(SpellSchool,"sb.SpellSchools")+" Spell"+if(isRitualTest," (ritual)","")]
+[h:IsCantrip = (SpellLevel == 0)]
+[h,if(IsCantrip):
+	SpellTitle = SpellDisplayName+": "+pm.GetDisplayName(SpellSchool,"sb.SpellSchools")+" Cantrip";
+	SpellTitle = SpellDisplayName+": Level "+SpellLevel+" "+pm.GetDisplayName(SpellSchool,"sb.SpellSchools")+" Spell"+if(isRitualTest," (ritual)","")
+]
 
 [h:"<!-- Note: The below is the first entry in abilityTable so that it can be removed in SpellTooltipBorder but present in other tables. -->"]
 [h:abilityTable = json.append("",json.set("",
@@ -81,12 +85,12 @@
     [h:tempComponents = json.path.read(SpellData,"[*]['mComponents']")]
     [h,if(json.isEmpty(tempComponents)):
         materialComponents = "";
-        materialComponents = json.get(tempComponents,0)
+        materialComponents = base64.decode(json.get(tempComponents,0))
     ]
     [h:tempConsumedComponents = json.path.read(SpellData,"[*]['mComponentsConsumed']")]
     [h,if(json.isEmpty(tempConsumedComponents)):
         materialComponentsConsumed = "";
-        materialComponentsConsumed = json.get(tempConsumedComponents,0)
+        materialComponentsConsumed = base64.decode(json.get(tempConsumedComponents,0))
     ]
 };{
     [h:componentsDisplay = ""]
@@ -96,7 +100,7 @@
 
 [h:componentsDisplay = if(vComp,"V","")]
 [h:componentsDisplay = if(sComp,listAppend(componentsDisplay,"S",", "),componentsDisplay)]
-[h:componentsDisplay = if(mComp,listAppend(componentsDisplay,"M"+if(materialComponents=="",""," ("+materialComponents+")"),", "),componentsDisplay)]
+[h:componentsDisplay = if(mComp,listAppend(componentsDisplay,"M"+if(materialComponents==""," (consumed)"," ("+materialComponents+")"),", "),componentsDisplay)]
 [h:abilityTable = json.append(abilityTable,json.set("",
 	"ShowIfCondensed",1,
 	"Header","Components",
@@ -133,5 +137,7 @@
 ))]
 
 [h:SpellDescription = base64.decode(json.get(BaseSpellData,"Description"))]
+[h:SpellAHLDescription = base64.decode(json.get(BaseSpellData,"AHLDescription"))]
+[h:CompleteSpellDescription = SpellDescription+if(SpellAHLDescription=="","","<br><br>"+if(IsCantrip,"","<b><i>At Higher Levels.</b></i> "))+SpellAHLDescription]
 
-[h:macro.return = json.set("","Table",abilityTable,"Source","Arcane","Description",SpellDescription,"DisplayName",SpellTitle)]
+[h:macro.return = json.set("","Table",abilityTable,"Source","Arcane","Description",CompleteSpellDescription,"DisplayName",SpellTitle)]

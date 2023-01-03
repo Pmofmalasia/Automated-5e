@@ -19,6 +19,8 @@
 
 [h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowWeaponAddDmgMod'><th><label for='WeaponAddDmgMod'>Add Stat Modifier to Damage?</label></th><td><input type='checkbox' id='WeaponAddDmgMod' name='WeaponAddDmgMod' checked></td></tr>"]
 
+[h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowWeaponDamage2'><th><label for='WeaponDamageDie2'>Second Damage Type:</label></th><td><input type='number' id='WeaponDamageNumber2' name='WeaponDamageNumber2' min=0 value=0 style='width:25px'> d <input type='number' id='WeaponDamageDie2' name='WeaponDamageDie2' min=1 value=6 style='width:25px'><select id='WeaponDamageType2' name='WeaponDamageType2'><option value=''>None</option>"+DamageTypeOptions+"</select></td></tr>"]
+
 [h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowWeaponMagicBonus'><th><label for='WeaponMagicBonus'>Magic Bonus:</label></th><td><input type='number' id='WeaponMagicBonus' name='WeaponMagicBonus' min='0' value='0' style='width:25px'></td></tr>"]
 
 [h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowWeaponMeleeRanged'><th><label for='WeaponMeleeRanged'>Range Type:</label></th><td><select id='WeaponMeleeRanged' name='WeaponMeleeRanged' onchange='toggleReachRanged()'><option value='Melee'>Melee</option><option value='Ranged'>Ranged</option><option value='Both'>Both</option></select></td></tr>"]

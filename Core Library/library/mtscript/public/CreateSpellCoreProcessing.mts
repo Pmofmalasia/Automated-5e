@@ -48,7 +48,19 @@
 [h:SpellCoreData = json.set(SpellCoreData,"CastTime",castTimeInfo)]
 [h:SpellCoreData = json.remove(SpellCoreData,"previousCustomCastTimeValue")]
 [h:SpellCoreData = json.remove(SpellCoreData,"previousCustomCastTimeUnits")]
-[h,if(json.contains(SpellCoreData,"ReactionDescription")): json.set(SpellCoreData,"ReactionDescription",base64.encode(json.get(SpellCoreData,"ReactionDescription")))]
+[h,if(json.contains(SpellCoreData,"ReactionDescription")): SpellCoreData = json.set(SpellCoreData,"ReactionDescription",base64.encode(json.get(SpellCoreData,"ReactionDescription")))]
+
+[h,if(json.contains(SpellCoreData,"mComp")),CODE:{
+    [h,if(json.get(SpellCoreData,"mComponents")==""):
+        SpellCoreData = json.remove(SpellCoreData,"mComponents");
+        SpellCoreData = json.set(SpellCoreData,"mComponents",base64.encode(json.get(SpellCoreData,"mComponents")))
+    ]
+    
+    [h,if(json.get(SpellCoreData,"mComponentsConsumed")==""):
+        SpellCoreData = json.remove(SpellCoreData,"mComponentsConsumed");
+        SpellCoreData = json.set(SpellCoreData,"mComponentsConsumed",base64.encode(json.get(SpellCoreData,"mComponentsConsumed")))
+    ]
+};{}]
 
 [h:durationInfo = "{}"]
 [h,switch(json.get(SpellCoreData,"Duration")),CODE:
@@ -130,9 +142,15 @@
     [h:tempDescription = replace(encode(tempDescription),"%0A","<br>")]
     [h:tempDescription = decode(tempDescription)]
     [h:SpellCoreData = json.set(SpellCoreData,"Description",base64.encode(tempDescription))]
+
+    [h:tempAHLDescription = pm.EvilChars(json.get(SpellCoreData,"AHLDescription"))]
+    [h:tempAHLDescription = replace(encode(tempAHLDescription),"%0A","<br>")]
+    [h:tempAHLDescription = decode(tempAHLDescription)]
+    [h:SpellCoreData = json.set(SpellCoreData,"AHLDescription",base64.encode(tempAHLDescription))]
 };{
     [h:baseSpellData = json.get(thisPlayerCurrentSpellData,0)]
     [h:SpellCoreData = json.set(SpellCoreData,"Description",json.get(baseSpellData,"Description"))]
+    [h:SpellCoreData = json.set(SpellCoreData,"AHLDescription",json.get(baseSpellData,"AHLDescription"))]
 }]
 
 [h:TotalSubeffects = json.get(SpellCoreData,"multiSubeffects")]

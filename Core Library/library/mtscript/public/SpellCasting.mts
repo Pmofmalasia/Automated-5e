@@ -9,8 +9,6 @@
 [h:ForcedLevel = json.get(NonSpellData,"ForcedLevel")]
 [h:FreeCasting = json.get(NonSpellData,"FreeCasting")]
 [h:SpellSource = json.get(NonSpellData,"SpellSource")]
-[h:InnateCast = json.get(NonSpellData,"InnateCast")]
-[h:MonsterCast = json.get(NonSpellData,"MonsterCast")]
 [h:ForcedSummonName = json.get(NonSpellData,"ForcedSummonName")]
 [h:ForcedImage = json.get(NonSpellData,"ForcedImage")]
 [h:ForcedPortrait = json.get(NonSpellData,"ForcedPortrait")]
@@ -69,24 +67,29 @@
 [h:sLevelSelect = ""]
 [h:classList = pm.GetClasses("Name","json")]
 
-[h,if(ForcedClass=="" && InnateCast==0),CODE:{
+[h,if(ForcedClass==""),CODE:{
 	[h:ClassOptionsArray = "[]"]
 	[h:pm.PassiveFunction("SpellClass")]
 	
 	[h:ClassOptions = ""]
 	[h,foreach(castingClass,ClassOptionsArray),CODE:{
-		[h:"<!-- TODO: isClassTest will not work for any class feature that casts spells that count as another class's (e.g. eldritch knight) -->"]
-		[h:isClassTest = json.contains(classList,json.get(castingClass,"Class"))]
+		[h,if(json.contains(castingClass,"CastAsClass")):
+			thisCastingClass = json.get(castingClass,"CastAsClass");
+			thisCastingClass = json.get(castingClass,"Class")
+		]
+		
+		[h:isClassTest = json.contains(classList,thisCastingClass)]
 		[h,if(isClassTest):
-			ClassOptions = json.append(ClassOptions,pm.GetDisplayName(json.get(castingClass,"Class"),"sb.Classes"));
-			ClassOptions = json.append(ClassOptions,json.get(castingClass,"DisplayName"))
+			ClassOptions = json.append(ClassOptions,pm.GetDisplayName(thisCastingClass,"sb.Classes"));
+			ClassOptions = if(thisCastingClass=="Monster",json.append(ClassOptions,"Monster"),json.append(ClassOptions,json.get(castingClass,"DisplayName")))
 		]
 	}]
+	
 	[h:ClassOptionsArray = json.append(ClassOptionsArray,"None")]
+	[h:ClassOptions = json.append(ClassOptions,"None")]
 };{
 	[h:ClassOptionsArray = json.append("",ForcedClass)]
 	[h,if(ForcedClass!=""): ClassOptionsArray = ForcedClass]
-	[h,if(InnateCast==1): ClassOptions=if(MonsterCast==0,getProperty("a5e.stat.Race"),"Monster")]
 }]
 
 [h,if(ForcedLevel==""),CODE:{
@@ -142,17 +145,7 @@
 
 [h,if(json.length(ClassOptionsArray) < 3),CODE:{
 	[h:chosenClass = 0]
-	[h:tempClassSelect = json.get(ClassOptionsArray,0)]
-	[h:infoTypeTest = json.type(tempClassSelect)]
-	[h,if(infoTypeTest == "UNKNOWN"),CODE:{
-		[h:disSpellClassSelect = " junkVar | "+pm.GetDisplayName(tempClassSelect,"sb.Classes")+" | Casting Class | LABEL "]
-	};{
-		[h:tempClassTest = json.contains(classList,json.get(tempClassSelect,"Class"))]
-		[h,if(tempClassTest):
-			disSpellClassSelect = " junkVar | "+pm.GetDisplayName(json.get(tempClassSelect,"Class"),"sb.Classes")+" | Casting Class | LABEL ";
-			disSpellClassSelect = " junkVar | "+json.get(tempClassSelect,"DisplayName")+" | Casting Class | LABEL "			
-		]
-	}]
+	[h:disSpellClassSelect = " junkVar | "+json.get(ClassOptions,0)+" | Casting Class | LABEL "]
 };{
 	[h:disSpellClassSelect = " chosenClass | "+ClassOptions+" | Casting Class | LIST | DELIMITER=JSON "]
 }]
@@ -164,7 +157,7 @@
 
 [h:disPassiveBars = if(disPassiveChoices=="","","junkvar | ----------------------------------------------------------- |  | LABEL | SPAN=TRUE ")]
 
-[h,if(and(ForcedClass=="",InnateCast==0) || ForcedLevel=="" || MultiEffectChoiceTest==1),CODE:{
+[h,if(ForcedClass=="" || ForcedLevel=="" || MultiEffectChoiceTest==1),CODE:{
 	[h,if(IsCantrip && json.length(ClassOptionsArray) < 3 && MultiEffectChoiceTest == 0 && disPassiveChoices == ""),CODE:{
 		[h:sLevelSelect = "Cantrip"]
 		[h:sRulesShow = getLibProperty("FullSpellRules","Lib:pm.a5e.Core")]
@@ -181,11 +174,11 @@
 			disSpellEffectChoices,
 			disPassiveBars,
 			disPassiveChoices
-		))]		
+		))]
 	}]
 };{
-	[h:sClassSelect=if(ForcedClass!="",ForcedClass,if(InnateCast,getProperty("a5e.stat.Race"),""))]
-	[h:sLevelSelect=ForcedLevel]
+	[h:sClassSelect = if(ForcedClass!="",ForcedClass,"")]
+	[h:sLevelSelect = ForcedLevel]
 	[h,if(IsCantrip): sLevelSelect = "Cantrip"]
 	[h:sRulesShow = getLibProperty("FullSpellRules","Lib:pm.a5e.Core")]
 	[h:abort(input(
@@ -233,14 +226,16 @@
 [h:vComp = json.contains(FinalSpellData,"vComp")]
 [h:sComp = json.contains(FinalSpellData,"sComp")]
 [h:mComp = json.contains(FinalSpellData,"mComp")]
-[h:mComponents = json.get(FinalSpellData,"mComponents")]
-[h:mComponentsConsumed = json.get(FinalSpellData,"mComponentsConsumed")]
+[h:mComponents = base64.decode(json.get(FinalSpellData,"mComponents"))]
+[h:mComponentsConsumed = base64.decode(json.get(FinalSpellData,"mComponentsConsumed"))]
 
 [h:CastTime = json.get(FinalSpellData,"CastTime")]
 [h:Duration = json.get(FinalSpellData,"Duration")]
 [h:SpellSubeffects = json.get(FinalSpellData,"Subeffects")]
 
 [h:SpellDescription = base64.decode(json.get(FinalSpellData,"Description"))]
+[h:SpellAHLDescription = base64.decode(json.get(FinalSpellData,"AHLDescription"))]
+[h:CompleteSpellDescription = SpellDescription+if(SpellAHLDescription=="","","<br><br>"+if(IsCantrip,"","<b><i>At Higher Levels.</b></i> "))+SpellAHLDescription]
 
 [h:IsOngoing=json.get(FinalSpellData,"IsOngoing")]
 [h:IsCheck=json.get(FinalSpellData,"IsCheck")]
@@ -389,10 +384,10 @@
 
 [h:pm.PassiveFunction("AfterSpell")]
 
-[h:SpellDescriptionData = json.set(NonSpellData,"Description",SpellDescription,"SpellDisplayName",SpellDisplayName,"ForcedLevel",sLevelSelect)]
+[h:SpellDescriptionData = json.set(NonSpellData,"Description",CompleteSpellDescription,"SpellDisplayName",SpellDisplayName,"ForcedLevel",sLevelSelect)]
 
 [h:sDescriptionLink = macroLinkText("spellDescription@Lib:pm.a5e.Core",if(DMOnly,"gm","all"),SpellDescriptionData,ParentToken)]
-[h:SpellDescriptionFinal = if(sRulesShow==0,"<a style='color:"+LinkColor+";' href='"+sDescriptionLink+"'>Click to show full spell text</a>",SpellDescription)]
+[h:SpellDescriptionFinal = if(sRulesShow==0,"<a style='color:"+LinkColor+";' href='"+sDescriptionLink+"'>Click to show full spell text</a>",CompleteSpellDescription)]
 
 
 [h:ReturnData = json.set(NonSpellData,"SpellData",json.append("",FinalSpellData),"Slot",if(IsCantrip,0,eLevel),"Source",sSource,"Class",sClassSelect,"Effect",pm.a5e.EffectData,"Table",abilityTable,"Description",SpellDescriptionFinal,"ShowFullRules",sRulesShow)]

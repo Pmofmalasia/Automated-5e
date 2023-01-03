@@ -18,6 +18,10 @@
 
 [h:DurationBase = json.set("","year",0,"day",0,"hour",0,"minute",0,"round",0)]
 [h:DurationFinal = json.set(DurationBase,ConditionDurationUnits,ConditionDuration,"AdvancePoint",ConditionAdvancePoint)]
+
+[h:ConditionImmunities = pm.a5e.ConditionImmunityCalc(json.set("","ParentToken",ParentToken,"SetBy",ConditionSetBy,"SourceType","{}"))]
+[h:a5e.ConditionsTemp = json.path.delete(a5e.ConditionsTemp,"[*][?(@.Name in "+ConditionImmunities+")]")]
+
 [h:"<!-- The purpose of looping here is to catch any chain reactions - e.g. Condition A is associated with Condition B, which in turn is associated with Condition C. -->"]
 [h:a5e.Conditions = a5e.ConditionsTemp]
 [h:FirstLoopTest = 1]
@@ -30,7 +34,7 @@
 	[h:AssociatedConditions = "[]"]
 	[h,foreach(condition,AssociatedConditionsTemp): AssociatedConditions = json.merge(AssociatedConditions,condition)]
 	
-	[h:AssociatedConditionNames = json.path.read(AssociatedConditions,"[*]['Name']")]
+	[h:AssociatedConditionNames = json.path.read(AssociatedConditions,"[*][?(@.Name nin "+ConditionImmunities+")]['Name']")]
 	[h:AssociatedConditionNamesToAdd = json.difference(AssociatedConditionNames,json.path.read(a5e.ConditionsTemp,"[*]['Name']"))]
 
 	[h:AssociatedConditionsToAdd = json.path.read(AssociatedConditions,"[*][?(@.Name in "+AssociatedConditionNamesToAdd+")]")]
@@ -68,6 +72,20 @@
 	"Duration",DurationFinal	
 )]
 
+[h:notApplyingConditions = json.isEmpty(json.path.read(a5e.Conditions,"[*]['Name']"))]
+[h,if(notApplyingConditions),CODE:{
+	[h:abilityTable = json.append(abilityTable,json.set("",
+		"ShowIfCondensed",1,
+		"Header","Conditions Activated",
+		"FalseHeader","",
+		"FullContents","",
+		"RulesContents","All conditions resisted.",
+		"RollContents","",
+		"DisplayOrder","['Rules','Roll','Full']"
+	))]
+
+	[h:return(0,json.set("","Table",abilityTable))]
+}]
 [h:setProperty("a5e.stat.ConditionList",json.merge(getProperty("a5e.stat.ConditionList"),a5e.Conditions))]
 [h:setProperty("a5e.stat.ConditionGroups",json.append(getProperty("a5e.stat.ConditionGroups"),json.set(a5e.GroupingInfo,"SetBy",ConditionSetBy)))]
 
@@ -89,7 +107,7 @@
 	"Header","Condition"+if(json.length(a5e.Conditions)>1,"s","")+" Activated",
 	"FalseHeader","",
 	"FullContents","",
-	"RulesContents",json.toList(json.path.read(a5e.Conditions,"[*]['DisplayName']"),", "),
+	"RulesContents",pm.a5e.CreateDisplayList(json.path.read(a5e.Conditions,"[*][?(@.IsAssociated!=1 || @.IsAssociated==null)]['DisplayName']"),"and"),
 	"RollContents","",
 	"DisplayOrder","['Rules','Roll','Full']"
 ))]

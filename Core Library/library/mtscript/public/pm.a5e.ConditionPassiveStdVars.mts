@@ -61,4 +61,4 @@
 	"Handout",cond.ForcedSummonHandout
 )]
 
-[h:cond.abilityEffect = if(cond.ShowFullRules,cond.abilityFullEffect,cond.abilityAbridgedEffect)]
+[h:cond.abilityEffect = if(cond.ShowFullRules,cond.FeatureFullDescription,cond.FeatureAbridgedDescription)]

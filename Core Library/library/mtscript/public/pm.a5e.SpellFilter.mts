@@ -11,7 +11,20 @@
 [h:CastTimeFilter = json.get(SpellFilter,"Time")]
 [h:RitualFilter = json.get(SpellFilter,"Ritual")]
 
+[h:NameOverride = json.get(SpellFilter,"Name")]
+
 [h:SpellFilterString = ""]
+
+[h,switch(LevelBasedMaxLevel),CODE:
+    case "":{};
+    case "All":{[h:LevelBasedMaxLevel = a5e.CastingLevel()]};
+    case "FilterClassesMax":{
+        [h:LevelBasedMaxLevel = 0]
+        [h,if(json.type(ClassFilter)=="UNKNOWN"): tempClassFilter = json.append("",ClassFilter)]
+        [h,foreach(tempClass,tempClassFilter): LevelBasedMaxLevel = max(LevelBasedMaxLevel,a5e.CastingLevel(tempClass))]
+    };
+    default:{[h:LevelBasedMaxLevel = a5e.CastingLevel(LevelBasedMaxLevel)]}
+]
 
 [h,switch(json.type(ClassFilter)),CODE:
     case "ARRAY":{
@@ -72,8 +85,9 @@
 ]
 
 [h:FinalFilterDescription = pm.a5e.SpellFilterDisplay(SpellFilter)]
-[h:FinalSpellList = json.path.read(InitialSpellList,"[*][?("+SpellFilterString+")]")]
+[h:FinalSpellInfo = json.path.read(InitialSpellList,"[*][?("+SpellFilterString+")]")]
+[h:FinalSpellList = json.sort(json.unique(json.path.read(FinalSpellInfo,"[*]['DisplayName']")))]
 
-[h:ReturnData = json.set("","SpellList",FinalSpellList,"Description",FinalFilterDescription)]
+[h:ReturnData = json.set("","SpellList",FinalSpellList,"SpellInfo",FinalSpellInfo,"Description",FinalFilterDescription)]
 
 [h:return(0,ReturnData)]

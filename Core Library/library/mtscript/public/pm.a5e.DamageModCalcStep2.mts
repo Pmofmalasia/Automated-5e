@@ -4,7 +4,11 @@
 [h:switchToken(json.get(hp.Data,"ParentToken"))]
 
 [h:AllSourcesTest = if(json.get(modifierInstance,"All")==1,1,0)]
-	
+
+[h:"<!-- Damage modifiers are calculated in instances - at this level, there is only one instance of damage, but instances of effects that modify the damage. This is because separate features that provide damage modifiers may only be *situationally* better than the other, as opposed to strictly better. Therefore, each feature that can provide damage modification is checked to see what provides the best benefit. That being said, all of this feels like insanity and hopefully there is a better way. -->"]
+
+[h:"<!-- Additional note: I think Physical damage does not need a separate note from magical, since if something is not magical then it is physical by default, but will need to consider this. --> "]
+
 [h,if(AllSourcesTest),CODE:{
 	[h:macro.return = json.get(modifierInstance,"DamageTypes")]
 };{
@@ -19,23 +23,23 @@
 	[h,if(json.get(modifierInstance,"ExcludeOrder")==""): ExcludeOrderTest = 1; ExcludeOrderTest = if(json.get(hp.Data,"SourceToken")=="",1,!json.contains(json.get(modifierInstance,"ExcludeOrder"),json.get(getProperty("a5e.stat.Alignment",json.get(modifierInstance,"SourceToken")),"Order")))]
 	
 	[h,switch(hp.Source),CODE:
-	case "Spell":{
-		[h:MagicSourcesTest = if(json.get(modifierInstance,"Magical")==0,0,1)]
-		[h,if(json.get(modifierInstance,"IncludeSchool")==""): IncludeSchoolTest = 1; IncludeSchoolTest = json.contains(json.get(modifierInstance,"IncludeSchool"),json.get(hp.Data,"School"))]
-		[h,if(json.get(modifierInstance,"ExcludeSchool")==""): ExcludeSchoolTest = 1; ExcludeSchoolTest = !json.contains(json.get(modifierInstance,"ExcludeSchool"),json.get(hp.Data,"School"))]
-		[h:SpecificSourceTest = min(MagicSourcesTest,IncludeSchoolTest,ExcludeSchoolTest)]
-		
-	};
-	case "Weapon":{
-		[h:MeleeRangedTest = or(json.get(modifierInstance,"MeleeRanged")=="",json.get(modifierInstance,"MeleeRanged") == json.get(hp.Data,"MeleeRanged"))]
-		[h:MagicSourcesTest = or(json.get(modifierInstance,"Magical")=="",json.get(modifierInstance,"Magical") == json.get(hp.Data,"Magical"))]
-		[h,if(json.get(modifierInstance,"IncludeMaterial")==""): IncludeMaterialTest = 1; IncludeMaterialTest = json.contains(json.get(modifierInstance,"IncludeMaterial"),json.get(hp.Data,"Material"))]
-		[h,if(json.get(modifierInstance,"ExcludeMaterial")==""): ExcludeMaterialTest = 1; ExcludeMaterialTest = !json.contains(json.get(modifierInstance,"ExcludeMaterial"),json.get(hp.Data,"Material"))]
-		[h:SpecificSourceTest = min(MeleeRangedTest,MagicSourcesTest,IncludeMaterialTest,ExcludeMaterialTest)]
-	};
-	default:{
-		[h:SpecificSourceTest = 1]
-	}
+		case "Spell":{
+			[h:MagicSourcesTest = if(json.get(modifierInstance,"Magical")==0,0,1)]
+			[h,if(json.get(modifierInstance,"IncludeSchool")==""): IncludeSchoolTest = 1; IncludeSchoolTest = json.contains(json.get(modifierInstance,"IncludeSchool"),json.get(hp.Data,"School"))]
+			[h,if(json.get(modifierInstance,"ExcludeSchool")==""): ExcludeSchoolTest = 1; ExcludeSchoolTest = !json.contains(json.get(modifierInstance,"ExcludeSchool"),json.get(hp.Data,"School"))]
+			[h:SpecificSourceTest = min(MagicSourcesTest,IncludeSchoolTest,ExcludeSchoolTest)]
+			
+		};
+		case "Weapon":{
+			[h:MeleeRangedTest = or(json.get(modifierInstance,"MeleeRanged")=="",json.get(modifierInstance,"MeleeRanged") == json.get(hp.Data,"MeleeRanged"))]
+			[h:MagicSourcesTest = or(json.get(modifierInstance,"Magical")=="",json.get(modifierInstance,"Magical") == json.get(hp.Data,"Magical"))]
+			[h,if(json.get(modifierInstance,"IncludeMaterial")==""): IncludeMaterialTest = 1; IncludeMaterialTest = json.contains(json.get(modifierInstance,"IncludeMaterial"),json.get(hp.Data,"Material"))]
+			[h,if(json.get(modifierInstance,"ExcludeMaterial")==""): ExcludeMaterialTest = 1; ExcludeMaterialTest = !json.contains(json.get(modifierInstance,"ExcludeMaterial"),json.get(hp.Data,"Material"))]
+			[h:SpecificSourceTest = min(MeleeRangedTest,MagicSourcesTest,IncludeMaterialTest,ExcludeMaterialTest)]
+		};
+		default:{
+			[h:SpecificSourceTest = 1]
+		}
 	]
 	
 	[h:hp.TempDmgModTest = and(SpecificSourceTest,ExcludeOrderTest,IncludeOrderTest,ExcludeMoralityTest,IncludeMoralityTest,HasConditionTest,ExcludeCreatureTypeTest,CreatureTypeTest,ExcludeTokenTest,SpecificTokenTest)]

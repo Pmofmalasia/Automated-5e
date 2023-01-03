@@ -1,8 +1,13 @@
-[h:ParentToken = currentToken()]
+[h,if(argCount()>0),CODE:{
+    [h:ParentToken = json.get(arg(0),"ParentToken")]
+    [h,if(ParentToken!=""): switchToken(ParentToken)]
+};{
+    [h:ParentToken = currentToken()]
+}]
 [h:a5e.UnifiedAbilities = a5e.GatherAbilities(ParentToken)]
 [h:pm.a5e.OverarchingContext = "Stats"]
 [h:IsTooltip = 0]
-[h:"<!-- TODO: This macro is used for the statsheet. There is another macro, pm.a5e.DamageModCalc, which is used for change HP. That macro takes into account the specific damage instance, while this does not. Could likely merge these two macros, and would also be good to create another that outputs the result as a string for the statsheet. -->"]
+[h:"<!-- This macro is used for the statsheet. There is another macro, pm.a5e.DamageModCalc, which is used for change HP. This macro provides the instances that provide damage. The other macro takes these instances and checks to see if they apply to a particular set of damage. This macro will remain to be used in other functions. -->"]
 
 [h:mod.Vuln = "[]"]
 [h:mod.Res = "[]"]

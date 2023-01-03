@@ -4,7 +4,7 @@
 [h:ChangeHPHTML = "<input type='hidden' name='TargetTokens' id='TargetTokens' value='"+base64.encode(TargetTokens)+"'>"]
 
 [h,if(json.length(TargetTokens) == 1),CODE:{
-	[h:ChangeHPHTML = ChangeHPHTML + "<tr id='rowTargetDisplay><th text-align='center' colspan='2'>Changing HP of "+getName(json.get(TargetTokens,0))+": <img src='"+getTokenImage(50,json.get(TargetTokens,0))+"'></th></tr>"]
+	[h:ChangeHPHTML = ChangeHPHTML + "<tr id='rowTargetDisplay'><th text-align='center' colspan='2'><img src='"+getTokenImage(50,json.get(TargetTokens,0))+"'> Changing HP of "+getName(json.get(TargetTokens,0))+"</th></tr>"]
 };{
 	[h:tempTargetNames = ""]
 	[h,foreach(target,targetTokens): tempTargetNames = json.append(tempTargetNames,getName(target))]

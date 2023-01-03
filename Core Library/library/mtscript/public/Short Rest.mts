@@ -79,7 +79,12 @@
 			"Value",ResourceRestoredFinal
 		))]
 	}]
-	[h:setProperty("a5e.stat.AllFeatures",json.path.set(getProperty("a5e.stat.AllFeatures"),"[?(@.Name=='"+json.get(Ability,"Name")+"' && @.Class=='"+json.get(Ability,"Class")+"' && @.Subclass=='"+json.get(Ability,"Subclass")+"')]['Resource']",ResourceRestoredFinal))]
+	
+	[h:needsPutTest = !json.isEmpty(json.path.read(getProperty("a5e.stat.AllFeatures"),"[?("+pm.a5e.PathFeatureFilter(Ability)+" && @.Resource==null)]","DEFAULT_PATH_LEAF_TO_NULL"))]
+	[h,if(needsPutTest):
+		setProperty("a5e.stat.AllFeatures",json.path.put(getProperty("a5e.stat.AllFeatures"),"[?("+pm.a5e.PathFeatureFilter(Ability)+")]","Resource",ResourceRestoredFinal));
+		setProperty("a5e.stat.AllFeatures",json.path.set(getProperty("a5e.stat.AllFeatures"),"[?("+pm.a5e.PathFeatureFilter(Ability)+")]['Resource']",ResourceRestoredFinal))
+	]
 }]
 
 [h:pm.PassiveFunction("ShortRest")]

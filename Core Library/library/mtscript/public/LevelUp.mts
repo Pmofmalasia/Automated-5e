@@ -229,7 +229,6 @@
 };{}]
 
 [h:"<!-- Adds newly gained spell macros from outside of the regular spell list, e.g. Cleric domain spells, feats, etc. -->"]
-[h:broadcast(lu.NewSpells)]
 [h,if(!json.isEmpty(lu.NewSpells)),CODE:{
 	[h,MACRO("RefreshSpellMacroButtons@Lib:pm.a5e.Core"): json.set("","Add",lu.NewSpells,"ParentToken",ParentToken)]
 }]

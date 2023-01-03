@@ -16,7 +16,7 @@
 		[h:condDisplayNames = json.path.read(getProperty("a5e.stat.ConditionList"),"[*][?(@.ConditionID=="+json.get(condGroup,"GroupID")+")]['DisplayName']")]
 		[h,if(pm.ConditionChoiceNum==1):
 			condOptions = json.append(condOptions,json.toList(condDisplayNames,", "));
-			cn.Input = listAppend(cn.Input," choice"+json.get(condGroup,"GroupID")+" |  | "+json.toList(condDisplayNames,", ")+" | CHECK ","##")
+			cn.Input = listAppend(cn.Input," choice"+json.get(condGroup,"GroupID")+" |  | "+pm.a5e.CreateDisplayList(condDisplayNames,"and")+" | CHECK ","##")
 		]
 	}]
 

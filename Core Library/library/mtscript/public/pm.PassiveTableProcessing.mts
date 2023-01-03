@@ -17,7 +17,7 @@ getLibProperty("VerticalDisplay","Lib:pm.a5e.Core")==1,"</td></tr><tr style='tex
 	[h:showPCsLineTest = if(or(outputTest.NoFullMacro,and(outputTest.NoRules,json.get(tableline,"FullContents")=="",json.get(tableline,"RollContents")==""),and(outputTest.NoRolls,json.get(tableline,"FullContents")=="")),0,1)]
 	[h:showLineTest = if(or(json.get(tableline,"ShowIfCondensed")==1,ShowFullRules==1),1,0)]
 	
-	[h:output.Temp="<tr valign:middle><th style = '"+AccentFormat+"'"+if(pm.BigHeaderTest,"; colspan='"+pm.MaxColNum+"'","")+">"]
+	[h:output.Temp="<tr valign:middle><th style = '"+AccentFormat+"'"+if(pm.BigHeaderTest && getLibProperty("VerticalDisplay","Lib:pm.a5e.Core")==0,"; colspan='"+pm.MaxColNum+"'","")+">"]
 	[h:output.PC = if(and(showPCsLineTest,showLineTest),output.PC+output.Temp,output.PC)]
 	[h:output.GM = if(showLineTest,output.GM + output.Temp,output.GM)]
 
@@ -34,8 +34,8 @@ getLibProperty("VerticalDisplay","Lib:pm.a5e.Core")==1,"</td></tr><tr style='tex
 
 	[h,foreach(displayType,json.get(tableline,"DisplayOrder"),""),CODE:{
 		[h:outputTest.NoThisPart = if(displayType=="Full",outputTest.NoFullMacro,if(displayType=="Roll",outputTest.NoRolls,outputTest.NoRules))]
-		[h,if(!pm.BigHeaderTest):output.PC = if(and(showPCsLineTest,showLineTest),if(outputTest.NoThisPart,output.PC,output.PC+json.get(tableline,displayType+"Contents")),output.PC)]
-		[h,if(!pm.BigHeaderTest):output.GM = if(showLineTest,output.GM + json.get(tableline,displayType+"Contents"),output.GM)]
+		[h,if(!pm.BigHeaderTest): output.PC = if(and(showPCsLineTest,showLineTest),if(outputTest.NoThisPart,output.PC,output.PC+json.get(tableline,displayType+"Contents")),output.PC)]
+		[h,if(!pm.BigHeaderTest): output.GM = if(showLineTest,output.GM + json.get(tableline,displayType+"Contents"),output.GM)]
 	}]
 
 	[h:pm.BonusCount = 1]
@@ -48,12 +48,12 @@ getLibProperty("VerticalDisplay","Lib:pm.a5e.Core")==1,"</td></tr><tr style='tex
 		]
 		
 		[h,if(json.get(tableline,"BonusHeader"+pm.BonusCount)==""): output.Temp = ""; output.Temp = VerticalFormat+json.get(tableline,"BonusSectionStyling"+pm.BonusCount)+"'>"+"<span style = '"+AccentFormat+"'>"+json.get(tableline,"BonusHeader"+pm.BonusCount)+"</span>"]
-		[h,if(!pm.BigHeaderTest):output.PC = if(and(showPCsLineTest,showLineTest),if(outputTest.NoBonusSection,output.PC,output.PC+output.Temp),output.PC)]
-		[h,if(!pm.BigHeaderTest):output.GM = if(showLineTest,output.GM + output.Temp,output.GM)]
+		[h,if(!pm.BigHeaderTest): output.PC = if(and(showPCsLineTest,showLineTest),if(outputTest.NoBonusSection,output.PC,output.PC+output.Temp),output.PC)]
+		[h,if(!pm.BigHeaderTest): output.GM = if(showLineTest,output.GM + output.Temp,output.GM)]
 		
 		[h,if(json.get(tableline,"BonusBody"+pm.BonusCount)==""): output.Temp == ""; output.Temp = if(pm.BonusCount==pm.BonusSections,VerticalFormatFinalBonus,VerticalFormat)+json.get(tableline,"BonusSectionStyling"+pm.BonusCount)+"'>"+json.get(tableline,"BonusBody"+pm.BonusCount)]
-		[h,if(!pm.BigHeaderTest):output.PC = if(and(showPCsLineTest,showLineTest),if(outputTest.NoBonusSection,output.PC,output.PC+output.Temp),output.PC)]
-		[h,if(!pm.BigHeaderTest):output.GM = if(showLineTest,output.GM + output.Temp,output.GM)]
+		[h,if(!pm.BigHeaderTest): output.PC = if(and(showPCsLineTest,showLineTest),if(outputTest.NoBonusSection,output.PC,output.PC+output.Temp),output.PC)]
+		[h,if(!pm.BigHeaderTest): output.GM = if(showLineTest,output.GM + output.Temp,output.GM)]
 
 		[h:pm.BonusCount = pm.BonusCount+1]
 	}]

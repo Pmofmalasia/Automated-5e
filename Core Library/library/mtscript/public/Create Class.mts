@@ -48,7 +48,7 @@
 	" cl.ASI18 |  | 18 | CHECK ",
 	" cl.ASI19 | 1 | 19 | CHECK ",
 	" cl.ASI20 |  | 20 | CHECK "
-	))]
+))]
 
 [h:cl.ASILevels = "[]"]
 [h,count(20): cl.ASILevels = if(eval("cl.ASI"+(roll.count+1)),json.append(cl.ASILevels,(roll.count+1)),cl.ASILevels)]
@@ -73,7 +73,7 @@
 	"Subclass","",
 	"Level",1,
 	"Library",cl.SourcebookLib
-	))]
+)]
 
 [h,if(cl.SkillProficiencies==1 || cl.SkillProficiencies==3),CODE:{
 	[h:cl.Base = json.set(cl.Base,"SkillOptions",pm.SkillSelectionChoices())]
@@ -123,7 +123,7 @@
 	"Level",1,
 	"HitDie",cl.HitDie,
 	"Library",cl.SourcebookLib
-	))]
+)]
 
 
 [h,if(cl.SkillProficiencies==1 || cl.SkillProficiencies==3),CODE:{

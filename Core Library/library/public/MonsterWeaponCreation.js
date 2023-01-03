@@ -39,9 +39,4 @@ async function loadUserData() {
     document.getElementById('MonsterWeaponCreationTable').innerHTML = userdata;
 }
 
-async function submitSetupData() {
-    let submitData = Object.fromEntries(new FormData(MonsterWeaponCreation));
-    let request = fetch("macro:MonsterWeaponCreationProcessing@lib:pm.a5e.Core", {method: "POST", body: JSON.stringify(submitData)});
-    let result = await request.json();
-}
 setTimeout(loadUserData, 1);

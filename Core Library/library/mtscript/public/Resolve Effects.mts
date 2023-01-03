@@ -64,10 +64,10 @@
 		[h:hitTarget = and(!attackCritFail,or(attackCrit,attackToHit >= getProperty("a5e.stat.AC")))]
 	};{
 		[h:hitTarget = 1]
+		[h:attackCrit = 0]
 	}]
 	
 	[h,if(!hitTarget),CODE:{
-		[h:broadcast("miss")]
 		[h:thisTokenSaveDCData = ""]
 		[h:thisTokenCheckDCData = ""]
 		[h:thisTokenDamageDealt = ""]
@@ -183,7 +183,7 @@
 	
 	[h:"<!-- Note to future self: Add crit data to the damage info here. Will make processing abilities easier if they add/negate a crit. -->"]
 	[h,if(thisTokenDamageDealt!=""),CODE:{
-		[h,MACRO("Change HP@Lib:pm.a5e.Core"): json.set("","DamageDealt",thisTokenDamageDealt,"ParentToken",targetToken)]
+		[h,MACRO("Change HP@Lib:pm.a5e.Core"): json.set("","DamageDealt",thisTokenDamageDealt,"IsCrit",attackCrit,"ParentToken",targetToken)]
 		[h:abilityTable = json.merge(abilityTable,json.get(macro.return,"Table"))]
 	};{}]
 	
@@ -205,7 +205,6 @@
 		[h,if(tempConditionsRemovedNames == "ARRAY"): 
 			tempConditionsRemovedGroups = json.merge(tempConditionsRemovedGroups,json.unique(json.path.read(getProperty("a5e.stat.ConditionList",targetToken),"[*][?(@.Name in "+tempConditionsRemovedNames+")]['GroupID']")));
 			tempConditionsRemovedGroups = json.merge(tempConditionsRemovedGroups,json.path.read(getProperty("a5e.stat.ConditionList",targetToken),"[*][?(@.Name == '"+tempConditionsRemovedNames+"')]['GroupID']"))
-		
 		]
 
 		[h:tempConditionsRemovedTypes = json.get(thisTokenConditionsRemovedInfo,"ConditionTypes")]
@@ -220,16 +219,7 @@
 		)]
 		[h,MACRO("EndCondition@Lib:pm.a5e.Core"): tempEndConditionData]
 
-		[h:cn.RemovedList = json.path.read(macro.return,"['Removed'][*]['DisplayName']")]
-		[h,if(cn.RemovedList != ""): abilityTable = json.append(abilityTable,json.set("",
-			"ShowIfCondensed",1,
-			"Header","Conditions Removed",
-			"FalseHeader","",
-			"FullContents","",
-			"RulesContents",pm.a5e.CreateDisplayList(cn.RemovedList,"and"),
-			"RollContents","",
-			"DisplayOrder","['Rules','Roll','Full']"
-		))]
+		[h:abilityTable = json.append(abilityTable,json.get(macro.return,"Table"))]
 	}]
 }]
 

@@ -13,8 +13,16 @@
 	"RollContents","",
 	"DisplayOrder","['Rules','Roll','Full']"
 ))]
-		
+
 [h:pm.PassiveFunction("StartTurn")]
+
+[h,foreach(feature,json.path.read(a5e.UnifiedAbilities,"[*][?(@.RechargeRoll!=null)]","DEFAULT_PATH_LEAF_TO_NULL")),CODE:{
+	[h:NeedsRecharge = (json.get(feature,"Resource") != evalMacro(json.get(feature,"MaxResource")))]
+	[h,if(NeedsRecharge),CODE:{
+		[h:RechargeRollData = pm.a5e.RechargeRoll(json.set("","ParentToken",ParentToken),feature)]
+		[h:abilityTable = json.merge(abilityTable,json.get(RechargeRollData,"Table"))]
+	};{}]
+}]
 
 [h:validAbilities = json.path.read(getProperty("a5e.stat.AllFeatures"),"[*][?(@.Duration.AdvancePoint=='StartofTurn')]")]
 [h,foreach(ability,validAbilities): setProperty("a5e.stat.AllFeatures",json.path.set(getProperty("a5e.stat.AllFeatures"),"[*][?(@.Name=='"+json.get(ability,"Name")+"' && @.Class=='"+json.get(ability,"Class")+"' && @.Subclass=='"+json.get(ability,"Subclass")+"')]['Duration']",pm.a5e.AdvanceTime(json.set("","Ability",ability,"Time",1,"TimeUnits","round","ParentToken",ParentToken))))]
@@ -61,7 +69,7 @@
 [h:setConditionsRemoved = json.unique(json.path.read(setConditionsRemoved,"[*]['DisplayName']"))]
 [h,if(!json.isEmpty(setConditionsRemoved)): abilityTable = json.append(abilityTable,json.set("",
 	"ShowIfCondensed",1,
-	"Header","Conditions on Targets Ending",
+	"Header","Conditions on Other Creatures Ending",
 	"FalseHeader","",
 	"FullContents","",
 	"RulesContents",json.toList(setConditionsRemoved,", "),

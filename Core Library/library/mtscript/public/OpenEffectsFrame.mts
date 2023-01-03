@@ -12,7 +12,10 @@
 [h,foreach(effect,incompleteEffects),CODE:{
 	[h,if(json.get(effect,"ToResolve")==""),CODE:{};{
 		[h:tempTargetList = json.get(effect,"Targets")]
-		[h:targetList = json.path.delete(tempTargetList,"[?(@=='')]")]
+		[h,if(json.type(tempTargetList)=="ARRAY"):
+			targetList = json.path.delete(tempTargetList,"[?(@=='')]");
+			targetList = tempTargetList
+		]
 		[h:UnlistedTargetTest = json.length(tempTargetList) != json.length(targetList)]
 		[h:targetName = ""]
 

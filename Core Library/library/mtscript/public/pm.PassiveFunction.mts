@@ -21,17 +21,20 @@
 		case "Condition": a5efunctionName = "pm."+json.get(ability,"Name")+json.get(ability,"Class")+json.get(ability,"Subclass")+"ConditionPassive"
 	]
 	
+	[h:AbilityCallingInstanceValue = json.get(ability,"Call"+a5e.CallingInstance)]
 	[h:pm.ValidFunction = isFunctionDefined(a5efunctionName)]
-	[h:pm.SpecificAbilityTest = json.type(json.get(ability,"Call"+a5e.CallingInstance))]
+	[h:pm.SpecificAbilityTest = json.type(AbilityCallingInstanceValue)]
 	[h:"<!-- Ways determine if it's valid to abilities: -->"]
 	[h:"<!-- UNKNOWN + no arg is simple: 1 means ability is called -->"]
 	[h:"<!-- UNKNOWN + arg of FeatureClassSubclass: The ability being run is calling out to a specific ability in the argument (current use case = CallDieSize) -->"]
+	[h:"<!-- UNKNOWN + not a valid function AND first character is [: Indicates that the CallX contains code, and executes that code. This bypasses the need for declaring passive functions. -->"]
 	[h:"<!-- Not UNKNOWN (should be ARRAY) + no arg: Ability being called is acting on the ability being run. If ability being run is in the preset list, then ability is called. -->"]
 	[h,if(pm.SpecificAbilityTest=="UNKNOWN"),CODE:{
-		[h,if(argCount()>1 && pm.ValidFunction): pm.ValidFunction = json.get(ability,"Call"+a5e.CallingInstance) == if(json.get(arg(1),"SpecificFeature")=="",1,json.get(arg(1),"SpecificFeature"))]
+		[h,if(argCount()>1 && pm.ValidFunction): pm.ValidFunction = (AbilityCallingInstanceValue == if(json.get(arg(1),"SpecificFeature")=="",1,json.get(arg(1),"SpecificFeature")))]
 		[h,if(pm.ValidFunction): evalMacro("[h:"+a5efunctionName+"('"+a5e.CallingInstance+"')]")]
+		[h,if(!pm.ValidFunction && substring(AbilityCallingInstanceValue,0,1) == "["): pm.a5e.ExecutePassiveFeature(ability,AbilityCallingInstanceValue)]
 	};{
-		[h:pm.ThisAbilityTest = json.contains(json.get(ability,"Call"+a5e.CallingInstance),json.set("","Name",json.get(abilityInfo,"Name"),"DisplayName",json.get(abilityInfo,"DisplayName"),"Class",json.get(abilityInfo,"Class"),"Subclass",json.get(abilityInfo,"Subclass")))]
+		[h:pm.ThisAbilityTest = json.contains(AbilityCallingInstanceValue,json.set("","Name",json.get(abilityInfo,"Name"),"DisplayName",json.get(abilityInfo,"DisplayName"),"Class",json.get(abilityInfo,"Class"),"Subclass",json.get(abilityInfo,"Subclass")))]
 		[h,if(pm.ValidFunction && pm.ThisAbilityTest): evalMacro("[h:"+a5efunctionName+"('"+a5e.CallingInstance+"')]")]
 	}]
 }]

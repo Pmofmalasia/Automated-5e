@@ -76,4 +76,4 @@
 	"Library",ability.json.get(abilityInfo,"Library")
 )]
 
-[h:abilityEffect = if(ShowFullRules,abilityFullEffect,abilityAbridgedEffect)]
+[h:abilityEffect = if(ShowFullRules,FeatureFullDescription,FeatureAbridgedDescription)]

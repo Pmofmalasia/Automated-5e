@@ -17,32 +17,34 @@
 [h:outerCounter = 0]
 [h,foreach(selectionInstance,SelectionData),CODE:{
     [h:TotalSelectionNumber = json.get(selectionInstance,"Number")]
+    [h,if(!isNumber(TotalSelectionNumber)): TotalSelectionNumber = evalMacro(TotalSelectionNumber)]
 
     [h:tempSelectionList = json.get(selectionInstance,"List")]
     [h,if(tempSelectionList==""),CODE:{
         [h:SelectionList = getLibProperty("sb.Spells","Lib:pm.a5e.Core")]
     };{
-        [h:SelectionListFeature = json.path.read(getLibProperty("sb.Abilities","Lib:pm.a5e.Core"),"[*][?(@.Name=='"+json.get(tempSelectionList,"Name")+"' && @.Class=='"+json.get(tempSelectionList,"Class")+"' && @.Subclass=='"+json.get(tempSelectionList,"Subclass")+"')]['SpellList']")]
+        [h:"<!-- If List is a feature object, find the list in that feature. If no feature, use all spells. If List is a string, assume it to be a casting class and get the stored list from that class. -->"]
+        [h,if(json.type(tempSelectionList)=="UNKNOWN"): 
+            SelectionListFeature = "[]";
+            SelectionListFeature = json.path.read(getLibProperty("sb.Abilities","Lib:pm.a5e.Core"),"[*][?(@.Name=='"+json.get(tempSelectionList,"Name")+"' && @.Class=='"+json.get(tempSelectionList,"Class")+"' && @.Subclass=='"+json.get(tempSelectionList,"Subclass")+"')]['SpellList']")
+        ]
         [h,if(json.isEmpty(SelectionListFeature)):
             SelectionList = getLibProperty("sb.Spells","Lib:pm.a5e.Core");
             SelectionList = json.path.read(getLibProperty("sb.Spells","Lib:pm.a5e.Core"),"[*][?(@.Name in "+json.get(SelectionListFeature,0)+")]")
         ]
+        [h,if(json.type(tempSelectionList)=="UNKNOWN"): SelectionList = if(json.get(getLibProperty("sb.SpellLists","Lib:pm.a5e.Core"),tempSelectionList)!="",json.path.read(getLibProperty("sb.Spells","Lib:pm.a5e.Core"),"[*][?(@.Name in "+json.get(getLibProperty("sb.SpellLists","Lib:pm.a5e.Core"),tempSelectionList)+")]"),SelectionList)]
     }]
 
-[h:"<!-- If I can't get this to work, the solution may be to just send it as is and weed out any duplicates - could solve the issue with it working for spells where only one effect matches as well -->"]
     [h:SpellFilter = json.get(selectionInstance,"Filter")]
     [h,if(SpellFilter!=""),CODE:{
-        [h,if(json.get(SpellFilter,"LevelBasedMaxLevel")==1):
-            SpellFilter = json.set(SpellFilter,"LevelBasedMaxLevel",ceiling((json.get(SpellSelectionFeature,"Level")*json.get(SpellSelectionFeature,"CasterType")/2)));
-            SpellFilter = json.set(SpellFilter,"LevelBasedMaxLevel","")
-        ]
+        [h,if(json.get(SpellFilter,"LevelBasedMaxLevel")==1): SpellFilter = json.set(SpellFilter,"LevelBasedMaxLevel",json.get(SpellSelectionFeature,"Class"))]
         [h:FilteredListData = pm.a5e.SpellFilter(json.set("","List",SelectionList,"Filter",SpellFilter))]
-        [h:FilteredList = json.get(FilteredListData,"SpellList")]
+        [h:FinalSelectionList = json.get(FilteredListData,"SpellList")]
         [h:FilterDescription = json.get(FilteredListData,"Description")]
     };{
         [h:FilterDescription = "Spell"]
     }]
-    [h:FinalSelectionList = json.sort(json.path.read(FilteredList,"[*]['DisplayName']"))]
+    
     [h,if(AllPriorSpellSelections!=""),CODE:{
         [h,if(json.length(AllPriorSpellSelections) > outerCounter):
             thisInstancePriorSelections = json.get(AllPriorSpellSelections,outerCounter);
@@ -81,23 +83,3 @@
 [h:macro.return = SelectionInput]
 
 [h:"<!-- TODO: Add capability to prepare spells from a spellbook - current method is ok to prepare TO a spellbook, but not from spellbook to prep -->"]
-
-[h:'<-- for each feature, create X number of entries, where X is number of spells allowed to choose from. for each entry, the list of options should come from:
-
-a) straight up just a list of spells, no limits within the list (base spellcasting stuff)
-
-b) some entries like in (a), some with limitations (e.g. divination/illusion only; ritual only)
-
-c) The above, but with entries on another feature (e.g. Arcane Trickster casting takes from the Wizard entry)
-
-d) any combination of the above, with options coming from a spellbook (which in turn necessitates the ability to add spells to a spellbook)
-
-Contents of key "SpellOptions": Array of objects containing number of choices associated + (List of spell names OR object of spell parameters)
-
-Create key "SpellPrepType": Options = Known, Prepared, Spellbook
-
-On spell features, will have multiple keys for spell storage:
-    "SpellList": Spells which are always known/prepared no matter what
-    "SpellsKnown": Spells chosen from "SpellOptions" to become known
-    "SpellsPrepared": Same as above with prepared
-    "Spellbook": SpellOptions --> Spellbook --> SpellsPrepared. May go away with spellbook item.']

@@ -1,4 +1,4 @@
-async function checkEffectType(){
+function checkEffectType(){
     return document.getElementById("EffectType").value;
 }
 
@@ -137,14 +137,15 @@ async function addDamageTypeRows(){
     
     let isAHLRow = table.insertRow(buttonRowIndex+2);
     isAHLRow.id = "rowIsAHL"+damageTypeNumber;
-    
-    if(document.getElementById("SpellLevel").value == "0"){
-        isAHLRow.innerHTML = "<th>Damage Increases AHL:</th><td><select id='isAHL"+damageTypeNumber+"' name='isAHL"+damageTypeNumber+"' onchange='createAHLDamage("+damageTypeNumber+")'><option value='0'>No Increase</option><option value='1'>Every Interval</option><option value='2'>Every Other Interval</option><option value='3'>Every Three Intervals</option></select></td>";
-    }
-    else{
-        isAHLRow.innerHTML = "<th>Damage Increases AHL:</th><td><select id='isAHL"+damageTypeNumber+"' name='isAHL"+damageTypeNumber+"' onchange='createAHLDamage("+damageTypeNumber+")'><option value='0'>No Increase</option><option value='1'>Every Level</option><option value='2'>Every Other Level</option><option value='3'>Every Three Levels</option></select></td>";
-    }
    
+    if(checkEffectType()=="Spell"){
+        if(document.getElementById("SpellLevel").value == "0"){
+            isAHLRow.innerHTML = "<th>Damage Increases AHL:</th><td><select id='isAHL"+damageTypeNumber+"' name='isAHL"+damageTypeNumber+"' onchange='createAHLDamage("+damageTypeNumber+")'><option value='0'>No Increase</option><option value='1'>Every Interval</option><option value='2'>Every Other Interval</option><option value='3'>Every Three Intervals</option></select></td>";
+        }
+        else{
+            isAHLRow.innerHTML = "<th>Damage Increases AHL:</th><td><select id='isAHL"+damageTypeNumber+"' name='isAHL"+damageTypeNumber+"' onchange='createAHLDamage("+damageTypeNumber+")'><option value='0'>No Increase</option><option value='1'>Every Level</option><option value='2'>Every Other Level</option><option value='3'>Every Three Levels</option></select></td>";
+        }
+    }
 
     if(document.getElementById("howMitigate").value == "Save"){
         let saveMitigationRow = table.insertRow(buttonRowIndex+3);
@@ -244,7 +245,7 @@ async function createConditionTable(){
             }
             else{
                 let conditionOptions = await createConditionMultipleBoxes("AlwaysAdded","createConditionSaveTable()");
-                conditionOptions = conditionOptions + "<label><input type='checkbox' id='AlwaysAddedEffectSpecific' name='AlwaysAddedEffectSpecific' value=1 onchange='createSpellConditionRow(1)'><span>Spell-Specific Condition</span></label>";
+                conditionOptions = conditionOptions + "<label><input type='checkbox' id='AlwaysAddedEffectSpecific' name='AlwaysAddedEffectSpecific' value=1 onchange='createUniqueConditionRow(1)'><span>Unique Condition</span></label>";
 
                 let rowConditionsAlwaysAdded = table.insertRow(nextRowIndex);
                 rowConditionsAlwaysAdded.id = "rowConditionsAlwaysAdded";
@@ -259,22 +260,32 @@ async function createConditionTable(){
         else{
             nextRowIndex = nextRowIndex + (document.getElementById(endRowId).rowIndex - document.getElementById("rowCondition").rowIndex - 1);
         }
-        
+
         if(conditionChoice == "Choose" || conditionChoice == "Mixture"){
             if(!alreadyOptionsTest){
                 let conditionOptions = await createConditionMultipleBoxes("ConditionOption","createConditionSaveTable()");
-                conditionOptions = conditionOptions + "<label><input type='checkbox' id='ConditionOptionEffectSpecific' name='ConditionOptionEffectSpecific' value=1 onchange='createSpellConditionRow(2)'><span>Spell-Specific Condition</span></label>";
+                conditionOptions = conditionOptions + "<label><input type='checkbox' id='ConditionOptionEffectSpecific' name='ConditionOptionEffectSpecific' value=1 onchange='createUniqueConditionRow(2)'><span>Unique Condition</span></label>";
 
                 let rowConditionOptions = table.insertRow(nextRowIndex);
                 rowConditionOptions.id = "rowConditionOptions";
                 rowConditionOptions.innerHTML = "<th>Condition Options:</th><td><div class='check-multiple' style='width:100%'>"+conditionOptions+"</div></td>";
                 nextRowIndex++;
 
-                let conditionAHLScalingSelect = await createAHLSelect("ConditionOptionsNumberAHLScaling");
+                if(checkEffectType=="Spell"){
+                    
+                }
+
 
                 let rowConditionOptionsNumber = table.insertRow(nextRowIndex);
                 rowConditionOptionsNumber.id = "rowConditionOptionsNumber";
-                rowConditionOptionsNumber.innerHTML = "<th><label  for='ConditionOptionsNumber'>Number of Options to Choose:</label></th><td><input type='number' id='ConditionOptionsNumber' name='ConditionOptionsNumber' min=1 value=1 style='width:25px'> + <input type='number' id='ConditionOptionsNumberAHL' name='ConditionOptionsNumberAHL' min=0 value=0 style='width:25px'>"+conditionAHLScalingSelect+"</td>";
+                let ConditionOptionsHTML = "<th><label  for='ConditionOptionsNumber'>Number of Options to Choose:</label></th><td><input type='number' id='ConditionOptionsNumber' name='ConditionOptionsNumber' min=1 value=1 style='width:25px'>";
+
+                if(checkEffectType()=="Spell"){
+                    let conditionAHLScalingSelect = await createAHLSelect("ConditionOptionsNumberAHLScaling");                   
+                    ConditionOptionsHTML = ConditionOptionsHTML + " + <input type='number' id='ConditionOptionsNumberAHL' name='ConditionOptionsNumberAHL' min=0 value=0 style='width:25px'>"+conditionAHLScalingSelect;
+                }
+
+                rowConditionOptionsNumber.innerHTML = ConditionOptionsHTML+"</td>";
                 nextRowIndex++;
             }
             else{
@@ -286,10 +297,21 @@ async function createConditionTable(){
         }
 
         if(!alreadyEndInfoTest){
-            let rowSameDuration = table.insertRow(nextRowIndex);
-            rowSameDuration.id = "rowSameDuration";
-            rowSameDuration.innerHTML = "<th><label for='isConditionSameDuration'>Duration is Same as Spell's?</label></th><input type='checkbox' id='isConditionSameDuration' name='isConditionSameDuration' onchange='conditionAlternateDuration()' checked></td>";
-            nextRowIndex++;
+            if(checkEffectType()=="Spell"){
+                let rowSameDuration = table.insertRow(nextRowIndex);
+                rowSameDuration.id = "rowSameDuration";
+                rowSameDuration.innerHTML = "<th><label for='isConditionSameDuration'>Duration is Same as Spell's?</label></th><input type='checkbox' id='isConditionSameDuration' name='isConditionSameDuration' onchange='conditionAlternateDuration()' checked></td>";
+                nextRowIndex++;                
+            }
+            else{
+                //TODO: Add Duration input here for non-spell purposes (since spells get theirs added previously)
+
+                let rowDuration = table.insertRow(nextRowIndex);
+                rowDuration.id = "rowDuration";
+                rowDuration.innerHTML = "<th><label for='DurationValue'>Duration is Same as Spell's?</label></th><input type='checkbox' id='isConditionSameDuration' name='isConditionSameDuration' onchange='conditionAlternateDuration()' checked></td>";
+                nextRowIndex++; 
+            }
+
 
             let rowIsConditionNonDurationEnd = table.insertRow(nextRowIndex);
             rowIsConditionNonDurationEnd.id = "rowIsConditionNonDurationEnd";
@@ -323,7 +345,7 @@ async function createConditionMultipleBoxes(boxNamePrefix,onChangeFunction){
     return conditionOptions;
 }
 
-async function createSpellConditionRow(whichStartingPosition){
+async function createUniqueConditionRow(whichStartingPosition){
     let table = document.getElementById("SubeffectTable");
     let nextRowIndex = 0;
     let conditionPrefix = "";

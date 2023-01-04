@@ -192,6 +192,8 @@ async function createTypeOptions(damageTypeNumber){
 }
 
 async function createAHLDamage(damageTypeNumber){
+    //This function is not currently using any checkEffectType functions since it should only be run if the EffectType is Spell in the first place. If something is going wrong, check here.
+
     let table = document.getElementById("SubeffectTable");
     let AHLRowIndex = document.getElementById("rowIsAHL"+damageTypeNumber).rowIndex;
     
@@ -312,7 +314,6 @@ async function createConditionTable(){
                 nextRowIndex++; 
             }
 
-
             let rowIsConditionNonDurationEnd = table.insertRow(nextRowIndex);
             rowIsConditionNonDurationEnd.id = "rowIsConditionNonDurationEnd";
             rowIsConditionNonDurationEnd.innerHTML = "<th><label for='isConditionNonDurationEnd'>May End Separate from Duration?</label></th><input type='checkbox' id='isConditionNonDurationEnd' name='isConditionNonDurationEnd' onchange='createConditionNonDurationEnd()'></td>";
@@ -362,7 +363,7 @@ async function createUniqueConditionRow(whichStartingPosition){
     if(document.getElementById(conditionPrefix+"EffectSpecific").checked){
         let rowIsEffectSpecificMulti = table.insertRow(nextRowIndex);
         rowIsEffectSpecificMulti.id = "rowIsEffectSpecificMulti"+conditionPrefix;
-        rowIsEffectSpecificMulti.innerHTML = "<th><label for='isEffectSpecific"+conditionPrefix+"Multiple'>Multiple Spell Conditions?</label></th><input type='checkbox' id='isEffectSpecific"+conditionPrefix+"Multiple' name='isEffectSpecific"+conditionPrefix+"Multiple' onchange='createMultiSpellConditionRow("+'"'+conditionPrefix+'"'+")'></td>";
+        rowIsEffectSpecificMulti.innerHTML = "<th><label for='isEffectSpecific"+conditionPrefix+"Multiple'>Multiple Unique Conditions?</label></th><input type='checkbox' id='isEffectSpecific"+conditionPrefix+"Multiple' name='isEffectSpecific"+conditionPrefix+"Multiple' onchange='createMultiUniqueConditionRow("+'"'+conditionPrefix+'"'+")'></td>";
     }
     else{
         table.deleteRow(document.getElementById("rowIsEffectSpecificMulti"+conditionPrefix).rowIndex);
@@ -374,7 +375,7 @@ async function createUniqueConditionRow(whichStartingPosition){
     createConditionSaveTable();
 }
 
-async function createMultiSpellConditionRow(conditionPrefix){
+async function createMultiUniqueConditionRow(conditionPrefix){
     let table = document.getElementById("SubeffectTable");
     let nextRowIndex = document.getElementById("rowIsEffectSpecificMulti"+conditionPrefix).rowIndex + 1;
 
@@ -622,12 +623,14 @@ async function createSummonTable(){
             rowSummonCrMax.innerHTML = "<th><label for='summonCrMax'>Maximum CR of Creature:</th><td><input type='number' id='summonCrMax' name='summonCrMax' min=0 value=2 style='width:25px'></td>";
             nextRowIndex++;
 
-            let summonCrMaxAHLScalingSelect = await createAHLSelect("summonCrMaxAHLScaling");
+            if(checkEffectType=="Spell"){
+                let summonCrMaxAHLScalingSelect = await createAHLSelect("summonCrMaxAHLScaling");
 
-            let rowSummonCrAHL = table.insertRow(nextRowIndex);
-            rowSummonCrAHL.id = "rowSummonCrAHL";
-            rowSummonCrAHL.innerHTML = "<th><label for='summonCrMaxAHLNum'>CR Increase AHL:</th><td><select id='summonCrMaxAHLScaleHow' name='summonCrMaxAHLScaleHow'><option value='Add'>Add</option><option value='Multiply'>Multiply</option></select><input type='number' id='summonCrMaxAHLNum' name='summonCrMaxAHLNum' min=0 value=1 style='width:25px'>"+summonCrMaxAHLScalingSelect+"</td>";
-            nextRowIndex++;
+                let rowSummonCrAHL = table.insertRow(nextRowIndex);
+                rowSummonCrAHL.id = "rowSummonCrAHL";
+                rowSummonCrAHL.innerHTML = "<th><label for='summonCrMaxAHLNum'>CR Increase AHL:</th><td><select id='summonCrMaxAHLScaleHow' name='summonCrMaxAHLScaleHow'><option value='Add'>Add</option><option value='Multiply'>Multiply</option></select><input type='number' id='summonCrMaxAHLNum' name='summonCrMaxAHLNum' min=0 value=1 style='width:25px'>"+summonCrMaxAHLScalingSelect+"</td>";
+                nextRowIndex++;                
+            }
 
             let request = await fetch("macro:pm.GetCreatureTypes@lib:pm.a5e.Core", {method: "POST", body: ""});
             let allCreatureTypes = await request.json();
@@ -664,12 +667,16 @@ async function createSummonTable(){
             rowSummonNumber.innerHTML = "<th><label for='summonNumber'>Number of Summons:</th><td>"+summonNumberOptions+"</td>";
             nextRowIndex++;
 
-            let summonNumberAHLScalingSelect = await createAHLSelect("summonNumberAHLScaling");
+            if(checkEffectType()=="Spell"){
+                let summonNumberAHLScalingSelect = await createAHLSelect("summonNumberAHLScaling");
 
-            let rowSummonNumberAHL = table.insertRow(nextRowIndex);
-            rowSummonNumberAHL.id = "rowSummonNumberAHL";
-            rowSummonNumberAHL.innerHTML = "<th><label for='summonNumberAHLScaleHow'>Increased Number AHL:</th><td><select id='summonNumberAHLScaleHow' name='summonNumberAHLScaleHow'><option value='Add'>Add</option><option value='Multiply'>Multiply</option></select><input type='number' id='summonNumberAHL' name='summonNumberAHL' min='0' style='width:25px' value=0>"+summonNumberAHLScalingSelect+"</td>";
-            nextRowIndex++;            
+                let rowSummonNumberAHL = table.insertRow(nextRowIndex);
+                rowSummonNumberAHL.id = "rowSummonNumberAHL";
+                rowSummonNumberAHL.innerHTML = "<th><label for='summonNumberAHLScaleHow'>Increased Number AHL:</th><td><select id='summonNumberAHLScaleHow' name='summonNumberAHLScaleHow'><option value='Add'>Add</option><option value='Multiply'>Multiply</option></select><input type='number' id='summonNumberAHL' name='summonNumberAHL' min='0' style='width:25px' value=0>"+summonNumberAHLScalingSelect+"</td>";
+                nextRowIndex++;
+            }
+
+
         }
     }
 }
@@ -694,13 +701,15 @@ async function createMoveTargetTable(){
     if(document.getElementById("isMoveTarget").checked){
         let rowMoveTargetInfo = table.insertRow(startRowIndex+1);
         rowMoveTargetInfo.id = "rowMoveTargetInfo";
-        rowMoveTargetInfo.innerHTML = "<th><label for='moveTargetValue'>Distance Target Moved:</label></th><input type='number' id='moveTargetValue' name='moveTargetValue' min=0 value=10 style='width:25px'><select id='moveTargetUnits' name='moveTargetUnits'><option value='Feet'>Feet</option><option value='Miles'>Miles</option></select><select id='moveTargetDirection' name='moveTargetDirection'><option value='Away'>Away From Caster</option><option value='Towards'>Towards Caster</option><option value='Choice'>Caster's Choice</option><option value='Random4'>Random, 4 Directions</option><option value='Random8'>Random, 8 Directions</option></select></td></tr>";
+        rowMoveTargetInfo.innerHTML = "<th><label for='moveTargetValue'>Distance Target Moved:</label></th><input type='number' id='moveTargetValue' name='moveTargetValue' min=0 value=10 style='width:25px'><select id='moveTargetUnits' name='moveTargetUnits'><option value='Feet'>Feet</option><option value='Miles'>Miles</option></select><select id='moveTargetDirection' name='moveTargetDirection'><option value='Choice'>User's Choice</option><option value='Away'>Away From User</option><option value='Towards'>Towards User</option><option value='Random4'>Random, 4 Directions</option><option value='Random8'>Random, 8 Directions</option></select></td></tr>";
 
-        let moveTargetAHLScalingSelect = await createAHLSelect("moveTargetAHLScaling");
+        if(checkEffectType()=="Spell"){
+            let moveTargetAHLScalingSelect = await createAHLSelect("moveTargetAHLScaling");
 
-        let rowMoveTargetAHLInfo = table.insertRow(startRowIndex+2);
-        rowMoveTargetAHLInfo.id = "rowMoveTargetAHLInfo";
-        rowMoveTargetAHLInfo.innerHTML = "<th><label for='moveTargetAHLValue'>Increased Distance AHL:</label></th><input type='number' id='moveTargetAHLValue' name='moveTargetAHLValue' min=0 value=0 style='width:25px'>"+moveTargetAHLScalingSelect+"</td></tr>";
+            let rowMoveTargetAHLInfo = table.insertRow(startRowIndex+2);
+            rowMoveTargetAHLInfo.id = "rowMoveTargetAHLInfo";
+            rowMoveTargetAHLInfo.innerHTML = "<th><label for='moveTargetAHLValue'>Increased Distance AHL:</label></th><input type='number' id='moveTargetAHLValue' name='moveTargetAHLValue' min=0 value=0 style='width:25px'>"+moveTargetAHLScalingSelect+"</td></tr>";                
+        }
 
         if(document.getElementById("howMitigate").value == "Save"){
             let rowSavePreventMove = table.insertRow(startRowIndex+3);
@@ -776,12 +785,14 @@ async function createRangeTable(){
             let rangeDistanceRow = table.insertRow(RangeRowIndex+1);
             rangeDistanceRow.id = "rowRangeDistance";
             rangeDistanceRow.innerHTML = "<th>Range:</th><td><input type='number' id='RangeValue' name='RangeValue' min=0 style='width:25px' value=0><select id='RangeUnits' name='RangeUnits'><option value='Feet'>Feet</option><option value='Miles'>Miles</option></select></td>";
-            
-            let RangeScalingAHLSelect = await createAHLSelect("RangeScalingAHL");
 
-            let rangeDistanceAHLRow = table.insertRow(RangeRowIndex+2);
-            rangeDistanceAHLRow.id = "rowRangeDistanceAHL";
-            rangeDistanceAHLRow.innerHTML = "<th>Range Increase AHL:</th><td><input type='number' id='RangeValueAHL' name='RangeValueAHL' min=0 style='width:25px' value=0>"+RangeScalingAHLSelect+"</td>";
+            if(checkEffectType()=="Spell"){
+                let RangeScalingAHLSelect = await createAHLSelect("RangeScalingAHL");
+
+                let rangeDistanceAHLRow = table.insertRow(RangeRowIndex+2);
+                rangeDistanceAHLRow.id = "rowRangeDistanceAHL";
+                rangeDistanceAHLRow.innerHTML = "<th>Range Increase AHL:</th><td><input type='number' id='RangeValueAHL' name='RangeValueAHL' min=0 style='width:25px' value=0>"+RangeScalingAHLSelect+"</td>";                
+            }
         }
     }
     else if(RangeRowIndex+1 != document.getElementById("AoE").rowIndex){
@@ -798,12 +809,16 @@ async function createAoETable(whichShape){
         clearUnusedTable("SubeffectTable","AoE","rowTargetNumber");
     }
     else{
-        if(document.getElementById("rowAoENum") == null){   
-            let AoENumAHLScalingSelect = await createAHLSelect("AoENumAHLScaling");
-
+        if(document.getElementById("rowAoENum") == null){
             let rowAoENum = table.insertRow(startRowIndex);
             rowAoENum.id = "rowAoENum";
-            rowAoENum.innerHTML = "<th><label for='AoENum'>Number of AoEs:</label></th><td><input type='number' id='AoENum' name='AoENum' min=1 value=1 style='width:25px'> + <input type='number' id='AoENumAHL' name='AoENumAHL' min=0 value=0 style='width:25px'>"+AoENumAHLScalingSelect+"</td>";
+            let rowAoEHTML = "<th><label for='AoENum'>Number of AoEs:</label></th><td><input type='number' id='AoENum' name='AoENum' min=1 value=1 style='width:25px'>";
+            if(checkEffectType()=="Spell"){
+                let AoENumAHLScalingSelect = await createAHLSelect("AoENumAHLScaling");
+
+                rowAoEHTML = rowAoEHTML + " + <input type='number' id='AoENumAHL' name='AoENumAHL' min=0 value=0 style='width:25px'>"+AoENumAHLScalingSelect;
+            }
+            rowAoENum.innerHTML = rowAoEHTML+"</td>";
         }
 
         if(aoeShapeSelction == "Choose"){
@@ -851,7 +866,14 @@ async function createAoETable(whichShape){
             whichShape = document.getElementById("aoeShape").value;
             if(document.getElementById("row"+whichShape+"Dimensions") != null){
                 clearUnusedTable("SubeffectTable","AoE","row"+whichShape+"Dimensions");
-                clearUnusedTable("SubeffectTable","row"+whichShape+"DimensionsAHL","rowAoENum");
+                
+                if(checkEffectType()=="Spell"){
+                    clearUnusedTable("SubeffectTable","row"+whichShape+"DimensionsAHL","rowAoENum");                    
+                }
+                else{
+                    clearUnusedTable("SubeffectTable","row"+whichShape+"Dimensions","rowAoENum");
+                }
+
                 return;
             }
             else{
@@ -865,12 +887,14 @@ async function createAoETable(whichShape){
             rowConeDimensions.innerHTML = "<th><label for='coneDimensionValue'>Cone Size:</label></th><td><input type='number' id='coneDimensionValue' name='coneDimensionValue' min=0 style='width:25px' value=0><select id='coneDimensionUnits' name='coneDimensionUnits'><option value='Feet'>Feet</option><option value='Miles'>Miles</option></select></td>";
             startRowIndex++;
 
-            let coneSizeAHLScalingSelect = await createAHLSelect("coneSizeAHLScaling");
+            if(checkEffectType()=="Spell"){
+                let coneSizeAHLScalingSelect = await createAHLSelect("coneSizeAHLScaling");
 
-            let rowConeDimensionsAHL = table.insertRow(startRowIndex);
-            rowConeDimensionsAHL.id = "rowConeDimensionsAHL";
-            rowConeDimensionsAHL.innerHTML = "<th><label for='coneDimensionValueAHL'>Increased Cone Size AHL:</label></th><td><input type='number' id='coneDimensionValueAHL' name='coneDimensionValueAHL' min=0 style='width:25px' value=0>"+coneSizeAHLScalingSelect+"</td>";
-            startRowIndex++;
+                let rowConeDimensionsAHL = table.insertRow(startRowIndex);
+                rowConeDimensionsAHL.id = "rowConeDimensionsAHL";
+                rowConeDimensionsAHL.innerHTML = "<th><label for='coneDimensionValueAHL'>Increased Cone Size AHL:</label></th><td><input type='number' id='coneDimensionValueAHL' name='coneDimensionValueAHL' min=0 style='width:25px' value=0>"+coneSizeAHLScalingSelect+"</td>";
+                startRowIndex++;                
+            }
         }
         else if(whichShape == "Cube"){
             let rowCubeDimensions = table.insertRow(startRowIndex);
@@ -878,12 +902,14 @@ async function createAoETable(whichShape){
             rowCubeDimensions.innerHTML = "<th><label for='cubeDimensionValue'>Cube Side Length:</label></th><td><input type='number' id='cubeDimensionValue' name='cubeDimensionValue' min=0 style='width:25px' value=0><select id='cubeDimensionUnits' name='cubeDimensionUnits'><option value='Feet'>Feet</option><option value='Miles'>Miles</option></select></td>";
             startRowIndex++;
 
-            let cubeSizeAHLScalingSelect = await createAHLSelect("cubeSizeAHLScaling");
+            if(checkEffectType()=="Spell"){
+                let cubeSizeAHLScalingSelect = await createAHLSelect("cubeSizeAHLScaling");
 
-            let rowCubeDimensionsAHL = table.insertRow(startRowIndex);
-            rowCubeDimensionsAHL.id = "rowCubeDimensionsAHL";
-            rowCubeDimensionsAHL.innerHTML = "<th><label for='cubeDimensionValueAHL'>Increased Side Length AHL:</label></th><td><input type='number' id='cubeDimensionValueAHL' name='cubeDimensionValueAHL' min=0 style='width:25px' value=0>"+cubeSizeAHLScalingSelect+"</td>";
-            startRowIndex++;
+                let rowCubeDimensionsAHL = table.insertRow(startRowIndex);
+                rowCubeDimensionsAHL.id = "rowCubeDimensionsAHL";
+                rowCubeDimensionsAHL.innerHTML = "<th><label for='cubeDimensionValueAHL'>Increased Side Length AHL:</label></th><td><input type='number' id='cubeDimensionValueAHL' name='cubeDimensionValueAHL' min=0 style='width:25px' value=0>"+cubeSizeAHLScalingSelect+"</td>";
+                startRowIndex++;                
+            }
         }
         else if(whichShape == "Cylinder"){
             let rowCylinderDimensions = table.insertRow(startRowIndex);
@@ -891,12 +917,14 @@ async function createAoETable(whichShape){
             rowCylinderDimensions.innerHTML = "<th><label for='cylinderRadiusValue'>Cylinder Radius x Height:</label></th><td><input type='number' id='cylinderRadiusValue' name='cylinderRadiusValue' min=0 style='width:25px' value=0><select id='cylinderRadiusUnits' name='cylinderRadiusUnits'><option value='Feet'>Feet</option><option value='Miles'>Miles</option></select> x <input type='number' id='cylinderHeightValue' name='cylinderHeightValue' min=0 style='width:25px' value=0><select id='cylinderHeightUnits' name='cylinderHeightUnits'><option value='Feet'>Feet</option><option value='Miles'>Miles</option></select></td>";
             startRowIndex++;
 
-            let cylinderSizeAHLScalingSelect = await createAHLSelect("cylinderSizeAHLScaling");
+            if(checkEffectType()=="Spell"){
+                let cylinderSizeAHLScalingSelect = await createAHLSelect("cylinderSizeAHLScaling");
 
-            let rowCylinderDimensionsAHL = table.insertRow(startRowIndex);
-            rowCylinderDimensionsAHL.id = "rowCylinderDimensionsAHL";
-            rowCylinderDimensionsAHL.innerHTML = "<th><label for='cylinderRadiusValueAHL'>Cylinder Dimensions AHL:</label></th><td><input type='number' id='cylinderRadiusValueAHL' name='cylinderRadiusValueAHL' min=0 style='width:25px' value=0> x <input type='number' id='cylinderHeightValueAHL' name='cylinderHeightValueAHL' min=0 style='width:25px' value=0>"+cylinderSizeAHLScalingSelect+"</td>";
-            startRowIndex++;
+                let rowCylinderDimensionsAHL = table.insertRow(startRowIndex);
+                rowCylinderDimensionsAHL.id = "rowCylinderDimensionsAHL";
+                rowCylinderDimensionsAHL.innerHTML = "<th><label for='cylinderRadiusValueAHL'>Cylinder Dimensions AHL:</label></th><td><input type='number' id='cylinderRadiusValueAHL' name='cylinderRadiusValueAHL' min=0 style='width:25px' value=0> x <input type='number' id='cylinderHeightValueAHL' name='cylinderHeightValueAHL' min=0 style='width:25px' value=0>"+cylinderSizeAHLScalingSelect+"</td>";
+                startRowIndex++;                
+            }
         }
         else if(whichShape == "Half Sphere"){
             let rowHalfSphereDimensions = table.insertRow(startRowIndex);
@@ -904,12 +932,15 @@ async function createAoETable(whichShape){
             rowHalfSphereDimensions.innerHTML = "<th><label for='halfSphereDimensionValue'>Half Sphere Radius:</label></th><td><input type='number' id='halfSphereDimensionValue' name='halfSphereDimensionValue' min=0 style='width:25px' value=0><select id='halfSphereDimensionUnits' name='halfSphereDimensionUnits'><option value='Feet'>Feet</option><option value='Miles'>Miles</option></select></td>";
             startRowIndex++;
 
-            let halfSphereSizeAHLScalingSelect = await createAHLSelect("halfSphereSizeAHLScaling");
+            if(checkEffectType()=="Spell"){
+                let halfSphereSizeAHLScalingSelect = await createAHLSelect("halfSphereSizeAHLScaling");
 
-            let rowHalfSphereDimensionsAHL = table.insertRow(startRowIndex);
-            rowHalfSphereDimensionsAHL.id = "rowHalfSphereDimensionsAHL";
-            rowHalfSphereDimensionsAHL.innerHTML = "<th><label for='halfSphereDimensionValueAHL'>Increased Radius AHL:</label></th><td><input type='number' id='halfSphereDimensionValueAHL' name='halfSphereDimensionValueAHL' min=0 style='width:25px' value=0>"+halfSphereSizeAHLScalingSelect+"</td>";
-            startRowIndex++;
+                let rowHalfSphereDimensionsAHL = table.insertRow(startRowIndex);
+                rowHalfSphereDimensionsAHL.id = "rowHalfSphereDimensionsAHL";
+                rowHalfSphereDimensionsAHL.innerHTML = "<th><label for='halfSphereDimensionValueAHL'>Increased Radius AHL:</label></th><td><input type='number' id='halfSphereDimensionValueAHL' name='halfSphereDimensionValueAHL' min=0 style='width:25px' value=0>"+halfSphereSizeAHLScalingSelect+"</td>";
+                startRowIndex++;
+            }
+
         }
         else if(whichShape == "Line"){
             let rowLineDimensions = table.insertRow(startRowIndex);
@@ -917,12 +948,14 @@ async function createAoETable(whichShape){
             rowLineDimensions.innerHTML = "<th><label for='lineLengthValue'>Line Length x Width:</label></th><td><input type='number' id='lineLengthValue' name='lineLengthValue' min=0 style='width:25px' value=0><select id='lineLengthUnits' name='lineLengthUnits'><option value='Feet'>Feet</option><option value='Miles'>Miles</option></select> x <input type='number' id='lineWidthValue' name='lineWidthValue' min=0 style='width:25px' value=0><select id='lineWidthUnits' name='lineWidthUnits'><option value='Feet'>Feet</option><option value='Miles'>Miles</option></select></td>";
             startRowIndex++;
 
-            let lineSizeAHLScalingSelect = await createAHLSelect("lineSizeAHLScaling");
+            if(checkEffectType()=="Spell"){
+                let lineSizeAHLScalingSelect = await createAHLSelect("lineSizeAHLScaling");
 
-            let rowLineDimensionsAHL = table.insertRow(startRowIndex);
-            rowLineDimensionsAHL.id = "rowLineDimensionsAHL";
-            rowLineDimensionsAHL.innerHTML = "<th><label for='lineLengthValueAHL'>Increased Dimensions AHL:</label></th><td><input type='number' id='lineLengthValueAHL' name='lineLengthValueAHL' min=0 style='width:25px' value=0> x <input type='number' id='lineWidthValueAHL' name='lineWidthValueAHL' min=0 style='width:25px' value=0>"+lineSizeAHLScalingSelect+"</td>";
-            startRowIndex++;
+                let rowLineDimensionsAHL = table.insertRow(startRowIndex);
+                rowLineDimensionsAHL.id = "rowLineDimensionsAHL";
+                rowLineDimensionsAHL.innerHTML = "<th><label for='lineLengthValueAHL'>Increased Dimensions AHL:</label></th><td><input type='number' id='lineLengthValueAHL' name='lineLengthValueAHL' min=0 style='width:25px' value=0> x <input type='number' id='lineWidthValueAHL' name='lineWidthValueAHL' min=0 style='width:25px' value=0>"+lineSizeAHLScalingSelect+"</td>";
+                startRowIndex++;                
+            }
         }
         else if(whichShape == "Panels"){
             let rowPanelsDimensions = table.insertRow(startRowIndex);
@@ -930,12 +963,14 @@ async function createAoETable(whichShape){
             rowPanelsDimensions.innerHTML = "<th><label for='panelsNumber'>Panel Number and Side Length:</label></th><td><input type='number' id='panelsNumber' name='panelsNumber' min=0 style='width:25px' value=10> panels, <input type='number' id='panelsDimensionValue' name='panelsDimensionValue' min=0 style='width:25px' value=0><select id='panelsDimensionUnits' name='panelsDimensionUnits'><option value='Feet'>Feet</option><option value='Miles'>Miles</option></select></td>";
             startRowIndex++;
 
-            let panelsNumberAHLScalingSelect = await createAHLSelect("panelsNumberAHLScaling");
+            if(checkEffectType()=="Spell"){
+                let panelsNumberAHLScalingSelect = await createAHLSelect("panelsNumberAHLScaling");
 
-            let rowPanelsDimensionsAHL = table.insertRow(startRowIndex);
-            rowPanelsDimensionsAHL.id = "rowPanelsDimensionsAHL";
-            rowPanelsDimensionsAHL.innerHTML = "<th><label for='panelsNumberAHL'>Increased Panels AHL:</label></th><td><input type='number' id='panelsNumberAHL' name='panelsNumberAHL' min=0 style='width:25px' value=0>"+panelsNumberAHLScalingSelect+"</td>";
-            startRowIndex++;
+                let rowPanelsDimensionsAHL = table.insertRow(startRowIndex);
+                rowPanelsDimensionsAHL.id = "rowPanelsDimensionsAHL";
+                rowPanelsDimensionsAHL.innerHTML = "<th><label for='panelsNumberAHL'>Increased Panels AHL:</label></th><td><input type='number' id='panelsNumberAHL' name='panelsNumberAHL' min=0 style='width:25px' value=0>"+panelsNumberAHLScalingSelect+"</td>";
+                startRowIndex++;                
+            }
         }
         else if(whichShape == "Sphere"){
             let rowSphereDimensions = table.insertRow(startRowIndex);
@@ -943,12 +978,14 @@ async function createAoETable(whichShape){
             rowSphereDimensions.innerHTML = "<th><label for='sphereDimensionValue'>Sphere Radius:</label></th><td><input type='number' id='sphereDimensionValue' name='sphereDimensionValue' min=0 style='width:25px' value=0><select id='sphereDimensionUnits' name='sphereDimensionUnits'><option value='Feet'>Feet</option><option value='Miles'>Miles</option></select></td>";
             startRowIndex++;
 
-            let sphereSizeAHLScalingSelect = await createAHLSelect("sphereSizeAHLScaling");
+            if(checkEffectType()=="Spell"){
+                let sphereSizeAHLScalingSelect = await createAHLSelect("sphereSizeAHLScaling");
 
-            let rowSphereDimensionsAHL = table.insertRow(startRowIndex);
-            rowSphereDimensionsAHL.id = "rowSphereDimensionsAHL";
-            rowSphereDimensionsAHL.innerHTML = "<th><label for='sphereDimensionValueAHL'>Increased Radius AHL:</label></th><td><input type='number' id='sphereDimensionValueAHL' name='sphereDimensionValueAHL' min=0 style='width:25px' value=0>"+sphereSizeAHLScalingSelect+"</td>";
-            startRowIndex++;
+                let rowSphereDimensionsAHL = table.insertRow(startRowIndex);
+                rowSphereDimensionsAHL.id = "rowSphereDimensionsAHL";
+                rowSphereDimensionsAHL.innerHTML = "<th><label for='sphereDimensionValueAHL'>Increased Radius AHL:</label></th><td><input type='number' id='sphereDimensionValueAHL' name='sphereDimensionValueAHL' min=0 style='width:25px' value=0>"+sphereSizeAHLScalingSelect+"</td>";
+                startRowIndex++;                
+            }
         }
         else if(whichShape == "Wall"){
             let rowWallDimensions = table.insertRow(startRowIndex);
@@ -956,12 +993,14 @@ async function createAoETable(whichShape){
             rowWallDimensions.innerHTML = "<th><label for='wallLengthValue'>Wall Length x Width x Height:</label></th><td><input type='number' id='wallLengthValue' name='wallLengthValue' min=0 style='width:25px' value=0><select id='wallLengthUnits' name='wallLengthUnits'><option value='Feet'>Feet</option><option value='Miles'>Miles</option></select> x <input type='number' id='wallWidthValue' name='wallWidthValue' min=0 style='width:25px' value=0><select id='wallWidthUnits' name='wallWidthUnits'><option value='Feet'>Feet</option><option value='Miles'>Miles</option></select> x <input type='number' id='wallHeightValue' name='wallHeightValue' min=0 style='width:25px' value=0><select id='wallHeightUnits' name='wallHeightUnits'><option value='Feet'>Feet</option><option value='Miles'>Miles</option></select></td>";
             startRowIndex++;
 
-            let wallSizeAHLScalingSelect = await createAHLSelect("wallSizeAHLScaling");
+            if(checkEffectType()=="Spell"){
+                let wallSizeAHLScalingSelect = await createAHLSelect("wallSizeAHLScaling");
 
-            let rowWallDimensionsAHL = table.insertRow(startRowIndex);
-            rowWallDimensionsAHL.id = "rowWallDimensionsAHL";
-            rowWallDimensionsAHL.innerHTML = "<th><label for='wallLengthValueAHL'>Increased Dimensions AHL:</label></th><td><input type='number' id='wallLengthValueAHL' name='wallLengthValueAHL' min=0 style='width:25px' value=0> x <input type='number' id='wallWidthValueAHL' name='wallWidthValueAHL' min=0 style='width:25px' value=0> x <input type='number' id='wallHeightValueAHL' name='wallHeightValueAHL' min=0 style='width:25px' value=0>"+wallSizeAHLScalingSelect+"</td>";
-            startRowIndex++;
+                let rowWallDimensionsAHL = table.insertRow(startRowIndex);
+                rowWallDimensionsAHL.id = "rowWallDimensionsAHL";
+                rowWallDimensionsAHL.innerHTML = "<th><label for='wallLengthValueAHL'>Increased Dimensions AHL:</label></th><td><input type='number' id='wallLengthValueAHL' name='wallLengthValueAHL' min=0 style='width:25px' value=0> x <input type='number' id='wallWidthValueAHL' name='wallWidthValueAHL' min=0 style='width:25px' value=0> x <input type='number' id='wallHeightValueAHL' name='wallHeightValueAHL' min=0 style='width:25px' value=0>"+wallSizeAHLScalingSelect+"</td>";
+                startRowIndex++;                
+            }
         }
     }
 }
@@ -970,16 +1009,20 @@ async function createTargetNumberToggle(){
     let table = document.getElementById("SubeffectTable");
 
     if(document.getElementById("isTargetNumberUnlimited").checked){
-        table.deleteRow(document.getElementById("rowTargetNumberAHL").rowIndex);
+        if(checkEffectType()=="Spell"){
+            table.deleteRow(document.getElementById("rowTargetNumberAHL").rowIndex);            
+        }
 
         document.getElementById("TargetNumber").setAttribute("disabled","");
     }
     else{
-        let TargetNumberAHLScalingSelect = await createAHLSelect("TargetNumberAHLScaling");
+        if(checkEffectType()=="Spell"){
+            let TargetNumberAHLScalingSelect = await createAHLSelect("TargetNumberAHLScaling");
 
-        let rowTargetNumberAHL = table.insertRow(document.getElementById("rowTargetNumber").rowIndex + 1);
-        rowTargetNumberAHL.id = "rowTargetNumberAHL";
-        rowTargetNumberAHL.innerHTML = "<th><label for='TargetNumberAHL'>Increased Target Number AHL:</label></th><td><input type='number' id='TargetNumberAHL' name='TargetNumberAHL' value=0 min=0 style='width:25px'>"+TargetNumberAHLScalingSelect+"</td>";
+            let rowTargetNumberAHL = table.insertRow(document.getElementById("rowTargetNumber").rowIndex + 1);
+            rowTargetNumberAHL.id = "rowTargetNumberAHL";
+            rowTargetNumberAHL.innerHTML = "<th><label for='TargetNumberAHL'>Increased Target Number AHL:</label></th><td><input type='number' id='TargetNumberAHL' name='TargetNumberAHL' value=0 min=0 style='width:25px'>"+TargetNumberAHLScalingSelect+"</td>";                
+        }
 
         document.getElementById("TargetNumber").removeAttribute("disabled","");
     }
@@ -1290,9 +1333,4 @@ async function loadUserData() {
     document.getElementById('SubeffectTable').innerHTML = userdata;
 }
 
-async function submitSpellData() {
-    let submitData = Object.fromEntries(new FormData(spellCreation));
-    let request = fetch("macro:CreateSpellSubeffectProcessing@lib:pm.a5e.Core", {method: "POST", body: JSON.stringify(submitData)});
-    let result = await request.json();
-}
 setTimeout(loadUserData, 1);

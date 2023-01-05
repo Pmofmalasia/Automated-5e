@@ -3,11 +3,11 @@ function checkEffectType(){
 }
 
 async function createMitigationTable(){
-    let table = document.getElementById("SubeffectTable");
+    let table = document.getElementById("SubeffectCreationTable");
     let mitigationLineIndex = document.getElementById("Mitigation").rowIndex;
 
     if(document.getElementById("howMitigate").value == "Attack"){
-        clearUnusedTable("SubeffectTable","Mitigation","Damage");
+        clearUnusedTable("SubeffectCreationTable","Mitigation","Damage");
         let attackTableRow2 = table.insertRow(mitigationLineIndex+1);
         let attackTableRow1 = table.insertRow(mitigationLineIndex+1);
 
@@ -15,7 +15,7 @@ async function createMitigationTable(){
         attackTableRow2.innerHTML = "<th>Crit Threshhold:</th><td><input type='number' id='CritThresh' name='CritThresh' max='20' min='1' value='20'></td>";
     }
     else if(document.getElementById("howMitigate").value == "Save"){
-        clearUnusedTable("SubeffectTable","Mitigation","Damage");
+        clearUnusedTable("SubeffectCreationTable","Mitigation","Damage");
         let saveTableRows = table.insertRow(mitigationLineIndex+1);
 
         let request = await fetch("macro:pm.GetAttributes@lib:pm.a5e.Core",{method: "POST", body: "['DisplayName','json']"});
@@ -58,7 +58,7 @@ async function createMitigationTable(){
         }
     }
     else{
-        clearUnusedTable("SubeffectTable","Mitigation","Damage");
+        clearUnusedTable("SubeffectCreationTable","Mitigation","Damage");
     }
 
     if(document.getElementById("howMitigate").value != "Save"){
@@ -96,7 +96,7 @@ async function createAHLSelect(ahlSelectID){
 
 async function createDamageTable(){
     if(document.getElementById("isDamage").checked){
-        let table = document.getElementById("SubeffectTable");
+        let table = document.getElementById("SubeffectCreationTable");
         let damageRowIndex = document.getElementById("Damage").rowIndex;
         let addRemoveButtonsRow = table.insertRow(damageRowIndex+1);
         addRemoveButtonsRow.id = "AdditionButtons";
@@ -105,13 +105,13 @@ async function createDamageTable(){
         addDamageTypeRows();
     }
     else{
-        clearUnusedTable("SubeffectTable","Damage","rowCondition");
+        clearUnusedTable("SubeffectCreationTable","Damage","rowCondition");
         document.getElementById("differentTypes").value = 0;
     }
 }
 
 async function addDamageTypeRows(){
-    let table = document.getElementById("SubeffectTable");
+    let table = document.getElementById("SubeffectCreationTable");
     let buttonRowIndex = document.getElementById("AdditionButtons").rowIndex;
     let damageTypeNumber = document.getElementById("differentTypes").value;
     damageTypeNumber++;
@@ -155,15 +155,15 @@ async function addDamageTypeRows(){
 }
 
 async function removeDamageTypeRows(){
-    let table = document.getElementById("SubeffectTable");
+    let table = document.getElementById("SubeffectCreationTable");
     let damageTypeNumber = document.getElementById("differentTypes").value;
-    clearUnusedTable("SubeffectTable","DamageSet"+damageTypeNumber,"AdditionButtons");
+    clearUnusedTable("SubeffectCreationTable","DamageSet"+damageTypeNumber,"AdditionButtons");
     document.getElementById("differentTypes").value = damageTypeNumber-1;
     table.deleteRow(document.getElementById("AdditionButtons").rowIndex - 1);
 }
 
 async function createTypeOptions(damageTypeNumber){
-    let table = document.getElementById("SubeffectTable");
+    let table = document.getElementById("SubeffectCreationTable");
     let damageRowIndex = document.getElementById("DamageSet"+damageTypeNumber).rowIndex;
 
     if(document.getElementById("DamageType"+damageTypeNumber).value == "Multiple Options"){
@@ -186,7 +186,7 @@ async function createTypeOptions(damageTypeNumber){
     }
     else{
         if(table.rows[damageRowIndex+1].id != "rowModBonus"+damageTypeNumber){
-            clearUnusedTable("SubeffectTable","DamageSet"+damageTypeNumber,"rowModBonus"+damageTypeNumber);
+            clearUnusedTable("SubeffectCreationTable","DamageSet"+damageTypeNumber,"rowModBonus"+damageTypeNumber);
         }
     }
 }
@@ -194,19 +194,19 @@ async function createTypeOptions(damageTypeNumber){
 async function createAHLDamage(damageTypeNumber){
     //This function is not currently using any checkEffectType functions since it should only be run if the EffectType is Spell in the first place. If something is going wrong, check here.
 
-    let table = document.getElementById("SubeffectTable");
+    let table = document.getElementById("SubeffectCreationTable");
     let AHLRowIndex = document.getElementById("rowIsAHL"+damageTypeNumber).rowIndex;
     
     if(document.getElementById("isAHL"+damageTypeNumber).value == "0"){
         if(document.getElementById("howMitigate").value == "Save"){
-            clearUnusedTable("SubeffectTable","rowIsAHL"+damageTypeNumber,"rowSaveMitigation"+damageTypeNumber)
+            clearUnusedTable("SubeffectCreationTable","rowIsAHL"+damageTypeNumber,"rowSaveMitigation"+damageTypeNumber)
         }
         else{
             if(damageTypeNumber == document.getElementById("differentTypes").value){
-                clearUnusedTable("SubeffectTable","rowIsAHL"+damageTypeNumber,"AdditionButtons");
+                clearUnusedTable("SubeffectCreationTable","rowIsAHL"+damageTypeNumber,"AdditionButtons");
             }
             else{
-                clearUnusedTable("SubeffectTable","rowIsAHL"+damageTypeNumber,"DamageSet"+(damageTypeNumber+1));
+                clearUnusedTable("SubeffectCreationTable","rowIsAHL"+damageTypeNumber,"DamageSet"+(damageTypeNumber+1));
             }
         }
 
@@ -221,12 +221,12 @@ async function createAHLDamage(damageTypeNumber){
 }
 
 async function createConditionTable(){
-    let table = document.getElementById("SubeffectTable");
+    let table = document.getElementById("SubeffectCreationTable");
     let nextRowIndex = document.getElementById("rowCondition").rowIndex + 1;
     let conditionChoice = document.getElementById("isCondition").value;
 
     if(conditionChoice == "None"){
-        clearUnusedTable("SubeffectTable","rowCondition","rowSummons");
+        clearUnusedTable("SubeffectCreationTable","rowCondition","rowSummons");
     }
     else{
         let alreadyAlwaysAddedTest = (table.rows.namedItem("rowConditionsAlwaysAdded") != null);
@@ -255,7 +255,7 @@ async function createConditionTable(){
                 nextRowIndex++;
             }
             if(alreadyOptionsTest && conditionChoice == "All"){
-                clearUnusedTable("SubeffectTable","rowConditionOptions",endRowId);
+                clearUnusedTable("SubeffectCreationTable","rowConditionOptions",endRowId);
                 table.deleteRow(document.getElementById("rowConditionOptions").rowIndex);
             }
         }
@@ -273,11 +273,6 @@ async function createConditionTable(){
                 rowConditionOptions.innerHTML = "<th>Condition Options:</th><td><div class='check-multiple' style='width:100%'>"+conditionOptions+"</div></td>";
                 nextRowIndex++;
 
-                if(checkEffectType=="Spell"){
-                    
-                }
-
-
                 let rowConditionOptionsNumber = table.insertRow(nextRowIndex);
                 rowConditionOptionsNumber.id = "rowConditionOptionsNumber";
                 let ConditionOptionsHTML = "<th><label  for='ConditionOptionsNumber'>Number of Options to Choose:</label></th><td><input type='number' id='ConditionOptionsNumber' name='ConditionOptionsNumber' min=1 value=1 style='width:25px'>";
@@ -294,7 +289,7 @@ async function createConditionTable(){
                 nextRowIndex = nextRowIndex + (document.getElementById(endRowId).rowIndex - document.getElementById("rowConditionOptions").rowIndex);
             }
             if(alreadyAlwaysAddedTest && conditionChoice == "Choose"){
-                clearUnusedTable("SubeffectTable","rowCondition","rowConditionOptions");
+                clearUnusedTable("SubeffectCreationTable","rowCondition","rowConditionOptions");
             }
         }
 
@@ -347,7 +342,7 @@ async function createConditionMultipleBoxes(boxNamePrefix,onChangeFunction){
 }
 
 async function createUniqueConditionRow(whichStartingPosition){
-    let table = document.getElementById("SubeffectTable");
+    let table = document.getElementById("SubeffectCreationTable");
     let nextRowIndex = 0;
     let conditionPrefix = "";
 
@@ -376,7 +371,7 @@ async function createUniqueConditionRow(whichStartingPosition){
 }
 
 async function createMultiUniqueConditionRow(conditionPrefix){
-    let table = document.getElementById("SubeffectTable");
+    let table = document.getElementById("SubeffectCreationTable");
     let nextRowIndex = document.getElementById("rowIsEffectSpecificMulti"+conditionPrefix).rowIndex + 1;
 
     if(document.getElementById("isEffectSpecific"+conditionPrefix+"Multiple").checked){
@@ -390,7 +385,7 @@ async function createMultiUniqueConditionRow(conditionPrefix){
 }
 
 async function conditionAlternateDuration(){
-    let table = document.getElementById("SubeffectTable");
+    let table = document.getElementById("SubeffectCreationTable");
     let isSameDuration = document.getElementById("isConditionSameDuration").checked;
     let nextRowIndex = document.getElementById("rowIsConditionSameDuration").rowIndex + 1;
 
@@ -405,7 +400,7 @@ async function conditionAlternateDuration(){
 }
 
 async function createConditionNonDurationEnd(){
-    let table = document.getElementById("SubeffectTable");
+    let table = document.getElementById("SubeffectCreationTable");
     let hasOtherEndOptions = document.getElementById("isConditionNonDurationEnd").checked;
     let nextRowIndex = document.getElementById("rowIsConditionNonDurationEnd").rowIndex + 1;
 
@@ -513,7 +508,7 @@ async function createConditionNonDurationEnd(){
             endRowID = "rowSummons";
         }
 
-        clearUnusedTable("SubeffectTable","rowIsConditionNonDurationEnd",endRowID)
+        clearUnusedTable("SubeffectCreationTable","rowIsConditionNonDurationEnd",endRowID)
     }
 }
 
@@ -522,7 +517,7 @@ async function createConditionSaveTable(){
         return;
     }
 
-    let table = document.getElementById("SubeffectTable");
+    let table = document.getElementById("SubeffectCreationTable");
     let nextRowIndex = document.getElementById("rowConditionSave").rowIndex + 1;
     let conditionSaveEffect = document.getElementById("conditionSaveEffect").value;
 
@@ -574,36 +569,36 @@ async function createConditionSaveTable(){
             conditionOptions = conditionOptions + "<label><input type='checkbox' id='SaveNullifyEffectSpecific' name='SaveNullifyEffectSpecific' value=1"+alreadyNullifiedText+"><span>Spell-Specific Condition</span></label>";
         }
 
-        clearUnusedTable("SubeffectTable","rowConditionSave","rowSummons");
+        clearUnusedTable("SubeffectCreationTable","rowConditionSave","rowSummons");
 
         let rowConditionsNullified = table.insertRow(nextRowIndex);
         rowConditionsNullified.id = "rowConditionsNullified";
         rowConditionsNullified.innerHTML = "<th>Conditions Nullified:</th><td><div id='SaveConditionNullify' class='check-multiple' style='width:100%'>"+conditionOptions+"</div></td>";
     }
     else if(conditionSaveEffect == "Different"){
-        clearUnusedTable("SubeffectTable","rowConditionSave","rowSummons");
+        clearUnusedTable("SubeffectCreationTable","rowConditionSave","rowSummons");
 
         let rowConditionSave = table.insertRow(nextRowIndex);
         rowConditionSave.id = "rowConditionSave";
         rowConditionSave.innerHTML = "<th><label for='alternateConditions'>Alternate Conditions:</label></th><td>I don't wanna right now thanks. TODO later.</td>";
     }
     else{
-        clearUnusedTable("SubeffectTable","rowConditionSave","rowSummons");
+        clearUnusedTable("SubeffectCreationTable","rowConditionSave","rowSummons");
     }
 }
 
 async function createSummonTable(){
-    let table = document.getElementById("SubeffectTable");
+    let table = document.getElementById("SubeffectCreationTable");
     let nextRowIndex = document.getElementById("rowSummons").rowIndex + 1;
     let summonsSelection = document.getElementById("isSummons").value;
     let hadPriorSummonType = table.rows.namedItem("rowSummonNumber") != null;
 
     if(summonsSelection == "No"){
-        clearUnusedTable("SubeffectTable","rowSummons","rowIsMoveTarget");
+        clearUnusedTable("SubeffectCreationTable","rowSummons","rowIsMoveTarget");
     }
     else{
         if(hadPriorSummonType){
-            clearUnusedTable("SubeffectTable","rowSummons","rowSummonNumber");
+            clearUnusedTable("SubeffectCreationTable","rowSummons","rowSummonNumber");
         }
         if(summonsSelection == "Single"){
             let rowSingleSummon = table.insertRow(nextRowIndex);
@@ -675,8 +670,6 @@ async function createSummonTable(){
                 rowSummonNumberAHL.innerHTML = "<th><label for='summonNumberAHLScaleHow'>Increased Number AHL:</th><td><select id='summonNumberAHLScaleHow' name='summonNumberAHLScaleHow'><option value='Add'>Add</option><option value='Multiply'>Multiply</option></select><input type='number' id='summonNumberAHL' name='summonNumberAHL' min='0' style='width:25px' value=0>"+summonNumberAHLScalingSelect+"</td>";
                 nextRowIndex++;
             }
-
-
         }
     }
 }
@@ -695,7 +688,7 @@ async function createSummonCreatureSubtypeTable(thisCreatureType){
 }
 
 async function createMoveTargetTable(){
-    let table = document.getElementById("SubeffectTable");
+    let table = document.getElementById("SubeffectCreationTable");
     let startRowIndex = document.getElementById("rowIsMoveTarget").rowIndex;
 
     if(document.getElementById("isMoveTarget").checked){
@@ -718,12 +711,12 @@ async function createMoveTargetTable(){
         }
     }
     else{
-        clearUnusedTable("SubeffectTable","rowIsMoveTarget","rowIsCreateObject");
+        clearUnusedTable("SubeffectCreationTable","rowIsMoveTarget","rowIsCreateObject");
     }
 }
 
 async function createCreateObjectTable(){
-    let table = document.getElementById("SubeffectTable");
+    let table = document.getElementById("SubeffectCreationTable");
     let startRowIndex = document.getElementById("rowIsCreateObject").rowIndex;
 //TODO: Object creation once equipment/item stuff is done
     if(document.getElementById("isCreateObject").checked){
@@ -732,16 +725,16 @@ async function createCreateObjectTable(){
         rowCreateObjectInfo.innerHTML = "<th style='colspan:2'>Note: There is currently no data collection for what type of objects are created by spells.</th>";
     }
     else{
-        clearUnusedTable("SubeffectTable","rowIsCreateObject","rowLightType");
+        clearUnusedTable("SubeffectCreationTable","rowIsCreateObject","rowLightType");
     }
 }
 
 async function createLightTable(){
-    let table = document.getElementById("SubeffectTable");
+    let table = document.getElementById("SubeffectCreationTable");
     let startRowIndex = document.getElementById("rowLightType").rowIndex;
     let lightSelection = document.getElementById("lightType").value;
 
-    clearUnusedTable("SubeffectTable","rowLightType","rowIsWeaponAttack");
+    clearUnusedTable("SubeffectCreationTable","rowLightType","rowIsWeaponAttack");
 
     if(lightSelection == "None"){
 
@@ -777,7 +770,7 @@ async function createLightTable(){
 }
 
 async function createRangeTable(){
-    let table = document.getElementById("SubeffectTable");
+    let table = document.getElementById("SubeffectCreationTable");
     let RangeRowIndex = document.getElementById("Range").rowIndex;
 
     if(document.getElementById("RangeType").value == "SelfRanged" || document.getElementById("RangeType").value == "Ranged"){
@@ -796,17 +789,17 @@ async function createRangeTable(){
         }
     }
     else if(RangeRowIndex+1 != document.getElementById("AoE").rowIndex){
-        clearUnusedTable("SubeffectTable","Range","AoE");
+        clearUnusedTable("SubeffectCreationTable","Range","AoE");
     }
 }
 
 async function createAoETable(whichShape){
-    let table = document.getElementById("SubeffectTable");
+    let table = document.getElementById("SubeffectCreationTable");
     let startRowIndex = document.getElementById("AoE").rowIndex + 1;
     let shapesArray = ["Cone","Cube","Cylinder","Half Sphere","Line","Panels","Sphere","Wall"];
     let aoeShapeSelction = document.getElementById("aoeShape").value;
     if(aoeShapeSelction == "None"){
-        clearUnusedTable("SubeffectTable","AoE","rowTargetNumber");
+        clearUnusedTable("SubeffectCreationTable","AoE","rowTargetNumber");
     }
     else{
         if(document.getElementById("rowAoENum") == null){
@@ -865,19 +858,19 @@ async function createAoETable(whichShape){
         else{
             whichShape = document.getElementById("aoeShape").value;
             if(document.getElementById("row"+whichShape+"Dimensions") != null){
-                clearUnusedTable("SubeffectTable","AoE","row"+whichShape+"Dimensions");
+                clearUnusedTable("SubeffectCreationTable","AoE","row"+whichShape+"Dimensions");
                 
                 if(checkEffectType()=="Spell"){
-                    clearUnusedTable("SubeffectTable","row"+whichShape+"DimensionsAHL","rowAoENum");                    
+                    clearUnusedTable("SubeffectCreationTable","row"+whichShape+"DimensionsAHL","rowAoENum");                    
                 }
                 else{
-                    clearUnusedTable("SubeffectTable","row"+whichShape+"Dimensions","rowAoENum");
+                    clearUnusedTable("SubeffectCreationTable","row"+whichShape+"Dimensions","rowAoENum");
                 }
 
                 return;
             }
             else{
-                clearUnusedTable("SubeffectTable","AoE","rowAoENum");
+                clearUnusedTable("SubeffectCreationTable","AoE","rowAoENum");
             }
         }
 
@@ -1006,7 +999,7 @@ async function createAoETable(whichShape){
 }
 
 async function createTargetNumberToggle(){
-    let table = document.getElementById("SubeffectTable");
+    let table = document.getElementById("SubeffectCreationTable");
 
     if(document.getElementById("isTargetNumberUnlimited").checked){
         if(checkEffectType()=="Spell"){
@@ -1029,7 +1022,7 @@ async function createTargetNumberToggle(){
 }
 
 async function createMultitargetDistanceToggle(){
-    let table = document.getElementById("SubeffectTable");
+    let table = document.getElementById("SubeffectCreationTable");
     if(document.getElementById("isMultitargetDistanceUnlimited").checked){
         document.getElementById("MultitargetDistance").setAttribute("disabled","");
     }
@@ -1039,7 +1032,7 @@ async function createMultitargetDistanceToggle(){
 }
 
 async function createTargetTable(primarySecondary){
-    let table = document.getElementById("SubeffectTable");
+    let table = document.getElementById("SubeffectCreationTable");
     
     if(primarySecondary == 1){
         var currentTargetTypeSelection = document.getElementById("TargetType").value;
@@ -1078,12 +1071,12 @@ async function createTargetTable(primarySecondary){
         secondaryTargetSelection = document.getElementById("secondaryTargetType").remove(10);
     }
     else{
-        clearUnusedTable("SubeffectTable","Target","submitRow");
+        clearUnusedTable("SubeffectCreationTable","Target","submitRow");
     }
 }
 
 async function createCreatureTargetTable(primarySecondary){
-    let table = document.getElementById("SubeffectTable");
+    let table = document.getElementById("SubeffectCreationTable");
     let currentTargetTypeSelection = document.getElementById("TargetType").value;
 
     if(primarySecondary==1){
@@ -1123,14 +1116,14 @@ async function createCreatureTargetTable(primarySecondary){
 }
 
 async function createCreatureTargetTypes(){
-    let table = document.getElementById("SubeffectTable");
+    let table = document.getElementById("SubeffectCreationTable");
     
     let currentTargetCreatureTypeSelection = document.getElementById("targetCreatureTypes").value;
     let startRowIndex = document.getElementById("rowCreatureTypes").rowIndex;
     let nextRowIndex = startRowIndex+1;
 
     if(currentTargetCreatureTypeSelection == "All"){
-        clearUnusedTable("SubeffectTable","rowCreatureTypes","rowTargetSenses");
+        clearUnusedTable("SubeffectCreationTable","rowCreatureTypes","rowTargetSenses");
     }
     else{
         let request = await fetch("macro:pm.GetCreatureTypes@lib:pm.a5e.Core", {method: "POST", body: ""});
@@ -1158,7 +1151,7 @@ async function createCreatureTargetTypes(){
                 nextRowIndex++;
             }
             if(alreadyExclusiveTest && currentTargetCreatureTypeSelection == "Inclusive"){
-                clearUnusedTable("SubeffectTable","rowInclusiveCreatureTypes","rowTargetSenses");
+                clearUnusedTable("SubeffectCreationTable","rowInclusiveCreatureTypes","rowTargetSenses");
             }
         }
         else if(alreadyInclusiveTest){
@@ -1176,20 +1169,20 @@ async function createCreatureTargetTypes(){
                 nextRowIndex++;
             }
             if(alreadyInclusiveTest && currentTargetCreatureTypeSelection == "Exclusive"){
-                clearUnusedTable("SubeffectTable","rowCreatureTypes","rowExclusiveCreatureTypes");
+                clearUnusedTable("SubeffectCreationTable","rowCreatureTypes","rowExclusiveCreatureTypes");
             }
         }
     }
 }
 
 async function createTargetConditionTable(){
-    let table = document.getElementById("SubeffectTable");
+    let table = document.getElementById("SubeffectCreationTable");
     let startRowIndex = document.getElementById("rowTargetCondition").rowIndex;
     let conditionChoice = document.getElementById("isTargetCondition").value;
     let nextRowIndex = startRowIndex+1;
 
     if(conditionChoice == "None"){
-        clearUnusedTable("SubeffectTable","rowTargetCondition","rowTargetAbilityScore");
+        clearUnusedTable("SubeffectCreationTable","rowTargetCondition","rowTargetAbilityScore");
     }
     else{
         let alreadyInclusiveTest = (table.rows.namedItem("rowInclusiveConditions") != null);
@@ -1215,7 +1208,7 @@ async function createTargetConditionTable(){
                 nextRowIndex++;
             }
             if(alreadyExclusiveTest && conditionChoice == "Inclusive"){
-                clearUnusedTable("SubeffectTable","rowInclusiveSetByCaster","rowTargetAbilityScore");
+                clearUnusedTable("SubeffectCreationTable","rowInclusiveSetByCaster","rowTargetAbilityScore");
             }
         }
         else if(alreadyInclusiveTest){
@@ -1243,7 +1236,7 @@ async function createTargetConditionTable(){
                 nextRowIndex++;
             }
             if(alreadyInclusiveTest && conditionChoice == "Exclusive"){
-                clearUnusedTable("SubeffectTable","rowTargetCondition","rowExclusiveConditions");
+                clearUnusedTable("SubeffectCreationTable","rowTargetCondition","rowExclusiveConditions");
             }
         }
     }
@@ -1254,7 +1247,7 @@ async function createClassConditionRow(inclusiveExclusive){
 }
 
 async function createTargetAbilityScoreTable(){
-    let table = document.getElementById("SubeffectTable");
+    let table = document.getElementById("SubeffectCreationTable");
     let startRowIndex = document.getElementById("rowTargetAbilityScore").rowIndex;
 
     if(document.getElementById("isAbilityScore").checked){
@@ -1274,7 +1267,7 @@ async function createTargetAbilityScoreTable(){
         }
     }
     else{
-        clearUnusedTable("SubeffectTable","rowTargetAbilityScore","rowTargetAlignment");
+        clearUnusedTable("SubeffectCreationTable","rowTargetAbilityScore","rowTargetAlignment");
     }
     
 }
@@ -1303,7 +1296,7 @@ async function enableAbilityScoreLimits(abilityScoreName){
 }
 
 async function createTargetAlignmentTable(){
-    let table = document.getElementById("SubeffectTable");
+    let table = document.getElementById("SubeffectCreationTable");
     let startRowIndex = document.getElementById("rowTargetAlignment").rowIndex;
 
     if(document.getElementById("isAlignment").checked){
@@ -1324,13 +1317,13 @@ async function createTargetAlignmentTable(){
         rowAlignmentsOther.innerHTML = "<td text-align='center' colspan='3'><input type='checkbox' id='alignmentUnaligned' name='alignmentUnaligned'><label for='alignmentUnaligned'>Unaligned</label></td>";
     }
     else{
-        clearUnusedTable("SubeffectTable","rowTargetAlignment","submitRow");
+        clearUnusedTable("SubeffectCreationTable","rowTargetAlignment","submitRow");
     }
 }
 
 async function loadUserData() {
     let userdata = atob(await MapTool.getUserData());
-    document.getElementById('SubeffectTable').innerHTML = userdata;
+    document.getElementById('SubeffectCreationTable').innerHTML = userdata;
 }
 
 setTimeout(loadUserData, 1);

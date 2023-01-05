@@ -191,7 +191,7 @@
 [h:subeffectData = json.remove(subeffectData,"isSummons")]
 [h,if(isSummons != "No"),CODE:{
     [h,switch(isSummons),CODE:
-        case "SpellEffect":{
+        case "UniqueEffect":{
             [h:SummonData = json.set("",
                 "SummonName",SpellName
             )]

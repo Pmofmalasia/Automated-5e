@@ -1,10 +1,18 @@
 [h:subeffectData = macro.args]
-[h:EffectType = json.get(subeffectData,)]
-[h:currentSpellData = getLibProperty("ct.NewSpell","pm.a5e.Core")]
-[h:thisPlayerCurrentSpellData = json.get(currentSpellData,getPlayerName())]
-[h:currentEffectData = json.get(thisPlayerCurrentSpellData,json.length(thisPlayerCurrentSpellData)-1)]
+[h:EffectType = json.get(subeffectData,"EffectType")]
+
+[h,switch(EffectType),CODE:
+    case "Spell":{
+        [h:CurrentFeatureData = getLibProperty("ct.NewSpell","pm.a5e.Core")]
+        [h:thisPlayerCurrentFeatureData = json.get(CurrentFeatureData,getPlayerName())]
+        [h:currentEffectData = json.get(thisPlayerCurrentFeatureData,json.length(thisPlayerCurrentFeatureData)-1)]
+        [h:FeatureName = json.get(json.get(thisPlayerCurrentFeatureData,0),"Name")]
+    };
+    default:{}
+]
+
+
 [h:subeffectData = pm.a5e.KeyStringsToNumbers(subeffectData)]
-[h:SpellName = json.get(json.get(thisPlayerCurrentSpellData,0),"Name")]
 
 [h:howMitigate = json.get(subeffectData,"howMitigate")]
 [h:subeffectData = json.remove(subeffectData,"howMitigate")]
@@ -47,7 +55,7 @@
         [h:thisDamageTypeInfo = json.set(thisDamageTypeInfo,"DamageTypeOptions",DamageTypeOptions)]
     }]
 
-    [h,if(json.get(subeffectData,"isAHL"+whichType)!=0):
+    [h,if(json.get(subeffectData,"isAHL"+whichType)!=0 && json.contains(subeffectData,"isAHL"+whichType)):
         thisDamageTypeInfo = json.set(thisDamageTypeInfo,
             "AHLScaling",number(json.get(subeffectData,"isAHL"+whichType)),
             "AHLDieSize",number(json.get(subeffectData,"AHLDieSize"+whichType)),
@@ -84,6 +92,11 @@
 
 [h,if(!json.isEmpty(damageInfo)): subeffectData = json.set(subeffectData,"Damage",damageInfo)]
 
+[h,switch(EffectType):
+    case "Spell": ConditionIdentificationInfo = json.set("","Class","Spell","Subclass",FeatureName);
+    default: ConditionIdentificationInfo = json.set("","Class","","Subclass","")
+]
+
 [h:isCondition = json.get(subeffectData,"isCondition")]
 [h:subeffectData = json.remove(subeffectData,"isCondition")]
 [h:allBaseConditions = pm.a5e.GetBaseConditions("Name","json")]
@@ -98,13 +111,13 @@
     
     [h,switch(json.contains(subeffectData,"AlwaysAddedEffectSpecific")+""+json.contains(subeffectData,"isEffectSpecificAlwaysAddedMultiple")),CODE:
         case "10":{
-            [h:conditionsAlwaysAdded = json.append(conditionsAlwaysAdded,json.set("","Name",SpellName,"Class","Spell","Subclass",SpellName))]
-            [h:EffectSpecificConditions = json.append(EffectSpecificConditions,json.set("","Name",SpellName,"Class","Spell","Subclass",SpellName))]
+            [h:conditionsAlwaysAdded = json.append(conditionsAlwaysAdded,json.set(ConditionIdentificationInfo,"Name",FeatureName))]
+            [h:EffectSpecificConditions = json.append(EffectSpecificConditions,json.set(ConditionIdentificationInfo,"Name",FeatureName))]
         };
         case "11":{
             [h:conditionNames = json.fromList(encode(json.get(subeffectData,"AlwaysAddedEffectSpecificNames")),"%0A")]
-            [h,foreach(tempCondition,conditionNames): conditionsAlwaysAdded = json.append(conditionsAlwaysAdded,json.set("","Name",tempCondition,"Class","Spell","Subclass",SpellName))]
-            [h,foreach(tempCondition,conditionNames): EffectSpecificConditions = json.append(EffectSpecificConditions,json.set("","Name",tempCondition,"Class","Spell","Subclass",SpellName))]
+            [h,foreach(tempCondition,conditionNames): conditionsAlwaysAdded = json.append(conditionsAlwaysAdded,json.set(ConditionIdentificationInfo,"Name",tempCondition))]
+            [h,foreach(tempCondition,conditionNames): EffectSpecificConditions = json.append(EffectSpecificConditions,json.set(ConditionIdentificationInfo,"Name",tempCondition))]
             [h:subeffectData = json.remove(subeffectData,"isEffectSpecificAlwaysAddedMultiple")]
             [h:subeffectData = json.remove(subeffectData,"AlwaysAddedEffectSpecificNames")]
         };
@@ -122,13 +135,13 @@
 
     [h,switch(json.contains(subeffectData,"ConditionOptionEffectSpecific")+""+json.contains(subeffectData,"isEffectSpecificConditionOptionMultiple")),CODE:
         case "10":{
-            [h:conditionOptions = json.append(conditionOptions,json.set("","Name",SpellName,"Class","Spell","Subclass",SpellName))]
-            [h:EffectSpecificConditions = json.append(EffectSpecificConditions,json.set("","Name",SpellName,"Class","Spell","Subclass",SpellName))]
+            [h:conditionOptions = json.append(conditionOptions,json.set(ConditionIdentificationInfo,"Name",FeatureName))]
+            [h:EffectSpecificConditions = json.append(EffectSpecificConditions,json.set(ConditionIdentificationInfo,"Name",FeatureName))]
         };
         case "11":{
             [h:conditionNames = json.fromList(encode(json.get(subeffectData,"ConditionOptionEffectSpecificNames")),"%0A")]
-            [h,foreach(tempCondition,conditionNames): conditionOptions = json.append(conditionOptions,json.set("","Name",tempCondition,"Class","Spell","Subclass",SpellName))]
-            [h,foreach(tempCondition,conditionNames): EffectSpecificConditions = json.append(EffectSpecificConditions,json.set("","Name",tempCondition,"Class","Spell","Subclass",SpellName))]
+            [h,foreach(tempCondition,conditionNames): conditionOptions = json.append(conditionOptions,json.set(ConditionIdentificationInfo,"Name",tempCondition))]
+            [h,foreach(tempCondition,conditionNames): EffectSpecificConditions = json.append(EffectSpecificConditions,json.set(ConditionIdentificationInfo,"Name",tempCondition))]
             [h:subeffectData = json.remove(subeffectData,"isEffectSpecificConditionOptionMultiple")]
             [h:subeffectData = json.remove(subeffectData,"ConditionOptionEffectSpecificNames")]
         };
@@ -193,7 +206,7 @@
     [h,switch(isSummons),CODE:
         case "UniqueEffect":{
             [h:SummonData = json.set("",
-                "SummonName",SpellName
+                "SummonName",FeatureName
             )]
         };
         case "Single":{
@@ -219,10 +232,13 @@
 
             [h:SummonData = json.set("",
                 "SummonCRMax",json.get(subeffectData,"summonCrMax"),
+                "SummonCreatureType",summonCreatureTypesAllowed
+            )]
+
+            [h,if(json.contains(subeffectData,"summonCrMaxAHLNum")): SummonData = json.set(SummonData,
                 "SummonCRMaxAHL",json.get(subeffectData,"summonCrMaxAHLNum"),
                 "SummonCRMaxAHLScaling",json.get(subeffectData,"summonCrMaxAHLScaling"),
-                "SummonCRMaxAHLScalingMethod",json.get(subeffectData,"summonCrMaxAHLScaleHow"),
-                "SummonCreatureType",summonCreatureTypesAllowed
+                "SummonCRMaxAHLScalingMethod",json.get(subeffectData,"summonCrMaxAHLScaleHow")
             )]
 
             [h,foreach(tempCreatureType,CreatureTypeNameArray): subeffectData = json.remove(subeffectData,"summonCreatureType"+tempCreatureType)]
@@ -241,7 +257,7 @@
     [h:subeffectData = json.remove(subeffectData,"summonNumber")]
     [h:subeffectData = json.remove(subeffectData,"summonNumberCRBased")]
 
-    [h:SummonData = json.set(SummonData,
+    [h,if(json.contains(subeffectData,"summonNumberAHL")): SummonData = json.set(SummonData,
         "SummonNumberAHL",json.get(subeffectData,"summonNumberAHL"),
         "SummonNumberAHLScaling",json.get(subeffectData,"summonNumberAHLScaling"),
         "SummonNumberScalingMethod",json.get(subeffectData,"summonNumberAHLScaleHow")
@@ -260,7 +276,7 @@
         "Direction",json.get(subeffectData,"moveTargetDirection")
     )]
 
-    [h,if(json.get(subeffectData,"moveTargetAHLScaling") != "0"):
+    [h,if(json.get(subeffectData,"moveTargetAHLScaling") != "0" && json.contains(subeffectData,"moveTargetAHLScaling")):
         moveTargetData = json.set(moveTargetData,
             "AHLScaling",number(json.get(subeffectData,"moveTargetAHLScaling")),
             "AHLValue",number(json.get(subeffectData,"moveTargetAHLValue")));
@@ -320,7 +336,7 @@
         "Value",number(json.get(subeffectData,"RangeValue")),
         "Units",json.get(subeffectData,"RangeUnits")
     )]
-    [h,if(json.get(subeffectData,"RangeScalingAHL") != "0"):
+    [h,if(json.get(subeffectData,"RangeScalingAHL") != "0" && json.contains(subeffectData,"RangeScalingAHL")):
         rangeData = json.set(rangeData,
             "AHLScaling",number(json.get(subeffectData,"RangeScalingAHL")),
             "AHLValue",number(json.get(subeffectData,"RangeValueAHL")));
@@ -420,18 +436,18 @@
 [h:thisEffectSubeffectData = json.get(currentEffectData,"Subeffects")]
 [h:thisEffectSubeffectData = json.append(thisEffectSubeffectData,subeffectData)]
 [h:currentEffectData = json.set(currentEffectData,"Subeffects",thisEffectSubeffectData)]
-[h:thisPlayerCurrentSpellData = json.set(thisPlayerCurrentSpellData,json.length(thisPlayerCurrentSpellData)-1,currentEffectData)]
-[h:setLibProperty("ct.NewSpell",json.set(currentSpellData,getPlayerName(),thisPlayerCurrentSpellData),"Lib:pm.a5e.Core")]
+[h:thisPlayerCurrentFeatureData = json.set(thisPlayerCurrentFeatureData,json.length(thisPlayerCurrentFeatureData)-1,currentEffectData)]
+[h:setLibProperty("ct.NewSpell",json.set(CurrentFeatureData,getPlayerName(),thisPlayerCurrentFeatureData),"Lib:pm.a5e.Core")]
 
-[h:baseSpellData = json.get(thisPlayerCurrentSpellData,0)]
+[h:baseSpellData = json.get(thisPlayerCurrentFeatureData,0)]
 [h:lastSubeffectTest = (thisSubeffectNum>=totalSubeffects)]
-[h:lastEffectTest = json.length(thisPlayerCurrentSpellData) >= json.get(baseSpellData,"multiEffects")]
+[h:lastEffectTest = json.length(thisPlayerCurrentFeatureData) >= json.get(baseSpellData,"multiEffects")]
 [h,switch(lastSubeffectTest+""+lastEffectTest),CODE:
     case "11":{
         [h:tempAllConditions = json.path.read(json.get(getLibProperty("ct.NewSpell","Lib:pm.a5e.Core"),getPlayerName()),"[*]['Subeffects'][*][?(@.Conditions!=null)]['Conditions']","DEFAULT_PATH_LEAF_TO_NULL")]
         [h:allConditions = "[]"]
         [h,foreach(tempConditions,tempAllConditions): allConditions = json.merge(allConditions,tempConditions)]
-        [h,if(!json.isEmpty(allConditions)): SpellConditions = json.path.read(allConditions,"[?(@.Name=='"+SpellName+"' && @.Class=='Spell')]"); SpellConditions = "[]"]
+        [h,if(!json.isEmpty(allConditions)): SpellConditions = json.path.read(allConditions,"[?(@.Name=='"+FeatureName+"' && @.Class=='Spell')]"); SpellConditions = "[]"]
 
         [h:closeDialog("Spell Creation")]
 
@@ -442,7 +458,7 @@
         }]
     };
     case "10":{
-        [h:baseSpellData = json.set(json.get(thisPlayerCurrentSpellData,0),"WhichEffect",json.length(thisPlayerCurrentSpellData)+1)]
+        [h:baseSpellData = json.set(json.get(thisPlayerCurrentFeatureData,0),"WhichEffect",json.length(thisPlayerCurrentFeatureData)+1)]
         [h,MACRO("CreateSpellCore@Lib:pm.a5e.Core"): baseSpellData]
     };
     default:{

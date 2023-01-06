@@ -11,7 +11,6 @@
     default:{}
 ]
 
-
 [h:subeffectData = pm.a5e.KeyStringsToNumbers(subeffectData)]
 
 [h:howMitigate = json.get(subeffectData,"howMitigate")]
@@ -155,6 +154,7 @@
         [h:conditionEndInfo = json.set("","UseSpellDuration",1)]
         [h:subeffectData = json.remove(subeffectData,"isConditionSameDuration")]
     };{
+        [h:"<!-- Note: Alternate duration works as the 'main' duration for things that apply conditions but don't have another 'main duration -->"]
         [h:conditionEndInfo = json.set("","Duration",json.get(subeffectData,"conditionAlternateDuration"),"DurationUnits",lower(json.get(subeffectData,"conditionAlternateDurationUnits")))]
         [h:subeffectData = json.remove(subeffectData,"conditionAlternateDuration")]
         [h:subeffectData = json.remove(subeffectData,"conditionAlternateDurationUnits")]
@@ -273,7 +273,8 @@
     [h:moveTargetData = json.set("",
         "Value",number(json.get(subeffectData,"moveTargetValue")),
         "Units",json.get(subeffectData,"moveTargetUnits"),
-        "Direction",json.get(subeffectData,"moveTargetDirection")
+        "Direction",json.get(subeffectData,"moveTargetDirection"),
+        "Type",json.get(subeffectData,"moveTargetType")
     )]
 
     [h,if(json.get(subeffectData,"moveTargetAHLScaling") != "0" && json.contains(subeffectData,"moveTargetAHLScaling")):
@@ -284,11 +285,12 @@
             "AHLScaling",0,
             "AHLValue",0)
     ]
-
+    
     [h:subeffectData = json.remove(subeffectData,"isMoveTarget")]
     [h:subeffectData = json.remove(subeffectData,"moveTargetValue")]
     [h:subeffectData = json.remove(subeffectData,"moveTargetUnits")]
     [h:subeffectData = json.remove(subeffectData,"moveTargetDirection")]
+    [h:subeffectData = json.remove(subeffectData,"moveTargetType")]
     [h:subeffectData = json.remove(subeffectData,"moveTargetAHLScaling")]
     [h:subeffectData = json.remove(subeffectData,"moveTargetAHLValue")]
     [h:subeffectData = json.set(subeffectData,"Movement",moveTargetData)]

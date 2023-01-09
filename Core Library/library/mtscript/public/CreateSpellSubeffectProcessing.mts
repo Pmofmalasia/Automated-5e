@@ -138,7 +138,7 @@
 
 [h,if(isCondition != "None"),CODE:{
     [h,if(json.contains(subeffectData,"isConditionSameDuration")),CODE:{
-        [h:conditionEndInfo = json.set("","UseSpellDuration",1)]
+        [h:conditionEndInfo = json.set("","UseMainDuration",1)]
         [h:subeffectData = json.remove(subeffectData,"isConditionSameDuration")]
     };{
         [h:conditionEndInfo = json.set("","Duration",json.get(subeffectData,"conditionAlternateDuration"),"DurationUnits",lower(json.get(subeffectData,"conditionAlternateDurationUnits")))]

@@ -8,7 +8,12 @@
         [h:currentEffectData = json.get(thisPlayerCurrentFeatureData,json.length(thisPlayerCurrentFeatureData)-1)]
         [h:FeatureName = json.get(json.get(thisPlayerCurrentFeatureData,0),"Name")]
     };
-    default:{}
+    default:{
+        [h:CurrentFeatureData = getLibProperty("ct.New"+EffectType,"pm.a5e.Core")]
+        [h:thisPlayerCurrentFeatureData = json.get(CurrentFeatureData,getPlayerName())]
+        [h:currentEffectData = thisPlayerCurrentFeatureData]
+        [h:FeatureName = json.get(thisPlayerCurrentFeatureData,"Name")]
+    }
 ]
 
 [h:subeffectData = pm.a5e.KeyStringsToNumbers(subeffectData)]
@@ -151,7 +156,7 @@
 
 [h,if(isCondition != "None"),CODE:{
     [h,if(json.contains(subeffectData,"isConditionSameDuration")),CODE:{
-        [h:conditionEndInfo = json.set("","UseSpellDuration",1)]
+        [h:conditionEndInfo = json.set("","UseMainDuration",1)]
         [h:subeffectData = json.remove(subeffectData,"isConditionSameDuration")]
     };{
         [h:"<!-- Note: Alternate duration works as the 'main' duration for things that apply conditions but don't have another 'main duration -->"]
@@ -438,32 +443,39 @@
 [h:thisEffectSubeffectData = json.get(currentEffectData,"Subeffects")]
 [h:thisEffectSubeffectData = json.append(thisEffectSubeffectData,subeffectData)]
 [h:currentEffectData = json.set(currentEffectData,"Subeffects",thisEffectSubeffectData)]
-[h:thisPlayerCurrentFeatureData = json.set(thisPlayerCurrentFeatureData,json.length(thisPlayerCurrentFeatureData)-1,currentEffectData)]
-[h:setLibProperty("ct.NewSpell",json.set(CurrentFeatureData,getPlayerName(),thisPlayerCurrentFeatureData),"Lib:pm.a5e.Core")]
 
-[h:baseSpellData = json.get(thisPlayerCurrentFeatureData,0)]
-[h:lastSubeffectTest = (thisSubeffectNum>=totalSubeffects)]
-[h:lastEffectTest = json.length(thisPlayerCurrentFeatureData) >= json.get(baseSpellData,"multiEffects")]
-[h,switch(lastSubeffectTest+""+lastEffectTest),CODE:
-    case "11":{
-        [h:tempAllConditions = json.path.read(json.get(getLibProperty("ct.NewSpell","Lib:pm.a5e.Core"),getPlayerName()),"[*]['Subeffects'][*][?(@.Conditions!=null)]['Conditions']","DEFAULT_PATH_LEAF_TO_NULL")]
-        [h:allConditions = "[]"]
-        [h,foreach(tempConditions,tempAllConditions): allConditions = json.merge(allConditions,tempConditions)]
-        [h,if(!json.isEmpty(allConditions)): SpellConditions = json.path.read(allConditions,"[?(@.Name=='"+FeatureName+"' && @.Class=='Spell')]"); SpellConditions = "[]"]
+[h,switch(EffectType),CODE:
+    case "Spell":{
+        [h:thisPlayerCurrentFeatureData = json.set(thisPlayerCurrentFeatureData,json.length(thisPlayerCurrentFeatureData)-1,currentEffectData)]
+        [h:setLibProperty("ct.NewSpell",json.set(CurrentFeatureData,getPlayerName(),thisPlayerCurrentFeatureData),"Lib:pm.a5e.Core")]
 
-        [h:closeDialog("Spell Creation")]
+        [h:baseFeatureData = json.get(thisPlayerCurrentFeatureData,0)]
+        [h:lastSubeffectTest = (thisSubeffectNum>=totalSubeffects)]
+        [h:lastEffectTest = json.length(thisPlayerCurrentFeatureData) >= json.get(baseFeatureData,"multiEffects")]
 
-        [h,if(json.length(SpellConditions)<=1),CODE:{
-            [h,MACRO("CreateSpellEnd@Lib:pm.a5e.Core"): ""]
-        };{
-            [h,MACRO("CreateSpellFinalInfo@Lib:pm.a5e.Core"): ""]
-        }]
-    };
-    case "10":{
-        [h:baseSpellData = json.set(json.get(thisPlayerCurrentFeatureData,0),"WhichEffect",json.length(thisPlayerCurrentFeatureData)+1)]
-        [h,MACRO("CreateSpellCore@Lib:pm.a5e.Core"): baseSpellData]
+        [h:extraData = json.set("","SpellLevel",spellLevel)]
     };
     default:{
-        [h,MACRO("CreateSpellSubeffect@Lib:pm.a5e.Core"): json.set("","TotalSubeffects",totalSubeffects,"WhichSubeffect",thisSubeffectNum+1,"SpellLevel",spellLevel)]        
+        [h:thisPlayerCurrentFeatureData = currentEffectData]
+        [h:setLibProperty("ct.New"+EffectType,json.set(CurrentFeatureData,getPlayerName(),thisPlayerCurrentFeatureData),"Lib:pm.a5e.Core")]
+
+        [h:baseFeatureData = thisPlayerCurrentFeatureData]
+        [h:lastSubeffectTest = (thisSubeffectNum>=totalSubeffects)]
+        [h:lastEffectTest = 1]
+        [h:extraData = ""]
+    }
+]
+
+[h,switch(lastSubeffectTest+""+lastEffectTest),CODE:
+    case "11":{
+        [h:closeDialog("SubeffectCreation")]
+        [h,MACRO("CreateFeatureCoreFinalInput@Lib:pm.a5e.Core"): ""]
+    };
+    case "10":{
+        [h:baseFeatureData = json.set(baseFeatureData,"WhichEffect",json.length(thisPlayerCurrentFeatureData)+1)]
+        [h,MACRO("CreateSpellCore@Lib:pm.a5e.Core"): baseFeatureData]
+    };
+    default:{
+        [h,MACRO("CreateSubeffect@Lib:pm.a5e.Core"): json.set("","TotalSubeffects",totalSubeffects,"WhichSubeffect",thisSubeffectNum+1,"ExtraData",extraData)]        
     }
 ]

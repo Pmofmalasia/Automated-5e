@@ -208,8 +208,8 @@
 	[h:spell.Conditions = pm.a5e.ChooseCondition(json.get(tempConditionInfo,"Conditions"),spell.ConditionChoiceNumber)]
 
 	[h:spell.ConditionEndInfo = json.get(tempConditionInfo,"EndInfo")]
-	[h,if(json.get(spell.ConditionEndInfo,"UseSpellDuration") == 1): spell.ConditionEndInfo = json.set(spell.ConditionEndInfo,"Duration",DurationValue,"DurationUnits",lower(DurationUnits))]
-	[h:spell.ConditionEndInfo = json.remove(spell.ConditionEndInfo,"UseSpellDuration")]
+	[h,if(json.get(spell.ConditionEndInfo,"UseMainDuration") == 1): spell.ConditionEndInfo = json.set(spell.ConditionEndInfo,"Duration",DurationValue,"DurationUnits",lower(DurationUnits))]
+	[h:spell.ConditionEndInfo = json.remove(spell.ConditionEndInfo,"UseMainDuration")]
 
 	[h:hasSaveDCTest = !json.isEmpty(json.path.read(spell.ConditionEndInfo,"[*][?(@.EndTriggers.*.SaveType!=null)]","DEFAULT_PATH_LEAF_TO_NULL"))]
 

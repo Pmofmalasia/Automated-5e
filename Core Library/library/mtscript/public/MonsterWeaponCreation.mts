@@ -29,6 +29,8 @@
 
 [h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowWeaponCritThresh'><th><label for='WeaponCritThresh'>Critical Threshhold:</label></th><td><input type='number' id='WeaponCritThresh' name='WeaponCritThresh' max='20' min='0' value='20'></td></tr>"]
 
+[h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowSpecialEffects'><th><label for='SpecialEffects'>Has Special Effects?</label></th><td><input type='checkbox' id='SpecialEffects' name='SpecialEffects'></td></tr>"]
+
 [h:monsterCreationHTML = monsterCreationHTML + "<tr><th text-align='center' colspan='2'><input type='submit' id='submitButton' value='Submit'></th></tr>"]
 
 [h:html.dialog5("MonsterWeaponCreation","lib://pm.a5e.core/MonsterWeaponCreation.html?cachelib=false","value="+base64.encode(monsterCreationHTML)+"; closebutton=0; width=450; height=1050")]

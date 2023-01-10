@@ -2,21 +2,16 @@
 [h:EffectType = json.get(subeffectData,"EffectType")]
 [h:totalSubeffects = json.get(subeffectData,"TotalSubeffects")]
 [h:thisSubeffectNum = json.get(subeffectData,"WhichSubeffect")]
+[h:ExtraData = json.get(subeffectData,"ExtraData")]
 
 [h,if(totalSubeffects==1):
     SubeffectHTML = "";
     SubeffectHTML = "<tr><th text-align='center' colspan='2'>Subeffect #"+thisSubeffectNum+"</th></tr>"
 ]
 
-[h,switch(EffectType),CODE:
-    case "Spell":{
-        [h:spellLevel = json.get(subeffectData,"SpellLevel")]
-        [h:SubeffectHTML = SubeffectHTML + "<input type='hidden' id='SpellLevel' name='SpellLevel' value="+spellLevel+">"]
-    };
-    default:{
-
-    }
-]
+[h,if(json.type(ExtraData) == "OBJECT"),CODE:{
+    [h,foreach(tempKey,json.fields(ExtraData)): SubeffectHTML = SubeffectHTML + "<input type='hidden' id='"+tempKey+"' name='"+tempKey+"' value='"+json.get(ExtraData,tempKey)+"'>"]
+};{}]
 
 [h:"<!-- May want to send the subeffect number as an argument in some onchange functions -->"]
 

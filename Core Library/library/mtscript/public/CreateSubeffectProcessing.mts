@@ -469,7 +469,7 @@
 [h,switch(lastSubeffectTest+""+lastEffectTest),CODE:
     case "11":{
         [h:closeDialog("SubeffectCreation")]
-        [h,MACRO("CreateFeatureCoreFinalInput@Lib:pm.a5e.Core"): ""]
+        [h,MACRO("CreateFeatureCoreFinalInput@Lib:pm.a5e.Core"): json.set("","EffectType",EffectType,"ExtraData",extraData)]
     };
     case "10":{
         [h:baseFeatureData = json.set(baseFeatureData,"WhichEffect",json.length(thisPlayerCurrentFeatureData)+1)]

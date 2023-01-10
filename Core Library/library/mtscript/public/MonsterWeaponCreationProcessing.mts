@@ -41,28 +41,38 @@
     "Props",NewWeaponProps
 )]
 
-[h:setProperty("a5e.stat.Weapon",json.append(getProperty("a5e.stat.Weapon"),NewWeaponData))]
-
-[h:NewWeaponCommand = '[h,MACRO("SingleAttack@Lib:pm.a5e.Core"): json.set("","ParentToken",currentToken(),"WeaponData",'+"'"+NewWeaponData+"'"+')]']
-
-[h:NewWeaponMacroProps = json.set("",
-    "applyToSelected",0,
-    "autoExecute",1,
-    "color","black",
-    "command",NewWeaponCommand,
-    "fontColor","white",
-    "fontSize","1.00em",
-    "includeLabel",0,
-    "group","Combat",
-    "sortBy","",
-    "label",json.get(MonsterWeaponData,"DisplayName"),
-    "maxWidth","",
-    "minWidth",89,
-    "playerEditable",0,
-    "tooltip",'[h:TooltipData=json.set("","tooltipDisplaySizeOverride",200,"WeaponData",'+"'"+NewWeaponData+"'"+')][MACRO("Attack Macro Tooltip@Lib:pm.a5e.Core"):TooltipData]',
-    "delim","json"
-)]
-
-[h:createMacro(NewWeaponMacroProps)]
-
 [h:closeDialog("MonsterWeaponCreation")]
+
+[h,if(json.contains(MonsterWeaponData,"SpecialEffects")),CODE:{
+    [h:AllWeaponData = json.set(getLibProperty("ct.NewWeapon","pm.a5e.Core"),getPlayerName(),NewWeaponData)]
+    [h:setLibProperty("ct.NewWeapon",AllWeaponData,"Lib:pm.a5e.Core")]
+    [h,MACRO("CreateSubeffect@Lib:pm.a5e.Core"): json.set("",
+        "EffectType","Weapon",
+        "TotalSubeffects",1,
+        "WhichSubeffect",1
+    )]
+};{
+    [h:setProperty("a5e.stat.Weapon",json.append(getProperty("a5e.stat.Weapon"),NewWeaponData))]
+
+    [h:NewWeaponCommand = '[h,MACRO("SingleAttack@Lib:pm.a5e.Core"): json.set("","ParentToken",currentToken(),"WeaponData",'+"'"+NewWeaponData+"'"+')]']
+
+    [h:NewWeaponMacroProps = json.set("",
+        "applyToSelected",0,
+        "autoExecute",1,
+        "color","black",
+        "command",NewWeaponCommand,
+        "fontColor","white",
+        "fontSize","1.00em",
+        "includeLabel",0,
+        "group","Combat",
+        "sortBy","",
+        "label",json.get(MonsterWeaponData,"DisplayName"),
+        "maxWidth","",
+        "minWidth",89,
+        "playerEditable",0,
+        "tooltip",'[h:TooltipData=json.set("","tooltipDisplaySizeOverride",200,"WeaponData",'+"'"+NewWeaponData+"'"+')][MACRO("Attack Macro Tooltip@Lib:pm.a5e.Core"):TooltipData]',
+        "delim","json"
+    )]
+
+    [h:createMacro(NewWeaponMacroProps)]
+}]

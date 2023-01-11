@@ -5,7 +5,7 @@
 [h:subeffect.RangeType = json.get(SubeffectData,"RangeType")]
 [h,if(subeffect.RangeType == "SelfRanged" || subeffect.RangeType == "Ranged"),CODE:{
 	[h,if(json.get(subeffect.RangeData,"AHLScaling")>0):
-		subeffect.AHLRange = json.get(subeffect.RangeData,"AHLValue") * (subeffect.AHL / json.get(subeffect.RangeData,"AHLScaling"));
+		subeffect.AHLRange = json.get(subeffect.RangeData,"AHLValue") * (AHLTier / json.get(subeffect.RangeData,"AHLScaling"));
 		subeffect.AHLRange = 0
 	]
 	[h:subeffect.RangeData = json.set(subeffect.RangeData,"Value",json.get(subeffect.RangeData,"Value") + subeffect.AHLRange)]
@@ -39,8 +39,8 @@
 	[h:subeffect.TargetNumber = 99999999999]
 };{
 	[h:subeffect.TargetNumber = json.get(SubeffectData,"TargetNumber")]
-	[h,if(json.get(SubeffectData,"TargetNumberAHLScaling") > 0 && subeffect.AHL > 0),CODE:{
-		[h:subeffect.TargetNumber = subeffect.TargetNumber + (json.get(SubeffectData,"TargetNumberAHL") * (subeffect.AHL / json.get(SubeffectData,"TargetNumberAHLScaling")))]
+	[h,if(json.get(SubeffectData,"TargetNumberAHLScaling") > 0 && AHLTier > 0),CODE:{
+		[h:subeffect.TargetNumber = subeffect.TargetNumber + (json.get(SubeffectData,"TargetNumberAHL") * (AHLTier / json.get(SubeffectData,"TargetNumberAHLScaling")))]
 	}]
 }]
 
@@ -51,11 +51,11 @@
 }]
 
 [h,if(json.contains(SubeffectData,"zAOE")),CODE:{
-	[h:AoEScaling=if(sAoESizeScalingAHL=="Every Level",subeffect.AHL,if(sAoESizeScalingAHL=="Every Other Level",floor(subeffect.AHL/2),if(sAoESizeScalingAHL=="Every Three Levels",floor(subeffect.AHL/3),0)))]
+	[h:AoEScaling=if(sAoESizeScalingAHL=="Every Level",AHLTier,if(sAoESizeScalingAHL=="Every Other Level",floor(AHLTier/2),if(sAoESizeScalingAHL=="Every Three Levels",floor(AHLTier/3),0)))]
 	[h:dAoESizeAHL = sAoESizeAHL*AoEScaling]
-	[h:RangeScaling=if(sRangeScalingAHL=="Every Level",subeffect.AHL,if(sRangeScalingAHL=="Every Other Level",floor(subeffect.AHL/2),if(sRangeScalingAHL=="Every Three Levels",floor(subeffect.AHL/3),0)))]
+	[h:RangeScaling=if(sRangeScalingAHL=="Every Level",AHLTier,if(sRangeScalingAHL=="Every Other Level",floor(AHLTier/2),if(sRangeScalingAHL=="Every Three Levels",floor(AHLTier/3),0)))]
 	[h:dRangeAHL = sRangeAHL*RangeScaling]
-	[h:DamageScaling=if(AHLScaling=="Every Level",subeffect.AHL,if(AHLScaling=="Every Other Level",floor(subeffect.AHL/2),if(AHLScaling=="Every Three Levels",floor(subeffect.AHL/3),0)))]
+	[h:DamageScaling=if(AHLScaling=="Every Level",AHLTier,if(AHLScaling=="Every Other Level",floor(AHLTier/2),if(AHLScaling=="Every Three Levels",floor(AHLTier/3),0)))]
 }]
 
 [h,if(json.contains(SubeffectData,"TargetOrigin")),CODE:{
@@ -140,18 +140,33 @@
 }]
 
 [h,if(json.contains(SubeffectData,"SaveData")),CODE:{
+	[h:thisSubeffectSaveData = json.get(SubeffectData,"SaveData")]
+	[h,switch(json.get(thisSubeffectSaveData,"DCMethod")),CODE:
+		case "SpellSave":{
+
+		};
+		case "AbilityScore":{
+
+		};
+		case "SetValue":{
+
+		};
+		default:{
+
+		}
+	]
 	[h:subeffect.SaveDC = 8 + getProperty("a5e.stat.Proficiency") + PrimeStatMod]
 
 	[h:pm.PassiveFunction("SpellSaveDC")]
 
-	[h:subeffect.SaveDCData = json.set(json.get(SubeffectData,"SaveData"),"DC",subeffect.SaveDC)]
+	[h:subeffect.SaveDCData = json.set(thisSubeffectSaveData,"DC",subeffect.SaveDC)]
 	[h:thisEffectData = json.set(thisEffectData,"SaveDC",subeffect.SaveDCData)]
 
 	[h:abilityTable = json.append(abilityTable,json.set("",
 		"ShowIfCondensed",1,
 		"Header","Saving Throw",
 		"FalseHeader","",
-		"FullContents",pm.GetDisplayName(json.get(json.get(SubeffectData,"SaveData"),"SaveType"),"sb.Attributes"),
+		"FullContents",pm.GetDisplayName(json.get(thisSubeffectSaveData,"SaveType"),"sb.Attributes")+" Save",
 		"RulesContents","DC "+subeffect.SaveDC+" ",
 		"RollContents","",
 		"DisplayOrder","['Rules','Roll','Full']"
@@ -164,14 +179,14 @@
 	"IsWeapon",0,
 	"IsAttack",subeffect.IsAttack,
 	"Modifier",1,
-	"ScalingBase",subeffect.AHL
+	"ScalingBase",AHLTier
 )]
-[h:SpellDamagePassiveFunctions = json.append("","Damage","SpellDamage")]
-[h,if(subeffect.IsAttack): SpellDamagePassiveFunctions = json.append(SpellDamagePassiveFunctions,"AttackDamage","SpellAttackDamage")]
+[h:DamagePassiveFunctions = json.append("","Damage","SpellDamage")]
+[h,if(subeffect.IsAttack): DamagePassiveFunctions = json.append(DamagePassiveFunctions,"AttackDamage","SpellAttackDamage")]
 
 [h:subeffect.DamageInfo = "[]"]
 [h,foreach(tempDamageInstance,json.get(SubeffectData,"Damage")),CODE:{
-	[h:thisDamageTypeInfo = pm.a5e.DamageRoll(tempDamageInstance,SpellNonDamageProperties,SpellDamagePassiveFunctions)]
+	[h:thisDamageTypeInfo = pm.a5e.DamageRoll(tempDamageInstance,SpellNonDamageProperties,DamagePassiveFunctions)]
 
 	[h:subeffect.DamageInfo = json.append(subeffect.DamageInfo,thisDamageTypeInfo)]
 
@@ -200,7 +215,7 @@
 	[h:tempConditionInfo = json.get(SubeffectData,"ConditionInfo")]
 	[h,if(json.contains(SubeffectData,"ConditionOptionsNumber")),CODE:{
 		[h:subeffect.ConditionChoiceNumber = json.get(SubeffectData,"ConditionOptionsNumber")]
-		[h,if(json.get(SubeffectData,"ConditionOptionsNumberAHLScaling") > 0): subeffect.ConditionChoiceNumber = subeffect.ConditionChoiceNumber + (json.contains(SubeffectData,"ConditionOptionsNumberAHL") * floor(subeffect.AHL/json.get(SubeffectData,"ConditionOptionsNumberAHLScaling")))]
+		[h,if(json.get(SubeffectData,"ConditionOptionsNumberAHLScaling") > 0): subeffect.ConditionChoiceNumber = subeffect.ConditionChoiceNumber + (json.contains(SubeffectData,"ConditionOptionsNumberAHL") * floor(AHLTier/json.get(SubeffectData,"ConditionOptionsNumberAHLScaling")))]
 	};{
 		[h:subeffect.ConditionChoiceNumber = 0]
 	}]
@@ -251,8 +266,8 @@
 		[h:subeffect.SummonCRMaxAHL = json.get(subeffect.SummonData,"SummonCRMaxAHL")]
 		[h:subeffect.SummonCRMaxAHLScalingMethod = json.get(subeffect.SummonData,"SummonCRMaxAHLScalingMethod")]
 		[h,if(subeffect.SummonCRMaxAHLScalingMethod=="Add"):
-			subeffect.SummonCRMax = subeffect.SummonCRMax + (subeffect.SummonCRMaxAHL * floor(subeffect.AHL/subeffect.SummonCRMaxAHLScaling));
-			subeffect.SummonCRMax = subeffect.SummonCRMax * (subeffect.SummonCRMaxAHL + floor(subeffect.AHL/subeffect.SummonCRMaxAHLScaling))
+			subeffect.SummonCRMax = subeffect.SummonCRMax + (subeffect.SummonCRMaxAHL * floor(AHLTier/subeffect.SummonCRMaxAHLScaling));
+			subeffect.SummonCRMax = subeffect.SummonCRMax * (subeffect.SummonCRMaxAHL + floor(AHLTier/subeffect.SummonCRMaxAHLScaling))
 		]
 	}]
 	
@@ -267,8 +282,8 @@
 		[h:subeffect.SummonNumberAHLScalingMethod = json.get(subeffect.SummonData,"SummonNumberAHLScalingMethod")]
 
 		[h,if(subeffect.SummonNumberAHLScalingMethod=="Add"):
-			subeffect.SummonNumberBonusAHL = subeffect.SummonNumberAHL * floor(subeffect.AHL/subeffect.SummonNumberAHLScaling);
-			subeffect.SummonNumberMultiplierAHL = subeffect.SummonNumberAHL + floor(subeffect.AHL/subeffect.SummonNumberAHLScaling)
+			subeffect.SummonNumberBonusAHL = subeffect.SummonNumberAHL * floor(AHLTier/subeffect.SummonNumberAHLScaling);
+			subeffect.SummonNumberMultiplierAHL = subeffect.SummonNumberAHL + floor(AHLTier/subeffect.SummonNumberAHLScaling)
 		]
 	}]
 

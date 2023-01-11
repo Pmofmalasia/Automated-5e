@@ -239,6 +239,9 @@
 		"Targets",json.append("",thisAttackTarget)
 	))]
 
+	[h:AHLTier = 0]
+	[h,foreach(tempSubeffect,json.get(wa.WeaponUsed,"Subeffects")): pm.a5e.ExecuteSubeffect(tempSubeffect)]
+
 	[h:WhichAttack = WhichAttack + 1]
 }]
 

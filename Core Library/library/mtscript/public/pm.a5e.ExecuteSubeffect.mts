@@ -1,4 +1,5 @@
 [h:SubeffectData = arg(0)]
+[h:NonSubeffectData = arg(1)]
 [h:thisEffectData = json.set("","ID",pm.a5e.GenerateEffectID())]
 
 [h:subeffect.RangeData = json.get(SubeffectData,"Range")]
@@ -105,14 +106,13 @@
 	[h:attack.ProfTest = 1]
 	[h:attack.ToHitBonus = 0]
 	[h,if(json.length(subeffect.AllTargets)>1):
-		subeffect.AttackData = pm.a5e.AttackRoll(NonSpellData,json.append("","Attack","SpellAttack"));
-		subeffect.AttackData = pm.a5e.AttackRoll(NonSpellData,json.append("","Attack","SpellAttack"),json.get(subeffect.AllTargets,0))		
+		subeffect.AttackData = pm.a5e.AttackRoll(json.get(NonSubeffectData,"OverallData"),json.get(NonSubeffectData,"AttackFunctions"));
+		subeffect.AttackData = pm.a5e.AttackRoll(json.get(NonSubeffectData,"OverallData"),json.get(NonSubeffectData,"AttackFunctions"),json.get(subeffect.AllTargets,0))		
 	]
 	[h:attack.CritTest = json.get(subeffect.AttackData,"CritTest")]
 	[h:attack.CritFailTest = json.get(subeffect.AttackData,"CritFailTest")]
 
-	[h:subeffect.RerollNonSpellData = json.merge(NonSpellData,subeffect.AttackData)]
-	[h:subeffect.RerollData = json.set(subeffect.RerollNonSpellData,"SpellData",json.append("",FinalSpellData))]
+	[h:subeffect.RerollData = json.get(NonSubeffectData,"RerollData")]
 
 	[h:sp.AdvRerollLink = macroLinkText("AttackReroll@Lib:pm.a5e.Core","self-gm",subeffect.RerollData,ParentToken)]
 	[h:sp.DisRerollLink = macroLinkText("AttackReroll@Lib:pm.a5e.Core","self-gm",subeffect.RerollData,ParentToken)]
@@ -172,20 +172,19 @@
 	))]
 }]
 
-[h:SpellDamageData = "[]"]
-[h:SpellNonDamageProperties = json.set("",
-	"IsSpell",1,
-	"IsWeapon",0,
+[h:SubeffectNonDamageProperties = json.set("",
+	"IsSpell",pm.a5e.OverarchingContext=="Spell",
+	"IsWeapon",pm.a5e.OverarchingContext=="Attack",
 	"IsAttack",subeffect.IsAttack,
 	"Modifier",1,
 	"ScalingBase",AHLTier
 )]
-[h:DamagePassiveFunctions = json.append("","Damage","SpellDamage")]
-[h,if(subeffect.IsAttack): DamagePassiveFunctions = json.append(DamagePassiveFunctions,"AttackDamage","SpellAttackDamage")]
+[h:DamagePassiveFunctions = json.get(NonSubeffectData,"DamageFunctions")]
+[h,if(subeffect.IsAttack): DamagePassiveFunctions = json.merge(DamagePassiveFunctions,json.get(NonSubeffectData,"AttackDamageFunctions"))]
 
 [h:subeffect.DamageInfo = "[]"]
 [h,foreach(tempDamageInstance,json.get(SubeffectData,"Damage")),CODE:{
-	[h:thisDamageTypeInfo = pm.a5e.DamageRoll(tempDamageInstance,SpellNonDamageProperties,DamagePassiveFunctions)]
+	[h:thisDamageTypeInfo = pm.a5e.DamageRoll(tempDamageInstance,SubeffectNonDamageProperties,DamagePassiveFunctions)]
 
 	[h:subeffect.DamageInfo = json.append(subeffect.DamageInfo,thisDamageTypeInfo)]
 

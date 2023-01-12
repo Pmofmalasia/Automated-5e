@@ -226,6 +226,8 @@
 [h:defineFunction("pm.a5e.SpellcastingSubeffect","pm.a5e.SpellcastingSubeffect@Lib:pm.a5e.Core",0,0)]
 [h:defineFunction("pm.a5e.DamageRoll","pm.a5e.DamageRoll@Lib:pm.a5e.Core",0,0)]
 [h:defineFunction("pm.a5e.AttackRoll","pm.a5e.AttackRoll@Lib:pm.a5e.Core",0,0)]
+[h:defineFunction("pm.a5e.ExecuteSubeffect","pm.a5e.ExecuteSubeffect@Lib:pm.a5e.Core",0,0)]
+[h:defineFunction("pm.a5e.AttackSubeffect","pm.a5e.AttackSubeffect@Lib:pm.a5e.Core",0,0)]
 
 [h:"<!-- Functions for Checks and Saves -->"]
 [h:defineFunction("pm.a5e.d20Roll","pm.a5e.d20Roll@Lib:pm.a5e.Core",0,0)]

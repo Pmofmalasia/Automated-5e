@@ -155,7 +155,6 @@
 	[h:pm.PassiveFunction("AttackRollTargeted",json.set("","ParentToken",thisAttackTarget))]
 	[h:pm.PassiveFunction("WeaponAttackRollTargeted",json.set("","ParentToken",thisAttackTarget))]
 
-
 	[h:AllAttacksDmg = json.append(AllAttacksDmg,thisAttackDamage)]
 }]
 

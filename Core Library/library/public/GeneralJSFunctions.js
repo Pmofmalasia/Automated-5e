@@ -12,7 +12,6 @@ async function clearUnusedTable(tableID,startRowID,endRowID){
 async function submitData(formName,nextMacroName) {
     let form = document.getElementById(formName);
     let submitData = Object.fromEntries(new FormData(form));
-    console.log("HI");
     let request = fetch("macro:"+nextMacroName+"@Lib:pm.a5e.Core", {method: "POST", body: JSON.stringify(submitData)});
     let result = await request.json();
 }

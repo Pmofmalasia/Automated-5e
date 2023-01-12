@@ -49,7 +49,8 @@
     [h,MACRO("CreateSubeffect@Lib:pm.a5e.Core"): json.set("",
         "EffectType","Weapon",
         "TotalSubeffects",1,
-        "WhichSubeffect",1
+        "WhichSubeffect",1,
+        "ParentToken",currentToken()
     )]
 };{
     [h:setProperty("a5e.stat.Weapon",json.append(getProperty("a5e.stat.Weapon"),NewWeaponData))]

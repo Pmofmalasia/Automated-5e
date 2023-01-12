@@ -1,4 +1,5 @@
 [h:subeffectData = macro.args]
+[h:ParentToken = json.get(subeffectData,"ParentToken")]
 [h:EffectType = json.get(subeffectData,"EffectType")]
 [h:totalSubeffects = json.get(subeffectData,"TotalSubeffects")]
 [h:thisSubeffectNum = json.get(subeffectData,"WhichSubeffect")]
@@ -15,7 +16,7 @@
 
 [h:"<!-- May want to send the subeffect number as an argument in some onchange functions -->"]
 
-[h:SubeffectHTML = SubeffectHTML + "<input type='hidden' id='EffectType' name='EffectType' value='"+EffectType+"'><input type='hidden' id='TotalSubeffects' name='TotalSubeffects' value="+totalSubeffects+"><input type='hidden' id='WhichSubeffect' name='WhichSubeffect' value="+thisSubeffectNum+">
+[h:SubeffectHTML = SubeffectHTML + "<input type='hidden' id='ParentToken' name='ParentToken' value='"+ParentToken+"'><input type='hidden' id='EffectType' name='EffectType' value='"+EffectType+"'><input type='hidden' id='TotalSubeffects' name='TotalSubeffects' value="+totalSubeffects+"><input type='hidden' id='WhichSubeffect' name='WhichSubeffect' value="+thisSubeffectNum+">
 
 <tr id='Mitigation'><th><label for='howMitigate'>Make Attack or Force Save?</label></th><td><select id='howMitigate' name='howMitigate' onchange='createMitigationTable()'><option value='Attack'>Make Attack</option><option value='Save'>Force Save</option><option value='Neither' selected>Neither</option></select></td></tr>
 

@@ -229,7 +229,6 @@
 
 	[h,if(hasSaveDCTest && !json.contains(SubeffectData,"SaveData")),CODE:{
 		[h:subeffect.SaveDC = 8 + getProperty("a5e.stat.Proficiency") + PrimeStatMod]
-		[h:pm.PassiveFunction("SpellSaveDC")]
 	};{}]
 	
 	[h,if(hasSaveDCTest): subeffect.ConditionEndInfo = json.path.put(subeffect.ConditionEndInfo,"['EndTriggers'][*][?(@.SaveType!=null)]","DC",subeffect.SaveDC)]

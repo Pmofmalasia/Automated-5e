@@ -5,11 +5,11 @@
 
 [h:thisWeaponData = json.remove(thisWeaponData,"Sourcebook")]
 [h:thisWeaponData = json.remove(thisWeaponData,"multiEffects")]
+[h:thisWeaponData = json.remove(thisWeaponData,"ParentToken")]
 
 [h:"<!-- Need to add a method of checking for multiple unnamed spell-specific effects to make them be named (or marked as all the same effect). Will likely need to be done prior to calling this macro by shunting off to another one since it would involve another interface. --> "]
 
 [h:setLibProperty("ct.NewWeapon",json.remove(getLibProperty("ct.NewWeapon","Lib:pm.a5e.Core"),getPlayerName()),"Lib:pm.a5e.Core")]
-
 [h:ParentToken = json.get(macro.args,"ParentToken")]
 [h:switchToken(ParentToken)]
 
@@ -27,7 +27,7 @@
     "includeLabel",0,
     "group","Combat",
     "sortBy","",
-    "label",json.get(MonsterWeaponData,"DisplayName"),
+    "label",json.get(thisWeaponData,"DisplayName"),
     "maxWidth","",
     "minWidth",89,
     "playerEditable",0,

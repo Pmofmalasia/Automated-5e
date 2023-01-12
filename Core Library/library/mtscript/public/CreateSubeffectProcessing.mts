@@ -469,13 +469,13 @@
 [h,switch(lastSubeffectTest+""+lastEffectTest),CODE:
     case "11":{
         [h:closeDialog("SubeffectCreation")]
-        [h,MACRO("CreateFeatureCoreFinalInput@Lib:pm.a5e.Core"): json.set("","EffectType",EffectType,"ExtraData",extraData)]
+        [h,MACRO("CreateFeatureCoreFinalInput@Lib:pm.a5e.Core"): json.set("","EffectType",EffectType,"ExtraData",extraData,"ParentToken",json.get(subeffectData,"ParentToken"))]
     };
     case "10":{
         [h:baseFeatureData = json.set(baseFeatureData,"WhichEffect",json.length(thisPlayerCurrentFeatureData)+1)]
         [h,MACRO("CreateSpellCore@Lib:pm.a5e.Core"): baseFeatureData]
     };
     default:{
-        [h,MACRO("CreateSubeffect@Lib:pm.a5e.Core"): json.set("","TotalSubeffects",totalSubeffects,"WhichSubeffect",thisSubeffectNum+1,"ExtraData",extraData)]        
+        [h,MACRO("CreateSubeffect@Lib:pm.a5e.Core"): json.set("","TotalSubeffects",totalSubeffects,"WhichSubeffect",thisSubeffectNum+1,"ExtraData",extraData,"ParentToken",json.get(subeffectData,"ParentToken"))]        
     }
 ]

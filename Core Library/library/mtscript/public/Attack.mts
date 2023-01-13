@@ -148,7 +148,7 @@
 		"Target",thisAttackTarget
 	)]
 	[h:thisAttackDamage = "[]"]
-	[h,foreach(tempDamageInstance,preReworkDamageData): thisAttackDamage = json.append(thisAttackDamage,pm.a5e.DamageRoll(tempDamageInstance,preReworkNonDamageData,json.append("","Damage","AttackDamage","WeaponAttackDamage")))]
+	[h,foreach(tempDamageInstance,preReworkDamageData): thisAttackDamage = json.append(thisAttackDamage,pm.a5e.DamageRoll(tempDamageInstance,preReworkNonDamageData,json.append("","Attack","WeaponAttack")))]
 
 	[h:pm.PassiveFunction("AttackRoll")]
 	[h:pm.PassiveFunction("WeaponAttackRoll")]
@@ -239,6 +239,10 @@
 	))]
 
 	[h:AHLTier = 0]
+	[h:DataForSubeffect = json.set("",
+		"InstancePrefixes",json.append("","Attack","WeaponAttack"),
+		"RerollData",wa.Data
+	)]
 	[h,foreach(tempSubeffect,json.get(wa.WeaponUsed,"Subeffects")): pm.a5e.ExecuteSubeffect(tempSubeffect,json.set("","BaseData",wa.Data))]
 
 	[h:WhichAttack = WhichAttack + 1]

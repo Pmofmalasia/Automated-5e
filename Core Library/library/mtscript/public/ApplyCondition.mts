@@ -17,7 +17,10 @@
 [h:ConditionEndTriggers = json.get(a5e.EndConditionInfo,"EndTriggers")]
 
 [h:DurationBase = json.set("","year",0,"day",0,"hour",0,"minute",0,"round",0)]
-[h:DurationFinal = json.set(DurationBase,ConditionDurationUnits,ConditionDuration,"AdvancePoint",ConditionAdvancePoint)]
+[h,if(ConditionDurationUnits=="" || lower(ConditionDurationUnits)=="instantaneous"): 
+	DurationFinal = "{}";
+	DurationFinal = json.set(DurationBase,ConditionDurationUnits,ConditionDuration,"AdvancePoint",ConditionAdvancePoint)
+]
 
 [h:ConditionImmunities = pm.a5e.ConditionImmunityCalc(json.set("","ParentToken",ParentToken,"SetBy",ConditionSetBy,"SourceType","{}"))]
 [h:a5e.ConditionsTemp = json.path.delete(a5e.ConditionsTemp,"[*][?(@.Name in "+ConditionImmunities+")]")]
@@ -68,8 +71,7 @@
 	"EndTriggers",ConditionEndTriggers,
 	"Duration",DurationFinal,
 	"Names",json.path.read(a5e.Conditions,"[*]['Name']"),
-	"GroupID",a5e.GroupID,
-	"Duration",DurationFinal	
+	"GroupID",a5e.GroupID
 )]
 
 [h:notApplyingConditions = json.isEmpty(json.path.read(a5e.Conditions,"[*]['Name']"))]

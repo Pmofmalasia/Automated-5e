@@ -166,8 +166,8 @@
 	"Modifier",1,
 	"ScalingBase",spell.AHL
 )]
-[h:SpellDamagePassiveFunctions = json.append("","Damage","SpellDamage")]
-[h,if(spell.IsAttack): SpellDamagePassiveFunctions = json.append(SpellDamagePassiveFunctions,"AttackDamage","SpellAttackDamage")]
+[h:SpellDamagePassiveFunctions = json.append("","Spell")]
+[h,if(spell.IsAttack): SpellDamagePassiveFunctions = json.append(SpellDamagePassiveFunctions,"Attack","SpellAttack")]
 
 [h:spell.DamageInfo = "[]"]
 [h,foreach(tempDamageInstance,json.get(SpellSubeffectData,"Damage")),CODE:{

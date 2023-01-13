@@ -1,6 +1,10 @@
 [h:damage.ThisInstance = arg(0)]
 [h:damage.NonDamageData = arg(1)]
-[h:damage.Functions = arg(2)]
+[h:damage.FunctionPrefixes = arg(2)]
+[h,if(json.isEmpty(damage.FunctionPrefixes)):
+    damage.FunctionPrefixes = json.append("","");
+    damage.FunctionPrefixes = json.merge(json.append("",""),damage.FunctionPrefixes)
+]
 
 [h:damage.IsSpell = json.get(damage.NonDamageData,"IsSpell")]
 [h,if(json.contains(damage.NonDamageData,"ScalingBase")):
@@ -53,9 +57,9 @@
 [h:damage.AddedFlatBonus = "[]"]
 
 [h:"<!-- TODO: Needs transmission of targets through NonDamageData or whatever it's called -->"]
-[h,foreach(tempFunction,damage.Functions),CODE:{
-    [h:pm.PassiveFunction(tempFunction)]
-    [h:pm.PassiveFunction(tempFunction+"Targeted",json.set("","ParentToken",json.get(damage.NonDamageData,"Target")))]
+[h,foreach(tempPrefix,damage.FunctionPrefixes),CODE:{
+    [h:pm.PassiveFunction(tempPrefix+"Damage")]
+    [h:pm.PassiveFunction(tempPrefix+"DamageTargeted",json.set("","ParentToken",json.get(damage.NonDamageData,"Target")))]
 }]
 
 [h:damage.RulesFinal = damage.Rules+if(damage.AddedRolledRules=="",""," + "+damage.AddedRolledRules)+if(damage.FlatBonusRules=="",""," + "+damage.FlatBonusRules)+if(damage.AddedFlatBonusRules=="",""," + "+damage.AddedFlatBonusRules)]

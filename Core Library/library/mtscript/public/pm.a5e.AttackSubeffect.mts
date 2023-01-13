@@ -180,8 +180,8 @@
 	"Modifier",1,
 	"ScalingBase",AHLTier
 )]
-[h:DamagePassiveFunctions = json.append("","Damage","SpellDamage")]
-[h,if(subeffect.IsAttack): DamagePassiveFunctions = json.append(DamagePassiveFunctions,"AttackDamage","SpellAttackDamage")]
+[h:DamagePassiveFunctions = json.append("","Spell")]
+[h,if(subeffect.IsAttack): DamagePassiveFunctions = json.append(DamagePassiveFunctions,"Attack","SpellAttack")]
 
 [h:subeffect.DamageInfo = "[]"]
 [h,foreach(tempDamageInstance,json.get(SubeffectData,"Damage")),CODE:{

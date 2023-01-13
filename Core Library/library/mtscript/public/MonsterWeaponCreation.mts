@@ -29,7 +29,7 @@
 
 [h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowWeaponCritThresh'><th><label for='WeaponCritThresh'>Critical Threshhold:</label></th><td><input type='number' id='WeaponCritThresh' name='WeaponCritThresh' max='20' min='0' value='20'></td></tr>"]
 
-[h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowSpecialEffects'><th><label for='SpecialEffects'>Has Special Effects?</label></th><td><input type='checkbox' id='SpecialEffects' name='SpecialEffects'></td></tr>"]
+[h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowSpecialEffects'><th><label for='SpecialEffects'>Has Special Effects?</label></th><td><select id='SpecialEffects' name='SpecialEffects'><option value='None'>None</option><option value='SameSubeffect'>Occur on Hit</option><option value='NewSubeffect'>Additional Resolution on Hit</option><option value='Mixed'>Mix of Both</option></select></td></tr>"]
 
 [h:monsterCreationHTML = monsterCreationHTML + "<tr><th text-align='center' colspan='2'><input type='submit' id='submitButton' value='Submit'></th></tr>"]
 

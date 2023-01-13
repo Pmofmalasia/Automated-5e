@@ -1,5 +1,8 @@
 [h:SubeffectData = arg(0)]
 [h:NonSubeffectData = arg(1)]
+
+[h:SubeffectFunctionPrefixes = json.get(NonSubeffectData,"InstancePrefixes")]
+
 [h:thisEffectData = json.set("","ID",pm.a5e.GenerateEffectID())]
 
 [h:subeffect.RangeData = json.get(SubeffectData,"Range")]
@@ -105,14 +108,14 @@
 [h,if(subeffect.IsAttack),CODE:{
 	[h:attack.ProfTest = 1]
 	[h:attack.ToHitBonus = 0]
+
+	[h:subeffect.RerollData = json.get(NonSubeffectData,"RerollData")]
 	[h,if(json.length(subeffect.AllTargets)>1):
-		subeffect.AttackData = pm.a5e.AttackRoll(json.get(NonSubeffectData,"OverallData"),json.get(NonSubeffectData,"AttackFunctions"));
-		subeffect.AttackData = pm.a5e.AttackRoll(json.get(NonSubeffectData,"OverallData"),json.get(NonSubeffectData,"AttackFunctions"),json.get(subeffect.AllTargets,0))		
+		subeffect.AttackData = pm.a5e.AttackRoll(subeffect.RerollData,SubeffectFunctionPrefixes);
+		subeffect.AttackData = pm.a5e.AttackRoll(subeffect.RerollData,SubeffectFunctionPrefixes,json.get(subeffect.AllTargets,0))		
 	]
 	[h:attack.CritTest = json.get(subeffect.AttackData,"CritTest")]
 	[h:attack.CritFailTest = json.get(subeffect.AttackData,"CritFailTest")]
-
-	[h:subeffect.RerollData = json.get(NonSubeffectData,"RerollData")]
 
 	[h:sp.AdvRerollLink = macroLinkText("AttackReroll@Lib:pm.a5e.Core","self-gm",subeffect.RerollData,ParentToken)]
 	[h:sp.DisRerollLink = macroLinkText("AttackReroll@Lib:pm.a5e.Core","self-gm",subeffect.RerollData,ParentToken)]
@@ -179,12 +182,11 @@
 	"Modifier",1,
 	"ScalingBase",AHLTier
 )]
-[h:DamagePassiveFunctions = json.get(NonSubeffectData,"DamageFunctions")]
-[h,if(subeffect.IsAttack): DamagePassiveFunctions = json.merge(DamagePassiveFunctions,json.get(NonSubeffectData,"AttackDamageFunctions"))]
 
 [h:subeffect.DamageInfo = "[]"]
 [h,foreach(tempDamageInstance,json.get(SubeffectData,"Damage")),CODE:{
-	[h:thisDamageTypeInfo = pm.a5e.DamageRoll(tempDamageInstance,SubeffectNonDamageProperties,DamagePassiveFunctions)]
+	[h:thisDamageTypeInfo = pm.a5e.DamageRoll(tempDamageInstance,SubeffectFunctionPrefixes,DamagePassiveFunctions)]
+	[h:"<!-- TODO: SubeffectFunctionPrefixes won't work here because spells don't know if they're a spell attack or not before they enter subeffects (technically they could, but meh). This would be solved by eliminating separate instances for Spell vs. Weapon vs. Attack damage, and just tracking these things better and using them to filter out things that don't apply. Requires a lot of work in making sure variables overlap enough for spells vs. attacks, though. -->"]
 
 	[h:subeffect.DamageInfo = json.append(subeffect.DamageInfo,thisDamageTypeInfo)]
 

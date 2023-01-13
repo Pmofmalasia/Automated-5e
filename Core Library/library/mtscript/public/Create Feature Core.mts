@@ -396,9 +396,7 @@
 			" RechargeNumber | 0,1,2,3,4,5,6 | Minimum Number for Recharge | LIST | SELECT=5 "
 		))]
 
-		[h,if(!SharedRecharge): ab.Final = json.set(ab.Final,
-			"RechargeRoll",json.set("","DieSize",6,"Target",RechargeNumber)
-		)]
+		[h:ab.Final = json.set(ab.Final,"RechargeRoll",json.set("","DieSize",6,"Target",RechargeNumber))]
 	};{}]
 
 	[h,if(json.get(ab.ResourceInfo,"DisplayName")==""),CODE:{

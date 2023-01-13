@@ -385,7 +385,6 @@ async function conditionAlternateDuration(){
     let table = document.getElementById("CreateSubeffectTable");
     let isSameDuration = 0;
     let nextRowIndex = document.getElementById("rowIsConditionNonDurationEnd").rowIndex + 1;
-    console.log("HI");
     
     if(checkEffectType()=="Spell"){
         isSameDuration = document.getElementById("isConditionSameDuration").checked;
@@ -398,7 +397,7 @@ async function conditionAlternateDuration(){
     else{
         let rowAlternateConditionDuration = table.insertRow(nextRowIndex);
         rowAlternateConditionDuration.id = "rowAlternateConditionDuration";
-        rowAlternateConditionDuration.innerHTML = "<th><label for='conditionAlternateDuration'>Condition Duration:</label></th><input type='number' id='conditionAlternateDuration' name='conditionAlternateDuration' min='1' value='1' width='25px'><select id='conditionAlternateDurationUnits' name='conditionAlternateDurationUnits'><option value='Rounds'>Rounds</option><option value='Minutes'>Minutes</option><option value='Hours' select>Hours</option><option value='Days'>Days</option><option value='Years'>Years</option></select></td>";
+        rowAlternateConditionDuration.innerHTML = "<th><label for='conditionAlternateDuration'>Condition Duration:</label></th><input type='number' id='conditionAlternateDuration' name='conditionAlternateDuration' min='1' value='1' style='width:25px'><select id='conditionAlternateDurationUnits' name='conditionAlternateDurationUnits'><option value=''>No Duration</option><option value='Round'>Rounds</option><option value='Minute'>Minutes</option><option value='Hour' select>Hours</option><option value='Day'>Days</option><option value='Year'>Years</option></select></td>";
     }
 }
 

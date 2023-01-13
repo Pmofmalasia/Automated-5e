@@ -19,7 +19,9 @@
 [h,if(json.get(sCastTime,"Value")==""),CODE:{
 	[h:CastTimeString = ""]
 };{
-	[h:CastTimeString = json.get(sCastTime,"Value")+" "+json.get(sCastTime,"Units")+if(json.get(sCastTime,"Value")==1,"","s")]
+	[h:CastTimeUnits = json.get(sCastTime,"Units")]
+	[h:StringNeedsValueTest = !and(or(CastTimeUnits=="Action",CastTimeUnits=="Bonus Action",CastTimeUnits=="Reaction"),json.get(sCastTime,"Value")==1)]
+	[h:CastTimeString = if(StringNeedsValueTest,json.get(sCastTime,"Value")+" ","")+CastTimeUnits+if(json.get(sCastTime,"Value")==1,"","s")]
 }]
 [h:castTimeOptions = json.append("","Action","Bonus Action","Reaction","1 Minute","10 Minutes","1 Hour","8 Hours","12 Hours","24 Hours","Custom")]
 [h:previousCustomCastTimeTest = CastTimeString!="" && !json.contains(castTimeOptions,CastTimeString)]

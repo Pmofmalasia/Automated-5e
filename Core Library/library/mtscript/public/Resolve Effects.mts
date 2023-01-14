@@ -22,6 +22,7 @@
 [h:effAttackData = json.get(effToResolve,"Attack")]
 [h:effCheckDCData = json.get(effToResolve,"CheckDC")]
 [h:effSaveDCData = json.get(effToResolve,"SaveDC")]
+[h:broadcast("HI")]
 
 [h:effAllConditionIdentifiers = ""]
 [h,foreach(conditionSet,effConditionInfo),CODE:{
@@ -43,6 +44,7 @@
 	[h:thisTokenConditionInfo = effConditionInfo]
 	[h:thisTokenConditionsRemovedInfo = effConditionsRemovedInfo]
     [h:thisTokenConditionsApplied = effAllConditionIdentifiers]
+	[h:broadcast(getName(targetToken))]
 	[h:switchToken(targetToken)]
 
 	[h,if(json.length(effTargets)>1):
@@ -109,10 +111,12 @@
 		case "10":{
 			[h:SaveResult = json.get(effSavesMadeData,targetToken)]
 			[h:passedSave = json.get(SaveResult,"Value")>=json.get(thisTokenSaveDCData,"DC")]
+			[h:broadcast(effConditionInfo)]
 			[h,if(passedSave==1):
 				pm.a5e.ResolveDCSuccess(json.set("","DCData",thisTokenSaveDCData));
 				pm.a5e.ResolveDCFailure(json.set("","DCData",thisTokenSaveDCData))
 			]
+			[h:broadcast(effConditionInfo)]
 			[h:abilityTable = json.merge(abilityTable,json.get(SaveResult,"Table"))]
 		};
 		default:{}

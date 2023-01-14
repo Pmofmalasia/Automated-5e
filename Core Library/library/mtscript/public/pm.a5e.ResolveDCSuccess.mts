@@ -20,6 +20,7 @@
     [h:typesHalvedFinal = json.intersection(typesHalvedFinal,thisEffectDamageTypes)]
 };{}]
 
+[h:broadcast(effDamageData)]
 [h,foreach(damageInstance,thisTokenDamageDealt),CODE:{
     [h:thisTypeModifiedTest = (json.contains(typesHalvedFinal,json.get(damageInstance,"DamageType")) && isDamageHalved!=0)]
     [h:modificationImmunityTest = (json.get(damageInstance,"NoModification")==1)]
@@ -27,6 +28,7 @@
     [h,if(modifyThisInstance): thisTokenDamageDealt = json.path.set(thisTokenDamageDealt,"["+roll.count+"]['Modifier']",json.path.read(thisTokenDamageDealt,"["+roll.count+"]['Modifier']")*if(isDamageHalved==1,(1/2),0))]
 }]
 
+[h:broadcast(effDamageData)]
 [h:ConditionsResistedInfo = json.get(DCData,"ConditionsResisted")]
 [h,if(ConditionsResistedInfo==""): ConditionsResistedInfo = "{}"]
 [h:conditionsResistedInclusive = json.get(ConditionsResistedInfo,"Inclusive")]
@@ -38,8 +40,11 @@
     default: conditionsResistedFinal = "[]"
 ]
 
+[h:broadcast(effConditionInfo+" HERE")]
+[h:broadcast(conditionsResistedFinal)]
 [h,foreach(condition,conditionsResistedFinal): thisTokenConditionInfo = json.path.delete(thisTokenConditionInfo,"[*]['Conditions'][*][?(@.Name=='"+json.get(condition,"Name")+"' && @.Class=='"+json.get(condition,"Class")+"' && @.Subclass=='"+json.get(condition,"Subclass")+"')]")]
 
+[h:broadcast(effConditionInfo)]
 [h:tempDeleteCount = 0]
 [h,foreach(conditionSet,thisTokenConditionInfo),CODE:{
     [h:allResistedTest = json.isEmpty(json.get(conditionSet,"Conditions"))]

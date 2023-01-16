@@ -5,7 +5,7 @@
 [h:ColorSubtype = json.get(arg(0),"ColorSubtype")]
 [h:abilityName = json.get(arg(0),"Name")]
 [h:abilityDisplayName = if(json.get(arg(0),"DisplayName")=="",abilityName,json.get(arg(0),"DisplayName"))]
-[h:abilityEffect=json.get(arg(0),"Effect")]
+[h:FeatureDescription=json.get(arg(0),"Effect")]
 [h:abilityTable=json.get(arg(0),"abilityTable")]
 [h:Flavor = json.get(arg(0),"Flavor")]
 [h:DMOnly=json.get(arg(0),"DMOnly")]

@@ -21,10 +21,7 @@
 [h:pass.ForcedSummonHandout=json.get(pass.DisplayObject,"ForcedSummonHandout")]
 [h:pass.ShowFullRules=if(IsTooltip,1,if(pass.ShowFullRulesOverride=="",if(number(getLibProperty("ChatIndividual","Lib:pm.a5e.Core")),getProperty("a5e.stat.FullAbilityRules"),getLibProperty("FullAbilityRules","Lib:pm.a5e.Core")),pass.ShowFullRulesOverride))]
 
-[h:pass.abilityInfo = json.set("",
-	"Name",pass.abilityName,
-	"Class",pass.abilityClass,
-	"Subclass",pass.abilitySubclass,
+[h:pass.abilityInfo = json.set(pass.FeatureInfo,
 	"DisplayName",pass.abilityDisplayName,
 	"Context",pass.Context,
 	"OverarchingContext",pm.a5e.OverarchingContext,
@@ -35,11 +32,12 @@
 	"FullRules",pass.ShowFullRules
 )]
 
-[h:pass.abilityLevel = pm.GetAbilityLevel(pass.abilityInfo)]
-[h:pass.abilityInfo = json.set(pass.abilityInfo,
-	"Level",pass.abilityLevel,
-	"Library",ability.json.get(pass.abilityInfo,"Library","",ParentToken)
-)]
+[h:pass.abilityLevel = json.get(pass.abilityInfo,"Level")]
+
+[h:tempPrimeStatInfo = pm.a5e.GetFeaturePrimeStat(pass.abilityInfo)]
+[h:pass.abilityPrimeStat = json.get(tempPrimeStatInfo,"PrimeStat")]
+[h:pass.abilityPrimeStatValue = json.get(tempPrimeStatInfo,"PrimeStatValue")]
+[h:pass.abilityPrimeStatMod = json.get(tempPrimeStatInfo,"PrimeStatMod")]
 
 [h:pass.SummonCustomization = json.set("",
 	"Name",pass.ForcedSummonName,
@@ -48,4 +46,4 @@
 	"Handout",pass.ForcedSummonHandout
 )]
 
-[h:pass.abilityEffect = if(pass.ShowFullRules,pass.FeatureFullDescription,pass.FeatureAbridgedDescription)]
+[h:pass.FeatureDescription = if(pass.ShowFullRules,pass.FeatureFullDescription,pass.FeatureAbridgedDescription)]

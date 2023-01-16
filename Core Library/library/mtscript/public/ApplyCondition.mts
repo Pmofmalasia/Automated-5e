@@ -23,7 +23,8 @@
 ]
 
 [h:ConditionImmunities = pm.a5e.ConditionImmunityCalc(json.set("","ParentToken",ParentToken,"SetBy",ConditionSetBy,"SourceType","{}"))]
-[h:a5e.ConditionsTemp = json.path.delete(a5e.ConditionsTemp,"[*][?(@.Name in "+ConditionImmunities+")]")]
+[h:a5e.ConditionsTemp = json.path.delete(a5e.ConditionsTemp,"[*][?(@.Name in "+json.get(ConditionImmunities,"Conditions")+")]")]
+[h:a5e.ConditionsTemp = json.path.delete(a5e.ConditionsTemp,"[*][?(@.ConditionType in "+json.get(ConditionImmunities,"ConditionTypes")+")]")]
 
 [h:"<!-- The purpose of looping here is to catch any chain reactions - e.g. Condition A is associated with Condition B, which in turn is associated with Condition C. -->"]
 [h:a5e.Conditions = a5e.ConditionsTemp]
@@ -86,7 +87,7 @@
 		"DisplayOrder","['Rules','Roll','Full']"
 	))]
 
-	[h:return(0,json.set("","Table",abilityTable))]
+	[h:return(0,json.set("","Table",abilityTable,"Conditions","[]","ConditionDisplay","Resisted all conditions"))]
 }]
 [h:setProperty("a5e.stat.ConditionList",json.merge(getProperty("a5e.stat.ConditionList"),a5e.Conditions))]
 [h:setProperty("a5e.stat.ConditionGroups",json.append(getProperty("a5e.stat.ConditionGroups"),json.set(a5e.GroupingInfo,"SetBy",ConditionSetBy)))]
@@ -104,16 +105,17 @@
 	[h:switchToken(ParentToken)]
 };{}]
 
+[h:ConditionsAppliedDisplay = pm.a5e.CreateDisplayList(json.path.read(a5e.Conditions,"[*][?(@.IsAssociated!=1 || @.IsAssociated==null)]['DisplayName']"),"and")]
 [h:abilityTable = json.append(abilityTable,json.set("",
 	"ShowIfCondensed",1,
 	"Header","Condition"+if(json.length(a5e.Conditions)>1,"s","")+" Activated",
 	"FalseHeader","",
 	"FullContents","",
-	"RulesContents",pm.a5e.CreateDisplayList(json.path.read(a5e.Conditions,"[*][?(@.IsAssociated!=1 || @.IsAssociated==null)]['DisplayName']"),"and"),
+	"RulesContents",ConditionsAppliedDisplay,
 	"RollContents","",
 	"DisplayOrder","['Rules','Roll','Full']"
 ))]
 
 [h:pm.PassiveFunction("CondGain")]
 
-[h:macro.return = json.set("","Table",abilityTable)]
+[h:macro.return = json.set("","Table",abilityTable,"Conditions",a5e.Conditions,"ConditionDisplay",ConditionsAppliedDisplay)]

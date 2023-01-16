@@ -26,7 +26,6 @@
 	" ab.StoredValue | None,Chosen When Gained,Chosen through button | <html><span title='For abilities that may require a choice to be made that modify how it functions (e.g. Transmutation Wizard - Transmuters Stone)'>Feature stores a miscellaneous value</span></html> | LIST ",
 	" junkVar | ------------------------------------------------------------------------------------------------------- |  | LABEL | SPAN=TRUE ",
 	" ab.ChooseSubabilities | None,Chosen on Level Up,Chosen through button | <html><span title='For the main feature ONLY, e.g. Battle Master Fighter - Combat Superiority BUT not each individual maneuver. No mechanical difference between chosen through button/level up, but may want to choose via button for things subject to change.'>Feature has subfeatures to choose from</span></html> | LIST ",
-	" ab.DieSize |  | <html><span title='e.g. Bardic Inspiration, Combat Superiority, etc.'>Feature has a die used by other features</span></html> | CHECK ",
 	" ab.Resource |  | <html><span title='Does NOT apply for abilities that use resources of another feature, e.g. Lore Bard - Cutting Words/Bardic Inspiration, Battle Master Fighter - Superiority Dice'>Feature tracks its own associated resource</span></html> | CHECK ",
 	" ab.IsClassOptions |  | <html><span title='Mostly for feats, e.g. Magic Initiate'>Choose an associated class?</span></html> | CHECK "
 	))]
@@ -372,12 +371,6 @@
 	[h:ab.Final = json.set(ab.Final,"Prereqs",ab.PrereqsFinal)]
 };{}]
 
-[h,if(ab.DieSize==1),CODE:{
-	[h:" junkVar | ---------------------- Shared Die Size Info ---------------------- |  | LABEL | SPAN=TRUE "]
-	
-	[h:ab.Final = json.set(ab.Final,"CallDieSize",json.get(ab.Final,"Name")+json.get(ab.Final,"Class")+json.get(ab.Final,"Subclass"))]
-};{}]
-
 [h,if(ab.Resource == 1),CODE:{
 	[h:abort(input(
 		" ab.ResourceDisplayName | -- Blank/Ignore to Use Feature Name -- | Name of Resource ",
@@ -464,6 +457,9 @@
 	" ab.HitDie | 0 | Effect triggers after spending Hit Dice | CHECK ",
 	" ab.StartTurn | 0 | Effect triggers on start of turn | CHECK ",
 	" ab.EndTurn | 0 | Effect triggers on end of turn | CHECK ",
+	" junkVar | --------------------------------------------------------------------------------------------------------------------- | 0 | LABEL | SPAN=TRUE ",
+	" ab.DieSize |  | <html><span title='e.g. Bardic Inspiration, Combat Superiority, etc.'>Feature has a die used by other features</span></html> | CHECK ",
+	" ab.SharedDC |  | <html><span title='e.g. Bardic Inspiration, Combat Superiority, etc.'>Feature has a saving throw DC used by other features</span></html> | CHECK ",
 	" junkVar | --------------------------------------------------------------------------------------------------------------------- | 0 | LABEL | SPAN=TRUE ",
 	" ab.Button | 0 | <html><span title='Things that have their own action/reaction like granting Bardic Inspiration, going into a rage, etc. Can also be used for passive abilities that do not have a mechanical trigger that is feasible to program, like the Fighter Maneuver - Evasive Footwork'>Feature can be used independently of the above</span></html> | CHECK ",
 	" junkVar | --------------------------------------------------------------------------------------------------------------------- | 0 | LABEL | SPAN=TRUE ",
@@ -978,6 +974,14 @@
 	[h:ab.Final = json.set(ab.Final,
 		"CallEndTurn",1
 	)]
+};{}]
+
+[h,if(ab.DieSize==1),CODE:{
+	[h:ab.Final = json.set(ab.Final,"CallDieSize",json.get(ab.Final,"Name")+json.get(ab.Final,"Class")+json.get(ab.Final,"Subclass"))]
+};{}]
+
+[h,if(ab.SharedDC==1),CODE:{
+	[h:ab.Final = json.set(ab.Final,"CallSharedDC",json.get(ab.Final,"Name")+json.get(ab.Final,"Class")+json.get(ab.Final,"Subclass"))]
 };{}]
 
 [h,if(ab.CondGain),CODE:{

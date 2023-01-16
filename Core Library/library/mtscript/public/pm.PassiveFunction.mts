@@ -1,21 +1,31 @@
 [h:a5e.CallingInstance = arg(0)]
 
-[h,if(argCount()>1): switchTest = json.get(arg(1),"ParentToken"); switchTest = ""]
-[h,if(switchTest!=""),CODE:{
-	[h:oldParentToken = ParentToken]
-	[h:oldFeatures = a5e.UnifiedAbilities]
-	[h:switchType = json.get(arg(1),"SwitchType")]
-	[h,switch(switchType):
-		case "Condition": a5e.UnifiedAbilities = SetByAbilities;
-		case "Target": a5e.UnifiedAbilities = TargetAbilities;
-		default: a5e.UnifiedAbilities = a5e.GatherAbilities(switchTest)
-	]
-	[h:ParentToken = switchTest]
-	[h:switchToken(ParentToken)]
-};{}]
+[h,if(argCount()>1),CODE:{
+	[h:passiveSpecificFeature = json.get(arg(1),"SpecificFeature")]
+	
+	[h:switchTest = json.get(arg(1),"ParentToken")]
+	[h,if(switchTest!=""),CODE:{
+		[h:oldParentToken = ParentToken]
+		[h:oldFeatures = a5e.UnifiedAbilities]
+		[h:switchType = json.get(arg(1),"SwitchType")]
+		[h,switch(switchType):
+			case "Condition": a5e.UnifiedAbilities = SetByAbilities;
+			case "Target": a5e.UnifiedAbilities = TargetAbilities;
+			default: a5e.UnifiedAbilities = a5e.GatherAbilities(switchTest)
+		]
+		[h:ParentToken = switchTest]
+		[h:switchToken(ParentToken)]
+	};{}]
+};{
+	[h:passiveSpecificFeature = ""]
+	[h:switchTest = ""]
+}]
 
-[h:pm.ValidAbilities = json.path.read(a5e.UnifiedAbilities,"[*][?(@.IsActive>0 && @.Call"+a5e.CallingInstance+"!=0 && @.Call"+a5e.CallingInstance+"!=null)]","DEFAULT_PATH_LEAF_TO_NULL")]
-[h,foreach(ability,pm.ValidAbilities,""),CODE:{
+
+[h:pm.ValidAbilities = json.path.read(a5e.UnifiedAbilities,"[*][?(@.IsActive>0 && @.Call"+a5e.CallingInstance+if(passiveSpecificFeature=="","!=0","=='"+passiveSpecificFeature+"'")+" && @.Call"+a5e.CallingInstance+"!=null)]","DEFAULT_PATH_LEAF_TO_NULL")]
+
+[h:"<!-- BUGFIX: When nesting one passivefunction into another, a5e.CallingInstance changes in the second passivefunction. This means that AbilityCallingInstanceValue will be incorrect in the loop after the second passivefunction finishes. -->"]
+[h,foreach(ability,pm.ValidAbilities),CODE:{
 	[h,switch(json.get(ability,"AbilityType")):
 		case "Feature": a5efunctionName = "pm."+json.get(ability,"Name")+json.get(ability,"Class")+json.get(ability,"Subclass")+"Passive";
 		case "Condition": a5efunctionName = "pm."+json.get(ability,"Name")+json.get(ability,"Class")+json.get(ability,"Subclass")+"ConditionPassive"
@@ -30,7 +40,7 @@
 	[h:"<!-- UNKNOWN + not a valid function AND first character is [: Indicates that the CallX contains code, and executes that code. This bypasses the need for declaring passive functions. -->"]
 	[h:"<!-- Not UNKNOWN (should be ARRAY) + no arg: Ability being called is acting on the ability being run. If ability being run is in the preset list, then ability is called. -->"]
 	[h,if(pm.SpecificAbilityTest=="UNKNOWN"),CODE:{
-		[h,if(argCount()>1 && pm.ValidFunction): pm.ValidFunction = (AbilityCallingInstanceValue == if(json.get(arg(1),"SpecificFeature")=="",1,json.get(arg(1),"SpecificFeature")))]
+		[h,if(argCount()>1 && pm.ValidFunction): pm.ValidFunction = (AbilityCallingInstanceValue == if(passiveSpecificFeature=="",1,passiveSpecificFeature))]
 		[h,if(pm.ValidFunction): evalMacro("[h:"+a5efunctionName+"('"+a5e.CallingInstance+"')]")]
 		[h,if(!pm.ValidFunction && substring(AbilityCallingInstanceValue,0,1) == "["): pm.a5e.ExecutePassiveFeature(ability,AbilityCallingInstanceValue)]
 	};{

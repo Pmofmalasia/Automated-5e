@@ -24,6 +24,7 @@
 	"MagicSource",sp.MagicSource,
 	"SpellPrepType",sp.Prepared,
 	"CallSpellClass",1,
+	"CallSharedDC",pm.RemoveSpecial(sp.Name)+json.get(sp.SpellcastingAbility,"Class")+json.get(sp.SpellcastingAbility,"Subclass"),
 	"GainOnLevel",1
 )]
 [h:sp.UpdateLevelOptions = string(sp.LevelGained)]

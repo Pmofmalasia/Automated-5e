@@ -75,4 +75,4 @@
 )]
 [h:pm.a5e.OverarchingContext = "Feature"]
 
-[h:abilityEffect = if(ShowFullRules,FeatureFullDescription,FeatureAbridgedDescription)]
+[h:FeatureDescription = if(ShowFullRules,FeatureFullDescription,FeatureAbridgedDescription)]

@@ -82,7 +82,7 @@
 			[h:abilityTable = json.get(macro.return,"Table")]
 
 			[h:setProperty("a5e.stat.AllFeatures",json.path.delete(getProperty("a5e.stat.AllFeatures"),"[*][?(@.Name == '"+currentFeatureName+"' && @.Class == '"+currentFeatureClass+"' && @.Subclass == '"+currentFeatureSubclass+"')]['GroupID']"))]
-			[h:abilityEffect=""]
+			[h:FeatureDescription=""]
 			[h:pm.a5e.EffectData = json.append("",json.set("","Class",currentFeatureClass))]
 			[h:abilityClass = currentFeatureClass]
 			[h:pm.a5e.FeatureFormatCall()]

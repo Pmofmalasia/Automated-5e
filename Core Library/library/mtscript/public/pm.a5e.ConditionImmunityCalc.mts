@@ -7,6 +7,7 @@
 [h:ConditionImmunityInstances = pm.a5e.ConditionImmunities(json.set("","ParentToken",ParentToken))]
 
 [h:ConditionImmunities = "[]"]
+[h:ConditionTypeImmunities = "[]"]
 [h,foreach(tempInstance,ConditionImmunityInstances),CODE:{
 	[h,if(json.get(tempInstance,"All")==1),CODE:{
 		[h:ThisInstanceImmuneTest = 1]
@@ -61,11 +62,19 @@
 	
 	[h,if(ThisInstanceImmuneTest),CODE:{
 		[h:tempConditionImmunities = json.get(tempInstance,"Conditions")]
+		[h,if(tempConditionImmunities==""): tempConditionImmunities = "[]"]
 		[h,if(json.type(tempConditionImmunities)=="UNKNOWN"):
 			ConditionImmunities = json.append(ConditionImmunities,tempConditionImmunities);
 			ConditionImmunities = json.merge(ConditionImmunities,tempConditionImmunities)
 		]
+
+		[h:tempConditionTypeImmunities = json.get(tempInstance,"ConditionTypes")]
+		[h,if(tempConditionTypeImmunities==""): tempConditionTypeImmunities = "[]"]
+		[h,if(json.type(tempConditionTypeImmunities)=="UNKNOWN"):
+			ConditionTypeImmunities = json.append(ConditionTypeImmunities,tempConditionTypeImmunities);
+			ConditionTypeImmunities = json.merge(ConditionTypeImmunities,tempConditionTypeImmunities)
+		]
 	};{}]
 }]
 
-[h:macro.return = ConditionImmunities]
+[h:macro.return = json.set("","Conditions",ConditionImmunities,"ConditionTypes",ConditionTypeImmunities)]

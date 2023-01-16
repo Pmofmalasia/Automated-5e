@@ -100,6 +100,7 @@
 [h:defineFunction("pm.a5e.ConditionLinkStdVars","pm.a5e.ConditionLinkStdVars@Lib:pm.a5e.Core",0,0)]
 [h:defineFunction("pm.a5e.ConditionPassiveStdVars","pm.a5e.ConditionPassiveStdVars@Lib:pm.a5e.Core",0,0)]
 [h:defineFunction("pm.GetAbilityLevel","pm.GetAbilityLevel@Lib:pm.a5e.Core")]
+[h:defineFunction("pm.a5e.GetFeaturePrimeStat","pm.a5e.GetFeaturePrimeStat@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.GetAbilityMacro","pm.GetAbilityMacro@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.GetPrimeStat","pm.GetPrimeStat@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.a5e.FeaturePassiveStdVars","pm.a5e.FeaturePassiveStdVars@Lib:pm.a5e.Core",0,0)]
@@ -144,8 +145,8 @@
 [h:defineFunction("pm.a5e.BuildEffectMergeConditionsRemoved","pm.a5e.BuildEffectMergeConditionsRemoved@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.a5e.BuildEffectMergeDamage","pm.a5e.BuildEffectMergeDamage@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.a5e.GetEffectComponent","pm.a5e.GetEffectComponent@Lib:pm.a5e.Core")]
-[h:defineFunction("pm.a5e.ResolveDCSuccess","pm.a5e.ResolveDCSuccess@Lib:pm.a5e.Core",0,0)]
-[h:defineFunction("pm.a5e.ResolveDCFailure","pm.a5e.ResolveDCFailure@Lib:pm.a5e.Core",0,0)]
+[h:defineFunction("pm.a5e.ResolveDCSuccess","pm.a5e.ResolveDCSuccess@Lib:pm.a5e.Core")]
+[h:defineFunction("pm.a5e.ResolveDCFailure","pm.a5e.ResolveDCFailure@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.a5e.RechargeRoll","pm.a5e.RechargeRoll@Lib:pm.a5e.Core")]
 
 [h:"<!-- Functions for general use -->"]

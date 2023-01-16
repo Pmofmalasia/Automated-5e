@@ -12,9 +12,9 @@
 [h:TooltipPermission=if(or(DMOnly==0,isGM(),isOwner()),1,0)]
 	
 [r,if(Frame.tooltip && TooltipPermission),CODE:{
-	[r,frame5("Ability Info"):{[r:strformat('<html>'+pm.BorderFrame+if(tooltipFrameTableText=="","",'<table style="font-size:1em; color: '+BodyTextFinal.tooltip+';">'+tooltipFrameTableText+'</table><br>')+abilityEffect+'</div></div></html>')]}]
+	[r,frame5("Ability Info"):{[r:strformat('<html>'+pm.BorderFrame+if(tooltipFrameTableText=="","",'<table style="font-size:1em; color: '+BodyTextFinal.tooltip+';">'+tooltipFrameTableText+'</table><br>')+FeatureDescription+'</div></div></html>')]}]
 };{}]
 
 [r,if(Mouseover.tooltip && TooltipPermission),CODE:{
-	[r:strformat('<html>'+pm.BorderTooltip+if(tooltipTableText=="","",'<table style="font-size:1em; color: '+BodyTextFinal.tooltip+';">'+tooltipTableText+'</table><br>')+abilityEffect+'</div></div></html>')]
+	[r:strformat('<html>'+pm.BorderTooltip+if(tooltipTableText=="","",'<table style="font-size:1em; color: '+BodyTextFinal.tooltip+';">'+tooltipTableText+'</table><br>')+FeatureDescription+'</div></div></html>')]
 };{}]

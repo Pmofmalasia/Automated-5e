@@ -225,7 +225,7 @@
 	"RollContents","",
 	"DisplayOrder","['Rules','Roll','Full']"
 ))]
-[h:abilityEffect = sDescription+if(or(sDescriptionAHL=="",sDescriptionAHL=="0"),"","<br><br>"+sDescriptionAHL)]
+[h:FeatureDescription = sDescription+if(or(sDescriptionAHL=="",sDescriptionAHL=="0"),"","<br><br>"+sDescriptionAHL)]
 
 [h,if(NeedsBorder),CODE:{
 	[h:ClassFeatureData = json.set("",
@@ -237,10 +237,10 @@
 		"Class","zzSpell",
 		"Name",pm.RemoveSpecial(SpellName),
 		"DisplayName","<b>"+SpellName+"</b>: Level "+sLevel+" "+upper(sSchool,1)+" Spell",
-		"Effect",abilityEffect,
+		"Effect",FeatureDescription,
 		"abilityTable",abilityTable
 	)]
 	[r:pm.TooltipOutput(ClassFeatureData)]
 };{
-	[h:macro.return = json.set("","Table",abilityTable,"Effect",abilityEffect)]
+	[h:macro.return = json.set("","Table",abilityTable,"Effect",FeatureDescription)]
 }]

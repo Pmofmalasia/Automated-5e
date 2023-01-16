@@ -27,7 +27,7 @@
 
 [h,foreach(tempPrefix,attack.FunctionPrefixes),CODE:{
     [h:pm.PassiveFunction(tempPrefix+"Crit")]
-    [h:pm.PassiveFunction(tempPrefix+"CritTargeted",json.set("","ParentToken",attack.Target))]  
+    [h:pm.PassiveFunction(tempPrefix+"CritTargeted",json.set("","ParentToken",attack.Target))]
 }]
 
 [h:CritTest = if(or(attack.AutoCrit,d20EffectiveRoll>=attack.FinalCritRange),1,0)]

@@ -1,17 +1,24 @@
-[h:pm.SpellList = json.get(macro.args,"Spells")]
-[h:ParentToken = json.get(macro.args,"ParentToken")]
+[h:SpellMacroData = macro.args]
+[h:NewSpells = json.get(SpellMacroData,"Add")]
+[h:OldSpells = json.get(SpellMacroData,"Remove")]
+[h:MagicSource = json.get(SpellMacroData,"Source")]
+[h:ParentToken = json.get(SpellMacroData,"ParentToken")]
 [h:switchToken(ParentToken)]
+[h,if(NewSpells==""): NewSpells = "[]"]
+[h,if(OldSpells==""): OldSpells = "[]"]
+[h,if(MagicSource==""): MagicSource = "Arcane"]
 
-[h,foreach(spell,pm.SpellList),CODE:{
-	[h:MainSpellData = json.get(spell,0)]
-	[h:pm.CastTimeNote = if(or(json.get(MainSpellData,"CastTime")=="",lower(json.get(MainSpellData,"CastTime"))=="action"),""," <b>("+json.get(MainSpellData,"CastTime")+")</b>")]
-	[h:pm.NewMacroLabel = json.get(MainSpellData,"SpellName")+" ("+json.get(MainSpellData,"sLevel")+")"+pm.CastTimeNote]
+[h:"<!-- TODO: Make a function to convert casttime to a display -->"]
+[h,foreach(tempSpell,NewSpells),CODE:{
+	[h:SpellData = pm.a5e.GetSpecificSpell(tempSpell)]
+	[h:MainSpellData = json.get(SpellData,0)]
+
+	[h,MACRO("CreateSpellMacroLabel@Lib:pm.a5e.Core"): tempSpell]
+	[h:pm.NewMacroLabel = macro.return]
 	[h:pm.NewMacroCommand = '[h:"<!-- Dont mess with these variables unless you know what they do -->"]
 [h:ForcedClass=""]
 [h:ForcedLevel=""]
 [h:DMOnly=0]
-[h:InnateCast=0]
-[h:MonsterCast=0]
 
 [h:"<!-- The following are customization options to personalize your macros! They wont actually affect calculations or anything -->"]
 
@@ -50,6 +57,7 @@
 
 [h:FlavorData = json.set("",
 	"Flavor",Flavor,
+	"Spell","'+tempSpell+'",
 	"ForcedClass",ForcedClass,
 	"ForcedLevel",ForcedLevel,
 	"CritMessage",CritMessage,
@@ -59,8 +67,6 @@
 	"SummonPortrait",SummonPortrait,
 	"SummonHandout",SummonHandout,
 	"DMOnly",DMOnly,
-	"InnateCast",InnateCast,
-	"MonsterCast",MonsterCast,
 	"AuraColor",AuraColor,
 	"BorderColorOverride",BorderColorOverride,
 	"TitleFontColorOverride",TitleFontColorOverride,
@@ -74,12 +80,12 @@
 	"IsTooltip",0,
 	"ParentToken",currentToken())]
 
-[MACRO("'+json.get(MainSpellData,"SpellName")+' ('+json.get(MainSpellData,"sLevel")+')@Lib:Complete Spellbook"): FlavorData]']
+[h,MACRO("SpellcastingBorder@Lib:pm.a5e.Core"): FlavorData]']
 
-	[h:pm.NewMacroTooltip = '[h:Flavor=""][h:BorderColorOverride=""][h:TitleFontColorOverride=""][h:tooltipDisplaySizeOverride=""][h:TitleFont=""][h:BodyFont=""][h:ForcedClass=""][h:DMOnly=0][h:InnateCast=0][h:MonsterCast=0][h:placeholdToAdd=""][h:TooltipData = json.set("","Flavor",Flavor,"ParentToken",currentToken(),"BorderColorOverride",BorderColorOverride,"TitleFontColorOverride",TitleFontColorOverride,"tooltipDisplaySizeOverride",tooltipDisplaySizeOverride,"TitleFont",TitleFont,"BodyFont",BodyFont,"ForcedClass",ForcedClass,"DMOnly",DMOnly,"InnateCast",InnateCast,"MonsterCast",MonsterCast,"IsTooltip",1,"placeholdToAdd",placeholdToAdd)][MACRO("'+json.get(MainSpellData,"SpellName")+' ('+json.get(MainSpellData,"sLevel")+')@Lib:Complete Spellbook"): TooltipData]']
+	[h:pm.NewMacroTooltip = '[h:Flavor=""][h:BorderColorOverride=""][h:TitleFontColorOverride=""][h:tooltipDisplaySizeOverride=""][h:TitleFont=""][h:BodyFont=""][h:ForcedClass=""][h:DMOnly=0][h:placeholdToAdd=""][h:TooltipData = json.set("","Flavor",Flavor,"Spell","'+tempSpell+'","ParentToken",currentToken(),"BorderColorOverride",BorderColorOverride,"TitleFontColorOverride",TitleFontColorOverride,"tooltipDisplaySizeOverride",tooltipDisplaySizeOverride,"TitleFont",TitleFont,"BodyFont",BodyFont,"ForcedClass",ForcedClass,"DMOnly",DMOnly,"IsTooltip",1,"placeholdToAdd",placeholdToAdd)][h,MACRO("SpellTooltipBorder@Lib:pm.a5e.Core"): TooltipData]']
 
-	[h:"<!-- Source is temporarily set to Arcane permanently until Divine is implemented -->"]
-	[h:DefaultDisplayData = pm.SpellColors(json.set("","Level",string(json.get(MainSpellData,"sLevel")),"Source","Arcane"))]
+	[h:"<!-- TODO: Source is temporarily set to Arcane permanently until Divine is implemented -->"]
+	[h:DefaultDisplayData = pm.SpellColors(json.set("","Level",string(json.get(MainSpellData,"Level")),"Source",MagicSource))]
 	[h:BorderColor = json.get(DefaultDisplayData,"Border")]
 	[h:TextColor = json.get(DefaultDisplayData,"Title")]
 
@@ -91,14 +97,22 @@
 		"fontColor",TextColor,
 		"fontSize","1.00em",
 		"includeLabel",0,
-		"group"," New Spells",
-		"sortBy",json.get(MainSpellData,"sLevel"),
+		"group","Current Spells",
+		"sortBy",json.get(MainSpellData,"Level"),
 		"label",pm.NewMacroLabel,
 		"maxWidth","",
 		"minWidth",89,
 		"playerEditable",0,
 		"tooltip",pm.NewMacroTooltip,
 		"delim","json"
-		)]
+	)]
 	[h:createMacro(pm.NewMacroProps)]
+}]
+
+[h,foreach(tempSpell,OldSpells),CODE:{
+	[h,MACRO("CreateSpellMacroLabel@Lib:pm.a5e.Core"): tempSpell]
+	[h:OldMacroLabel = macro.return]
+	
+	[h:OldMacroIndexes = getMacroIndexes(OldMacroLabel,"json")]
+	[h,foreach(index,OldMacroIndexes): removeMacro(index)]
 }]

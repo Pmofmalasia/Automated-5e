@@ -166,8 +166,8 @@
 	"Modifier",1,
 	"ScalingBase",spell.AHL
 )]
-[h:SpellDamagePassiveFunctions = json.append("","Damage","SpellDamage")]
-[h,if(spell.IsAttack): SpellDamagePassiveFunctions = json.append(SpellDamagePassiveFunctions,"AttackDamage","SpellAttackDamage")]
+[h:SpellDamagePassiveFunctions = json.append("","Spell")]
+[h,if(spell.IsAttack): SpellDamagePassiveFunctions = json.append(SpellDamagePassiveFunctions,"Attack","SpellAttack")]
 
 [h:spell.DamageInfo = "[]"]
 [h,foreach(tempDamageInstance,json.get(SpellSubeffectData,"Damage")),CODE:{
@@ -177,9 +177,15 @@
 
 	[h:tempDamageType = json.get(thisDamageTypeInfo,"DamageType")]
 
+	[h,switch(tempDamageType):
+		case "Healing": DamageTypeDisplay = "Healing";
+		case "TempHP": DamageTypeDisplay = "Temporary HP";
+		default: DamageTypeDisplay = pm.GetDisplayName(tempDamageType,"sb.DamageTypes")
+	]
+	
 	[h:abilityTable = json.append(abilityTable,json.set("",
 		"ShowIfCondensed",1,
-		"Header",tempDamageType+if(or(tempDamageType=="Healing",tempDamageType=="Temp HP"),""," Damage"),
+		"Header",DamageTypeDisplay+if(or(tempDamageType=="Healing",tempDamageType=="TempHP"),""," Damage"),
 		"FalseHeader","",
 		"FullContents","<span style='"+if(attack.CritTest,"font-size:2em; color:"+CritColor,"font-size:1.5em")+"'>"+if(attack.CritTest,json.get(thisDamageTypeInfo,"CritTotal"),json.get(thisDamageTypeInfo,"Total"))+"</span>",
 		"RulesContents",if(attack.CritTest,json.get(thisDamageTypeInfo,"CritFormula"),json.get(thisDamageTypeInfo,"Formula"))+" = ",
@@ -202,8 +208,8 @@
 	[h:spell.Conditions = pm.a5e.ChooseCondition(json.get(tempConditionInfo,"Conditions"),spell.ConditionChoiceNumber)]
 
 	[h:spell.ConditionEndInfo = json.get(tempConditionInfo,"EndInfo")]
-	[h,if(json.get(spell.ConditionEndInfo,"UseSpellDuration") == 1): spell.ConditionEndInfo = json.set(spell.ConditionEndInfo,"Duration",DurationValue,"DurationUnits",lower(DurationUnits))]
-	[h:spell.ConditionEndInfo = json.remove(spell.ConditionEndInfo,"UseSpellDuration")]
+	[h,if(json.get(spell.ConditionEndInfo,"UseMainDuration") == 1): spell.ConditionEndInfo = json.set(spell.ConditionEndInfo,"Duration",DurationValue,"DurationUnits",lower(DurationUnits))]
+	[h:spell.ConditionEndInfo = json.remove(spell.ConditionEndInfo,"UseMainDuration")]
 
 	[h:hasSaveDCTest = !json.isEmpty(json.path.read(spell.ConditionEndInfo,"[*][?(@.EndTriggers.*.SaveType!=null)]","DEFAULT_PATH_LEAF_TO_NULL"))]
 
@@ -212,7 +218,6 @@
 		[h:pm.PassiveFunction("SpellSaveDC")]
 	};{}]
 	
-	[h:broadcast(spell.ConditionEndInfo)]
 	[h,if(hasSaveDCTest): spell.ConditionEndInfo = json.path.put(spell.ConditionEndInfo,"['EndTriggers'][*][?(@.SaveType!=null)]","DC",spell.SaveDC)]
 
 	[h:"<!-- TODO: Fix to allow selection of AdvancePoint manually; Temporary solution for now -->"]

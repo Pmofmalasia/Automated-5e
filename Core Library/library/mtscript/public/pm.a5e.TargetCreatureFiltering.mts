@@ -51,8 +51,8 @@
 
 [h,switch(pm.RangeNumFinal):
 	case "": pm.TargetsInRange = "[]";
-	case "Unlimited": pm.TargetsInRange = getTokens("json");
-	default: pm.TargetsInRange = getTokens("json",json.set("","range",json.set("","token",pm.TargetOrigin,"upto",pm.RangeNumFinal,"distancePerCell",1)))
+	case "Unlimited": pm.TargetsInRange = getTokens("json",json.set("","propertyType","A5ECreature"));
+	default: pm.TargetsInRange = getTokens("json",json.set("","propertyType","A5ECreature","range",json.set("","token",pm.TargetOrigin,"upto",pm.RangeNumFinal,"distancePerCell",1)))
 ]
 
 [h,if(json.get(pm.TargetAllegiance,"Self")==1 || json.get(pm.TargetAllegiance,"Any")==1),CODE:{
@@ -93,6 +93,7 @@
 	
 	[h,if(json.type(pm.TargetTypeInclusive) == "UNKNOWN"):
 		pm.TypeTest = if(or(pm.TargetTypeInclusive==getProperty("a5e.stat.CreatureType",target),pm.TargetTypeInclusive=="Any",pm.TargetTypeInclusive==""),1,0);
+		pm.TypeTest = if(json.contains(pm.TargetTypeInclusive,getProperty("a5e.stat.CreatureType",target)),1,0)
 	]
 	
 	[h,if(json.type(pm.TargetSubtypeInclusive) == "UNKNOWN"):

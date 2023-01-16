@@ -86,6 +86,7 @@
 [h:lu.NewAbilities = json.get(macro.return,"Abilities")]
 [h:lu.NewButtons = json.get(macro.return,"Buttons")]
 [h:lu.NewSpells = json.get(macro.return,"Spells")]
+[h,if(json.isEmpty(lu.NewSpells)): lu.NewSpells = "[]"]
 
 [h:"<!-- Looks up the current amount of max resources for each ability. After all abilities are added and updated, this will be checked again. If there is increase in the in the amount of max resource, the current amount of resource is increased for that amount. This is done instead of just giving the players a long rest in case anyone wants to run a game where leveling can occur without regaining all resources.-->"]
 [h:noFeaturesTest = json.isEmpty(getProperty("a5e.stat.AllFeatures"))]
@@ -102,6 +103,16 @@
 [h:lu.AbilityUpdates = json.path.read(getLibProperty("sb.AbilityUpdates","Lib:pm.a5e.Core"),"[*][?(@.Class == '"+lu.Class+"' && (@.Subclass == null || @.Subclass == '' || @.Subclass == '"+pm.RemoveSpecial(json.get(getProperty("a5e.stat.Subclasses"),lu.Class))+"') && @."+lu.NewLevel+" != null)]","DEFAULT_PATH_LEAF_TO_NULL")]
 [h,foreach(ability,lu.AbilityUpdates),CODE:{
 	[h:lu.TempUpdates = json.fields(json.get(ability,lu.NewLevel),"json")]
+
+	[h,if(json.contains(lu.TempUpdates,"SpellsAlwaysActive")),CODE:{
+		[h:lu.UpdateSpells = json.get(json.get(ability,lu.NewLevel),"SpellsAlwaysActive")]
+		[h,if(noFeaturesTest):
+			lu.OldSpells = "[]";
+			lu.OldSpells = json.path.read(getProperty("a5e.stat.AllFeatures"),"[*][?(@.Class  == '"+json.get(ability,"Class")+"' && (@.Subclass == '' || @.Subclass == '"+json.get(ability,"Subclass")+"') && @.Name == '"+json.get(ability,"Name")+"')]['SpellsAlwaysActive']")
+		]
+		[h,if(!json.isEmpty(lu.OldSpells)): lu.OldSpells = json.get(lu.OldSpells,0)]
+		[h:lu.NewSpells = json.merge(lu.NewSpells,json.difference(lu.UpdateSpells,lu.OldSpells))]
+	}]
 	[h,foreach(updateKey,lu.TempUpdates),CODE:{
 		[h:lu.ValidKeyTest = !json.isEmpty(json.path.read(getProperty("a5e.stat.AllFeatures"),"[*][?(@.Class  == '"+json.get(ability,"Class")+"' && (@.Subclass == '' || @.Subclass == '"+json.get(ability,"Subclass")+"') && @.Name == '"+json.get(ability,"Name")+"')]['"+updateKey+"']"))]
 		[h,if(lu.ValidKeyTest):
@@ -146,7 +157,7 @@
 	}]
 }]
 
-[h:abilityTable = json.append(abilityTable,json.set("","ShowIfCondensed",1,"Header","Abilities Gained","FalseHeader","","FullContents","","RulesContents",lu.DisplayNewAbilities,"RollContents","","DisplayOrder","['Rules','Roll','Full']","Value",""))]
+[h,if(lu.DisplayNewAbilities != ""): abilityTable = json.append(abilityTable,json.set("","ShowIfCondensed",1,"Header","Abilities Gained","FalseHeader","","FullContents","","RulesContents",lu.DisplayNewAbilities,"RollContents","","DisplayOrder","['Rules','Roll','Full']"))]
 
 [h,MACRO("CreatePlayerClassMacro@Lib:pm.a5e.Core"): json.set("","AbilityList",lu.NewButtons,"ParentToken",ParentToken)]
 
@@ -194,46 +205,32 @@
 	))
 ]
 
-[h:"<!-- Adds newly gained spell macros to the character. Occurs after gaining spell slots because filtering macro limits to spells that you have slots for by default -->"]
-[h:"<!-- Switch statement is temporary until spells are adjusted in the way their classes are stored -->"]
-[h:noFeaturesTest = json.isEmpty(getProperty("a5e.stat.AllFeatures"))]
-[h,if(noFeaturesTest): lu.NewSpellClass = "[]"; lu.NewSpellClass = json.path.read(getProperty("a5e.stat.AllFeatures"),"[*][?((@.Name == 'Spellcasting' || @.Name == 'PactMagic') && @.Class=='"+lu.Class+"' && (@.Subclass=='"+json.get(getProperty("a5e.stat.Subclasses"),lu.Class)+"' || @.Subclass == ''))]","DEFAULT_PATH_LEAF_TO_NULL")]
-[h,if(!json.isEmpty(lu.NewSpellClass)),CODE:{
-	[h:lu.NewSpellClass = json.get(lu.NewSpellClass,0)]
-	[h,switch(json.get(lu.NewSpellClass,"Class")),CODE:
-		case "Artificer": {[h:TempSpellClass = "Art"]};
-		case "Bard": {[h:TempSpellClass = "Brd"]};
-		case "Cleric": {[h:TempSpellClass = "Clc"]};
-		case "Druid": {[h:TempSpellClass = "Drd"]};
-		case "Paladin": {[h:TempSpellClass = "Pdn"]};
-		case "Ranger": {[h:TempSpellClass = "Rgr"]};
-		case "Sorcerer": {[h:TempSpellClass = "Scr"]};
-		case "Warlock": {[h:TempSpellClass = "Wlk"]};
-		case "Wizard": {[h:TempSpellClass = "Wiz"]};
-		default: {[h:TempSpellClass = "Wiz"]}
-		]
-	[h:TempSpellClass = json.get(lu.NewSpellClass,"Class")]
-	
-	[h:MaxSpellLevel = 9]
-	[h:spellLevelCap = if(json.get(lu.NewSpellClass,"CasterCap")=="",MaxSpellLevel,json.get(lu.NewSpellClass,"CasterCap"))]
-	[h:lu.NewSpellFilter = if(
-		or(lu.HadSpellcastingTest==0,and(ceiling(json.get(lu.NewSpellClass,"Level")*(1/2)*json.get(lu.NewSpellClass,"CasterType"))!=ceiling((json.get(lu.NewSpellClass,"Level")-1)*(1/2)*json.get(lu.NewSpellClass,"CasterType")),ceiling(json.get(lu.NewSpellClass,"Level")*(1/2)*json.get(lu.NewSpellClass,"CasterType"))<=spellLevelCap)),
-		json.set("","Class",json.append("",TempSpellClass),"Level",json.append("",ceiling(json.get(lu.NewSpellClass,"Level")*(1/2)*json.get(lu.NewSpellClass,"CasterType")))),
-		"")]
-		
-	[h,if(lu.NewSpellFilter==""): 
-		lu.NewSpellFilter = if(lu.HadSpellcastingTest,lu.NewSpellFilter,json.set("","Class",json.append("",TempSpellClass),"Level",json.append("",0)));
-		lu.NewSpellFilter = if(lu.HadSpellcastingTest,lu.NewSpellFilter,json.set(lu.NewSpellFilter,"Class",json.append(json.get(lu.NewSpellFilter,"Class"),TempSpellClass),"Level",json.append(json.get(lu.NewSpellFilter,"Level"),0)))
-	]
-	
-	[h,if(lu.NewSpellFilter!=""),CODE:{
-		[h,MACRO("CreatePlayerSpellMacro@Lib:pm.a5e.Core"): json.set("","Spells",json.get(pm.SpellFilter(lu.NewSpellFilter),"Spells"),"ParentToken",ParentToken)]
-	};{}]
+[h:"<!-- Checks to see if the token should have a Spell Preparation macro, then adds it if not present. May want to add a notification that new spells can be prepped. -->"]
+[h:CanPrepSpells = !json.isEmpty(json.path.read(getProperty("a5e.stat.AllFeatures"),"[*][?(@.SpellOptions != null)]","DEFAULT_PATH_LEAF_TO_NULL"))]
+[h,if(CanPrepSpells),CODE:{
+	[h:SpellPrepMacroProps = json.set("",
+	"applyToSelected",0,
+	"autoExecute",1,
+	"color","cyan",
+	"command",'[h,MACRO("SpellPreparation@Lib:pm.a5e.Core"): json.set("","ParentToken",currentToken())]',
+	"fontColor","black",
+	"fontSize","1.00em",
+	"includeLabel",0,
+	"group","Current Spells",
+	"sortBy",0,
+	"label","Spell Preparation",
+	"maxWidth","",
+	"minWidth",89,
+	"playerEditable",0,
+	"tooltip","",
+	"delim","json"
+	)]
+	[h,if(!hasMacro("Spell Preparation")): createMacro(SpellPrepMacroProps)]
 };{}]
 
 [h:"<!-- Adds newly gained spell macros from outside of the regular spell list, e.g. Cleric domain spells, feats, etc. -->"]
 [h,if(!json.isEmpty(lu.NewSpells)),CODE:{
-	[h,MACRO("CreatePlayerSpellMacro@Lib:pm.a5e.Core"): json.set("","Spells",lu.NewSpells,"ParentToken",ParentToken)]
+	[h,MACRO("RefreshSpellMacroButtons@Lib:pm.a5e.Core"): json.set("","Add",lu.NewSpells,"ParentToken",ParentToken)]
 }]
 
 [h:"<!-- Start of output creation -->"]

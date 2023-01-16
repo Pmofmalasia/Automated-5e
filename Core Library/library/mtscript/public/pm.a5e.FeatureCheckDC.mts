@@ -87,7 +87,7 @@
 
 		[h:return(0)]
 	};{
-		[h:CheckDataFinal = json.set("","DC",json.set(CheckInfo,"Contested",1)]
+		[h:CheckDataFinal = json.set("","DC",json.set(CheckInfo,"Contested",1))]
 	}]
 };{
 	[h:"<!-- Temporary for future magic item/passive influence -->"]

@@ -43,6 +43,18 @@
 	[h:thisTokenConditionInfo = effConditionInfo]
 	[h:thisTokenConditionsRemovedInfo = effConditionsRemovedInfo]
     [h:thisTokenConditionsApplied = effAllConditionIdentifiers]
+	[h,if(json.type(effTargetSpecific)=="OBJECT"):
+		thisTokenTargetSpecificEffects = json.get(effTargetSpecific,targetToken);
+		thisTokenTargetSpecificEffects = ""
+	]
+
+	[h:thisTokenModifiableComponents = json.set("",
+		"Conditions",thisTokenConditionInfo,
+		"Damage",thisTokenDamageDealt,
+		"ConditionsRemoved",thisTokenConditionsRemovedInfo,
+		"ConditionsApplied",thisTokenConditionsApplied,
+		"TargetSpecific",thisTokenTargetSpecificEffects
+	)]
 	[h:switchToken(targetToken)]
 
 	[h,if(json.length(effTargets)>1):
@@ -64,24 +76,26 @@
 		[h:hitTarget = and(!attackCritFail,or(attackCrit,attackToHit >= getProperty("a5e.stat.AC")))]
 	};{
 		[h:hitTarget = 1]
+		[h:attackCrit = 0]
 	}]
 	
 	[h,if(!hitTarget),CODE:{
-		[h:broadcast("miss")]
+		[h:thisTokenModifiableComponents = json.set("",
+			"Conditions","[]",
+			"Damage","",
+			"ConditionsRemoved","{}",
+			"ConditionsApplied",json.append("",json.set("","Conditions","[]","EndInfo","{}"))
+		)]
 		[h:thisTokenSaveDCData = ""]
 		[h:thisTokenCheckDCData = ""]
-		[h:thisTokenDamageDealt = ""]
-		[h:thisTokenConditionInfo = "[]"]
-		[h:thisTokenConditionsApplied = json.append("",json.set("","Conditions","[]","EndInfo","{}"))]
-		[h:thisTokenConditionsRemovedInfo = "{}"]
 		[h:abilityTable = json.append(abilityTable,json.set("",
-		"ShowIfCondensed",1,
-		"Header","Attack Missed",
-		"FalseHeader","",
-		"FullContents","",
-		"RulesContents","",
-		"RollContents","",
-		"DisplayOrder","['Rules','Roll','Full']"
+			"ShowIfCondensed",1,
+			"Header","Attack Missed",
+			"FalseHeader","",
+			"FullContents","",
+			"RulesContents","",
+			"RollContents","",
+			"DisplayOrder","['Rules','Roll','Full']"
 		))]
 	};{}]
 
@@ -90,7 +104,24 @@
 	[h:"<!-- Wish this could be an if/else but CODE block limits say no -->"]
 	[h,switch((thisTokenSaveDCData!="")+""+(needsToSave)),CODE:
 		case "11":{
-			[h,MACRO("Save@Lib:pm.a5e.Core"): json.set("","Save",json.get(thisTokenSaveDCData,"SaveType"),"Type","Save","ParentToken",targetToken,"ID",effID)]
+			[h:effSaveDCType = json.get(thisTokenSaveDCData,"SaveType")]
+			[h:multiSaveDCTypeTest = json.type(effSaveDCType) == "ARRAY"]
+			[h,if(!multiSaveDCTypeTest): effSaveDCType = json.append("",effSaveDCType)]
+			[h:SaveDCOptionNames = ""]
+			
+			[h,foreach(SaveDCOption,effSaveDCType): SaveDCOptionNames = json.append(SaveDCOptionNames,pm.GetDisplayName(SaveDCOption,"sb.Attributes"))]
+	
+			[h,if(multiSaveDCTypeTest): 
+				abort(input(
+					thisTokenInputDisplay,
+					" saveChoice | "+SaveDCOptionNames+" | Choose a Save Type | LIST | DELIMITER=JSON "
+				));
+				saveChoice = 0
+			]
+			
+			[h:finalSaveType = json.get(effSaveDCType,saveChoice)]
+
+			[h,MACRO("Save@Lib:pm.a5e.Core"): json.set("","Save",finalSaveType,"Type","Save","ParentToken",targetToken,"ID",effID)]
 			[h:SaveResult = macro.return]
 			[h:effSavesMadeData = json.set(effSavesMadeData,targetToken,SaveResult)]
 			[h:abilityTable = json.merge(abilityTable,json.get(SaveResult,"Table"))]
@@ -101,8 +132,8 @@
 				passedSave = 0
 			]
 			[h,switch(autoResultTest+""+passedSave):
-				case "11": pm.a5e.ResolveDCSuccess(json.set("","DCData",thisTokenSaveDCData));
-				case "10": pm.a5e.ResolveDCFailure(json.set("","DCData",thisTokenSaveDCData));
+				case "11": thisTokenModifiableComponents = pm.a5e.ResolveDCSuccess(json.set("","DCData",thisTokenSaveDCData,"ModifiableComponents",thisTokenModifiableComponents));
+				case "10": thisTokenModifiableComponents = pm.a5e.ResolveDCFailure(json.set("","DCData",thisTokenSaveDCData,"ModifiableComponents",thisTokenModifiableComponents));
 				case "00": needsFurtherResolution = 1
 			]
 		};
@@ -110,8 +141,8 @@
 			[h:SaveResult = json.get(effSavesMadeData,targetToken)]
 			[h:passedSave = json.get(SaveResult,"Value")>=json.get(thisTokenSaveDCData,"DC")]
 			[h,if(passedSave==1):
-				pm.a5e.ResolveDCSuccess(json.set("","DCData",thisTokenSaveDCData));
-				pm.a5e.ResolveDCFailure(json.set("","DCData",thisTokenSaveDCData))
+				thisTokenModifiableComponents = pm.a5e.ResolveDCSuccess(json.set("","DCData",thisTokenSaveDCData,"ModifiableComponents",thisTokenModifiableComponents));
+				thisTokenModifiableComponents = pm.a5e.ResolveDCFailure(json.set("","DCData",thisTokenSaveDCData,"ModifiableComponents",thisTokenModifiableComponents))
 			]
 			[h:abilityTable = json.merge(abilityTable,json.get(SaveResult,"Table"))]
 		};
@@ -129,7 +160,7 @@
 			
 			[h,foreach(CheckDCOption,effCheckDCType): CheckDCOptionNames = json.append(CheckDCOptionNames,if(json.get(CheckDCOption,"Type")=="Initiative","Initiative",pm.GetDisplayName(json.get(CheckDCOption,"Skill"),if(json.get(CheckDCOption,"Type")=="Skill","sb.Skills",if(json.get(CheckDCOption,"Type")=="Ability Score","sb.Attributes","sb.Tools")))))]
 	
-			[h,if(json.length(effCheckDCType)>0): 
+			[h,if(multiCheckDCTypeTest): 
 				abort(input(
 					thisTokenInputDisplay,
 					" checkChoice | "+CheckDCOptionNames+" | Choose a Skill to Contest the Check DC | LIST | DELIMITER=JSON "
@@ -151,8 +182,8 @@
 				passedCheck = 0
 			]
 			[h,switch(autoResultTest+""+passedCheck):
-				case "11": pm.a5e.ResolveDCSuccess(json.set("","DCData",thisTokenCheckDCData));
-				case "10": pm.a5e.ResolveDCFailure(json.set("","DCData",thisTokenCheckDCData));
+				case "11": thisTokenModifiableComponents = pm.a5e.ResolveDCSuccess(json.set("","DCData",thisTokenCheckDCData,"ModifiableComponents",thisTokenModifiableComponents));
+				case "10": thisTokenModifiableComponents = pm.a5e.ResolveDCFailure(json.set("","DCData",thisTokenCheckDCData,"ModifiableComponents",thisTokenModifiableComponents));
 				case "00": needsFurtherResolution = 1
 			]
 		};
@@ -166,13 +197,18 @@
 			]
 			
 			[h,if(json.get(CheckResult,"Value") >= DCValue):
-				pm.a5e.ResolveDCSuccess(json.set("","DCData",thisTokenCheckDCData));
-				pm.a5e.ResolveDCFailure(json.set("","DCData",thisTokenCheckDCData))
+				thisTokenModifiableComponents = pm.a5e.ResolveDCSuccess(json.set("","DCData",thisTokenCheckDCData,"ModifiableComponents",thisTokenModifiableComponents));
+				thisTokenModifiableComponents = pm.a5e.ResolveDCFailure(json.set("","DCData",thisTokenCheckDCData,"ModifiableComponents",thisTokenModifiableComponents))
 			]
 			[h:abilityTable = json.merge(abilityTable,json.get(CheckResult,"Table"))]
 		};
 		default:{}
 	]
+
+	[h:thisTokenDamageDealt = json.get(thisTokenModifiableComponents,"Damage")]
+	[h:thisTokenConditionInfo = json.get(thisTokenModifiableComponents,"Conditions")]
+	[h:thisTokenConditionsRemovedInfo = json.get(thisTokenModifiableComponents,"ConditionsRemoved")]
+	[h:thisTokenConditionsApplied = json.get(thisTokenModifiableComponents,"ConditionsApplied")]
 
 	[h,if(needsFurtherResolution),CODE:{
 		[h:thisTokenDamageDealt = ""]
@@ -183,7 +219,7 @@
 	
 	[h:"<!-- Note to future self: Add crit data to the damage info here. Will make processing abilities easier if they add/negate a crit. -->"]
 	[h,if(thisTokenDamageDealt!=""),CODE:{
-		[h,MACRO("Change HP@Lib:pm.a5e.Core"): json.set("","DamageDealt",thisTokenDamageDealt,"ParentToken",targetToken)]
+		[h,MACRO("Change HP@Lib:pm.a5e.Core"): json.set("","DamageDealt",thisTokenDamageDealt,"IsCrit",attackCrit,"ParentToken",targetToken)]
 		[h:abilityTable = json.merge(abilityTable,json.get(macro.return,"Table"))]
 	};{}]
 	
@@ -205,7 +241,6 @@
 		[h,if(tempConditionsRemovedNames == "ARRAY"): 
 			tempConditionsRemovedGroups = json.merge(tempConditionsRemovedGroups,json.unique(json.path.read(getProperty("a5e.stat.ConditionList",targetToken),"[*][?(@.Name in "+tempConditionsRemovedNames+")]['GroupID']")));
 			tempConditionsRemovedGroups = json.merge(tempConditionsRemovedGroups,json.path.read(getProperty("a5e.stat.ConditionList",targetToken),"[*][?(@.Name == '"+tempConditionsRemovedNames+"')]['GroupID']"))
-		
 		]
 
 		[h:tempConditionsRemovedTypes = json.get(thisTokenConditionsRemovedInfo,"ConditionTypes")]
@@ -220,16 +255,7 @@
 		)]
 		[h,MACRO("EndCondition@Lib:pm.a5e.Core"): tempEndConditionData]
 
-		[h:cn.RemovedList = json.path.read(macro.return,"['Removed'][*]['DisplayName']")]
-		[h,if(cn.RemovedList != ""): abilityTable = json.append(abilityTable,json.set("",
-			"ShowIfCondensed",1,
-			"Header","Conditions Removed",
-			"FalseHeader","",
-			"FullContents","",
-			"RulesContents",pm.a5e.CreateDisplayList(cn.RemovedList,"and"),
-			"RollContents","",
-			"DisplayOrder","['Rules','Roll','Full']"
-		))]
+		[h:abilityTable = json.merge(abilityTable,json.get(macro.return,"Table"))]
 	}]
 }]
 

@@ -66,6 +66,7 @@
 [h:PrimeStat = if(json.get(wa.Props,"IntMod")>0,"Intelligence",PrimeStat)]
 [h:PrimeStat = if(json.get(wa.Props,"WisMod")>0,"Wisdom",PrimeStat)]
 [h:PrimeStat = if(json.get(wa.Props,"ChaMod")>0,"Charisma",PrimeStat)]
+[h,if(json.get(wa.Props,"PrimeStat")!=""): PrimeStat = json.get(wa.Props,"PrimeStat")]
 
 [h:pm.PassiveFunction("AttackStat")]
 [h:pm.PassiveFunction("WeaponAttackStat")]
@@ -78,11 +79,14 @@
 
 [h:wa.BrutalCrit = 0]
 [h:CritDmgDie = (wa.CritMultiplier*number(substring(wa.DmgDie,0,indexOf(wa.DmgDie,"d")))) + wa.BrutalCrit]
-[h:wa.DmgDie2Placehold = if(wa.DmgDie2=="0","0d1",wa.DmgDie2)]
+[h:wa.DmgDie2Placehold = if(wa.DmgDie2=="0" || wa.DmgDie2=="","0d1",wa.DmgDie2)]
 [h:CritSecDmgDie = (wa.CritMultiplier*number(substring(wa.DmgDie2Placehold,0,indexOf(wa.DmgDie2Placehold,"d"))))]
 
 [h:wa.DmgDieNum = number(substring(wa.DmgDie,0,indexOf(wa.DmgDie,"d")))]
-[h:wa.DmgDie2Num = number(substring(wa.DmgDie2,0,1))]
+[h,if(wa.DmgDie2==""):
+	wa.DmgDie2Num = 0;
+	wa.DmgDie2Num = number(substring(wa.DmgDie2,0,1))
+]
 
 [h,if(AttackNum<0),CODE:{
 	[h:AttackCount = abs(AttackNum)]
@@ -101,20 +105,24 @@
 	[h,count(AttackCount): wa.TargetList = json.merge(wa.TargetList,json.get(wa.AllTargets,roll.count))]
 }]
 
+[h,if(json.get(wa.Props,"DmgMod")==""):
+	preReworkUseDamageMod = 0;
+	preReworkUseDamageMod = json.get(wa.Props,"DmgMod")
+]
 [h:preReworkDamageData = json.append("",json.set("",
-"DamageType",wa.DmgType,
-"DamageDieNumber",wa.DmgDieNum,
-"DamageDieSize",wa.DmgDieSize,
-"DamageFlatBonus",wa.MagicBonus,
-"IsModBonus",1
+	"DamageType",wa.DmgType,
+	"DamageDieNumber",wa.DmgDieNum,
+	"DamageDieSize",wa.DmgDieSize,
+	"DamageFlatBonus",wa.MagicBonus,
+	"IsModBonus",preReworkUseDamageMod
 ))]
 [h,if(wa.DmgDie2 != "0"): preReworkDamageData = json.append(preReworkDamageData,json.set("",
 	"DamageType",wa.DmgType2,
 	"DamageDieNumber",wa.DmgDie2Num,
 	"DamageDieSize",wa.DmgDie2Size,
 	"DamageFlatBonus",0,
-	"IsModBonus",1
-)]
+	"IsModBonus",0
+))]
 
 [h:AllAttacksToHit = "[]"]
 [h:AllAttacksDmg = "[]"]
@@ -140,13 +148,12 @@
 		"Target",thisAttackTarget
 	)]
 	[h:thisAttackDamage = "[]"]
-	[h,foreach(tempDamageInstance,preReworkDamageData): thisAttackDamage = json.append(thisAttackDamage,pm.a5e.DamageRoll(tempDamageInstance,preReworkNonDamageData,json.append("","Damage","AttackDamage","WeaponAttackDamage")))]
+	[h,foreach(tempDamageInstance,preReworkDamageData): thisAttackDamage = json.append(thisAttackDamage,pm.a5e.DamageRoll(tempDamageInstance,preReworkNonDamageData,json.append("","Attack","WeaponAttack")))]
 
 	[h:pm.PassiveFunction("AttackRoll")]
 	[h:pm.PassiveFunction("WeaponAttackRoll")]
 	[h:pm.PassiveFunction("AttackRollTargeted",json.set("","ParentToken",thisAttackTarget))]
 	[h:pm.PassiveFunction("WeaponAttackRollTargeted",json.set("","ParentToken",thisAttackTarget))]
-
 
 	[h:AllAttacksDmg = json.append(AllAttacksDmg,thisAttackDamage)]
 }]
@@ -231,6 +238,13 @@
 		"Targets",json.append("",thisAttackTarget)
 	))]
 
+	[h:AHLTier = 0]
+	[h:DataForSubeffect = json.set("",
+		"InstancePrefixes",json.append("","Attack","WeaponAttack"),
+		"RerollData",wa.Data
+	)]
+	[h,foreach(tempSubeffect,json.get(wa.WeaponUsed,"Subeffects")): pm.a5e.ExecuteSubeffect(tempSubeffect,json.set("","BaseData",wa.Data))]
+
 	[h:WhichAttack = WhichAttack + 1]
 }]
 
@@ -239,26 +253,11 @@
 [h:pm.PassiveFunction("AfterAttackTargeted",json.set("","ParentToken",thisAttackTarget))]
 [h:pm.PassiveFunction("AfterWeaponAttackTargeted",json.set("","ParentToken",thisAttackTarget))]
 
-[h:pm.RemovedConditions = "[]"]
-[h:pm.RemovedConditionsTableLines = "[]"]
-[h,foreach(group,json.path.read(a5e.stat.ConditionGroups,"[*][?(@.EndTriggers.AfterAttack != null && @.EndTriggers.AfterAttack != 0)]","DEFAULT_PATH_LEAF_TO_NULL")),CODE:{
-	[h,macro("EndCondition@Lib:pm.a5e.Core"): json.set("","GroupID",json.get(group,"GroupID"),"ParentToken",ParentToken)]
-	[h:pm.RemovedConditions = json.merge(pm.RemovedConditions,json.get(macro.return,"Removed"))]
-	[h:pm.RemovedConditionsTableLines = json.merge(pm.RemovedConditionsTableLines,json.get(macro.return,"Table"))]
-}]
-
-[h,if(!json.isEmpty(pm.RemovedConditions)): 
-	abilityTable = json.append(abilityTable,json.set("",
-		"ShowIfCondensed",1,
-		"Header","Conditions Removed",
-		"FalseHeader","",
-		"FullContents","",
-		"RulesContents",json.toList(json.path.read(pm.RemovedConditions,"[*]['DisplayName']"),", "),
-		"RollContents","",
-		"DisplayOrder","['Rules','Roll','Full']")
-	)
-]
-
-[h,if(!json.isEmpty(pm.RemovedConditions)): abilityTable = json.merge(abilityTable,pm.RemovedConditionsTableLines)]
+[h:RemovedConditionGroups = json.path.read(a5e.stat.ConditionGroups,"[*][?(@.EndTriggers.AfterAttack != null && @.EndTriggers.AfterAttack != 0)]['GroupID']","DEFAULT_PATH_LEAF_TO_NULL")]
+[h,if(!json.isEmpty(RemovedConditionGroups)),CODE:{
+	[h,macro("EndCondition@Lib:pm.a5e.Core"): json.set("","GroupID",RemovedConditionGroups,"ParentToken",ParentToken)]
+	[h:pm.RemovedConditions = json.get(macro.return,"Removed")]
+	[h:abilityTable = json.merge(abilityTable,json.get(macro.return,"Table"))]
+};{}]
 
 [h:macro.return = json.set("","Table",abilityTable,"Effect",pm.a5e.EffectData)]

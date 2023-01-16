@@ -1,12 +1,20 @@
 [h:priorData = macro.args]
 [h,if(priorData==""),CODE:{
     [h:nextInput = ""]
+    [h:nextInputData = ""]
+    [h:ParentToken = currentToken()]
+    [h:skillSelectionHTML = "<input type='hidden' name='ParentToken' id='ParentToken' value='"+ParentToken+"'>"]
 };{
     [h:nextInput = json.get(priorData,"NextInput")]
+    [h:nextInputData = json.get(priorData,"NextInputData")]
+    [h:ParentToken = json.get(priorData,"ParentToken")]
+    [h:skillSelectionHTML = "<input type='hidden' name='ParentToken' id='ParentToken' value='"+ParentToken+"'>"]
+    [h:switchToken(ParentToken)]
 }]
 
-[h:skillSelectionHTML = "<input type='hidden' name='ParentToken' id='ParentToken' value='"+currentToken()+"'>"]
-[h,if(nextInput!=""): skillSelectionHTML = skillSelectionHTML + "<input type='hidden' id='NextInput' name='NextInput' value='"+nextInput+"'>"]
+[h,if(nextInput!=""),CODE:{
+    [h:skillSelectionHTML = skillSelectionHTML + "<input type='hidden' id='NextInput' name='NextInput' value='"+nextInput+"'><input type='hidden' id='NextInputData' name='NextInputData' value='"+nextInputData+"'>"]
+};{}]
 [h,if(currentToken()==""): currentSaves = "{}"; currentSaves = getProperty("a5e.stat.BaseSaves")]
 [h,if(currentToken()==""): currentSkills = "{}"; currentSkills = getProperty("a5e.stat.BaseSkills")]
 

@@ -1,4 +1,6 @@
-[h:pm.RemovedAbilities = macro.args]
+[h:pm.RemovedAbilities = json.get(macro.args,"Features")]
+[h:ParentToken = json.get(macro.args,"ParentToken")]
+[h:switchToken(ParentToken)]
 [h:pm.RemovedButtons = "[]"]
 [h:pm.RemoveButtonTest = 0]
 [h:pm.RemovedButtonsInput = "junkVar | The following buttons will be removed unless unchecked. The ability will still be removed. |  | LABEL | SPAN=TRUE ## junkVar | ------------------------------------------------------------------------------------------------------------------------- |  | LABEL | SPAN=TRUE "]

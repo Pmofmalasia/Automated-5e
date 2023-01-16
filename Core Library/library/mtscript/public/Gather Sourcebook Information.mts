@@ -9,6 +9,7 @@
 [h:pm.AbilitiesToMerge = ""]
 [h:pm.Conditions = ""]
 [h:pm.AbilityUpdates = ""]
+[h:pm.MonsterFeatures = ""]
 [h:pm.Subclasses = ""]
 [h:pm.Subraces = ""]
 [h:pm.CreatureTypes = ""]
@@ -20,6 +21,7 @@
 [h:pm.CastingAbilities = "{}"]
 [h:pm.SpellSchools = ""]
 [h:pm.Spells = ""]
+[h:pm.SpellLists = "{}"]
 
 [h:"<!-- Since languages may be setting specific, may want to add a function for DMs to exclude languages from certain sourcebooks. Can use this macro as the gate for blocking those books. -->"]
 [h,foreach(book,pm.SourcebookLibs),CODE:{
@@ -40,16 +42,23 @@
 	[h,if(getLibProperty("sb.Abilities","Lib:"+book)!=""): pm.Abilities = json.merge(pm.Abilities,json.path.read(getLibProperty("sb.Abilities","Lib:"+book),"[*][?(@.CreatedForMerging!=1)]"))]
 	[h,if(getLibProperty("sb.Abilities","Lib:"+book)!=""): pm.AbilitiesToMerge = json.merge(pm.AbilitiesToMerge,json.path.read(getLibProperty("sb.Abilities","Lib:"+book),"[*][?(@.CreatedForMerging==1)]"))]
 	[h,if(getLibProperty("sb.AbilityUpdates","Lib:"+book)!=""): pm.AbilityUpdates = json.merge(pm.AbilityUpdates,getLibProperty("sb.AbilityUpdates","Lib:"+book))]
+	[h,if(getLibProperty("sb.MonsterFeatures","Lib:"+book)!=""): pm.MonsterFeatures = json.merge(pm.MonsterFeatures,getLibProperty("sb.MonsterFeatures","Lib:"+book))]
 	[h,if(getLibProperty("sb.DamageTypes","Lib:"+book)!=""): pm.DamageTypes = json.merge(pm.DamageTypes,getLibProperty("sb.DamageTypes","Lib:"+book))]
 	[h,if(getLibProperty("sb.CastingAbilities","Lib:"+book)!=""): pm.CastingAbilities = json.merge(pm.CastingAbilities,getLibProperty("sb.CastingAbilities","Lib:"+book))]
 	[h,if(getLibProperty("sb.SpellSchools","Lib:"+book)!=""): pm.SpellSchools = json.merge(pm.SpellSchools,getLibProperty("sb.SpellSchools","Lib:"+book))]
 	[h,if(getLibProperty("sb.Spells","Lib:"+book)!=""): pm.Spells = json.merge(pm.Spells,getLibProperty("sb.Spells","Lib:"+book))]
+	[h:thisBookSpellLists = getLibProperty("sb.SpellLists","Lib:"+book)]
+	[h,foreach(tempClass,json.fields(thisBookSpellLists)),CODE:{
+		[h,if(json.get(pm.SpellLists,tempClass)==""):
+			pm.SpellLists = json.set(pm.SpellLists,tempClass,json.get(thisBookSpellLists,tempClass));
+			pm.SpellLists = json.set(pm.SpellLists,tempClass,json.sort(json.merge(json.get(pm.SpellLists,tempClass),json.get(thisBookSpellLists,tempClass))))
+		]
+	}]
 }]
 
 [h,foreach(ability,pm.AbilitiesToMerge),CODE:{
 	[h:BaseAbility = json.get(json.path.read(pm.Abilities,"[*][?(@.Name=='"+json.get(ability,"Name")+"' && @.Class=='"+json.get(ability,"Class")+"' && @.Subclass=='"+json.get(ability,"Subclass")+"')]"),0)]
 	[h,if(json.get(ability,"FightingStyleList")!=""): pm.Abilities = json.path.set(pm.Abilities,"[*][?(@.Name=='"+json.get(ability,"Name")+"' && @.Class=='"+json.get(ability,"Class")+"' && @.Subclass=='"+json.get(ability,"Subclass")+"')]['FightingStyleList']",json.merge(json.get(BaseAbility,"FightingStyleList"),json.get(ability,"FightingStyleList")))]
-	[h,if(json.get(ability,"SpellList")!=""): pm.Abilities = json.path.set(pm.Abilities,"[*][?(@.Name=='"+json.get(ability,"Name")+"' && @.Class=='"+json.get(ability,"Class")+"' && @.Subclass=='"+json.get(ability,"Subclass")+"')]['SpellList']",json.merge(json.get(BaseAbility,"SpellList"),json.get(ability,"SpellList")))]
 }]
 
 [h:setLibProperty("sb.Attributes",pm.Attributes,"Lib:pm.a5e.Core")]
@@ -68,9 +77,13 @@
 [h:setLibProperty("sb.Conditions",json.sort(pm.Conditions,"a","Class","Subclass","Level","DisplayName"),"Lib:pm.a5e.Core")]
 [h:setLibProperty("sb.Abilities",json.sort(pm.Abilities,"a","Class","Subclass","Level","DisplayName"),"Lib:pm.a5e.Core")]
 [h:setLibProperty("sb.AbilityUpdates",json.sort(pm.AbilityUpdates,"a","Class","Subclass","Level","DisplayName"),"Lib:pm.a5e.Core")]
+[h:setLibProperty("sb.MonsterFeatures",json.sort(pm.MonsterFeatures,"a","Class","Subclass","Level","DisplayName"),"Lib:pm.a5e.Core")]
 [h:setLibProperty("sb.DamageTypes",pm.DamageTypes,"Lib:pm.a5e.Core")]
 [h:setLibProperty("sb.CastingAbilities",pm.CastingAbilities,"Lib:pm.a5e.Core")]
 [h:setLibProperty("sb.SpellSchools",json.sort(pm.SpellSchools,"a","DisplayName"),"Lib:pm.a5e.Core")]
 [h:setLibProperty("sb.Spells",pm.Spells,"Lib:pm.a5e.Core")]
+[h:setLibProperty("sb.SpellLists",pm.SpellLists,"Lib:pm.a5e.Core")]
+
 [h:"<!-- TODO: See if there's a way to sort spells by name/level, since they're a level deep in an array -->"]
+
 [h:broadcast("Sourcebook Data has been moved to the core library.")]

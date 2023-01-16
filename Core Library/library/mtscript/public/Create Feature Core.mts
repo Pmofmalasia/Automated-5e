@@ -26,7 +26,6 @@
 	" ab.StoredValue | None,Chosen When Gained,Chosen through button | <html><span title='For abilities that may require a choice to be made that modify how it functions (e.g. Transmutation Wizard - Transmuters Stone)'>Feature stores a miscellaneous value</span></html> | LIST ",
 	" junkVar | ------------------------------------------------------------------------------------------------------- |  | LABEL | SPAN=TRUE ",
 	" ab.ChooseSubabilities | None,Chosen on Level Up,Chosen through button | <html><span title='For the main feature ONLY, e.g. Battle Master Fighter - Combat Superiority BUT not each individual maneuver. No mechanical difference between chosen through button/level up, but may want to choose via button for things subject to change.'>Feature has subfeatures to choose from</span></html> | LIST ",
-	" ab.DieSize |  | <html><span title='e.g. Bardic Inspiration, Combat Superiority, etc.'>Feature has a die used by other features</span></html> | CHECK ",
 	" ab.Resource |  | <html><span title='Does NOT apply for abilities that use resources of another feature, e.g. Lore Bard - Cutting Words/Bardic Inspiration, Battle Master Fighter - Superiority Dice'>Feature tracks its own associated resource</span></html> | CHECK ",
 	" ab.IsClassOptions |  | <html><span title='Mostly for feats, e.g. Magic Initiate'>Choose an associated class?</span></html> | CHECK "
 	))]
@@ -95,99 +94,87 @@
 			if(roll.count==0," junkVar | On the next screen, use the filters to find the spell you are looking for. |  | LABEL | SPAN=TRUE ",""),
 			if(roll.count==0," SpellListLevelChanges |  | Are additional spells added at higher levels | CHECK ","")
 		))]
-		[h,if(ReuseFilter==0): TempSpellFilter = json.set(pm.SpellFilterInput(),"IgnoreLevelCap",1)]
+		[h,if(ReuseFilter==0): TempSpellFilter = pm.a5e.SpellFilterInput()]
+		[h:FilteredSpellInfo = pm.a5e.SpellFilter(json.set("","Filter",TempSpellFilter))]
+		
 		[h:abort(input(
-			" TempSpellChoice | "+json.get(pm.SpellFilter(TempSpellFilter),"Options")+" | Choose a spell to add to the list | LIST | VALUE=STRING ",
+			" TempSpellChoice | "+json.get(FilteredSpellInfo,"SpellList")+" | Choose a spell to add to the list | LIST | VALUE=STRING DELIMITER=JSON ",
+			" junkVar | "+json.get(FilteredSpellInfo,"Description")+" | Current Filter | LABEL ",
 			" ReuseFilter |  | Use same filter for next spell? | CHECK",
 			" IgnoreChoice | Yes,No - Ignore choice and try again | Spell found in the list | RADIO ",
 			if(SpellListLevelChanges," LevelGainedSpellList | "+ab.UpdateLevelOptions+" | Level spell is gained | LIST | VALUE=STRING ",""),
 			" DoneAddingSpellsTest |  | Finish adding spells to the list | CHECK "
 		))]
 		[h,if(SpellListLevelChanges==0): LevelGainedSpellList=ab.Level]
-		[h:ab.SpellList = if(IgnoreChoice,ab.SpellList,json.append(ab.SpellList,json.set("","Spell",TempSpellChoice,"Level",number(LevelGainedSpellList))))]
+		[h:ab.SpellList = if(IgnoreChoice,ab.SpellList,json.append(ab.SpellList,json.set("","Spell",pm.RemoveSpecial(TempSpellChoice),"Level",number(LevelGainedSpellList))))]
 		[h:ab.LevelsChosen = if(json.contains(ab.LevelsChosen,number(LevelGainedSpellList)),ab.LevelsChosen,json.append(ab.LevelsChosen,number(LevelGainedSpellList)))]
 	}]
 	[h:ab.BaseSpellList=""]
 	[h,foreach(spell,ab.SpellList): ab.BaseSpellList = if(json.get(spell,"Level")==ab.Level,json.append(ab.BaseSpellList,json.get(spell,"Spell")),ab.BaseSpellList)]
-	[h,foreach(levelOption,ab.LevelsChosen),CODE:{
+	[h,foreach(levelOption,json.remove(ab.LevelsChosen,0)),CODE:{
 		[h:tempSpellList = ""]
 		[h,foreach(spell,ab.SpellList): tempSpellList = if(levelOption>=json.get(spell,"Level"),json.append(tempSpellList,json.get(spell,"Spell")),tempSpellList)]
-		[h,if(json.get(ab.Updates,levelOption)==""): ab.Updates = json.set(ab.Updates,levelOption,json.set("","SpellList",tempSpellList)); ab.Updates = json.set(ab.Updates,levelOption,json.set(json.get(ab.Updates,levelOption),"SpellList",tempSpellList))]
+		[h,if(json.get(ab.Updates,levelOption)==""): ab.Updates = json.set(ab.Updates,levelOption,json.set("","SpellsAlwaysActive",tempSpellList)); ab.Updates = json.set(ab.Updates,levelOption,json.set(json.get(ab.Updates,levelOption),"SpellsAlwaysActive",tempSpellList))]
 	}]
-	[h:ab.Final = json.set(ab.Final,"SpellList",ab.BaseSpellList)]
+	[h:ab.Final = json.set(ab.Final,"SpellsAlwaysActive",ab.BaseSpellList)]
 };{}]
 
 [h:ab.HigherLevelSpellOptions = ""]
 [h:ab.SpellOptionsUpdatesTest = 0]
-[h,if(ab.IsSpellList>=2),CODE:{
-	[h:DoneAddingSpellsTest = 0]
-	[h:ab.SpellOptionsUpdatesTest = 0]
-	[h:ab.SpellOptions = ""]
-	[h,while(DoneAddingSpellsTest < 2),CODE:{
-		[h:NewFilterLevel = ab.Level]
-		[h:ReuseFilter = 0]
-		[h:abort(input(
-			" junkVar | ---------------------- Spell Filter Creation ---------------------- |  | LABEL | SPAN=TRUE ",
-			" junkVar | On the next screen, set the parameters that determine which spells can be chosen. |  | LABEL | SPAN=TRUE ",
-			if(DoneAddingSpellsTest == 1," NewFilterLevel | "+ab.UpdateLevelOptions+" | Level spells can first be chosen from filter | LIST | VALUE=STRING ",""),
-			" ClassChoiceFilter |  | <html><span title='Mostly for things like feats, e.g. Magic Initiate, that have you choose a class and then pick spells from that class. Will be added in addition to any classes chosen on the next screen. This is jank as fuck but will change it in updated interfaces... sorry.'>Add a filter by a chosen class</span></html> | CHECK "
-		))]
-		[h:TempSpellFilter = pm.SpellFilterInput()]
-		[h,if(ClassChoiceFilter): TempSpellFilter = json.set(TempSpellFilter,"Class",json.append(json.get(TempSpellFilter,"Class"),"Chosen_Class"))]
-		[h:abort(input(
-			" TempSpellNum | 0,1,2,3,4,5,6,7,8,9,10 | Choose the number of spells that can be chosen using this filter | LIST | SELECT=1 ",
-			" SpellChoiceLevelChanges |  | Does the amount of spells that can be chosen change by level | CHECK ",
-			" DoneAddingSpellsTest | No,New Filter at Higher Level,Yes | Finish adding filters to the list | RADIO "
-		))]		
-		[h:ab.SpellOptions = if(NewFilterLevel == ab.Level,json.append(ab.SpellOptions,json.set(TempSpellFilter,"Number",TempSpellNum,"LevelChanges",SpellChoiceLevelChanges)),ab.SpellOptions)]
-		[h:ab.HigherLevelSpellOptions = json.append(ab.HigherLevelSpellOptions,json.set(TempSpellFilter,"Number",TempSpellNum,"LevelChanges",SpellChoiceLevelChanges,"LevelGained",NewFilterLevel))]
-		[h:ab.SpellOptionsUpdatesTest = max(ab.SpellOptionsUpdatesTest,if(or(NewFilterLevel!=ab.Level,SpellChoiceLevelChanges),1,0))]
+[h:DoneAddingSpellsTest = 0]
+[h:ab.SpellOptionsUpdates = "{}"]
+[h:ab.SpellOptions = ""]
+[h,while(DoneAddingSpellsTest < 2 && ab.IsSpellList>=2),CODE:{
+	[h:NewFilterLevel = ab.Level]
+	[h:ReuseFilter = 0]
+	[h:abort(input(
+		" junkVar | ---------------------- Spell Filter Creation ---------------------- |  | LABEL | SPAN=TRUE ",
+		" junkVar | On the next screen, set the parameters that determine which spells can be chosen. |  | LABEL | SPAN=TRUE ",
+		if(DoneAddingSpellsTest == 1," NewFilterLevel | "+ab.UpdateLevelOptions+" | Level spells can first be chosen from filter | LIST | VALUE=STRING ",""),
+		" ClassChoiceFilter |  | <html><span title='Mostly for things like feats, e.g. Magic Initiate, that have you choose a class and then pick spells from that class. Will be added in addition to any classes chosen on the next screen. This is janky but will change it in updated interfaces... sorry.'>Add a filter by a chosen class</span></html> | CHECK ",
+		" DoneAddingSpellsTest |  | Is this the last filter? | CHECK "
+	))]
+	[h:TempSpellFilter = pm.a5e.SpellFilterInput()]
+	[h,if(ClassChoiceFilter): TempSpellFilter = json.set(TempSpellFilter,"Class",json.append(json.get(TempSpellFilter,"Class"),"Chosen_Class"))]
+
+	[h:TempSpellChoiceNumberData = pm.a5e.SpellSelectionNumberInput(json.set("",
+		"Name",json.get(ab.Final,"Name"),
+		"Class",json.get(ab.Final,"Class"),
+		"Subclass",json.get(ab.Final,"Subclass"),
+		"Level",json.get(ab.Final,"Level"),
+		"FilterDescription",pm.a5e.SpellFilterDisplay(TempSpellFilter)
+	))]
+
+	[h:thisInstanceData = json.set("","Filter",TempSpellFilter,"Number",json.get(TempSpellChoiceNumberData,"Base"))]
+	[h:thisInstanceUpdateData = json.get(TempSpellChoiceNumberData,"Updates")]
+
+	[h:ab.SpellOptions = json.append(ab.SpellOptions,thisInstanceData)]
+
+	[h,if(json.get(TempSpellChoiceNumberData,"Updates")!=""):
+		tempUpdateLevels = json.fields(thisInstanceUpdateData);
+		tempUpdateLevels = "[]"
+	]
+
+	[h:mostRecentUpdate = thisInstanceData]
+	[h,foreach(tempLevel,ab.UpdateLevelOptions),CODE:{
+		[h,if(json.contains(thisInstanceUpdateData,tempLevel)): mostRecentUpdate = json.get(thisInstanceUpdateData,tempLevel)]
+
+		[h:tempNeedsUpdateTest = (json.contains(thisInstanceUpdateData,tempLevel) || json.contains(ab.SpellOptionsUpdates,tempLevel))]
+		[h,if(tempNeedsUpdateTest): json.set(ab.SpellOptionsUpdates,tempLevel,json.append(json.get(ab.SpellOptionsUpdates,tempLevel),mostRecentUpdate))]
 	}]
+
+	[h:DoneAddingSpellsTest = DoneAddingSpellsTest + 1]
+}]
+
+[h,if(ab.IsSpellList>=2),CODE:{
 	[h:ab.Final = json.set(ab.Final,"SpellOptions",ab.SpellOptions)]
-	[h,foreach(tempLevel,ab.UpdateLevelOptions): set("ab.UpdateSpellOptions"+tempLevel,if(tempLevel==ab.Level,json.path.delete(ab.SpellOptions,"[*].LevelChanges"),""))]
+	[h,foreach(tempLevel,json.fields(ab.SpellOptionsUpdates)): ab.Updates = json.set(ab.Updates,tempLevel,json.set(json.get(ab.Updates,tempLevel),"SpellOptions",json.get(ab.SpellOptionsUpdates,tempLevel)))]
 };{
 	[h:ab.SpellOptions=""]
 }]
 
-[h,foreach(filter,ab.HigherLevelSpellOptions),CODE:{
-	[h:cumulativeSpellNum = if(json.get(filter,"LevelGained") == ab.Level,json.get(filter,"Number"),0)]
-	[h,if(json.get(filter,"LevelChanges")),CODE:{
-		[h:disFilterByLevel = ""]
-		[h:tempLevelChangeCount = listDelete(ab.UpdateLevelOptions,0)]
-		[h,foreach(tempLevel,tempLevelChangeCount): disFilterByLevel = listAppend(disFilterByLevel," filterChoiceNum"+tempLevel+" | 0,1,2,3,4,5,6,7,8,9,10 | Level "+tempLevel+" | LIST ","##")]
-		[h:abort(input(
-			" junkVar | ---------------- Grant Additonal Spell Choices by Level ---------------- |  | LABEL | SPAN=TRUE ",
-			" junkVar | Choose the number of new spells granted at each level for the following filter. Do NOT use the cumulative total number of spells - e.g. going from 3 spells to 4, input '1' for that level instead of '4'. |  | LABEL | SPAN=TRUE ",
-			" junkVar | Current Filter: "+json.toList(pm.SpellFilterDisplay(filter),";")+" |  | LABEL | SPAN=TRUE ",
-			disFilterByLevel
-		))]
-	};{
-		[h:tempLevelChangeCount = if(ab.SpellOptionsUpdatesTest,listDelete(ab.UpdateLevelOptions,0),"")]
-		[h,foreach(tempLevel,tempLevelChangeCount): set("filterChoiceNum"+tempLevel,if(tempLevel == json.get(filter,"LevelGained"),json.get(filter,"Number"),0))]
-	}]
-	[h,foreach(tempLevel,tempLevelChangeCount),CODE:{
-		[h:cumulativeSpellNum = cumulativeSpellNum + eval("filterChoiceNum"+tempLevel)]
-		[h:set("ab.UpdateSpellOptions"+tempLevel,if(cumulativeSpellNum>0,json.append(eval("ab.UpdateSpellOptions"+tempLevel),json.set(json.remove(json.remove(filter,"LevelChanges"),"LevelGained"),"Number",cumulativeSpellNum)),eval("ab.UpdateSpellOptions"+tempLevel)))]
-	}]
-	[h:ab.Final = json.path.delete(ab.Final,"SpellOptions.[*].LevelChanges")]
-}]
-
-[h,if(ab.IsSpellList>=2 && ab.SpellOptionsUpdatesTest == 1),CODE:{
-	[h,foreach(tempLevel,listDelete(ab.UpdateLevelOptions,0)),CODE:{
-		[h:ab.Updates = if(json.equals(eval("ab.UpdateSpellOptions"+tempLevel),eval("ab.UpdateSpellOptions"+(tempLevel-1))),
-				ab.Updates,
-				json.set(ab.Updates,tempLevel,json.set(json.get(ab.Updates,tempLevel),"SpellOptions",eval("ab.UpdateSpellOptions"+tempLevel)))
-				)]
-	}]
-	[h:ab.Updates = json.path.delete(ab.Updates,"*.SpellOptions.[*].LevelChanges")]
-};{}]
-
 [h,if(ab.IsSpellList>=1),CODE:{
-	[h:abort(input(
-		" ab.SpellMarker | -- Ignore/Blank for None -- | Enter a cosmetic marker to display on the spells' buttons "
-		))]
-	[h:ab.SpellMarker = if(ab.SpellMarker=="-- Ignore/Blank for None --","",ab.SpellMarker)]
-	[h:ab.Final = json.set(ab.Final,"SpellMarker",ab.SpellMarker,"CallSpellClass",1)]
+	[h:ab.Final = json.set(ab.Final,"CallSpellClass",1)]
 };{}]
 
 [h:"<!-- Need to check the library of the fighting styles so fighting styles from different libraries from the base ability are added to a duplicate ability on the same library -->"]
@@ -384,21 +371,27 @@
 	[h:ab.Final = json.set(ab.Final,"Prereqs",ab.PrereqsFinal)]
 };{}]
 
-[h,if(ab.DieSize==1),CODE:{
-	[h:" junkVar | ---------------------- Shared Die Size Info ---------------------- |  | LABEL | SPAN=TRUE "]
-	
-	[h:ab.Final = json.set(ab.Final,"CallDieSize",json.get(ab.Final,"Name")+json.get(ab.Final,"Class")+json.get(ab.Final,"Subclass"))]
-};{}]
-
 [h,if(ab.Resource == 1),CODE:{
 	[h:abort(input(
 		" ab.ResourceDisplayName | -- Blank/Ignore to Use Feature Name -- | Name of Resource ",
 		" ab.ResourceType | 1,Other Flat Number,Attribute Based,Linearly Class Level Based,Non-Linearly Class Level Based,Proficiency Based,Multiple Resources,Custom | Amount of Resource | LIST | VALUE=STRING ",
+		" ab.RestoreRechargeRoll |  | Restore on Recharge Roll | CHECK ",
 		" ab.RestoreShortRest |  | Resource Restored on Short Rests | CHECK ",
 		" ab.RestoreLongRest | 1 | Resource Restored on Long Rests | CHECK "
 	))]
 	[h:ab.ResourceInfo = pm.ResourceInput(json.set("","Name",json.get(ab.Final,"Name"),"Class",json.get(ab.Final,"Class"),"Subclass",json.get(ab.Final,"Subclass"),"Level",ab.Level),ab.ResourceType)]
 	[h:ab.Final = json.set(ab.Final,"RestoreShortRest",ab.RestoreShortRest,"RestoreLongRest",ab.RestoreLongRest,"MaxResource",json.get(ab.ResourceInfo,"Base"))]
+
+	[h,if(ab.RestoreRechargeRoll),CODE:{
+		[h:"<!-- TODO: When converted to dialog, add functionality for more die sizes --> "]
+		[h:abort(input(
+			" RechargeCharges | 0,1,2,3,4,5,6 | Uses Before Recharge | LIST | SELECT=1 ",
+			" RechargeNumber | 0,1,2,3,4,5,6 | Minimum Number for Recharge | LIST | SELECT=5 "
+		))]
+
+		[h:ab.Final = json.set(ab.Final,"RechargeRoll",json.set("","DieSize",6,"Target",RechargeNumber))]
+	};{}]
+
 	[h,if(json.get(ab.ResourceInfo,"DisplayName")==""),CODE:{
 		[h,if(ab.ResourceDisplayName!="" && ab.ResourceDisplayName!="0" && ab.ResourceDisplayName!="-- Blank/Ignore to Use Feature Name --"): ab.Final = json.set(ab.Final,"ResourceDisplayName",ab.ResourceDisplayName)]
 	};{
@@ -464,6 +457,9 @@
 	" ab.HitDie | 0 | Effect triggers after spending Hit Dice | CHECK ",
 	" ab.StartTurn | 0 | Effect triggers on start of turn | CHECK ",
 	" ab.EndTurn | 0 | Effect triggers on end of turn | CHECK ",
+	" junkVar | --------------------------------------------------------------------------------------------------------------------- | 0 | LABEL | SPAN=TRUE ",
+	" ab.DieSize |  | <html><span title='e.g. Bardic Inspiration, Combat Superiority, etc.'>Feature has a die used by other features</span></html> | CHECK ",
+	" ab.SharedDC |  | <html><span title='e.g. Bardic Inspiration, Combat Superiority, etc.'>Feature has a saving throw DC used by other features</span></html> | CHECK ",
 	" junkVar | --------------------------------------------------------------------------------------------------------------------- | 0 | LABEL | SPAN=TRUE ",
 	" ab.Button | 0 | <html><span title='Things that have their own action/reaction like granting Bardic Inspiration, going into a rage, etc. Can also be used for passive abilities that do not have a mechanical trigger that is feasible to program, like the Fighter Maneuver - Evasive Footwork'>Feature can be used independently of the above</span></html> | CHECK ",
 	" junkVar | --------------------------------------------------------------------------------------------------------------------- | 0 | LABEL | SPAN=TRUE ",
@@ -978,6 +974,14 @@
 	[h:ab.Final = json.set(ab.Final,
 		"CallEndTurn",1
 	)]
+};{}]
+
+[h,if(ab.DieSize==1),CODE:{
+	[h:ab.Final = json.set(ab.Final,"CallDieSize",json.get(ab.Final,"Name")+json.get(ab.Final,"Class")+json.get(ab.Final,"Subclass"))]
+};{}]
+
+[h,if(ab.SharedDC==1),CODE:{
+	[h:ab.Final = json.set(ab.Final,"CallSharedDC",json.get(ab.Final,"Name")+json.get(ab.Final,"Class")+json.get(ab.Final,"Subclass"))]
 };{}]
 
 [h,if(ab.CondGain),CODE:{

@@ -19,6 +19,7 @@
 [h:setProperty("a5e.stat.BaseSkills",tempBaseSkills)]
 [h:closeDialog("Skill Selection")]
 
-[h,if(json.get(BaseSkillSelectionData,"NextInput")==""),CODE:{
-    [h,MACRO(json.get(BaseSkillSelectionData,"NextInput")+":@Lib:pm.a5e.Core"): ""]
+[h,if(json.get(BaseSkillSelectionData,"NextInput")!=""),CODE:{
+    [h:NextInputData = base64.decode(json.get(BaseSkillSelectionData,"NextInputData"))]
+    [h,MACRO(json.get(BaseSkillSelectionData,"NextInput")+":@Lib:pm.a5e.Core"): NextInputData]
 }]

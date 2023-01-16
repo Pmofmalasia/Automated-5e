@@ -5,7 +5,7 @@
 [h:OldArmorMagic=json.get(json.get(getProperty("a5e.stat.Armor"),json.get(getProperty("a5e.stat.Armor"),0)),"MagicItem")]
 [h:OldArmorName=json.get(json.get(getProperty("a5e.stat.Armor"),json.get(getProperty("a5e.stat.Armor"),0)),"Name")]
 [h:ArmorList=""]
-[h,count(json.length(getProperty("a5e.stat.Armor"))),code:{
+[h,count(json.length(a5e.stat.Armor)),code:{
 	[if(roll.count>0),code:{
 		[ArmorList=ArmorList+json.get(json.get(getProperty("a5e.stat.Armor"),roll.count),"Name")+","]
 	};{}]
@@ -13,7 +13,7 @@
 
 [h:ShieldEquipped=json.get(getProperty("a5e.stat.Shield"),0)]
 [h:ShieldList=""]
-[h,count(json.length(getProperty("a5e.stat.Shield"))),code:{
+[h,count(json.length(a5e.stat.Shield)),code:{
 	[if(roll.count>1),code:{
 		[ShieldList=ShieldList+json.get(json.get(getProperty("a5e.stat.Shield"),roll.count),"Name")+","]
 	};{}]
@@ -23,7 +23,7 @@
 [h:WeaponList=""]
 [h:OldMHMagic=json.get(json.get(getProperty("a5e.stat.Weapon"),json.get(getProperty("a5e.stat.Weapon"),0)),"MagicItem")]
 [h:OldMHName=json.get(json.get(getProperty("a5e.stat.Weapon"),json.get(getProperty("a5e.stat.Weapon"),0)),"Name")]
-[h,count(json.length(getProperty("a5e.stat.Weapon"))),code:{
+[h,count(json.length(a5e.stat.Weapon)),code:{
 	[if(roll.count>1),code:{
 		[WeaponList=WeaponList+json.get(json.get(getProperty("a5e.stat.Weapon"),roll.count),"Name")+","]
 	};{}]

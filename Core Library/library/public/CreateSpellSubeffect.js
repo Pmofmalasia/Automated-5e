@@ -673,23 +673,28 @@ async function createSummonCreatureSubtypeTable(thisCreatureType){
 
 async function createMoveTargetTable(){
     let table = document.getElementById("SubeffectTable");
-    let startRowIndex = document.getElementById("rowIsMoveTarget").rowIndex;
+    let nextRowIndex = document.getElementById("rowIsMoveTarget").rowIndex+1;
 
     if(document.getElementById("isMoveTarget").checked){
-        let rowMoveTargetInfo = table.insertRow(startRowIndex+1);
+        let rowMoveTargetInfo = table.insertRow(nextRowIndex);
         rowMoveTargetInfo.id = "rowMoveTargetInfo";
-        rowMoveTargetInfo.innerHTML = "<th><label for='moveTargetValue'>Distance Target Moved:</label></th><input type='number' id='moveTargetValue' name='moveTargetValue' min=0 value=10 style='width:25px'><select id='moveTargetUnits' name='moveTargetUnits'><option value='Feet'>Feet</option><option value='Miles'>Miles</option></select><select id='moveTargetDirection' name='moveTargetDirection'><option value='Away'>Away From Caster</option><option value='Towards'>Towards Caster</option><option value='Choice'>Caster's Choice</option><option value='Random4'>Random, 4 Directions</option><option value='Random8'>Random, 8 Directions</option></select></td></tr>";
+        rowMoveTargetInfo.innerHTML = "<th><label for='moveTargetValue'>Distance Target Moved:</label></th><input type='number' id='moveTargetValue' name='moveTargetValue' min=0 value=10 style='width:25px'><select id='moveTargetUnits' name='moveTargetUnits'><option value='Feet'>Feet</option><option value='Miles'>Miles</option></select><select id='moveTargetDirection' name='moveTargetDirection'><option value='Away'>Away From Caster</option><option value='Towards'>Towards Caster</option><option value='Choice'>Caster's Choice</option><option value='Random4'>Random, 4 Directions</option><option value='Random8'>Random, 8 Directions</option></select></td></tr>";nextRowIndex++;
 
         let moveTargetAHLScalingSelect = await createAHLSelect("moveTargetAHLScaling");
 
-        let rowMoveTargetAHLInfo = table.insertRow(startRowIndex+2);
+        let rowMoveTargetAHLInfo = table.insertRow(nextRowIndex);
         rowMoveTargetAHLInfo.id = "rowMoveTargetAHLInfo";
-        rowMoveTargetAHLInfo.innerHTML = "<th><label for='moveTargetAHLValue'>Increased Distance AHL:</label></th><input type='number' id='moveTargetAHLValue' name='moveTargetAHLValue' min=0 value=0 style='width:25px'>"+moveTargetAHLScalingSelect+"</td></tr>";
+        rowMoveTargetAHLInfo.innerHTML = "<th><label for='moveTargetAHLValue'>Increased Distance AHL:</label></th><input type='number' id='moveTargetAHLValue' name='moveTargetAHLValue' min=0 value=0 style='width:25px'>"+moveTargetAHLScalingSelect+"</td></tr>";nextRowIndex++;
+
+        let rowMoveTargetType = table.insertRow(nextRowIndex);
+        rowMoveTargetType.id = "rowMoveTargetType";
+        rowMoveTargetType.innerHTML = "<th><label for='moveTargetType'>Type of Movement:</label></th><select id='moveTargetType' name='moveTargetType'><option value='Physical'>Physical Movement</option><option value='Teleportation'>Teleportation</option></select></td></tr>";nextRowIndex++;
 
         if(document.getElementById("howMitigate").value == "Save"){
-            let rowSavePreventMove = table.insertRow(startRowIndex+3);
+            let rowSavePreventMove = table.insertRow(nextRowIndex);
             rowSavePreventMove.id = "rowSavePreventMove";
             rowSavePreventMove.innerHTML = "<th><label for='savePreventMove'>Save Prevents Movement:</label></th><select id='savePreventMove' name='savePreventMove'><option value=2>Prevent Completely</option><option value=1>Halved Movement</option><option value=0>Move Not Affected</option></select></td></tr>";
+            nextRowIndex++;
         }
     }
     else{

@@ -252,39 +252,6 @@
 	[h:lu.NewAbilities = json.path.put(lu.NewAbilities,"[?(@.Name == '"+json.get(ability,"Name")+"' && @.Class == '"+json.get(ability,"Class")+"' && @.Subclass == '"+json.get(ability,"Subclass")+"')]","DamageType",json.get(json.path.read(lu.DamageOptions,"[?(@.Name=='"+pm.RemoveSpecial(lu.DamageChoice)+"')]['Name']"),0))]
 }]
 
-[h:"<!-- Choose Spells -->"]
-[h,if(json.isEmpty(lu.NewAbilities)): lu.SpellChoiceAbilities = ""; lu.SpellChoiceAbilities = json.path.read(lu.NewAbilities,"[*][?(@.SpellOptions != null)]","DEFAULT_PATH_LEAF_TO_NULL")]
-[h,foreach(ability,lu.SpellChoiceAbilities),CODE:{
-	[h:pm.SpellChoiceInput = "junkVar | ---------------------------- "+json.get(ability,"DisplayName")+": Choose Your Spells ---------------------------- | | LABEL | SPAN=TRUE"]
-	[h:filterNum = 0]
-	[h:spellNum = 0]
-	[h:pm.CurrentSpellList=json.get(ability,"SpellList")]
-	[h:pm.CurrentSpellPosition=0]
-	[h:pm.AllSpellInfo = json.get(ability,"SpellOptions")]
-
-	[h,foreach(tempFilter,pm.AllSpellInfo),CODE:{
-		[h,if(json.get(tempFilter,"Class")!=""): 
-			tempFilter =
-			if(json.contains(json.get(tempFilter,"Class"),"Chosen_Class"),
-				json.set(tempFilter,"Class",json.difference(json.append(json.get(tempFilter,"Class"),json.get(ability,"AssociatedClass")),json.append("","Chosen_Class"))),
-				tempFilter
-			)]
-		[h:pm.AllSpellInfo = json.set(pm.AllSpellInfo,roll.count,tempFilter)]
-	}]
-	
-	[h,count(json.length(pm.AllSpellInfo)): pm.AllSpellInfo = json.set(pm.AllSpellInfo,roll.count,json.set(json.get(pm.AllSpellInfo,roll.count),"LevelCapBonus",1))]
-
-	[h:pm.AbilityAddSpellInput()]
-	[h:abort(input(pm.SpellChoiceInput))]
-	
-	[h:pm.ChosenSpells = ""]
-	[h,count(spellNum): pm.ChosenSpells = json.append(pm.ChosenSpells,eval("spell"+(roll.count+1)))]
-
-	[h,if(json.get(ability,"SpellList")!=""): 
-		lu.NewAbilities = json.path.set(lu.NewAbilities,"[?(@.Name == '"+json.get(ability,"Name")+"' && @.Class == '"+json.get(ability,"Class")+"' && @.Subclass == '"+json.get(ability,"Subclass")+"')]['SpellList']",json.merge(json.get(ability,"SpellList"),pm.ChosenSpells));
-		lu.NewAbilities = json.path.put(lu.NewAbilities,"[?(@.Name == '"+json.get(ability,"Name")+"' && @.Class == '"+json.get(ability,"Class")+"' && @.Subclass == '"+json.get(ability,"Subclass")+"')]","SpellList",pm.ChosenSpells)]
-}]
-
 [h:"<!-- Other Miscellaneous Choices -->"]
 [h,if(json.isEmpty(lu.NewAbilities)): lu.MiscChoiceAbilities = ""; lu.MiscChoiceAbilities = json.path.read(lu.NewAbilities,"[*][?(@.MiscChoice != null)]","DEFAULT_PATH_LEAF_TO_NULL")]
 [h,foreach(ability,lu.MiscChoiceAbilities),CODE:{
@@ -302,10 +269,9 @@
 }]
 
 [h:"<!-- Add new spells gained from outside of the regular class spell list to an array. Does not currently transfer marker data, will wait until after spell data storage is reworked. -->"]
-[h:lu.NewSpells = ""]
-[h:lu.NewSpellsRaw = json.path.read(lu.NewAbilities,"[*][?(@.SpellList != null)]['SpellList']","DEFAULT_PATH_LEAF_TO_NULL")]
-[h,foreach(spellGroup,lu.NewSpellsRaw),CODE:{
-	[h,foreach(spell,spellGroup): lu.NewSpells = json.append(lu.NewSpells,getLibProperty("sp."+pm.RemoveSpecial(spell),"Lib:Complete Spellbook"))]
-}]
+[h:lu.NewSpells = "[]"]
+[h:lu.NewSpellsRaw = json.path.read(lu.NewAbilities,"[*][?(@.SpellsAlwaysActive != null)]['SpellsAlwaysActive']","DEFAULT_PATH_LEAF_TO_NULL")]
+[h:broadcast(lu.NewSpellsRaw)]
+[h,foreach(spellGroup,lu.NewSpellsRaw): lu.NewSpells = json.merge(lu.NewSpells,spellGroup)]
 
 [h:macro.return = json.set("","Abilities",lu.NewAbilities,"Buttons",lu.NewButtons,"Spells",lu.NewSpells)]

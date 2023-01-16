@@ -18,7 +18,7 @@
 }]
 
 [h:abilityTable = "[]"]
-[h:abilityEffect = pm.a5e.CreateDisplayList(cn.RemovedList,"and")+" deactivated."]
+[h:FeatureDescription = pm.a5e.CreateDisplayList(cn.RemovedList,"and")+" deactivated by the GM."]
 
 [h:ClassFeatureData = json.set("",
 	"Flavor","",
@@ -36,7 +36,7 @@
 
 [h:output.Temp = pm.AbilityTableProcessing(abilityTable,FormattingData,1)]
 
-[h:output.PC = output.PC + json.get(macro.return,"Player")+abilityEffect]
-[h:output.GM = output.GM + json.get(macro.return,"GM")+abilityEffect]
+[h:output.PC = output.PC + json.get(macro.return,"Player")+FeatureDescription]
+[h:output.GM = output.GM + json.get(macro.return,"GM")+FeatureDescription]
 [h:broadcastAsToken(output.GM,"gm")]
 [h:broadcastAsToken(output.PC,"not-gm")]

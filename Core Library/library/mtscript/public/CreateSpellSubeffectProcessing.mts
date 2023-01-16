@@ -138,7 +138,7 @@
 
 [h,if(isCondition != "None"),CODE:{
     [h,if(json.contains(subeffectData,"isConditionSameDuration")),CODE:{
-        [h:conditionEndInfo = json.set("","UseSpellDuration",1)]
+        [h:conditionEndInfo = json.set("","UseMainDuration",1)]
         [h:subeffectData = json.remove(subeffectData,"isConditionSameDuration")]
     };{
         [h:conditionEndInfo = json.set("","Duration",json.get(subeffectData,"conditionAlternateDuration"),"DurationUnits",lower(json.get(subeffectData,"conditionAlternateDurationUnits")))]
@@ -151,7 +151,7 @@
     [h:subeffectData = json.remove(subeffectData,"TempHPLost")]
     [h:"<!-- TODO/Note: The below loop will likely be temporary, as the 'conditional' portion will likely need to be customized to each instance once completed. But for now, it's easier to just loop it. -->"]
     [h:conditionEndInstances = json.append("","StartTurn","EndTurn","AfterAttack","AfterSpell","AfterForceSave","AfterDamage","AfterMoving","AfterAttacked","AfterDamaged","AfterShortRest","AfterLongRest","AfterGainCondition","AfterEndCondition","AfterChangeEquipment")]
-    [h,foreach(tempInstance,conditionEndInstances): ct.a5e.SpellConditionEndTriggerInputProcessing(tempInstance)]
+    [h,foreach(tempInstance,conditionEndInstances): ct.a5e.ConditionEndTriggerInputProcessing(tempInstance)]
     [h:conditionEndInfo = json.set(conditionEndInfo,"EndTriggers",ConditionEndTriggers)]
 
     [h:allConditionInfo = json.set("",
@@ -341,7 +341,7 @@
         [h:AoEShapeOptions = "[]"]
         [h,foreach(tempShape,AoEShapes),CODE:{
             [h:isOptionTest = json.contains(subeffectData,"is"+pm.RemoveSpecial(tempShape)+"AOEMulti")]
-            [h,if(isOptionTest): AoEShapeData = ct.a5e.AoESpellDataProcessing(tempShape)]
+            [h,if(isOptionTest): AoEShapeData = ct.a5e.AoEDataProcessing(tempShape)]
             [h,if(isOptionTest): AoEShapeOptions = json.append(AoEShapeOptions,json.set(AoEShapeData,"Shape",pm.RemoveSpecial(tempShape)))]
             [h:subeffectData = json.remove(subeffectData,"is"+pm.RemoveSpecial(tempShape)+"AOEMulti")]
         }]
@@ -349,7 +349,7 @@
         [h:subeffectData = json.set(subeffectData,"AoEOptions",AoEShapeOptions)]
     };
     default:{
-        [h:AoEShapeData = ct.a5e.AoESpellDataProcessing(json.get(subeffectData,"aoeShape"))]
+        [h:AoEShapeData = ct.a5e.AoEDataProcessing(json.get(subeffectData,"aoeShape"))]
 
         [h:subeffectData = json.set(subeffectData,"AoE",json.set(AoEShapeData,"Shape",pm.RemoveSpecial(json.get(subeffectData,"aoeShape"))))]
     }

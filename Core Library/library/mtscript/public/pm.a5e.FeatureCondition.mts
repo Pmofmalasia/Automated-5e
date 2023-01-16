@@ -79,10 +79,10 @@
 		case "01":{
 			[h:pm.CurrentID = json.get(pm.GroupIDTest,0)]
 			[h,MACRO("EndCondition@Lib:pm.a5e.Core"): json.set("","GroupID",pm.CurrentID,"ParentToken",ParentToken)]
-			[h:pm.CondRemovedList = json.toList(json.path.read(json.get(macro.return,"Removed"),"[*]['DisplayName']"),", ")]
-			[h:abilityTable = json.append(json.get(macro.return,"Table"),json.set("","ShowIfCondensed",1,"Header","Condition"+if(pm.ConditionNum>1,"s","")+" Deactivated","FalseHeader","","FullContents","","RulesContents",pm.CondRemovedList,"RollContents","","DisplayOrder","['Rules','Roll','Full']"))]
+			[h:abilityTable = json.get(macro.return,"Table")]
+
 			[h:setProperty("a5e.stat.AllFeatures",json.path.delete(getProperty("a5e.stat.AllFeatures"),"[*][?(@.Name == '"+currentFeatureName+"' && @.Class == '"+currentFeatureClass+"' && @.Subclass == '"+currentFeatureSubclass+"')]['GroupID']"))]
-			[h:abilityEffect=""]
+			[h:FeatureDescription=""]
 			[h:pm.a5e.EffectData = json.append("",json.set("","Class",currentFeatureClass))]
 			[h:abilityClass = currentFeatureClass]
 			[h:pm.a5e.FeatureFormatCall()]

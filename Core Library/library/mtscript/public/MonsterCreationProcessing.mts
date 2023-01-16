@@ -1,8 +1,7 @@
 [h:MonsterData = macro.args]
 [h:MonsterData = pm.a5e.KeyStringsToNumbers(MonsterData)]
-[h:ParentToken = json.get(macro.args,"ParentToken")]
+[h:ParentToken = json.get(MonsterData,"ParentToken")]
 [h:switchToken(ParentToken)]
-[h:closeDialog("Monster Creation")]
 
 [h:setName(json.get(MonsterData,"DisplayName"))]
 [h:setProperty("a5e.stat.CreatureType",json.get(MonsterData,"CreatureType"))]
@@ -52,12 +51,23 @@
         [h:alignmentMorality = "Unaligned"]
     }
 ]
+
 [h:setProperty("a5e.stat.Alignment",json.set("","Order",alignmentOrder,"Morality",alignmentMorality))]
+
+[h:AttributeList = pm.GetAttributes()]
+[h,foreach(TempAttribute,AttributeList): setProperty("a5e.stat.BaseAttributes",json.set(getProperty("a5e.stat.BaseAttributes"),json.get(TempAttribute,"Name"),json.get(MonsterData,"Attribute"+json.get(TempAttribute,"Name"))))]
 
 [h:"<!-- TODO: Update AC after updates to equipment -->"]
 [h:setProperty("a5e.stat.Armor",json.append("",1,json.set("","Name","None","MagicBonus",0,"Type","None","ArmorTier","None","BaseAC",json.get(MonsterData,"AC"),"DexMax",0,"StrReq",0,"StealthDis",0,"MagicItem",0,"ItemBuffs","")))]
 
-[h:setProperty("a5e.stat.RolledMaxHP",json.get(MonsterData,"MaxHP"))]
+[h:tempHitDieObject = json.set("","1d6",0,"1d8",0,"1d10",0,"1d12",0)]
+[h:HitDieNum = json.get(MonsterData,"HitDieNum")]
+[h:setProperty("a5e.stat.MaxHitDice",json.set(tempHitDieObject,"1d"+json.get(MonsterData,"HitDieSize"),HitDieNum))]
+
+[h:HPFromCon = HitDieNum * json.get(getProperty("a5e.stat.AtrMods"),"Constitution")]
+
+[h:setProperty("a5e.stat.RolledMaxHP",json.get(MonsterData,"MaxHP") - HPFromCon)]
+[h:setProperty("a5e.stat.HP",json.get(MonsterData,"MaxHP"))]
 
 [h:setProperty("a5e.stat.BaseSpeed",json.get(MonsterData,"SpeedWalking"))]
 [h:setProperty("a5e.stat.BaseBurrowSpeed",json.get(MonsterData,"SpeedBurrow"))]
@@ -65,13 +75,109 @@
 [h:setProperty("a5e.stat.BaseFlySpeed",json.get(MonsterData,"SpeedFly"))]
 [h:setProperty("a5e.stat.BaseSwimSpeed",json.get(MonsterData,"SpeedSwim"))]
 
-[h:AttributeList = pm.GetAttributes()]
-[h,foreach(TempAttribute,AttributeList): setProperty("a5e.stat.BaseAttributes",json.set(getProperty("a5e.stat.BaseAttributes"),json.get(TempAttribute,"Name"),json.get(MonsterData,"Attribute"+json.get(TempAttribute,"Name"))))]
-
 [h:setProperty("a5e.stat.Proficiency",json.get(MonsterData,"Proficiency"))]
+
+[h:"<-- TODO: Currently missing damage resistances, condition immunities, senses/vision, language (not in input either) -->"]
+[h:MonsterTraitsFeature = ""]
+[h:DamageModCommand = ""]
+
+[h:AllVulnerabilityInstances = ""]
+[h,if(json.contains(MonsterData,"IsVulnerability")),CODE:{
+    [h:PhysicalVulnerability = ""]
+    [h:MagicalVulnerability = ""]
+    [h:AllVulnerability = ""]
+    [h,foreach(tempType,pm.GetDamageTypes("Name","json")),CODE:{
+        [h,switch(json.get(MonsterData,"Vulnerability"+tempType)):
+            case 0: "";
+            case 1: PhysicalVulnerability = listAppend(PhysicalVulnerability,"'"+tempType+"'");
+            case 2: MagicalVulnerability = listAppend(MagicalVulnerability,"'"+tempType+"'");
+            case 3: AllVulnerability = listAppend(AllVulnerability,"'"+tempType+"'")
+        ]
+    }]
+
+    [h,if(PhysicalVulnerability!=""): AllVulnerabilityInstances = listAppend(AllVulnerabilityInstances,"json.set('','DamageTypes',json.append('',"+PhysicalVulnerability+"),'Physical',1)")]
+    [h,if(MagicalVulnerability!=""): AllVulnerabilityInstances = listAppend(AllVulnerabilityInstances,"json.set('','DamageTypes',json.append('',"+MagicalVulnerability+"),'Magical',1)")]
+    [h,if(AllVulnerability!=""): AllVulnerabilityInstances = listAppend(AllVulnerabilityInstances,"json.set('','DamageTypes',json.append('',"+AllVulnerability+"),'All',1)")]
+
+    [h,if(!json.isEmpty(AllVulnerability)): DamageModCommand = DamageModCommand + "[h:mod.Vuln = json.merge(mod.Vuln,json.append('',"+AllVulnerabilityInstances+"))]"]
+};{}]
+
+[h:AllResistanceInstances = ""]
+[h,if(json.contains(MonsterData,"IsResistance")),CODE:{
+    [h:PhysicalResistance = ""]
+    [h:MagicalResistance = ""]
+    [h:AllResistance = ""]
+    [h,foreach(tempType,pm.GetDamageTypes("Name","json")),CODE:{
+        [h,switch(json.get(MonsterData,"Resistance"+tempType)):
+            case 0: "";
+            case 1: PhysicalResistance = listAppend(PhysicalResistance,"'"+tempType+"'");
+            case 2: MagicalResistance = listAppend(MagicalResistance,"'"+tempType+"'");
+            case 3: AllResistance = listAppend(AllResistance,"'"+tempType+"'")
+        ]
+    }]
+
+    [h,if(PhysicalResistance!=""): AllResistanceInstances = listAppend(AllResistanceInstances,"json.set('','DamageTypes',json.append('',"+PhysicalResistance+"),'Physical',1)")]
+    [h,if(MagicalResistance!=""): AllResistanceInstances = listAppend(AllResistanceInstances,"json.set('','DamageTypes',json.append('',"+MagicalResistance+"),'Magical',1)")]
+    [h,if(AllResistance!=""): AllResistanceInstances = listAppend(AllResistanceInstances,"json.set('','DamageTypes',json.append('',"+AllResistance+"),'All',1)")]
+
+    [h,if(!json.isEmpty(AllResistance)): DamageModCommand = DamageModCommand + "[h:mod.Res = json.merge(mod.Res,json.append('',"+AllResistanceInstances+"))]"]
+};{}]
+
+[h:AllImmunityInstances = ""]
+[h,if(json.contains(MonsterData,"IsImmunity")),CODE:{
+    [h:PhysicalImmunity = ""]
+    [h:MagicalImmunity = ""]
+    [h:AllImmunity = ""]
+    [h,foreach(tempType,pm.GetDamageTypes("Name","json")),CODE:{
+        [h,switch(json.get(MonsterData,"Immunity"+tempType)):
+            case 0: "";
+            case 1: PhysicalImmunity = listAppend(PhysicalImmunity,"'"+tempType+"'");
+            case 2: MagicalImmunity = listAppend(MagicalImmunity,"'"+tempType+"'");
+            case 3: AllImmunity = listAppend(AllImmunity,"'"+tempType+"'")
+        ]
+    }]
+
+    [h,if(PhysicalImmunity!=""): AllImmunityInstances = listAppend(AllImmunityInstances,"json.set('','DamageTypes',json.append('',"+PhysicalImmunity+"),'Physical',1)")]
+    [h,if(MagicalImmunity!=""): AllImmunityInstances = listAppend(AllImmunityInstances,"json.set('','DamageTypes',json.append('',"+MagicalImmunity+"),'Magical',1)")]
+    [h,if(AllImmunity!=""): AllImmunityInstances = listAppend(AllImmunityInstances,"json.set('','DamageTypes',json.append('',"+AllImmunity+"),'All',1)")]
+
+    [h,if(!json.isEmpty(AllImmunity)): DamageModCommand = DamageModCommand + "[h:mod.Immun = json.merge(mod.Immun,json.append('',"+AllImmunityInstances+"))]"]
+};{}]
+
+[h,if(DamageModCommand!=""): MonsterTraitsFeature = json.set(MonsterTraitsFeature,"CallDamageMod",DamageModCommand)]
+
+[h,if(json.contains(MonsterData,"IsConditionImmun")),CODE:{
+    [h:ConditionImmunityList = ""]
+    [h,foreach(tempCondition,pm.a5e.GetBaseConditions("Name","json")),CODE:{
+        [h,if(json.contains(MonsterData,tempCondition+"Immunity")): ConditionImmunityList = listAppend(ConditionImmunityList,"'"+tempCondition+"'")]
+    }]
+    
+    [h,if(ConditionImmunityList != ""),CODE:{
+        [h:ConditionImmunityFunctionCommand = "[h:ConditionImmunityInstances = json.append(ConditionImmunityInstances,json.set('','All',1,'Conditions',json.append('',"+ConditionImmunityList+")))]"]
+
+        [h:MonsterTraitsFeature = json.set(MonsterTraitsFeature,"CallCondImmun",ConditionImmunityFunctionCommand)]
+    };{}]
+};{}]
+
+[h,if(MonsterTraitsFeature != ""),CODE:{
+    [h:MonsterTraitsFeature = json.set(MonsterTraitsFeature,
+        "Name","MonsterTraits",
+        "DisplayName","Monster Traits",
+        "Class","Monster",
+        "Subclass","",
+        "Level",1,
+        "Library","SRD",
+        "IsDisplayed",1,
+        "IsActive",1,
+        "MagicItemLink","None"
+    )]
+
+    [h:setProperty("a5e.stat.AllFeatures",json.append("",MonsterTraitsFeature))]
+};{}]
 
 [h:MonsterCR = json.get(MonsterData,"CR")]
 [h,if(!isNumber(MonsterCR)): MonsterCR = eval(MonsterCR)]
 [h:setProperty("a5e.stat.CR",MonsterCR)]
 [h:setProperty("a5e.stat.XP",json.get(MonsterData,"XP"))]
-[h,MACRO("BaseSkillSelection@Lib:pm.a5e.Core"): json.set("","NextInput","MonsterSpellcastingCreation")]
+[h:closeDialog("Monster Creation")]
+[h,MACRO("BaseSkillSelection@Lib:pm.a5e.Core"): json.set("","ParentToken",ParentToken)]

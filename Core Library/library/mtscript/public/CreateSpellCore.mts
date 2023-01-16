@@ -19,7 +19,9 @@
 [h,if(json.get(sCastTime,"Value")==""),CODE:{
 	[h:CastTimeString = ""]
 };{
-	[h:CastTimeString = json.get(sCastTime,"Value")+" "+json.get(sCastTime,"Units")+if(json.get(sCastTime,"Value")==1,"","s")]
+	[h:CastTimeUnits = json.get(sCastTime,"Units")]
+	[h:StringNeedsValueTest = !and(or(CastTimeUnits=="Action",CastTimeUnits=="Bonus Action",CastTimeUnits=="Reaction"),json.get(sCastTime,"Value")==1)]
+	[h:CastTimeString = if(StringNeedsValueTest,json.get(sCastTime,"Value")+" ","")+CastTimeUnits+if(json.get(sCastTime,"Value")==1,"","s")]
 }]
 [h:castTimeOptions = json.append("","Action","Bonus Action","Reaction","1 Minute","10 Minutes","1 Hour","8 Hours","12 Hours","24 Hours","Custom")]
 [h:previousCustomCastTimeTest = CastTimeString!="" && !json.contains(castTimeOptions,CastTimeString)]
@@ -75,7 +77,9 @@
 
 	[h:spellCreationHTML = spellCreationHTML + "<tr id='rowSourcebook'><th><label for='spellSourcebook'>Spell Sourcebook:</label></th><td><select id='spellSourcebook' name='spellSourcebook'>"+sourcebookOptions+"</select></td></tr>
 
-	<tr id='rowDescription'><th text-align='center' colspan='2'><label for='Description'>Full Spell Description:</label></th colspan='2'></th></tr><tr id='rowSpellTextArea'><th><textarea id='Description' name='Description' rows='10' style='width:177%'></textarea></th>"]
+	<tr id='rowDescription'><th text-align='center' colspan='2'><label for='Description'>Full Spell Description:</label></th colspan='2'></th></tr><tr id='rowSpellTextArea'><th><textarea id='Description' name='Description' rows='10' style='width:177%'></textarea></th>
+
+	<tr id='rowAHLDescription'><th text-align='center' colspan='2'><label for='AHLDescription'>At Higher Levels:</label></th colspan='2'></th></tr><tr id='rowAHLSpellTextArea'><th><textarea id='AHLDescription' name='AHLDescription' rows='3' style='width:177%'></textarea></th>"]
 }]
 
 [h:spellCreationHTML = spellCreationHTML + "</tr><tr><th text-align='center' colspan='2'><input type='submit' id='submitButton' value='Submit'></th></tr>"]

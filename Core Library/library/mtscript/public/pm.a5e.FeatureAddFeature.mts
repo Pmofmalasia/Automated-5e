@@ -49,8 +49,8 @@
 	[h:pm.NewAbilities = json.difference(pm.ChosenAbilities,pm.CurrentAbilities)]
 	[h:pm.RemovedAbilities = json.difference(pm.CurrentAbilities,pm.ChosenAbilities)]
 	[h,MACRO("NewAbilityProcessing@Lib:pm.a5e.Core"): json.set("","Abilities",pm.NewAbilities,"ParentToken",ParentToken)]
-	[h,MACRO("New Ability Addition@Lib:pm.a5e.Core"): macro.return]
-	[h,MACRO("Ability Removal@Lib:pm.a5e.Core"): pm.RemovedAbilities]
+	[h,MACRO("NewFeatureAddition@Lib:pm.a5e.Core"): json.set(macro.return,"ParentToken",ParentToken)]
+	[h,MACRO("FeatureRemoval@Lib:pm.a5e.Core"): json.set("","Features",pm.RemovedAbilities,"ParentToken",ParentToken)]
 	
 	[h:pm.AbilitiesChosenStr = json.toList(json.path.read(getProperty("a5e.stat.AllFeatures"),"[?(@.Master.Name=='"+currentFeatureName+"' && @.Master.Class=='"+currentFeatureClass+"' && @.Master.Subclass=='"+currentFeatureSubclass+"' && @.IsActive > 0)]['DisplayName']"),if(getLibProperty("VerticalDisplay","Lib:pm.a5e.Core")==1,"<br>",", "))]
 }]

@@ -30,7 +30,7 @@
 [h,foreach(SubracePrereq,json.get(pr.Prereqs,"Subrace")): pr.SubraceTest = if(getProperty("a5e.stat.Subrace") == SubracePrereq,1,pr.SubraceTest)]
 [h:"<!-- json.intersection has the dual effect of removing the AllOrOne key from the attribute options AND removing attributes that are not indicated both in the prereqs AND currently enabled on Lib:pm.a5e.Core -->"]
 [h,if(json.get(pr.Prereqs,"Attributes")==""): pr.AttrPrereqOptions = ""; pr.AttrPrereqOptions = json.intersection(json.fields(json.get(pr.Prereqs,"Attributes"),"json"),pm.GetAttributes("Name","json"))]
-[h,foreach(attribute,pr.AttrPrereqOptions): pr.AttrMetCount = if(and(json.get(Attributes,attribute)>=json.get(json.get(pr.Prereqs,"Attributes"),attribute),json.get(json.get(pr.Prereqs,"Attributes"),attribute)>0),pr.AttrMetCount+1,pr.AttrMetCount)]
+[h,foreach(attribute,pr.AttrPrereqOptions): pr.AttrMetCount = if(and(json.get(getProperty("a5e.stat.Attributes"),attribute)>=json.get(json.get(pr.Prereqs,"Attributes"),attribute),json.get(json.get(pr.Prereqs,"Attributes"),attribute)>0),pr.AttrMetCount+1,pr.AttrMetCount)]
 [h,if(json.get(pr.Prereqs,"Attributes")==""): pr.AttributeTest = 1; pr.AttributeTest = if(pr.AttrMetCount>=json.get(json.get(pr.Prereqs,"Attributes"),"AllOrOne"),1,0)]
 [h:pr.Valid = if(and(pr.FeatureTest,pr.LevelTest,pr.ClassTest,pr.SubclassTest,pr.RaceTest,pr.SubraceTest,pr.AttributeTest),1,0)]
 

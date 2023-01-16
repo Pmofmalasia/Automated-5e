@@ -28,10 +28,11 @@
 }]
 
 [h:pm.ConditionsExpired = json.unique(json.path.read(getProperty("a5e.stat.ConditionList"),"[*][?(@.Duration.Expired==1)]['GroupID']"))]
-[h:validConditionEndTriggers = json.path.read(getProperty("a5e.stat.ConditionGroups"),"[*]['EndTriggers'][?(@.EndTurn!=null)]","DEFAULT_PATH_LEAF_TO_NULL")]
+[h:validConditionEndTriggers = json.path.read(getProperty("a5e.stat.ConditionGroups"),"[*][?(@.EndTriggers!='')]","DEFAULT_PATH_LEAF_TO_NULL")]
+[h:validConditionEndTriggers = json.path.read(validConditionEndTriggers,"[*][?(@.EndTriggers.EndTurn!=null)]","DEFAULT_PATH_LEAF_TO_NULL")]
 [h:effectConditionsRemoved = ""]
 [h,foreach(tempConditionGroup,validConditionEndTriggers),CODE:{
-	[h:tempEndTriggers = json.path.read(tempConditionGroup,"EndTriggers.EndTurn")]
+	[h:tempEndTriggers = json.get(json.get(tempConditionGroup,"EndTriggers"),"EndTurn")]
 	[h,switch(json.type(tempEndTriggers)),CODE:
 		case "UNKNOWN":{ 
 			[h,if(tempEndTriggers==1): pm.ConditionsExpired = json.append(pm.ConditionsExpired,json.get(tempConditionGroup,"GroupID"))]
@@ -89,7 +90,7 @@
 [h:setConditionsRemoved = json.unique(json.path.read(setConditionsRemoved,"[*]['DisplayName']"))]
 [h,if(!json.isEmpty(setConditionsRemoved)): abilityTable = json.append(abilityTable,json.set("",
 	"ShowIfCondensed",1,
-	"Header","Conditions on Targets Ending",
+	"Header","Conditions on Other Creatures Ending",
 	"FalseHeader","",
 	"FullContents","",
 	"RulesContents",pm.a5e.CreateDisplayList(setConditionsRemoved),
@@ -106,9 +107,7 @@
 )]
 [h,MACRO("Build Effect@Lib:pm.a5e.Core"): json.set("","CurrentEffects","[]","ToMerge",effectsToMerge,"BaseEffect",pm.a5e.BaseEffectData)]
 [h:pm.a5e.EffectData = macro.return]
-[h,foreach(effect,pm.a5e.EffectData),CODE:{
-    [h:setLibProperty("gd.Effects",json.append(getLibProperty("gd.Effects","Lib:pm.a5e.Core"),effect),"Lib:pm.a5e.Core")]
-}]
+[h,if(!json.isEmpty(pm.a5e.EffectData)): setLibProperty("gd.Effects",json.merge(getLibProperty("gd.Effects","Lib:pm.a5e.Core"),pm.a5e.EffectData),"Lib:pm.a5e.Core")]
 [h,MACRO("OpenEffectsFrame@Lib:pm.a5e.Core"): ""]
 
 [h:setState("Initiative", 0)]

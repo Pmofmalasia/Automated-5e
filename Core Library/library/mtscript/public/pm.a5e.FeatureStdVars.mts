@@ -66,7 +66,7 @@
 	"Portrait",ForcedSummonPortrait,
 	"Handout",ForcedSummonHandout
 )]
-	
+
 [h:a5e.UnifiedAbilities = a5e.GatherAbilities(ParentToken)]
 [h:abilityInfo = json.set(abilityInfo,
 	"Level",abilityLevel,
@@ -75,4 +75,4 @@
 )]
 [h:pm.a5e.OverarchingContext = "Feature"]
 
-[h:abilityEffect = if(ShowFullRules,abilityFullEffect,abilityAbridgedEffect)]
+[h:FeatureDescription = if(ShowFullRules,FeatureFullDescription,FeatureAbridgedDescription)]

@@ -12,7 +12,7 @@
 [h:output.PC = output.PC + json.get(output.Temp,"Player")]
 [h:output.GM = output.GM + json.get(output.Temp,"GM")]
 
-[h:output.Temp=abilityEffect+"</div></div>"]
+[h:output.Temp=FeatureDescription+"</div></div>"]
 [h:output.PC = if(outputTest.NoRules,output.PC,output.PC + output.Temp)]
 [h:output.GM = output.GM + output.Temp]
 

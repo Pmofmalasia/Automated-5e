@@ -77,4 +77,14 @@
 
 [h:pm.PassiveFunction("CondEnd")]
 
-[h:macro.return = json.set("","Table",abilityTable,"Removed",RemovedConditions)]
+[h,if(!json.isEmpty(RemovedConditionsFinal)): abilityTable = json.append(abilityTable,json.set("",
+	"ShowIfCondensed",1,
+	"Header","Conditions Removed",
+	"FalseHeader","",
+	"FullContents","",
+	"RulesContents",pm.a5e.CreateDisplayList(json.path.read(RemovedConditionsFinal,"[*][?(@.IsAssociated!=1 || @.IsAssociated==null)]['DisplayName']"),"and"),
+	"RollContents","",
+	"DisplayOrder","['Rules','Roll','Full']"
+))]
+
+[h:macro.return = json.set("","Table",abilityTable,"Removed",RemovedConditionsFinal)]

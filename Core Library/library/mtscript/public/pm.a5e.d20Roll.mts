@@ -13,6 +13,7 @@
 [h:d20ForcedAdvantage = if(json.get(d20Data,"ForcedAdvantage")=="",0,json.get(d20Data,"ForcedAdvantage"))]
 [h:d20Advantage = if(json.get(d20Data,"Advantage")=="",0,json.get(d20Data,"Advantage"))]
 [h:d20Disadvantage = if(json.get(d20Data,"Disadvantage")=="",0,json.get(d20Data,"Disadvantage"))]
+[h:d20AdvantageMessageArray = json.get(d20Data,"AdvantageMessageArray")]
 
 [h:d20RolledNum = 1 + d20ExtraRolls]
 
@@ -24,21 +25,26 @@
     [h:d20AdvantageBalance = if(or(and(d20Disadvantage == 0,d20Advantage == 0),and(d20Disadvantage !=0,d20Advantage != 0)),0,if(d20Disadvantage == 0,1,-1))]
     [h:d20RolledNum = if(d20AdvantageBalance!=0,d20RolledNum + 1,d20RolledNum)]
 };{
-    [h:d20ForcedAdvantageBalance = if(or(and(d20Disadvantage == 0,d20Advantage == 0),and(d20Disadvantage !=0,d20Advantage != 0)),0,if(d20Disadvantage == 0,1,-1))]
+    [h:d20ForcedAdvantageBalance = if(or(and(d20Disadvantage == 0,d20Advantage == 0),and(d20Disadvantage != 0,d20Advantage != 0)),0,if(d20Disadvantage == 0,1,-1))]
 
     [h,switch(d20ForcedAdvantageBalance),CODE:
         case -1:{
 			[h:d20AdvantageBalance = -1]
 			[h:d20RolledNum = d20RolledNum + 1]
+            [h:d20ForcedAdvantageMessage = "Disadvantage Forced"]
         };
         case 0:{
 			[h:d20AdvantageBalance = 0]
+            [h:d20ForcedAdvantageMessage = "Neutral Roll Forced"]
         };
         case 1:{
 			[h:d20AdvantageBalance = 1]
 			[h:d20RolledNum = d20RolledNum + 1]
+            [h:d20ForcedAdvantageMessage = "Advantage Forced"]
         }
     ]
+
+    [h,if(!json.contains(d20AdvantageMessageArray,d20ForcedAdvantageMessage)): d20AdvantageMessageArray = json.merge("['"+d20ForcedAdvantageMessage+"']",d20AdvantageMessageArray)]
 }]
 
 [h:d20RolledNum = d20RolledNum - json.length(d20AllRolls)]

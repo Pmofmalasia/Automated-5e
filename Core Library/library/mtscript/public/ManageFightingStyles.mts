@@ -56,8 +56,8 @@
 	[h:fs.New = json.difference(fs.ChosenAbilities,thisGroupFSCurrent)]
 	[h:fs.Removed = json.difference(thisGroupFSCurrent,fs.ChosenAbilities)]
 	[h,MACRO("NewAbilityProcessing@Lib:pm.a5e.Core"): json.set("","Abilities",fs.New,"ParentToken",ParentToken)]
-	[h,MACRO("New Ability Addition@Lib:pm.a5e.Core"): json.path.put(macro.return,"['Abilities'][*]","AssociatedClass",json.get(TempGroup,"Class"))]
-	[h,MACRO("Ability Removal@Lib:pm.a5e.Core"): fs.Removed]
+	[h,MACRO("NewFeatureAddition@Lib:pm.a5e.Core"): json.path.put(macro.return,"['Abilities'][*]","AssociatedClass",json.get(TempGroup,"Class"))]
+	[h,MACRO("FeatureRemoval@Lib:pm.a5e.Core"): json.set("","Features",fs.Removed,"ParentToken",ParentToken)]
 	
 	[h:fs.ChosenStr = json.toList(json.path.read(getProperty("a5e.stat.AllFeatures"),"[?(@.Class=='FightingStyle' && @.AssociatedClass=='"+json.get(TempGroup,"Class")+"' && @.IsActive > 0)]['DisplayName']"),if(getLibProperty("VerticalDisplay","Lib:pm.a5e.Core")==1,"<br>",", "))]
 	

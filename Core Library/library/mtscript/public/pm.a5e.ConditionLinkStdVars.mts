@@ -91,4 +91,4 @@
 	"Library",cond.Library
 )]
 
-[h:abilityEffect = if(ShowFullRules,abilityFullEffect,abilityAbridgedEffect)]
+[h:FeatureDescription = if(ShowFullRules,FeatureFullDescription,FeatureAbridgedDescription)]

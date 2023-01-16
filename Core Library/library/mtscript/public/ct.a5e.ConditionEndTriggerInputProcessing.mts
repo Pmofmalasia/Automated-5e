@@ -8,7 +8,8 @@
     };
     case "Always":{
         [h:ConditionEndTriggers = json.set(ConditionEndTriggers,thisInstance,if(json.get(subeffectData,"isEndCondition"+thisInstance+"Save")=="None",1,json.set("","SaveType",json.get(subeffectData,"isEndCondition"+thisInstance+"Save"))))]
-    }
+    };
+    default:{}
 ]
 [h:subeffectData = json.remove(subeffectData,"isEndCondition"+thisInstance)]
 [h:subeffectData = json.remove(subeffectData,"isEndCondition"+thisInstance+"Save")]

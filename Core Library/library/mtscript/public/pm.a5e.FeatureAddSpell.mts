@@ -1,3 +1,4 @@
+[h:"<!-- Likely replaced by the general spell prep/knowledge macros -->"]
 [h:pm.AllSpellInfo = arg(1)]
 [h:pm.a5e.FeatureComponentStdVars(arg(0))]
 

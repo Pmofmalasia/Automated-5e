@@ -25,18 +25,14 @@
 [h:cond.ShowFullRules=if(IsTooltip,1,if(cond.ShowFullRulesOverride=="",if(number(getLibProperty("ChatIndividual","Lib:pm.a5e.Core")),getProperty("a5e.stat.FullAbilityRules"),getLibProperty("FullAbilityRules","Lib:pm.a5e.Core")),cond.ShowFullRulesOverride))]
 
 [h:cond.SetBy = json.get(cond.Info,"SetBy")]
-[h:cond.abilityInfo = json.set("",
-	"Name",cond.abilityName,
-	"Class",cond.abilityClass,
-	"Subclass",cond.abilitySubclass,
+[h:cond.abilityInfo = json.set(cond.Info,
 	"DisplayName",cond.abilityDisplayName,
-	"Tooltip",0,
+	"Tooltip",IsTooltip,
 	"Type","Condition",
 	"ParentToken",ParentToken,
 	"OverarchingContext",pm.a5e.OverarchingContext,
 	"UnifiedAbilities",a5e.UnifiedAbilities,
 	"Context",cond.Context,
-	"Library",cond.Library,
 	"FullRules",cond.ShowFullRules
 )]
 
@@ -61,4 +57,4 @@
 	"Handout",cond.ForcedSummonHandout
 )]
 
-[h:cond.abilityEffect = if(cond.ShowFullRules,cond.abilityFullEffect,cond.abilityAbridgedEffect)]
+[h:cond.FeatureDescription = if(cond.ShowFullRules,cond.FeatureFullDescription,cond.FeatureAbridgedDescription)]

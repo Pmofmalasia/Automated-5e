@@ -1,4 +1,10 @@
 [h:DCData = json.get(arg(0),"DCData")]
+[h:thisTokenModifiableComponents = json.get(arg(0),"ModifiableComponents")]
+[h:thisTokenDamageDealt = json.get(thisTokenModifiableComponents,"Damage")]
+[h:thisTokenConditionInfo = json.get(thisTokenModifiableComponents,"Conditions")]
+[h:thisTokenConditionsRemovedInfo = json.get(thisTokenModifiableComponents,"ConditionsRemoved")]
+[h:thisTokenConditionsApplied = json.get(thisTokenModifiableComponents,"ConditionsApplied")]
+[h:thisTokenTargetSpecificEffects = json.get(thisTokenModifiableComponents,"TargetSpecific")]
 
 [h:DamageModInfo = if(json.get(DCData,"DamageModifier")=="","{}",json.get(DCData,"DamageModifier"))]
 [h:isDamageHalved = if(json.get(DamageModInfo,"DamageHalved")=="",0,json.get(DamageModInfo,"DamageHalved"))]
@@ -49,19 +55,17 @@
 
 [h:"<!-- Note: Conditions that require failure to be removed are evaled in success and vice versa, since there are 3 options (success, failure, neither) -->"]
 [h:ConditionsRemovedSaveInfo = json.get(DCData,"ConditionsRemoved")]
-[h:broadcast("save succ")]
 [h,if(ConditionsRemovedSaveInfo != ""): 
     preventConditionRemovalTest = json.get(ConditionsRemovedSaveInfo,"Failure");
     preventConditionRemovalTest = 0
 ]
 [h,if(preventConditionRemovalTest==1): thisTokenConditionsRemovedInfo = "{}"]
 
-[h,if(json.type(effTargetSpecific)=="OBJECT"),CODE:{
-    [h:targetSpecificDamage = json.get(effTargetSpecific,targetToken)]
-    [h:targetSpecificDamageTypes = json.fields(targetSpecificDamage)]
+[h:targetSpecificDamageTypes = "[]"]
+[h,if(json.type(thisTokenTargetSpecificEffects)=="OBJECT"),CODE:{
+    [h:"<!-- TODO: Add target specific effect stuff -->"]
 };{
-    [h:targetSpecificDamage = "{}"]
-    [h:targetSpecificDamageTypes = ""]
+    
 }]
 
 [h,foreach(damageType,targetSpecificDamageTypes),CODE:{
@@ -71,3 +75,10 @@
         thisTokenDamageDealt = json.path.set(thisTokenDamageDealt,"['Damage']['"+damageType+"']",json.get(targetSpecificDamage,damageType)+allTargetsDamage)
     ]			
 }]
+
+[h:macro.return = json.set("",
+    "Conditions",thisTokenConditionInfo,
+    "Damage",thisTokenDamageDealt,
+    "ConditionsRemoved",thisTokenConditionsRemovedInfo,
+    "ConditionsApplied",thisTokenConditionsApplied
+)]

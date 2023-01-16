@@ -13,8 +13,12 @@
 ]
 
 [h,switch(componentToGet),CODE:
-    case "Save":{
-        
+    case "SaveDC":{
+        [h:SaveDCData = json.get(json.get(json.get(allEffectData,whichEffect),"ToResolve"),"SaveDC")]
+        [h,if(json.type(componentToGetData)=="OBJECT"):
+            macro.return = json.get(SaveDCData,json.get(componentToGetData,"SecondaryKey"));
+            macro.return = SaveDCData
+        ]
     };
     case "Check":{
         

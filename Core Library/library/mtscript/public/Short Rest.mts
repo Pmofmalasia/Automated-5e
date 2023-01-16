@@ -79,7 +79,12 @@
 			"Value",ResourceRestoredFinal
 		))]
 	}]
-	[h:setProperty("a5e.stat.AllFeatures",json.path.set(getProperty("a5e.stat.AllFeatures"),"[?(@.Name=='"+json.get(Ability,"Name")+"' && @.Class=='"+json.get(Ability,"Class")+"' && @.Subclass=='"+json.get(Ability,"Subclass")+"')]['Resource']",ResourceRestoredFinal))]
+	
+	[h:needsPutTest = !json.isEmpty(json.path.read(getProperty("a5e.stat.AllFeatures"),"[?("+pm.a5e.PathFeatureFilter(Ability)+" && @.Resource==null)]","DEFAULT_PATH_LEAF_TO_NULL"))]
+	[h,if(needsPutTest):
+		setProperty("a5e.stat.AllFeatures",json.path.put(getProperty("a5e.stat.AllFeatures"),"[?("+pm.a5e.PathFeatureFilter(Ability)+")]","Resource",ResourceRestoredFinal));
+		setProperty("a5e.stat.AllFeatures",json.path.set(getProperty("a5e.stat.AllFeatures"),"[?("+pm.a5e.PathFeatureFilter(Ability)+")]['Resource']",ResourceRestoredFinal))
+	]
 }]
 
 [h:pm.PassiveFunction("ShortRest")]
@@ -88,7 +93,7 @@
 [h:state.Bloodied=if(getProperty("a5e.stat.HP")/getProperty("a5e.stat.MaxHP") <= 0.5, 1, 0)]
 [h:bar.Health = getProperty("a5e.stat.HP") / getProperty("a5e.stat.MaxHP")]
 
-[h:getProperty("a5e.stat.DeathSaves",json.set("", "Successes",0,"Failures",0))]
+[h:setProperty("a5e.stat.DeathSaves",json.set("","Successes",0,"Failures",0))]
 
 [h:ClassFeatureData = json.set("",
 	"Flavor",Flavor,

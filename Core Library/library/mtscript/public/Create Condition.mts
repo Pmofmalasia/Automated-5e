@@ -47,7 +47,7 @@
 	case 0: cn.Subclass = "";
 	case 1: cn.TypeInput=" cn.Subclass | None,"+pm.GetSubclasses(cn.Class,"DisplayName")+" | Subclass Associated with Condition | LIST | VALUE=STRING ";
 	case 2: cn.TypeInput=" cn.Subclass | None,"+pm.GetSubraces(cn.Class,"DisplayName")+" | Subrace Associated with Condition | LIST | VALUE=STRING ";
-	case 3: cn.Subclass = " cn.Subclass |  | Spell Associated with Condition ";
+	case 3: cn.TypeInput = " cn.Subclass |  | Spell Associated with Condition ";
 	case 4: cn.Subclass = "";
 	case 5: cn.Subclass = "";
 	default: cn.Subclass = ""
@@ -59,7 +59,7 @@
 
 [h,if(cn.HasTiers): cn.Final = json.set(cn.Final,"HasTiers",cn.HasTiers)]
 
-[h:"<!-- Currently unable to add non-base conditions. May want to add later, but don't really care to for now since not used in official 5e content afaik. TODO: MAYBE add 'movement' conditions (which I made up), but prone is the only one I'd think would be used and it's made as a 'base' condition -->"]
+[h:"<!-- Currently unable to add non-base conditions. May want to add later, but don't really care to for now since not used in official 5e content afaik. TODO: Add spell conditions as an option (e.g. Confusion gets used) and MAYBE add 'movement' conditions (which I made up) -->"]
 [h,if(cn.HasAssociatedConditions),CODE:{
 	[h:associatedCondInput = " junkVar | ----------------------------------- Associated Conditions ----------------------------------- | | LABEL | SPAN=TRUE "]
 	[h,foreach(baseCondition,pm.a5e.GetBaseConditions()): associatedCondInput = listAppend(associatedCondInput," choice."+json.get(baseCondition,"Name")+" |  | "+json.get(baseCondition,"DisplayName")+" | CHECK ","##")]
@@ -67,6 +67,8 @@
 	
 	[h:associatedConditionList = "[]"]
 	[h,foreach(baseCondition,pm.a5e.GetBaseConditions()): associatedConditionList = if(eval("choice."+json.get(baseCondition,"Name")),json.append(associatedConditionList,json.get(baseCondition,"Name","Class","Subclass","DisplayName")),associatedConditionList)]
+
+	[h:cn.Final = json.set(cn.Final,"AssociatedConditions",associatedConditionList)]
 };{}]
 
 [h,macro("Create Feature Core@Lib:pm.a5e.Core"): json.set("","Feature",cn.Final,"PrereqsTest",0)]

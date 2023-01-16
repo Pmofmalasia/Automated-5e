@@ -1,31 +1,35 @@
 [h:hp.Data = macro.args]
 [h:Flavor = json.get(hp.Data,"Flavor")]
 [h:ParentToken = json.get(hp.Data,"ParentToken")]
-[h:hp.Source = json.get(hp.Data,"SourceType")]
-[h:hp.IsCrit = json.get(hp.Data,"IsCrit")]
-[h:hp.IsCrit = if(hp.IsCrit=="",0,hp.IsCrit)]
-[h:hp.DamageDealt = json.get(hp.Data,"DamageDealt")]
 [h:switchToken(ParentToken)]
 [h:IsTooltip = 0]
 [h:a5e.UnifiedAbilities = a5e.GatherAbilities(ParentToken)]
 [h:pm.a5e.EffectData = "[]"]
 [h:pm.a5e.OverarchingContext = "Damage"]
 
-[h:"<!-- Temporary adjustment to data from the Change HP Input macro -->"]
-[h:tempDamageDealt = ""]
-[h,if(json.type(hp.DamageDealt)=="OBJECT"),CODE:{
-	[h,foreach(damageType,json.fields(hp.DamageDealt)): tempDamageDealt = json.append(tempDamageDealt,json.set(json.get(hp.DamageDealt,damageType),"DamageType",damageType))]
-	[h:hp.DamageDealt = tempDamageDealt]
-};{}]
+[h:hp.DamageDealt = json.get(hp.Data,"DamageDealt")]
+[h:hp.Source = json.get(hp.Data,"SourceType")]
+[h:hp.IsCrit = json.get(hp.Data,"IsCrit")]
+[h:hp.IsCrit = if(hp.IsCrit=="",0,hp.IsCrit)]
+[h,if(json.get(hp.Data,"BypassConc")==""): 
+	hp.BypassConc = 0;
+	hp.BypassConc = json.get(hp.Data,"BypassConc")
+]
+[h,if(json.get(hp.Data,"ConcSaveBonus")==""): 
+	hp.ConcSaveBonus = 0;
+	hp.ConcSaveBonus = json.get(hp.Data,"ConcSaveBonus")
+]
 
-[h:hp.TypesDealt = json.intersection(json.append(pm.GetDamageTypes("Name","json"),"None - Modify Manually","Healing","TempHP"),json.unique(json.path.read(hp.DamageDealt,"[*]['DamageType']")))]
+[h:hp.TypesDealt = json.intersection(json.append(pm.GetDamageTypes("Name","json"),"None","Healing","TempHP"),json.unique(json.path.read(hp.DamageDealt,"[*]['DamageType']")))]
 [h:hp.DmgModData = pm.a5e.DamageModCalc(hp.Data)]
 
 [h:hp.FinalDamageDealt = json.set("","Healing",0)]
 [h:hp.DamageDealtString = ""]
 [h,foreach(damagetype,hp.TypesDealt),CODE:{
-	[h,if(damagetype == "None - Modify Manually"),CODE:{
-		[h:hp.FinalDamageDealt = json.set(hp.FinalDamageDealt,"Untyped",json.get(hp.DamageDealt,damagetype))]
+	[h,if(damagetype == "None"),CODE:{
+		[h:thisDamageTypeInfo = json.path.read(hp.DamageDealt,"[*][?(@.DamageType=='"+damagetype+"')]['Total']")]
+
+		[h:hp.FinalDamageDealt = json.set(hp.FinalDamageDealt,"Untyped",math.arraySum(thisDamageTypeInfo))]
 	};{
 		[h:hp.VulnTest = json.contains(json.get(hp.DmgModData,"Vulnerability"),damagetype)]
 		[h:hp.ResTest = json.contains(json.get(hp.DmgModData,"Resistance"),damagetype)]
@@ -73,34 +77,34 @@
 }]
 [h:hp.FinalDamageDealt = json.remove(hp.FinalDamageDealt,"Healing")]
 
-[h:"<!-- Temp HP is slightly more complex due to effects that are tied to Temp HP. Will code in later. May need to have a way to loop in any conditions to be set with the Temp HP to accomodate situations where old Temp HP > new, but new has a condition attached. -->"]
-[h:hp.TempHP = json.get(hp.FinalDamageDealt,"Temp HP")]
+[h:hp.TempHP = json.get(hp.FinalDamageDealt,"TempHP")]
 [h,if(hp.TempHP==0 || hp.TempHP==""),CODE:{
 	[h:hp.TempHPGain = 0]
 };{
-	[h:hp.TempHPGain = json.get(hp.FinalDamageDealt,"Temp HP")]
+	[h:hp.TempHPGain = json.get(hp.FinalDamageDealt,"TempHP")]
 }]
-[h:hp.FinalDamageDealt = json.remove(hp.FinalDamageDealt,"Temp HP")]
+[h:hp.FinalDamageDealt = json.remove(hp.FinalDamageDealt,"TempHP")]
 
 [h:hp.TypesDealt = json.fields(hp.FinalDamageDealt,"json")]
-[h:hp.Damage = 0]
+[h:TotalDamage = 0]
 [h,foreach(damageType,hp.TypesDealt),CODE:{
-	[h:hp.Damage = hp.Damage + json.get(hp.FinalDamageDealt,damageType)]
+	[h:TotalDamage = TotalDamage + json.get(hp.FinalDamageDealt,damageType)]
 }]
 
 [h:"<!-- Things get very funky around simultaneous damage and healing when it comes to crossing the 0 HP threshhold or already being downed. Unlikely to actually come up since simultaneous healing/damage on the same target is rare/nonexistent without homebrew so will add in options later. -->"]
 [h,if(getProperty("a5e.stat.TempHP")==0),CODE:{
 	[h:hp.TempEndTest = 0]
+	[h:RemainingDamage = TotalDamage]
 };{
-	[h:hp.NewTemp = max(0,getProperty("a5e.stat.TempHP")-hp.Damage)]
+	[h:hp.NewTemp = max(0,getProperty("a5e.stat.TempHP") - TotalDamage)]
 	[h:hp.TempDiff = getProperty("a5e.stat.TempHP") - hp.NewTemp]
 	[h:setProperty("a5e.stat.TempHP",hp.NewTemp)]
-	[h:hp.Damage = hp.Damage-hp.TempDiff]
+	[h:RemainingDamage = RemainingDamage - hp.TempDiff]
 	[h:hp.TempEndTest = (getProperty("a5e.stat.TempHP")==0)]
 }]
 
 [h:hp.AlreadyDying = if(getProperty("a5e.stat.HP")==0,1,0)]
-[h:setProperty("a5e.stat.HP",min(getProperty("a5e.stat.HP") - hp.Damage + hp.Healing,getProperty("a5e.stat.MaxHP")))]
+[h:setProperty("a5e.stat.HP",min(getProperty("a5e.stat.HP") - RemainingDamage + hp.Healing,getProperty("a5e.stat.MaxHP")))]
 
 [h,if(hp.AlreadyDying && hp.Healing!=0),CODE:{
 	[h:setProperty("a5e.stat.DeathSaves",json.set(getProperty("a5e.stat.DeathSaves"),"Successes",0,"Failures",0))]
@@ -110,27 +114,45 @@
 	[h:hp.Resuscitated = 0]
 }]
 
-[h,if(getProperty("a5e.stat.HP")<1 && hp.Damage!=0),CODE:{
+[h:NoHPConditionTable = "[]"]
+[h,if(getProperty("a5e.stat.HP")<1 && TotalDamage!=0),CODE:{
 	[h:hp.Resuscitated = 0]
 	[h,if(hp.AlreadyDying): DeathFailures = min(3,json.get(getProperty("a5e.stat.DeathSaves"),"Failures")+if(hp.IsCrit,2,1)); DeathFailures = 0]
 	[h:setProperty("a5e.stat.DeathSaves",json.set(getProperty("a5e.stat.DeathSaves"),"Failures",DeathFailures))]
 	[h:hp.DeadTest = or(abs(getProperty("a5e.stat.HP"))>=getProperty("a5e.stat.MaxHP"),DeathFailures==3)]
 	
-	[h,if(!hp.AlreadyDying),CODE:{
-		[h:setState("Dying",1)]
-		[h:setState("Unconscious",1)]
+	[h,if(!hp.AlreadyDying && !hp.DeadTest),CODE:{
+		[h:DyingConditionInfo = json.set("",
+			"Conditions",json.append("",pm.a5e.GetSpecificCondition("Dying","Condition")),
+			"EndInfo","{}",
+			"GroupID",pm.a5e.CreateConditionID(ParentToken),
+			"Target",ParentToken,
+			"SetBy",""
+		)]
+		[h,MACRO("ApplyCondition@Lib:pm.a5e.Core"): DyingConditionInfo]
+		[h:NoHPConditionTable = json.get(macro.return,"Table")]
 	};{}]
-	
+
 	[h,if(hp.DeadTest),CODE:{
-		[h:setState("Dead",1)]
+		[h:DeadConditionInfo = json.set("",
+			"Conditions",json.append("",pm.a5e.GetSpecificCondition("Dead","Condition")),
+			"EndInfo","{}",
+			"GroupID",pm.a5e.CreateConditionID(ParentToken),
+			"Target",ParentToken,
+			"SetBy",""
+		)]
+		[h,MACRO("ApplyCondition@Lib:pm.a5e.Core"): DeadConditionInfo]
+		[h:NoHPConditionTable = json.get(macro.return,"Table")]
 	};{}]
 	
-	[h:getProperty("a5e.stat.HP") = 0]
+	[h:setProperty("a5e.stat.HP",0)]
 };{
 	[h:hp.DeadTest = 0]
 	[h,if(hp.Resuscitated),CODE:{
-		[h:setState("Dying",0)]
-		[h:setState("Unconscious",0)]
+		[h:DeadOrDyingGroups = json.path.read(getProperty("a5e.stat.ConditionList"),"[*][?(@.Name == 'Dead' || @.Name=='Dying')]['GroupID']")]
+
+		[h,MACRO("EndCondition@Lib:pm.a5e.Core"): json.set("","GroupID",DeadOrDyingGroups,"ParentToken",ParentToken)]
+		[h:NoHPConditionTable = json.get(macro.return,"Table")]
 	};{}]
 }]
 
@@ -143,22 +165,47 @@
 [h:LinkColor = pm.LinkColor()]
 
 [h:abilityTable = "[]"]
-[h,if(hp.TempHPGain!=0):
-	abilityTable = json.append(abilityTable,json.set("",
-	"ShowIfCondensed",1,
-	"Header","Temp HP",
-	"FalseHeader","",
-	"FullContents","<span style='font-size:1.5em; color:"+HealingColor+"'>"+abs(hp.TempHP)+"</span>",
-	"RulesContents","",
-	"RollContents","",
-	"DisplayOrder","['Rules','Roll','Full']"
-	))
-]
+[h,if(hp.TempHPGain!=0),CODE:{
+	[h:TempHPLinks = json.path.read(getProperty("a5e.stat.ConditionGroups"),"[*][?(@.EndTriggers.TempHPLost==1)]")]
+	[h,if(json.isEmpty(TempHPLinks)),CODE:{
+		[h,if(hp.TempHPGain > getProperty("a5e.stat.TempHP")):
+			abilityTable = json.append(abilityTable,json.set("",
+				"ShowIfCondensed",1,
+				"Header","Temporary HP",
+				"FalseHeader","",
+				"FullContents","<span style='font-size:1.5em; color:"+HealingColor+"'>"+abs(hp.TempHP)+"</span>",
+				"RulesContents","",
+				"RollContents","",
+				"DisplayOrder","['Rules','Roll','Full']"
+			));
+			abilityTable = json.append(abilityTable,json.set("",
+				"ShowIfCondensed",1,
+				"Header","Temporary HP",
+				"FalseHeader","",
+				"FullContents","Not Gained - Lower than Current",
+				"RulesContents","",
+				"RollContents","",
+				"DisplayOrder","['Rules','Roll','Full']"
+			))
+		]
+		[h,if(hp.TempHPGain > getProperty("a5e.stat.TempHP")): setProperty("a5e.stat.TempHP",hp.TempHPGain)]
+	};{
+		[h:abilityTable = json.append(abilityTable,json.set("",
+			"ShowIfCondensed",1,
+			"Header","Temporary HP",
+			"FalseHeader","",
+			"FullContents","TODO: Add ability to choose whether or not to accept Temp HP via chat link if there is a linked condition.",
+			"RulesContents","",
+			"RollContents","",
+			"DisplayOrder","['Rules','Roll','Full']"
+		))]
+		[h:"<!-- TODO: also add above link to the 'Not Gained - Lower than Current' option above for if Temp HP is lower but it has a linked condition -->"]
+	}]
+};{}]
 
 [h:"<!-- Currently, hp.DamageDealtString looks odd if there is a combination of healing and damage. May want to fix later. -->"]
-[h:hp.ChangeValue = hp.Healing - hp.Damage]
-[h:abilityTable = json.append(abilityTable,
-	json.set("",
+[h:hp.ChangeValue = hp.Healing - TotalDamage]
+[h:abilityTable = json.append(abilityTable,json.set("",
 	"ShowIfCondensed",1,
 	"Header","Total "+if(hp.ChangeValue>0,"Healing","Damage"),
 	"FalseHeader","",
@@ -166,8 +213,9 @@
 	"RulesContents",if(listCount(hp.DamageDealtString)>1,hp.DamageDealtString+" = ",""),
 	"RollContents","",
 	"DisplayOrder","['Rules','Roll','Full']"
-	)
-)]
+))]
+
+[h:abilityTable = json.merge(abilityTable,NoHPConditionTable)]
 
 [h:"<!-- I changed this to a code block for a specific purpose and forgot what it was. If this is still here, I never remembered. -->"]
 [h,if(hp.AlreadyDying),CODE:{
@@ -206,8 +254,8 @@
 	))
 ]
 
-[h,if(getProperty("a5e.stat.Concentration")!="" && hp.Damage>0),CODE:{
-	[h:hp.ConcDC = max(10,floor(hp.Damage/2))]
+[h,if(getProperty("a5e.stat.Concentration")!="" && TotalDamage>0 && !hp.BypassConc),CODE:{
+	[h:hp.ConcDC = max(10,floor(TotalDamage/2))]
 	[h,MACRO("Save@Lib:pm.a5e.Core"): 
 	json.set(hp.Data,
 	"Save","Concentration Save",
@@ -240,5 +288,4 @@
 
 [h:pm.PassiveFunction("AfterDamaged")]
 [h:"<!-- Things Still Needed: Shapechange break (later); Temp HP if there is a condition attached to the lesser value (new or old) -->"]
-
 [h:macro.return = json.set("","Table",abilityTable)]

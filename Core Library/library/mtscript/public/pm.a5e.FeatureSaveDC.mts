@@ -15,9 +15,34 @@
 		[h:pm.DC = 8 + json.get(getProperty("a5e.stat.AtrMods"),pm.DCPrimeStat) + getProperty("a5e.stat.Proficiency")]
 	}]
 };{
-	[h:pm.baseDC = json.get(pm.DCInfo,"Base")]
-	[h:pm.DCPrimeStat = json.get(pm.DCInfo,"Stat")]
-	[h:pm.DC = pm.baseDC + json.get(getProperty("a5e.stat.AtrMods"),pm.DCPrimeStat) + getProperty("a5e.stat.Proficiency")]
+	[h,switch(json.get(pm.DCInfo,"DCMethod")),CODE:
+		case "Custom":{
+			[h:pm.baseDC = json.get(pm.DCInfo,"Base")]
+			[h:pm.DCPrimeStat = json.get(pm.DCInfo,"Stat")]
+			[h:pm.DC = pm.baseDC + json.get(getProperty("a5e.stat.AtrMods"),pm.DCPrimeStat) + getProperty("a5e.stat.Proficiency")]
+		};
+		case "SharedDC":{
+			[h:pm.PassiveFunction("SharedDC",json.set("","SpecificFeature",json.get(pm.DCInfo,"Name")+json.get(pm.DCInfo,"Class")+json.get(pm.DCInfo,"Subclass"),"ParentToken",ParentToken))]
+		};
+		case "SpellSave":{
+			[h:pm.PassiveFunction("SharedDC",json.set("","SpecificFeature",json.get(pm.DCInfo,"Name")+json.get(pm.DCInfo,"Class")+json.get(pm.DCInfo,"Subclass"),"ParentToken",ParentToken))]
+		};
+		default:{
+			[h:pm.baseDC = json.get(pm.DCInfo,"Base")]
+			[h:pm.DCPrimeStat = json.get(pm.DCInfo,"Stat")]
+			[h:pm.DC = pm.baseDC + json.get(getProperty("a5e.stat.AtrMods"),pm.DCPrimeStat) + getProperty("a5e.stat.Proficiency")]
+		}
+	]
+}]
+
+[h,if(json.type(pm.SaveType)=="UNKNOWN"),CODE:{
+	[h:ForcedSaveDisplay = pm.GetDisplayName(pm.SaveType,"sb.Attributes")]
+};{
+	[h:tempForcedSkillDisplay = ""]
+	[h,foreach(tempSave,pm.SaveType),CODE:{
+		[h:tempForcedSkillDisplay = json.append(tempForcedSkillDisplay,pm.GetDisplayName(tempSave,"sb.Attributes"))]
+	}]
+	[h:ForcedSaveDisplay = pm.a5e.CreateDisplayList(tempForcedSkillDisplay,"or")]
 }]
 
 [h:isDamageHalved = json.get(pm.SaveModifiers,"DamageHalved")]
@@ -59,15 +84,13 @@
 	"ShowIfCondensed",1,
 	"Header","Saving Throw",
 	"FalseHeader","",
-	"FullContents",pm.SaveType,
+	"FullContents",ForcedSaveDisplay,
 	"RulesContents"," - <b>DC <span style='font-size:1.5em'>"+pm.DCFinal+"</span></b>",
 	"RollContents","",
 	"DisplayOrder","['Full','Rules','Roll']")
 )]
 
 [h:effectsToMerge = json.append("",json.set("","SaveDC",saveDataFinal))]
-
-[h:return(!IsTooltip)]
 
 [h,MACRO("Build Effect@Lib:pm.a5e.Core"): json.set("","CurrentEffects",pm.a5e.EffectData,"ToMerge",effectsToMerge,"BaseEffect",pm.a5e.BaseEffectData,"WhichEffect",whichEffect)]
 

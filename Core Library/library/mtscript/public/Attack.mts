@@ -145,7 +145,8 @@
 		"IsAttack",1,
 		"Modifier",1,
 		"ScalingBase",0,
-		"Target",thisAttackTarget
+		"Target",thisAttackTarget,
+		"PrimeStat",PrimeStat
 	)]
 	[h:thisAttackDamage = "[]"]
 	[h,foreach(tempDamageInstance,preReworkDamageData): thisAttackDamage = json.append(thisAttackDamage,pm.a5e.DamageRoll(tempDamageInstance,preReworkNonDamageData,json.append("","Attack","WeaponAttack")))]

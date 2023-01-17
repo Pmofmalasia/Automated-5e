@@ -44,11 +44,17 @@
 
 [h,if(json.contains(damage.ThisInstance,"AHLFlatBonus")): damage.FlatBonus = damage.FlatBonus + (damage.Scaling * json.get(damage.ThisInstance,"AHLFlatBonus"))]
 
-[h:damage.FlatBonusRules = if(damage.IsModBonus,substring(PrimeStat,0,3),"")]
+[h:damage.PrimeStat = json.get(damage.NonDamageData,"PrimeStat")]
+[h:damage.FlatBonusRules = if(damage.IsModBonus,substring(damage.PrimeStat,0,3),"")]
 [h,if(damage.FlatBonus==0): listAppend(damage.FlatBonusRules,damage.FlatBonus," + ")]
 
-[h:"<!-- TODO: needs primestatmod sent somehow -->"]
-[h,if(damage.IsModBonus): damage.PrimeStatBonus = PrimeStatMod; damage.PrimeStatBonus = 0]
+[h,if(damage.IsModBonus),CODE:{
+    [h:damage.PrimeStatMod = json.get(getProperty("a5e.stat.AtrMods"),damage.PrimeStat)]
+    [h:damage.PrimeStatBonus = damage.PrimeStatMod]
+};{
+    [h:damage.PrimeStatMod = 0]
+    [h:damage.PrimeStatBonus = 0]
+}]
 [h:damage.FlatBonusTotal = damage.PrimeStatBonus + damage.FlatBonus]
 
 [h:damage.AddedRolledRules = ""]

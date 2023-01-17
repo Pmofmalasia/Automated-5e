@@ -185,7 +185,7 @@
 
 [h:subeffect.DamageInfo = "[]"]
 [h,foreach(tempDamageInstance,json.get(SubeffectData,"Damage")),CODE:{
-	[h:thisDamageTypeInfo = pm.a5e.DamageRoll(tempDamageInstance,SubeffectFunctionPrefixes,DamagePassiveFunctions)]
+	[h:thisDamageTypeInfo = pm.a5e.DamageRoll(tempDamageInstance,SubeffectNonDamageProperties,SubeffectFunctionPrefixes)]
 	[h:"<!-- TODO: SubeffectFunctionPrefixes won't work here because spells don't know if they're a spell attack or not before they enter subeffects (technically they could, but meh). This would be solved by eliminating separate instances for Spell vs. Weapon vs. Attack damage, and just tracking these things better and using them to filter out things that don't apply. Requires a lot of work in making sure variables overlap enough for spells vs. attacks, though. -->"]
 
 	[h:subeffect.DamageInfo = json.append(subeffect.DamageInfo,thisDamageTypeInfo)]

@@ -1,20 +1,18 @@
-[h:AllDamageArgs = json.remove(macro.args,0)]
-[h:pm.baseDieNum=arg(1)]
-[h:pm.baseDieSize=arg(2)]
-[h:pm.DamageBonus=arg(3)]
-[h:pm.DamageType=arg(4)]
-[h,if(argCount()>5),CODE:{
-	[h:damNoModification = if(json.get(arg(5),"NoModification")=="",0,json.get(arg(5),"NoModification"))]
-	[h:damIsWeapon = if(json.get(arg(5),"IsWeapon")=="",0,json.get(arg(5),"IsWeapon"))]
-	[h:damIsSpell = if(json.get(arg(5),"IsSpell")=="",0,json.get(arg(5),"IsSpell"))]
+[h:pm.baseDieNum=arg(0)]
+[h:pm.baseDieSize=arg(1)]
+[h:pm.DamageBonus=arg(2)]
+[h:pm.DamageType=arg(3)]
+[h,if(argCount()>4),CODE:{
+	[h:damNoModification = if(json.get(arg(4),"NoModification")=="",0,json.get(arg(4),"NoModification"))]
+	[h:damIsWeapon = if(json.get(arg(4),"IsWeapon")=="",0,json.get(arg(4),"IsWeapon"))]
+	[h:damIsSpell = if(json.get(arg(4),"IsSpell")=="",0,json.get(arg(4),"IsSpell"))]
+	[h:damIsSpell = if(json.get(arg(4),"IsAttack")=="",0,json.get(arg(4),"IsAttack"))]
 };{
 	[h:damNoModification = 0]
 	[h:damIsWeapon = 0]
 	[h:damIsSpell = 0]
+	[h:damIsAttack = 0]
 }]
-[h:pm.a5e.FeatureComponentStdVars(arg(0))]
-
-[h:pm.a5e.FeatureDamageRoll(AllDamageArgs)]
 
 [h:DamageColor = pm.DamageColor()]
 [h:HealingColor = pm.HealingColor()]
@@ -35,6 +33,24 @@
 	default: DamageTypeDisplay = pm.GetDisplayName(pm.DamageType,"sb.DamageTypes")
 ]
 
+[h:FeatureDamageData = json.append("",json.set("",
+	"DamageType",pm.DamageType,
+	"DamageDieNumber",pm.baseDieNum,
+	"DamageDieSize",DieSizeFinal,
+	"DamageFlatBonus",pm.DamageBonus,
+	"IsModBonus",preReworkUseDamageMod
+))]
+
+[h:FeatureNonDamageData = json.set("",
+    "IsSpell",damIsSpell,
+    "IsWeapon",damIsWeapon,
+    "IsAttack",damIsAttack,
+    "Modifier",1,
+    "ScalingBase",0,
+    "Target",,
+    "PrimeStat",
+)]
+
 [h,if(IsTooltip),CODE:{
 	[h:abilityTable = json.append(abilityTable,json.set("",
 		"ShowIfCondensed",1,
@@ -46,7 +62,9 @@
 		"DisplayOrder","['Rules','Roll','Full']")
 	)]
 };{
-	[h:pm.DamageRoll = pm.DieRoller(pm.baseDieNum,pm.baseDieSize,pm.DamageBonus)]
+	[h:pm.DamageRoll = pm.a5e.DamageRoll(FeatureDamageData,FeatureNonDamageData,"[]")]
+
+    
 	[h:pm.DamageRoll = json.set(pm.DamageRoll,
 		"DamageType",pm.DamageType,
 		"NoModification",damNoModification,
@@ -65,10 +83,4 @@
 		"RollContents",if(or(pm.baseDieNum==0,and(pm.baseDieNum==1,pm.DamageBonus==0)),"",json.get(pm.DamageRoll,"String")+" = "),
 		"DisplayOrder","['Rules','Roll','Full']"
 	))]
-
-	[h:effectsToMerge = json.append("",json.set("","Damage",json.append("",pm.DamageRoll)))]
-
-	[h,MACRO("Build Effect@Lib:pm.a5e.Core"): json.set("","CurrentEffects",pm.a5e.EffectData,"ToMerge",effectsToMerge,"BaseEffect",pm.a5e.BaseEffectData,"WhichEffect",whichEffect)]
-
-	[h:pm.a5e.EffectData = macro.return]
 }]

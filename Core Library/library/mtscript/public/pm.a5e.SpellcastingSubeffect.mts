@@ -164,7 +164,8 @@
 	"IsWeapon",0,
 	"IsAttack",spell.IsAttack,
 	"Modifier",1,
-	"ScalingBase",spell.AHL
+	"ScalingBase",spell.AHL,
+	"PrimeStat",PrimeStat
 )]
 [h:SpellDamagePassiveFunctions = json.append("","Spell")]
 [h,if(spell.IsAttack): SpellDamagePassiveFunctions = json.append(SpellDamagePassiveFunctions,"Attack","SpellAttack")]

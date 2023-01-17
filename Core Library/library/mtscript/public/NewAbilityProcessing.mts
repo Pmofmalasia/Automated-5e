@@ -271,7 +271,7 @@
 [h:"<!-- Add new spells gained from outside of the regular class spell list to an array. Does not currently transfer marker data, will wait until after spell data storage is reworked. -->"]
 [h:lu.NewSpells = "[]"]
 [h:lu.NewSpellsRaw = json.path.read(lu.NewAbilities,"[*][?(@.SpellsAlwaysActive != null)]['SpellsAlwaysActive']","DEFAULT_PATH_LEAF_TO_NULL")]
-[h:broadcast(lu.NewSpellsRaw)]
+
 [h,foreach(spellGroup,lu.NewSpellsRaw): lu.NewSpells = json.merge(lu.NewSpells,spellGroup)]
 
 [h:macro.return = json.set("","Abilities",lu.NewAbilities,"Buttons",lu.NewButtons,"Spells",lu.NewSpells)]

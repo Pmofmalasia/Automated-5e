@@ -5,37 +5,78 @@
     [h:ModifyFilter = ""]
     [h,if(json.get(ModifyFilterData,"DamageTypeInclusive")!=""): ModifyFilter = listAppend(ModifyFilter,"@.DamageType in "+json.get(ModifyFilterData,"DamageTypeInclusive")," && ")]
     [h,if(json.get(ModifyFilterData,"DamageTypeExclusive")!=""): ModifyFilter = listAppend(ModifyFilter,"@.DamageType nin "+json.get(ModifyFilterData,"DamageTypeExclusive")," && ")]
-    [h,if(json.get(ModifyFilterData,"IsWeaponDamage")!=""): ModifyFilter = listAppend(ModifyFilter,"@.IsWeapon == "+json.get(ModifyFilterData,"IsWeaponDamage")+"'"," && ")]
+    [h,if(json.get(ModifyFilterData,"IsWeaponDamage")!=""): ModifyFilter = listAppend(ModifyFilter,"@.IsWeapon == '"+json.get(ModifyFilterData,"IsWeaponDamage")+"'"," && ")]
     [h,if(json.get(ModifyFilterData,"IsSpellDamage")!=""): ModifyFilter = listAppend(ModifyFilter,"@.IsSpell == '"+json.get(ModifyFilterData,"IsSpellDamage")+"'"," && ")]
-    [h,if(ModifyFilter==""):
-        ModifiablePriorDamage = PriorDamage;
-        ModifiablePriorDamage = json.path.read(PriorDamage,"[*][?("+ModifyFilter+")]")
-    ]
+    [h,if(ModifyFilter != ""): ModifyFilter = " && "+ModifyFilter]
+    [h:ModifiablePriorDamage = json.path.put(PriorDamage,"[*][?(@.NoModification==0"+ModifyFilter+")]","CanBeModified",1)]
 }]
 
-[h:AdjustPriorRollsHow = json.get(tempInstance,"ModifyHow")]
+[h:"<!-- Note: There may be some benefit here to having passive effects simply collect damage modification instances rather than modifying damage as they come up. Then instances can be reordered/sorted and checked again to see if their conditions apply later (eg add damage instance/change damage type first, then other stuff second)"]
+[h:"<!-- Note: Min/Max roll and change damage type could be done across all damage instances with one json.path.set (two for crit), if they did not need to update their string. UseMaxRoll requires a loop, so not done. May consider doing this in the future. -->"]
+[h:AdjustPriorRollsHow = json.get(tempInstance,"Method")]
 [h,switch(AdjustPriorRollsHow),CODE:
     case "MinimumRoll":{
-        [h:MinimumRoll = json.get(AdjustPriorRollsHow,"Value")]
-        [h:ModifiedDamage = ModifiablePriorDamage]
-        [h,foreach(damageInstance,ModifiedDamage),CODE:{
-            [h:"<!-- Could do json.path here instead of loops -->"]
+        [h:MinimumRoll = json.get(tempInstance,"Value")]
+        [h,foreach(damageInstance,ModifiablePriorDamage),CODE:{
+            [h:FlatBonus = json.get(damageInstance,"Bonus")]
+            [h:FlatBonusString = json.get(damageInstance,"BonusString")]
             [h:tempDamageArray = json.get(damageInstance,"Array")]
-            [h,foreach(tempRoll,tempDamageArray): tempDamageArray = if(MinimumRoll>tempRoll,json.set(tempDamageArray,roll.count,MinimumRoll),tempDamageArray)]
+            [h:tempDamageArray = json.path.set(tempDamageArray,"[?(@ < "+MinimumRoll+")]",MinimumRoll)]
             [h:tempCritDamageArray = json.get(damageInstance,"CritArray")]
-            [h,foreach(tempRoll,tempCritDamageArray): tempCritDamageArray = if(MinimumRoll>tempRoll,json.set(tempCritDamageArray,roll.count,MinimumRoll),tempCritDamageArray)]
-            [h:ModifiedDamage = json.set(ModifiedDamage,roll.count,json.set(damageInstance,"Array",tempDamageArray,"CritArray",tempCritDamageArray))]
+            [h,if(tempCritDamageArray != ""): tempCritDamageArray = json.path.set(tempCritDamageArray,"[?(@ < "+MinimumRoll+")]",MinimumRoll)]
+
+            [h:tempNewString = json.toList(tempDamageArray," + ")]
+            [h,if(tempCritDamageArray!=""):
+                NewCritString = tempNewString+json.toList(tempCritDamageArray," + ")+FlatBonusString;
+                NewCritString = ""
+            ]
+            [h:NewString = tempNewString+FlatBonusString]
+
+            [h:NewTotal = math.arraySum(tempDamageArray) + FlatBonus]
+            [h:NewCritTotal = NewTotal + math.arraySum(tempCritDamageArray)]
+
+            [h:NewDamageInstance = json.set(damageInstance,
+                "Array",tempDamageArray,
+                "CritArray",tempCritDamageArray,
+                "String",NewString,
+                "CritString",NewCritString,
+                "Total",NewTotal,
+                "CritTotal",NewCritTotal
+            )]
+
+            [h,if(json.get(damageInstance,"CanBeModified")): ModifiablePriorDamage = json.set(ModifiablePriorDamage,roll.count,NewDamageInstance)]
         }]
     };
     case "MaximumRoll":{
-        [h:MaximumRoll = json.get(AdjustPriorRollsHow,"Value")]
-        [h:ModifiedDamage = ModifiablePriorDamage]
-        [h,foreach(damageInstance,ModifiedDamage),CODE:{
+        [h:MaximumRoll = json.get(tempInstance,"Value")]
+        [h,foreach(damageInstance,ModifiablePriorDamage),CODE:{
+            [h:FlatBonus = json.get(damageInstance,"Bonus")]
+            [h:FlatBonusString = json.get(damageInstance,"BonusString")]
             [h:tempDamageArray = json.get(damageInstance,"Array")]
-            [h,foreach(tempRoll,tempDamageArray): tempDamageArray = if(MaximumRoll<tempRoll,json.set(tempDamageArray,roll.count,MaximumRoll),tempDamageArray)]
+            [h:tempDamageArray = json.path.set(tempDamageArray,"[?(@ > "+MaximumRoll+")]",MaximumRoll)]
             [h:tempCritDamageArray = json.get(damageInstance,"CritArray")]
-            [h,foreach(tempRoll,tempCritDamageArray): tempCritDamageArray = if(MaximumRoll<tempRoll,json.set(tempCritDamageArray,roll.count,MaximumRoll),tempCritDamageArray)]
-            [h:ModifiedDamage = json.set(ModifiedDamage,roll.count,json.set(damageInstance,"Array",tempDamageArray,"CritArray",tempCritDamageArray))]
+            [h,if(tempCritDamageArray != ""): tempCritDamageArray = json.path.set(tempCritDamageArray,"[?(@ > "+MaximumRoll+")]",MaximumRoll)]
+
+            [h:tempNewString = json.toList(tempDamageArray," + ")]
+            [h,if(tempCritDamageArray!=""):
+                NewCritString = tempNewString+json.toList(tempCritDamageArray," + ")+FlatBonusString;
+                NewCritString = ""
+            ]
+            [h:NewString = tempNewString+FlatBonusString]
+            
+            [h:NewTotal = math.arraySum(tempDamageArray) + FlatBonus]
+            [h:NewCritTotal = NewTotal + math.arraySum(tempCritDamageArray)]
+
+            [h:NewDamageInstance = json.set(damageInstance,
+                "Array",tempDamageArray,
+                "CritArray",tempCritDamageArray,
+                "String",NewString,
+                "CritString",NewCritString,
+                "Total",NewTotal,
+                "CritTotal",NewCritTotal
+            )]
+
+            [h,if(json.get(damageInstance,"CanBeModified")): ModifiablePriorDamage = json.set(ModifiablePriorDamage,roll.count,NewDamageInstance)]
         }]
     };
     case "Reroll":{
@@ -44,42 +85,46 @@
         [h:"<!-- Only need this reroll stuff and adjusting the strings for min/max rolls. Maybe change min/max to json.path. Will likely want to make a table line for rerolls at the very least. -->"]     
     };
     case "ChangeDamageType":{
-        [h:ModifiedDamage = json.path.set(ModifiablePriorDamage,"[*]['DamageType']",json.get(AdjustPriorRollsHow,"DamageType"))]
+        [h:ModifiablePriorDamage = json.path.set(ModifiablePriorDamage,"[*]['DamageType']",json.get(tempInstance,"DamageType"))]
     };
     case "UseMaxRoll":{
-        [h:ModifiedDamage = ModifiablePriorDamage]
-        [h,foreach(damageInstance,ModifiedDamage),CODE:{
+        [h,foreach(damageInstance,ModifiablePriorDamage),CODE:{
+            [h:FlatBonus = json.get(damageInstance,"Bonus")]
+            [h:FlatBonusString = json.get(damageInstance,"BonusString")]
             [h:tempNewString = json.toList(json.get(damageInstance,"Dice")," + ")]
             [h,if(json.get(damageInstance,"CritDice")!=""):
-                NewCritString = tempNewString+json.toList(json.get(damageInstance,"CritDice")," + ")+pm.PlusMinus(json.get(damageInstance,"Bonus"),1);
+                NewCritString = tempNewString+json.toList(json.get(damageInstance,"CritDice")," + ")+FlatBonusString;
                 NewCritString = ""
             ]
-            [h:NewString = tempNewString+pm.PlusMinus(json.get(damageInstance,"Bonus"),1)]
-            [h:ModifiedDamage = json.set(ModifiedDamage,roll.count,json.set(damageInstance,
+            [h:NewString = tempNewString+FlatBonusString]
+
+            [h:ModifiablePriorDamage = json.set(ModifiablePriorDamage,roll.count,json.set(damageInstance,
                 "Array",json.get(damageInstance,"Dice"),
                 "CritArray",json.get(damageInstance,"CritDice"),
                 "String",NewString,
-                "CritString",NewCritString
+                "CritString",NewCritString,
+                "Total",json.get(damageInstance,"MaxTotal"),
+                "CritTotal",json.get(damageInstance,"CritMaxTotal")
             ))]
         }]
     };
     case "AddDamage":{
-        [h:DamageInstanceToAdd = json.get(AdjustPriorRollsHow,"DamageInstance")]
+        [h:DamageInstanceToAdd = json.get(tempInstance,"DamageInstance")]
 
         [h:UntypedTest = json.get(DamageInstanceToAdd,"DamageType") == "Untyped"]
         [h,if(UntypedTest),CODE:{
-            [h:NewDamageType = json.path.read(PriorDamage,"[*][?(@.PrimaryDamageType == 1)]['DamageType']","DEFAULT_PATH_LEAF_TO_NULL")]
+            [h:NewDamageType = json.path.read(ModifiablePriorDamage,"[*][?(@.PrimaryDamageType == 1)]['DamageType']","DEFAULT_PATH_LEAF_TO_NULL")]
             [h,if(json.isEmpty(NewDamageType)): 
-                NewDamageType = json.get(json.get(PriorDamage,0),"DamageType");
+                NewDamageType = json.get(json.get(ModifiablePriorDamage,0),"DamageType");
                 NewDamageType = json.get(NewDamageType,0)
             ]
-            [h:PriorDamage = json.append(PriorDamage,json.set(DamageInstanceToAdd,"DamageType",NewDamageType))]
+            [h:ModifiablePriorDamage = json.append(ModifiablePriorDamage,json.set(DamageInstanceToAdd,"DamageType",NewDamageType))]
         };{
-            [h:PriorDamage = json.append(PriorDamage,DamageInstanceToAdd)]
+            [h:ModifiablePriorDamage = json.append(ModifiablePriorDamage,DamageInstanceToAdd)]
         }]
-        
-        [h:ModifiedDamage = "[]"]
     }
 ]
+
+[h:PriorDamage = json.path.delete(ModifiablePriorDamage,"[*]['CanBeModified']")]
 
 [h:"<!-- Set PriorDamage here so restarting the loop is based on the changes made so far. -->"]

@@ -74,16 +74,17 @@
 ]
 
 [h:damage.Total = math.arraySum(damage.Array) + damage.TotalAddedFlatBonus]
-[h:damage.RollDisplay = json.toList(damage.Array," + ")+pm.PlusMinus(damage.PrimeStatBonus,damage.IsModBonus)+pm.PlusMinus(damage.FlatBonus,0)+if(json.isEmpty(damage.AddedFlatBonus),""," + "+json.toList(damage.AddedFlatBonus," + "))]
+[h:damage.FlatDisplay = pm.PlusMinus(damage.PrimeStatBonus,damage.IsModBonus)+pm.PlusMinus(damage.FlatBonus,0)+if(json.isEmpty(damage.AddedFlatBonus),""," + "+json.toList(damage.AddedFlatBonus," + "))]
+[h:damage.RollDisplay = json.toList(damage.Array," + ")+damage.FlatDisplay]
 [h:damage.Max = math.arraySum(damage.FinalDice) + damage.TotalAddedFlatBonus]
 
 [h:"<!-- TODO: Temporarily separate out addedRolledDice and regular rolled dice array so the order can be natty dice, natty crit dice, added dice, added crit dice in the array -->"]
 [h:damage.FinalCritDice = json.merge(damage.AllCritDice,damage.AddedRolledDice)]
 [h:damage.CritArray = damage.Array]
 [h,foreach(die,damage.FinalCritDice): damage.CritArray = json.append(damage.CritArray,eval("1d"+die))]
-[h:damage.CritTotal = math.arraySum(damage.CritArray) + damage.TotalAddedFlatBonus]
+[h:damage.CritTotal = math.arraySum(damage.CritArray) + damage.Total]
 [h:damage.CritRollDisplay = json.toList(damage.CritArray," + ")+pm.PlusMinus(damage.PrimeStatBonus,damage.IsModBonus)+pm.PlusMinus(damage.FlatBonus,0)+if(json.isEmpty(damage.AddedFlatBonus),""," + "+json.toList(damage.AddedFlatBonus," + "))]
-[h:damage.CritMax = math.arraySum(damage.FinalCritDice) + damage.TotalAddedFlatBonus]
+[h:damage.CritMax = math.arraySum(damage.FinalCritDice) + damage.Max]
 
 [h:damage.NonDamageData = json.remove(damage.NonDamageData,"Target")]
 [h:return(0,json.set(damage.NonDamageData,
@@ -93,6 +94,7 @@
     "MaxTotal",damage.Max,
     "Dice",damage.FinalDice,
     "Bonus",damage.TotalAddedFlatBonus,
+    "BonusString",damage.FlatDisplay,
     "Formula",damage.RulesFinal,
     "CritFormula",damage.CritRulesFinal,
     "CritDice",damage.FinalCritDice,

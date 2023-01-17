@@ -79,7 +79,7 @@
 [h:lu.FightingStyleTest = !json.isEmpty(json.path.read(lu.NewAbilities,"[*][?(@.FightingStyleList!=null)]","DEFAULT_PATH_LEAF_TO_NULL"))]
 [h,if(lu.FightingStyleTest),CODE:{
 	[h:needsMacroTest = !json.contains(getMacros("json"),"Manage Fighting Styles")]
-	[h,if(needsMacroTest): createMacro(json.set("","label","Manage Fighting Styles","command",'[MACRO("ManageFightingStyles@Lib:pm.a5e.Core"): json.set("","LevelUp",0,"Class","'+lu.Class+'","ParentToken",ParentToken)]',"group"," New Macros","color",pm.BorderColor("FightingStyle"),"fontColor",pm.TitleColor("FightingStyle"),"applyToSelected",1,"playerEditable",0,"minWidth",89))]
+	[h,if(needsMacroTest): createMacro(json.set("","label","Manage Fighting Styles","command",'[MACRO("ManageFightingStyles@Lib:pm.a5e.Core"): json.set("","LevelUp",0,"Class","'+lu.Class+'","ParentToken",currentToken())]',"group"," New Macros","color",pm.BorderColor("FightingStyle"),"fontColor",pm.TitleColor("FightingStyle"),"applyToSelected",1,"playerEditable",0,"minWidth",89))]
 };{}]
 
 [h,MACRO("NewAbilityProcessing@Lib:pm.a5e.Core"): json.set("","Abilities",lu.NewAbilities,"ParentToken",ParentToken)]

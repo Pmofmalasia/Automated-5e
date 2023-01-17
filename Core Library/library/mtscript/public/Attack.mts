@@ -149,11 +149,19 @@
 	)]
 	[h:thisAttackDamage = "[]"]
 	[h,foreach(tempDamageInstance,preReworkDamageData): thisAttackDamage = json.append(thisAttackDamage,pm.a5e.DamageRoll(tempDamageInstance,preReworkNonDamageData,json.append("","Attack","WeaponAttack")))]
+	
+	[h:ModifyDamageRollData = "[]"]
 
 	[h:pm.PassiveFunction("AttackRoll")]
 	[h:pm.PassiveFunction("WeaponAttackRoll")]
 	[h:pm.PassiveFunction("AttackRollTargeted",json.set("","ParentToken",thisAttackTarget))]
 	[h:pm.PassiveFunction("WeaponAttackRollTargeted",json.set("","ParentToken",thisAttackTarget))]
+	
+	[h,if(!json.isEmpty(ModifyDamageRollData)),CODE:{
+		[h,MACRO("ModifyDamageRoll@Lib:pm.a5e.Core"): json.append("",thisAttackDamage,ModifyDamageRollData)]
+
+		[h:thisAttackDamage = macro.return]
+	};{}]	
 
 	[h:AllAttacksDmg = json.append(AllAttacksDmg,thisAttackDamage)]
 }]

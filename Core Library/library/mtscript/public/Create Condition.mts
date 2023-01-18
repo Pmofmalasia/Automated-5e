@@ -8,7 +8,7 @@
 	" junkVar | -------------------------------------------- Basic Condition Info -------------------------------------------- |  | LABEL | SPAN=TRUE ",
 	" cn.Name | -- Name Here -- | Enter Condition Name ",
 	" cn.Type | Base Condition,Class Feature,Racial Feature,Spell,Feat,Background | Condition Association | LIST ",
-	" cn.ConditionSubtype | None,Boon,Curse,Disease,Poison | Condition Counts As | RADIO | VALUE=STRING ",
+	" cn.ConditionSubtype | None,Boon,Curse,Disease,Poison,Posession | Condition Counts As | RADIO | VALUE=STRING ",
 	" cn.HasTiers |  | Condition Has Multiple Tiers With Varying Effects | CHECK ",
 	" cn.HasAssociatedConditions |  | Always Adds Other Conditions When Gained | CHECK ",
 	" cn.Source | "+cn.Sourcebooks+" | Associated Sourcebook | LIST | VALUE=STRING "

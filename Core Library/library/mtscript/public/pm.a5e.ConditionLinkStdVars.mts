@@ -1,15 +1,21 @@
 [h:abilityName = pm.RemoveSpecial(abilityName)]
 [h:abilitySubclass = pm.RemoveSpecial(abilitySubclass)]
+[h:abilityPriorData = arg(0)]
+[h:ParentToken=json.get(abilityPriorData,"ParentToken")]
 
-[h:cond.Info = json.get(json.path.read(getProperty("a5e.stat.ConditionList"),"[?(@.Name=='"+abilityName+"' && @.Class=='"+abilityClass+"' && @.Subclass=='"+abilitySubclass+"' && @.IsActive>0)]"),0)]
-[h:cond.Library = json.get(cond.Info,"Library")]
-[h:cond.SetBy = json.get(cond.Info,"SetBy")]
+[h:abilityInfo = json.path.read(getProperty("a5e.stat.ConditionList"),"[?(@.Name=='"+abilityName+"' && @.Class=='"+abilityClass+"' && @.Subclass=='"+abilitySubclass+"' && @.IsActive>0)]")]
 
-[h:DisplayObject = json.get(cond.Info,"Settings")]
+[h,if(json.isEmpty(abilityInfo)):
+	assert(0,"Condition "+abilityDisplayName+" not found on "+getName(ParentToken)+"!");
+	abilityInfo = json.get(abilityInfo,0)
+]
+
+[h:cond.Library = json.get(abilityInfo,"Library")]
+[h:cond.SetBy = json.get(abilityInfo,"SetBy")]
+
+[h:DisplayObject = json.get(abilityInfo,"Settings")]
 [h,if(DisplayObject == ""): DisplayObject = "{}"]
 
-[h:abilityPriorData = arg(0)]
-[h:ParentToken = json.get(arg(0),"ParentToken")]
 [h:IsTooltip = json.get(arg(0),"IsTooltip")]
 [h:abilityContext = json.get(arg(0),"Context")]
 [h:pm.a5e.OverarchingContext = json.get(arg(0),"OverarchingContext")]
@@ -31,7 +37,9 @@
 [h:ShowFullRules=if(IsTooltip,1,if(ShowFullRulesOverride=="",if(getLibProperty("ChatIndividual","Lib:pm.a5e.Core")==1,getProperty("a5e.stat.FullAbilityRules"),getLibProperty("FullAbilityRules","Lib:pm.a5e.Core")),ShowFullRulesOverride))]
 [h:abilityTable="[]"]
 
-[h:abilityInfo = json.set("",
+[h:a5e.UnifiedAbilities = a5e.GatherAbilities(ParentToken)]
+
+[h:abilityInfo = json.set(abilityInfo,
 	"Flavor",Flavor,
 	"ParentToken",ParentToken,
 	"Tooltip",IsTooltip,
@@ -45,12 +53,10 @@
 	"BodyFont",BodyFont,
 	"OverarchingContext",pm.a5e.OverarchingContext,
 	"Context",abilityContext,
-	"Class",abilityClass,
-	"Type","Feature",
-	"Subclass",abilitySubclass,
-	"Name",abilityName,
+	"Type","Condition",
 	"DisplayName",abilityDisplayName,
-	"FalseName",abilityFalseName
+	"FalseName",abilityFalseName,
+	"UnifiedAbilities",a5e.UnifiedAbilities
 )]
 		
 [h:cond.NeedsSetByInfo = json.append(pm.GetClasses("Name","json"),"Feat")]
@@ -58,11 +64,14 @@
 	[h:switchToken(cond.SetBy)]
 	[h:SetByAbilities = a5e.GatherAbilities(cond.SetBy)]
 	[h:abilityLevel = json.get(json.get(json.path.read(getProperty("a5e.stat.AllFeatures"),"[?(@.Name=='"+abilityName+"' && @.Class=='"+abilityClass+"' && @.Subclass=='"+abilitySubclass+"')]"),0),"Level")]
-	[h,if(json.get(cond.Info,"HasTiers")==1): abilityTier = math.arraySum(json.path.read(getProperty("a5e.stat.ConditionList"),"[*][?(@.Name=='"+abilityName+"')]['Level']")); abilityTier = json.get(cond.Info,"Level")]
+	[h,if(json.get(abilityInfo,"HasTiers")==1): abilityTier = math.arraySum(json.path.read(getProperty("a5e.stat.ConditionList"),"[*][?(@.Name=='"+abilityName+"')]['Level']")); abilityTier = json.get(abilityInfo,"Level")]
 	[h:switchToken(ParentToken)]
 };{
-	[h:abilityLevel = json.get(cond.Info,"Level")]
-	[h,if(json.get(cond.Info,"HasTiers")==1): abilityTier = math.arraySum(json.path.read(getProperty("a5e.stat.ConditionList"),"[*][?(@.Name=='"+abilityName+"')]['Level']")); abilityTier = abilityLevel]
+	[h:abilityLevel = json.get(abilityInfo,"Level")]
+	[h,if(json.get(abilityInfo,"HasTiers")==1):
+		abilityTier = math.arraySum(json.path.read(getProperty("a5e.stat.ConditionList"),"[*][?(@.Name=='"+abilityName+"')]['Level']"));
+		abilityTier = abilityLevel
+	]
 	[h:SetByAbilities = "[]"]
 }]
 
@@ -82,13 +91,6 @@
 	"Image",ForcedSummonImage,
 	"Portrait",ForcedSummonPortrait,
 	"Handout",ForcedSummonHandout
-	)]
-	
-[h:a5e.UnifiedAbilities = a5e.GatherAbilities(ParentToken)]
-[h:abilityInfo = json.set(abilityInfo,
-	"Level",abilityLevel,
-	"UnifiedAbilities",a5e.UnifiedAbilities,
-	"Library",cond.Library
 )]
 
 [h:FeatureDescription = if(ShowFullRules,FeatureFullDescription,FeatureAbridgedDescription)]

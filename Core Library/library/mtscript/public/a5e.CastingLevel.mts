@@ -1,7 +1,8 @@
 [h,if(argCount()>0),CODE:{
-    [h,if(json.type(arg(0))=="ARRAY")
-        SpecificClassFilter = " && @.Class in "+arg(0);
-        SpecificClassFilter = " && @.Class == '"+arg(0)+"'"
+    [h:ClassOptions = arg(0)]
+    [h,if(json.type(ClassOptions)=="ARRAY"):
+        SpecificClassFilter = " && @.Class in "+ClassOptions;
+        SpecificClassFilter = " && @.Class == '"+ClassOptions+"'"
     ]
 };{
     [h:SpecificClassFilter = ""]

@@ -45,7 +45,10 @@
 [h,if(json.contains(damage.ThisInstance,"AHLFlatBonus")): damage.FlatBonus = damage.FlatBonus + (damage.Scaling * json.get(damage.ThisInstance,"AHLFlatBonus"))]
 
 [h:damage.PrimeStat = json.get(damage.NonDamageData,"PrimeStat")]
-[h:damage.FlatBonusRules = if(damage.IsModBonus,substring(damage.PrimeStat,0,3),"")]
+[h,if(damage.IsModBonus):
+    damage.FlatBonusRules = substring(damage.PrimeStat,0,3);
+    damage.FlatBonusRules = ""
+]
 [h,if(damage.FlatBonus==0): listAppend(damage.FlatBonusRules,damage.FlatBonus," + ")]
 
 [h,if(damage.IsModBonus),CODE:{
@@ -65,7 +68,7 @@
 [h:"<!-- TODO: Needs transmission of targets through NonDamageData or whatever it's called -->"]
 [h,foreach(tempPrefix,damage.FunctionPrefixes),CODE:{
     [h:pm.PassiveFunction(tempPrefix+"Damage")]
-    [h:pm.PassiveFunction(tempPrefix+"DamageTargeted",json.set("","ParentToken",json.get(damage.NonDamageData,"Target")))]
+    [h,if(json.get(damage.NonDamageData,"Target")!=""): pm.PassiveFunction(tempPrefix+"DamageTargeted",json.set("","ParentToken",json.get(damage.NonDamageData,"Target")))]
 }]
 
 [h:damage.RulesFinal = damage.Rules+if(damage.AddedRolledRules=="",""," + "+damage.AddedRolledRules)+if(damage.FlatBonusRules=="",""," + "+damage.FlatBonusRules)+if(damage.AddedFlatBonusRules=="",""," + "+damage.AddedFlatBonusRules)]

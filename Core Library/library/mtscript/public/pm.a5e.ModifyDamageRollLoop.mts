@@ -127,4 +127,4 @@
 
 [h:PriorDamage = json.path.delete(ModifiablePriorDamage,"[*]['CanBeModified']")]
 
-[h:"<!-- Set PriorDamage here so restarting the loop is based on the changes made so far. -->"]
+[h:"<!-- Sets PriorDamage so restarting the loop is based on the changes made so far. -->"]

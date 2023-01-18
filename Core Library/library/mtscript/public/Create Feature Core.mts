@@ -448,6 +448,7 @@
 	" ab.Spells | 0 | Affects spells | CHECK ",
 	" ab.OtherAbilities | 0 | Affects other features | CHECK ",
 	" ab.OtherConditions | 0 | Affects conditions you have set on others | CHECK ",
+	" ab.Targeting | 0 | Affects ability to target you | CHECK ",
 	" ab.WhenTargeted | 0 | Effect triggers when you are targeted | CHECK ",
 	" junkVar | --------------------------------------------------------------------------------------------------------------------- | 0 | LABEL | SPAN=TRUE ",
 	" ab.Damaged | 0 | Effect triggers when damaged | CHECK ",
@@ -918,6 +919,8 @@
 		[h,if(!json.isEmpty(ab.AfterConditionOptions)): ab.Final = json.set(ab.Final,"CallAfterCondition",json.path.delete(ab.AfterConditionOptions,"[*]['Type']"))]
 	}]
 }]
+
+[h,if(ab.Targeting): ab.Final = json.set(ab.Final,"CallTargeting",1)]
 
 [h,if(ab.WhenTargeted),CODE:{
 	[h:abort(input(

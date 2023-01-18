@@ -26,6 +26,6 @@
 		abilityTable = json.append(abilityTable,pm.a5e.CreateBasicTableLine(
 			currentFeatureDisplayName,
 			"<a href='"+currentFeatureLink+"' style='color:"+pm.LinkColor()+"'>Use Feature</a> / <a href='"+currentFeatureTooltipLink+"' style='color:"+pm.LinkColor()+"'>Feature Info</a>"
-			))
+		))
 	]
 }]

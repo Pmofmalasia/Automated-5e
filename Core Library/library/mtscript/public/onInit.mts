@@ -73,6 +73,7 @@
 [h:defineFunction("pm.a5e.FeatureLink","pm.a5e.FeatureLink@Lib:pm.a5e.Core",0,0)]
 [h:defineFunction("pm.a5e.FeatureModifyd20Test","pm.a5e.FeatureModifyd20Test@Lib:pm.a5e.Core",0,0)]
 [h:defineFunction("pm.a5e.FeatureModifyd20TestLoop","pm.a5e.FeatureModifyd20TestLoop@Lib:pm.a5e.Core",0,0)]
+[h:defineFunction("pm.a5e.FeatureModifyDamageRoll","pm.a5e.FeatureModifyDamageRoll@Lib:pm.a5e.Core",0,0)]
 [h:defineFunction("pm.a5e.ModifyDamageRollLoop","pm.a5e.ModifyDamageRollLoop@Lib:pm.a5e.Core",0,0)]
 [h:defineFunction("pm.AbilityMagItemMsg","pm.AbilityMagItemMsg@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.AbilityPrereq","pm.AbilityPrereq@Lib:pm.a5e.Core")]

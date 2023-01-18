@@ -6,12 +6,16 @@
 	[h:damNoModification = if(json.get(arg(4),"NoModification")=="",0,json.get(arg(4),"NoModification"))]
 	[h:damIsWeapon = if(json.get(arg(4),"IsWeapon")=="",0,json.get(arg(4),"IsWeapon"))]
 	[h:damIsSpell = if(json.get(arg(4),"IsSpell")=="",0,json.get(arg(4),"IsSpell"))]
-	[h:damIsSpell = if(json.get(arg(4),"IsAttack")=="",0,json.get(arg(4),"IsAttack"))]
+	[h:damIsAttack = if(json.get(arg(4),"IsAttack")=="",0,json.get(arg(4),"IsAttack"))]
+	[h:damTarget = if(json.get(arg(4),"Target")=="",0,json.get(arg(4),"Target"))]
+	[h:damIsModBonus = if(json.get(arg(4),"IsModBonus")=="",0,json.get(arg(4),"IsModBonus"))]
 };{
 	[h:damNoModification = 0]
 	[h:damIsWeapon = 0]
 	[h:damIsSpell = 0]
 	[h:damIsAttack = 0]
+	[h:damIsModBonus = 0]
+	[h:damTarget = ""]
 }]
 
 [h:DamageColor = pm.DamageColor()]
@@ -30,16 +34,17 @@
 [h,switch(pm.DamageType):
 	case "Healing": DamageTypeDisplay = "Healing";
 	case "TempHP": DamageTypeDisplay = "Temporary HP";
+	case "Untyped": DamageTypeDisplay = "Untyped";
 	default: DamageTypeDisplay = pm.GetDisplayName(pm.DamageType,"sb.DamageTypes")
 ]
 
-[h:FeatureDamageData = json.append("",json.set("",
+[h:FeatureDamageData = json.set("",
 	"DamageType",pm.DamageType,
 	"DamageDieNumber",pm.baseDieNum,
 	"DamageDieSize",DieSizeFinal,
 	"DamageFlatBonus",pm.DamageBonus,
-	"IsModBonus",preReworkUseDamageMod
-))]
+	"IsModBonus",damIsModBonus
+)]
 
 [h:FeatureNonDamageData = json.set("",
     "IsSpell",damIsSpell,
@@ -47,8 +52,8 @@
     "IsAttack",damIsAttack,
     "Modifier",1,
     "ScalingBase",0,
-    "Target",,
-    "PrimeStat",
+    "Target",damTarget,
+    "PrimeStat",json.get(currentFeatureInfo,"PrimeStat")
 )]
 
 [h,if(IsTooltip),CODE:{
@@ -63,16 +68,6 @@
 	)]
 };{
 	[h:pm.DamageRoll = pm.a5e.DamageRoll(FeatureDamageData,FeatureNonDamageData,"[]")]
-
-    
-	[h:pm.DamageRoll = json.set(pm.DamageRoll,
-		"DamageType",pm.DamageType,
-		"NoModification",damNoModification,
-		"IsWeapon",damIsWeapon,
-		"IsSpell",damIsSpell,
-		"Modifier",1,
-		"PrimeStat",PrimeStat
-	)]
 	
 	[h:abilityTable = json.append(abilityTable,json.set("",
 		"ShowIfCondensed",1,

@@ -244,7 +244,8 @@
 	[h:pm.a5e.EffectData = json.append(pm.a5e.EffectData,json.set("",
 		"Attack",thisAttackData,
 		"Damage",thisAttackAllDamage,
-		"Targets",json.append("",thisAttackTarget)
+		"Targets",json.append("",thisAttackTarget),
+		"ID",json.get(wa.EffectIDs,roll.count)
 	))]
 
 	[h:AHLTier = 0]

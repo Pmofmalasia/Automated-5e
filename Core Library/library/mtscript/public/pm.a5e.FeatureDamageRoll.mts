@@ -7,7 +7,7 @@
 	[h:damIsWeapon = if(json.get(arg(4),"IsWeapon")=="",0,json.get(arg(4),"IsWeapon"))]
 	[h:damIsSpell = if(json.get(arg(4),"IsSpell")=="",0,json.get(arg(4),"IsSpell"))]
 	[h:damIsAttack = if(json.get(arg(4),"IsAttack")=="",0,json.get(arg(4),"IsAttack"))]
-	[h:damTarget = if(json.get(arg(4),"Target")=="",0,json.get(arg(4),"Target"))]
+	[h:damTarget = if(json.get(arg(4),"Target")=="","",json.get(arg(4),"Target"))]
 	[h:damIsModBonus = if(json.get(arg(4),"IsModBonus")=="",0,json.get(arg(4),"IsModBonus"))]
 };{
 	[h:damNoModification = 0]

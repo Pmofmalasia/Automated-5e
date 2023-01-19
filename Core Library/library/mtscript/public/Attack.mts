@@ -174,6 +174,7 @@
 [h,count(AttackCount),CODE:{
 	[h:thisAttackTarget = json.get(wa.TargetList,roll.count)]
 	[h:thisAttackData = json.get(AllAttacksToHit,roll.count)]
+	[h:thisAttackEffectID = json.get(wa.EffectIDs,roll.count)]
 	[h:thisAttackd20Rolls = json.get(thisAttackData,"d20Rolls")]
 	[h:thisAttackFinalRoll = json.get(thisAttackData,"FinalRoll")]
 	[h:thisAttackAdvDis = json.get(thisAttackData,"Advantage")]
@@ -185,8 +186,8 @@
 
 	[h:thisAttackAllDamage = json.path.put(json.get(AllAttacksDmg,roll.count),"[*]","UseCrit",thisAttackCrit)]
 
-	[h:wa.AdvRerollLink = macroLinkText("Modify Attack Border@Lib:pm.a5e.Core","self-gm",json.set(wa.Data,"Advantage",1,"ForcedAdvantage",1,"d20Rolls",thisAttackd20Rolls,"PreviousDamage",thisAttackAllDamage,"Target",json.get(wa.TargetList,roll.count),"AttackNum",-1,"EffectID",json.get(wa.EffectIDs,roll.count)),ParentToken)]
-	[h:wa.DisRerollLink = macroLinkText("Modify Attack Border@Lib:pm.a5e.Core","self-gm",json.set(wa.Data,"Disadvantage",1,"ForcedAdvantage",1,"d20Rolls",thisAttackd20Rolls,"PreviousDamage",thisAttackAllDamage,"Target",thisAttackTarget,"AttackNum",-1,"EffectID",json.get(wa.EffectIDs,roll.count)),ParentToken)]
+	[h:wa.AdvRerollLink = macroLinkText("Modify Attack Border@Lib:pm.a5e.Core","self-gm",json.set(wa.Data,"Advantage",1,"ForcedAdvantage",1,"d20Rolls",thisAttackd20Rolls,"PreviousDamage",thisAttackAllDamage,"Target",json.get(wa.TargetList,roll.count),"AttackNum",-1,"EffectID",thisAttackEffectID),ParentToken)]
+	[h:wa.DisRerollLink = macroLinkText("Modify Attack Border@Lib:pm.a5e.Core","self-gm",json.set(wa.Data,"Disadvantage",1,"ForcedAdvantage",1,"d20Rolls",thisAttackd20Rolls,"PreviousDamage",thisAttackAllDamage,"Target",thisAttackTarget,"AttackNum",-1,"EffectID",thisAttackEffectID),ParentToken)]
 	
 	[h:ToHitTableLine = json.set("",
 		"ShowIfCondensed",1,
@@ -245,7 +246,7 @@
 		"Attack",thisAttackData,
 		"Damage",thisAttackAllDamage,
 		"Targets",json.append("",thisAttackTarget),
-		"ID",json.get(wa.EffectIDs,roll.count)
+		"ID",thisAttackEffectID
 	))]
 
 	[h:AHLTier = 0]

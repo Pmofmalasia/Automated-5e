@@ -43,7 +43,7 @@
 
 [h,if(json.get(ModifyHowData,"Method")=="AddDamage"),CODE:{
     [h:NewDamageData = json.get(ModifyHowData,"DamageInstance")]
-    [h,if(json.get(NewDamageData,"NonDamageData")=="")
+    [h,if(json.get(NewDamageData,"NonDamageData")==""):
         NonDamageData = "{}";
         NonDamageData = json.get(NewDamageData,"NonDamageData")
     ]

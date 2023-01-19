@@ -126,6 +126,8 @@
 [h:defineFunction("pm.a5e.FeatureSpellClass","pm.a5e.FeatureSpellClass@Lib:pm.a5e.Core",0,0)]
 [h:defineFunction("pm.a5e.GrantAdvantage","pm.a5e.GrantAdvantage@Lib:pm.a5e.Core",0,0)]
 [h:defineFunction("pm.a5e.GrantDisadvantage","pm.a5e.GrantDisadvantage@Lib:pm.a5e.Core",0,0)]
+[h:defineFunction("pm.a5e.PassiveFeatureCheckBonus","pm.a5e.PassiveFeatureCheckBonus@Lib:pm.a5e.Core",0,0)]
+[h:defineFunction("pm.a5e.PassiveFeatureSaveBonus","pm.a5e.PassiveFeatureSaveBonus@Lib:pm.a5e.Core",0,0)]
 
 [h:"<!-- Functions for resolving effects on targets -->"]
 [h:defineFunction("pm.a5e.AdvanceTime","pm.a5e.AdvanceTime@Lib:pm.a5e.Core")]

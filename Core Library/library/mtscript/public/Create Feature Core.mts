@@ -450,6 +450,8 @@
 	" ab.OtherConditions | 0 | Affects conditions you have set on others | CHECK ",
 	" ab.Targeting | 0 | Affects ability to target you | CHECK ",
 	" ab.WhenTargeted | 0 | Effect triggers when you are targeted | CHECK ",
+	" ab.UseTime | 0 | Affects time required to use abilities | CHECK ",
+	" ab.ChangePrereqs | 0 | Affects requirements for other features to be activated | CHECK ",
 	" junkVar | --------------------------------------------------------------------------------------------------------------------- | 0 | LABEL | SPAN=TRUE ",
 	" ab.Damaged | 0 | Effect triggers when damaged | CHECK ",
 	" ab.CondGain | 0 | Effect triggers when gaining a condition | CHECK ",
@@ -937,6 +939,10 @@
 	[h,if(ab.AttackAutoHitTargeted>0): ab.Final = json.set(ab.Final,if(ab.AttackAutoHitTargeted==1,"CallWeaponAttackAutoHitTargeted",if(ab.AttackAutoHitTargeted==2,"CallSpellAutoHitTargeted","CallAttackAutoHitTargeted")),1)]
 	[h,if(ab.AttackCritTargeted>0): ab.Final = json.set(ab.Final,if(ab.AttackCritTargeted==1,"CallWeaponAttackCritTargeted",if(ab.AttackCritTargeted==2,"CallSpellCritTargeted","CallAttackCritTargeted")),1)]
 };{}]
+
+[h,if(ab.UseTime): ab.Final = json.set(ab.Final,"UseTime",1)]
+
+[h,if(ab.ChangePrereqs): ab.Final = json.set(ab.Final,"ChangePrereqs",1)]
 
 [h,if(ab.Damaged),CODE:{
 	[h:abort(input(

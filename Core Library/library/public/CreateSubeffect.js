@@ -256,6 +256,8 @@ async function createConditionTable(){
                 rowConditionsAlwaysAdded.innerHTML = "<th><label for='conditionsAlwaysAdded'>Set Conditions:</label></th><td><div class='check-multiple' style='width:100%'>"+conditionOptions+"</div></td>";
                 nextRowIndex++;
             }
+
+            //need to change endRowId here to id of altduration/usespellduration
             if(alreadyOptionsTest && conditionChoice == "All"){
                 clearUnusedTable("CreateSubeffectTable","rowConditionOptions",endRowId);
                 table.deleteRow(document.getElementById("rowConditionOptions").rowIndex);
@@ -291,16 +293,12 @@ async function createConditionTable(){
                 nextRowIndex = nextRowIndex + (document.getElementById(endRowId).rowIndex - document.getElementById("rowConditionOptions").rowIndex);
             }
             if(alreadyAlwaysAddedTest && conditionChoice == "Choose"){
+                //ConditionOptions is likely being inserted one row too much when going from all --> choose, so endinfo stuff gets removed here
                 clearUnusedTable("CreateSubeffectTable","rowCondition","rowConditionOptions");
             }
         }
 
         if(!alreadyEndInfoTest){
-            let rowIsConditionNonDurationEnd = table.insertRow(nextRowIndex);
-            rowIsConditionNonDurationEnd.id = "rowIsConditionNonDurationEnd";
-            rowIsConditionNonDurationEnd.innerHTML = "<th><label for='isConditionNonDurationEnd'>May End Separate from Duration?</label></th><input type='checkbox' id='isConditionNonDurationEnd' name='isConditionNonDurationEnd' onchange='createConditionNonDurationEnd()'></td>";
-            nextRowIndex++;
-
             if(checkEffectType()=="Spell"){
                 let rowSameDuration = table.insertRow(nextRowIndex);
                 rowSameDuration.id = "rowSameDuration";
@@ -309,7 +307,13 @@ async function createConditionTable(){
             }
             else{
                 conditionAlternateDuration();
+                nextRowIndex++;
             }
+
+            let rowIsConditionNonDurationEnd = table.insertRow(nextRowIndex);
+            rowIsConditionNonDurationEnd.id = "rowIsConditionNonDurationEnd";
+            rowIsConditionNonDurationEnd.innerHTML = "<th><label for='isConditionNonDurationEnd'>May End Separate from Duration?</label></th><input type='checkbox' id='isConditionNonDurationEnd' name='isConditionNonDurationEnd' onchange='createConditionNonDurationEnd()'></td>";
+            nextRowIndex++;
         }
 
         if(document.getElementById("howMitigate").value == "Save" && !alreadySaveTest){
@@ -384,11 +388,19 @@ async function createMultiUniqueConditionRow(conditionPrefix){
 async function conditionAlternateDuration(){
     let table = document.getElementById("CreateSubeffectTable");
     let isSameDuration = 0;
-    let nextRowIndex = document.getElementById("rowIsConditionNonDurationEnd").rowIndex + 1;
+    let nextRowIndex = 0;
     
     if(checkEffectType()=="Spell"){
         isSameDuration = document.getElementById("isConditionSameDuration").checked;
         nextRowIndex = document.getElementById("rowSameDuration").rowIndex + 1;
+    }
+    else{
+        if(document.getElementById("rowConditionOptions")==null){
+            nextRowIndex = document.getElementById("rowConditionsAlwaysAdded").rowIndex+1;
+        }
+        else{
+            nextRowIndex = document.getElementById("rowConditionOptionsNumber").rowIndex+1;
+        }
     }
     
     if(isSameDuration){

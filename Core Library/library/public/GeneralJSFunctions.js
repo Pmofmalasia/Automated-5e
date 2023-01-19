@@ -9,6 +9,13 @@ async function clearUnusedTable(tableID,startRowID,endRowID){
     }
 }
 
+function addTableRow(tableID,rowIndex,rowID,rowHTML){
+    let table = document.getElementById(tableID);
+    let newRow = table.insertRow(rowIndex);
+    newRow.id = rowID;
+    newRow.innerHTML = rowHTML;
+}
+
 async function submitData(formName,nextMacroName) {
     let form = document.getElementById(formName);
     let submitData = Object.fromEntries(new FormData(form));

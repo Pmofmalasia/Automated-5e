@@ -245,7 +245,7 @@ async function createConditionTable(){
 
         if(conditionChoice == "All" || conditionChoice == "Mixture"){
             if(alreadyAlwaysAddedTest){
-                nextRowIndex = nextRowIndex + (document.getElementById(endRowId).rowIndex - document.getElementById("rowCondition").rowIndex - 1);
+                nextRowIndex = (document.getElementById("rowConditionsAlwaysAdded").rowIndex + 1);
             }
             else{
                 let conditionOptions = await createConditionMultipleBoxes("AlwaysAdded","createConditionSaveTable()");
@@ -257,7 +257,6 @@ async function createConditionTable(){
                 nextRowIndex++;
             }
 
-            //need to change endRowId here to id of altduration/usespellduration
             if(alreadyOptionsTest && conditionChoice == "All"){
                 let tempRemovalId = 0;
 
@@ -273,7 +272,9 @@ async function createConditionTable(){
             }
         }
         else{
-            nextRowIndex = nextRowIndex + (document.getElementById(endRowId).rowIndex - document.getElementById("rowCondition").rowIndex - 1);
+            if(alreadyAlwaysAddedTest){
+                nextRowIndex = (document.getElementById("rowConditionsAlwaysAdded").rowIndex + 1);
+            }
         }
 
         if(conditionChoice == "Choose" || conditionChoice == "Mixture"){

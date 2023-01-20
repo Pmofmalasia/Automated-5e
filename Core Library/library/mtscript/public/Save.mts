@@ -8,6 +8,12 @@
 [h:d20ID = json.get(d20Data,"ID")]
 [h:d20Data = json.set(d20Data,"OverallType","Save")]
 
+[h,if(d20ID != ""),CODE:{
+	[h:d20ThisEffect = json.get(json.path.read(getLibProperty("gd.Effects","Lib:pm.a5e.Core"),"[*][?(@.ID=="+d20ID+")]"),0)]
+};{
+	[h:d20ThisEffect = json.set("","ToResolve","{}")]
+}]
+
 [h:CurrentSaveDisplay = json.get(d20Data,"Save")]
 [h:CurrentSave = pm.RemoveSpecial(CurrentSaveDisplay)]
 [h,SWITCH(d20Type):

@@ -2,7 +2,7 @@
 	" sp.Name |  | Enter damage type name ",
 	" sp.Group | None,Arcane,Elemental,Mental,Physical,Other | Choose a grouping | LIST | VALUE=STRING ",
 	" sp.Source | "+pm.GetBookInfo("DisplayName")+" | Which sourcebook is the damage type from | LIST | VALUE=STRING "
-	))]
+))]
 	
 [h:abort(input(
 	if(sp.Group=="Other"," sp.Group |  | Enter a group name ","")

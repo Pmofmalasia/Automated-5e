@@ -259,7 +259,16 @@ async function createConditionTable(){
 
             //need to change endRowId here to id of altduration/usespellduration
             if(alreadyOptionsTest && conditionChoice == "All"){
-                clearUnusedTable("CreateSubeffectTable","rowConditionOptions",endRowId);
+                let tempRemovalId = 0;
+
+                if(checkEffectType()=="Spell"){
+                    tempRemovalId = "rowUseSameDuration";
+                }
+                else{
+                    tempRemovalId = "rowAlternateConditionDuration";
+                }
+
+                clearUnusedTable("CreateSubeffectTable","rowConditionOptions",tempRemovalId);
                 table.deleteRow(document.getElementById("rowConditionOptions").rowIndex);
             }
         }

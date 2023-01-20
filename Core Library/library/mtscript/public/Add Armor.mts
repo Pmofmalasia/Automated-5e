@@ -55,7 +55,7 @@
 	"EquipAnswer|No,Yes|Would you like to equip "+ArmorName+"?|LIST"
 ))]
 
-[h:getProperty("a5e.stat.Armor",if(EquipAnswer==1,json.set(getProperty("a5e.stat.Armor"),0,json.length(getProperty("a5e.stat.Armor"))-1),getProperty("a5e.stat.Armor")))]
+[h:setProperty("a5e.stat.Armor",if(EquipAnswer==1,json.set(getProperty("a5e.stat.Armor"),0,json.length(getProperty("a5e.stat.Armor"))-1),getProperty("a5e.stat.Armor")))]
 
 <div style="background-color: #f7ae27; color: #000000; padding-top:2px; padding-bottom:5px; padding-left:8px; padding-right:8px;">
 	<b>Add Armor</b>

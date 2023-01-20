@@ -243,7 +243,7 @@
 		" ab.WeaponProfPrereq | None,One,Multiple | Has required weapon proficiencies | LIST ",
 		" ab.ArmorProfPrereq | None,One,Multiple | Has required armor proficiencies | LIST ",
 		" ab.SpellPrereq |  | Requires the ability to cast spells | CHECK "
-		))]
+	))]
 	
 	[h,if(ab.LevelPrereq>0): ab.PrereqsFinal = json.set(ab.PrereqsFinal,"Level",ab.LevelPrereq)]
 	
@@ -266,7 +266,7 @@
 	[h,while(ab.SubclassPrereq>0 && ab.SubclassLoop == 1),CODE:{
 		[h:abort(input(
 			" ab.ClassTemp | "+pm.GetClasses("DisplayName")+" | Class of prerequisite subclass | LIST "
-			))]
+		))]
 		[h:ab.ClassTemp = pm.RemoveSpecial(ab.ClassTemp)]
 		[h:ab.SubclassPrereqDis = ""]
 		[h,foreach(Subclass,pm.GetSubclasses(ab.ClassTemp)): ab.SubclassPrereqDis = listAppend(ab.SubclassPrereqDis," ab.Choice"+Subclass+" |  | "+Subclass+" | CHECK ","##")]
@@ -321,8 +321,7 @@
 		
 		[h:ab.PrereqsFinal = json.set(ab.PrereqsFinal,"Features",ab.FeaturePrereqs,"FeatureNum",ab.PrereqFeatureNumRequired)]
 	}]
-		
-	
+
 	[h,if(ab.RacePrereq>0 || ab.SubracePrereq>0),CODE:{
 		[h:ab.RaceList = pm.GetRaces("DisplayName","json")]
 		[h:ab.RacePrereqDis = ""]
@@ -354,17 +353,17 @@
 
 	[h,if(ab.AttrPrereq),CODE:{
 		[h:ab.AtrPreInput = ""]
-		[h,foreach(TempAtr,ab.AtrList): ab.AtrPreInput = listAppend(ab.AtrPreInput," ab."+json.get(TempAtr,"Name")+"Prereq | "+ab.LevelList+" | "+json.get(TempAtr,"DisplayName")+" Prerequisite | LIST ","##")]
+		[h,foreach(TempAtr,ab.AtrList): ab.AtrPreInput = listAppend(ab.AtrPreInput," ab."+pm.RemoveSpecial(TempAtr)+"Prereq | "+ab.LevelList+" | "+TempAtr+" Prerequisite | LIST ","##")]
 		[h:abort(input(
-	" junkVar | ---------------------- Attribute Prerequisite Info ---------------------- |  | LABEL | SPAN=TRUE ",
-	" ab.AttrAllOrOne | All,One | Requires all of the below to be met or just one | RADIO | SELECT=1 ",
-	ab.AtrPreInput
+			" junkVar | ---------------------- Attribute Prerequisite Info ---------------------- |  | LABEL | SPAN=TRUE ",
+			" ab.AttrAllOrOne | All,One | Requires all of the below to be met or just one | RADIO | SELECT=1 ",
+			ab.AtrPreInput
 		))]
 
 		[h:ab.AtrPreChoices = ""]
 		[h:ab.AttrPrereqCount = 0]
-		[h,foreach(TempAtr,ab.AtrList): ab.AtrPreChoices = json.set(ab.AtrPreChoices,json.get(TempAtr,"Name"),eval("ab."+json.get(TempAtr,"Name")+"Prereq"))]
-		[h,foreach(TempAtr,ab.AtrList): ab.AttrPrereqCount = if(ab.AttrAllOrOne,1,if(eval("ab."+json.get(TempAtr,"Name")+"Prereq")>0,ab.AttrPrereqCount+1,ab.AttrPrereqCount))]
+		[h,foreach(TempAtr,ab.AtrList): ab.AtrPreChoices = json.set(ab.AtrPreChoices,pm.RemoveSpecial(TempAtr),eval("ab."+pm.RemoveSpecial(TempAtr)+"Prereq"))]
+		[h,foreach(TempAtr,ab.AtrList): ab.AttrPrereqCount = if(ab.AttrAllOrOne,1,if(eval("ab."+pm.RemoveSpecial(TempAtr)+"Prereq")>0,ab.AttrPrereqCount+1,ab.AttrPrereqCount))]
 		[h:ab.AtrPreChoices = json.set(ab.AtrPreChoices,"AllOrOne",ab.AttrPrereqCount)]
 		[h:ab.PrereqsFinal = json.set(ab.PrereqsFinal,"Attributes",ab.AtrPreChoices)]
 	};{}]
@@ -456,7 +455,7 @@
 	" ab.Damaged | 0 | Effect triggers when damaged | CHECK ",
 	" ab.CondGain | 0 | Effect triggers when gaining a condition | CHECK ",
 	" ab.CondEnd | 0 | Effect triggers when ending a condition | CHECK ",
-	" ab.Rest | 0 | Effect triggers after rests | CHECK ",
+	" ab.Rest | 0 | Effect triggers during or after rests | CHECK ",
 	" ab.HitDie | 0 | Effect triggers after spending Hit Dice | CHECK ",
 	" ab.StartTurn | 0 | Effect triggers on start of turn | CHECK ",
 	" ab.EndTurn | 0 | Effect triggers on end of turn | CHECK ",
@@ -960,11 +959,15 @@
 		" junkVar | Choose triggers for a feature after resting | 0 | LABEL | SPAN=TRUE ",
 		" junkVar | ------------------------------------------------------------ | 0 | LABEL | SPAN=TRUE ",
 		" ab.AfterShort | 0 | Triggers after short rests | CHECK ",
-		" ab.AfterLong | 0 | Triggers after long rests | CHECK "
+		" ab.AfterLong | 0 | Triggers after long rests | CHECK ",
+		" ab.DurationShort | 0 | Affects duration of short rests | CHECK ",
+		" ab.DurationLong | 0 | Affects duration of long rests | CHECK "
 	))]
 	
 	[h,if(ab.AfterShort): ab.Final = json.set(ab.Final,"CallShortRest",ab.AfterShort)]
 	[h,if(ab.AfterLong): ab.Final = json.set(ab.Final,"CallLongRest",ab.AfterLong)]
+	[h,if(ab.DurationShort): ab.Final = json.set(ab.Final,"CallShortRestDuration",1)]
+	[h,if(ab.DurationLong): ab.Final = json.set(ab.Final,"CallLongRestDuration",1)]
 };{}]
 
 [h,if(ab.HitDie),CODE:{

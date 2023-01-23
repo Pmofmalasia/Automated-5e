@@ -49,7 +49,6 @@
 [h:pm.TargetIntMin = if(json.get(arg(1),"IntMin")=="",0,json.get(arg(1),"IntMin"))]
 [h:pm.TargetIntMax = if(json.get(arg(1),"IntMax")=="",999999,json.get(arg(1),"IntMax"))]
 
-[h:broadcast(pm.TargetTypeInclusive)]
 [h,switch(pm.RangeNumFinal):
 	case "": pm.TargetsInRange = "[]";
 	case "Unlimited": pm.TargetsInRange = getTokens("json",json.set("","propertyType","A5ECreature"));

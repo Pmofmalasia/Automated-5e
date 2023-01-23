@@ -270,6 +270,7 @@
 
 [h:"<!-- TODO: Set up spell source types - should be in NonSpellData. Source temporarily set to always be Arcane -->"]
 [h:sSource = "Arcane"]
+[h,if(json.type(sClassSelectData)=="OBJECT"): sSource = if(json.get(sClassSelectData,"MagicSource")=="",sSource,json.get(sClassSelectData,"MagicSource"))]
 
 [h:DefaultDisplayData = pm.SpellColors(json.set("","Level",if(IsCantrip,"0",string(eLevel)),"Source",sSource))]
 [h:BorderColor = json.get(DefaultDisplayData,"Border")]

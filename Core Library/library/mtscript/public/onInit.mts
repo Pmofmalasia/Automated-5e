@@ -172,6 +172,7 @@
 [h:defineFunction("pm.a5e.CompareSizes","pm.a5e.CompareSizes@Lib:pm.a5e.Core")]
 
 [h:"<!-- Functions for Getting Data from Sourcebook Library Tokens -->"]
+[h:defineFunction("pm.a5e.GetCoreData","pm.a5e.GetCoreData@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.GetAttributes","pm.GetAttributes@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.GetBackgrounds","pm.GetBackgrounds@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.GetBookInfo","pm.GetBookInfo@Lib:pm.a5e.Core")]

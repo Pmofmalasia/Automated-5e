@@ -4,15 +4,28 @@
 [h:cn.LevelList = "None,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20"]
 [h:cn.Class = "Condition"]
 
+[h:ConditionTags = pm.a5e.GetCoreData("sb.ConditionTags")]
+[h:ConditionTagOptions = ""]
+[h,foreach(tempTag,ConditionTags): ConditionTagOptions = listAppend(ConditionTagOptions," choice"+json.get(tempTag,"Name")+" |  | "+json.get(tempTag,"DisplayName")+" | CHECK ","##")]
+
 [h:abort(input(
 	" junkVar | -------------------------------------------- Basic Condition Info -------------------------------------------- |  | LABEL | SPAN=TRUE ",
 	" cn.Name | -- Name Here -- | Enter Condition Name ",
 	" cn.Type | Base Condition,Class Feature,Racial Feature,Spell,Feat,Background | Condition Association | LIST ",
-	" cn.ConditionSubtype | None,Boon,Curse,Disease,Poison,Posession | Condition Counts As | RADIO | VALUE=STRING ",
+	ConditionTagOptions,
+	" otherConditionTag |  | Add Tag not Shown | CHECK ",
 	" cn.HasTiers |  | Condition Has Multiple Tiers With Varying Effects | CHECK ",
 	" cn.HasAssociatedConditions |  | Always Adds Other Conditions When Gained | CHECK ",
 	" cn.Source | "+cn.Sourcebooks+" | Associated Sourcebook | LIST | VALUE=STRING "
 ))]
+
+[h:ConditionTagsChosen = ""]
+[h,foreach(tempTag,ConditionTags): ConditionTagsChosen = if(eval("choice"+json.get(tempTag,"Name")),json.append(ConditionTagsChosen,json.get(tempTag,"Name")),ConditionTagsChosen)]
+
+[h,if(otherConditionTag),CODE:{
+	[h:MACRO("CreateConditionTag@Lib:pm.a5e.Core"): ""]
+	[h:ConditionTagsChosen = json.append(ConditionTagsChosen,macro.return)]
+};{}]
 
 [h:cn.SourceLib = json.get(json.path.read(getLibProperty("ms.Sources","Lib:pm.a5e.Core"),"[?(@.Name=='"+pm.RemoveSpecial(cn.Source)+"')]['Library']"),0)]
 [h:cn.DisplayName = cn.Name]
@@ -21,7 +34,7 @@
 	"Name",cn.Name,
 	"DisplayName",cn.DisplayName,
 	"Type","Condition",
-	"ConditionType",if(cn.ConditionSubtype=="None","",cn.ConditionSubtype),
+	"ConditionType",ConditionTagsChosen,
 	"Level",1,
 	"GainOnLevel",0,
 	"Optional",0,

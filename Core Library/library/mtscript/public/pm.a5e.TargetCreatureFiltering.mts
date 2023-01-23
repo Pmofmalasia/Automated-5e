@@ -49,6 +49,7 @@
 [h:pm.TargetIntMin = if(json.get(arg(1),"IntMin")=="",0,json.get(arg(1),"IntMin"))]
 [h:pm.TargetIntMax = if(json.get(arg(1),"IntMax")=="",999999,json.get(arg(1),"IntMax"))]
 
+[h:broadcast(pm.TargetTypeInclusive)]
 [h,switch(pm.RangeNumFinal):
 	case "": pm.TargetsInRange = "[]";
 	case "Unlimited": pm.TargetsInRange = getTokens("json",json.set("","propertyType","A5ECreature"));
@@ -62,7 +63,7 @@
 
 	[h:pm.SelfOnlyTest = 1]
 	[h,foreach(allegianceType,json.fields(pm.TargetAllegiance)): pm.SelfOnlyTest = if(json.get(pm.TargetAllegiance,allegianceType)==1,0,pm.SelfOnlyTest)]
-	[h:return(!pm.SelfOnlyTest,json.append("",ParentToken))]
+	[h:return(!pm.SelfOnlyTest,json.set("","ValidTargets",json.append("",ParentToken),"SelfOnly",1))]
 };{
 	[h:pm.TargetSelf = 0]
 }]
@@ -90,11 +91,12 @@
 	[h,if(pm.TargetSizeMin != ""):
 		pm.SizeTest = if(pm.a5e.CompareSizes(pm.TargetSizeMin,getSize(target)) > 0, 0, pm.SizeTest)
 	]
-	
+
 	[h,if(json.type(pm.TargetTypeInclusive) == "UNKNOWN"):
 		pm.TypeTest = if(or(pm.TargetTypeInclusive==getProperty("a5e.stat.CreatureType",target),pm.TargetTypeInclusive=="Any",pm.TargetTypeInclusive==""),1,0);
 		pm.TypeTest = if(json.contains(pm.TargetTypeInclusive,getProperty("a5e.stat.CreatureType",target)),1,0)
 	]
+	[h:broadcast(getName(target)+": "+pm.TypeTest)]
 	
 	[h,if(json.type(pm.TargetSubtypeInclusive) == "UNKNOWN"):
 		pm.SubtypeTest = if(or(pm.TargetSubtypeInclusive==getProperty("a5e.stat.Race",target),pm.TargetSubtypeInclusive=="Any",pm.TargetSubtypeInclusive==""),1,0);
@@ -116,4 +118,4 @@
 	[h:pm.ValidTargets = if(and(pm.AllegianceTest,pm.TypeTest,pm.SubtypeTest,pm.IntTest,pm.SizeTest),json.append(pm.ValidTargets,target),pm.ValidTargets)]
 }]
 
-[h:macro.return = pm.ValidTargets]
+[h:macro.return = json.set("","ValidTargets",pm.ValidTargets,"SelfOnly",0)]

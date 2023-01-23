@@ -102,9 +102,12 @@
 	[h:abort(input(
 		" junkVar | --------------- "+json.get(ability,"DisplayName")+": Associated Class --------------- |  | LABEL | SPAN=TRUE ",
 		" tempClassChoice | "+json.toList(json.get(ability,"ClassOptions"))+" | Choose a Class | LIST | VALUE=STRING "
-		))]
+	))]
 [h:"<!-- Note: PrimeStat Change -->"]
-	[h,if(json.get(ability,"PrimeStatOptions")==""):lu.PrimeStatTest = 0; lu.PrimeStatTest = if(json.get(json.get(ability,"PrimeStatOptions"),"ChoiceMethod")=="Class",1,0)]
+	[h,if(json.get(ability,"PrimeStatOptions")==""):
+		lu.PrimeStatTest = 0;
+		lu.PrimeStatTest = if(json.get(json.get(ability,"PrimeStatOptions"),"ChoiceMethod")=="Class",1,0)
+	]
 	[h,if(lu.PrimeStatTest),CODE:{
 		[h:lu.NewAbilities = json.path.put(lu.NewAbilities,"[?(@.Name == '"+json.get(ability,"Name")+"' && @.Class == '"+json.get(ability,"Class")+"' && @.Subclass == '"+json.get(ability,"Subclass")+"')]","PrimeStat",json.get(getLibProperty("sb.CastingAbilities","Lib:pm.a5e.Core"),pm.RemoveSpecial(tempClassChoice)))]
 	};{}]
@@ -206,12 +209,12 @@
 
 [h:"<!-- Choose Primary Stat -->"]
 [h:"<!-- Note: PrimeStat Change -->"]
-[h,if(json.isEmpty(lu.NewAbilities)): lu.PrimeStatAbilities = ""; lu.PrimeStatAbilities = json.path.read(lu.NewAbilities,"[*].PrimeStatOptions.[?(@.ChoiceMethod=='Choice')]")]
+[h,if(json.isEmpty(lu.NewAbilities)): lu.PrimeStatAbilities = ""; lu.PrimeStatAbilities = json.path.read(lu.NewAbilities,"[*][?(@.PrimeStatOptions.ChoiceMethod=='Choice')]")]
 [h,foreach(ability,lu.PrimeStatAbilities),CODE:{
 	[h:abort(input(
 		" junkVar | ---------- Primary Stat Selection ---------- |  | LABEL | SPAN=TRUE ",
-		" lu.StatChoice | "+json.fields(json.intersection(json.get(ability,"PrimeStatOptions"),json.fromStrProp(pm.GetAttributes("DisplayName","=1;")+"=1")))+" | Stat Choice for "+json.get(ability,"DisplayName")+" | LIST | VALUE=STRING "
-		))]
+		" lu.StatChoice | "+json.get(json.get(ability,"PrimeStatOptions"),"Stats")+" | Stat Choice for "+json.get(ability,"DisplayName")+" | LIST | VALUE=STRING DELIMITER=JSON"
+	))]
 	[h:lu.NewAbilities = json.path.put(lu.NewAbilities,"[?(@.Name == '"+json.get(ability,"Name")+"' && @.Class == '"+json.get(ability,"Class")+"' && @.Subclass == '"+json.get(ability,"Subclass")+"')]","PrimeStat",pm.RemoveSpecial(lu.StatChoice))]
 }]
 

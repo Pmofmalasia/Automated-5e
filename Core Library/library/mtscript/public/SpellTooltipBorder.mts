@@ -16,8 +16,9 @@
 
 [h:ClassFeatureData = json.set("",
     "DMOnly",DMOnly,
-    "Class","zzSpell"+SpellSource,
-    "ColorSubtype",SpellLevel,
+    "Class","Spell",
+    "ClassForDisplay","zzSpell",
+    "ColorSubtype",json.set("","Source",SpellSource,"Level",SpellLevel),
     "Name",pm.RemoveSpecial(SpellName),
     "DisplayName",SpellDisplayName,
     "Effect",SpellDescription,

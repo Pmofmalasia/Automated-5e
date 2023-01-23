@@ -21,7 +21,7 @@
 	),
 	"{}"
 )]
-[h:HelpTargets = pm.a5e.TargetCreatureTargeting(HelpTargetOptions,HelpTargetNum)]
+[h:HelpTargets = pm.a5e.TargetCreatureTargeting(json.get(HelpTargetOptions,"ValidTargets"),HelpTargetNum)]
 
 [h:HelpConditionInfo = pm.a5e.GetSpecificCondition("Help","Condition")]
 [h:HelpDuration = 1]

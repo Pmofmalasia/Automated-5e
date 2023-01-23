@@ -21,7 +21,7 @@
 
 [h,MACRO("ApplyCondition@Lib:pm.a5e.Core"): applyConditionData]
 
-[h:ConditionsAppliedInfo = macro.args]
+[h:ConditionsAppliedInfo = macro.return]
 [h:abilityTable = "[]"]
 [h:FeatureDescription = json.get(ConditionsAppliedInfo,"ConditionDisplay")+" applied by the GM."]
 

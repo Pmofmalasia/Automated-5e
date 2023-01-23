@@ -59,8 +59,9 @@
 
 	[h:"<!-- Note: pm.RemoveSpecial call is correctly left out here so DisplayName can be used for choosing the attribute. pm.RemoveSpecial happens after the choice. -->"]
 	[h,if(ab.AttrDescMethod == "Choice"),CODE:{
-		[h:ab.PrimeOptions = json.set("","ChoiceMethod","Choice")]
-		[h,foreach(TempAtr,ab.AtrList): ab.PrimeOptions = json.set(ab.PrimeOptions,TempAtr,eval("ab."+pm.RemoveSpecial(TempAtr)+"Option"))]
+		[h:ab.PrimeOptionArray = "[]"]
+		[h,foreach(TempAtr,ab.AtrList): ab.PrimeOptionArray = if(eval("ab."+pm.RemoveSpecial(TempAtr)+"Option"),json.append(ab.PrimeOptionArray,TempAtr),PrimeOptionArray)]
+		[h:ab.PrimeOptions = json.set("","ChoiceMethod","Choice","Stats",PrimeOptionArray)]
 		[h:ab.Final = json.set(ab.Final,"PrimeStatOptions",ab.PrimeOptions)]
 	};{}]
 	

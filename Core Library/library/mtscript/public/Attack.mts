@@ -97,7 +97,7 @@
 }]
 
 [h:wa.TargetOptions = pm.a5e.TargetCreatureFiltering(json.set("","ParentToken",ParentToken,"Number",1,"Origin",wa.TargetOrigin,"Range",json.set("","Value",if(wa.MeleeRanged=="Ranged",wa.Range,wa.Reach),"Units","Feet")),json.set("","Allegiance",json.set("","NotSelf",1)))]
-[h:wa.AllTargets = pm.a5e.TargetCreatureTargeting(wa.TargetOptions,1,AttackCount)]
+[h:wa.AllTargets = pm.a5e.TargetCreatureTargeting(json.get(wa.TargetOptions,"ValidTargets"),1,AttackCount)]
 [h,if(AttackCount==1),CODE:{
 	[h:wa.TargetList = wa.AllTargets]
 };{

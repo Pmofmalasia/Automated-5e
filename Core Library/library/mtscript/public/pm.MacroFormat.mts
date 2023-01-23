@@ -1,4 +1,6 @@
 [h:abilityClass = json.get(arg(0),"Class")]
+[h:DisplayClass = json.get(arg(0),"ClassForDisplay")]
+[h,if(DisplayClass!=""): abilityClass = DisplayClass]
 [h:abilityName = json.get(arg(0),"Name")]
 [h:abilityDisplayName = if(json.get(arg(0),"DisplayName")=="",abilityName,json.get(arg(0),"DisplayName"))]
 [h:Flavor = json.get(arg(0),"Flavor")]
@@ -15,17 +17,17 @@
 [h:ParentToken=json.get(arg(0),"ParentToken")]
 [h,if(ParentToken!=""): switchToken(ParentToken)]
 
-[h,if(BorderColorOverride == ""),CODE:{
-	[h:chat.Border = pm.BorderColor(abilityClass,ColorSubtype)]
+[h,if(abilityClass=="zzSpell"),CODE:{
+	[h:tempColors = pm.SpellColors(ColorSubtype)]
+	[h:chat.Border = json.get(tempColors,"Border")]
+	[h:chat.Title = json.get(tempColors,"Title")]
 };{
-	[h:chat.Border = BorderColorOverride]
+	[h:chat.Border = pm.BorderColor(abilityClass,ColorSubtype)]
+	[h:chat.Title = pm.TitleColor(abilityClass,ColorSubtype)]
 }]
 
-[h,if(TitleColorOverride == ""),CODE:{
-	[h:chat.Title = pm.TitleColor(abilityClass,ColorSubtype)]
-};{
-	[h:chat.Title = TitleColorOverride]
-}]
+[h,if(BorderColorOverride != ""): chat.Border = BorderColorOverride]
+[h,if(TitleColorOverride != ""): chat.Title = TitleColorOverride]
 
 [h,if(currentToken()!=""),CODE:{
 	[h:outputTest.NoRules = if(DMOnly,if(or(and(number(getLibProperty("HideEnemyMacros","Lib:pm.a5e.Core"))<1,getProperty("a5e.stat.Allegiance")=="Enemy"),and(number(getLibProperty("HideAllyMacros","Lib:pm.a5e.Core"))<1,getProperty("a5e.stat.Allegiance")=="Ally")),0,1),0)]

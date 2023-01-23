@@ -39,8 +39,8 @@
         [h:subeffectData = json.remove(subeffectData,"CreatureTypeTargetInclusive"+tempCreature)]
         [h:subeffectData = json.remove(subeffectData,"CreatureTypeTargetExclusive"+tempCreature)]
     }]
-    [h:creatureTargetData = json.set(creatureTargetData,"TypeInclusive",inclusiveCreatures)]
-    [h:creatureTargetData = json.set(creatureTargetData,"TypeExclusive",exclusiveCreatures)]
+    [h,if(!json.isEmpty(inclusiveCreatures)): creatureTargetData = json.set(creatureTargetData,"TypeInclusive",inclusiveCreatures)]
+    [h,if(!json.isEmpty(exclusiveCreatures)): creatureTargetData = json.set(creatureTargetData,"TypeExclusive",exclusiveCreatures)]
     [h:subeffectData = json.remove(subeffectData,"targetCreatureTypes")]
 }]
 

@@ -27,9 +27,11 @@
 [h:hp.DamageDealtString = ""]
 [h,foreach(damagetype,hp.TypesDealt),CODE:{
 	[h,if(damagetype == "None"),CODE:{
-		[h:thisDamageTypeInfo = json.path.read(hp.DamageDealt,"[*][?(@.DamageType=='"+damagetype+"')]['Total']")]
+		[h:thisDamageTypeInfo = json.path.read(hp.DamageDealt,"[*][?(@.DamageType=='"+damagetype+"')]['"+if(hp.IsCrit,"Crit","")+"Total']")]
 
 		[h:hp.FinalDamageDealt = json.set(hp.FinalDamageDealt,"Untyped",math.arraySum(thisDamageTypeInfo))]
+		
+		[h:hp.DamageDealtString = if(tempDamageDealt==0,hp.DamageDealtString,listAppend(hp.DamageDealtString,tempDamageDealt," + "))]
 	};{
 		[h:hp.VulnTest = json.contains(json.get(hp.DmgModData,"Vulnerability"),damagetype)]
 		[h:hp.ResTest = json.contains(json.get(hp.DmgModData,"Resistance"),damagetype)]
@@ -42,7 +44,7 @@
 		[h:thisDamageTypeInfo = json.path.read(hp.DamageDealt,"[*][?(@.DamageType=='"+damagetype+"')]")]
 
 		[h:tempDamageDealt = 0]
-		[h,foreach(damageInstance,thisDamageTypeInfo): tempDamageDealt = tempDamageDealt + if(json.get(damageInstance,"NoModification")==0,json.get(damageInstance,"Total")*json.get(damageInstance,"Modifier"),0)]
+		[h,foreach(damageInstance,thisDamageTypeInfo): tempDamageDealt = tempDamageDealt + if(json.get(damageInstance,"NoModification")==0,json.get(damageInstance,if(hp.IsCrit,"Crit","")+"Total")*json.get(damageInstance,"Modifier"),0)]
 		[h:tempDamageDealt = floor(tempDamageDealt) - hp.DRTest]
 
 		[h:tempDamageType = damagetype]
@@ -54,7 +56,7 @@
 			default: tempDamageDealt = tempDamageDealt
 		]
 		
-		[h:noModsDamageDealt = math.arraySum(json.append(json.path.read(hp.DamageDealt,"[?(@.NoModification==1 && @.DamageType=='"+damagetype+"')]['Total']"),0))]
+		[h:noModsDamageDealt = math.arraySum(json.append(json.path.read(hp.DamageDealt,"[?(@.NoModification==1 && @.DamageType=='"+damagetype+"')]['"+if(hp.IsCrit,"Crit","")+"Total']"),0))]
 	
 		[h,if(tempDamageType == "Healing"):
 			hp.FinalDamageDealt = json.set(hp.FinalDamageDealt,"Healing",json.get(hp.FinalDamageDealt,"Healing")+tempDamageDealt);
@@ -210,7 +212,7 @@
 	"Header","Total "+if(hp.ChangeValue>0,"Healing","Damage"),
 	"FalseHeader","",
 	"FullContents","<span style='font-size:1.5em; color:"+if(hp.ChangeValue>0,HealingColor,DamageColor)+"'>"+abs(hp.ChangeValue)+"</span>",
-	"RulesContents",if(listCount(hp.DamageDealtString)>1,hp.DamageDealtString+" = ",""),
+	"RulesContents",if(listCount(hp.DamageDealtString," + ")>1,hp.DamageDealtString+" = ",""),
 	"RollContents","",
 	"DisplayOrder","['Rules','Roll','Full']"
 ))]
@@ -267,16 +269,16 @@
 	[h:hp.PassedSave = hp.ConcSave>=hp.ConcDC]
 	
 	[h:abilityTable = json.append(abilityTable,json.set("",
-	"ShowIfCondensed",1,
-	"Header","Concentration",
-	"FalseHeader","",
-	"FullContents","DC <span style='font-size:1.5em'>"+hp.ConcDC+"</span>",
-	"RulesContents","",
-	"RollContents","",
-	"DisplayOrder","['Rules','Roll','Full']",
-	"BonusSectionNum",1,
-	"BonusSectionType1","Full",
-	"BonusBody1","<span style='color:"+if(hp.PassedSave,HealingColor+"'>Maintained",DamageColor+"'>Broken")+"</span>"
+		"ShowIfCondensed",1,
+		"Header","Concentration",
+		"FalseHeader","",
+		"FullContents","DC <span style='font-size:1.5em'>"+hp.ConcDC+"</span>",
+		"RulesContents","",
+		"RollContents","",
+		"DisplayOrder","['Rules','Roll','Full']",
+		"BonusSectionNum",1,
+		"BonusSectionType1","Full",
+		"BonusBody1","<span style='color:"+if(hp.PassedSave,HealingColor+"'>Maintained",DamageColor+"'>Broken")+"</span>"
 	))]
 	
 	[h:abilityTable = json.merge(abilityTable,json.get(macro.return,"Table"))]

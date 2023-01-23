@@ -72,8 +72,16 @@
 [h:spell.TargetTypes = json.fields(spell.TargetingData,"json")]
 [h,if(json.contains(spell.TargetTypes,"Creature")),CODE:{
 	[h:spell.TargetCreatureLimits = json.get(spell.TargetingData,"Creature")]
-	[h:spell.TargetOptions = pm.a5e.TargetCreatureFiltering(json.set("","ParentToken",ParentToken,"Origin",spell.TargetOrigin,"Range",spell.RangeData),spell.TargetCreatureLimits)]
-	[h:spell.AllTargets = pm.a5e.TargetCreatureTargeting(spell.TargetOptions,spell.TargetNumber,MissileCount)]
+	[h:spell.TargetOptionData = pm.a5e.TargetCreatureFiltering(json.set("","ParentToken",ParentToken,"Origin",spell.TargetOrigin,"Range",spell.RangeData),spell.TargetCreatureLimits)]
+	
+	[h:spell.TargetOptions = json.get(spell.TargetOptionData,"ValidTargets")]
+	[h:SelfOnlyTest = json.get(spell.TargetOptionData,"SelfOnly")]
+	[h,if(SelfOnlyTest),CODE:{
+		[h:spell.AllTargets = spell.TargetOptions]
+	};{
+		[h:spell.AllTargets = pm.a5e.TargetCreatureTargeting(spell.TargetOptions,spell.TargetNumber,MissileCount)]
+	}]
+	
 	[h:thisEffectData = json.set(thisEffectData,"Targets",spell.AllTargets)]
 }]
 

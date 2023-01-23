@@ -24,7 +24,14 @@
 
 [h:ConditionImmunities = pm.a5e.ConditionImmunityCalc(json.set("","ParentToken",ParentToken,"SetBy",ConditionSetBy,"SourceType","{}"))]
 [h:a5e.ConditionsTemp = json.path.delete(a5e.ConditionsTemp,"[*][?(@.Name in "+json.get(ConditionImmunities,"Conditions")+")]")]
-[h:a5e.ConditionsTemp = json.path.delete(a5e.ConditionsTemp,"[*][?(@.ConditionType in "+json.get(ConditionImmunities,"ConditionTypes")+")]")]
+
+[h:AllConditionsImmunType = "[]"]
+[h,foreach(tempCondition,a5e.ConditionsTemp),CODE:{
+	[h:ImmunTypeTest = !json.isEmpty(json.intersection(json.get(tempCondition,"ConditionType"),json.get(ConditionImmunities,"ConditionTypes")))]
+	[h,if(ImmunTypeTest): AllConditionsImmunType = json.append(AllConditionsImmunType,json.get(tempCondition,"Name"))]
+}]
+
+[h:a5e.ConditionsTemp = json.path.delete(a5e.ConditionsTemp,"[*][?(@.Name in "+AllConditionsImmunType+")]")]
 
 [h:"<!-- The purpose of looping here is to catch any chain reactions - e.g. Condition A is associated with Condition B, which in turn is associated with Condition C. -->"]
 [h:a5e.Conditions = a5e.ConditionsTemp]
@@ -105,7 +112,7 @@
 	[h:switchToken(ParentToken)]
 };{}]
 
-[h:ConditionsAppliedDisplay = pm.a5e.CreateDisplayList(json.path.read(a5e.Conditions,"[*][?(@.IsAssociated!=1 || @.IsAssociated==null)]['DisplayName']"),"and")]
+[h:ConditionsAppliedDisplay = pm.a5e.CreateDisplayList(json.path.read(a5e.Conditions,"[*][?(@.IsAssociated!=1 || @.IsAssociated==null)]['DisplayName']","DEFAULT_PATH_LEAF_TO_NULL"),"and")]
 [h:abilityTable = json.append(abilityTable,json.set("",
 	"ShowIfCondensed",1,
 	"Header","Condition"+if(json.length(a5e.Conditions)>1,"s","")+" Activated",

@@ -219,7 +219,7 @@
 	
 	[h:"<!-- Note to future self: Add crit data to the damage info here. Will make processing abilities easier if they add/negate a crit. -->"]
 	[h,if(thisTokenDamageDealt!=""),CODE:{
-		[h,MACRO("Change HP@Lib:pm.a5e.Core"): json.set("","DamageDealt",thisTokenDamageDealt,"IsCrit",attackCrit,"ParentToken",targetToken)]
+		[h,MACRO("ChangeHP@Lib:pm.a5e.Core"): json.set("","DamageDealt",thisTokenDamageDealt,"IsCrit",attackCrit,"ParentToken",targetToken)]
 		[h:abilityTable = json.merge(abilityTable,json.get(macro.return,"Table"))]
 	};{}]
 	
@@ -245,8 +245,8 @@
 
 		[h:tempConditionsRemovedTypes = json.get(thisTokenConditionsRemovedInfo,"ConditionTypes")]
 		[h,if(tempConditionsRemovedTypes == "ARRAY"): 
-			tempConditionsRemovedGroups = json.merge(tempConditionsRemovedGroups,json.unique(json.path.read(getProperty("a5e.stat.ConditionList",targetToken),"[*][?(@.ConditionType in "+tempConditionsRemovedTypes+")]['GroupID']")));
-			tempConditionsRemovedGroups = json.merge(tempConditionsRemovedGroups,json.path.read(getProperty("a5e.stat.ConditionList",targetToken),"[*][?(@.ConditionType == '"+tempConditionsRemovedTypes+"' && @.ConditionType != '')]['GroupID']"))
+			tempConditionsRemovedGroups = json.merge(tempConditionsRemovedGroups,json.unique(json.path.read(getProperty("a5e.stat.ConditionList",targetToken),"[*][?(@.ConditionType.* in "+tempConditionsRemovedTypes+")]['GroupID']")));
+			tempConditionsRemovedGroups = json.merge(tempConditionsRemovedGroups,json.path.read(getProperty("a5e.stat.ConditionList",targetToken),"[*][?(@.ConditionType.* == '"+tempConditionsRemovedTypes+"' && @.ConditionType != '')]['GroupID']"))
 		]
 
 		[h:tempEndConditionData = json.set("",

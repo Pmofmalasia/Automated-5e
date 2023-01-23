@@ -76,8 +76,16 @@
 [h:subeffect.TargetTypes = json.fields(subeffect.TargetingData,"json")]
 [h,if(json.contains(subeffect.TargetTypes,"Creature")),CODE:{
 	[h:subeffect.TargetCreatureLimits = json.get(subeffect.TargetingData,"Creature")]
-	[h:subeffect.TargetOptions = pm.a5e.TargetCreatureFiltering(json.set("","ParentToken",ParentToken,"Origin",subeffect.TargetOrigin,"Range",subeffect.RangeData),subeffect.TargetCreatureLimits)]
-	[h:subeffect.AllTargets = pm.a5e.TargetCreatureTargeting(subeffect.TargetOptions,subeffect.TargetNumber,MissileCount)]
+	[h:subeffect.TargetOptionData = pm.a5e.TargetCreatureFiltering(json.set("","ParentToken",ParentToken,"Origin",subeffect.TargetOrigin,"Range",subeffect.RangeData),subeffect.TargetCreatureLimits)]
+	
+	[h:subeffect.TargetOptions = json.get(subeffect.TargetOptionData,"ValidTargets")]
+	[h:SelfOnlyTest = json.get(subeffect.TargetOptionData,"SelfOnly")]
+	[h,if(SelfOnlyTest),CODE:{
+		[h:subeffect.AllTargets = subeffect.TargetOptions]
+	};{
+		[h:subeffect.AllTargets = pm.a5e.TargetCreatureTargeting(subeffect.TargetOptions,subeffect.TargetNumber,MissileCount)]
+	}]
+
 	[h:thisEffectData = json.set(thisEffectData,"Targets",subeffect.AllTargets)]
 }]
 

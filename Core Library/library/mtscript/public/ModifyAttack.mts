@@ -67,11 +67,13 @@
 [h:PrimeStat = if(json.get(wa.Props,"IntMod")>0,"Intelligence",PrimeStat)]
 [h:PrimeStat = if(json.get(wa.Props,"WisMod")>0,"Wisdom",PrimeStat)]
 [h:PrimeStat = if(json.get(wa.Props,"ChaMod")>0,"Charisma",PrimeStat)]
+[h,if(json.get(wa.Props,"PrimeStat")!=""): PrimeStat = json.get(wa.Props,"PrimeStat")]
 
 [h:pm.PassiveFunction("AttackStat")]
 [h:pm.PassiveFunction("WeaponAttackStat")]
 
 [h:attack.PrimeStatBonus = json.get(getProperty("a5e.stat.AtrMods"),PrimeStat)]
+[h:PrimeStatMod = json.get(getProperty("a5e.stat.AtrMods"),PrimeStat)]
 
 [h:wa.DmgDieSize = number(substring(wa.DmgDie,indexOf(wa.DmgDie,"d")+1))]
 [h:wa.DmgDie2Size = number(substring(wa.DmgDie2,indexOf(wa.DmgDie2,"d")+1))]
@@ -92,15 +94,19 @@
 	[h:pm.PassiveFunction("WeaponAttackNum")]
 }]
 
+[h:"<!-- Note: Not using SelfOnlyTest here for targeting to avoid CODE block limits, but shouldn't need it since attacks don't generally only target self anyway. -->"]
 [h,if(wa.PresetTarget == ""),CODE:{
-	[h:wa.TargetOptions = pm.a5e.TargetCreatureFiltering(json.set("","ParentToken",ParentToken,"Number",1,"Allegiance",json.set("","NotSelf",1),"Origin",wa.TargetOrigin,"Range",json.set("","Value",if(wa.MeleeRanged=="Ranged",wa.Range,wa.Reach),"Units","Feet")),"{}")]
+	[h:wa.TargetOptionData = pm.a5e.TargetCreatureFiltering(json.set("","ParentToken",ParentToken,"Number",1,"Allegiance",json.set("","NotSelf",1),"Origin",wa.TargetOrigin,"Range",json.set("","Value",if(wa.MeleeRanged=="Ranged",wa.Range,wa.Reach),"Units","Feet")),"{}")]
+	
+	[h:wa.TargetOptions = json.get(wa.TargetOptionData,"ValidTargets")]
+
 	[h:wa.AllTargets = pm.a5e.TargetCreatureTargeting(wa.TargetOptions,1,AttackCount)]
 	[h,if(AttackCount==1),CODE:{
 		[h:wa.TargetList = wa.AllTargets]
 	};{
 		[h:wa.TargetList = "[]"]
 		[h,count(AttackCount): wa.TargetList = json.merge(wa.TargetList,json.get(wa.AllTargets,roll.count))]
-	}]
+	}]	
 };{
 	[h:wa.TargetList = "[]"]
 	[h,count(AttackCount): wa.TargetList = json.append(wa.TargetList,wa.PresetTarget)]

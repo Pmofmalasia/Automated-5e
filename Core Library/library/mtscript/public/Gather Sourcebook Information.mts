@@ -21,8 +21,9 @@
 [h:pm.CastingAbilities = "{}"]
 [h:pm.SpellSchools = ""]
 [h:pm.Spells = ""]
+[h:pm.DamageTypeTags = ""]
+[h:pm.ConditionTags = ""]
 [h:pm.SpellLists = "{}"]
-
 [h:"<!-- Since languages may be setting specific, may want to add a function for DMs to exclude languages from certain sourcebooks. Can use this macro as the gate for blocking those books. -->"]
 [h,foreach(book,pm.SourcebookLibs),CODE:{
 	[h,if(getLibProperty("sb.Attributes","Lib:"+book)!=""): pm.Attributes = if(or(json.get(getLibProperty("AttributeSourcebooks","Lib:pm.a5e.Core"),book)==1,json.get(getLibProperty("AttributeSourcebooks","Lib:pm.a5e.Core"),book)==""),json.merge(pm.Attributes,getLibProperty("sb.Attributes","Lib:"+book)),pm.Attributes)]
@@ -44,6 +45,8 @@
 	[h,if(getLibProperty("sb.AbilityUpdates","Lib:"+book)!=""): pm.AbilityUpdates = json.merge(pm.AbilityUpdates,getLibProperty("sb.AbilityUpdates","Lib:"+book))]
 	[h,if(getLibProperty("sb.MonsterFeatures","Lib:"+book)!=""): pm.MonsterFeatures = json.merge(pm.MonsterFeatures,getLibProperty("sb.MonsterFeatures","Lib:"+book))]
 	[h,if(getLibProperty("sb.DamageTypes","Lib:"+book)!=""): pm.DamageTypes = json.merge(pm.DamageTypes,getLibProperty("sb.DamageTypes","Lib:"+book))]
+	[h,if(getLibProperty("sb.DamageTypeTags","Lib:"+book)!=""): pm.DamageTypeTags = json.merge(pm.DamageTypeTags,getLibProperty("sb.DamageTypeTags","Lib:"+book))]
+	[h,if(getLibProperty("sb.ConditionTags","Lib:"+book)!=""): pm.ConditionTags = json.merge(pm.ConditionTags,getLibProperty("sb.ConditionTags","Lib:"+book))]
 	[h,if(getLibProperty("sb.CastingAbilities","Lib:"+book)!=""): pm.CastingAbilities = json.merge(pm.CastingAbilities,getLibProperty("sb.CastingAbilities","Lib:"+book))]
 	[h,if(getLibProperty("sb.SpellSchools","Lib:"+book)!=""): pm.SpellSchools = json.merge(pm.SpellSchools,getLibProperty("sb.SpellSchools","Lib:"+book))]
 	[h,if(getLibProperty("sb.Spells","Lib:"+book)!=""): pm.Spells = json.merge(pm.Spells,getLibProperty("sb.Spells","Lib:"+book))]
@@ -79,6 +82,8 @@
 [h:setLibProperty("sb.AbilityUpdates",json.sort(pm.AbilityUpdates,"a","Class","Subclass","Level","DisplayName"),"Lib:pm.a5e.Core")]
 [h:setLibProperty("sb.MonsterFeatures",json.sort(pm.MonsterFeatures,"a","Class","Subclass","Level","DisplayName"),"Lib:pm.a5e.Core")]
 [h:setLibProperty("sb.DamageTypes",pm.DamageTypes,"Lib:pm.a5e.Core")]
+[h:setLibProperty("sb.DamageTypeTags",json.sort(pm.DamageTypeTags,"a","DisplayName"),"Lib:pm.a5e.Core")]
+[h:setLibProperty("sb.ConditionTags",json.sort(pm.ConditionTags,"a","DisplayName"),"Lib:pm.a5e.Core")]
 [h:setLibProperty("sb.CastingAbilities",pm.CastingAbilities,"Lib:pm.a5e.Core")]
 [h:setLibProperty("sb.SpellSchools",json.sort(pm.SpellSchools,"a","DisplayName"),"Lib:pm.a5e.Core")]
 [h:setLibProperty("sb.Spells",pm.Spells,"Lib:pm.a5e.Core")]

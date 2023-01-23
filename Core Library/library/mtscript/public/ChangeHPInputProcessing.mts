@@ -62,7 +62,7 @@
 		))
 	]
 	[h:FinalHPData = json.set(FinalHPData,"ParentToken",target)]
-	[h,MACRO("Change HP@Lib:pm.a5e.Core"): FinalHPData]
+	[h,MACRO("ChangeHP@Lib:pm.a5e.Core"): FinalHPData]
 	[h:abilityTable = json.merge(abilityTable,json.get(macro.return,"Table"))]
 }]
 

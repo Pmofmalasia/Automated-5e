@@ -9,7 +9,8 @@
     [h:outerCounter = 0]
     [h,foreach(selectionInstance,json.get(tempFeature,"SpellOptions")),CODE:{
         [h:thisInstanceSpellsChosen = "[]"]
-        [h,count(json.get(selectionInstance,"Number")): thisInstanceSpellsChosen = json.append(thisInstanceSpellsChosen,json.get(SpellPrepData,"choice"+json.get(tempFeature,"Name")+json.get(tempFeature,"Class")+json.get(tempFeature,"Subclass")+outerCounter+roll.count))]
+        [h:selectionNumber = evalMacro(json.get(selectionInstance,"Number"))]
+        [h,count(selectionNumber): thisInstanceSpellsChosen = json.append(thisInstanceSpellsChosen,json.get(SpellPrepData,"choice"+json.get(tempFeature,"Name")+json.get(tempFeature,"Class")+json.get(tempFeature,"Subclass")+outerCounter+roll.count))]
         [h:thisFeatureSpellsChosen = json.append(thisFeatureSpellsChosen,thisInstanceSpellsChosen)]
         [h:outerCounter = outerCounter + 1]
     }]

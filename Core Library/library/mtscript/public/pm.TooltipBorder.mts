@@ -2,6 +2,8 @@
 	abilityClass = json.get(arg(0),"Class");
 	abilityClass = if(json.get(arg(0),"Class")==getProperty("a5e.stat.Race"),"Innate",json.get(arg(0),"Class"))
 ]
+[h:DisplayClass = json.get(arg(0),"ClassForDisplay")]
+[h,if(DisplayClass!=""): abilityClass = DisplayClass]
 [h:ColorSubtype = json.get(arg(0),"ColorSubtype")]
 [h:abilityName = json.get(arg(0),"Name")]
 [h:abilityDisplayName = if(json.get(arg(0),"DisplayName")=="",abilityName,json.get(arg(0),"DisplayName"))]
@@ -18,8 +20,14 @@
 [h:FalseName=json.get(arg(0),"FalseName")]
 [h:OnlyRules=json.get(arg(0),"OnlyRules")]
 
-[h:tooltip.Border = pm.BorderColor(abilityClass,ColorSubtype)]
-[h:tooltip.Title = pm.TitleColor(abilityClass,ColorSubtype)]
+[h,if(abilityClass=="zzSpell"),CODE:{
+	[h:tempColors = pm.SpellColors(ColorSubtype)]
+	[h:tooltip.Border = json.get(tempColors,"Border")]
+	[h:tooltip.Title = json.get(tempColors,"Title")]
+};{
+	[h:tooltip.Border = pm.BorderColor(abilityClass,ColorSubtype)]
+	[h:tooltip.Title = pm.TitleColor(abilityClass,ColorSubtype)]
+}]
 			
 [h,if(BorderColorOverride == ""),CODE:{};{
 	[h:tooltip.Border = if(isOwner(getPlayerName()),BorderColorOverride,tooltip.Border)]

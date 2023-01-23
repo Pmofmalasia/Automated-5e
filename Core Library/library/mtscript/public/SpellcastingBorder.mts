@@ -20,8 +20,8 @@
     "Flavor",Flavor,
     "ParentToken",ParentToken,
     "DMOnly",DMOnly,
-    "Class","zzSpell"+SpellSource,
-    "ColorSubtype",SpellSlot,
+    "Class","zzSpell",
+    "ColorSubtype",json.set("","Source",SpellSource,"Level",SpellSlot),
     "Name",json.get(json.get(SpellData,0),"DisplayName"),
     "FalseName","Spellcasting",
     "OnlyRules",ShowFullRules
@@ -37,9 +37,9 @@
 
 [h:pm.a5e.BaseEffectData = json.set("",
     "Class","Spell",
-    "ClassForDisplay","zzSpell"+SpellSource,
+    "ClassForDisplay","zzSpell",
 	"DisplayName",json.get(json.get(SpellData,0),"DisplayName"),
-    "ColorSubtype",SpellSlot,
+    "ColorSubtype",json.set("","Source",SpellSource,"Level",SpellSlot),
     "FalseName","Spellcasting",
 	"Type","Spell",
 	"ID",pm.a5e.GenerateEffectID(),

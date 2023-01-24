@@ -241,16 +241,20 @@
 	[h:DamageTypeArray = pm.GetDamageTypes()]
 	[h,if(DmgAllTest),CODE:{
 		[h:lu.DamageOptions = DamageTypeArray]
-		[h:lu.DamageOptionsList = json.toList(json.path.read(lu.DamageOptions,".DisplayName"))]
+		[h:lu.DamageOptionsList = json.path.read(lu.DamageOptions,".DisplayName")]
 	};{
-		[h:lu.DamageOptions = if(json.get(json.get(ability,"DamageOptions"),"Inclusive"),json.intersection(json.get(json.get(ability,"DamageOptions"),"DamageTypes"),DamageTypeArray),json.difference(json.get(json.get(ability,"DamageOptions"),"DamageTypes"),DamageTypeArray))]
-		[h:lu.DamageOptionsList = json.toList(json.path.read(lu.DamageOptions,".DisplayName"))]
+		[h:DamageTypeInclusive = json.get(json.get(ability,"DamageOptions"),"Inclusive")]
+		[h,if(DamageTypeInclusive): 
+			lu.DamageOptions = json.path.read(DamageTypeArray,"[*][?(@.Name in "+json.get(json.get(ability,"DamageOptions"),"DamageTypes")+")]");
+			lu.DamageOptions = json.path.read(DamageTypeArray,"[*][?(@.Name nin "+json.get(json.get(ability,"DamageOptions"),"DamageTypes")+")]")
+		]
+		[h:lu.DamageOptionsList = json.path.read(lu.DamageOptions,".DisplayName")]
 	}]
 	
 	[h:abort(input(
 		"junkVar | ---------------------------- "+json.get(ability,"DisplayName")+": Damage Type ---------------------------- | | LABEL | SPAN=TRUE",
-		" lu.DamageChoice | "+lu.DamageOptionsList+" | Choose a damage type | RADIO | VALUE=STRING"
-		))]
+		" lu.DamageChoice | "+lu.DamageOptionsList+" | Choose a damage type | RADIO | VALUE=STRING DELIMITER=JSON "
+	))]
 	
 	[h:lu.NewAbilities = json.path.put(lu.NewAbilities,"[?(@.Name == '"+json.get(ability,"Name")+"' && @.Class == '"+json.get(ability,"Class")+"' && @.Subclass == '"+json.get(ability,"Subclass")+"')]","DamageType",json.get(json.path.read(lu.DamageOptions,"[?(@.Name=='"+pm.RemoveSpecial(lu.DamageChoice)+"')]['Name']"),0))]
 }]

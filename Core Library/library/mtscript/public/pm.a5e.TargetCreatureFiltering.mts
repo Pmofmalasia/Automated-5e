@@ -95,7 +95,6 @@
 		pm.TypeTest = if(or(pm.TargetTypeInclusive==getProperty("a5e.stat.CreatureType",target),pm.TargetTypeInclusive=="Any",pm.TargetTypeInclusive==""),1,0);
 		pm.TypeTest = if(json.contains(pm.TargetTypeInclusive,getProperty("a5e.stat.CreatureType",target)),1,0)
 	]
-	[h:broadcast(getName(target)+": "+pm.TypeTest)]
 	
 	[h,if(json.type(pm.TargetSubtypeInclusive) == "UNKNOWN"):
 		pm.SubtypeTest = if(or(pm.TargetSubtypeInclusive==getProperty("a5e.stat.Race",target),pm.TargetSubtypeInclusive=="Any",pm.TargetSubtypeInclusive==""),1,0);

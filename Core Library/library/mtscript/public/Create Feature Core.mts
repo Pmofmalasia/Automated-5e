@@ -209,7 +209,7 @@
 		[h:ab.DamageOptions = json.set("","DamageTypes",json.append("","All_Types"))]
 	};{
 		[h:ab.TypesChosen = ""]
-		[h,foreach(dmgType,pm.GetDamageTypes()): ab.TypesChosen = if(eval("temp."+json.get(dmgType,"Name")),json.append(ab.TypesChosen,dmgType),ab.TypesChosen)]
+		[h,foreach(dmgType,pm.GetDamageTypes("Name","json")): ab.TypesChosen = if(eval("temp."+dmgType),json.append(ab.TypesChosen,dmgType),ab.TypesChosen)]
 		[h:ab.DamageOptions = json.set("","DamageTypes",ab.TypesChosen,"Inclusive",!ab.DamageTypeInclusive)]
 	}]
 	

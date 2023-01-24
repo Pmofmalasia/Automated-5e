@@ -106,7 +106,7 @@
 	"TitleFont",json.get(sr.Data,"TitleFont"),
 	"BodyFont",json.get(sr.Data,"BodyFont"),
 	"Class","",
-	"Name","Long Rest",
+	"Name","Short Rest",
 	"FalseName","",
 	"OnlyRules",0
 )]

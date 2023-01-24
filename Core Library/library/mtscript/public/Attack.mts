@@ -45,7 +45,7 @@
 [h:wa.Magical = json.get(wa.WeaponUsed,"MagicItem")]
 [h:attack.ProfTest = if(or(json.get(getProperty("a5e.stat.WeaponProficiencies"),wa.WeaponType)==1,json.get(MagicItemStats,wa.WeaponType+"Prof")==1),1,0)]
 [h:attack.ToHitBonus = wa.MagicBonus]
-[h:wa.ProfTest = 1]
+[h:attack.ProfTest = 1]
 [h:wa.TargetOrigin = ParentToken]
 
 [h:pm.PassiveFunction("AttackProps")]

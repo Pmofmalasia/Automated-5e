@@ -1,4 +1,5 @@
 [h:AllEffectData = arg(1)]
+[h,if(json.type(AllEffectData)=="OBJECT"): AllEffectData = json.append("",AllEffectData)]
 
 [h:EffectModificationData = arg(2)]
 [h,if(json.type(EffectModificationData)=="OBJECT"),CODE:{

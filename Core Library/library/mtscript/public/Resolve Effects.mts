@@ -73,13 +73,22 @@
 		[h:attackToHit = json.get(thisTokenAttackData,"ToHit")]
 		[h:attackCrit = json.get(thisTokenAttackData,"CritTest")]
 		[h:attackCritFail = json.get(thisTokenAttackData,"CritFailTest")]
-		[h:hitTarget = and(!attackCritFail,or(attackCrit,attackToHit >= getProperty("a5e.stat.AC")))]
+		[h:hitTarget = and(!attackCritFail,or(attackCrit,attackToHit >= getProperty("a5e.stat.AC"))) * 2]
 	};{
 		[h:hitTarget = 1]
 		[h:attackCrit = 0]
 	}]
+
+	[h:AdditionalOnHitResolution = 0]
+	[h:"<!-- Set AdditionalOnHitResolution to 1 for any FeatureLinks OnHit, since they need to wait for the link to be clicked before applying damage and removing the effect -->"]
+	[h,if(hitTarget==2),CODE:{
+		[h:pm.PassiveFunction("AttackOnHit",json.set("","ParentToken",ParentToken))]
+
+		[h:hitTarget = 1]
+		[h,if(AdditionalOnHitResolution): needsFurtherResolution = 1]
+	};{}]
 	
-	[h,if(!hitTarget),CODE:{
+	[h,if(hitTarget==0),CODE:{
 		[h:thisTokenModifiableComponents = json.set("",
 			"Conditions","[]",
 			"Damage","",
@@ -157,7 +166,7 @@
 			[h:multiCheckDCTypeTest = json.type(effCheckDCType) == "ARRAY"]
 			[h,if(!multiCheckDCTypeTest): effCheckDCType = json.append("",effCheckDCType)]
 			[h:CheckDCOptionNames = ""]
-			
+
 			[h,foreach(CheckDCOption,effCheckDCType): CheckDCOptionNames = json.append(CheckDCOptionNames,if(json.get(CheckDCOption,"Type")=="Initiative","Initiative",pm.GetDisplayName(json.get(CheckDCOption,"Skill"),if(json.get(CheckDCOption,"Type")=="Skill","sb.Skills",if(json.get(CheckDCOption,"Type")=="Ability Score","sb.Attributes","sb.Tools")))))]
 	
 			[h,if(multiCheckDCTypeTest): 
@@ -216,8 +225,7 @@
 		[h:thisTokenConditionsRemovedInfo = "{}"]
 		[h:remainingTargetsList = json.append(remainingTargetsList,targetToken)]
 	};{}]
-	
-	[h:"<!-- Note to future self: Add crit data to the damage info here. Will make processing abilities easier if they add/negate a crit. -->"]
+
 	[h,if(thisTokenDamageDealt!=""),CODE:{
 		[h,MACRO("ChangeHP@Lib:pm.a5e.Core"): json.set("","DamageDealt",thisTokenDamageDealt,"IsCrit",attackCrit,"ParentToken",targetToken)]
 		[h:abilityTable = json.merge(abilityTable,json.get(macro.return,"Table"))]

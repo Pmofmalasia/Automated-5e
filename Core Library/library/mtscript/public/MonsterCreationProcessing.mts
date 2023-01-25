@@ -77,7 +77,7 @@
 
 [h:setProperty("a5e.stat.Proficiency",json.get(MonsterData,"Proficiency"))]
 
-[h:"<-- TODO: Currently missing damage resistances, condition immunities, senses/vision, language (not in input either) -->"]
+[h:"<-- TODO: Currently missing senses/vision, language (not in input either) -->"]
 [h:MonsterTraitsFeature = ""]
 [h:DamageModCommand = ""]
 

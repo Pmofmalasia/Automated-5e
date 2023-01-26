@@ -186,7 +186,7 @@
 	[h,foreach(TempFS,FightingStyleOptions): fs.Input = listAppend(fs.Input," pm.Choose"+json.get(TempFS,"Name")+" |  | "+json.get(TempFS,"DisplayName")+" | CHECK ","##")]
 	
 	[h:abort(input(fs.Input," junkVar | Note: Any fighting styles not added previously can be added to this list on fighting style creaton. |  | LABEL | SPAN=TRUE "))]
-	
+
 	[h:fs.ChoicesFinal = "[]"]
 	[h:fs.OtherLibOptions = "{}"]
 	[h,foreach(TempFS,FightingStyleOptions),CODE:{
@@ -195,7 +195,7 @@
 			fs.OtherLibOptions = if(eval("pm.Choose"+json.get(TempFS,"Name")),json.set(fs.OtherLibOptions,json.get(TempFS,"Library"),json.append(json.get(fs.OtherLibOptions,json.get(TempFS,"Library")),json.get(TempFS,"Name"))),fs.OtherLibOptions)
 		]
 	}]
-	
+
 	[h:ab.Final = json.set(ab.Final,"FightingStyleList",fs.ChoicesFinal)]
 };{}]
 
@@ -212,7 +212,7 @@
 		[h,foreach(dmgType,pm.GetDamageTypes("Name","json")): ab.TypesChosen = if(eval("temp."+dmgType),json.append(ab.TypesChosen,dmgType),ab.TypesChosen)]
 		[h:ab.DamageOptions = json.set("","DamageTypes",ab.TypesChosen,"Inclusive",!ab.DamageTypeInclusive)]
 	}]
-	
+
 	[h:ab.Final = json.set(ab.Final,"DamageOptions",ab.DamageOptions)]
 };{}]
 

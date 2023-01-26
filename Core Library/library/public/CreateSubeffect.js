@@ -820,7 +820,11 @@ async function createRangeTable(){
             }
         }
     }
+    else if(document.getElementById("RangeType").value == "PriorTarget"){
+
+    }
     else if(RangeRowIndex+1 != document.getElementById("AoE").rowIndex){
+        //Will need to change when rows are deleted here
         clearUnusedTable("CreateSubeffectTable","Range","AoE");
     }
 }

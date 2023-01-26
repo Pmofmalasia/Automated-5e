@@ -47,6 +47,7 @@
 		thisTokenTargetSpecificEffects = json.get(effTargetSpecific,targetToken);
 		thisTokenTargetSpecificEffects = ""
 	]
+	[h:a5e.UnifiedAbilities = a5e.GatherAbilities(ParentToken)]
 
 	[h:thisTokenModifiableComponents = json.set("",
 		"Conditions",thisTokenConditionInfo,
@@ -80,7 +81,7 @@
 	}]
 
 	[h:AdditionalOnHitResolution = 0]
-	[h:"<!-- Set AdditionalOnHitResolution to 1 for any FeatureLinks OnHit, since they need to wait for the link to be clicked before applying damage and removing the effect -->"]
+	[h:"<!-- Set AdditionalOnHitResolution to 1 for any FeatureLinks OnHit, since they need to wait for the link to be clicked before applying damage and removing the effect. Also need something here to bypass this if it's already been run before. -->"]
 	[h,if(hitTarget==2),CODE:{
 		[h:pm.PassiveFunction("AttackOnHit",json.set("","ParentToken",ParentToken))]
 
@@ -279,7 +280,7 @@
 	[h:setLibProperty("gd.Effects",json.path.delete(getLibProperty("gd.Effects","Lib:pm.a5e.Core"),"[*][?(@.ID=="+effID+")]"),"Lib:pm.a5e.Core")]
 }]
 
-[h,MACRO("OpenEffectsFrame@Lib:pm.a5e.Core"): ""]
+[h,MACRO("BuildEffectsFrame@Lib:pm.a5e.Core"): ""]
 
 [h,if(ParentToken!=""): switchToken(ParentToken)]
 

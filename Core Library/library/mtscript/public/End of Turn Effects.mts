@@ -108,7 +108,7 @@
 [h,MACRO("Build Effect@Lib:pm.a5e.Core"): json.set("","CurrentEffects","[]","ToMerge",effectsToMerge,"BaseEffect",pm.a5e.BaseEffectData)]
 [h:pm.a5e.EffectData = macro.return]
 [h,if(!json.isEmpty(pm.a5e.EffectData)): setLibProperty("gd.Effects",json.merge(getLibProperty("gd.Effects","Lib:pm.a5e.Core"),pm.a5e.EffectData),"Lib:pm.a5e.Core")]
-[h,MACRO("OpenEffectsFrame@Lib:pm.a5e.Core"): ""]
+[h,MACRO("BuildEffectsFrame@Lib:pm.a5e.Core"): ""]
 
 [h:setState("Initiative", 0)]
 [h:macro.return = abilityTable]

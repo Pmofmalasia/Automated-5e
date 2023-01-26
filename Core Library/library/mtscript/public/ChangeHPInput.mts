@@ -15,7 +15,7 @@
 [h,foreach(tempType,pm.GetDamageTypes()): DamageTypeOptions = DamageTypeOptions + "<option value='"+json.get(tempType,"Name")+"'>"+json.get(tempType,"DisplayName")+"</option>"]
 [h:DamageTypeOptions = DamageTypeOptions + "<option value='Healing'>Healing</option><option value='TempHP'>Temp HP</option>"]
 
-[h:ChangeHPHTML = ChangeHPHTML + "<input type='hidden' id='DamageTypeNumber' name='DamageTypeNumber' value=0><tr id='rowDamage0'><th><label for='DamageValue0'>Damage:</label></th><td><input type='number' id='DamageValue0' name='DamageValue0' value='0' min=0 style='width:30px' autofocus><select id='DamageType0' name='DamageType0'>"+DamageTypeOptions+"</select></td></tr>"]
+[h:ChangeHPHTML = ChangeHPHTML + "<input type='hidden' id='DamageTypeNumber' name='DamageTypeNumber' value=0><tr id='rowDamage0'><th><label for='DamageValue0'>Damage:</label></th><td><input type='number' id='DamageValue0' name='DamageValue0' min=0 style='width:30px' autofocus><select id='DamageType0' name='DamageType0'>"+DamageTypeOptions+"</select></td></tr>"]
 
 [h:ChangeHPHTML = ChangeHPHTML + "<tr id='rowDamageButtons'><th text-align='center' colspan='2'><input type='button' id='addDamageType' name='addDamageType' value='Add' onclick='addDamageTypeRow()'>  <input type='button' id='removeDamageType' name='removeDamageType' value='Remove' onclick='removeDamageTypeRow()'></th></tr>"]
 

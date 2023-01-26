@@ -15,7 +15,7 @@
 			};
 			case "Remove":{
 				[h:setLibProperty("gd.Effects",json.remove(incompleteEffects,chosenEffect),"Lib:pm.a5e.Core")]
-				[h,MACRO("OpenEffectsFrame@Lib:pm.a5e.Core"): ""]
+				[h,MACRO("BuildEffectsFrame@Lib:pm.a5e.Core"): ""]
 				[h:broadcast("Effect "+EffectDisplay+" removed.","gm")]
 			}
 		]
@@ -27,6 +27,6 @@
 	};
 	case 2:{
 		[h:setLibProperty("gd.Effects","[]","Lib:pm.a5e.Core")]
-		[h,MACRO("OpenEffectsFrame@Lib:pm.a5e.Core"): ""]
+		[h,MACRO("BuildEffectsFrame@Lib:pm.a5e.Core"): ""]
 	}
 ]

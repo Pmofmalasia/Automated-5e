@@ -32,6 +32,15 @@
 
 [h:needsFurtherResolution = 0]
 [h:remainingTargetsList = "[]"]
+[h:targetsWithAdditionalOnHitResolution = "[]"]
+
+[h:IsTooltip = 0]
+[h:pm.a5e.OverarchingContext = json.get(effFull,"Context")]
+[h:DamageColor = pm.DamageColor()]
+[h:HealingColor = pm.HealingColor()]
+[h:CritColor = pm.CritColor()]
+[h:CritFailColor = pm.CritFailColor()]
+[h:LinkColor = pm.LinkColor()]
 
 [h:abilityTable = "[]"]
 [h,foreach(targetToken,effTargets),CODE:{
@@ -67,26 +76,32 @@
 		"RulesContents","",
 		"RollContents","",
 		"DisplayOrder","['Rules','Roll','Full']"
-		))
-	]
+	))]
 
 	[h,if(thisTokenAttackData!=""),CODE:{
 		[h:attackToHit = json.get(thisTokenAttackData,"ToHit")]
 		[h:attackCrit = json.get(thisTokenAttackData,"CritTest")]
 		[h:attackCritFail = json.get(thisTokenAttackData,"CritFailTest")]
-		[h:hitTarget = and(!attackCritFail,or(attackCrit,attackToHit >= getProperty("a5e.stat.AC"))) * 2]
+		[h:hitTarget = and(!attackCritFail,or(attackCrit,attackToHit >= getProperty("a5e.stat.AC")))]
+		[h,if(json.get(thisTokenAttackData,"OnHitTriggered")==""):
+			needsOnHit = 1;
+			needsOnHit = !json.contains(json.get(thisTokenAttackData,"OnHitTriggered"),targetToken)
+		]
+		[h:ResolveOnHitEffects = needsOnHit * hitTarget]
 	};{
 		[h:hitTarget = 1]
 		[h:attackCrit = 0]
+		[h:ResolveOnHitEffects = 0]
 	}]
 
 	[h:AdditionalOnHitResolution = 0]
 	[h:"<!-- Set AdditionalOnHitResolution to 1 for any FeatureLinks OnHit, since they need to wait for the link to be clicked before applying damage and removing the effect. Also need something here to bypass this if it's already been run before. -->"]
-	[h,if(hitTarget==2),CODE:{
+	[h,if(ResolveOnHitEffects),CODE:{
 		[h:pm.PassiveFunction("AttackOnHit",json.set("","ParentToken",ParentToken))]
+		[h:pm.PassiveFunction("AttackOnHitTargeted")]
 
-		[h:hitTarget = 1]
 		[h,if(AdditionalOnHitResolution): needsFurtherResolution = 1]
+		[h,if(AdditionalOnHitResolution): targetsWithAdditionalOnHitResolution = json.append(targetsWithAdditionalOnHitResolution,targetToken)]
 	};{}]
 	
 	[h,if(hitTarget==0),CODE:{
@@ -154,7 +169,21 @@
 				thisTokenModifiableComponents = pm.a5e.ResolveDCSuccess(json.set("","DCData",thisTokenSaveDCData,"ModifiableComponents",thisTokenModifiableComponents));
 				thisTokenModifiableComponents = pm.a5e.ResolveDCFailure(json.set("","DCData",thisTokenSaveDCData,"ModifiableComponents",thisTokenModifiableComponents))
 			]
-			[h:abilityTable = json.merge(abilityTable,json.get(SaveResult,"Table"))]
+
+			[h,if(passedSave):
+				saveResultText = "<span style='color:"+HealingColor+"'>Success</span>";
+				saveResultText = "<span style='color:"+DamageColor+"'>Failure</span>"
+			]
+
+			[h:abilityTable = json.append(abilityTable,json.set("",
+				"ShowIfCondensed",1,
+				"Header","Check Result",
+				"FalseHeader","",
+				"FullContents",saveResultText,
+				"RulesContents","",
+				"RollContents","",
+				"DisplayOrder","['Rules','Roll','Full']"
+			))]
 		};
 		default:{}
 	]
@@ -210,7 +239,21 @@
 				thisTokenModifiableComponents = pm.a5e.ResolveDCSuccess(json.set("","DCData",thisTokenCheckDCData,"ModifiableComponents",thisTokenModifiableComponents));
 				thisTokenModifiableComponents = pm.a5e.ResolveDCFailure(json.set("","DCData",thisTokenCheckDCData,"ModifiableComponents",thisTokenModifiableComponents))
 			]
-			[h:abilityTable = json.merge(abilityTable,json.get(CheckResult,"Table"))]
+
+			[h,if(json.get(CheckResult,"Value") >= DCValue):
+				checkResultText = "<span style='color:"+HealingColor+"'>Success</span>";
+				checkResultText = "<span style='color:"+DamageColor+"'>Failure</span>"
+			]
+
+			[h:abilityTable = json.append(abilityTable,json.set("",
+				"ShowIfCondensed",1,
+				"Header","Check Result",
+				"FalseHeader","",
+				"FullContents",checkResultText,
+				"RulesContents","",
+				"RollContents","",
+				"DisplayOrder","['Rules','Roll','Full']"
+			))]
 		};
 		default:{}
 	]
@@ -270,11 +313,12 @@
 
 [h,if(!json.isEmpty(remainingTargetsList)),CODE:{
 	[h:effFull = json.set(effFull,"Targets",remainingTargetsList)]
-
+	
 	[h:"<!-- This is awful. I am sorry. I blame CODE block limits. -->"]
 	[h,if(json.get(effToResolve,"SaveDC")!=""): effFull = json.set(effFull,"ToResolve",json.set(json.get(effFull,"ToResolve"),"SaveDC",json.set(json.get(json.get(effFull,"ToResolve"),"SaveDC"),"SavesMade",effSavesMadeData)))]
 	[h,if(json.get(effToResolve,"CheckDC")!=""): effFull = json.set(effFull,"ToResolve",json.set(json.get(effFull,"ToResolve"),"CheckDC",json.set(json.get(json.get(effFull,"ToResolve"),"CheckDC"),"ChecksMade",effChecksMadeData)))]
-
+	[h,if(!json.isEmpty(targetsWithAdditionalOnHitResolution)): effFull = json.set(effFull,"ToResolve",json.set(json.get(effFull,"ToResolve"),"Attack",json.set(json.get(json.get(effFull,"ToResolve"),"Attack"),"OnHitTriggered",targetsWithAdditionalOnHitResolution)))]
+	
 	[h:setLibProperty("gd.Effects",json.path.set(getLibProperty("gd.Effects","Lib:pm.a5e.Core"),"[*][?(@.ID=="+effID+")]",effFull),"Lib:pm.a5e.Core")]
 };{
 	[h:setLibProperty("gd.Effects",json.path.delete(getLibProperty("gd.Effects","Lib:pm.a5e.Core"),"[*][?(@.ID=="+effID+")]"),"Lib:pm.a5e.Core")]

@@ -23,7 +23,7 @@
 ]
 
 [h:ConditionImmunities = pm.a5e.ConditionImmunityCalc(json.set("","ParentToken",ParentToken,"SetBy",ConditionSetBy,"SourceType","{}"))]
-[h:a5e.ConditionsTemp = json.path.delete(a5e.ConditionsTemp,"[*][?(@.Name in "+json.get(ConditionImmunities,"Conditions")+")]")]
+[h:a5e.ConditionsTemp = json.path.delete(a5e.ConditionsTemp,"[*][?(@.Name in "+json.get(ConditionImmunities,"Conditions")+" || @.CountsAs in "+json.get(ConditionImmunities,"Conditions")+")]")]
 
 [h:AllConditionsImmunType = "[]"]
 [h,foreach(tempCondition,a5e.ConditionsTemp),CODE:{

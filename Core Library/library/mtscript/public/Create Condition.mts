@@ -4,6 +4,10 @@
 [h:cn.LevelList = "None,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20"]
 [h:cn.Class = "Condition"]
 
+[h:cn.BaseConditions = pm.a5e.GetConditions()]
+[h:CountsAsOptions = json.append("","None")]
+[h,foreach(tempCondition,CountsAsOptions): CountsAsOptions = json.append(CountsAsOptions,json.get(tempCondition,"DisplayName"))]
+
 [h:ConditionTags = pm.a5e.GetCoreData("sb.ConditionTags")]
 [h:ConditionTagOptions = ""]
 [h,foreach(tempTag,ConditionTags): ConditionTagOptions = listAppend(ConditionTagOptions," choice"+json.get(tempTag,"Name")+" |  | "+json.get(tempTag,"DisplayName")+" | CHECK ","##")]
@@ -12,6 +16,7 @@
 	" junkVar | -------------------------------------------- Basic Condition Info -------------------------------------------- |  | LABEL | SPAN=TRUE ",
 	" cn.Name | -- Name Here -- | Enter Condition Name ",
 	" cn.Type | Base Condition,Class Feature,Racial Feature,Spell,Feat,Background | Condition Association | LIST ",
+	" cn.CountsAs | "+CountsAsOptions+" | Also Counts As | LIST | DELIMITER=JSON ",
 	ConditionTagOptions,
 	" otherConditionTag |  | Add Tag not Shown | CHECK ",
 	" cn.HasTiers |  | Condition Has Multiple Tiers With Varying Effects | CHECK ",
@@ -41,6 +46,8 @@
 	"MultiAbility",0,
 	"Library",cn.SourceLib
 )]
+
+[h,if(cn.CountsAs != 0): cn.Final = json.set(cn.Final,"CountsAs",json.get(json.get(CountsAsOptions,cn.CountsAs),"Name"))]
 
 [h:cn.TypeInput=""]
 [h,SWITCH(cn.Type):

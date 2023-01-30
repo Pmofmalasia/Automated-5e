@@ -209,7 +209,6 @@ async function createAHLDamage(damageTypeNumber){
                 clearUnusedTable("CreateSubeffectTable","rowIsAHL"+damageTypeNumber,"DamageSet"+(damageTypeNumber+1));
             }
         }
-
     }
     else{
         if(table.rows[AHLRowIndex+1].id != "rowAHLDieNum"+damageTypeNumber){

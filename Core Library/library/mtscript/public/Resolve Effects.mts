@@ -32,7 +32,7 @@
 
 [h:needsFurtherResolution = 0]
 [h:remainingTargetsList = "[]"]
-[h:targetsWithAdditionalOnHitResolution = "[]"]
+[h:targetsWithAdditionalAttackResolution = "[]"]
 
 [h:IsTooltip = 0]
 [h:pm.a5e.OverarchingContext = json.get(effFull,"Context")]
@@ -56,7 +56,7 @@
 		thisTokenTargetSpecificEffects = json.get(effTargetSpecific,targetToken);
 		thisTokenTargetSpecificEffects = ""
 	]
-	[h:a5e.UnifiedAbilities = a5e.GatherAbilities(ParentToken)]
+	[h:a5e.UnifiedAbilities = a5e.GatherAbilities(targetToken)]
 
 	[h:thisTokenModifiableComponents = json.set("",
 		"Conditions",thisTokenConditionInfo,
@@ -83,26 +83,28 @@
 		[h:attackCrit = json.get(thisTokenAttackData,"CritTest")]
 		[h:attackCritFail = json.get(thisTokenAttackData,"CritFailTest")]
 		[h:hitTarget = and(!attackCritFail,or(attackCrit,attackToHit >= getProperty("a5e.stat.AC")))]
-		[h,if(json.get(thisTokenAttackData,"OnHitTriggered")==""):
-			needsOnHit = 1;
-			needsOnHit = !json.contains(json.get(thisTokenAttackData,"OnHitTriggered"),targetToken)
+		[h,if(json.get(thisTokenAttackData,"AdditionalAttackResolution")==""):
+			needsAdditionalAttackResolution = 1;
+			needsAdditionalAttackResolution = !json.contains(json.get(thisTokenAttackData,"AdditionalAttackResolution"),targetToken)
 		]
-		[h:ResolveOnHitEffects = needsOnHit * hitTarget]
+		[h:ResolveOnHitEffects = needsAdditionalAttackResolution * hitTarget]
+		[h:ResolveOnMissEffects = needsAdditionalAttackResolution * !hitTarget]
+
+		[h,if(hitTarget): abilityTable = json.append(abilityTable,json.set("",
+			"ShowIfCondensed",1,
+			"Header","Attack Result",
+			"FalseHeader","",
+			"FullContents","<span style='color:"+HealingColor+"'>Hit</span>",
+			"RulesContents","",
+			"RollContents","",
+			"DisplayOrder","['Rules','Roll','Full']"
+		))]
 	};{
 		[h:hitTarget = 1]
 		[h:attackCrit = 0]
 		[h:ResolveOnHitEffects = 0]
+		[h:ResolveOnMissEffects = 0]
 	}]
-
-	[h:AdditionalOnHitResolution = 0]
-	[h:"<!-- Set AdditionalOnHitResolution to 1 for any FeatureLinks OnHit, since they need to wait for the link to be clicked before applying damage and removing the effect. Also need something here to bypass this if it's already been run before. -->"]
-	[h,if(ResolveOnHitEffects),CODE:{
-		[h:pm.PassiveFunction("AttackOnHit",json.set("","ParentToken",ParentToken))]
-		[h:pm.PassiveFunction("AttackOnHitTargeted")]
-
-		[h,if(AdditionalOnHitResolution): needsFurtherResolution = 1]
-		[h,if(AdditionalOnHitResolution): targetsWithAdditionalOnHitResolution = json.append(targetsWithAdditionalOnHitResolution,targetToken)]
-	};{}]
 	
 	[h,if(hitTarget==0),CODE:{
 		[h:thisTokenModifiableComponents = json.set("",
@@ -115,13 +117,34 @@
 		[h:thisTokenCheckDCData = ""]
 		[h:abilityTable = json.append(abilityTable,json.set("",
 			"ShowIfCondensed",1,
-			"Header","Attack Missed",
+			"Header","Attack Result",
 			"FalseHeader","",
-			"FullContents","",
+			"FullContents","<span style='color:"+DamageColor+"'>Miss</span>",
 			"RulesContents","",
 			"RollContents","",
 			"DisplayOrder","['Rules','Roll','Full']"
 		))]
+	};{}]
+
+	[h:AdditionalAttackResolution = 0]
+	[h:"<!-- Set AdditionalAttackResolution to 1 for any FeatureLinks OnHit/Miss, since they need to wait for the link to be clicked before applying damage and removing the effect. Also need something here to bypass this if it's already been run before. -->"]
+	[h:"<!-- Note: switchToken() back to targetToken is needed here because PassiveFunction() switches back to ParentToken, not targetToken. Setting 'ParentToken':targetToken is needed to make the variable ParentToken be the targetToken for purposes of later functions. -->"]
+	[h,if(ResolveOnHitEffects),CODE:{
+		[h:pm.PassiveFunction("AttackOnHit",json.set("","ParentToken",ParentToken))]
+		[h:switchToken(targetToken)]
+		[h:pm.PassiveFunction("AttackOnHitTargeted",json.set("","ParentToken",targetToken))]
+
+		[h,if(AdditionalAttackResolution): needsFurtherResolution = 1]
+		[h,if(AdditionalAttackResolution): targetsWithAdditionalAttackResolution = json.append(targetsWithAdditionalAttackResolution,targetToken)]
+	};{}]
+
+	[h,if(ResolveOnMissEffects),CODE:{
+		[h:pm.PassiveFunction("AttackOnMiss",json.set("","ParentToken",ParentToken))]
+		[h:switchToken(targetToken)]
+		[h:pm.PassiveFunction("AttackOnMissTargeted",json.set("","ParentToken",targetToken))]
+
+		[h,if(AdditionalAttackResolution): needsFurtherResolution = 1]
+		[h,if(AdditionalAttackResolution): targetsWithAdditionalAttackResolution = json.append(targetsWithAdditionalAttackResolution,targetToken)]
 	};{}]
 
 	[h,if(thisTokenSaveDCData!=""): needsToSave = json.get(effSavesMadeData,targetToken)==""; needsToSave = 0]
@@ -177,7 +200,7 @@
 
 			[h:abilityTable = json.append(abilityTable,json.set("",
 				"ShowIfCondensed",1,
-				"Header","Check Result",
+				"Header","Save Result",
 				"FalseHeader","",
 				"FullContents",saveResultText,
 				"RulesContents","",
@@ -317,7 +340,7 @@
 	[h:"<!-- This is awful. I am sorry. I blame CODE block limits. -->"]
 	[h,if(json.get(effToResolve,"SaveDC")!=""): effFull = json.set(effFull,"ToResolve",json.set(json.get(effFull,"ToResolve"),"SaveDC",json.set(json.get(json.get(effFull,"ToResolve"),"SaveDC"),"SavesMade",effSavesMadeData)))]
 	[h,if(json.get(effToResolve,"CheckDC")!=""): effFull = json.set(effFull,"ToResolve",json.set(json.get(effFull,"ToResolve"),"CheckDC",json.set(json.get(json.get(effFull,"ToResolve"),"CheckDC"),"ChecksMade",effChecksMadeData)))]
-	[h,if(!json.isEmpty(targetsWithAdditionalOnHitResolution)): effFull = json.set(effFull,"ToResolve",json.set(json.get(effFull,"ToResolve"),"Attack",json.set(json.get(json.get(effFull,"ToResolve"),"Attack"),"OnHitTriggered",targetsWithAdditionalOnHitResolution)))]
+	[h,if(!json.isEmpty(targetsWithAdditionalAttackResolution)): effFull = json.set(effFull,"ToResolve",json.set(json.get(effFull,"ToResolve"),"Attack",json.set(json.get(json.get(effFull,"ToResolve"),"Attack"),"AdditionalAttackResolution",targetsWithAdditionalAttackResolution)))]
 	
 	[h:setLibProperty("gd.Effects",json.path.set(getLibProperty("gd.Effects","Lib:pm.a5e.Core"),"[*][?(@.ID=="+effID+")]",effFull),"Lib:pm.a5e.Core")]
 };{

@@ -18,7 +18,10 @@
     [h:sameBookTest = (spellSourcebook==json.get(tempFeature,"Library"))]
 
     [h,if(onListTest),CODE:{
-        [h:CurrentList = json.get(getLibProperty("sb.SpellLists","Lib:"+spellSourcebook),json.get(tempFeature,"Class")+json.get(tempFeature,"Subclass"))]
+        [h,if(getLibProperty("sb.SpellLists","Lib:"+spellSourcebook)==""):
+            CurrentList = "[]";
+            CurrentList = json.get(getLibProperty("sb.SpellLists","Lib:"+spellSourcebook),json.get(tempFeature,"Class")+json.get(tempFeature,"Subclass"))
+        ]
         [h:NewList = json.sort(json.unique(json.append(CurrentList,SpellName)))]
 
         [h:setLibProperty("sb.SpellLists",json.set(getLibProperty("sb.SpellLists","Lib:"+spellSourcebook),json.get(tempFeature,"Class")+json.get(tempFeature,"Subclass"),NewList),"Lib:"+spellSourcebook)]

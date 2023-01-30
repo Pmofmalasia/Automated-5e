@@ -89,6 +89,7 @@
 	[h:ClassOptions = json.append(ClassOptions,"None")]
 };{
 	[h:ClassOptionsArray = json.append("",ForcedClass)]
+	[h:ClassOptions = json.append("",ForcedClass)]
 	[h,if(ForcedClass!=""): ClassOptionsArray = ForcedClass]
 }]
 
@@ -289,10 +290,20 @@
 
 [h:"<!--- Cancel Old Spell Notice --->"]
 
-[h,if(json.type(sClassSelectData)=="UNKNOWN"): 
-	PrimeStat = json.get(getLibProperty("sb.CastingAbilities","Lib:pm.a5e.Core"),sClassSelect);
-	PrimeStat = json.get(sClassSelectData,"PrimeStat")
-]
+[h:"<!-- PrimeStat selection has multiple failsafes for selection. Currently, sClassSelectData should always be an object with either CastAsClass or PrimeStat present. The other paths serve as backups with possible future use. -->"]
+[h,if(json.type(sClassSelectData)=="UNKNOWN"),CODE:{
+	[h:PrimeStat = json.get(getLibProperty("sb.CastingAbilities","Lib:pm.a5e.Core"),sClassSelect)]
+};{
+	[h,if(json.get(sClassSelectData,"CastAsClass")==""),CODE:{
+		[h,if(json.get(sClassSelectData,"PrimeStat")==""):
+			PrimeStat = json.get(getLibProperty("sb.CastingAbilities","Lib:pm.a5e.Core"),json.get(sClassSelectData,"Class"));
+			PrimeStat = json.get(sClassSelectData,"PrimeStat")
+		]
+	};{
+		[h:PrimeStat = json.get(getLibProperty("sb.CastingAbilities","Lib:pm.a5e.Core"),json.get(sClassSelectData,"CastAsClass"))]
+	}]
+}]
+
 [h:PrimeStat = if(PrimeStat=="","None",PrimeStat)]
 [h,if(PrimeStat == "None"): PrimeStatMod = 0; PrimeStatMod = json.get(getProperty("a5e.stat.AtrMods"),PrimeStat)]
 [h:pm.PassiveFunction("SpellStat")]

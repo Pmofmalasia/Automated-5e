@@ -275,12 +275,16 @@
 };{}]
 
 [h,if(json.contains(subeffectData,"isMoveTarget")),CODE:{
-    [h:moveTargetData = json.set("",
-        "Value",number(json.get(subeffectData,"moveTargetValue")),
-        "Units",json.get(subeffectData,"moveTargetUnits"),
-        "Direction",json.get(subeffectData,"moveTargetDirection"),
-        "Type",json.get(subeffectData,"moveTargetType")
-    )]
+    [h,if(json.get(subeffectData,"moveTargetUnits")=="Unlimited"):
+        moveTargetData = json.set("",
+            "Direction",json.get(subeffectData,"moveTargetDirection"),
+            "Type",json.get(subeffectData,"moveTargetType"));
+        moveTargetData = json.set("",
+            "Value",number(json.get(subeffectData,"moveTargetValue")),
+            "Units",json.get(subeffectData,"moveTargetUnits"),
+            "Direction",json.get(subeffectData,"moveTargetDirection"),
+            "Type",json.get(subeffectData,"moveTargetType"))
+    ]
 
     [h,if(json.get(subeffectData,"moveTargetAHLScaling") != "0" && json.contains(subeffectData,"moveTargetAHLScaling")):
         moveTargetData = json.set(moveTargetData,
@@ -385,6 +389,9 @@
     case "AnyCreature":{
         [h:targetData = json.set(targetData,"Creature","{}")]
     };
+    case "AnyOtherCreature":{
+        [h:targetData = json.set(targetData,"Creature",json.set("","Allegiance",json.set("","Self",0)))]
+    };
     case "AlliedCreature":{
         [h:targetData = json.set(targetData,"Creature",json.set("","Allegiance",json.set("","Ally",1,"Self",1)))]
     };
@@ -425,7 +432,7 @@
     }
 ]
 [h:subeffectData = json.remove(subeffectData,"TargetType")]
-[h:"<!-- TODO: Incorporate isSight (can you see the target) into targetData -->"]
+[h:"<!-- TODO: Incorporate isSight (can you see the target) into targetData - or maybe not? Since it's kinda info on the caster? Will consider. -->"]
 [h:subeffectData = json.set(subeffectData,"TargetLimits",targetData)]
 [h:subeffectData = json.remove(subeffectData,"MaxCover")]
 

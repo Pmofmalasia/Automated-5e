@@ -717,13 +717,13 @@ async function createMoveTargetTable(){
     if(document.getElementById("isMoveTarget").checked){
         let rowMoveTargetInfo = table.insertRow(nextRowIndex);
         rowMoveTargetInfo.id = "rowMoveTargetInfo";
-        rowMoveTargetInfo.innerHTML = "<th><label for='moveTargetValue'>Distance Target Moved:</label></th><input type='number' id='moveTargetValue' name='moveTargetValue' min=0 value=10 style='width:25px'><select id='moveTargetUnits' name='moveTargetUnits'><option value='Feet'>Feet</option><option value='Miles'>Miles</option></select><select id='moveTargetDirection' name='moveTargetDirection'><option value='Choice'>User's Choice</option><option value='Away'>Away From User</option><option value='Towards'>Towards User</option><option value='Random4'>Random, 4 Directions</option><option value='Random8'>Random, 8 Directions</option></select></td></tr>";
+        rowMoveTargetInfo.innerHTML = "<th><label for='moveTargetValue'>Distance Target Moved:</label></th><input type='number' id='moveTargetValue' name='moveTargetValue' min=0 value=10 style='width:25px'><select id='moveTargetUnits' name='moveTargetUnits'><option value='Feet'>Feet</option><option value='Miles'>Miles</option><option value='Unlimited'>Unlimited</option></select><select id='moveTargetDirection' name='moveTargetDirection'><option value='Choice'>User's Choice</option><option value='Away'>Away From User</option><option value='Towards'>Towards User</option><option value='Random4'>Random, 4 Directions</option><option value='Random8'>Random, 8 Directions</option></select></td></tr>";
         nextRowIndex++;
 
         if(checkEffectType()=="Spell"){
             let moveTargetAHLScalingSelect = await createAHLSelect("moveTargetAHLScaling");
 
-            let rowMoveTargetAHLInfo = table.insertRow(snextRowIndex);
+            let rowMoveTargetAHLInfo = table.insertRow(nextRowIndex);
             rowMoveTargetAHLInfo.id = "rowMoveTargetAHLInfo";
             rowMoveTargetAHLInfo.innerHTML = "<th><label for='moveTargetAHLValue'>Increased Distance AHL:</label></th><input type='number' id='moveTargetAHLValue' name='moveTargetAHLValue' min=0 value=0 style='width:25px'>"+moveTargetAHLScalingSelect+"</td></tr>";
             nextRowIndex++;
@@ -731,7 +731,7 @@ async function createMoveTargetTable(){
 
         let rowMoveTargetType = table.insertRow(nextRowIndex);
         rowMoveTargetType.id = "rowMoveTargetType";
-        rowMoveTargetType.innerHTML = "<th><label for='moveTargetType'>Type of Movement:</label></th><select id='moveTargetType' name='moveTargetType'><option value='Physical'>Physical Movement</option><option value='Teleportation'>Teleportation</option></select></td></tr>";
+        rowMoveTargetType.innerHTML = "<th><label for='moveTargetType'>Type of Movement:</label></th><select id='moveTargetType' name='moveTargetType'><option value='Physical'>Physical Movement</option><option value='Teleportation'>Teleportation</option><option value='Extraplanar'>Extraplanar Teleportation</option></select></td></tr>";
         nextRowIndex++;
 
         if(document.getElementById("howMitigate").value == "Save"){

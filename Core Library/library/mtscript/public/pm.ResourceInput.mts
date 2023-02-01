@@ -77,6 +77,7 @@
 }]
 
 [h:ab.ResourceFinal = ab.ResourceFinal+if(ab.MultiResourceTest,")","")+"]"]
+
 [h,foreach(tempLevel,listDelete(ab.UpdateLevelOptions,0)): set("ab.UpdateLevel"+tempLevel,eval("ab.UpdateLevel"+tempLevel)+if(ab.MultiResourceTest,")","")+"]")]
 
 [h:ab.ResourceUpdates = ""]
@@ -90,4 +91,7 @@
 };{
 	[h:ab.ResourceUpdates = ""]
 }]
+
+[h:"<!-- Prevents features that don't gain a multiresource until future levels from causing errors -->"]
+[h,if(ab.ResourceFinal == "[r:json.set('')]"): ab.ResourceFinal = ""]
 [h:macro.return = json.set("","Base",ab.ResourceFinal,"Updates",ab.ResourceUpdates)]

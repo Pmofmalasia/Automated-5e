@@ -161,4 +161,12 @@
 
 [h:closeDialog("Spell Creation")]
 
-[h,MACRO("CreateSpellSubeffect@Lib:pm.a5e.Core"): json.set("","TotalSubeffects",TotalSubeffects,"WhichSubeffect",1,"WhichEffect",json.get(SpellCoreData,"WhichEffect"),"SpellLevel",json.get(SpellCoreData,"Level"),"SpellName",json.get(SpellCoreData,"Name"))]
+[h,MACRO("CreateSubeffect@Lib:pm.a5e.Core"): json.set("",
+    "TotalSubeffects",TotalSubeffects,
+    "WhichSubeffect",1,
+    "WhichEffect",json.get(SpellCoreData,"WhichEffect"),
+    "EffectType","Spell",
+    "ExtraData",json.set("",
+        "SpellLevel",json.get(SpellCoreData,"Level"),
+        "SpellName",json.get(SpellCoreData,"Name"))
+)]

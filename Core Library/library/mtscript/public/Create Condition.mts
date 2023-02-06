@@ -4,9 +4,9 @@
 [h:cn.LevelList = "None,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20"]
 [h:cn.Class = "Condition"]
 
-[h:cn.BaseConditions = pm.a5e.GetConditions()]
+[h:cn.BaseConditions = pm.a5e.GetBaseConditions()]
 [h:CountsAsOptions = json.append("","None")]
-[h,foreach(tempCondition,CountsAsOptions): CountsAsOptions = json.append(CountsAsOptions,json.get(tempCondition,"DisplayName"))]
+[h,foreach(tempCondition,cn.BaseConditions): CountsAsOptions = json.append(CountsAsOptions,json.get(tempCondition,"DisplayName"))]
 
 [h:ConditionTags = pm.a5e.GetCoreData("sb.ConditionTags")]
 [h:ConditionTagOptions = ""]
@@ -47,7 +47,7 @@
 	"Library",cn.SourceLib
 )]
 
-[h,if(cn.CountsAs != 0): cn.Final = json.set(cn.Final,"CountsAs",json.get(json.get(CountsAsOptions,cn.CountsAs),"Name"))]
+[h,if(cn.CountsAs != 0): cn.Final = json.set(cn.Final,"CountsAs",json.get(json.get(cn.BaseConditions,cn.CountsAs-1),"Name"))]
 
 [h:cn.TypeInput=""]
 [h,SWITCH(cn.Type):

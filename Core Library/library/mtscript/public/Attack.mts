@@ -47,6 +47,7 @@
 [h:attack.ToHitBonus = wa.MagicBonus]
 [h:attack.ProfTest = 1]
 [h:wa.TargetOrigin = ParentToken]
+[h:wa.BrutalCrit = 0]
 
 [h:pm.PassiveFunction("AttackProps")]
 [h:pm.PassiveFunction("WeaponAttackProps")]
@@ -76,11 +77,6 @@
 
 [h:wa.DmgDieSize = number(substring(wa.DmgDie,indexOf(wa.DmgDie,"d")+1))]
 [h:wa.DmgDie2Size = number(substring(wa.DmgDie2,indexOf(wa.DmgDie2,"d")+1))]
-
-[h:wa.BrutalCrit = 0]
-[h:CritDmgDie = (wa.CritMultiplier*number(substring(wa.DmgDie,0,indexOf(wa.DmgDie,"d")))) + wa.BrutalCrit]
-[h:wa.DmgDie2Placehold = if(wa.DmgDie2=="0" || wa.DmgDie2=="","0d1",wa.DmgDie2)]
-[h:CritSecDmgDie = (wa.CritMultiplier*number(substring(wa.DmgDie2Placehold,0,indexOf(wa.DmgDie2Placehold,"d"))))]
 
 [h:wa.DmgDieNum = number(substring(wa.DmgDie,0,indexOf(wa.DmgDie,"d")))]
 [h,if(wa.DmgDie2==""):
@@ -114,6 +110,7 @@
 	"DamageDieNumber",wa.DmgDieNum,
 	"DamageDieSize",wa.DmgDieSize,
 	"DamageFlatBonus",wa.MagicBonus,
+	"BonusCritDice",wa.BrutalCrit,
 	"IsModBonus",preReworkUseDamageMod
 ))]
 [h,if(wa.DmgDie2 != "0"): preReworkDamageData = json.append(preReworkDamageData,json.set("",

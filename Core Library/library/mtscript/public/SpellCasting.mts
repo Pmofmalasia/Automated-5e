@@ -202,11 +202,9 @@
 	[h,switch(json.get(sLevelSelectData,"ResourceType")),CODE:
 		case "Spell Slots":{
 			[h:eLevel = number(json.get(sLevelSelectData,"Name"))]
-			[h,if(FreeCasting!=1): setProperty("a5e.stat.SpellSlots",json.set(getProperty("a5e.stat.SpellSlots"),eLevel,json.get(getProperty("a5e.stat.SpellSlots"),eLevel)-1))]
 		};
 		case "FeatureSpell":{
 			[h:eLevel = evalMacro(json.get(sLevelSelectData,"ResourceSpellLevel"))]
-			[h,if(FreeCasting!=1): setProperty("a5e.stat.AllFeatures",json.path.set(getProperty("a5e.stat.AllFeatures"),"[*][?(@.Name=='"+json.get(sLevelSelectData,"Name")+"' && @.Class=='"+json.get(sLevelSelectData,"Class")+"' && @.Subclass=='"+json.get(sLevelSelectData,"Subclass")+"')]['Resource']",json.get(sLevelSelectData,"Resource")-1))]
 		};
 		case "Ritual":{
 			[h:eLevel = SpellLevel]
@@ -398,9 +396,21 @@
 
 [h:SpellDescriptionData = json.set(NonSpellData,"Description",CompleteSpellDescription,"SpellDisplayName",SpellDisplayName,"ForcedLevel",sLevelSelect)]
 
+[h,if(IsCantrip),CODE:{};{
+	[h,switch(json.get(sLevelSelectData,"ResourceType")),CODE:
+		case "Spell Slots":{
+			[h,if(FreeCasting!=1): setProperty("a5e.stat.SpellSlots",json.set(getProperty("a5e.stat.SpellSlots"),eLevel,json.get(getProperty("a5e.stat.SpellSlots"),eLevel)-1))]
+		};
+		case "FeatureSpell":{
+			[h,if(FreeCasting!=1): setProperty("a5e.stat.AllFeatures",json.path.set(getProperty("a5e.stat.AllFeatures"),"[*][?(@.Name=='"+json.get(sLevelSelectData,"Name")+"' && @.Class=='"+json.get(sLevelSelectData,"Class")+"' && @.Subclass=='"+json.get(sLevelSelectData,"Subclass")+"')]['Resource']",json.get(sLevelSelectData,"Resource")-1))]
+		};
+		default:{
+		}
+	]
+}]
+
 [h:sDescriptionLink = macroLinkText("spellDescription@Lib:pm.a5e.Core",if(DMOnly,"gm","all"),SpellDescriptionData,ParentToken)]
 [h:SpellDescriptionFinal = if(sRulesShow==0,"<a style='color:"+LinkColor+";' href='"+sDescriptionLink+"'>Click to show full spell text</a>",CompleteSpellDescription)]
-
 
 [h:ReturnData = json.set(NonSpellData,"SpellData",json.append("",FinalSpellData),"Slot",if(IsCantrip,0,eLevel),"Source",sSource,"Class",sClassSelect,"Effect",pm.a5e.EffectData,"Table",abilityTable,"Description",SpellDescriptionFinal,"ShowFullRules",sRulesShow)]
 [h:macro.return = ReturnData]

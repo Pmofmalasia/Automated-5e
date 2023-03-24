@@ -4,7 +4,6 @@
 
 [h,if(IsTooltip),CODE:{};{
 	[h:FeatureTargetOptionData = pm.a5e.TargetCreatureFiltering(json.set(basicTargetData,"ParentToken",ParentToken),targetFilters)]
-	[h:"<!-- TODO: Return self without going through targeting input ONLY if the ability is ALWAYS incapable of targeting anything other than self. -->"]
 	
 	[h:FeatureTargetOptions = json.get(FeatureTargetOptionData,"ValidTargets")]
 	[h:SelfOnlyTest = json.get(FeatureTargetOptionData,"SelfOnly")]

@@ -28,7 +28,8 @@
     [h:usageData = json.get(effect,"UseTime")]
     [h:resourceData = json.get(effect,"Resource")]
     [h:conditionData = json.get(effect,"ConditionInfo")]
-    [h:conditionsRemovedData = json.get(effect,"ConditionsRemovedInfo")]
+    [h:conditionModificationData = json.get(effect,"ConditionModificationInfo")]
+    [h:targetedConditionsData = json.get(effect,"TargetedConditions")]
     [h:effectTargetData = json.get(effect,"TargetedEffects")]
     [h:effectTargetOptionData = json.get(effect,"TargetedEffectOptions")]
 
@@ -160,21 +161,32 @@
 		[h,if(whichEffect >= json.length(currentEffectData)): currentEffectData = json.append(currentEffectData,thisEffect); currentEffectData = json.set(currentEffectData,whichEffect,thisEffect)]
     };{}]
     
-    [h,if(conditionsRemovedData!=""),CODE:{
+    [h,if(conditionModificationData!=""),CODE:{
 		[h,if(whichEffect >= json.length(currentEffectData)): thisEffect = json.path.set(baseEffectData,".ID",newID); thisEffect = json.get(currentEffectData,whichEffect)]
-		
-        [h:tempToResolve = json.get(thisEffect,"ToResolve")]
-		[h,if(tempToResolve==""):
-            noPriorConditionsRemovedTest = 1;
-            noPriorConditionsRemovedTest = json.isEmpty(json.get(tempToResolve,"ConditionsRemovedInfo"))
-        ]
 
-		[h,if(noPriorConditionsRemovedTest):
-            tempToResolve = json.set(tempToResolve,"ConditionsRemovedInfo",conditionsRemovedData);
-            tempToResolve = pm.a5e.BuildEffectMergeConditionsRemoved(tempToResolve,conditionsRemovedData)
-        ]
+		[h:"<!-- TODO: Consider merging instead of overriding multiple datasets. Check old effect resolution vs. new one. If the same, combine effects. If Prolong vs. Shorten, subtract effects and correct method appropriately. -->"]
+		
+        [h:tempToResolve = json.set(json.get(thisEffect,"ToResolve"),"ConditionModificationInfo",conditionModificationData)]
 
         [h:thisEffect = json.set(thisEffect,"ToResolve",tempToResolve)]
+
+		[h,if(whichEffect >= json.length(currentEffectData)): currentEffectData = json.append(currentEffectData,thisEffect); currentEffectData = json.set(currentEffectData,whichEffect,thisEffect)]
+    };{}]
+    
+    [h,if(targetedConditionsData!=""),CODE:{
+		[h,if(whichEffect >= json.length(currentEffectData)): thisEffect = json.path.set(baseEffectData,".ID",newID); thisEffect = json.get(currentEffectData,whichEffect)]
+
+		[h:"<!-- The following first combines conditions on the same target, then adds conditions not already on currentTargetedConditions to it. -->"]
+
+		[h:currentTargetedConditions = json.get(thisEffect,"TargetedConditions")]
+		[h,if(currentTargetedConditions==""): currentTargetedConditions = "{}"]
+		[h:oldTargets = json.fields(currentTargetedConditions)]
+		[h:targetOverlap = json.intersection(oldTargets,json.fields(targetedConditionsData))]
+		[h,foreach(target,targetOverlap): currentTargetedConditions = json.set(currentTargetedConditions,target,json.merge(json.get(currentTargetedConditions,target),json.get(targetedConditionsData,target)))]
+
+		[h:currentTargetedConditions = json.merge(targetedConditionsData,currentTargetedConditions)]
+
+        [h:thisEffect = json.set(thisEffect,"TargetedConditions",currentTargetedConditions)]
 
 		[h,if(whichEffect >= json.length(currentEffectData)): currentEffectData = json.append(currentEffectData,thisEffect); currentEffectData = json.set(currentEffectData,whichEffect,thisEffect)]
     };{}]

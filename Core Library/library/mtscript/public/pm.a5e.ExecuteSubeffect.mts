@@ -263,6 +263,23 @@
 	))]
 }]
 
+[h,if(json.contains(subeffectData,"TargetConditionLimits")),CODE:{
+	[h:TargetConditionLimitsData = json.get(subeffectData,"TargetConditionLimits")]
+
+	[h:subeffect.TargetConditionOptions = pm.a5e.TargetConditionFiltering(subeffect.AllTargets,TargetConditionLimitsData)]
+	
+	[h,if(json.get(TargetConditionLimitsData,"Number")=="" && json.get(TargetConditionLimitsData,"MustTargetAll")==1):
+		subeffect.ConditionTargets = subeffect.TargetConditionOptions;
+		subeffect.ConditionTargets = pm.a5e.TargetConditionTargeting(subeffect.TargetConditionOptions,json.get(TargetConditionLimitsData,"Number"))
+	]
+
+	[h:thisEffectData = json.set(thisEffectData,"TargetedConditions",subeffect.ConditionTargets)]
+};{}]
+
+[h,if(json.contains(subeffectData,"ConditionModificationInfo")),CODE:{
+	[h:thisEffectData = json.set(thisEffectData,"ConditionModificationInfo",json.get(subeffectData,"ConditionModificationInfo"))]
+};{}]
+
 [h,if(json.contains(SubeffectData,"Summon")),CODE:{
 	[h:subeffect.SummonData = json.get(SubeffectData,"Summon")]
 	

@@ -1,37 +1,95 @@
-[h:pm.TargetCreatures = arg(0)]
-[h:pm.TargetConditionType = json.get(arg(1),"Type")]
-[h:pm.TargetConditionName = json.get(arg(1),"Name")]
-[h:pm.RemoveFullEffect = json.get(arg(1),"FullEffect")]
-[h:pm.ConditionChoiceNum = json.get(arg(1),"Number")]
+[h:TargetCreatures = arg(0)]
+[h:ConditionFilterData = arg(1)]
 
-[h:conditionsSelected = ""]
-[h,foreach(creature,pm.TargetCreatures),CODE:{
-	[h:cn.Input = "junkVar | Select Condition"+if(pm.ConditionChoiceNum==1,"","s")+" Affecting "+getName(creature)+" | "+getTokenImage("",creature)+" | LABEL | ICON=TRUE "]
-	
-	[h:validConditionGroups = ""]
-	[h:"<!-- Add json.path.read to filter condition groups, then replace the ConditionGroups calls later with that -->"]
-		
-	[h,foreach(condGroup,getProperty("a5e.stat.ConditionGroups")),CODE:{
-		[h:condOptions = ""]
-		[h:condDisplayNames = json.path.read(getProperty("a5e.stat.ConditionList"),"[*][?(@.ConditionID=="+json.get(condGroup,"GroupID")+")]['DisplayName']")]
-		[h,if(pm.ConditionChoiceNum==1):
-			condOptions = json.append(condOptions,json.toList(condDisplayNames,", "));
-			cn.Input = listAppend(cn.Input," choice"+json.get(condGroup,"GroupID")+" |  | "+pm.a5e.CreateDisplayList(condDisplayNames,"and")+" | CHECK ","##")
-		]
-	}]
-
-	[h,if(pm.ConditionChoiceNum==1): cn.Input = listAppend(cn.Input," choiceCondition |  | "+condOptions+" | RADIO | DELIMITER=JSON","##")]
-	
-	[h:abort(input(cn.Input))]
-	
-	[h:tempConditionsSelected = ""]
-	[h,if(pm.ConditionChoiceNum==1),CODE:{
-		[h:tempConditionsSelected = json.append(tempConditionsSelectedjson.get(json.get(getProperty("a5e.stat.ConditionGroups"),choiceCondition),"GroupID"))]
+[h,if(json.isEmpty(ConditionFilterData)),CODE:{
+	[h:validConditionTypesInclusive = ""]
+	[h:validConditionTypesExclusive = ""]
+	[h:validConditionNamesInclusive = ""]
+	[h:validConditionNamesExclusive = ""]
+	[h:validConditionMaxTier = ""]
+	[h:validConditionCombineFiltersHow = "and"]
+};{
+	[h,if(json.get(ConditionFilterData,"ConditionTypes")!=""),CODE:{
+		[h:validConditionTypesInclusive = json.get(json.get(ConditionFilterData,"ConditionTypes"),"Inclusive")]
+		[h:validConditionTypesExclusive = json.get(json.get(ConditionFilterData,"ConditionTypes"),"Exclusive")]
 	};{
-		[h,foreach(condGroup,getProperty("a5e.stat.ConditionGroups")): tempConditionsSelected = if(eval("choice"+json.get(condGroup,"GroupID")),json.apppend(tempConditionsSelected,json.get(condGroup,"GroupID")),tempConditionsSelected)]
+		[h:validConditionTypesInclusive = ""]
+		[h:validConditionTypesExclusive = ""]
 	}]
-	
-	[h:conditionsSelected = json.set(conditionsSelected,creature,tempConditionsSelected)]
+
+	[h,if(json.get(ConditionFilterData,"ConditionNames")!=""),CODE:{
+		[h:validConditionNamesInclusive = json.get(json.get(ConditionFilterData,"ConditionNames"),"Inclusive")]
+		[h:validConditionNamesExclusive = json.get(json.get(ConditionFilterData,"ConditionNames"),"Exclusive")]
+	};{
+		[h:validConditionNamesInclusive = ""]
+		[h:validConditionNamesExclusive = ""]
+	}]
+
+	[h:validConditionMaxTier = json.get(ConditionFilterData,"Tier")]
+	[h:validConditionCombineFiltersHow = json.get(ConditionFilterData,"CombineFiltersHow")]
+	[h,if(validConditionCombineFiltersHow == ""): validConditionCombineFiltersHow = "and"]
 }]
 
-[h:macro.return = ConditionsSelected]
+
+[h,if(validConditionMaxTier==""): validConditionMaxTier = 1]
+
+[h:allValidConditionGroups = "{}"]
+
+[h:conditionsSelected = ""]
+[h,foreach(creature,TargetCreatures),CODE:{
+	[h:thisCreatureValidConditions = getProperty("a5e.stat.ConditionList",creature)]
+
+	[h,if(validConditionTypesInclusive != ""),CODE:{
+		[h,if(json.type(validConditionTypesInclusive) == "ARRAY"):
+			thisCreatureValidConditionsByType = json.path.read(thisCreatureValidConditions,"[*][?(@.ConditionType anyof "+validConditionTypesInclusive+")]");
+			thisCreatureValidConditionsByType = json.path.read(thisCreatureValidConditions,"[*][?("+validConditionTypesInclusive+" in @.ConditionType)]")
+		]
+	};{
+		[h:thisCreatureValidConditionsByType = thisCreatureValidConditions]
+	}]
+
+	[h,if(validConditionTypesExclusive != ""),CODE:{
+		[h,if(json.type(validConditionTypesExclusive) == "ARRAY"):
+			thisCreatureValidConditionsByType = json.path.read(thisCreatureValidConditionsByType,"[*][?(@.ConditionType noneof "+validConditionTypesExclusive+")]");
+			thisCreatureValidConditionsByType = json.path.read(thisCreatureValidConditionsByType,"[*][?("+validConditionTypesExclusive+" nin @.ConditionType)]")
+		]
+	};{}]
+	[h:broadcast(thisCreatureValidConditionsByType)]
+
+	[h,if(validConditionNamesInclusive != ""),CODE:{
+		[h,if(json.type(validConditionNamesInclusive) == "ARRAY"):
+			thisCreatureValidConditionsByName = json.path.read(thisCreatureValidConditions,"[*][?(@.Name in "+validConditionNamesInclusive+")]");
+			thisCreatureValidConditionsByName = json.path.read(thisCreatureValidConditions,"[*][?(@.Name == "+validConditionNamesInclusive+")]")
+		]
+	};{
+		[h:thisCreatureValidConditionsByName = thisCreatureValidConditions]
+	}]
+
+	[h,if(validConditionNamesExclusive != ""),CODE:{
+		[h,if(json.type(validConditionNamesExclusive) == "ARRAY"):
+			thisCreatureValidConditionsByName = json.path.read(thisCreatureValidConditionsByName,"[*][?(@.Name nin "+validConditionNamesExclusive+")]");
+			thisCreatureValidConditionsByName = json.path.read(thisCreatureValidConditionsByName,"[*][?(@.Name != "+validConditionNamesExclusive+")]")
+		]
+	};{}]
+	[h:broadcast(thisCreatureValidConditionsByName)]
+
+	[h,if((validConditionNamesInclusive != "" || validConditionNamesExclusive != "") && (validConditionTypesInclusive !="" || validConditionTypesExclusive !="")),CODE:{
+		[h:broadcast(validConditionCombineFiltersHow)]
+		[h,if(validConditionCombineFiltersHow == "and"):
+			thisCreatureValidConditions = json.intersection(thisCreatureValidConditionsByName,thisCreatureValidConditionsByType);
+			thisCreatureValidConditions = json.union(thisCreatureValidConditionsByName,thisCreatureValidConditionsByType)
+		]
+	};{
+		[h,if(validConditionNamesInclusive != "" || validConditionNamesExclusive != ""): thisCreatureValidConditions = thisCreatureValidConditionsByName]
+		[h,if(validConditionTypesInclusive !="" || validConditionTypesExclusive !=""): thisCreatureValidConditions = thisCreatureValidConditionsByType]
+	}]
+	[h:broadcast(thisCreatureValidConditions)]
+
+	[h:thisCreatureValidConditions = json.path.read(thisCreatureValidConditions,"[*][?(@.Tier <= "+validConditionMaxTier+" || @.Tier == null)]","DEFAULT_PATH_LEAF_TO_NULL")]
+
+	[h:thisCreatureValidConditionGroups = json.unique(json.path.read(thisCreatureValidConditions,"[*]['GroupID']"))]
+
+	[h:allValidConditionGroups = json.set(allValidConditionGroups,creature,thisCreatureValidConditionGroups)]
+}]
+
+[h:macro.return = allValidConditionGroups]

@@ -1,4 +1,4 @@
-async function clearUnusedTable(tableID,startRowID,endRowID){
+function clearUnusedTable(tableID,startRowID,endRowID){
     let table = document.getElementById(tableID);
     let startRowIndex = document.getElementById(startRowID).rowIndex;
     let endRowIndex = document.getElementById(endRowID).rowIndex;
@@ -14,6 +14,15 @@ function addTableRow(tableID,rowIndex,rowID,rowHTML){
     let newRow = table.insertRow(rowIndex);
     newRow.id = rowID;
     newRow.innerHTML = rowHTML;
+}
+
+function toggleFieldEnabled(toDisable,checkboxID){
+	if(document.getElementById(checkboxID).checked){
+		document.getElementById(toDisable).setAttribute("disabled","");
+	}
+	else{
+		document.getElementById(toDisable).removeAttribute("disabled","");
+	}
 }
 
 async function submitData(formName,nextMacroName) {

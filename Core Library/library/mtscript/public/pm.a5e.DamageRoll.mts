@@ -32,12 +32,19 @@
 [h,if(json.contains(damage.ThisInstance,"AHLDieNum")): damage.DieNumber = damage.DieNumber + (damage.Scaling * json.get(damage.ThisInstance,"AHLDieNum"))]
 
 [h:damage.CritDieNumber = damage.DieNumber]
+[h,if(json.get(damage.ThisInstance,"BonusCritDice")!=""): damage.CritDieNumber = damage.CritDieNumber + json.get(damage.ThisInstance,"BonusCritDice")]
 
 [h,count(damage.DieNumber): damage.AllDice = json.append(damage.AllDice,damage.DieSize)]
-[h:damage.Rules = damage.DieNumber+"d"+damage.DieSize]
+[h,if(damage.DieNumber==0):
+	damage.Rules = "";
+	damage.Rules = damage.DieNumber+"d"+damage.DieSize
+]
 
 [h,count(damage.CritDieNumber): damage.AllCritDice = json.append(damage.AllCritDice,damage.DieSize)]
-[h:damage.CritRules = damage.CritDieNumber+"d"+damage.DieSize]
+[h,if(damage.CritDieNumber==0): 
+	damage.CritRules = "";
+	damage.CritRules = damage.CritDieNumber+"d"+damage.DieSize
+]
 
 [h:damage.FlatBonus = json.get(damage.ThisInstance,"DamageFlatBonus")]
 [h:damage.IsModBonus = json.get(damage.ThisInstance,"IsModBonus")]
@@ -49,7 +56,7 @@
     damage.FlatBonusRules = substring(damage.PrimeStat,0,3);
     damage.FlatBonusRules = ""
 ]
-[h,if(damage.FlatBonus==0): listAppend(damage.FlatBonusRules,damage.FlatBonus," + ")]
+[h,if(damage.FlatBonus!=0): listAppend(damage.FlatBonusRules,damage.FlatBonus," + ")]
 
 [h,if(damage.IsModBonus),CODE:{
     [h:damage.PrimeStatMod = json.get(getProperty("a5e.stat.AtrMods"),damage.PrimeStat)]

@@ -79,7 +79,7 @@
 	)]
 
 	[h:abilityTable = json.merge(abilityTable,pm.AllRollTableLines)]
-	
+
 	[h:effectsToMerge = json.append("",json.set("","Roll",finalRollData))]
 
 	[h,MACRO("Build Effect@Lib:pm.a5e.Core"): json.set("","CurrentEffects",pm.a5e.EffectData,"ToMerge",effectsToMerge,"BaseEffect",pm.a5e.BaseEffectData,"WhichEffect",whichEffect)]

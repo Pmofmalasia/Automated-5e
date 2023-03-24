@@ -272,36 +272,137 @@
 	[h:subeffectData = json.set(subeffectData,"Summon",SummonData)]
 };{}]
 
+[h:ConditionModificationData = ""]
+[h:TargetConditionData = ""]
+[h,if(json.get(subeffectData,"isAffectCondition")!="No"),CODE:{
+	[h,if(!json.contains(subeffectData,"affectConditionNumberUnlimited")): TargetConditionData = json.set(TargetConditionData,
+		"Number",json.get(subeffectData,"affectConditionNumber"),
+		"NumberAHL",json.get(subeffectData,"affectConditionNumberAHL"),
+		"NumberAHLScaling",json.get(subeffectData,"affectConditionNumberAHLScaling"))
+	]
+
+	[h:subeffectData = json.remove(subeffectData,"affectConditionNumberUnlimited")]
+	[h:subeffectData = json.remove(subeffectData,"affectConditionNumber")]
+	[h:subeffectData = json.remove(subeffectData,"affectConditionNumberAHL")]
+	[h:subeffectData = json.remove(subeffectData,"affectConditionNumberAHLScaling")]
+
+	[h:TargetConditionData = json.set(TargetConditionData,"MustTargetAll",json.contains(subeffectData,"affectConditionAffectsAll"))]
+	[h:subeffectData = json.remove(subeffectData,"affectConditionAffectsAll")]
+
+	[h:tempNameData = ""]
+	[h,if(json.get(subeffectData,"affectConditionNameFilterType")=="Inclusive" || json.get(subeffectData,"affectConditionNameFilterType")=="Mixture"),CODE:{
+		[h:tempConditionList = pm.a5e.GetBaseConditions("Name","json")]
+		[h:inclusiveConditionTargetNames = ""]
+		[h,foreach(tempCondition,tempConditionList): inclusiveConditionTargetNames = if(json.contains(subeffectData,"affectConditionNameFilterInclusive"+tempCondition),json.append(inclusiveConditionTargetNames,tempCondition),inclusiveConditionTargetNames)]
+		[h,foreach(tempCondition,tempConditionList): subeffectData = json.remove(subeffectData,"affectConditionNameFilterInclusive"+tempCondition)]
+		[h,if(inclusiveConditionTargetNames!=""): tempNameData = json.set(tempNameData,"Inclusive",inclusiveConditionTargetNames)]
+	};{}]
+	
+	[h,if(json.get(subeffectData,"affectConditionNameFilterType")=="Exclusive" || json.get(subeffectData,"affectConditionNameFilterType")=="Mixture"),CODE:{
+		[h:tempConditionList = pm.a5e.GetBaseConditions("Name","json")]
+		[h:inclusiveConditionTargetNames = ""]
+		[h,foreach(tempCondition,tempConditionList): inclusiveConditionTargetNames = if(json.contains(subeffectData,"affectConditionNameFilterExclusive"+tempCondition),json.append(inclusiveConditionTargetNames,tempCondition),inclusiveConditionTargetNames)]
+		[h,foreach(tempCondition,tempConditionList): subeffectData = json.remove(subeffectData,"affectConditionNameFilterExclusive"+tempCondition)]
+		[h,if(inclusiveConditionTargetNames!=""): tempNameData = json.set(tempNameData,"Exclusive",inclusiveConditionTargetNames)]
+	};{}]
+
+	[h,if(tempNameData!=""): TargetConditionData = json.set(TargetConditionData,"ConditionNames",tempNameData)]
+
+	[h:tempTagData = ""]
+	[h,if(json.get(subeffectData,"affectConditionTagFilterType")=="Inclusive" || json.get(subeffectData,"affectConditionTagFilterType")=="Mixture"),CODE:{
+		[h:allConditionTags = pm.a5e.GetCoreData("sb.ConditionTags","Name","json")]
+		[h:inclusiveConditionTargetTags = ""]
+		[h,foreach(tempConditionTag,allConditionTags): inclusiveConditionTargetTags = if(json.contains(subeffectData,"affectConditionTagFilterInclusive"+tempConditionTag),json.append(inclusiveConditionTargetTags,tempConditionTag),inclusiveConditionTargetTags)]
+		[h,foreach(tempConditionTag,allConditionTags): subeffectData = json.remove(subeffectData,"affectConditionTagFilterInclusive"+tempConditionTag)]
+		[h,if(inclusiveConditionTargetTags!=""): tempTagData = json.set(tempTagData,"Inclusive",inclusiveConditionTargetTags)]
+	};{}]
+	
+	[h,if(json.get(subeffectData,"affectConditionTagFilterType")=="Exclusive" || json.get(subeffectData,"affectConditionTagFilterType")=="Mixture"),CODE:{
+		[h:allConditionTags = pm.a5e.GetCoreData("sb.ConditionTags","Name","json")]
+		[h:inclusiveConditionTargetTags = ""]
+		[h,foreach(tempConditionTag,allConditionTags): inclusiveConditionTargetTags = if(json.contains(subeffectData,"affectConditionTagFilterExclusive"+tempConditionTag),json.append(inclusiveConditionTargetTags,tempConditionTag),inclusiveConditionTargetTags)]
+		[h,foreach(tempConditionTag,allConditionTags): subeffectData = json.remove(subeffectData,"affectConditionTagFilterExclusive"+tempConditionTag)]
+		[h,if(inclusiveConditionTargetTags!=""): tempTagData = json.set(tempTagData,"Exclusive",inclusiveConditionTargetTags)]
+	};{}]
+	
+	[h,if(tempTagData!=""): TargetConditionData = json.set(TargetConditionData,"ConditionTypes",tempTagData)]
+
+	[h,if(json.contains(subeffectData,"affectConditionCombineFiltersHow")): TargetConditionData = json.set(TargetConditionData,"CombineFiltersHow",json.get(subeffectData,"affectConditionCombineFiltersHow"))]
+	[h:TargetConditionData = json.set(TargetConditionData,"Tier",json.get(subeffectData,"affectConditionTier"))]
+
+	[h:subeffectData = json.remove(subeffectData,"affectConditionCombineFiltersHow")]
+	[h:subeffectData = json.remove(subeffectData,"affectConditionTier")]
+	[h:subeffectData = json.remove(subeffectData,"affectConditionNameFilterType")]
+	[h:subeffectData = json.remove(subeffectData,"affectConditionTagFilterType")]
+
+	[h,switch(json.get(subeffectData,"isAffectCondition")),CODE:
+		case "End":{
+			[h:ConditionModificationData = json.set(ConditionModificationData,"Method","End")]
+		};
+		case "Suppress":{
+			[h:ConditionModificationData = json.set(ConditionModificationData,"Method","Suppress")]
+		};
+		case "Prolong":{
+			[h:ConditionModificationData = json.set(ConditionModificationData,"Method","Prolong")]
+		};
+		case "Shorten":{
+			[h:ConditionModificationData = json.set(ConditionModificationData,"Method","Shorten")]
+		}
+	]
+};{}]
+[h:subeffectData = json.remove(subeffectData,"isAffectCondition")]
+
+[h,if(TargetConditionData != ""): subeffectData = json.set(subeffectData,"TargetConditionLimits",TargetConditionData)]
+[h,if(ConditionModificationData != ""): subeffectData = json.set(subeffectData,"ConditionModificationInfo",ConditionModificationData)]
+
 [h,switch(json.get(subeffectData,"lightType")),CODE:
 	case "None":{};
 	case "":{};
 	case "BrightDim":{
 		[h:lightData = json.set("",
 			"LightType",json.get(subeffectData,"lightType"),
-			"Value",json.get(subeffectData,"lightDistanceValue"),
-			"Units",json.get(subeffectData,"lightDistanceUnits"),
-			"SecondaryValue",json.get(subeffectData,"lightDistanceValue")+json.get(subeffectData,"secondaryLightDistanceValue"),
-			"IsSunlight",json.contains(subeffectData,"isSunlight")
+			"IsSunlight",json.contains(subeffectData,"isSunlight"),
+			"CanBlock",json.contains(subeffectData,"lightCanBlock")
 		)]
+
+		[h,if(json.contains(subeffectData,"isLightUseAoESize")):
+			lightData = json.set(lightData,
+				"UseAoESize",1,
+				"Units",json.get(subeffectData,"lightDistanceUnits"),
+				"SecondaryValue",json.get(subeffectData,"secondaryLightDistanceValue"));
+			lightData = json.set(lightData,
+				"Value",json.get(subeffectData,"lightDistanceValue"),
+				"Units",json.get(subeffectData,"lightDistanceUnits"),
+				"SecondaryValue",json.get(subeffectData,"lightDistanceValue")+json.get(subeffectData,"secondaryLightDistanceValue"))
+		]
 
 		[h:subeffectData = json.set(subeffectData,"Light",lightData)]
 		[h:subeffectData = json.remove(subeffectData,"lightDistanceValue")]
 		[h:subeffectData = json.remove(subeffectData,"lightDistanceUnits")]
 		[h:subeffectData = json.remove(subeffectData,"secondaryLightDistanceValue")]
 		[h:subeffectData = json.remove(subeffectData,"isSunlight")]
+		[h:subeffectData = json.remove(subeffectData,"isLightUseAoESize")]
 	};
 	default:{
 		[h:lightData = json.set("",
 			"LightType",json.get(subeffectData,"lightType"),
-			"Value",number(json.get(subeffectData,"lightDistanceValue")),
-			"Units",json.get(subeffectData,"lightDistanceUnits"),
-			"IsSunlight",json.contains(subeffectData,"isSunlight")
+			"IsSunlight",json.contains(subeffectData,"isSunlight"),
+			"CanBlock",json.contains(subeffectData,"lightCanBlock")
 		)]
+
+		[h,if(json.contains(subeffectData,"isLightUseAoESize")):
+			lightData = json.set(lightData,"UseAoESize",1);
+			lightData = json.set(lightData,
+				"Value",json.get(subeffectData,"lightDistanceValue"),
+				"Units",json.get(subeffectData,"lightDistanceUnits"))
+		]
 
 		[h:subeffectData = json.set(subeffectData,"Light",lightData)]
 		[h:subeffectData = json.remove(subeffectData,"lightDistanceValue")]
 		[h:subeffectData = json.remove(subeffectData,"lightDistanceUnits")]
 		[h:subeffectData = json.remove(subeffectData,"isSunlight")]
+		[h:subeffectData = json.remove(subeffectData,"isLightUseAoESize")]
+		[h:subeffectData = json.remove(subeffectData,"lightCanBlock")]
 	}
 ]
 [h:subeffectData = json.remove(subeffectData,"lightType")]
@@ -431,11 +532,7 @@
 
 	};
 	case "CreatureObject":{
-		[h:CreatureTargetingData = ct.a5e.CreatureTargetingLimitProcessing(subeffectData,targetData)]
-		[h:subeffectData = json.get(CreatureTargetingData,"Subeffect")]
-		[h:creatureData = json.get(CreatureTargetingData,"Creature")]
-		[h:targetData = json.set(targetData,"Creature",creatureData)]
-		[h:subeffectData = json.remove(subeffectData,"MaxCover")]
+		[h:targetData = json.set(targetData,"Creature","{}","Object","{}")]
 	};
 	case "Point":{
 

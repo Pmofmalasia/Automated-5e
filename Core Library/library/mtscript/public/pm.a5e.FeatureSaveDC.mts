@@ -78,7 +78,9 @@
 	"ConditionsResisted",json.set("",
 		"Inclusive",conditionsResistedInclusive,
 		"Exclusive",conditionsResistedExclusive)
-	)]
+)]
+
+[h,if(json.get(pm.SaveModifiers,"ConditionModification")!=""): saveDataFinal = json.set(saveDataFinal,"ConditionModification",json.get(pm.SaveModifiers,"ConditionModification"))]
 
 [h:abilityTable = json.append(abilityTable,json.set("",
 	"ShowIfCondensed",1,

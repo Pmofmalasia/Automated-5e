@@ -613,7 +613,7 @@ async function createConditionSaveTable(){
 					alreadyNullifiedText = " checked";
 				}
 			}
-			conditionOptions = conditionOptions + "<label><input type='checkbox' id='SaveNullifyEffectSpecific' name='SaveNullifyEffectSpecific' value=1"+alreadyNullifiedText+"><span>Spell-Specific Condition</span></label>";
+			conditionOptions = conditionOptions + "<label><input type='checkbox' id='SaveNullifyEffectSpecific' name='SaveNullifyEffectSpecific' value=1"+alreadyNullifiedText+"><span>Unique Condition</span></label>";
 		}
 
 		clearUnusedTable("CreateSubeffectTable","rowConditionSave","rowSummons");
@@ -665,12 +665,12 @@ async function createSummonTable(){
 			rowSummonCrMax.innerHTML = "<th><label for='summonCrMax'>Maximum CR of Creature:</th><td><input type='number' id='summonCrMax' name='summonCrMax' min=0 value=2 style='width:25px'></td>";
 			nextRowIndex++;
 
-			if(checkEffectType=="Spell"){
+			if(checkEffectType()=="Spell"){
 				let summonCrMaxAHLScalingSelect = await createAHLSelect("summonCrMaxAHLScaling");
 
 				let rowSummonCrAHL = table.insertRow(nextRowIndex);
 				rowSummonCrAHL.id = "rowSummonCrAHL";
-				rowSummonCrAHL.innerHTML = "<th><label for='summonCrMaxAHLNum'>CR Increase AHL:</th><td><select id='summonCrMaxAHLScaleHow' name='summonCrMaxAHLScaleHow'><option value='Add'>Add</option><option value='Multiply'>Multiply</option></select><input type='number' id='summonCrMaxAHLNum' name='summonCrMaxAHLNum' min=0 value=1 style='width:25px'>"+summonCrMaxAHLScalingSelect+"</td>";
+				rowSummonCrAHL.innerHTML = "<th><label for='summonCrMaxAHLNum'>CR Increase AHL:</th><td><select id='summonCrMaxAHLScaleHow' name='summonCrMaxAHLScaleHow'><option value='Add'>Add</option><option value='Multiply'>Multiply</option></select><input type='number' id='summonCrMaxAHLNum' name='summonCrMaxAHLNum' min=0 value=0 style='width:25px'>"+summonCrMaxAHLScalingSelect+"</td>";
 				nextRowIndex++;                
 			}
 
@@ -738,9 +738,18 @@ async function createUncommonEffectsRows(){
 	let nextRowIndex = document.getElementById("rowUncommonEffects").rowIndex+1;
 
 	if(document.getElementById("isUncommonEffects").checked){
-		addTableRow("CreateSubeffectTable",nextRowIndex,"rowEndCondition","<th><label for='isEndCondition'>Ends Active Conditions?</label></th><td><input type='checkbox' id='isEndCondition' name='isEndCondition' onchange='createEndConditionRows()'></td>");
+		addTableRow("CreateSubeffectTable",nextRowIndex,"rowModifyD20","<th><label for='isModifyD20'>Modifies d20 Tests?</label></th><td><input type='checkbox' id='isModifyD20' name='isModifyD20' onchange='createModifyD20Rows()'></td>");
 		nextRowIndex++;
-		
+
+		addTableRow("CreateSubeffectTable",nextRowIndex,"rowModifyD20","<th><label for='isModifyDamageRoll'>Modifies Damage Rolls?</label></th><td><input type='checkbox' id='isModifyDamageRoll' name='isModifyDamageRoll' onchange='createModifyDamageRollRows()'></td>");
+		nextRowIndex++;
+
+		addTableRow("CreateSubeffectTable",nextRowIndex,"rowAffectCondition","<th><label for='isAffectCondition'>Affects Active Conditions?</label></th><td><select id='isAffectCondition' name='isAffectCondition' onchange='createAffectConditionRows()'><option value='No'>No Effect</option><option value='End'>End Conditions</option><option value='Suppress'>Suppress Conditions</option><option value='Shorten'>Shorten Conditions</option><option value='Prolong'>Prolong Conditions</option></select></td>");
+		nextRowIndex++;
+
+		addTableRow("CreateSubeffectTable",nextRowIndex,"rowAffectSpell","<th><label for='isAffectSpell'>Affects Spell Effects?</label></th><td><select id='isAffectSpell' name='isAffectSpell' onchange='createAffectSpellRows()'><option value='No'>No Effect</option><option value='End'>End Spells</option><option value='Suppress'>Suppress Spells</option><option value='Shorten'>Shorten Spells</option><option value='Prolong'>Prolong Spells</option></select></td>");
+		nextRowIndex++;
+
 		addTableRow("CreateSubeffectTable",nextRowIndex,"rowLightType","<th><label for='lightType'>Creates a Light or Darkness?</label></th><td><select id='lightType' name='lightType' onchange='createLightTable()'><option value='None'>No Light</option><option value='Dim'>Dim Light</option><option value='Bright'>Bright Light</option><option value='BrightDim'>Bright + Dim Light</option><option value='Darkness'>Darkness</option><option value='Obscure'>Heavily Obscure</option></select></td>");
 		nextRowIndex++;
 
@@ -752,16 +761,16 @@ async function createUncommonEffectsRows(){
 		
 		addTableRow("CreateSubeffectTable",nextRowIndex,"rowSetHP","<th><label for='isSetHP'>Set Target's Current HP?</label></th><td><input type='checkbox' id='isSetHP' name='isSetHP' onchange='createSetHPRows()'></td>");
 		nextRowIndex++;
-		
+
 		addTableRow("CreateSubeffectTable",nextRowIndex,"rowInstantKill","<th><label for='InstantKill'>Instantly Kills Target?</label></th><td><input type='checkbox' id='InstantKill' name='InstantKill' onchange='createInstantKillRows()'></td>");
 		nextRowIndex++;
-		
+
 		addTableRow("CreateSubeffectTable",nextRowIndex,"rowIsCreateObject","<th><label for='isCreateObject'>Creates an Object?</label></th><td><input type='checkbox' id='isCreateObject' name='isCreateObject' value=1 onchange='createCreateObjectTable()'></td>");
 		nextRowIndex++;
-		
+
 		addTableRow("CreateSubeffectTable",nextRowIndex,"rowIsWeaponAttack","<th><label for='isWeaponAttack'>Makes a Weapon Attack?</label></th><td><input type='checkbox' id='isWeaponAttack' name='isWeaponAttack' value=1 onchange='createWeaponAttackTable()'></td>");
 		nextRowIndex++;
-		
+
 		addTableRow("CreateSubeffectTable",nextRowIndex,"rowIgnoreCoverBenefits","<th><label for='IgnoreCoverBenefit'>Ignore Cover Benefits?</label></th><td><input type='checkbox' id='IgnoreCoverBenefit' name='IgnoreCoverBenefit'></td>");
 		nextRowIndex++;
 	}
@@ -770,20 +779,381 @@ async function createUncommonEffectsRows(){
 	}
 }
 
-async function createEndConditionRows(){
-	let nextRowIndex = document.getElementById("rowEndCondition").rowIndex + 1;
+async function createModifyD20Rows(){
+	let nextRowIndex = document.getElementById("rowModifyD20").rowIndex + 1;
 
-	if(document.getElementById("isEndCondition").checked){
-		addTableRow("CreateSubeffectTable",nextRowIndex,"rowEndConditionFilterMethod","<th>Bleh.</th><td>Later.</td>")
+	if(document.getElementById("isModifyD20").checked){
+		addTableRow("CreateSubeffectTable",nextRowIndex,"rowIsModifyAttack","<th><label for='affectEffectAffectsAll'>Must Affect All Possible Effects:</label></th><td><input type='checkbox' id='affectEffectAffectsAll' name='affectEffectAffectsAll'></td>");
+		nextRowIndex++;
+
+		addTableRow("CreateSubeffectTable",nextRowIndex,"rowModifyD20Number","<th><label for='affectEffectNumber'>Number to Remove:</label></th><td><input type='number' id='affectEffectNumber' name='affectEffectNumber' min=0 style='width:25px' value=1><input type='checkbox' name='affectEffectNumberUnlimited' id='affectEffectNumberUnlimited' onchange='toggleFieldEnabled("+'"affectEffectNumber","affectEffectNumberUnlimited"'+")'>Unlimited?</td>");
+		nextRowIndex++;
+
+		if(checkEffectType()=="Spell"){
+			let affectEffectNumberAHLScalingSelect = await createAHLSelect("affectEffectNumberAHLScaling");
+
+			addTableRow("CreateSubeffectTable",nextRowIndex,"rowModifyD20NumberAHL","<th><label for='affectEffectNumberAHL'>Number Affected Increase AHL:</th><td><input type='number' id='affectEffectNumberAHL' name='affectEffectNumberAHL' min=0 value=0 style='width:25px'>"+affectEffectNumberAHLScalingSelect+"</td>");
+			nextRowIndex++;
+		}
+
+		addTableRow("CreateSubeffectTable",nextRowIndex,"rowModifyD20Number","<th><label for='affectEffectAffectsAll'>Must Affect All Possible Effects:</label></th><td><input type='checkbox' id='affectEffectAffectsAll' name='affectEffectAffectsAll'></td>");
+		nextRowIndex++;
+
+		addTableRow("CreateSubeffectTable",nextRowIndex,"rowModifyD20NameFilterType","<th><label for='affectEffectNameFilterType'>Valid Spells By Name:</label></th><td><select id='affectEffectNameFilterType' name='affectEffectNameFilterType' onchange='createModifyD20NameFilterRows()'><option value='All'>All Spells</option><option value='Inclusive'>Must Be Specific Spell(s)</option><option value='Exclusive'>Cannot Be Specific Spell(s)</option><option value='Mixture'>Mixture of Both Above</option></select></td>");
+		nextRowIndex++;
+
+		addTableRow("CreateSubeffectTable",nextRowIndex,"rowModifyD20TagFilterType","<th><label for='affectEffectTagFilterType'>Valid Spells By Type:</label></th><td><select id='affectEffectTagFilterType' name='affectEffectTagFilterType' onchange='createModifyD20TagFilterRows()'><option value='All'>All Types</option><option value='Inclusive'>Must Be Specific Type(s)</option><option value='Exclusive'>Cannot Be Specific Type(s)</option><option value='Mixture'>Mixture of Both Above</option></select></td>");
+		nextRowIndex++;
+
+		if(checkEffectType()=="Spell"){
+			addTableRow("CreateSubeffectTable",nextRowIndex,"rowModifyD20LevelMax","<th><label for='affectEffectLevelMax'>Maximum Level Affected:</label></th><td><input type='number' id='affectEffectLevelMax' name='affectEffectLevelMax' min=0 value=1 style='width:25px'> OR <select id='affectEffectLevelMaxAlternate' name='affectEffectLevelMaxAlternate'><option value='None'>No Alternative</option><option value='CastLevel'>Spell Slot Level</option><option value='NoMax'>No Maximum</option></select></td>");
+			nextRowIndex++;
+		}
+		else{
+			addTableRow("CreateSubeffectTable",nextRowIndex,"rowModifyD20LevelMax","<th><label for='affectEffectLevelMax'>Maximum Level Affected:</label></th><td><input type='number' id='affectEffectLevelMax' name='affectEffectLevelMax' min=0 value=1 style='width:25px'><input type='checkbox' name='affectEffectNumberUnlimited' id='affectEffectNumberUnlimited' onchange='toggleFieldEnabled("+'"affectEffectNumber","affectEffectNumberUnlimited"'+")'>Unlimited?</td>");
+			nextRowIndex++;
+		}
+		
+		addTableRow("CreateSubeffectTable",nextRowIndex,"rowIsModifyD20LevelMaxOverride","<th><label for='isModifyD20LevelMaxOverride'>May Affect Spells Over Maximum Level?</label></th><td><input type='checkbox' id='isModifyD20LevelMaxOverride' name='isModifyD20LevelMaxOverride' onchange='createModifyD20LevelMaxOverrideRows()'></td>");
+		nextRowIndex++;
 	}
 	else{
-		clearUnusedTable("CreateSubeffectTable","rowEndCondition","rowLightType");
+		clearUnusedTable("CreateSubeffectTable","rowModifyD20","rowAffectCondition");
+	}
+}
+
+async function createModifyD20TypeRows(){
+	
+}
+
+async function createAffectConditionRows(){
+	let nextRowIndex = document.getElementById("rowAffectCondition").rowIndex + 1;
+
+	if(document.getElementById("isAffectCondition").value != "No"){
+		document.getElementById("isAffectSpell").setAttribute("disabled","");
+
+		addTableRow("CreateSubeffectTable",nextRowIndex,"rowAffectConditionNumber","<th><label for='affectConditionNumber'>Number to Remove:</label></th><td><input type='number' id='affectConditionNumber' name='affectConditionNumber' min=0 style='width:25px' value=1><input type='checkbox' name='affectConditionNumberUnlimited' id='affectConditionNumberUnlimited' onchange='toggleFieldEnabled("+'"affectConditionNumber","affectConditionNumberUnlimited"'+")'>Unlimited?</td>");
+		nextRowIndex++;
+
+		if(checkEffectType()=="Spell"){
+			let affectConditionNumberAHLScalingSelect = await createAHLSelect("affectConditionNumberAHLScaling");
+
+			addTableRow("CreateSubeffectTable",nextRowIndex,"rowAffectConditionNumberAHL","<th><label for='affectConditionNumberAHL'>Number Affected Increase AHL:</th><td><input type='number' id='affectConditionNumberAHL' name='affectConditionNumberAHL' min=0 value=0 style='width:25px'>"+affectConditionNumberAHLScalingSelect+"</td>");
+			nextRowIndex++;
+		}
+
+		addTableRow("CreateSubeffectTable",nextRowIndex,"rowAffectConditionAffectsAll","<th><label for='affectConditionAffectsAll'>Must Affect All Possible Conditions:</label></th><td><input type='checkbox' id='affectConditionAffectsAll' name='affectConditionAffectsAll'></td>");
+		nextRowIndex++;
+
+		addTableRow("CreateSubeffectTable",nextRowIndex,"rowAffectConditionNameFilterType","<th><label for='affectConditionNameFilterType'>Valid Conditions By Name:</label></th><td><select id='affectConditionNameFilterType' name='affectConditionNameFilterType' onchange='createAffectConditionNameFilterRows()'><option value='All'>All Conditions</option><option value='Inclusive'>Must Be Specific Condition(s)</option><option value='Exclusive'>Cannot Be Specific Condition(s)</option><option value='Mixture'>Mixture of Both Above</option></select></td>");
+		nextRowIndex++;
+
+		addTableRow("CreateSubeffectTable",nextRowIndex,"rowAffectConditionTagFilterType","<th><label for='affectConditionTagFilterType'>Valid Conditions By Type:</label></th><td><select id='affectConditionTagFilterType' name='affectConditionTagFilterType' onchange='createAffectConditionTagFilterRows()'><option value='All'>All Types</option><option value='Inclusive'>Must Be Specific Type(s)</option><option value='Exclusive'>Cannot Be Specific Type(s)</option><option value='Mixture'>Mixture of Both Above</option></select></td>");
+		nextRowIndex++;
+
+		addTableRow("CreateSubeffectTable",nextRowIndex,"rowAffectConditionTier","<th><label for='affectConditionTier'>Removal Tier:</label></th><td><select id='affectConditionTier' name='affectConditionTier'><option value=1>Basic</option><option value=2 select>Lesser Restoration</option><option value=3>Greater Restoration</option><option value=4>Heal</option><option value=5>Power Word: Heal</option><option value=6>Wish</option></select></td>");
+		nextRowIndex++;
+
+		//TODO: Add a "prolong/shorten conditions" thing here - Removal Tier should be included in this, which will require change to clearunusedtable for createtagfilterrows
+	}
+	else{
+		document.getElementById("isAffectSpell").removeAttribute("disabled","");
+		clearUnusedTable("CreateSubeffectTable","rowAffectCondition","rowAffectSpell");
+	}
+}
+
+async function createAffectConditionNameFilterRows(){
+	let table = document.getElementById("CreateSubeffectTable");
+	let currentNameFilterTypeSelection = document.getElementById("affectConditionNameFilterType").value;
+	let nextRowIndex = document.getElementById("rowAffectConditionNameFilterType").rowIndex + 1;
+
+	if(currentNameFilterTypeSelection == "All"){
+		clearUnusedTable("CreateSubeffectTable","rowAffectConditionNameFilterType","rowAffectConditionTagFilterType");
+	}
+	else{
+		let request = await fetch("macro:pm.a5e.GetBaseConditions@lib:pm.a5e.Core", {method: "POST", body: ""});
+		let allConditions = await request.json();
+
+		let conditionIncludeOptions = "";
+		let conditionExcludeOptions = "";
+		for(let tempCondition of allConditions){
+			conditionIncludeOptions = conditionIncludeOptions + "<label><input type='checkbox' id='affectConditionNameFilterInclusive"+tempCondition.Name+"' name='affectConditionNameFilterInclusive"+tempCondition.Name+"' value=1><span>"+tempCondition.DisplayName+"</span></label>";
+
+			conditionExcludeOptions = conditionExcludeOptions + "<label><input type='checkbox' id='affectConditionNameFilterExclusive"+tempCondition.Name+"' name='affectConditionNameFilterExclusive"+tempCondition.Name+"' value=1><span>"+tempCondition.DisplayName+"</span></label>";
+		}
+
+		let alreadyInclusiveTest = (table.rows.namedItem("rowInclusiveAffectConditionNames") != null);
+		let alreadyExclusiveTest = (table.rows.namedItem("rowExclusiveAffectConditionNames") != null);
+
+		if(currentNameFilterTypeSelection == "Inclusive" || currentNameFilterTypeSelection == "Mixture"){
+			if(alreadyInclusiveTest){
+				nextRowIndex++;
+			}
+			else{
+				addTableRow("CreateSubeffectTable",nextRowIndex,"rowInclusiveAffectConditionNames","<th>Affected Conditions:</th><td><div class='check-multiple' style='width:100%'>"+conditionIncludeOptions+"</div></td>");
+				nextRowIndex++;
+			}
+			if(alreadyExclusiveTest && currentNameFilterTypeSelection == "Inclusive"){
+				clearUnusedTable("CreateSubeffectTable","rowInclusiveAffectConditionNames","rowAffectConditionTagFilterType");
+			}
+		}
+		else if(alreadyInclusiveTest){
+			nextRowIndex++;
+		}
+		
+		if(currentNameFilterTypeSelection == "Exclusive" || currentNameFilterTypeSelection == "Mixture"){
+			if(!alreadyExclusiveTest){
+				addTableRow("CreateSubeffectTable",nextRowIndex,"rowExclusiveAffectConditionNames","<th>Unaffected Conditions:</th><td><div class='check-multiple' style='width:100%'>"+conditionExcludeOptions+"</div></td>");
+				nextRowIndex++;
+			}
+			else{
+				nextRowIndex++;
+			}
+			if(alreadyInclusiveTest && currentNameFilterTypeSelection == "Exclusive"){
+				clearUnusedTable("CreateSubeffectTable","rowAffectConditionNameFilterType","rowExclusiveAffectConditionNames");
+			}
+		}
+	}
+
+	createAffectConditionCombineNameTagFiltersHowRows();
+}
+
+async function createAffectConditionTagFilterRows(){
+	let table = document.getElementById("CreateSubeffectTable");
+	let currentTagFilterTypeSelection = document.getElementById("affectConditionTagFilterType").value;
+	let nextRowIndex = document.getElementById("rowAffectConditionTagFilterType").rowIndex + 1;
+
+	if(currentTagFilterTypeSelection == "All"){
+		clearUnusedTable("CreateSubeffectTable","rowAffectConditionTagFilterType","rowAffectConditionTier");
+	}
+	else{
+		let request = await fetch("macro:pm.a5e.GetCoreData@lib:pm.a5e.Core", {method: "POST", body: "['sb.ConditionTags']"});
+		let allConditionTags = await request.json();
+
+		let conditionTagIncludeOptions = "";
+		let conditionTagExcludeOptions = "";
+		for(let tempTag of allConditionTags){
+			conditionTagIncludeOptions = conditionTagIncludeOptions + "<label><input type='checkbox' id='affectConditionTagFilterInclusive"+tempTag.Name+"' name='affectConditionTagFilterInclusive"+tempTag.Name+"' value=1><span>"+tempTag.DisplayName+"</span></label>";
+	
+			conditionTagExcludeOptions = conditionTagExcludeOptions + "<label><input type='checkbox' id='affectConditionTagFilterExclusive"+tempTag.Name+"' name='affectConditionTagFilterExclusive"+tempTag.Name+"' value=1><span>"+tempTag.DisplayName+"</span></label>";
+		}
+
+		let alreadyInclusiveTest = (table.rows.namedItem("rowInclusiveAffectConditionTags") != null);
+		let alreadyExclusiveTest = (table.rows.namedItem("rowExclusiveAffectConditionTags") != null);
+
+		if(currentTagFilterTypeSelection == "Inclusive" || currentTagFilterTypeSelection == "Mixture"){
+			if(alreadyInclusiveTest){
+				nextRowIndex++;
+			}
+			else{
+				addTableRow("CreateSubeffectTable",nextRowIndex,"rowInclusiveAffectConditionTags","<th>Affect Conditions with Tag:</th><td><div class='check-multiple' style='width:100%'>"+conditionTagIncludeOptions+"</div></td>");
+				nextRowIndex++;
+			}
+			if(alreadyExclusiveTest && currentTagFilterTypeSelection == "Inclusive"){
+				clearUnusedTable("CreateSubeffectTable","rowInclusiveAffectConditionTags","rowAffectConditionTier");
+			}
+		}
+		else if(alreadyInclusiveTest){
+			nextRowIndex++;
+		}
+		
+		if(currentTagFilterTypeSelection == "Exclusive" || currentTagFilterTypeSelection == "Mixture"){
+			if(!alreadyExclusiveTest){
+				addTableRow("CreateSubeffectTable",nextRowIndex,"rowExclusiveAffectConditionTags","<th>Cannot Affect Conditions with Tag:</th><td><div class='check-multiple' style='width:100%'>"+conditionTagExcludeOptions+"</div></td>");
+				nextRowIndex++;
+			}
+			else{
+				nextRowIndex++;
+			}
+			if(alreadyInclusiveTest && currentTagFilterTypeSelection == "Exclusive"){
+				clearUnusedTable("CreateSubeffectTable","rowAffectConditionTagFilterType","rowExclusiveAffectConditionTags");
+			}
+		}
+	}
+
+	createAffectConditionCombineNameTagFiltersHowRows();
+}
+
+async function createAffectConditionCombineNameTagFiltersHowRows(){
+	let table = document.getElementById("CreateSubeffectTable");
+
+	if(document.getElementById("affectConditionNameFilterType").value != "All" && document.getElementById("affectConditionTagFilterType").value != "All"){
+		if(document.getElementById("rowAffectConditionCombineFiltersHow") == null){
+			let nextRowIndex = "";
+			if(document.getElementById("rowExclusiveAffectConditionTags") == null){
+				nextRowIndex = document.getElementById("rowInclusiveAffectConditionTags").rowIndex + 1;
+			}
+			else{
+				nextRowIndex = document.getElementById("rowExclusiveAffectConditionTags").rowIndex + 1;
+			}
+			
+			addTableRow("CreateSubeffectTable",nextRowIndex,"rowAffectConditionCombineFiltersHow","<th><label for='affectConditionCombineFiltersHow'>How Do Name and Tag Filters Interact?</label></th><td><select id='affectConditionCombineFiltersHow' name='affectConditionCombineFiltersHow'><option value='or'>Fit Name OR Tag Filters</option><option value='and'>Fit Name AND Tag Filters</option></select></td>");
+		}
+	}
+	else if(document.getElementById("rowAffectConditionCombineFiltersHow") != null){
+		table.deleteRow(document.getElementById("rowAffectConditionCombineFiltersHow").rowIndex);
+	}
+}
+
+async function createAffectSpellRows(){
+	let nextRowIndex = document.getElementById("rowAffectSpell").rowIndex + 1;
+
+	if(document.getElementById("isAffectSpell").value != "No"){
+		document.getElementById("isAffectCondition").setAttribute("disabled","");
+
+		addTableRow("CreateSubeffectTable",nextRowIndex,"rowAffectSpellNumber","<th><label for='affectSpellNumber'>Number to Remove:</label></th><td><input type='number' id='affectSpellNumber' name='affectSpellNumber' min=0 style='width:25px' value=1><input type='checkbox' name='affectSpellNumberUnlimited' id='affectSpellNumberUnlimited' onchange='toggleFieldEnabled("+'"affectSpellNumber","affectSpellNumberUnlimited"'+")'>Unlimited?</td>");
+		nextRowIndex++;
+
+		if(checkEffectType()=="Spell"){
+			let affectSpellNumberAHLScalingSelect = await createAHLSelect("affectSpellNumberAHLScaling");
+
+			addTableRow("CreateSubeffectTable",nextRowIndex,"rowAffectSpellNumberAHL","<th><label for='affectSpellNumberAHL'>Number Affected Increase AHL:</th><td><input type='number' id='affectSpellNumberAHL' name='affectSpellNumberAHL' min=0 value=0 style='width:25px'>"+affectSpellNumberAHLScalingSelect+"</td>");
+			nextRowIndex++;
+		}
+
+		addTableRow("CreateSubeffectTable",nextRowIndex,"rowAffectSpellAffectsAll","<th><label for='affectSpellAffectsAll'>Must Affect All Possible Spells:</label></th><td><input type='checkbox' id='affectSpellAffectsAll' name='affectSpellAffectsAll'></td>");
+		nextRowIndex++;
+
+		addTableRow("CreateSubeffectTable",nextRowIndex,"rowAffectSpellWhileCast","<th><label for='affectSpellWhileCast'>Affects Spells Being Cast:</label></th><td><input type='checkbox' id='affectSpellWhileCast' name='affectSpellWhileCast'></td>");
+		nextRowIndex++;
+
+		addTableRow("CreateSubeffectTable",nextRowIndex,"rowAffectSpellNameFilterType","<th><label for='affectSpellNameFilterType'>Valid Spells By Name:</label></th><td><select id='affectSpellNameFilterType' name='affectSpellNameFilterType' onchange='createAffectSpellNameFilterRows()'><option value='All'>All Spells</option><option value='Inclusive'>Must Be Specific Spell(s)</option><option value='Exclusive'>Cannot Be Specific Spell(s)</option><option value='Mixture'>Mixture of Both Above</option></select></td>");
+		nextRowIndex++;
+
+		addTableRow("CreateSubeffectTable",nextRowIndex,"rowAffectSpellTagFilterType","<th><label for='affectSpellTagFilterType'>Valid Spells By Type:</label></th><td><select id='affectSpellTagFilterType' name='affectSpellTagFilterType' onchange='createAffectSpellTagFilterRows()'><option value='All'>All Types</option><option value='Inclusive'>Must Be Specific Type(s)</option><option value='Exclusive'>Cannot Be Specific Type(s)</option><option value='Mixture'>Mixture of Both Above</option></select></td>");
+		nextRowIndex++;
+
+		if(checkEffectType()=="Spell"){
+			addTableRow("CreateSubeffectTable",nextRowIndex,"rowAffectSpellLevelMax","<th><label for='affectSpellLevelMax'>Maximum Level Affected:</label></th><td><input type='number' id='affectSpellLevelMax' name='affectSpellLevelMax' min=0 value=1 style='width:25px'> OR <select id='affectSpellLevelMaxAlternate' name='affectSpellLevelMaxAlternate'><option value='None'>No Alternative</option><option value='CastLevel'>Spell Slot Level</option><option value='NoMax'>No Maximum</option></select></td>");
+			nextRowIndex++;
+		}
+		else{
+			addTableRow("CreateSubeffectTable",nextRowIndex,"rowAffectSpellLevelMax","<th><label for='affectSpellLevelMax'>Maximum Level Affected:</label></th><td><input type='number' id='affectSpellLevelMax' name='affectSpellLevelMax' min=0 value=1 style='width:25px'><input type='checkbox' name='affectSpellNumberUnlimited' id='affectSpellNumberUnlimited' onchange='toggleFieldEnabled("+'"affectSpellNumber","affectSpellNumberUnlimited"'+")'>Unlimited?</td>");
+			nextRowIndex++;
+		}
+		
+		addTableRow("CreateSubeffectTable",nextRowIndex,"rowIsAffectSpellLevelMaxOverride","<th><label for='isAffectSpellLevelMaxOverride'>May Affect Spells Over Maximum Level?</label></th><td><input type='checkbox' id='isAffectSpellLevelMaxOverride' name='isAffectSpellLevelMaxOverride' onchange='createAffectSpellLevelMaxOverrideRows()'></td>");
+		nextRowIndex++;
+	}
+	else{
+		document.getElementById("isAffectCondition").removeAttribute("disabled","");
+		clearUnusedTable("CreateSubeffectTable","rowAffectSpell","rowLightType");
+	}
+}
+
+async function createAffectSpellNameFilterRows(){
+	let table = document.getElementById("CreateSubeffectTable");
+	let currentNameFilterTypeSelection = document.getElementById("affectSpellNameFilterType").value;
+	let nextRowIndex = document.getElementById("rowAffectSpellNameFilterType").rowIndex + 1;
+
+	if(currentNameFilterTypeSelection == "All"){
+		clearUnusedTable("CreateSubeffectTable","rowAffectSpellNameFilterType","rowAffectSpellTagFilterType");
+	}
+	else{
+		//TODO: This is an unmanagably large list for a check-multiple interface. Will need another solution.
+		let request = await fetch("macro:pm.a5e.GetBaseSpellData@lib:pm.a5e.Core", {method: "POST", body: ""});
+		let allSpells = await request.json();
+
+		let spellIncludeOptions = "";
+		let spellExcludeOptions = "";
+		for(let tempSpell of allSpells){
+			spellIncludeOptions = spellIncludeOptions + "<label><input type='checkbox' id='affectSpellNameFilterInclusive"+tempSpell.Name+"' name='affectSpellNameFilterInclusive"+tempSpell.Name+"' value=1><span>"+tempSpell.DisplayName+"</span></label>";
+
+			spellExcludeOptions = spellExcludeOptions + "<label><input type='checkbox' id='affectSpellNameFilterExclusive"+tempSpell.Name+"' name='affectSpellNameFilterExclusive"+tempSpell.Name+"' value=1><span>"+tempSpell.DisplayName+"</span></label>";
+		}
+
+		let alreadyInclusiveTest = (table.rows.namedItem("rowInclusiveAffectSpellNames") != null);
+		let alreadyExclusiveTest = (table.rows.namedItem("rowExclusiveAffectSpellNames") != null);
+
+		if(currentNameFilterTypeSelection == "Inclusive" || currentNameFilterTypeSelection == "Mixture"){
+			if(alreadyInclusiveTest){
+				nextRowIndex++;
+			}
+			else{
+				addTableRow("CreateSubeffectTable",nextRowIndex,"rowInclusiveAffectSpellNames","<th>Affected Spells:</th><td></td>");
+				nextRowIndex++;
+			}
+			if(alreadyExclusiveTest && currentNameFilterTypeSelection == "Inclusive"){
+				clearUnusedTable("CreateSubeffectTable","rowInclusiveAffectSpellNames","rowAffectSpellTagFilterType");
+			}
+		}
+		else if(alreadyInclusiveTest){
+			nextRowIndex++;
+		}
+
+		if(currentNameFilterTypeSelection == "Exclusive" || currentNameFilterTypeSelection == "Mixture"){
+			if(!alreadyExclusiveTest){
+				addTableRow("CreateSubeffectTable",nextRowIndex,"rowExclusiveAffectSpellNames","<th>Unaffected Spells:</th><td><div class='check-multiple' style='width:100%'>"+spellExcludeOptions+"</div></td>");
+				nextRowIndex++;
+			}
+			else{
+				nextRowIndex++;
+			}
+			if(alreadyInclusiveTest && currentNameFilterTypeSelection == "Exclusive"){
+				clearUnusedTable("CreateSubeffectTable","rowAffectSpellNameFilterType","rowExclusiveAffectSpellNames");
+			}
+		}
+	}
+}
+
+async function createAffectSpellTagFilterRows(){
+	let table = document.getElementById("CreateSubeffectTable");
+	let currentTagFilterTypeSelection = document.getElementById("affectSpellTagFilterType").value;
+	let nextRowIndex = document.getElementById("rowAffectSpellTagFilterType").rowIndex + 1;
+
+	if(currentTagFilterTypeSelection == "All"){
+		clearUnusedTable("CreateSubeffectTable","rowAffectSpellTagFilterType","rowAffectSpellTier");
+	}
+	else{
+		console.log("Spells do not have tags yet, so this will not work.");
+		let request = await fetch("macro:pm.a5e.GetCoreData@lib:pm.a5e.Core", {method: "POST", body: "['sb.SpellTags']"});
+		let allSpellTags = await request.json();
+
+		let spellTagIncludeOptions = "";
+		let spellTagExcludeOptions = "";
+		for(let tempTag of allSpellTags){
+			spellTagIncludeOptions = spellTagIncludeOptions + "<label><input type='checkbox' id='affectSpellTagFilterInclusive"+tempTag.Name+"' name='affectSpellTagFilterInclusive"+tempTag.Name+"' value=1><span>"+tempTag.DisplayName+"</span></label>";
+	
+			spellTagExcludeOptions = spellTagExcludeOptions + "<label><input type='checkbox' id='affectSpellTagFilterExclusive"+tempTag.Name+"' name='affectSpellTagFilterExclusive"+tempTag.Name+"' value=1><span>"+tempTag.DisplayName+"</span></label>";
+		}
+
+		let alreadyInclusiveTest = (table.rows.namedItem("rowInclusiveAffectSpellTags") != null);
+		let alreadyExclusiveTest = (table.rows.namedItem("rowExclusiveAffectSpellTags") != null);
+
+		if(currentTagFilterTypeSelection == "Inclusive" || currentTagFilterTypeSelection == "Mixture"){
+			if(alreadyInclusiveTest){
+				nextRowIndex++;
+			}
+			else{
+				addTableRow("CreateSubeffectTable",nextRowIndex,"rowInclusiveAffectSpellTags","<th>Affect Spells with Tag:</th><td><div class='check-multiple' style='width:100%'>"+spellTagIncludeOptions+"</div></td>");
+				nextRowIndex++;
+			}
+			if(alreadyExclusiveTest && currentTagFilterTypeSelection == "Inclusive"){
+				clearUnusedTable("CreateSubeffectTable","rowInclusiveAffectSpellTags","rowAffectSpellTier");
+			}
+		}
+		else if(alreadyInclusiveTest){
+			nextRowIndex++;
+		}
+		
+		if(currentTagFilterTypeSelection == "Exclusive" || currentTagFilterTypeSelection == "Mixture"){
+			if(!alreadyExclusiveTest){
+				addTableRow("CreateSubeffectTable",nextRowIndex,"rowExclusiveAffectSpellTags","<th>Cannot Affect Spells with Tag:</th><td><div class='check-multiple' style='width:100%'>"+spellTagExcludeOptions+"</div></td>");
+				nextRowIndex++;
+			}
+			else{
+				nextRowIndex++;
+			}
+			if(alreadyInclusiveTest && currentTagFilterTypeSelection == "Exclusive"){
+				clearUnusedTable("CreateSubeffectTable","rowAffectSpellTagFilterType","rowExclusiveAffectSpellTags");
+			}
+		}
 	}
 }
 
 async function createLightTable(){
 	let table = document.getElementById("CreateSubeffectTable");
-	let startRowIndex = document.getElementById("rowLightType").rowIndex;
+	let nextRowIndex = document.getElementById("rowLightType").rowIndex+1;
 	let lightSelection = document.getElementById("lightType").value;
 
 	clearUnusedTable("CreateSubeffectTable","rowLightType","rowIsMoveTarget");
@@ -791,34 +1161,51 @@ async function createLightTable(){
 	if(lightSelection == "None"){
 
 	}
-	else if(lightSelection == "Darkness"){
-		let rowLightInfo = table.insertRow(startRowIndex+1);
-		rowLightInfo.id = "rowLightInfo";
-		rowLightInfo.innerHTML = "<th><label for='lightDistanceValue'>Size of Darkness:</label></th><td><input type='number' id='lightDistanceValue' name='lightDistanceValue' min=0 value=30 style='width:25px'><select id='lightDistanceUnits' name='lightDistanceUnits'><option value='Feet'>Feet</option><option value='Miles'>Miles</option></select></td>";
-	}
-	else if(lightSelection == "BrightDim"){
-		let rowLightInfo = table.insertRow(startRowIndex+1);
-		rowLightInfo.id = "rowLightInfo";
-		rowLightInfo.innerHTML = "<th><label for='lightDistanceValue'>Size of Light/Dim Light:</label></th><td><input type='number' id='lightDistanceValue' name='lightDistanceValue' min=0 value=30 style='width:25px'><select id='lightDistanceUnits' name='lightDistanceUnits'><option value='Feet'>Feet</option><option value='Miles'>Miles</option></select> bright <b>/</b> <input type='number' id='secondaryLightDistanceValue' name='secondaryLightDistanceValue' min=0 value=30 style='width:25px'> dim</td>";
-
-		let rowIsSunlight = table.insertRow(startRowIndex+2);
-		rowIsSunlight.id = "rowIsSunlight";
-		rowIsSunlight.innerHTML = "<th><label for='isSunlight'>Counts as Sunlight:</label></th><td><input type='checkbox' id='isSunlight' name='isSunlight' value=1></td>";
-	}
-	else if(lightSelection == "Obscure"){
-		let rowLightInfo = table.insertRow(startRowIndex+1);
-		rowLightInfo.id = "rowLightInfo";
-		rowLightInfo.innerHTML = "<th><label for='lightDistanceValue'>Size of Obscured Area:</label></th><td><input type='number' id='lightDistanceValue' name='lightDistanceValue' min=0 value=30 style='width:25px'><select id='lightDistanceUnits' name='lightDistanceUnits'><option value='Feet'>Feet</option><option value='Miles'>Miles</option></select></td>";
-	}
 	else{
-		let rowLightInfo = table.insertRow(startRowIndex+1);
-		rowLightInfo.id = "rowLightInfo";
-		rowLightInfo.innerHTML = "<th><label for='lightDistanceValue'>Size of Light:</label></th><td><input type='number' id='lightDistanceValue' name='lightDistanceValue' min=0 value=30 style='width:25px'><select id='lightDistanceUnits' name='lightDistanceUnits'><option value='Feet'>Feet</option><option value='Miles'>Miles</option></select></td>";
+		if(lightSelection == "Darkness"){
+			let rowLightInfo = table.insertRow(nextRowIndex);
+			rowLightInfo.id = "rowLightInfo";
+			rowLightInfo.innerHTML = "<th><label for='lightDistanceValue'>Size of Darkness:</label></th><td><input type='number' id='lightDistanceValue' name='lightDistanceValue' min=0 value=30 style='width:25px'><select id='lightDistanceUnits' name='lightDistanceUnits'><option value='Feet'>Feet</option><option value='Miles'>Miles</option></select></td>";
+			nextRowIndex++;
+		}
+		else if(lightSelection == "BrightDim"){
+			let rowLightInfo = table.insertRow(nextRowIndex);
+			rowLightInfo.id = "rowLightInfo";
+			rowLightInfo.innerHTML = "<th><label for='lightDistanceValue'>Size of Light/Dim Light:</label></th><td><input type='number' id='lightDistanceValue' name='lightDistanceValue' min=0 value=30 style='width:25px'><select id='lightDistanceUnits' name='lightDistanceUnits'><option value='Feet'>Feet</option><option value='Miles'>Miles</option></select> bright <b>/</b> <input type='number' id='secondaryLightDistanceValue' name='secondaryLightDistanceValue' min=0 value=30 style='width:25px'> dim</td>";
+			nextRowIndex++;
 
-		let rowIsSunlight = table.insertRow(startRowIndex+2);
-		rowIsSunlight.id = "rowIsSunlight";
-		rowIsSunlight.innerHTML = "<th><label for='isSunlight'>Counts as Sunlight:</label></th><td><input type='checkbox' id='isSunlight' name='isSunlight' value=1></td>";
+			let rowIsSunlight = table.insertRow(nextRowIndex);
+			rowIsSunlight.id = "rowIsSunlight";
+			rowIsSunlight.innerHTML = "<th><label for='isSunlight'>Counts as Sunlight:</label></th><td><input type='checkbox' id='isSunlight' name='isSunlight' value=1></td>";
+			nextRowIndex++;
+		}
+		else if(lightSelection == "Obscure"){
+			let rowLightInfo = table.insertRow(nextRowIndex);
+			rowLightInfo.id = "rowLightInfo";
+			rowLightInfo.innerHTML = "<th><label for='lightDistanceValue'>Size of Obscured Area:</label></th><td><input type='number' id='lightDistanceValue' name='lightDistanceValue' min=0 value=30 style='width:25px'><select id='lightDistanceUnits' name='lightDistanceUnits'><option value='Feet'>Feet</option><option value='Miles'>Miles</option></select></td>";
+			nextRowIndex++;
+		}
+		else{
+			let rowLightInfo = table.insertRow(nextRowIndex);
+			rowLightInfo.id = "rowLightInfo";
+			rowLightInfo.innerHTML = "<th><label for='lightDistanceValue'>Size of Light:</label></th><td><input type='number' id='lightDistanceValue' name='lightDistanceValue' min=0 value=30 style='width:25px'><select id='lightDistanceUnits' name='lightDistanceUnits'><option value='Feet'>Feet</option><option value='Miles'>Miles</option></select></td>";
+			nextRowIndex++;
+
+			let rowIsSunlight = table.insertRow(nextRowIndex);
+			rowIsSunlight.id = "rowIsSunlight";
+			rowIsSunlight.innerHTML = "<th><label for='isSunlight'>Counts as Sunlight:</label></th><td><input type='checkbox' id='isSunlight' name='isSunlight' value=1></td>";
+			nextRowIndex++;
+		}
+
+		addTableRow("CreateSubeffectTable",nextRowIndex,"rowLightCanBlock","<th><label for='lightCanBlock'>Light Can Be Blocked if Covered:</label></th><td><input type='checkbox' id='lightCanBlock' name='lightCanBlock'></td>");
+		nextRowIndex++;
+
+		if(document.getElementById("aoeShape").value != "None"){
+			let UseAoESizeIndex = document.getElementById("rowLightInfo").rowIndex+1;
+			addTableRow("CreateSubeffectTable",UseAoESizeIndex,"rowLightUseAoESize","<th><label for='isLightUseAoESize'>Use AoE For Size:</label></th><td><input type='checkbox' id='isLightUseAoESize' name='isLightUseAoESize' onchange='toggleFieldEnabled("+'"lightDistanceValue","isLightUseAoESize"'+")'></td>");
+		}
 	}
+
 }
 
 async function createMoveTargetTable(){
@@ -934,6 +1321,11 @@ async function createAoETable(whichShape){
 	let aoeShapeSelction = document.getElementById("aoeShape").value;
 	if(aoeShapeSelction == "None"){
 		clearUnusedTable("CreateSubeffectTable","AoE","rowTargetNumber");
+
+		if(document.getElementById("rowLightUseAoESize") != null){
+			document.getElementById("lightDistanceValue").removeAttribute("disabled","");
+			table.deleteRow(document.getElementById("rowLightUseAoESize").rowIndex);
+		}
 	}
 	else{
 		if(document.getElementById("rowAoENum") == null){
@@ -946,6 +1338,14 @@ async function createAoETable(whichShape){
 				rowAoEHTML = rowAoEHTML + " + <input type='number' id='AoENumAHL' name='AoENumAHL' min=0 value=0 style='width:25px'>"+AoENumAHLScalingSelect;
 			}
 			rowAoENum.innerHTML = rowAoEHTML+"</td>";
+		}
+
+		if(document.getElementById("rowLightType") != null){
+			if(document.getElementById("rowLightUseAoESize") == null && document.getElementById("lightType").value != "None"){
+				let UseAoESizeIndex = document.getElementById("rowLightInfo").rowIndex+1;
+				addTableRow("CreateSubeffectTable",UseAoESizeIndex,"rowLightUseAoESize","<th><label for='isLightUseAoESize'>Use AoE For Size:</label></th><td><input type='checkbox' id='isLightUseAoESize' name='isLightUseAoESize' onchange='toggleFieldEnabled("+'"lightDistanceValue","isLightUseAoESize"'+")'></td>");
+				nextRowIndex++;
+			}
 		}
 
 		if(aoeShapeSelction == "Choose"){

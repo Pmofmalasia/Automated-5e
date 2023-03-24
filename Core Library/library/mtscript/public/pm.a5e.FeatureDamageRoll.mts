@@ -76,7 +76,7 @@
 		"Header",DamageTypeDisplay+if(or(pm.DamageType=="Healing",pm.DamageType=="TempHP"),""," Damage"),
 		"FalseHeader","",
 		"FullContents","<b><span style='color:"+if(or(pm.DamageType=="Healing",pm.DamageType=="TempHP"),HealingColor,DamageColor)+"; font-size:1.5em'>"+json.get(pm.DamageRoll,if(damIsCrit,"Crit","")+"Total")+"</span></b>",
-		"RulesContents",json.get(pm.DamageRoll,if(damIsCrit,"Crit","")+"Formula")+" = ",
+		"RulesContents",if(json.get(pm.DamageRoll,if(damIsCrit,"Crit","")+"Formula")=="","",json.get(pm.DamageRoll,if(damIsCrit,"Crit","")+"Formula")+" = "),
 		"RollContents",if(or(pm.baseDieNum==0,and(pm.baseDieNum==1,pm.DamageBonus==0)),"",json.get(pm.DamageRoll,if(damIsCrit,"Crit","")+"String")+" = "),
 		"DisplayOrder","['Rules','Roll','Full']"
 	))]

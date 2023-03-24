@@ -1,0 +1,269 @@
+async function createObjectSubtypeRows(){
+	clearUnusedTable("CreateObjectTable","rowObjectType","rowSize");
+	let nextRowIndex = document.getElementById("rowObjectType").rowIndex+1;
+
+	if(document.getElementById("Type").value == "Weapon"){
+		addTableRow("CreateObjectTable",nextRowIndex,"rowWeaponClass","<th><label for='WeaponClass'>Weapon Class:</label></th><td><select id='WeaponClass' name='WeaponClass'><option value='Simple'>Simple</option><option value='Martial'>Martial</option><option value='Exotic'>Exotic</option><option value='Natural'>Natural</option></select></td>");
+		nextRowIndex++;
+
+		let request = await fetch("macro:pm.a5e.GetCoreData@lib:pm.a5e.Core", {method: "POST", body: "['sb.WeaponTypes']"});
+		let allWeaponTypes = await request.json();
+		
+		let WeaponTypeOptions = "";
+		for(let tempWeaponType of allWeaponTypes){
+			WeaponTypeOptions = WeaponTypeOptions + "<option value='"+tempWeaponType.Name+"'>"+tempWeaponType.DisplayName+"</option>";
+		}
+
+		addTableRow("CreateObjectTable",nextRowIndex,"rowWeaponType","<th><label for='WeaponType'>Weapon Type:</label></th><td><select id='WeaponType' name='WeaponType' onchange='createWeaponTypeRows()'>"+WeaponTypeOptions+"<option value='@@NewType'>New Type</option></select></td>");
+		nextRowIndex++;
+
+		addTableRow("CreateObjectTable",nextRowIndex,"rowWeaponMeleeRanged","<th><label for='WeaponMeleeRanged'>Melee or Ranged Weapon:</label></th><td><select id='WeaponMeleeRanged' name='WeaponMeleeRanged' onchange='createWeaponRangeReachRows("+'rowWeaponMeleeRanged'+")'><option value='Melee'>Melee</option><option value='Ranged'>Ranged</option></select></td>");
+		nextRowIndex++;
+
+		addTableRow("CreateObjectTable",nextRowIndex,"rowWeaponReach","<th><label for='WeaponReach'>Reach:</label></th><td><input type='number' id='WeaponReach' name='WeaponReach' min='0' value='5' style='width:25px'></td>");
+		nextRowIndex++;
+
+		let requestPropsData = await fetch("macro:pm.a5e.GetCoreData@lib:pm.a5e.Core", {method: "POST", body: "['sb.WeaponProperties']"});
+		let allWeaponPropsData = JSON.stringify(await requestPropsData.json());
+		let requestPropsHTML = await fetch("macro:ut.a5e.GenerateSelectionHTML@lib:pm.a5e.Core", {method: "POST", body: "["+allWeaponPropsData+",1,'weaponProperty','createWeaponPropertyRows']"});
+		let WeaponPropertyOptions = await requestPropsHTML.text();
+		
+		addTableRow("CreateObjectTable",nextRowIndex,"rowWeaponProperties","<th>Weapon Properties:</th><td><div class='check-multiple' style='width:100%'>"+WeaponPropertyOptions+"</div></td>");
+		nextRowIndex++;
+	
+		addTableRow("CreateObjectTable",nextRowIndex,"rowWeaponDamageHeader","<th text-align='center' colspan='2'>Weapon Damage:<input type='hidden' id='weaponDamageInstanceNumber' name='weaponDamageInstanceNumber' value=0></th>");
+		nextRowIndex++;
+
+		await addWeaponDamageTypeRows();
+		nextRowIndex++;
+
+		addTableRow("CreateObjectTable",nextRowIndex,"rowWeaponAddDamageInstanceButtons","<th text-align='center' colspan='2'><input type='button' id='addDamageType' name='addDamageType' value='Add Type' onclick='addWeaponDamageTypeRows()'>  <input type='button' id='removeDamageType' name='removeDamageType' value='Remove Type' onclick='removeWeaponDamageTypeRows()'></th>");
+		nextRowIndex++;
+
+		addTableRow("CreateObjectTable",nextRowIndex,"rowWeaponCritThresh","<th><label for='WeaponCritThresh'>Critical Threshhold:</label></th><td><input type='number' id='WeaponCritThresh' name='WeaponCritThresh' max='20' min='0' value='20'></td>");
+		nextRowIndex++;
+	}
+	else if(document.getElementById("Type").value == "Armor" || document.getElementById("Type").value == "Shield"){
+		let allArmorTypes = "";
+		if(document.getElementById("Type").value == "Armor"){
+			addTableRow("CreateObjectTable",nextRowIndex,"rowArmorTier","<th><label for='ArmorTier'>Armor Tier:</label></th><td><select id='ArmorTier' name='ArmorTier' onchange='armorTierSelectionChanges()'><option value='Light'>Light</option><option value='Medium'>Medium</option><option value='Heavy'>Heavy</option></select></td>");
+			nextRowIndex++;
+
+			let request = await fetch("macro:pm.a5e.GetCoreData@lib:pm.a5e.Core", {method: "POST", body: "['sb.ArmorTypes']"});
+			allArmorTypes = await request.json();
+		}
+		else{
+			let request = await fetch("macro:pm.a5e.GetCoreData@lib:pm.a5e.Core", {method: "POST", body: "['sb.ShieldTypes']"});
+			allArmorTypes = await request.json();
+		}
+
+		let ArmorTypeOptions = "";
+		for(let tempArmorType of allArmorTypes){
+			ArmorTypeOptions = ArmorTypeOptions + "<option value='"+tempArmorType.Name+"'>"+tempArmorType.DisplayName+"</option>";
+		}
+
+		addTableRow("CreateObjectTable",nextRowIndex,"rowArmorType","<th><label for='ArmorType'>Armor Type:</label></th><td><select id='ArmorType' name='ArmorType' onchange='createArmorTypeRows()'>"+ArmorTypeOptions+"<option value='@@NewType'>New Type</option></select></td>");
+		nextRowIndex++;
+
+		addTableRow("CreateObjectTable",nextRowIndex,"rowArmorBaseAC","<th><label for='ArmorBaseAC'>Starting AC:</label></th><td><input type='number' id='ArmorBaseAC' name='ArmorBaseAC' min='0' value='11' style='width:25px'></td>");
+		nextRowIndex++;
+
+		addTableRow("CreateObjectTable",nextRowIndex,"rowArmorDexCap","<th><label for='ArmorDexCap'>Maximum Dexterity Bonus:</label></th><td><input type='number' id='ArmorDexCap' name='ArmorDexCap' min='0' value='2' style='width:25px' disabled><input type='checkbox' id='ArmorNoDexCap' name='ArmorNoDexCap' onchange='toggleFieldEnabled("+'"ArmorDexCap","ArmorNoDexCap"'+")' checked><label for='ArmorNoDexCap'> Unlimited?</label></td>");
+		nextRowIndex++;
+
+		addTableRow("CreateObjectTable",nextRowIndex,"rowArmorStrengthReq","<th><label for='ArmorStrengthReq'>Strength Requirement:</label></th><td><input type='number' id='ArmorStrengthReq' name='ArmorStrengthReq' min='0' value='13' style='width:25px' disabled><input type='checkbox' id='ArmorNoStrengthReq' name='ArmorNoStrengthReq' onchange='toggleFieldEnabled("+'"ArmorStrengthReq","ArmorNoStrengthReq"'+")' checked><label for='ArmorNoStrengthReq'> No Requirement?</label></td>");
+		nextRowIndex++;
+
+		addTableRow("CreateObjectTable",nextRowIndex,"rowArmorStealthDisadvantage","<th><label for='ArmorStealthDisadvantage'>Causes Stealth Disadvantage:</label></th><td><input type='checkbox' id='ArmorStealthDisadvantage' name='ArmorStealthDisadvantage'></td>");
+		nextRowIndex++;
+	}
+}
+
+function createWeaponRangeReachRows(originID){
+	let nextRowIndex = document.getElementById(originID).rowIndex + 1;
+
+	if(originID == "rowWeaponMeleeRanged"){
+		clearUnusedTable("CreateObjectTable","rowWeaponMeleeRanged","rowWeaponProperties");
+
+		if(document.getElementById("WeaponMeleeRanged").value == "Melee"){
+			addTableRow("CreateObjectTable",nextRowIndex,"rowWeaponReach","<th><label for='WeaponReach'>Reach:</label></th><td><input type='number' id='WeaponReach' name='WeaponReach' min='0' value='5' style='width:25px'></td>");
+			nextRowIndex++;
+		}
+		else{
+			addTableRow("CreateObjectTable",nextRowIndex,"rowWeaponRange","<th><label for='WeaponRange'>Range:</label></th><td><input type='number' id='WeaponRange' name='WeaponRange' min='0' value='5' style='width:35px'> / <input type='number' id='WeaponLongRange' name='WeaponLongRange' min='0' value='5' style='width:35px'></td>");
+			nextRowIndex++;
+		}
+	}
+}
+
+async function addWeaponDamageTypeRows(){
+	let nextRowIndex = document.getElementById("rowWeaponDamageHeader").rowIndex + 1;
+	let currentInstanceNumber = document.getElementById("weaponDamageInstanceNumber").value;
+
+	let requestWeaponDamageData = await fetch("macro:pm.GetDamageTypes@lib:pm.a5e.Core", {method: "POST", body: ""});
+	let allWeaponDamageData = JSON.stringify(await requestWeaponDamageData.json());
+	let requestWeaponDamageHTML = await fetch("macro:ut.a5e.GenerateSelectionHTML@lib:pm.a5e.Core", {method: "POST", body: "["+allWeaponDamageData+"]"});
+	let DamageTypeOptions = await requestWeaponDamageHTML.text();
+	
+	addTableRow("CreateObjectTable",nextRowIndex,"rowWeaponDamage"+currentInstanceNumber,"<th text-align='center' colspan='2'><input type='number' id='WeaponDamageNumber"+currentInstanceNumber+"' name='WeaponDamageNumber"+currentInstanceNumber+"' min=0 value=1 style='width:25px'> d <input type='number' id='WeaponDamageDie"+currentInstanceNumber+"' name='WeaponDamageDie"+currentInstanceNumber+"' min=1 value=6 style='width:25px'><select id='WeaponAddDmgMod"+currentInstanceNumber+"' name='WeaponAddDmgMod"+currentInstanceNumber+"'> + <option value=1>Modifier</option><option value=0>No Modifier</option></select><select id='WeaponDamageType"+currentInstanceNumber+"' name='WeaponDamageType"+currentInstanceNumber+"'>"+DamageTypeOptions+"</select></th>");
+	
+	currentInstanceNumber++;
+	document.getElementById("weaponDamageInstanceNumber").value = currentInstanceNumber;
+}
+
+function removeWeaponDamageTypeRows(){
+	let currentInstanceNumber = document.getElementById("weaponDamageInstanceNumber").value;
+	currentInstanceNumber--;
+	document.getElementById("weaponDamageInstanceNumber").value = currentInstanceNumber;
+
+	let table = document.getElementById("CreateObjectTable");
+	let currentInstanceRowIndex = document.getElementById("rowWeaponDamage"+currentInstanceNumber).rowIndex;
+	
+	table.deleteRow(currentInstanceRowIndex);
+}
+
+async function createWeaponTypeRows(){
+	let WeaponTypeChoice = document.getElementById("WeaponType").value;
+	if(WeaponTypeChoice == "@@NewType"){
+		addTableRow("CreateObjectTable",nextRowIndex,"rowIsNewTemplate","<th><label for='AddWeaponTemplate'>Add as Template:</label></th><td><input type='checkbox' id='AddWeaponTemplate' name='AddWeaponTemplate'></td>");
+		nextRowIndex++;
+	}
+	else{
+		let request = await fetch("macro:pm.GetWeaponTypes@lib:pm.a5e.Core", {method: "POST", body: ""});
+		let allWeaponTypes = await request.json();
+
+		let WeaponTypeData = "";
+		for(let tempWeaponType of allWeaponTypes){
+			if(tempWeaponType.Name == WeaponTypeChoice){
+				WeaponTypeData = tempWeaponType;
+			}
+		}
+
+		//remove data from previous selections, add data from this selection
+	}
+}
+
+function createMagicItemRows(){
+	if(document.getElementById("isMagical").checked){
+		let nextRowIndex = document.getElementById("rowIsMagical").rowIndex+1;
+		
+		addTableRow("CreateObjectTable",nextRowIndex,"rowIsAttunement","<th><label for='isAttunement'>Requires Attunement:</label></th><td><input type='checkbox' id='isAttunement' name='isAttunement'></td>");
+		nextRowIndex++;
+		
+		addTableRow("CreateObjectTable",nextRowIndex,"rowIsSentient","<th><label for='isSentient'>Item is Sentient:</label></th><td><input type='checkbox' id='isSentient' name='isSentient' onchange='createSentientItemRows()'></td>");
+		nextRowIndex++;
+		
+		addTableRow("CreateObjectTable",nextRowIndex,"rowIsCursed","<th><label for='isCursed'>Item is Cursed:</label></th><td><input type='checkbox' id='isCursed' name='isCursed'></td>");
+		nextRowIndex++;
+	}
+	else{
+		clearUnusedTable("CreateObjectTable","rowIsMagical","rowIsConsumable");
+	}
+}
+
+function createSentientItemRows(){
+	if(document.getElementById("isSentient").checked){
+		let nextRowIndex = document.getElementById("rowIsSentient").rowIndex+1;
+		
+		addTableRow("CreateObjectTable",nextRowIndex,"rowSentientAlignment","<th><label for='sentientAlignment'>Item Alignment:</label></th><td><select id='sentientAlignment' name='sentientAlignment'><option value='LawfulGood'>Lawful Good</option><option value='NeutralGood'>Neutral Good</option><option value='ChaoticGood'>Chaotic Good</option><option value='LawfulNeutral'>Lawful Neutral</option><option value='TrueNeutral'>True Neutral</option><option value='ChaoticNeutral'>Chaotic Neutral</option><option value='LawfulEvil'>Lawful Evil</option><option value='NeutralEvil'>Neutral Evil</option><option value='ChaoticEvil'>Chaotic Evil</option><option value='Unaligned'>Unaligned</option><option value='Undetermined'>Undetermined</option></select></td>");
+		nextRowIndex++;
+		
+		//TODO: Add lines for all mental stats here procedurally
+		
+		addTableRow("CreateObjectTable",nextRowIndex,"rowHasSight","<th><label for='hasSight'>Item can See:</label></th><td><input type='checkbox' id='hasSight' name='hasSight' onchange='createSentientItemSightRows()'></td>");
+		nextRowIndex++;
+		
+		addTableRow("CreateObjectTable",nextRowIndex,"rowHasHearing","<th><label for='hasHearing'>Item can Hear:</label></th><td><input type='checkbox' id='hasHearing' name='hasHearing' onchange='createSentientItemHearingRows()'></td>");
+		nextRowIndex++;
+	}
+	else{
+		clearUnusedTable("CreateObjectTable","rowIsSentient","rowIsCursed");
+	}
+}
+
+function createChargesRows(){
+	if(document.getElementById("isCharges").checked){
+		let nextRowIndex = document.getElementById("rowIsCharges").rowIndex+1;
+
+		addTableRow("CreateObjectTable",nextRowIndex,"rowMaxCharges","<th><label for='MaxResource'>Maximum Number of Charges:</label></th><td><input type='number' id='MaxResource' name='MaxResource' min='0' value='0' style='width:35px'></td>");
+		nextRowIndex++;
+		
+		addTableRow("CreateObjectTable",nextRowIndex,"rowRechargeWhen","<th>Instances When Resource Recharges:</th><td><div class='check-multiple' style='width:100%'><label><input type='checkbox' id='ResourceRechargeShortRest' name='ResourceRechargeShortRest'><span>Short Rest</span></label><label><input type='checkbox' id='ResourceRechargeLongRest' name='ResourceRechargeLongRest'><span>Long Rest</span></label><label><input type='checkbox' id='ResourceRechargeDawn' name='ResourceRechargeDawn'><span>Dawn</span></label><label><input type='checkbox' id='ResourceRechargeStartTurn' name='ResourceRechargeStartTurn'><span>Start of Turn</span></label><label><input type='checkbox' id='ResourceRechargeStartCombat' name='ResourceRechargeStartCombat'><span>Start of Combat</span></label></div></td>");
+		nextRowIndex++;
+		
+		addTableRow("CreateObjectTable",nextRowIndex,"rowRechargeMethod","<th><label for='RechargeMethod'>Recharge Method:</label></th><td><select id='RechargeMethod' name='RechargeMethod' onchange='createRechargeMethodRows()'><option value='Full'>Fully Recharge</option><option value='Fixed'>Fixed Amount Regained</option><option value='Rolled'>Roll to Regain</option><option value='Attribute'>Based on Attribute</option><option value='Proficiency'>Based on Proficiency</option></select></td>");
+		nextRowIndex++;
+		
+		addTableRow("CreateObjectTable",nextRowIndex,"rowHasDepletedEffect","<th><label for='HasDepletedEffect'>Effect Occurs when Charges Depleted:</label></th><td><input type='checkbox' id='HasDepletedEffect' name='HasDepletedEffect' onchange='createChargeDepletedRows()'></td>");
+		nextRowIndex++;
+	}
+	else{
+		clearUnusedTable("CreateObjectTable","rowIsCharges","rowMaterials");
+	}
+}
+
+async function createRechargeMethodRows(){
+	clearUnusedTable("CreateObjectTable","rowRechargeMethod","rowHasDepletedEffect");
+	let nextRowIndex = document.getElementById("rowRechargeMethod").rowIndex+1;
+	
+	if(document.getElementById("RechargeMethod").value == "Fixed"){
+		addTableRow("CreateObjectTable",nextRowIndex,"rowRechargeAmount","<th><label for='RechargeAmount'>Amount Recharged:</label></th><td><input type='number' id='RechargeAmount' name='RechargeAmount' min='0' value='1' style='width:35px'></td>");
+	}
+	else if(document.getElementById("RechargeMethod").value == "Rolled"){
+		addTableRow("CreateObjectTable",nextRowIndex,"rowRechargeAmount","<th><label for='RechargeAmountDieNumber'>Amount Recharged:</label></th><td><input type='number' id='RechargeAmountDieNumber' name='RechargeAmountDieNumber' min='0' value='1' style='width:25px'> d <input type='number' id='RechargeAmountDieSize' name='RechargeAmountDieSize' min='0' value='6' style='width:25px'> + <input type='number' id='RechargeAmountBonus' name='RechargeAmountBonus' value=0 style='width:25px'></td>");
+	}
+	else if(document.getElementById("RechargeMethod").value == "Attribute"){
+		let request = await fetch("macro:pm.GetAttributes@lib:pm.a5e.Core", {method: "POST", body: ""});
+		let attributeList = await request.json();
+		let AttributeOptions = "";
+		for(let tempAttribute of attributeList){
+			AttributeOptions = AttributeOptions + "<option value='"+tempAttribute.Name+"'>"+tempAttribute.DisplayName+"</option>";
+		}
+
+		addTableRow("CreateObjectTable",nextRowIndex,"rowRechargeAmount","<th><label for='RechargeAmountMultiplier'>Amount Recharged:</label></th><td>(<input type='number' id='RechargeAmountMultiplier' name='RechargeAmountMultiplier' min='0' value='1' style='width:25px'> * <select id='RechargeAmountAttribute' name='RechargeAmountAttribute'>"+AttributeOptions+"</select>) + <input type='number' id='RechargeAmountBonus' name='RechargeAmountBonus' value=0 style='width:25px'></td>");
+	}
+	else if(document.getElementById("RechargeMethod").value == "Proficiency"){
+		addTableRow("CreateObjectTable",nextRowIndex,"rowRechargeAmount","<th><label for='RechargeAmountMultiplier'>Amount Recharged:</label></th><td>(<input type='number' id='RechargeAmountMultiplier' name='RechargeAmountMultiplier' min='0' value='1' style='width:25px'> * Proficiency) + <input type='number' id='RechargeAmountBonus' name='RechargeAmountBonus' value=0 style='width:25px'></td>");
+	}
+}
+
+async function createChooseMainMaterialRows(){
+	let nextRowIndex = document.getElementById("rowMaterials").rowIndex+1;
+
+	let request = await fetch("macro:pm.a5e.GetCoreData@lib:pm.a5e.Core", {method: "POST", body: "['sb.ObjectMaterials']"});
+	let allMaterials = await request.json();
+
+	let chosenMaterials = [];
+	for(let tempMaterial of allMaterials){
+		if(document.getElementById("objectMaterial"+tempMaterial.Name).checked){
+			chosenMaterials.push(tempMaterial);
+		}
+	}
+
+	if(chosenMaterials.length > 1){
+		let mainMaterialOptions = "";
+		for(let tempChosenMaterial of chosenMaterials){
+			mainMaterialOptions = mainMaterialOptions + "<option value='"+tempChosenMaterial.Name+"'>"+tempChosenMaterial.DisplayName+"</option>";
+		}
+//TODO: This will not remember which option was selected if a choice is made and the user goes back to pick another material. Don't know how to fix it off the top of my head and don't care enough to look it up tbh.
+		if(document.getElementById("rowMainMaterial") == null){
+			addTableRow("CreateObjectTable",nextRowIndex,"rowMainMaterial","<th><label for='MainMaterial'>Main Material:</label></th><td><select id='MainMaterial' name='MainMaterial'>"+mainMaterialOptions+"</select></td>");
+			nextRowIndex++;
+		}
+		else{
+			document.getElementById("MainMaterial").innerHTML = mainMaterialOptions;
+		}
+	}
+	else{
+		if(document.getElementById("rowMainMaterial") != null){
+			document.getElementById("CreateObjectTable").deleteRow(nextRowIndex)
+		}
+	}
+}
+
+async function loadUserData() {
+	let userdata = atob(await MapTool.getUserData());
+	document.getElementById('CreateObjectTable').innerHTML = userdata;
+}
+
+setTimeout(loadUserData, 1);

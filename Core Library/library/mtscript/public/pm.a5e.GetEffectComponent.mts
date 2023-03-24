@@ -96,6 +96,21 @@
     case "Condition":{
         
     };
+    case "TargetedConditions":{
+		[h,if(json.type(componentToGetData)=="UNKNOWN"): return(0,json.get(json.get(allEffectData,whichEffect),"TargetedConditions"))]
+		
+		[h,switch(json.get(componentToGetData,"SecondaryKey")),CODE:
+			case "Separate":{
+				[h:macro.return = json.get(json.get(allEffectData,whichEffect),"TargetedConditions")]
+			};
+			case "Combined":{
+				[h:AllConditionGroups = "[]"]
+				[h:tempConditionTargets = json.get(json.get(allEffectData,whichEffect),"TargetedConditions")]
+				[h,foreach(target,json.fields(tempConditionTargets)): AllConditionGroups = json.merge(AllConditionGroups,json.get(tempConditionTargets,target))]
+				[h:macro.return = AllConditionGroups]
+			}
+		]
+    };
     case "TargetedEffects":{
         [h:macro.return = json.get(json.get(allEffectData,whichEffect),"TargetedEffects")]
     };

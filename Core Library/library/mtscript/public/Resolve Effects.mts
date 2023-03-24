@@ -8,6 +8,7 @@
 [h:effColorSubtype = json.get(effFull,"ColorSubtype")]
 [h:ParentToken = json.get(effFull,"ParentToken")]
 [h:effTargets = json.get(effFull,"Targets")]
+[h:effTargetedConditions = json.get(effFull,"TargetedConditions")]
 [h:effConditionGroupID = pm.a5e.CreateConditionID(ParentToken,effTargets)]
 
 [h:effTargetSpecific = json.get(effToResolve,"TargetSpecificEffects")]
@@ -17,7 +18,7 @@
     case "ARRAY": effConditionInfo = effConditionInfo;
     case "UNKNOWN": effConditionInfo = "[]"
 ]
-[h:effConditionsRemovedInfo = json.get(effToResolve,"ConditionsRemovedInfo")]
+[h:effConditionModificationInfo = json.get(effToResolve,"ConditionModificationInfo")]
 [h:effDamageData = json.get(effToResolve,"Damage")]
 [h:effAttackData = json.get(effToResolve,"Attack")]
 [h:effCheckDCData = json.get(effToResolve,"CheckDC")]
@@ -50,8 +51,14 @@
 	[h:thisTokenCheckDCData = effCheckDCData]
 	[h:thisTokenDamageDealt = effDamageData]
 	[h:thisTokenConditionInfo = effConditionInfo]
-	[h:thisTokenConditionsRemovedInfo = effConditionsRemovedInfo]
     [h:thisTokenConditionsApplied = effAllConditionIdentifiers]
+	
+	[h,if(effTargetedConditions==""):
+		thisTokenTargetedConditions = "[]";
+		thisTokenTargetedConditions = json.get(effTargetedConditions,targetToken)
+	]
+	[h:thisTokenConditionModificationInfo = effConditionModificationInfo]
+
 	[h,if(json.type(effTargetSpecific)=="OBJECT"):
 		thisTokenTargetSpecificEffects = json.get(effTargetSpecific,targetToken);
 		thisTokenTargetSpecificEffects = ""
@@ -61,7 +68,7 @@
 	[h:thisTokenModifiableComponents = json.set("",
 		"Conditions",thisTokenConditionInfo,
 		"Damage",thisTokenDamageDealt,
-		"ConditionsRemoved",thisTokenConditionsRemovedInfo,
+		"ConditionModification",thisTokenConditionModificationInfo,
 		"ConditionsApplied",thisTokenConditionsApplied,
 		"TargetSpecific",thisTokenTargetSpecificEffects
 	)]
@@ -110,7 +117,7 @@
 		[h:thisTokenModifiableComponents = json.set("",
 			"Conditions","[]",
 			"Damage","",
-			"ConditionsRemoved","{}",
+			"ConditionModification","{}",
 			"ConditionsApplied",json.append("",json.set("","Conditions","[]","EndInfo","{}"))
 		)]
 		[h:thisTokenSaveDCData = ""]
@@ -283,13 +290,13 @@
 
 	[h:thisTokenDamageDealt = json.get(thisTokenModifiableComponents,"Damage")]
 	[h:thisTokenConditionInfo = json.get(thisTokenModifiableComponents,"Conditions")]
-	[h:thisTokenConditionsRemovedInfo = json.get(thisTokenModifiableComponents,"ConditionsRemoved")]
+	[h:thisTokenConditionModificationInfo = json.get(thisTokenModifiableComponents,"ConditionModification")]
 	[h:thisTokenConditionsApplied = json.get(thisTokenModifiableComponents,"ConditionsApplied")]
 
 	[h,if(needsFurtherResolution),CODE:{
 		[h:thisTokenDamageDealt = ""]
 		[h:thisTokenConditionInfo = "[]"]
-		[h:thisTokenConditionsRemovedInfo = "{}"]
+		[h:thisTokenConditionModificationInfo = "{}"]
 		[h:remainingTargetsList = json.append(remainingTargetsList,targetToken)]
 	};{}]
 
@@ -307,29 +314,8 @@
 		[h:abilityTable = json.merge(abilityTable,json.get(macro.return,"Table"))]
 	}]
 
-	[h,if(!json.isEmpty(thisTokenConditionsRemovedInfo)),CODE:{
-		[h:tempConditionsRemovedGroups = json.get(thisTokenConditionsRemovedInfo,"Groups")]
-		[h,if(tempConditionsRemovedGroups == ""): tempConditionsRemovedGroups = "[]"]
-		[h,if(json.type(tempConditionsRemovedGroups)=="UNKNOWN"): tempConditionsRemovedGroups = json.append("",tempConditionsRemovedGroups)]
-
-		[h:tempConditionsRemovedNames = json.get(thisTokenConditionsRemovedInfo,"ConditionNames")]
-		[h,if(tempConditionsRemovedNames == "ARRAY"): 
-			tempConditionsRemovedGroups = json.merge(tempConditionsRemovedGroups,json.unique(json.path.read(getProperty("a5e.stat.ConditionList",targetToken),"[*][?(@.Name in "+tempConditionsRemovedNames+")]['GroupID']")));
-			tempConditionsRemovedGroups = json.merge(tempConditionsRemovedGroups,json.path.read(getProperty("a5e.stat.ConditionList",targetToken),"[*][?(@.Name == '"+tempConditionsRemovedNames+"')]['GroupID']"))
-		]
-
-		[h:tempConditionsRemovedTypes = json.get(thisTokenConditionsRemovedInfo,"ConditionTypes")]
-		[h,if(tempConditionsRemovedTypes == "ARRAY"): 
-			tempConditionsRemovedGroups = json.merge(tempConditionsRemovedGroups,json.unique(json.path.read(getProperty("a5e.stat.ConditionList",targetToken),"[*][?(@.ConditionType.* in "+tempConditionsRemovedTypes+")]['GroupID']")));
-			tempConditionsRemovedGroups = json.merge(tempConditionsRemovedGroups,json.path.read(getProperty("a5e.stat.ConditionList",targetToken),"[*][?(@.ConditionType.* == '"+tempConditionsRemovedTypes+"' && @.ConditionType != '')]['GroupID']"))
-		]
-
-		[h:tempEndConditionData = json.set("",
-			"ParentToken",targetToken,
-			"GroupID",tempConditionsRemovedGroups
-		)]
-		[h,MACRO("EndCondition@Lib:pm.a5e.Core"): tempEndConditionData]
-
+	[h,if(!json.isEmpty(thisTokenConditionModificationInfo)),CODE:{
+		[h,MACRO("ModifyConditions@Lib:pm.a5e.Core"): json.set(thisTokenConditionModificationInfo,"Conditions",thisTokenTargetedConditions,"ParentToken",targetToken)]
 		[h:abilityTable = json.merge(abilityTable,json.get(macro.return,"Table"))]
 	}]
 }]

@@ -1,0 +1,64 @@
+%Name
+%DisplayName
+%FalseName:"Displayed Name if Not Identified"
+%Type:"Weapon,Armor,Shield,Tool,Container,Door,Trap,Hazard,CastingFocus,Treasure,Food,Water,Clothing,Ammunition,Vehicle,Gemstone,Potion,Scroll,Money"
+@Subtype
+%Weight:0
+^Amount
+^ItemID
+@%MainMaterial:"Cloth,Paper,Rope,Leather,Crystal,Glass,Flesh,Ice,Wood,Wax,Bone,Stone,Iron,Steel,Mithral,Adamantine,Diamond,Pearl,Gemstone,Silver,Gold,Platinum,Bronze,Copper"
+%Materials:["Multiple"]
+%Coating:"e.g. Silvered"
+%State:"Solid,Liquid,Gas,Plasma,BoseEinsteinCondensate"
+%Magnetic
+%Flammable:"Could link to material, but may be easier this way"
+%Integrity:"Fragile or Resilient, used to determine HP along with size"
+Stackable:"Purely programming property, can you stack items in an inventory slot"
+%Size
+	%Magical
+	%Rarity
+	@%RequiresAttunement
+	^IsIdentified
+	^AttunedTo:"TokenID"
+	@%Cursed
+	@Sentient:{"CommunicationMethod":"","Attributes":"Int/Wis/Cha only","Senses":"","Alignment":""}
+CastingImplement - Might not be needed
+%Cost
+DonTime - Only wearable gear
+DoffTime - Only wearable gear
+StowTime - Only non-wearable gear of a certain size (?)
+ItemProperties
+EquipRequirements:"One/Two hands, full use of a hand (may remove)"
+Effects:"Array of effect names + subeffects"
+PassiveEffects
+ActivationRequirements:"e.g. command word can't be activated if silenced"
+LightIsOn:
+Light:
+LightDuration:
+StoredSpells
+Speed:"For Vehicles/Mounts"
+IsLocked:0 - Container/Door/Trap(disarm) only
+LockDC
+___PREREQUISITES___:MaybeOptional
+ClassPrereq
+AttributePrereq
+SizePrereq
+AlignmentPrereq
+___HEALTH___:MaybeOptional
+MaxHP:"Table on page 247 DMG"
+HP
+DamageThreshhold:"Value, Takes no damage if under the threshhold is dealt but full damage if over"
+___CONSUMABLES___:Optional
+Resource
+MaxResource:"Optional"
+RechargeInstances:{"ShortRest":0,"LongRest":0,"Dawn":0,"StartCombat":0,"EndCombat":0,"Time":{"DurationInfo":{"Value":0,"Units":"Hours"}}}
+RechargeAmount:"Max,FixedAmount,RolledAmount,Attribute-Based"
+DepletedEffect
+___CONTAINERS___:Optional - All type-based
+CarryingCapacity:"To actually display the max allowed weight inside"
+WeightCap:"For bags of holding, etc."
+ExtradimensionalSpace
+SingleVsMultipleContents:"Can have single content (e.g. vial -> vial of water) or multiple contents (e.g. bag)"
+Contents:[]
+
+Note for Spells: pg 141 - "A magic item may require you to use your own spellcasting ability. If you have more than one (likely valid) ability, choose which one to use. If you don't have one (e.g. Rogue with Use Magic Device), then your ability modifier is +0 and you DO gain your proficiency bonus."

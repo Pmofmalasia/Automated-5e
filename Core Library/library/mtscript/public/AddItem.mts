@@ -1,4 +1,4 @@
-[h:ObjectTypeMultiselection = ut.a5e.GenerateSelectionHTML(pm.a5e.GetCoreData("sb.ObjectTypes",1,"objectType","adjustItemTypeFilters"))]
+[h:ObjectTypeMultiselection = ut.a5e.GenerateSelectionHTML(pm.a5e.GetCoreData("sb.ObjectTypes",1,"objectTypeFilter","adjustItemTypeFilters"))]
 [h:ItemOptions = ut.a5e.GenerateSelectionHTML(pm.a5e.GetCoreData("sb.Objects"))]
 [h:ParentToken = currentToken()]
 

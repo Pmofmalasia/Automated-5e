@@ -25,6 +25,15 @@ function toggleFieldEnabled(toDisable,checkboxID){
 	}
 }
 
+function createHTMLSelectOptions(inputData){
+	let finalOptions = "";
+	for(let tempObject of inputData){
+		finalOptions = "<option value='"+tempObject.Name+"'>"+tempObject.DisplayName+"</option>";
+	}
+
+	return finalOptions;
+}
+
 async function submitData(formName,nextMacroName) {
     let form = document.getElementById(formName);
     let submitData = Object.fromEntries(new FormData(form));

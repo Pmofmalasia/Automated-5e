@@ -1,6 +1,15 @@
 [h:ObjectTypeSelection = ut.a5e.GenerateSelectionHTML(pm.a5e.GetCoreData("sb.ObjectTypes"))]
 [h:ObjectMaterialMultiselection = ut.a5e.GenerateSelectionHTML(pm.a5e.GetCoreData("sb.ObjectMaterials"),1,"objectMaterial","createChooseMainMaterialRows")]
 [h:ObjectMaterialSelection = ut.a5e.GenerateSelectionHTML(pm.a5e.GetCoreData("sb.ObjectMaterials"))]
+[h:ObjectMaterialTagMultiselection = ut.a5e.GenerateSelectionHTML(pm.a5e.GetCoreData("sb.MaterialTags"),1,"objectMaterialTag")]
+
+[h:allSourcebooks = pm.GetBookInfo()]
+[h:sourcebookOptions = ""]
+[h,foreach(tempBook,allSourcebooks),CODE:{
+	[h:tempBookDisplayName = json.get(tempBook,"DisplayName")]
+	[h,if(length(tempBookDisplayName) > 22): tempBookDisplayName = substring(tempBookDisplayName,0,20)+"..."]
+	[h:sourcebookOptions = sourcebookOptions + "<option value='"+json.get(tempBook,"Library")+"'>"+tempBookDisplayName+"</option>"]
+}]
 
 [h:ObjectHTML = "<tr id='rowDisplayName'><th><label for='DisplayName'>Object Name:</label></th><td><input type='text' id='DisplayName' name='DisplayName' autofocus></td></tr>
 
@@ -12,7 +21,7 @@
 
 <tr id='rowRarity'><th><label for='Rarity'>Rarity:</label></th><td><select id='Rarity' name='Rarity'><option value='Mundane'>Mundane</option><option value='Common'>Common</option><option value='Uncommon'>Uncommon</option><option value='Rare'>Rare</option><option value='VeryRare'>Very Rare</option><option value='Legendary'>Legendary</option><option value='Artifact'>Artifact</option></select></td></tr>
 
-<tr id='rowCost'><th><label for='Cost'>Cost:</label></th><td><input type='number' id='Cost' name='Cost' value=0 min=0 style='width:35px'></td></tr>
+<tr id='rowCost'><th><label for='Cost'>Cost:</label></th><td><input type='number' id='Cost' name='Cost' value=0 min=0 style='width:35px'><select id='CostUnits' name='CostUnits'><option value='Copper'>Copper</option><option value='Silver'>Silver</option><option value='Gold' selected>Gold</option><option value='Platinum'>Platinum</option></select></td></tr>
 
 <tr id='rowWeight'><th><label for='Weight'>Weight:</label></th><td><input type='number' id='Weight' name='Weight' value=0 min=0 style='width:35px'></td></tr>
 
@@ -34,6 +43,14 @@
 
 <tr id='rowIsMagnetic'><th><label for='isMagnetic'>Object is Magnetic:</label></th><td><input type='checkbox' id='isMagnetic' name='isMagnetic'></td></tr>
 
-</tr><tr><th text-align='center' colspan='2'><input type='submit' id='submitButton' value='Submit'></th></tr>"]
+<tr id='rowObjectTags'><th>General Object Tags:</th><td><div class='check-multiple' style='width:100%'>"+ObjectMaterialTagMultiselection+"</div></td></tr>
+
+<tr id='rowSourcebook'><th><label for='Library'>Object Sourcebook:</label></th><td><select id='Library' name='Library'>"+sourcebookOptions+"</select></td></tr>
+
+<tr id='rowHasPassiveEffects'><th><label for='HasPassiveEffects'>Object Has Passive Effects:</label></th><td><input type='checkbox' id='HasPassiveEffects' name='HasPassiveEffects'></td></tr>
+
+<tr id='rowHasActiveEffects'><th><label for='HasActiveEffects'>Object Has Active Effects:</label></th><td><input type='checkbox' id='HasActiveEffects' name='HasActiveEffects'></td></tr>
+
+<tr><th text-align='center' colspan='2'><input type='submit' id='submitButton' value='Submit'></th></tr>"]
 
 [h:html.dialog5("ObjectCreation","lib://pm.a5e.core/CreateObject.html?cachelib=false","value="+base64.encode(ObjectHTML)+"; closebutton=0; height=800")]

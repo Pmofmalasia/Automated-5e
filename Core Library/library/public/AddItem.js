@@ -1,3 +1,5 @@
+//Note: All 'AddItem' variations (e.g. AddWeapon) can use this code by setting a hidden value for ObjectType to that type.
+
 async function adjustItemTypeFilters(){
 	let request = await fetch("macro:pm.a5e.GetCoreData@lib:pm.a5e.Core", {method: "POST", body: "['sb.ObjectTypes','Name','json']"});
 	let allObjectTypes = await request.json();
@@ -25,12 +27,18 @@ async function adjustItemTypeFilters(){
 		}
 	}
 
-	let ItemOptions = "<option value='@@ImpromptuItem'>New Item</option>"+createHTMLSelectOptions(validObjects);
+	let ItemOptions = createHTMLSelectOptions(validObjects,"");
+
+	ItemOptions = "<option value='@@ImpromptuItem'>New Item</option>"+ItemOptions;
+
+	document.getElementById("ItemChoice").innerHTML = ItemOptions;
 }
 
 async function loadUserData() {
 	let userdata = atob(await MapTool.getUserData());
 	document.getElementById('AddItemTable').innerHTML = userdata;
+
+	adjustItemTypeFilters();
 }
 
 setTimeout(loadUserData, 1);

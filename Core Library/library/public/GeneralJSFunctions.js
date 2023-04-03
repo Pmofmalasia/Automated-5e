@@ -25,10 +25,21 @@ function toggleFieldEnabled(toDisable,checkboxID){
 	}
 }
 
-function createHTMLSelectOptions(inputData){
+function createHTMLSelectOptions(inputData,valueKey){
 	let finalOptions = "";
 	for(let tempObject of inputData){
-		finalOptions = "<option value='"+tempObject.Name+"'>"+tempObject.DisplayName+"</option>";
+		if(arguments.length > 1){
+			if(valueKey == ""){
+				finalOptions = "<option value='"+JSON.stringify(tempObject)+"'>"+tempObject.DisplayName+"</option>";
+			}
+			else{
+				finalOptions = "<option value='"+tempObject.valueKey+"'>"+tempObject.DisplayName+"</option>";
+			}
+		}
+		else{
+			finalOptions = "<option value='"+tempObject.Name+"'>"+tempObject.DisplayName+"</option>";
+		}
+		
 	}
 
 	return finalOptions;

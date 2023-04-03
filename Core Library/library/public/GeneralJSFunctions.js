@@ -30,7 +30,7 @@ function createHTMLSelectOptions(inputData,valueKey){
 	for(let tempObject of inputData){
 		if(arguments.length > 1){
 			if(valueKey == ""){
-				finalOptions = "<option value='"+JSON.stringify(tempObject)+"'>"+tempObject.DisplayName+"</option>";
+				finalOptions = "<option value='"+btoa(JSON.stringify(tempObject))+"'>"+tempObject.DisplayName+"</option>";
 			}
 			else{
 				finalOptions = "<option value='"+tempObject.valueKey+"'>"+tempObject.DisplayName+"</option>";
@@ -39,13 +39,12 @@ function createHTMLSelectOptions(inputData,valueKey){
 		else{
 			finalOptions = "<option value='"+tempObject.Name+"'>"+tempObject.DisplayName+"</option>";
 		}
-		
 	}
 
 	return finalOptions;
 }
 
-async function submitData(formName,nextMacroName) {
+async function submitData(formName,nextMacroName){
     let form = document.getElementById(formName);
     let submitData = Object.fromEntries(new FormData(form));
     let request = fetch("macro:"+nextMacroName+"@Lib:pm.a5e.Core", {method: "POST", body: JSON.stringify(submitData)});

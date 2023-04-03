@@ -4,8 +4,9 @@
 %Type:"Weapon,Armor,Shield,Tool,Container,Door,Trap,Hazard,CastingFocus,Treasure,Food,Water,Clothing,Ammunition,Vehicle,Gemstone,Potion,Scroll,Money"
 @Subtype
 %Weight:0
+ItemIdentifier:"Unique Identifier for items of like type - name may not be reliable (e.g. wooden/steel shortsword) - maybe use encoded name + random roll. Use this for stacking stackable items"
+^ItemID:"Unique Identifier for separate stacks of items when put onto the token"
 ^Amount
-^ItemID
 @%MainMaterial:"Cloth,Paper,Rope,Leather,Crystal,Glass,Flesh,Ice,Wood,Wax,Bone,Stone,Iron,Steel,Mithral,Adamantine,Diamond,Pearl,Gemstone,Silver,Gold,Platinum,Bronze,Copper"
 %Materials:["Multiple"]
 %Coating:"e.g. Silvered"

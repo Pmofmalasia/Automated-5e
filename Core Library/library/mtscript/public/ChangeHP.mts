@@ -92,6 +92,7 @@
 [h,foreach(damageType,hp.TypesDealt),CODE:{
 	[h:TotalDamage = TotalDamage + json.get(hp.FinalDamageDealt,damageType)]
 }]
+[h:hp.FinalDamageDealt = json.set(hp.FinalDamageDealt,"Total",TotalDamage)]
 
 [h:"<!-- Things get very funky around simultaneous damage and healing when it comes to crossing the 0 HP threshhold or already being downed. Unlikely to actually come up since simultaneous healing/damage on the same target is rare/nonexistent without homebrew so will add in options later. -->"]
 [h,if(getProperty("a5e.stat.TempHP")==0),CODE:{
@@ -289,5 +290,5 @@
 };{}]
 
 [h:pm.PassiveFunction("AfterDamaged")]
-[h:"<!-- Things Still Needed: Shapechange break (later); Temp HP if there is a condition attached to the lesser value (new or old) -->"]
-[h:macro.return = json.set("","Table",abilityTable)]
+[h:"<!-- Things Still Needed: Shapechange break (later); Temp HP if there is a condition attached to the lesser value (new or old); return damage dealt by type -->"]
+[h:macro.return = json.set("","Table",abilityTable,"Damage",hp.FinalDamageDealt)]

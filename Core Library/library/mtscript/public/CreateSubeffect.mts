@@ -5,10 +5,17 @@
 [h:thisSubeffectNum = json.get(subeffectData,"WhichSubeffect")]
 [h:ExtraData = json.get(subeffectData,"ExtraData")]
 
-[h,if(totalSubeffects==1):
-    SubeffectHTML = "";
-    SubeffectHTML = "<tr><th text-align='center' colspan='2'>Subeffect #"+thisSubeffectNum+"</th></tr>"
-]
+[h,if(totalSubeffects==1),CODE:{
+	[h:SubeffectHTML = ""]
+};{
+	[h:SubeffectLinkOptions = ""]
+	[h,count(totalSubeffects): SubeffectLinkOptions = SubeffectLinkOptions + "<option value="+(roll.count+1)+">"+(roll.count+1)+"</option>"]
+	[h:SubeffectLinkOptions = SubeffectLinkOptions + "<option value=0>None</option>"]
+
+	[h:SubeffectHTML = "<tr><th text-align='center' colspan='2'>Subeffect #"+thisSubeffectNum+"</th></tr>
+	
+	<tr id='rowSubeffectLink'><th><label for='SubeffectLink'>Linked to Subeffect #:</label></th><td><select id='SubeffectLink' name='SubeffectLink' onchange='createSubeffectLinkRows()'>"+SubeffectLinkOptions+"</select></td></tr>"]
+}]
 
 [h,if(json.type(ExtraData) == "OBJECT"),CODE:{
     [h,foreach(tempKey,json.fields(ExtraData)): SubeffectHTML = SubeffectHTML + "<input type='hidden' id='"+tempKey+"' name='"+tempKey+"' value='"+json.get(ExtraData,tempKey)+"'>"]

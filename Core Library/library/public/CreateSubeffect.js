@@ -4,19 +4,22 @@ function checkEffectType(){
 
 async function createMitigationTable(){
 	let table = document.getElementById("CreateSubeffectTable");
-	let mitigationLineIndex = document.getElementById("Mitigation").rowIndex;
+	let nextMitigationRowIndex = document.getElementById("Mitigation").rowIndex + 1;
 
 	if(document.getElementById("howMitigate").value == "Attack"){
 		clearUnusedTable("CreateSubeffectTable","Mitigation","Damage");
-		let attackTableRow2 = table.insertRow(mitigationLineIndex+1);
-		let attackTableRow1 = table.insertRow(mitigationLineIndex+1);
-
+		let attackTableRow1 = table.insertRow(nextMitigationRowIndex);nextMitigationRowIndex++;
 		attackTableRow1.innerHTML = "<th>Melee or Ranged Attack:</th><select id='MeleeRanged' name='MeleeRanged'><option value='Melee'>Melee</option><option value='Ranged'>Ranged</option></select></td>";
+
+		let attackTableRow2 = table.insertRow(nextMitigationRowIndex);nextMitigationRowIndex++;
 		attackTableRow2.innerHTML = "<th>Crit Threshhold:</th><td><input type='number' id='CritThresh' name='CritThresh' max='20' min='1' value='20'></td>";
+
+		addTableRow("CreateSubeffectTable",nextMitigationRowIndex,"rowIsConditionalAdvantage","<th>Conditional (Dis)advantage:</th><input type='checkbox' id='isConditionalAttackAdvantage' name='isConditionalAttackAdvantage' onchange='createConditionalAttackAdvantageRows()'></td>");
+		nextMitigationRowIndex++;
 	}
 	else if(document.getElementById("howMitigate").value == "Save"){
 		clearUnusedTable("CreateSubeffectTable","Mitigation","Damage");
-		let saveTableRows = table.insertRow(mitigationLineIndex+1);
+		let saveTableRows = table.insertRow(nextMitigationRowIndex);
 
 		let request = await fetch("macro:pm.GetAttributes@lib:pm.a5e.Core",{method: "POST", body: "['DisplayName','json']"});
 		let saveTypes = await request.json();
@@ -26,6 +29,10 @@ async function createMitigationTable(){
 			saveOptions += "<option value='"+tempSave+"'>"+tempSave+"</option>";
 		}
 		saveTableRows.innerHTML = "<th>Save Type:</th><select id='SaveType' name='SaveType'>"+saveOptions+"</select></td>";
+		nextMitigationRowIndex++;
+
+		addTableRow("CreateSubeffectTable",nextMitigationRowIndex,"rowIsConditionalAdvantage","<th>Conditional (Dis)advantage:</th><input type='checkbox' id='isConditionalSaveAdvantage' name='isConditionalSaveAdvantage' onchange='createConditionalSaveAdvantageRows()'></td>");
+		nextMitigationRowIndex++;
 
 		if(document.getElementById("isDamage").checked){
 			for(let i=1; i <= document.getElementById("differentTypes").value; i++){

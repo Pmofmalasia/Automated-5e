@@ -38,7 +38,7 @@
 	case 0:{
 		[h,switch(resolveHow),CODE:
 			case 0:{
-				[h,MACRO("Resolve Effects@Lib:pm.a5e.Core"): json.get(incompleteEffects,em.Choice)]
+				[h,MACRO("ResolveEffectsBorder@Lib:pm.a5e.Core"): json.get(incompleteEffects,em.Choice)]
 			};
 			case 1:{
 				[h:broadcast("This feature does not exist yet!")]
@@ -51,7 +51,7 @@
 	};
 	case 1:{
 		[h,foreach(effect,incompleteEffects),CODE:{
-			[h,MACRO("Resolve Effects@Lib:pm.a5e.Core"): effect]
+			[h,MACRO("ResolveEffectsBorder@Lib:pm.a5e.Core"): effect]
 		}]
 	};
 	case 2:{

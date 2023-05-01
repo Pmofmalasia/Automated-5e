@@ -73,6 +73,7 @@
             thisEffect = json.set(thisEffect,"Targets",targetData);
             thisEffect = json.set(thisEffect,"Targets",json.merge(json.get(thisEffect,"Targets"),targetData))
         ]
+		[h:thisEffect = json.set(thisEffect,"RemainingTargets",json.get(thisEffect,"Targets"))]
     
         [h,if(whichEffect >= json.length(currentEffectData)): currentEffectData = json.append(currentEffectData,thisEffect); currentEffectData = json.set(currentEffectData,whichEffect,thisEffect)]
     };{}]

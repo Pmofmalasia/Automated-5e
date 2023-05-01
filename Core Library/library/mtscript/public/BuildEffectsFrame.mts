@@ -4,13 +4,22 @@
     "Name","Effect Management",
     "DisplayName","Effect Management"
 ))]
+[h:effectsTableCellFormat = "<td style='text-align:center; padding-left:4px'>"]
 
 [h:incompleteEffects = getLibProperty("gd.Effects","Lib:pm.a5e.Core")]
-[h:em.TableLines = ""]
-[h:secureCounter = 0]
+[h:em.TableLines = "<tr><th style = '"+FrameAccentFormat+"'>Origin</th><th style = '"+FrameAccentFormat+"'>Target(s)</th><th style = '"+FrameAccentFormat+"'>Status</th><th style = '"+FrameAccentFormat+"' colspan=3>How to Resolve</th></tr>"]
 [h:"<!-- TODO: Change removal of blank string so that targets can be selected by the DM on resolution -->"]
+
 [h,foreach(effect,incompleteEffects),CODE:{
-	[h,if(json.get(effect,"ToResolve")==""),CODE:{};{
+	[h:NoEffectTest = json.get(effect,"ToResolve") == ""]
+	[h,if(json.get(effect,"ParentEffect") != ""):
+		CurrentParentEffectTest = !json.isEmpty(json.path.read(incompleteEffects,"[*][?(@.ID == "+json.get(effect,"ParentEffect")+")]"));
+		CurrentParentEffectTest = 0
+	]
+
+	[h:NotDisplayedTest = or(NoEffectTest,CurrentParentEffectTest)]
+
+	[h,if(NotDisplayedTest),CODE:{};{
 		[h:tempTargetList = json.get(effect,"Targets")]
 		[h,if(json.type(tempTargetList)=="ARRAY"):
 			targetList = json.path.delete(tempTargetList,"[?(@=='')]");
@@ -25,7 +34,7 @@
 		[h,if(UnlistedTargetTest): TargetNameArray = json.append(TargetNameArray,"Unspecified Target")]
 
 		[h:targetName = pm.a5e.CreateDisplayList(TargetNameArray,"and")]
-		[h,if(length(targetName) > 40): targetName = "Multiple Targets"]
+		[h,if(length(targetName) > 50): targetName = "Multiple Targets"]
 		
 		[h,if(json.get(effect,"ParentToken")==""):
 			parentName = "World";
@@ -36,14 +45,20 @@
 		[h,if(json.get(effectsToResolve,"CheckDC")!=""): em.SecondPassDisplay = if(!json.isEmpty(json.get(json.get(effectsToResolve,"CheckDC"),"ChecksMade")),"Checks",""); em.SecondPassDisplay = ""]
 		[h,if(json.get(effectsToResolve,"SaveDC")!=""): em.SecondPassDisplay = if(!json.isEmpty(json.get(json.get(effectsToResolve,"SaveDC"),"SavesMade")),listAppend(em.SecondPassDisplay,"Saves"),em.SecondPassDisplay)]
 		[h:em.SecondPassDisplay = pm.a5e.CreateDisplayList(em.SecondPassDisplay,"and")]
-		[h,if(em.SecondPassDisplay!=""): em.SecondPassDisplay = ": "+em.SecondPassDisplay+" Made"]
+		[h,if(em.SecondPassDisplay!=""):
+			em.SecondPassDisplay = em.SecondPassDisplay+" Made";
+			em.SecondPassDisplay = "Unresolved"
+		]
+
+		[h:LinkedEffectNumber = json.length(json.path.read(incompleteEffects,"[*][?(@.ParentEffect == "+json.get(effect,"ID")+")]"))]
+		[h,if(LinkedEffectNumber > 0): em.SecondPassDisplay = em.SecondPassDisplay+ "<br>" + LinkedEffectNumber + " Linked Effect"+if(LinkedEffectNumber==1,"","s")]
 
 		[h:InvolvedTokensDisplay = if(targetName=="Self",parentName+" (self)",parentName+" vs. "+targetName)]
 		[h:em.EffectDisplay = InvolvedTokensDisplay+em.SecondPassDisplay]
 
-		[h:em.TableLines = em.TableLines + "<tr><th style = '"+FrameAccentFormat+"'>"+em.EffectDisplay+"</th><td style='padding-left:4px'><input type='button' onclick='doEffect("+json.set("","Effect",secureCounter,"ResolveHow","NoMod","DisplayName",em.EffectDisplay)+")' value='Resolve Effect'></td><td style='padding-left:4px'><input type='button' onclick='doEffect("+json.set("","Effect",secureCounter,"ResolveHow","Mods","DisplayName",em.EffectDisplay)+")' value='With Modifications'></td><td style='padding-left:4px'><input type='button' onclick='doEffect("+json.set("","Effect",secureCounter,"ResolveHow","Remove","DisplayName",em.EffectDisplay)+")' value='Remove Effect'></td></tr>"]
+		[h:thisEffectID = json.get(effect,"ID")]
+		[h:em.TableLines = em.TableLines + "<tr>"+effectsTableCellFormat+parentName+"</td>"+effectsTableCellFormat+targetName+"</td>"+effectsTableCellFormat+em.SecondPassDisplay+"</td></th><td style='padding-left:4px'><input type='button' onclick='doEffect("+json.set("","Effect",thisEffectID,"ResolveHow","NoMod","DisplayName",em.EffectDisplay)+")' value='Resolve Effect'></td><td style='padding-left:4px'><input type='button' onclick='doEffect("+json.set("","Effect",thisEffectID,"ResolveHow","Mods","DisplayName",em.EffectDisplay)+")' value='With Modifications'></td><td style='padding-left:4px'><input type='button' onclick='doEffect("+json.set("","Effect",thisEffectID,"ResolveHow","Remove","DisplayName",em.EffectDisplay)+")' value='Remove Effect'></td></tr>"]
 	}]
-	[h:secureCounter = secureCounter + 1]
 }]
 
 [h:EffectsFrameTargets = getLibProperty("EffectsFramePermissions","Lib:pm.a5e.Core")]

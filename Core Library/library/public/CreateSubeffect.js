@@ -2,6 +2,50 @@ function checkEffectType(){
 	return document.getElementById("EffectType").value;
 }
 
+function createSubeffectLinkRows(){
+	let nextRowIndex = document.getElementById("rowSubeffectLink").rowIndex + 1;
+
+	let ParentSubeffectNumber = Number(document.getElementById("SubeffectLink").value);
+	if(ParentSubeffectNumber == 0){
+		clearUnusedTable("CreateSubeffectTable","rowSubeffectLink","Mitigation");
+	}
+	else{
+		let PrereqSelectOptions = "<option value = ''>None</option>";
+		
+		let PriorSubeffects = document.getElementById("PriorSubeffects").value;
+		PriorSubeffects = JSON.parse(atob(PriorSubeffects));
+		let ParentSubeffect = PriorSubeffects[ParentSubeffectNumber-1];
+		console.log(ParentSubeffect);
+
+		console.log(ParentSubeffect.Attack);
+		let ParentSubeffectComponents = Object.keys(ParentSubeffect);
+		console.log(ParentSubeffectComponents);
+		console.log(ParentSubeffectComponents.includes("Attack"));
+
+		if(ParentSubeffectComponents.includes("Attack")){
+			PrereqSelectOptions = PrereqSelectOptions + "<option value='AttackHit'>Attack Hits</option><option value='AttackMiss'>Attack Misses</option>";
+		}
+
+		if(ParentSubeffectComponents.includes("Save")){
+			PrereqSelectOptions = PrereqSelectOptions + "<option value='FailedSave'>Failed Save</option><option value='PassedSave'>Passed Save</option>";
+		}
+
+		if(ParentSubeffectComponents.includes("Check")){
+			PrereqSelectOptions = PrereqSelectOptions + "<option value='FailedCheck'>Failed Check</option><option value='PassedCheck'>Passed Check</option>";
+		}
+
+		if(ParentSubeffectComponents.includes("Damage")){
+			PrereqSelectOptions = PrereqSelectOptions + "<option value='Damage'>Deals Damage</option><option value='Healing'>Heals Target</option>";
+		}
+
+		if(ParentSubeffectComponents.includes("ConditionInfo")){
+			PrereqSelectOptions = PrereqSelectOptions + "<option value='ConditionApplied'>Applies Condition</option>";
+		}
+
+		addTableRow("CreateSubeffectTable",nextRowIndex,"rowParentPrereqs","<th><label for='ParentPrereqs'>Requirement for This Subeffect to Occur:</label></th><td><select id='ParentPrereqs' name='ParentPrereqs' onchange='createParentPrereqRows()'>"+PrereqSelectOptions+"</select></td>");
+	}
+}
+
 async function createMitigationTable(){
 	let table = document.getElementById("CreateSubeffectTable");
 	let nextMitigationRowIndex = document.getElementById("Mitigation").rowIndex + 1;
@@ -9,7 +53,7 @@ async function createMitigationTable(){
 	if(document.getElementById("howMitigate").value == "Attack"){
 		clearUnusedTable("CreateSubeffectTable","Mitigation","Damage");
 		let attackTableRow1 = table.insertRow(nextMitigationRowIndex);nextMitigationRowIndex++;
-		attackTableRow1.innerHTML = "<th>Melee or Ranged Attack:</th><select id='MeleeRanged' name='MeleeRanged'><option value='Melee'>Melee</option><option value='Ranged'>Ranged</option></select></td>";
+		attackTableRow1.innerHTML = "<th><label for='MeleeRanged'>Melee or Ranged Attack:</label></th><select id='MeleeRanged' name='MeleeRanged'><option value='Melee'>Melee</option><option value='Ranged'>Ranged</option></select></td>";
 
 		let attackTableRow2 = table.insertRow(nextMitigationRowIndex);nextMitigationRowIndex++;
 		attackTableRow2.innerHTML = "<th>Crit Threshhold:</th><td><input type='number' id='CritThresh' name='CritThresh' max='20' min='1' value='20'></td>";

@@ -3,6 +3,8 @@ async function createObjectSubtypeRows(){
 	let nextRowIndex = document.getElementById("rowObjectType").rowIndex+1;
 
 	if(document.getElementById("Type").value == "Weapon"){
+		document.getElementById("isWearable").setAttribute("checked","");
+
 		let request = await fetch("macro:pm.a5e.GetCoreData@lib:pm.a5e.Core", {method: "POST", body: "['sb.WeaponTypes']"});
 		let allWeaponTypes = await request.json();
 
@@ -61,6 +63,8 @@ async function createObjectSubtypeRows(){
 		nextRowIndex++;
 	}
 	else if(document.getElementById("Type").value == "Armor" || document.getElementById("Type").value == "Shield"){
+		document.getElementById("isWearable").setAttribute("checked","");
+
 		let allArmorTypes = "";
 		if(document.getElementById("Type").value == "Armor"){
 			addTableRow("CreateObjectTable",nextRowIndex,"rowArmorTier","<th><label for='ArmorTier'>Armor Tier:</label></th><td><select id='ArmorTier' name='ArmorTier' onchange='armorTierSelectionChanges()'><option value='Light'>Light</option><option value='Medium'>Medium</option><option value='Heavy'>Heavy</option></select></td>");
@@ -95,31 +99,28 @@ async function createObjectSubtypeRows(){
 		nextRowIndex++;
 	}
 	else if(document.getElementById("Type").value == "Ammunition"){
-		
+		document.getElementById("isWearable").setAttribute("checked","");
 	}
 	else if(document.getElementById("Type").value == "CastingFocus"){
-		
+		document.getElementById("isWearable").setAttribute("checked","");
 	}
 	else if(document.getElementById("Type").value == "Container"){
-		
-	}
-	else if(document.getElementById("Type").value == "Ammunition"){
-		
+		document.getElementById("isWearable").removeAttribute("checked","");
 	}
 	else if(document.getElementById("Type").value == "Hazard" || document.getElementById("Type").value == "Trap"){
-		
+		document.getElementById("isWearable").removeAttribute("checked","");
 	}
 	else if(document.getElementById("Type").value == "Potion"){
-		
+		document.getElementById("isWearable").removeAttribute("checked","");
 	}
 	else if(document.getElementById("Type").value == "Scroll"){
-		
+		document.getElementById("isWearable").removeAttribute("checked","");
 	}
 	else if(document.getElementById("Type").value == "Tool"){
-		
+		document.getElementById("isWearable").removeAttribute("checked","");
 	}
 	else if(document.getElementById("Type").value == "Vehicle"){
-		
+		document.getElementById("isWearable").removeAttribute("checked","");
 	}
 }
 

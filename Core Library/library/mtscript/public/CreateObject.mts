@@ -27,9 +27,13 @@
 
 <tr id='rowIsMagical'><th><label for='isMagical'>Object is a Magic Item?</label></th><td><input type='checkbox' id='isMagical' name='isMagical' onchange='createMagicItemRows()'></td></tr>
 
+<tr id='rowIsWearable'><th><label for='isWearable'>Must be Worn/Held for Effect?</label></th><td><input type='checkbox' id='isWearable' name='isWearable'></td></tr>
+
 <tr id='rowIsConsumable'><th><label for='isConsumable'>Object is Consumable?</label></th><td><input type='checkbox' id='isConsumable' name='isConsumable' onchange='createConsumableRows()'></td></tr>
 
 <tr id='rowIsCharges'><th><label for='isCharges'>Object has Charges?</label></th><td><input type='checkbox' id='isCharges' name='isCharges' onchange='createChargesRows()'></td></tr>
+
+<tr id='rowIsStackable'><th><label for='isStackable'>Object Stacks with Others in Inventory?</label></th><td><input type='checkbox' id='isStackable' name='isStackable'></td></tr>
 
 <tr id='rowMaterials'><th>Materials Used:</th><td><div class='check-multiple' style='width:100%'>"+ObjectMaterialMultiselection+"</div></td></tr>
 

@@ -104,8 +104,10 @@
 ]
 
 [h:objectData = json.set(objectData,
+	"isWearable",json.contains(objectData,"isWearable"),
 	"isFlammable",json.contains(objectData,"isFlammable"),
-	"isMagnetic",json.contains(objectData,"isMagnetic")
+	"isMagnetic",json.contains(objectData,"isMagnetic"),
+	"isStackable",json.contains(objectData,"isStackable")
 )]
 
 [h:closeDialog("ObjectCreation")]
@@ -113,6 +115,9 @@
 	[h,if(newTemplateTest),CODE:{
 		[h:setLibProperty("sb."+json.get(objectData,"Type")+"Types",json.append(getLibProperty("sb."+json.get(objectData,"Type")+"Types","Lib:"+json.get(objectData,"Library")),objectData),"Lib:"+json.get(objectData,"Library"))]
 	};{}]
+
+	[h:ObjectID = encode(json.get(objectData,"Name"))+eval(d1000000)]
+	[h:objectData = json.set(objectData,"ObjectID",ObjectID)]
 
 	[h:setLibProperty("sb.Objects",json.append(getLibProperty("sb.Objects","Lib:"+json.get(objectData,"Library")),objectData),"Lib:"+json.get(objectData,"Library"))]
 };{

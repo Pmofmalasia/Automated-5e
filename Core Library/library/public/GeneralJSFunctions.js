@@ -33,7 +33,8 @@ function createHTMLSelectOptions(inputData,valueKey){
 				finalOptions = "<option value='"+btoa(JSON.stringify(tempObject))+"'>"+tempObject.DisplayName+"</option>";
 			}
 			else{
-				finalOptions = "<option value='"+tempObject.valueKey+"'>"+tempObject.DisplayName+"</option>";
+				let tempObjectKeyValue = tempObject[valueKey];
+				finalOptions = "<option value='"+tempObjectKeyValue+"'>"+tempObject.DisplayName+"</option>";
 			}
 		}
 		else{

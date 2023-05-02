@@ -5,23 +5,38 @@
 [h:thisSubeffectNum = json.get(subeffectData,"WhichSubeffect")]
 [h:ExtraData = json.get(subeffectData,"ExtraData")]
 
+[h:broadcast("Round #"+thisSubeffectNum)]
+
 [h,if(totalSubeffects==1),CODE:{
 	[h:SubeffectHTML = ""]
 };{
-	[h:SubeffectLinkOptions = ""]
-	[h,count(totalSubeffects): SubeffectLinkOptions = SubeffectLinkOptions + "<option value="+(roll.count+1)+">"+(roll.count+1)+"</option>"]
-	[h:SubeffectLinkOptions = SubeffectLinkOptions + "<option value=0>None</option>"]
-
-	[h:SubeffectHTML = "<tr><th text-align='center' colspan='2'>Subeffect #"+thisSubeffectNum+"</th></tr>
-	
-	<tr id='rowSubeffectLink'><th><label for='SubeffectLink'>Linked to Subeffect #:</label></th><td><select id='SubeffectLink' name='SubeffectLink' onchange='createSubeffectLinkRows()'>"+SubeffectLinkOptions+"</select></td></tr>"]
+	[h:SubeffectHTML = "<tr><th text-align='center' colspan='2'>Subeffect #"+thisSubeffectNum+"</th></tr>"]
 }]
+
+[h,if(thisSubeffectNum > 1),CODE:{
+	[h:SubeffectLinkOptions = "<option value=0>None</option>"]
+	[h,count(thisSubeffectNum - 1): SubeffectLinkOptions = SubeffectLinkOptions + "<option value="+(roll.count+1)+">"+(roll.count+1)+"</option>"]
+	
+	[h:CurrentFeatureData = getLibProperty("ct.New"+EffectType,"Lib:pm.a5e.Core")]
+	[h:thisPlayerCurrentFeatureData = json.get(CurrentFeatureData,getPlayerName())]
+	[h,switch(EffectType),CODE:
+		case "Spell": {
+			[h:tempPriorSubeffectData = json.get(thisPlayerCurrentFeatureData,json.length(thisPlayerCurrentFeatureData)-1)]
+			[h:PriorSubeffectData = json.get(tempPriorSubeffectData,"Subeffects")]
+		};
+		default: {
+			[h:PriorSubeffectData = thisPlayerCurrentFeatureData]
+		}
+	]
+
+	[h:PriorSubeffectData = base64.encode(PriorSubeffectData)]
+
+	[h:SubeffectHTML = SubeffectHTML + "<input type='hidden' name='PriorSubeffects' id='PriorSubeffects' value='"+PriorSubeffectData+"'><tr id='rowSubeffectLink'><th><label for='SubeffectLink'>Linked to Subeffect #:</label></th><td><select id='SubeffectLink' name='SubeffectLink' onchange='createSubeffectLinkRows()'>"+SubeffectLinkOptions+"</select></td></tr>"]
+};{}]
 
 [h,if(json.type(ExtraData) == "OBJECT"),CODE:{
     [h,foreach(tempKey,json.fields(ExtraData)): SubeffectHTML = SubeffectHTML + "<input type='hidden' id='"+tempKey+"' name='"+tempKey+"' value='"+json.get(ExtraData,tempKey)+"'>"]
 };{}]
-
-[h:"<!-- May want to send the subeffect number as an argument in some onchange functions -->"]
 
 [h:SubeffectHTML = SubeffectHTML + "<input type='hidden' id='ParentToken' name='ParentToken' value='"+ParentToken+"'><input type='hidden' id='EffectType' name='EffectType' value='"+EffectType+"'><input type='hidden' id='TotalSubeffects' name='TotalSubeffects' value="+totalSubeffects+"><input type='hidden' id='WhichSubeffect' name='WhichSubeffect' value="+thisSubeffectNum+">
 

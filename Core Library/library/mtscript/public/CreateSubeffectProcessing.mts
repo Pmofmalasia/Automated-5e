@@ -1,5 +1,6 @@
 [h:subeffectData = macro.args]
 [h:EffectType = json.get(subeffectData,"EffectType")]
+[h:subeffectData = json.remove(subeffectData,"EffectType")]
 [h:CurrentFeatureData = getLibProperty("ct.New"+EffectType,"pm.a5e.Core")]
 [h:thisPlayerCurrentFeatureData = json.get(CurrentFeatureData,getPlayerName())]
 
@@ -274,7 +275,7 @@
 
 [h:ConditionModificationData = ""]
 [h:TargetConditionData = ""]
-[h,if(json.get(subeffectData,"isAffectCondition")!="No"),CODE:{
+[h,if(json.get(subeffectData,"isAffectCondition")!="No" && json.get(subeffectData,"isAffectCondition")!=""),CODE:{
 	[h,if(!json.contains(subeffectData,"affectConditionNumberUnlimited")): TargetConditionData = json.set(TargetConditionData,
 		"Number",json.get(subeffectData,"affectConditionNumber"),
 		"NumberAHL",json.get(subeffectData,"affectConditionNumberAHL"),
@@ -555,10 +556,9 @@
 
 [h:totalSubeffects = number(json.get(subeffectData,"TotalSubeffects"))]
 [h:thisSubeffectNum = number(json.get(subeffectData,"WhichSubeffect"))]
-[h:spellLevel = json.get(subeffectData,"SpellLevel")]
 [h:subeffectData = json.remove(subeffectData,"TotalSubeffects")]
 [h:subeffectData = json.remove(subeffectData,"WhichSubeffect")]
-[h:subeffectData = json.remove(subeffectData,"SpellLevel")]
+[h:subeffectData = json.remove(subeffectData,"PriorSubeffects")]
 
 [h:thisEffectSubeffectData = json.get(currentEffectData,"Subeffects")]
 [h:thisEffectSubeffectData = json.append(thisEffectSubeffectData,subeffectData)]
@@ -566,16 +566,23 @@
 
 [h,switch(EffectType),CODE:
 	case "Spell":{
+		[h:spellLevel = json.get(subeffectData,"SpellLevel")]
+		[h:subeffectData = json.remove(subeffectData,"SpellLevel")]
+
 		[h:thisPlayerCurrentFeatureData = json.set(thisPlayerCurrentFeatureData,json.length(thisPlayerCurrentFeatureData)-1,currentEffectData)]
 		[h:setLibProperty("ct.NewSpell",json.set(CurrentFeatureData,getPlayerName(),thisPlayerCurrentFeatureData),"Lib:pm.a5e.Core")]
 
 		[h:baseFeatureData = json.get(thisPlayerCurrentFeatureData,0)]
+		[h:broadcast("Subeffect Num: "+thisSubeffectNum)]
+		[h:broadcast("Total Num: "+totalSubeffects)]
 		[h:lastSubeffectTest = (thisSubeffectNum>=totalSubeffects)]
+		[h:broadcast("Last subeffect: "+lastSubeffectTest)]
 		[h:lastEffectTest = json.length(thisPlayerCurrentFeatureData) >= json.get(baseFeatureData,"multiEffects")]
 
 		[h:extraData = json.set("","SpellLevel",spellLevel)]
 	};
 	default:{
+		[h:"<!-- Note: Currently, I think this allows for only one effect to be made - it stores the effect as an object instead of an array of multiple effects -->"]
 		[h:thisPlayerCurrentFeatureData = currentEffectData]
 		[h:setLibProperty("ct.New"+EffectType,json.set(CurrentFeatureData,getPlayerName(),thisPlayerCurrentFeatureData),"Lib:pm.a5e.Core")]
 
@@ -588,6 +595,8 @@
 
 [h,switch(lastSubeffectTest+""+lastEffectTest),CODE:
 	case "11":{
+		[h:broadcast("Making The Effect")]
+		[h:return(0)]
 		[h:closeDialog("SubeffectCreation")]
 		[h,MACRO("CreateFeatureCoreFinalInput@Lib:pm.a5e.Core"): json.set("","EffectType",EffectType,"ExtraData",extraData,"ParentToken",json.get(subeffectData,"ParentToken"))]
 	};
@@ -596,6 +605,7 @@
 		[h,MACRO("CreateSpellCore@Lib:pm.a5e.Core"): baseFeatureData]
 	};
 	default:{
-		[h,MACRO("CreateSubeffect@Lib:pm.a5e.Core"): json.set("","TotalSubeffects",totalSubeffects,"WhichSubeffect",thisSubeffectNum+1,"ExtraData",extraData,"ParentToken",json.get(subeffectData,"ParentToken"))]        
+		[h:closeDialog("SubeffectCreation")]
+		[h,MACRO("CreateSubeffect@Lib:pm.a5e.Core"): json.set("","TotalSubeffects",totalSubeffects,"WhichSubeffect",thisSubeffectNum+1,"EffectType",EffectType,"ExtraData",extraData,"ParentToken",json.get(subeffectData,"ParentToken"))]        
 	}
 ]

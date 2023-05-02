@@ -1,14 +1,18 @@
-//Note: All 'AddItem' variations (e.g. AddWeapon) can use this code by setting a hidden value for ObjectType to that type.
-
 async function adjustItemTypeFilters(){
-	let request = await fetch("macro:pm.a5e.GetCoreData@lib:pm.a5e.Core", {method: "POST", body: "['sb.ObjectTypes','Name','json']"});
-	let allObjectTypes = await request.json();
-
 	let ValidObjectTypes = [];
-	for(let tempType of allObjectTypes){
-		if(document.getElementById("objectTypeFilter"+tempType).checked){
-			ValidObjectTypes.push(tempType);
+
+	if(document.getElementById("TypeFilterOverride")==null){
+		let request = await fetch("macro:pm.a5e.GetCoreData@lib:pm.a5e.Core", {method: "POST", body: "['sb.ObjectTypes','Name','json']"});
+		let allObjectTypes = await request.json();
+
+		for(let tempType of allObjectTypes){
+			if(document.getElementById("objectTypeFilter"+tempType).checked){
+				ValidObjectTypes.push(tempType);
+			}
 		}
+	}
+	else{
+		ValidObjectTypes.push(document.getElementById("TypeFilterOverride").value);
 	}
 
 	let ObjectRequest = await fetch("macro:pm.a5e.GetCoreData@lib:pm.a5e.Core", {method: "POST", body: "['sb.Objects']"});
@@ -27,7 +31,7 @@ async function adjustItemTypeFilters(){
 		}
 	}
 
-	let ItemOptions = createHTMLSelectOptions(validObjects,"");
+	let ItemOptions = createHTMLSelectOptions(validObjects,"ObjectID");
 
 	ItemOptions = "<option value='@@ImpromptuItem'>New Item</option>"+ItemOptions;
 

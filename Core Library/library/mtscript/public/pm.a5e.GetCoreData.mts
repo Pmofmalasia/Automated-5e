@@ -12,7 +12,6 @@
 ]
 
 [h,if(pm.Delim == "json"),CODE:{
-	[h:broadcast(pm.ThingsGotten)]
 	[h:return(0,pm.ThingsGotten)]
 };{
 	[h:return(0,json.toList(pm.ThingsGotten,pm.Delim))]

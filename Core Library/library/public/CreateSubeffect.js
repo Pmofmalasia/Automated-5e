@@ -12,15 +12,9 @@ function createSubeffectLinkRows(){
 	else{
 		let PrereqSelectOptions = "<option value = ''>None</option>";
 		
-		let PriorSubeffects = document.getElementById("PriorSubeffects").value;
-		PriorSubeffects = JSON.parse(atob(PriorSubeffects));
+		let PriorSubeffects = JSON.parse(atob(document.getElementById("PriorSubeffects").value));
 		let ParentSubeffect = PriorSubeffects[ParentSubeffectNumber-1];
-		console.log(ParentSubeffect);
-
-		console.log(ParentSubeffect.Attack);
 		let ParentSubeffectComponents = Object.keys(ParentSubeffect);
-		console.log(ParentSubeffectComponents);
-		console.log(ParentSubeffectComponents.includes("Attack"));
 
 		if(ParentSubeffectComponents.includes("Attack")){
 			PrereqSelectOptions = PrereqSelectOptions + "<option value='AttackHit'>Attack Hits</option><option value='AttackMiss'>Attack Misses</option>";

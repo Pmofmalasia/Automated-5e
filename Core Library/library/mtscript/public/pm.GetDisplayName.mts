@@ -4,4 +4,7 @@
     [h:InitialSearch = json.path.read(getLibProperty(arg(1),"Lib:pm.a5e.Core"),"[*][?(@.Name=='"+arg(0)+"')]['DisplayName']")]
 }] 
 
-[h,if(json.isEmpty(InitialSearch)): macro.return = arg(0); macro.return = json.get(InitialSearch,0)]
+[h,if(json.isEmpty(InitialSearch)):
+	return(0,arg(0));
+	return(0,json.get(InitialSearch,0))
+]

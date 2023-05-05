@@ -8,10 +8,12 @@
 	case "Spell":{
 		[h:currentEffectData = json.get(thisPlayerCurrentFeatureData,json.length(thisPlayerCurrentFeatureData)-1)]
 		[h:FeatureName = json.get(json.get(thisPlayerCurrentFeatureData,0),"Name")]
+		[h:FeatureDisplayName = json.get(json.get(thisPlayerCurrentFeatureData,0),"DisplayName")]
 	};
 	default:{
 		[h:currentEffectData = thisPlayerCurrentFeatureData]
 		[h:FeatureName = json.get(thisPlayerCurrentFeatureData,"Name")]
+		[h:FeatureDisplayName = json.get(thisPlayerCurrentFeatureData,"DisplayName")]
 	}
 ]
 
@@ -102,25 +104,25 @@
 
 [h:isCondition = json.get(subeffectData,"isCondition")]
 [h:subeffectData = json.remove(subeffectData,"isCondition")]
-[h:allBaseConditions = pm.a5e.GetBaseConditions("Name","json")]
+[h:allBaseConditions = pm.a5e.GetBaseConditions()]
 [h:conditionsAlwaysAdded = "[]"]
 [h:EffectSpecificConditions = "[]"]
 [h,if(isCondition == "All" || isCondition == "Mixture"),CODE:{
 	[h:conditionsAlwaysAdded = "[]"]
 	[h,foreach(tempCondition,allBaseConditions),CODE:{
-		[h,if(json.contains(subeffectData,"AlwaysAdded"+tempCondition)): conditionsAlwaysAdded = json.append(conditionsAlwaysAdded,json.set("","Name",tempCondition,"Class","Condition","AlwaysAdded",1))]
+		[h,if(json.contains(subeffectData,"AlwaysAdded"+tempCondition)): conditionsAlwaysAdded = json.append(conditionsAlwaysAdded,json.set("","Name",json.get(tempCondition,"Name"),"DisplayName",json.get(tempCondition,"DisplayName"),"Class","Condition","AlwaysAdded",1))]
 		[h:subeffectData = json.remove(subeffectData,"AlwaysAdded"+tempCondition)]
 	}]
 	
 	[h,switch(json.contains(subeffectData,"AlwaysAddedEffectSpecific")+""+json.contains(subeffectData,"isEffectSpecificAlwaysAddedMultiple")),CODE:
 		case "10":{
-			[h:conditionsAlwaysAdded = json.append(conditionsAlwaysAdded,json.set(ConditionIdentificationInfo,"Name",FeatureName))]
-			[h:EffectSpecificConditions = json.append(EffectSpecificConditions,json.set(ConditionIdentificationInfo,"Name",FeatureName))]
+			[h:conditionsAlwaysAdded = json.append(conditionsAlwaysAdded,json.set(ConditionIdentificationInfo,"Name",FeatureName,"DisplayName",FeatureDisplayName))]
+			[h:EffectSpecificConditions = json.append(EffectSpecificConditions,json.set(ConditionIdentificationInfo,"Name",FeatureName,"DisplayName",FeatureDisplayName))]
 		};
 		case "11":{
 			[h:conditionNames = json.fromList(encode(json.get(subeffectData,"AlwaysAddedEffectSpecificNames")),"%0A")]
-			[h,foreach(tempCondition,conditionNames): conditionsAlwaysAdded = json.append(conditionsAlwaysAdded,json.set(ConditionIdentificationInfo,"Name",tempCondition))]
-			[h,foreach(tempCondition,conditionNames): EffectSpecificConditions = json.append(EffectSpecificConditions,json.set(ConditionIdentificationInfo,"Name",tempCondition))]
+			[h,foreach(tempCondition,conditionNames): conditionsAlwaysAdded = json.append(conditionsAlwaysAdded,json.set(ConditionIdentificationInfo,"Name",pm.RemoveSpecial(tempCondition),"DisplayName",tempCondition))]
+			[h,foreach(tempCondition,conditionNames): EffectSpecificConditions = json.append(EffectSpecificConditions,json.set(ConditionIdentificationInfo,"Name",pm.RemoveSpecial(tempCondition),"DisplayName",tempCondition))]
 			[h:subeffectData = json.remove(subeffectData,"isEffectSpecificAlwaysAddedMultiple")]
 			[h:subeffectData = json.remove(subeffectData,"AlwaysAddedEffectSpecificNames")]
 		};
@@ -132,19 +134,19 @@
 [h:conditionOptions = "[]"]
 [h,if(isCondition == "Choose" || isCondition == "Mixture"),CODE:{
 	[h,foreach(tempCondition,allBaseConditions),CODE:{
-		[h,if(json.contains(subeffectData,"ConditionOption"+tempCondition)): conditionOptions = json.append(conditionOptions,json.set("","Name",tempCondition,"Class","Condition","AlwaysAdded",0))]
+		[h,if(json.contains(subeffectData,"ConditionOption"+tempCondition)): conditionOptions = json.append(conditionOptions,json.set("","Name",json.get(tempCondition,"Name"),"DisplayName",json.get(tempCondition,"DisplayName"),"Condition","AlwaysAdded",0))]
 		[h:subeffectData = json.remove(subeffectData,"ConditionOption"+tempCondition)]
 	}]
 
 	[h,switch(json.contains(subeffectData,"ConditionOptionEffectSpecific")+""+json.contains(subeffectData,"isEffectSpecificConditionOptionMultiple")),CODE:
 		case "10":{
-			[h:conditionOptions = json.append(conditionOptions,json.set(ConditionIdentificationInfo,"Name",FeatureName))]
-			[h:EffectSpecificConditions = json.append(EffectSpecificConditions,json.set(ConditionIdentificationInfo,"Name",FeatureName))]
+			[h:conditionOptions = json.append(conditionOptions,json.set(ConditionIdentificationInfo,"Name",FeatureName,"DisplayName",FeatureDisplayName))]
+			[h:EffectSpecificConditions = json.append(EffectSpecificConditions,json.set(ConditionIdentificationInfo,"Name",FeatureName,"DisplayName",FeatureDisplayName))]
 		};
 		case "11":{
 			[h:conditionNames = json.fromList(encode(json.get(subeffectData,"ConditionOptionEffectSpecificNames")),"%0A")]
-			[h,foreach(tempCondition,conditionNames): conditionOptions = json.append(conditionOptions,json.set(ConditionIdentificationInfo,"Name",tempCondition))]
-			[h,foreach(tempCondition,conditionNames): EffectSpecificConditions = json.append(EffectSpecificConditions,json.set(ConditionIdentificationInfo,"Name",tempCondition))]
+			[h,foreach(tempCondition,conditionNames): conditionOptions = json.append(conditionOptions,json.set(ConditionIdentificationInfo,"Name",pm.RemoveSpecial(tempCondition),"DisplayName",tempCondition))]
+			[h,foreach(tempCondition,conditionNames): EffectSpecificConditions = json.append(EffectSpecificConditions,json.set(ConditionIdentificationInfo,"Name",pm.RemoveSpecial(tempCondition),"DisplayName",tempCondition))]
 			[h:subeffectData = json.remove(subeffectData,"isEffectSpecificConditionOptionMultiple")]
 			[h:subeffectData = json.remove(subeffectData,"ConditionOptionEffectSpecificNames")]
 		};
@@ -188,7 +190,7 @@
 	case "1": {
 		[h:conditionsNullified = "[]"]
 		[h,foreach(tempCondition,allBaseConditions),CODE:{
-			[h,if(json.contains(subeffectData,"SaveNullify"+tempCondition)): conditionsNullified = json.append(conditionsNullified,json.set("","Name",tempCondition,"Class","Condition"))]
+			[h,if(json.contains(subeffectData,"SaveNullify"+tempCondition)): conditionsNullified = json.append(conditionsNullified,json.set("","Name",json.get(tempCondition,"Name"),"DisplayName",json.get(tempCondition,"DisplayName"),"Class","Condition"))]
 			[h:subeffectData = json.remove(subeffectData,"SaveNullify"+tempCondition)]
 		}]
 		[h,if(json.contains(subeffectData,"SaveNullifyEffectSpecific")): conditionsNullified = json.merge(conditionsNullified,EffectSpecificConditions)]

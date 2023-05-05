@@ -4,16 +4,13 @@ function checkEffectType(){
 
 function createSubeffectLinkRows(){
 	let nextRowIndex = document.getElementById("rowSubeffectLink").rowIndex + 1;
+	let ParentSubeffect = getLinkedSubeffect();
 
-	let ParentSubeffectNumber = Number(document.getElementById("SubeffectLink").value);
-	if(ParentSubeffectNumber == 0){
+	if(ParentSubeffect == "NONE"){
 		clearUnusedTable("CreateSubeffectTable","rowSubeffectLink","Mitigation");
 	}
 	else{
 		let PrereqSelectOptions = "<option value = ''>None</option>";
-		
-		let PriorSubeffects = JSON.parse(atob(document.getElementById("PriorSubeffects").value));
-		let ParentSubeffect = PriorSubeffects[ParentSubeffectNumber-1];
 		let ParentSubeffectComponents = Object.keys(ParentSubeffect);
 
 		if(ParentSubeffectComponents.includes("Attack")){
@@ -37,6 +34,64 @@ function createSubeffectLinkRows(){
 		}
 
 		addTableRow("CreateSubeffectTable",nextRowIndex,"rowParentPrereqs","<th><label for='ParentPrereqs'>Requirement for This Subeffect to Occur:</label></th><td><select id='ParentPrereqs' name='ParentPrereqs' onchange='createParentPrereqRows()'>"+PrereqSelectOptions+"</select></td>");
+		nextRowIndex++;
+	}
+}
+
+function getLinkedSubeffect(){
+	let ParentSubeffectNumber = Number(document.getElementById("SubeffectLink").value);
+
+	if(ParentSubeffectNumber == 0){
+		return "NONE";
+	}
+	else{
+		let PriorSubeffects = JSON.parse(atob(document.getElementById("PriorSubeffects").value));
+		let ParentSubeffect = PriorSubeffects[ParentSubeffectNumber-1];
+		return ParentSubeffect;
+	}
+}
+
+function createParentPrereqRows(){
+	let nextRowIndex = document.getElementById("rowParentPrereqs").rowIndex + 1;
+	let PrereqChoice = document.getElementById("ParentPrereqs").value;
+	
+	clearUnusedTable("CreateSubeffectTable","rowParentPrereqs","Mitigation");
+
+	if(PrereqChoice == "AttackHit"){
+		addTableRow("CreateSubeffectTable",nextRowIndex,"rowParentPrereqExtra","<th><label for='PrereqAttackHitMargin'>Must Hit by At Least:</label></th><td><input type='number' id='PrereqAttackHitMargin' name='PrereqAttackHitMargin' min=0 value=0></td>");
+		nextRowIndex++;
+	}
+	else if(PrereqChoice == "AttackMiss"){
+		addTableRow("CreateSubeffectTable",nextRowIndex,"rowParentPrereqExtra","<th><label for='PrereqAttackMissMargin'>Must Miss by At Least:</label></th><td><input type='number' id='PrereqAttackMissMargin' name='PrereqAttackMissMargin' min=0 value=0></td>");
+		nextRowIndex++;
+	}
+	else if(PrereqChoice == "SaveSucceed"){
+		addTableRow("CreateSubeffectTable",nextRowIndex,"rowParentPrereqExtra","<th><label for='PrereqSaveSucceedMargin'>Must Succeed by At Least:</label></th><td><input type='number' id='PrereqSaveSucceedMargin' name='PrereqSaveSucceedMargin' min=0 value=0></td>");
+		nextRowIndex++;
+	}
+	else if(PrereqChoice == "SaveFail"){
+		addTableRow("CreateSubeffectTable",nextRowIndex,"rowParentPrereqExtra","<th><label for='PrereqSaveFailMargin'>Must Fail by At Least:</label></th><td><input type='number' id='PrereqSaveFailMargin' name='PrereqSaveFailMargin' min=0 value=0></td>");
+		nextRowIndex++;
+	}
+	else if(PrereqChoice == "CheckSucceed"){
+		addTableRow("CreateSubeffectTable",nextRowIndex,"rowParentPrereqExtra","<th><label for='PrereqCheckSucceedMargin'>Must Succeed by At Least:</label></th><td><input type='number' id='PrereqCheckSucceedMargin' name='PrereqCheckSucceedMargin' min=0 value=0></td>");
+		nextRowIndex++;
+	}
+	else if(PrereqChoice == "CheckFail"){
+		addTableRow("CreateSubeffectTable",nextRowIndex,"rowParentPrereqExtra","<th><label for='PrereqCheckFailMargin'>Must Fail by At Least:</label></th><td><input type='number' id='PrereqCheckFailMargin' name='PrereqCheckFailMargin' min=0 value=0></td>");
+		nextRowIndex++;
+	}
+	else if(PrereqChoice == "ConditionApplied"){
+		let ConditionsRequiredOptions = "<option value='All'>All Conditions</option><option value='Any'>Any Condition</option>";
+		let ParentSubeffect = getLinkedSubeffect();
+		let ParentSubeffectConditionInfo = ParentSubeffect.ConditionInfo;
+
+		for(let tempCondition of ParentSubeffectConditionInfo.Conditions){
+			ConditionsRequiredOptions = ConditionsRequiredOptions + "<option value='"+tempCondition.Name+"'>"+tempCondition.DisplayName+"</option>";
+		}
+
+		addTableRow("CreateSubeffectTable",nextRowIndex,"rowParentPrereqExtra","<th><label for='PrereqConditionsApplied'>Conditions that Must be Applied:</label></th><td><select id='PrereqConditionsApplied' name='PrereqConditionsApplied'></select></td>");
+		nextRowIndex++;
 	}
 }
 
@@ -182,19 +237,26 @@ async function addDamageTypeRows(){
 	damageTypeNumber++;
 	document.getElementById("differentTypes").value = damageTypeNumber;
 
-	let request = await fetch("macro:pm.GetDamageTypes@lib:pm.a5e.Core", {method: "POST", body: "['DisplayName','json']"});
-	let damageTypes = await request.json();
+	let damageTypeOptions = generateDamageTypeOptions();
+	damageTypeOptions = damageTypeOptions + "<option value='Multiple Options'>Multiple Options</option>";
 
-	let damageTypeOptions = "";
-	for(let tempType of damageTypes){
-		damageTypeOptions = damageTypeOptions + "<option value='"+tempType+"'>"+tempType+"</option>";
+	let UsePriorDamageButton = "";
+
+	if(document.getElementById("SubeffectLink") != null){
+		let ParentSubeffect = getLinkedSubeffect();
+		if(ParentSubeffect != "NONE"){
+			let ParentSubeffectHasDamage = Object.keys(ParentSubeffect).includes("Damage");
+
+			if(ParentSubeffectHasDamage){
+				UsePriorDamageButton = " <b>OR</b> <input type='button' id='switchToPriorDamage' name='switchToPriorDamage' value='Based On Prior Damage' onclick='switchToPriorDamage("+damageTypeNumber+")'>";
+			}			
+		}
 	}
 
-	damageTypeOptions = damageTypeOptions + "<option value='Healing'>Healing</option><option value='Temp HP'>Temp HP</option><option value='Multiple Options'>Multiple Options</option>";
-	
+	let damageRowHTML = generateDamageRowText(damageTypeNumber,damageTypeOptions,UsePriorDamageButton);
 	let damageRow = table.insertRow(buttonRowIndex);
 	damageRow.id = "DamageSet"+damageTypeNumber;
-	damageRow.innerHTML = "<th text-align='center' colspan='2'><input type='number' id='DamageDieNum"+damageTypeNumber+"' name='DamageDieNum"+damageTypeNumber+"' value=1 min=0 style='width:25px'> d <input type='number' id='DamageDieSize"+damageTypeNumber+"' name='DamageDieSize"+damageTypeNumber+"' value=6 style='width:25px'> <b>+</b> <input type='number' id='DamageFlatBonus"+damageTypeNumber+"' name='DamageFlatBonus"+damageTypeNumber+"' value=0 style='width:25px'><select id='DamageType"+damageTypeNumber+"' name='DamageType"+damageTypeNumber+"' onchange='createTypeOptions("+damageTypeNumber+")'>"+damageTypeOptions+"</select> Damage</th>";
+	damageRow.innerHTML = damageRowHTML;
 	
 	let modBonusRow = table.insertRow(buttonRowIndex+1);
 	modBonusRow.id = "rowModBonus"+damageTypeNumber;
@@ -217,6 +279,53 @@ async function addDamageTypeRows(){
 		saveMitigationRow.id = "rowSaveMitigation"+damageTypeNumber;
 		saveMitigationRow.innerHTML = "<th>Damage on Successful Save:</th><td><select id='saveMitigation"+damageTypeNumber+"' name='saveMitigation"+damageTypeNumber+"'><option value=2>None</option><option value=1>Half</option><option value=0>Full</option></select></td>";
 	}
+}
+
+function generateDamageRowText(damageTypeNumber,damageTypeOptions,UsePriorDamageButton){
+	return "<th text-align='center' colspan='2'><input type='number' id='DamageDieNum"+damageTypeNumber+"' name='DamageDieNum"+damageTypeNumber+"' value=1 min=0 style='width:25px'> d <input type='number' id='DamageDieSize"+damageTypeNumber+"' name='DamageDieSize"+damageTypeNumber+"' value=6 style='width:25px'> <b>+</b> <input type='number' id='DamageFlatBonus"+damageTypeNumber+"' name='DamageFlatBonus"+damageTypeNumber+"' value=0 style='width:25px'><select id='DamageType"+damageTypeNumber+"' name='DamageType"+damageTypeNumber+"' onchange='createTypeOptions("+damageTypeNumber+")'>"+damageTypeOptions+"</select> Damage"+UsePriorDamageButton+"</th>";
+}
+
+async function generateDamageTypeOptions(){
+	let request = await fetch("macro:pm.GetDamageTypes@lib:pm.a5e.Core", {method: "POST", body: "['DisplayName','json']"});
+	let damageTypes = await request.json();
+
+	let damageTypeOptions = "";
+	for(let tempType of damageTypes){
+		damageTypeOptions = damageTypeOptions + "<option value='"+tempType+"'>"+tempType+"</option>";
+	}
+	damageTypeOptions = damageTypeOptions + "<option value='Healing'>Healing</option><option value='Temp HP'>Temp HP</option>";
+
+	return damageTypeOptions;
+}
+
+async function switchToPriorDamage(damageTypeNumber){
+	let damageTypeOptions = generateDamageTypeOptions();
+
+	let ParentSubeffect = getLinkedSubeffect();
+	let ParentSubeffectDamage = ParentSubeffect.Damage;
+	let PriorDamageTypes = [];
+	let PriorDamageTypeOptions = "<option value='TotalDamage'>All</option>";
+
+	for(let tempInstance of ParentSubeffectDamage){
+		let tempRequest = await fetch("macro:pm.GetDisplayName@lib:pm.a5e.Core",{method:"POST",body:"['"+tempInstance.DamageType+"','sb.DamageTypes']"});
+		let tempDisplayType = tempRequest.text;
+		let tempTypeName = tempInstance.Name;
+
+		if(!PriorDamageTypes.includes(tempTypeName)){
+			PriorDamageTypes = PriorDamageTypes.push(tempTypeName);
+			PriorDamageTypeOptions = PriorDamageTypeOptions + "<option value='"+tempTypeName+"'>"+tempDisplayType+"</option>";
+		}		
+	}	
+
+	document.getElementById("DamageSet"+damageTypeNumber).innerHTML = "<th text-align='center' colspan='2'>Deal <select id='DamageType"+damageTypeNumber+"' name='DamageType"+damageTypeNumber+"'> Damage <input type='number' id='PriorDamageModifier"+damageTypeNumber+"' name='PriorDamageModifier"+damageTypeNumber+"' min=0 max=100 style='width:30px'>% of the <select id='PriorDamageType"+damageTypeNumber+"' name='PriorDamageType"+damageTypeNumber+"'>"+PriorDamageTypeOptions+"</select> Damage Dealt in the Linked Effect, <b>OR</b> <input type='button' id='switchToIndependentDamage' name='switchToIndependentDamage' value='Indepenent Damage' onclick='switchToIndependentDamage("+damageTypeNumber+")'>";
+}
+
+function switchToIndependentDamage(damageTypeNumber){
+	let damageTypeOptions = generateDamageTypeOptions();
+	let UsePriorDamageButton = " <b>OR</b> <input type='button' id='switchToPriorDamage' name='switchToPriorDamage' value='Based On Prior Damage' onclick='switchToPriorDamage("+damageTypeNumber+")'>";
+	let newInnerHTML = generateDamageRowText(damageTypeNumber,damageTypeOptions,UsePriorDamageButton);
+
+	document.getElementById("DamageSet"+damageTypeNumber).innerHTML = newInnerHTML;
 }
 
 async function removeDamageTypeRows(){

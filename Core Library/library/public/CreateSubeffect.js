@@ -237,7 +237,8 @@ async function addDamageTypeRows(){
 	damageTypeNumber++;
 	document.getElementById("differentTypes").value = damageTypeNumber;
 
-	let damageTypeOptions = generateDamageTypeOptions();
+	let damageTypeOptions = await generateDamageTypeOptions();
+
 	damageTypeOptions = damageTypeOptions + "<option value='Multiple Options'>Multiple Options</option>";
 
 	let UsePriorDamageButton = "";
@@ -248,7 +249,8 @@ async function addDamageTypeRows(){
 			let ParentSubeffectHasDamage = Object.keys(ParentSubeffect).includes("Damage");
 
 			if(ParentSubeffectHasDamage){
-				UsePriorDamageButton = " <b>OR</b> <input type='button' id='switchToPriorDamage' name='switchToPriorDamage' value='Based On Prior Damage' onclick='switchToPriorDamage("+damageTypeNumber+")'>";
+				console.log(damageTypeNumber);
+				UsePriorDamageButton = " <b>OR</b> <input type='button' id='PriorDamageButton' name='PriorDamageButton' value='Base On Prior Damage' onclick='switchToPriorDamage(1)'>";
 			}			
 		}
 	}
@@ -299,8 +301,7 @@ async function generateDamageTypeOptions(){
 }
 
 async function switchToPriorDamage(damageTypeNumber){
-	let damageTypeOptions = generateDamageTypeOptions();
-
+	let damageTypeOptions = await generateDamageTypeOptions();
 	let ParentSubeffect = getLinkedSubeffect();
 	let ParentSubeffectDamage = ParentSubeffect.Damage;
 	let PriorDamageTypes = [];
@@ -308,21 +309,21 @@ async function switchToPriorDamage(damageTypeNumber){
 
 	for(let tempInstance of ParentSubeffectDamage){
 		let tempRequest = await fetch("macro:pm.GetDisplayName@lib:pm.a5e.Core",{method:"POST",body:"['"+tempInstance.DamageType+"','sb.DamageTypes']"});
-		let tempDisplayType = tempRequest.text;
+		let tempDisplayType = await tempRequest.text();
 		let tempTypeName = tempInstance.Name;
 
-		if(!PriorDamageTypes.includes(tempTypeName)){
+		if(PriorDamageTypes.includes(tempTypeName) == false){
 			PriorDamageTypes = PriorDamageTypes.push(tempTypeName);
 			PriorDamageTypeOptions = PriorDamageTypeOptions + "<option value='"+tempTypeName+"'>"+tempDisplayType+"</option>";
-		}		
-	}	
+		}
+	}
 
-	document.getElementById("DamageSet"+damageTypeNumber).innerHTML = "<th text-align='center' colspan='2'>Deal <select id='DamageType"+damageTypeNumber+"' name='DamageType"+damageTypeNumber+"'> Damage <input type='number' id='PriorDamageModifier"+damageTypeNumber+"' name='PriorDamageModifier"+damageTypeNumber+"' min=0 max=100 style='width:30px'>% of the <select id='PriorDamageType"+damageTypeNumber+"' name='PriorDamageType"+damageTypeNumber+"'>"+PriorDamageTypeOptions+"</select> Damage Dealt in the Linked Effect, <b>OR</b> <input type='button' id='switchToIndependentDamage' name='switchToIndependentDamage' value='Indepenent Damage' onclick='switchToIndependentDamage("+damageTypeNumber+")'>";
+	document.getElementById("DamageSet"+damageTypeNumber).innerHTML = "<th text-align='center' colspan='2'> <input type='number' id='PriorDamageModifier"+damageTypeNumber+"' name='PriorDamageModifier"+damageTypeNumber+"' min=0 max=100 style='width:30px' value=100>% of the <select id='PriorDamageType"+damageTypeNumber+"' name='PriorDamageType"+damageTypeNumber+"'>"+PriorDamageTypeOptions+"</select> Damage dealt as <select id='DamageType"+damageTypeNumber+"' name='DamageType"+damageTypeNumber+"'>"+damageTypeOptions+"</select> Damage, <b>OR</b> <input type='button' id='IndependentDamageButton' name='IndependentDamageButton' value='Indepenent Damage' onclick='switchToIndependentDamage("+damageTypeNumber+")'>";
 }
 
-function switchToIndependentDamage(damageTypeNumber){
-	let damageTypeOptions = generateDamageTypeOptions();
-	let UsePriorDamageButton = " <b>OR</b> <input type='button' id='switchToPriorDamage' name='switchToPriorDamage' value='Based On Prior Damage' onclick='switchToPriorDamage("+damageTypeNumber+")'>";
+async function switchToIndependentDamage(damageTypeNumber){
+	let damageTypeOptions = await generateDamageTypeOptions();
+	let UsePriorDamageButton = " <b>OR</b> <input type='button' id='PriorDamageButton' name='PriorDamageButton' value='Base On Prior Damage' onclick='switchToPriorDamage("+damageTypeNumber+")'>";
 	let newInnerHTML = generateDamageRowText(damageTypeNumber,damageTypeOptions,UsePriorDamageButton);
 
 	document.getElementById("DamageSet"+damageTypeNumber).innerHTML = newInnerHTML;

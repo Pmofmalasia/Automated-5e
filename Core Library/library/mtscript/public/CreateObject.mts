@@ -1,7 +1,11 @@
 [h:ObjectTypeSelection = ut.a5e.GenerateSelectionHTML(pm.a5e.GetCoreData("sb.ObjectTypes"))]
 [h:ObjectMaterialMultiselection = ut.a5e.GenerateSelectionHTML(pm.a5e.GetCoreData("sb.ObjectMaterials"),1,"objectMaterial","createChooseMainMaterialRows")]
 [h:ObjectMaterialSelection = ut.a5e.GenerateSelectionHTML(pm.a5e.GetCoreData("sb.ObjectMaterials"))]
-[h:ObjectMaterialTagMultiselection = ut.a5e.GenerateSelectionHTML(pm.a5e.GetCoreData("sb.MaterialTags"),1,"objectMaterialTag")]
+
+[h:MaterialTags = pm.a5e.GetCoreData("sb.MaterialTags")]
+[h:ObjectTags = pm.a5e.GetCoreData("sb.ObjectTags")]
+[h:AllTags = json.sort(json.merge(MaterialTags,ObjectTags),"a","DisplayName")]
+[h:ObjectMaterialTagMultiselection = ut.a5e.GenerateSelectionHTML(AllTags,1,"objectMaterialTag")]
 
 [h:allSourcebooks = pm.GetBookInfo()]
 [h:sourcebookOptions = ""]
@@ -23,7 +27,7 @@
 
 <tr id='rowCost'><th><label for='Cost'>Cost:</label></th><td><input type='number' id='Cost' name='Cost' value=0 min=0 style='width:35px'><select id='CostUnits' name='CostUnits'><option value='Copper'>Copper</option><option value='Silver'>Silver</option><option value='Gold' selected>Gold</option><option value='Platinum'>Platinum</option></select></td></tr>
 
-<tr id='rowWeight'><th><label for='Weight'>Weight:</label></th><td><input type='number' id='Weight' name='Weight' value=0 min=0 style='width:35px'></td></tr>
+<tr id='rowWeight'><th><label for='Weight'>Weight:</label></th><td><input type='number' id='Weight' name='Weight' value=0 min=0 style='width:35px'> lbs.</td></tr>
 
 <tr id='rowIsMagical'><th><label for='isMagical'>Object is a Magic Item?</label></th><td><input type='checkbox' id='isMagical' name='isMagical' onchange='createMagicItemRows()'></td></tr>
 

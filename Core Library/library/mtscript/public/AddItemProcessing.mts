@@ -14,6 +14,8 @@
 	[h,if(json.get(AddItemData,"isWearable")==1): ChosenItem = json.set(ChosenItem,"isWorn",0)]
 }]
 
+[h,if(json.contains(AddItemData,"isAttunement")): ChosenItem = json.set(ChosenItem,"AttunedTo","")]
+
 [h:newEntryTest = 1]
 [h:StackingTest = json.get(ChosenItem,"isStackable")]
 [h,if(StackingTest),CODE:{

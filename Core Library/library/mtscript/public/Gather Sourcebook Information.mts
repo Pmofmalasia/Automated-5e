@@ -34,6 +34,7 @@
 [h:pm.ArmorTypes = ""]
 [h:pm.ArmorTags = ""]
 [h:pm.ShieldTypes = ""]
+[h:pm.AmmunitionTypes = ""]
 [h:pm.ArmorProperties = ""]
 [h:pm.SpellLists = "{}"]
 [h:"<!-- Since languages may be setting specific, may want to add a function for DMs to exclude languages from certain sourcebooks. Can use this macro as the gate for blocking those books. -->"]
@@ -72,6 +73,7 @@
 	[h,if(getLibProperty("sb.WeaponTags","Lib:"+book)!=""): pm.WeaponTags = json.merge(pm.WeaponTags,getLibProperty("sb.WeaponTags","Lib:"+book))]
 	[h,if(getLibProperty("sb.ArmorTypes","Lib:"+book)!=""): pm.ArmorTypes = json.merge(pm.ArmorTypes,getLibProperty("sb.ArmorTypes","Lib:"+book))]
 	[h,if(getLibProperty("sb.ShieldTypes","Lib:"+book)!=""): pm.ShieldTypes = json.merge(pm.ShieldTypes,getLibProperty("sb.ShieldTypes","Lib:"+book))]
+	[h,if(getLibProperty("sb.AmmunitionTypes","Lib:"+book)!=""): pm.AmmunitionTypes = json.merge(pm.AmmunitionTypes,getLibProperty("sb.AmmunitionTypes","Lib:"+book))]
 	[h,if(getLibProperty("sb.ArmorProperties","Lib:"+book)!=""): pm.ArmorProperties = json.merge(pm.ArmorProperties,getLibProperty("sb.ArmorProperties","Lib:"+book))]
 	[h,if(getLibProperty("sb.ArmorTags","Lib:"+book)!=""): pm.ArmorTags = json.merge(pm.ArmorTags,getLibProperty("sb.ArmorTags","Lib:"+book))]
 	[h:thisBookSpellLists = getLibProperty("sb.SpellLists","Lib:"+book)]
@@ -122,6 +124,7 @@
 [h:setLibProperty("sb.ArmorTypes",json.sort(pm.ArmorTypes,"a","DisplayName"),"Lib:pm.a5e.Core")]
 [h:setLibProperty("sb.ArmorTags",json.sort(pm.ArmorTags,"a","DisplayName"),"Lib:pm.a5e.Core")]
 [h:setLibProperty("sb.ShieldTypes",json.sort(pm.ShieldTypes,"a","DisplayName"),"Lib:pm.a5e.Core")]
+[h:setLibProperty("sb.AmmunitionTypes",json.sort(pm.AmmunitionTypes,"a","DisplayName"),"Lib:pm.a5e.Core")]
 [h:setLibProperty("sb.ArmorProperties",json.sort(pm.ArmorProperties,"a","DisplayName"),"Lib:pm.a5e.Core")]
 [h:setLibProperty("sb.SpellLists",pm.SpellLists,"Lib:pm.a5e.Core")]
 

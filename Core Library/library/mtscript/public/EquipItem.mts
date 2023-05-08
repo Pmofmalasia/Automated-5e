@@ -23,7 +23,7 @@
 [h:AllShields = json.path.read(CurrentInventory,"[*][?(@.Type == 'Shield')]")]
 [h:AllFoci = json.path.read(CurrentInventory,"[*][?(@.Type == 'CastingFocus')]")]
 [h:AllTools = json.path.read(CurrentInventory,"[*][?(@.Type == 'Tool')]")]
-[h:AllWearables = json.path.read(CurrentInventory,"[*][?(@.isWearable == 1 && @.Type != 'Armor')]")]
+[h:AllWearables = json.path.read(CurrentInventory,"[*][?(@.isWearable == 1 && @.Type != 'Armor' && @.Type != 'Weapon')]")]
 
 [h:"<!-- Will need to add a check for if it should use false name or not -->"]
 [h:ArmorSelection = "<option value=''>None</option>"]
@@ -43,12 +43,12 @@
 
 [h:EquipItemHTML = "<input type='hidden' name='ParentToken' id='ParentToken' value='"+ParentToken+"'><input type='hidden' name='LimbNumber' id='LimbNumber' value='"+json.length(UsableLimbs)+"'>
 
-<tr id='rowArmorChoice'><th>Armor:</th><td><select id='ArmorChoice' name='ArmorChoice'>"+ArmorSelection+"</select></td></tr>"]
+<tr id='rowArmorChoice'><th>Armor:</th><td><select id='ArmorChoice' name='ArmorChoice' value='"+getProperty("a5e.stat.EquippedArmor")+"'>"+ArmorSelection+"</select></td></tr>"]
 
 [h:AllHeldItemOptions = "<option value=''>Empty</option>" + WeaponSelection + ShieldSelection + FociSelection + ToolSelection]
-[h:"<!-- TODO: Add currently equipped items when structure of equipped items is decided -->"]
+[h:CurrentHeldItems = getProperty("a5e.stat.HeldItems")]
 [h,foreach(limb,UsableLimbs),CODE:{
-	[h:EquipItemHTML = EquipItemHTML + "<tr id='rowLimb"+roll.count+"Choice'><th>"+json.get(limb,"DisplayName")+":</th><td><select id='Limb"+roll.count+"Choice' name='Limb"+roll.count+"Choice'>"+AllHeldItemOptions+"</select></td></tr>"]
+	[h:EquipItemHTML = EquipItemHTML + "<tr id='rowLimb"+roll.count+"Choice'><th>"+json.get(limb,"DisplayName")+":</th><td><select id='Limb"+roll.count+"Choice' name='Limb"+roll.count+"Choice' value='"+json.get(CurrentHeldItems,roll.count)+"'>"+AllHeldItemOptions+"</select></td></tr>"]
 }]
 
 [h:AllAttunement = json.path.read(CurrentInventory,"[*][?(@.isAttunement == 1)]")]
@@ -61,7 +61,7 @@
 
 [h:"<!-- Add input for worn items here -->"]
 
-[h:EquipItemHTML = EquipItemHTML + "<tr id='rowWornItemsHeader name='rowWornItemsHeader'><th text-align='center' colspan='2'>Other Worn Items</th></tr>"]
+[h,if(!json.isEmpty(AllWearables)): EquipItemHTML = EquipItemHTML + "<tr id='rowWornItemsHeader name='rowWornItemsHeader'><th text-align='center' colspan='2'>Other Worn Items</th></tr>"]
 
 [h,foreach(wearableItem,AllWearables): EquipItemHTML = EquipItemHTML + "<tr id='rowWearableChoice"+json.get(wearableItem,"ItemID")+"'><th>Wear "+json.get(wearableItem,"DisplayName")+":</th><td><input type='checkbox' name='WearableChoice"+json.get(wearableItem,"ItemID")+" id='WearableChoice"+json.get(wearableItem,"ItemID")+"'"+if(json.get(wearableItem,"isWorn")==1," checked","")+"></td></tr>"]
 

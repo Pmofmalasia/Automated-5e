@@ -2,21 +2,22 @@
 [h:objectData = pm.a5e.KeyStringsToNumbers(objectData)]
 [h:ObjectName = pm.RemoveSpecial(json.get(objectData,"DisplayName"))]
 [h:objectData = json.set(objectData,"Name",ObjectName)]
+[h:objectType = json.get(objectData,"Type")]
 [h:newTemplateTest = 0]
 
-[h,if(json.get(objectData,"Type")=="Weapon"),CODE:{
-	[h,if(json.contains(objectData,"isNewWeaponTemplate")),CODE:{
-		[h:newTemplateTest = 1]
-		[h:newTemplateDisplayName = json.get(objectData,"NewWeaponTypeName")]
-		[h:newTemplateName = pm.RemoveSpecial(newTemplateDisplayName)]
-		[h:objectData = json.set(objectData,"WeaponType",newTemplateName)]
-		[h:objectData = json.remove(objectData,"NewWeaponTypeName")]
-		[h:objectData = json.remove(objectData,"isNewWeaponTemplate")]
-	};{
-		[h,if(json.get(objectData,"WeaponType")=="@@NewType"): objectData = json.set(objectData,"WeaponType",pm.RemoveSpecial(json.get(objectData,"NewWeaponTypeName")))]
-		[h:objectData = json.remove(objectData,"NewWeaponTypeName")]
-	}]
+[h,if(json.contains(objectData,"isNewTemplate")),CODE:{
+	[h:newTemplateTest = 1]
+	[h:newTemplateDisplayName = json.get(objectData,"NewTypeName")]
+	[h:newTemplateName = pm.RemoveSpecial(newTemplateDisplayName)]
+	[h:objectData = json.set(objectData,objectType+"Type",newTemplateName)]
+	[h:objectData = json.remove(objectData,"NewTypeName")]
+	[h:objectData = json.remove(objectData,"isNewTemplate")]
+};{
+	[h,if(json.get(objectData,objectType+"Type")=="@@NewType"): objectData = json.set(objectData,objectType+"Type",pm.RemoveSpecial(json.get(objectData,"NewTypeName")))]
+	[h:objectData = json.remove(objectData,"NewTypeName")]
+}]
 
+[h,if(objectType=="Weapon"),CODE:{
 	[h:allWeaponTags = pm.a5e.GetCoreData("sb.WeaponTags","Name","json")]
 	[h:ChosenWeaponTagsArray = "[]"]
 	[h,foreach(tempTag,allWeaponTags),CODE:{
@@ -34,7 +35,7 @@
 	[h:objectData = json.set(objectData,"WeaponProperties",ChosenWeaponPropertiesArray)]
 
 	[h:allWeaponDamage = "[]"]
-	[h,count(json.get(objectData,"weaponDamageInstanceNumber")),CODE:{
+	[h,count(json.get(objectData,"WeaponDamageInstanceNumber")),CODE:{
 		[h:thisDamageObject = json.set("",
 			"DamageType",json.get(objectData,"WeaponDamageType"+roll.count),
 			"DamageDieNumber",number(json.get(objectData,"WeaponDamageDieNumber"+roll.count)),
@@ -60,10 +61,53 @@
 	[h:objectData = json.remove(objectData,"WeaponCritThreshMethod")]
 
 	[h:objectData = json.set(objectData,"WeaponDamage",allWeaponDamage)]
-	[h:objectData = json.remove(objectData,"weaponDamageInstanceNumber")]
+	[h:objectData = json.remove(objectData,"WeaponDamageInstanceNumber")]
 	[h:objectData = json.remove(objectData,"addDamageType")]
 	[h:objectData = json.remove(objectData,"removeDamageType")]
 };{}]
+
+[h,if(objectType=="Ammunition"),CODE:{
+	[h:allAmmunitionDamage = "[]"]
+	[h,count(json.get(objectData,"AmmunitionDamageInstanceNumber")),CODE:{
+		[h:thisDamageObject = json.set("",
+			"DamageType",json.get(objectData,"AmmunitionDamageType"+roll.count),
+			"DamageDieNumber",number(json.get(objectData,"AmmunitionDamageDieNumber"+roll.count)),
+			"DamageDieSize",number(json.get(objectData,"AmmunitionDamageDieSize"+roll.count)),
+			"DamageFlatBonus",json.get(objectData,"AmmunitionDamageBonus"+roll.count),
+			"IsModBonus",json.contains(objectData,"AmmunitionAddDmgMod"+roll.count)
+		)]
+
+		[h:allAmmunitionDamage = json.append(allAmmunitionDamage,thisDamageObject)]
+
+		[h:objectData = json.remove(objectData,"AmmunitionDamageType"+roll.count)]
+		[h:objectData = json.remove(objectData,"AmmunitionDamageDieNumber"+roll.count)]
+		[h:objectData = json.remove(objectData,"AmmunitionDamageDieSize"+roll.count)]
+		[h:objectData = json.remove(objectData,"AmmunitionDamageBonus"+roll.count)]
+		[h:objectData = json.remove(objectData,"AmmunitionAddDmgMod"+roll.count)]
+	}]
+	[h:objectData = json.set(objectData,"AmmunitionDamage",allAmmunitionDamage)]
+	[h:objectData = json.remove(objectData,"AmmunitionDamageInstanceNumber")]
+}]
+
+[h,if(objectType=="Armor" || objectType=="Shield"),CODE:{
+	[h:objectData = json.set(objectData,"BaseAC",json.get(objectData,"ArmorBaseAC"))]
+	[h:objectData = json.remove(objectData,"ArmorBaseAC")]
+
+	[h:objectData = json.set(objectData,
+		"isDexterityCap",!json.contains(objectData,"ArmorNoDexCap"),
+		"isStrengthRequirement",!json.contains(objectData,"ArmorNoStrengthReq"),
+		"isStealthDisadvantage",json.contains(objectData,"ArmorStealthDisadvantage")
+	)]
+
+	[h,if(!json.contains(objectData,"ArmorNoDexCap")): objectData = json.set(objectData,"DexterityCap",json.get(objectData,"ArmorDexCap"))]
+	[h,if(!json.contains(objectData,"ArmorNoStrengthReq")): objectData = json.set(objectData,"StrengthRequirement",json.get(objectData,"ArmorStrengthReq"))]
+	
+	[h:objectData = json.remove(objectData,"ArmorNoDexCap")]
+	[h:objectData = json.remove(objectData,"ArmorNoStrengthReq")]
+	[h:objectData = json.remove(objectData,"ArmorStealthDisadvantage")]
+	[h:objectData = json.remove(objectData,"ArmorDexCap")]
+	[h:objectData = json.remove(objectData,"ArmorStrengthReq")]
+}]
 
 [h:objectData = json.set(objectData,"isMagical",json.contains(objectData,"isMagical"))]
 [h,if(json.get(objectData,"isMagical")),CODE:{
@@ -107,19 +151,36 @@
 	"isWearable",json.contains(objectData,"isWearable"),
 	"isFlammable",json.contains(objectData,"isFlammable"),
 	"isMagnetic",json.contains(objectData,"isMagnetic"),
-	"isStackable",json.contains(objectData,"isStackable")
+	"isStackable",json.contains(objectData,"isStackable"),
+	"isConsumable",json.contains(objectData,"isConsumable")
 )]
+
+[h:MaterialTags = pm.a5e.GetCoreData("sb.MaterialTags")]
+[h:ObjectTags = pm.a5e.GetCoreData("sb.ObjectTags")]
+[h:AllTags = json.sort(json.merge(MaterialTags,ObjectTags),"a","DisplayName")]
+[h:ChosenTags = "[]"]
+[h,foreach(tag,AllTags),CODE:{
+	[h:tempName = json.get(tag,"Name")]
+	[h:isChosenTest = json.contains(objectData,"objectMaterialTag"+tempName)]
+	[h,if(isChosenTest),CODE:{
+		[h:ChosenTags = json.append(ChosenTags,tempName)]
+		[h:objectData = json.remove(objectData,"objectMaterialTag"+tempName)]
+	}]	
+}]
+[h:objectData = json.set(objectData,"ObjectTags",ChosenTags)]
 
 [h:closeDialog("ObjectCreation")]
 [h,if(!json.contains(objectData,"HasPassiveEffects") && !json.contains(objectData,"HasActiveEffects")),CODE:{
 	[h,if(newTemplateTest),CODE:{
-		[h:setLibProperty("sb."+json.get(objectData,"Type")+"Types",json.append(getLibProperty("sb."+json.get(objectData,"Type")+"Types","Lib:"+json.get(objectData,"Library")),objectData),"Lib:"+json.get(objectData,"Library"))]
+		[h:setLibProperty("sb."+objectType+"Types",json.append(getLibProperty("sb."+objectType+"Types","Lib:"+json.get(objectData,"Library")),objectData),"Lib:"+json.get(objectData,"Library"))]
 	};{}]
 
-	[h:ObjectID = encode(json.get(objectData,"Name"))+eval(d1000000)]
+	[h:ObjectID = base64.encode(json.get(objectData,"Name"))+eval("1d1000000")]
 	[h:objectData = json.set(objectData,"ObjectID",ObjectID)]
 
 	[h:setLibProperty("sb.Objects",json.append(getLibProperty("sb.Objects","Lib:"+json.get(objectData,"Library")),objectData),"Lib:"+json.get(objectData,"Library"))]
+
+	[h:broadcast("Object "+json.get(objectData,"DisplayName")+" has been created.")]
 };{
 	[h,if(json.contains(objectData,"HasPassiveEffects")),CODE:{
 		[h:"<!-- Shuttle data to CreatePassiveEffect here (or create feature core) -->"]

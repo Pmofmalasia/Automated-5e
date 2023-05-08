@@ -1,8 +1,9 @@
 async function createObjectSubtypeRows(){
 	clearUnusedTable("CreateObjectTable","rowObjectType","rowSize");
 	let nextRowIndex = document.getElementById("rowObjectType").rowIndex+1;
+	let ObjectType = document.getElementById("Type").value;
 
-	if(document.getElementById("Type").value == "Weapon"){
+	if(ObjectType == "Weapon"){
 		document.getElementById("isWearable").setAttribute("checked","");
 
 		let request = await fetch("macro:pm.a5e.GetCoreData@lib:pm.a5e.Core", {method: "POST", body: "['sb.WeaponTypes']"});
@@ -47,26 +48,26 @@ async function createObjectSubtypeRows(){
 		addTableRow("CreateObjectTable",nextRowIndex,"rowWeaponProperties","<th>Weapon Properties:</th><td><div class='check-multiple' style='width:100%'>"+WeaponPropertyOptions+"</div></td>");
 		nextRowIndex++;
 
-		addTableRow("CreateObjectTable",nextRowIndex,"rowWeaponDamageHeader","<th text-align='center' colspan='2'>Weapon Damage:<input type='hidden' id='weaponDamageInstanceNumber' name='weaponDamageInstanceNumber' value=0></th>");
+		addTableRow("CreateObjectTable",nextRowIndex,"rowWeaponDamageHeader","<th text-align='center' colspan='2'>Weapon Damage:<input type='hidden' id='WeaponDamageInstanceNumber' name='WeaponDamageInstanceNumber' value=0></th>");
 		nextRowIndex++;
 
-		await addWeaponDamageTypeRows();
+		await addDamageTypeRows("Weapon");
 		nextRowIndex++;
 
-		addTableRow("CreateObjectTable",nextRowIndex,"rowWeaponAddDamageInstanceButtons","<th text-align='center' colspan='2'><input type='button' id='addDamageType' name='addDamageType' value='Add Type' onclick='addWeaponDamageTypeRows()'>  <input type='button' id='removeDamageType' name='removeDamageType' value='Remove Type' onclick='removeWeaponDamageTypeRows()'></th>");
+		addTableRow("CreateObjectTable",nextRowIndex,"rowWeaponAddDamageInstanceButtons","<th text-align='center' colspan='2'><input type='button' id='addDamageType' name='addDamageType' value='Add Type' onclick='addDamageTypeRows("+'"Weapon"'+")'>  <input type='button' id='removeDamageType' name='removeDamageType' value='Remove Type' onclick='removeWeaponDamageTypeRows("+'"Weapon"'+")'></th>");
 		nextRowIndex++;
 
-		addTableRow("CreateObjectTable",nextRowIndex,"rowWeaponMagicBonus","<th><label for='WeaponMagicBonus'>Magic Bonus:</label></th><td>+ <input type='number' id='WeaponMagicBonus' name='WeaponMagicBonus' min='0' value='0' style='width:25px' onchange='weaponMagicBonusChanges()'></td>");
+		addTableRow("CreateObjectTable",nextRowIndex,"rowMagicBonus","<th><label for='MagicBonus'>Magic Bonus:</label></th><td>+ <input type='number' id='MagicBonus' name='MagicBonus' min='0' value='0' style='width:25px' onchange='MagicBonusChanges()'></td>");
 		nextRowIndex++;
 
 		addTableRow("CreateObjectTable",nextRowIndex,"rowWeaponCritThresh","<th><label for='WeaponCritThresh'>Critical Threshhold:</label></th><td><input type='number' id='WeaponCritThresh' name='WeaponCritThresh' max='20' min='0' value='20'><select id='WeaponCritThreshMethod' name='WeaponCritThreshMethod'><option value='Set'>Set to Value</option><option value='Reduce'>Reduce by Value</option></select></td>");
 		nextRowIndex++;
 	}
-	else if(document.getElementById("Type").value == "Armor" || document.getElementById("Type").value == "Shield"){
+	else if(ObjectType == "Armor" || ObjectType == "Shield"){
 		document.getElementById("isWearable").setAttribute("checked","");
 
 		let allArmorTypes = "";
-		if(document.getElementById("Type").value == "Armor"){
+		if(ObjectType == "Armor"){
 			addTableRow("CreateObjectTable",nextRowIndex,"rowArmorTier","<th><label for='ArmorTier'>Armor Tier:</label></th><td><select id='ArmorTier' name='ArmorTier' onchange='armorTierSelectionChanges()'><option value='Light'>Light</option><option value='Medium'>Medium</option><option value='Heavy'>Heavy</option></select></td>");
 			nextRowIndex++;
 
@@ -83,8 +84,14 @@ async function createObjectSubtypeRows(){
 			ArmorTypeOptions = ArmorTypeOptions + "<option value='"+tempArmorType.Name+"'>"+tempArmorType.DisplayName+"</option>";
 		}
 
-		addTableRow("CreateObjectTable",nextRowIndex,"rowArmorType","<th><label for='ArmorType'>Armor Type:</label></th><td><select id='ArmorType' name='ArmorType' onchange='createArmorTypeRows()'>"+ArmorTypeOptions+"<option value='@@NewType'>New Type</option></select></td>");
+		addTableRow("CreateObjectTable",nextRowIndex,"rowArmorType","<th><label for='ArmorType'>Armor Type:</label></th><td><select id='ArmorType' name='ArmorType' onchange='createArmorTypeRows("+'"'+ObjectType+'"'+")'>"+ArmorTypeOptions+"<option value='@@NewType'>New Type</option></select></td>");
 		nextRowIndex++;
+
+		if(document.getElementById("ArmorType").value == "@@NewType"){
+			createArmorTypeRows(ObjectType);
+			nextRowIndex++;
+			nextRowIndex++;
+		}
 
 		addTableRow("CreateObjectTable",nextRowIndex,"rowArmorBaseAC","<th><label for='ArmorBaseAC'>Base AC:</label></th><td><input type='number' id='ArmorBaseAC' name='ArmorBaseAC' min='0' value='11' style='width:25px'></td>");
 		nextRowIndex++;
@@ -97,30 +104,290 @@ async function createObjectSubtypeRows(){
 
 		addTableRow("CreateObjectTable",nextRowIndex,"rowArmorStealthDisadvantage","<th><label for='ArmorStealthDisadvantage'>Causes Stealth Disadvantage:</label></th><td><input type='checkbox' id='ArmorStealthDisadvantage' name='ArmorStealthDisadvantage'></td>");
 		nextRowIndex++;
+
+		addTableRow("CreateObjectTable",nextRowIndex,"rowMagicBonus","<th><label for='MagicBonus'>Magic Bonus:</label></th><td>+ <input type='number' id='MagicBonus' name='MagicBonus' min='0' value='0' style='width:25px' onchange='MagicBonusChanges()'></td>");
+		nextRowIndex++;
 	}
-	else if(document.getElementById("Type").value == "Ammunition"){
+	else if(ObjectType == "Ammunition"){
+		document.getElementById("isWearable").setAttribute("checked","");
+		
+		let request = await fetch("macro:pm.a5e.GetCoreData@lib:pm.a5e.Core", {method: "POST", body: "['sb.AmmunitionTypes']"});
+		let allAmmunitionTypes = await request.json();
+
+		let AmmunitionTypeOptions = "";
+		for(let tempAmmunitionType of allAmmunitionTypes){
+			AmmunitionTypeOptions = AmmunitionTypeOptions + "<option value='"+tempAmmunitionType.Name+"'>"+tempAmmunitionType.DisplayName+"</option>";
+		}
+
+		addTableRow("CreateObjectTable",nextRowIndex,"rowAmmunitionType","<th><label for='AmmunitionType'>Ammunition Type:</label></th><td><select id='AmmunitionType' name='AmmunitionType' onchange='createAmmunitionTypeRows()'><option value='@@NewType'>New Type</option>"+AmmunitionTypeOptions+"</select></td>");
+		nextRowIndex++;
+		
+		if(document.getElementById("AmmunitionType").value == "@@NewType"){
+			createAmmunitionTypeRows();
+			nextRowIndex++;
+			nextRowIndex++;
+		}
+
+		addTableRow("CreateObjectTable",nextRowIndex,"rowAmmunitionDamageHeader","<th text-align='center' colspan='2'>Additional Damage:<input type='hidden' id='AmmunitionDamageInstanceNumber' name='AmmunitionDamageInstanceNumber' value=0></th>");
+		nextRowIndex++;
+
+		addTableRow("CreateObjectTable",nextRowIndex,"rowAmmunitionAddDamageInstanceButtons","<th text-align='center' colspan='2'><input type='button' id='addDamageType' name='addDamageType' value='Add Type' onclick='addDamageTypeRows("+'"Ammunition"'+")'>  <input type='button' id='removeDamageType' name='removeDamageType' value='Remove Type' onclick='removeAmmunitionDamageTypeRows("+'"Ammunition"'+")'></th>");
+		nextRowIndex++;
+
+		addTableRow("CreateObjectTable",nextRowIndex,"rowMagicBonus","<th><label for='MagicBonus'>Magic Bonus:</label></th><td>+ <input type='number' id='MagicBonus' name='MagicBonus' min='0' value='0' style='width:25px' onchange='MagicBonusChanges()'></td>");
+		nextRowIndex++;
+	}
+	else if(ObjectType == "CastingFocus"){
 		document.getElementById("isWearable").setAttribute("checked","");
 	}
-	else if(document.getElementById("Type").value == "CastingFocus"){
-		document.getElementById("isWearable").setAttribute("checked","");
-	}
-	else if(document.getElementById("Type").value == "Container"){
+	else if(ObjectType == "Container"){
 		document.getElementById("isWearable").removeAttribute("checked","");
 	}
-	else if(document.getElementById("Type").value == "Hazard" || document.getElementById("Type").value == "Trap"){
+	else if(ObjectType == "Hazard" || ObjectType == "Trap"){
 		document.getElementById("isWearable").removeAttribute("checked","");
 	}
-	else if(document.getElementById("Type").value == "Potion"){
+	else if(ObjectType == "Potion"){
 		document.getElementById("isWearable").removeAttribute("checked","");
 	}
-	else if(document.getElementById("Type").value == "Scroll"){
+	else if(ObjectType == "Scroll"){
 		document.getElementById("isWearable").removeAttribute("checked","");
 	}
-	else if(document.getElementById("Type").value == "Tool"){
+	else if(ObjectType == "Tool"){
 		document.getElementById("isWearable").removeAttribute("checked","");
 	}
-	else if(document.getElementById("Type").value == "Vehicle"){
+	else if(ObjectType == "Vehicle"){
 		document.getElementById("isWearable").removeAttribute("checked","");
+	}
+}
+
+function updateWithTemplateData(TemplateData){
+	if(TemplateData.Size != null){document.getElementById("Size").value = TemplateData.Size;}
+
+	if(TemplateData.Rarity != null){document.getElementById("Rarity").value = TemplateData.Rarity;}
+
+	if(TemplateData.Cost != null){document.getElementById("Cost").value = TemplateData.Cost;}
+
+	if(TemplateData.CostUnits != null){document.getElementById("CostUnits").value = TemplateData.CostUnits;}
+
+	if(TemplateData.Weight != null){document.getElementById("Weight").value = TemplateData.Weight;}
+
+	let TemplateIsMagical = TemplateData.isMagical;
+	if(TemplateIsMagical != null){
+		if(TemplateIsMagical == 1){
+			document.getElementById("isMagical").setAttribute("checked","");
+			document.getElementById("isMagical").dispatchEvent(new Event('change'));
+
+			if(TemplateData.isAttunement == 1){
+				document.getElementById("isAttunement").setAttribute("checked","");
+			}
+			else{
+				document.getElementById("isAttunement").removeAttribute("checked","");
+			}
+			
+			if(TemplateData.isSentient == 1){
+				document.getElementById("isSentient").setAttribute("checked","");
+				document.getElementById("isSentient").dispatchEvent(new Event('change'));
+				//TODO: Add sentient item data population once it has been added to the processing function
+			}
+			else{
+				document.getElementById("isSentient").removeAttribute("checked","");
+				document.getElementById("isSentient").dispatchEvent(new Event('change'));
+			}
+			
+			if(TemplateData.isCursed == 1){
+				document.getElementById("isCursed").setAttribute("checked","");
+			}
+			else{
+				document.getElementById("isCursed").removeAttribute("checked","");
+			}
+		}
+	}
+
+	if(TemplateData.MaxResource != null){
+		document.getElementById("isCharges").setAttribute("checked","");
+		document.getElementById("isCharges").dispatchEvent(new Event('change'));
+
+		document.getElementById("MaxResource").value = TemplateData.MaxResource;
+
+		let RestoreInstances = new Array("ShortRest","LongRest","Dawn","StartTurn","Initiative");
+		for(let tempInstance of RestoreInstances){
+			if(TemplateData["Restore"+tempInstance] != null){
+				document.getElementById("Restore"+tempInstance).setAttribute("checked","");
+			}
+			else{
+				document.getElementById("Restore"+tempInstance).removeAttribute("checked","");
+			}
+		}
+		
+		let templateRestoreMethod = TemplateData.RestoreMethod;
+		document.getElementById("RestoreMethod").value = templateRestoreMethod;
+		document.getElementById("RestoreMethod").dispatchEvent(new Event('change'));
+
+		if(templateRestoreMethod == "Fixed"){
+			document.getElementById("RestoreAmount").value = TemplateData.RestoreAmount;
+		}
+		else if(templateRestoreMethod == "Rolled"){
+			document.getElementById("RestoreAmountDieNumber").value = TemplateData.RestoreAmountDieNumber;
+			document.getElementById("RestoreAmountDieSize").value = TemplateData.RestoreAmountDieSize;
+			document.getElementById("RestoreAmountBonus").value = TemplateData.RestoreAmountBonus;
+		}
+		else if(templateRestoreMethod == "Chance"){
+			document.getElementById("RestoreChanceDieNumber").value = TemplateData.RestoreChanceDieNumber;
+			document.getElementById("RestoreChanceDieSize").value = TemplateData.RestoreChanceDieSize;
+			document.getElementById("RestoreChanceBonus").value = TemplateData.RestoreChanceBonus;
+		}
+		else if(templateRestoreMethod == "Attribute"){
+			document.getElementById("RestoreAmountMultiplier").value = TemplateData.RestoreAmountMultiplier;
+			document.getElementById("RestoreAmountAttribute").value = TemplateData.RestoreAmountAttribute;
+			document.getElementById("RestoreAmountBonus").value = TemplateData.RestoreAmountBonus;
+		}
+		else if(templateRestoreMethod == "Proficiency"){
+			document.getElementById("RestoreAmountMultiplier").value = TemplateData.RestoreAmountMultiplier;
+			document.getElementById("RestoreAmountBonus").value = TemplateData.RestoreAmountBonus;
+		}
+	}
+
+	let TemplateMaterials = TemplateData.Materials;
+	let TemplateHasMaterial = 0;
+	for(let tempMaterial of TemplateMaterials){
+		document.getElementById("objectMaterial"+tempMaterial).setAttribute("checked","");
+		TemplateHasMaterial = 1;
+	}
+	createChooseMainMaterialRows();
+
+	if(TemplateHasMaterial == 1){
+		if(TemplateData.MainMaterial != "@@Variable"){
+			document.getElementById("MainMaterial").value = TemplateData.MainMaterial;
+		}
+	}
+
+	document.getElementById("Coating").value = TemplateData.Coating;
+	document.getElementById("Integrity").value = TemplateData.Integrity;
+	document.getElementById("StateOfMatter").value = TemplateData.StateOfMatter;
+	document.getElementById("isFlammable").value = TemplateData.isFlammable;
+	document.getElementById("isMagnetic").value = TemplateData.isMagnetic;
+}
+
+function createNewTemplateRows(nextRowIndex,ObjectType){
+	addTableRow("CreateObjectTable",nextRowIndex,"rowNewTypeName","<th><label for='NewTypeName'>New "+ObjectType+" Type Name:</label></th><td><input type='text' id='NewTypeName' name='NewTypeName'></td>");
+	nextRowIndex++;
+	
+	addTableRow("CreateObjectTable",nextRowIndex,"rowIsNewTemplate","<th><label for='isNewTemplate'>Add New "+ObjectType+" as Template:</label></th><td><input type='checkbox' id='isNewTemplate' name='isNewTemplate' value=1></td>");
+	nextRowIndex++;
+}
+
+async function createAmmunitionTypeRows(){
+	let nextRowIndex = document.getElementById("rowAmmunitionType").rowIndex + 1;
+
+	if(document.getElementById("AmmunitionType").value == "@@NewType"){
+		createNewTemplateRows(nextRowIndex,"Ammunition");
+	}
+	else{
+		clearUnusedTable("CreateObjectTable","rowAmmunitionType","rowAmmunitionDamageHeader");
+		
+		let request = await fetch("macro:pm.a5e.GetCoreData@lib:pm.a5e.Core", {method: "POST", body: "['sb.AmmunitionTypes']"});
+		let allAmmunitionTypes = await request.json();
+
+		let AmmunitionTypeData;
+		let AmmunitionTypeChoice = document.getElementById("AmmunitionType").value;
+		for(let tempAmmunitionType of allAmmunitionTypes){
+			if(tempAmmunitionType.Name == AmmunitionTypeChoice){
+				AmmunitionTypeData = tempAmmunitionType;
+			}
+		}
+
+		if(AmmunitionTypeData.AmmunitionDamage != null){
+			clearUnusedTable("CreateObjectTable","rowAmmunitionDamageHeader","rowAmmunitionAddDamageInstanceButtons");
+			document.getElementById("AmmunitionDamageInstanceNumber").value = 0;
+			let i = 0;
+
+			for(let tempInstance of AmmunitionTypeData.AmmunitionDamage){
+				await addDamageTypeRows("Ammunition");
+				document.getElementById("AmmunitionDamageType"+i).value = tempInstance.DamageType;
+				document.getElementById("AmmunitionDamageDieNumber"+i).value = tempInstance.DamageDieNumber;
+				document.getElementById("AmmunitionDamageDieSize"+i).value = tempInstance.DamageDieSize;
+				document.getElementById("AmmunitionDamageBonus"+i).value = tempInstance.DamageFlatBonus;
+				document.getElementById("AmmunitionAddDmgMod"+i).value = tempInstance.IsModBonus;
+				i++;
+			}
+		}
+
+		if(AmmunitionTypeData.MagicBonus != null){
+			document.getElementById("MagicBonus").value = AmmunitionTypeData.MagicBonus;
+		}
+
+		updateWithTemplateData(AmmunitionTypeData);
+	}
+}
+
+async function createArmorTypeRows(ArmorOrShield){
+	let nextRowIndex = document.getElementById("rowArmorType").rowIndex + 1;
+
+	if(document.getElementById("ArmorType").value == "@@NewType"){
+		createNewTemplateRows(nextRowIndex,ArmorOrShield);
+	}
+	else{
+		clearUnusedTable("CreateObjectTable","rowArmorType","rowArmorBaseAC");
+		
+		let request = await fetch("macro:pm.a5e.GetCoreData@lib:pm.a5e.Core", {method: "POST", body: "['sb."+ArmorOrShield+"Types']"});
+		let allArmorTypes = await request.json();
+
+		let ArmorTypeData;
+		let ArmorTypeChoice = document.getElementById("ArmorType").value;
+		for(let tempArmorType of allArmorTypes){
+			if(tempArmorType.Name == ArmorTypeChoice){
+				ArmorTypeData = tempArmorType;
+			}
+		}
+
+		if(ArmorOrShield == "Armor"){
+			if(ArmorTypeData.ArmorTier != null){
+				document.getElementById("ArmorTier").value = ArmorTypeData.ArmorTier;
+			}
+		}
+
+		if(ArmorTypeData.BaseAC != null){
+			document.getElementById("ArmorBaseAC").value = ArmorTypeData.BaseAC;
+		}
+
+		if(ArmorTypeData.isDexterityCap != null){
+			if(ArmorTypeData.isDexterityCap == 1){
+				document.getElementById("ArmorNoDexCap").removeAttribute("checked","");
+				document.getElementById("ArmorNoDexCap").dispatchEvent(new Event('change'));
+				document.getElementById("ArmorDexCap").value = ArmorTypeData.DexterityCap;
+			}
+			else{
+				document.getElementById("ArmorNoDexCap").setAttribute("checked","");
+				document.getElementById("ArmorNoDexCap").dispatchEvent(new Event('change'));
+			}
+		}
+
+		if(ArmorTypeData.isStrengthRequirement != null){
+			if(ArmorTypeData.isStrengthRequirement == 1){
+				document.getElementById("ArmorNoStrengthReq").removeAttribute("checked","");
+				document.getElementById("ArmorNoStrengthReq").dispatchEvent(new Event('change'));
+				document.getElementById("ArmorStrengthReq").value = ArmorTypeData.StrengthRequirement;
+			}
+			else{
+				document.getElementById("ArmorNoStrengthReq").setAttribute("checked","");
+				document.getElementById("ArmorNoStrengthReq").dispatchEvent(new Event('change'));
+			}
+		}
+
+		if(ArmorTypeData.isStealthDisadvantage != null){
+			if(ArmorTypeData.isStealthDisadvantage == 1){
+				document.getElementById("ArmorStealthDisadvantage").setAttribute("checked","");
+			}
+			else{
+				document.getElementById("ArmorStealthDisadvantage").removeAttribute("checked","");
+			}
+		}
+
+		if(ArmorTypeData.MagicBonus != null){
+			document.getElementById("MagicBonus").value = ArmorTypeData.MagicBonus;
+		}
+
+		updateWithTemplateData(ArmorTypeData);
 	}
 }
 
@@ -128,11 +395,7 @@ async function createWeaponTypeRows(){
 	let nextRowIndex = document.getElementById("rowWeaponType").rowIndex + 1;
 
 	if(document.getElementById("WeaponType").value == "@@NewType"){
-		addTableRow("CreateObjectTable",nextRowIndex,"rowNewWeaponTypeName","<th><label for='NewWeaponTypeName'>New Weapon Type Name:</label></th><td><input type='text' id='NewWeaponTypeName' name='NewWeaponTypeName'></td>");
-		nextRowIndex++;
-		
-		addTableRow("CreateObjectTable",nextRowIndex,"rowIsNewWeaponTemplate","<th><label for='isNewWeaponTemplate'>Add New Weapon as Template:</label></th><td><input type='checkbox' id='isNewWeaponTemplate' name='isNewWeaponTemplate' value=1></td>");
-		nextRowIndex++;
+		createNewTemplateRows(nextRowIndex,"Weapon");
 	}
 	else{
 		clearUnusedTable("CreateObjectTable","rowWeaponType","rowWeaponClass");
@@ -176,11 +439,11 @@ async function createWeaponTypeRows(){
 
 		if(WeaponTypeData.WeaponDamage != null){
 			clearUnusedTable("CreateObjectTable","rowWeaponDamageHeader","rowWeaponAddDamageInstanceButtons");
-			document.getElementById("weaponDamageInstanceNumber").value = 0;
+			document.getElementById("WeaponDamageInstanceNumber").value = 0;
 			let i = 0;
 
 			for(let tempInstance of WeaponTypeData.WeaponDamage){
-				await addWeaponDamageTypeRows();
+				await addDamageTypeRows("Weapon");
 				document.getElementById("WeaponDamageType"+i).value = tempInstance.DamageType;
 				document.getElementById("WeaponDamageDieNumber"+i).value = tempInstance.DamageDieNumber;
 				document.getElementById("WeaponDamageDieSize"+i).value = tempInstance.DamageDieSize;
@@ -190,8 +453,8 @@ async function createWeaponTypeRows(){
 			}
 		}
 
-		if(WeaponTypeData.WeaponMagicBonus != null){
-			document.getElementById("WeaponMagicBonus").value = WeaponTypeData.WeaponMagicBonus;
+		if(WeaponTypeData.MagicBonus != null){
+			document.getElementById("MagicBonus").value = WeaponTypeData.MagicBonus;
 		}
 
 		if(WeaponTypeData.CritThresh != null){
@@ -204,113 +467,7 @@ async function createWeaponTypeRows(){
 			document.getElementById("WeaponCritThreshMethod").value = "Reduce";
 		}
 
-		//TODO: Put this all in its own function since it will be called by other item templates
-
-		if(WeaponTypeData.Size != null){document.getElementById("Size").value = WeaponTypeData.Size;}
-
-		if(WeaponTypeData.Rarity != null){document.getElementById("Rarity").value = WeaponTypeData.Rarity;}
-
-		if(WeaponTypeData.Cost != null){document.getElementById("Cost").value = WeaponTypeData.Cost;}
-
-		if(WeaponTypeData.CostUnits != null){document.getElementById("CostUnits").value = WeaponTypeData.CostUnits;}
-
-		if(WeaponTypeData.Weight != null){document.getElementById("Weight").value = WeaponTypeData.Weight;}
-
-		let WeaponTemplateIsMagical = WeaponTypeData.isMagical;
-		if(WeaponTemplateIsMagical != null){
-			if(WeaponTemplateIsMagical == 1){
-				document.getElementById("isMagical").setAttribute("checked","");
-				document.getElementById("isMagical").dispatchEvent(new Event('change'));
-
-				if(WeaponTypeData.isAttunement == 1){
-					document.getElementById("isAttunement").setAttribute("checked","");
-				}
-				else{
-					document.getElementById("isAttunement").removeAttribute("checked","");
-				}
-				
-				if(WeaponTypeData.isSentient == 1){
-					document.getElementById("isSentient").setAttribute("checked","");
-					document.getElementById("isSentient").dispatchEvent(new Event('change'));
-					//TODO: Add sentient item data population once it has been added to the processing function
-				}
-				else{
-					document.getElementById("isSentient").removeAttribute("checked","");
-					document.getElementById("isSentient").dispatchEvent(new Event('change'));
-				}
-				
-				if(WeaponTypeData.isCursed == 1){
-					document.getElementById("isCursed").setAttribute("checked","");
-				}
-				else{
-					document.getElementById("isCursed").removeAttribute("checked","");
-				}
-			}
-		}
-
-		if(WeaponTypeData.MaxResource != null){
-			document.getElementById("isCharges").setAttribute("checked","");
-			document.getElementById("isCharges").dispatchEvent(new Event('change'));
-
-			document.getElementById("MaxResource").value = WeaponTypeData.MaxResource;
-
-			let RestoreInstances = new Array("ShortRest","LongRest","Dawn","StartTurn","Initiative");
-			for(let tempInstance of RestoreInstances){
-				if(WeaponTypeData["Restore"+tempInstance] != null){
-					document.getElementById("Restore"+tempInstance).setAttribute("checked","");
-				}
-				else{
-					document.getElementById("Restore"+tempInstance).removeAttribute("checked","");
-				}
-			}
-			
-			let templateRestoreMethod = WeaponTypeData.RestoreMethod;
-			document.getElementById("RestoreMethod").value = templateRestoreMethod;
-			document.getElementById("RestoreMethod").dispatchEvent(new Event('change'));
-
-			if(templateRestoreMethod == "Fixed"){
-				document.getElementById("RestoreAmount").value = WeaponTypeData.RestoreAmount;
-			}
-			else if(templateRestoreMethod == "Rolled"){
-				document.getElementById("RestoreAmountDieNumber").value = WeaponTypeData.RestoreAmountDieNumber;
-				document.getElementById("RestoreAmountDieSize").value = WeaponTypeData.RestoreAmountDieSize;
-				document.getElementById("RestoreAmountBonus").value = WeaponTypeData.RestoreAmountBonus;
-			}
-			else if(templateRestoreMethod == "Chance"){
-				document.getElementById("RestoreChanceDieNumber").value = WeaponTypeData.RestoreChanceDieNumber;
-				document.getElementById("RestoreChanceDieSize").value = WeaponTypeData.RestoreChanceDieSize;
-				document.getElementById("RestoreChanceBonus").value = WeaponTypeData.RestoreChanceBonus;
-			}
-			else if(templateRestoreMethod == "Attribute"){
-				document.getElementById("RestoreAmountMultiplier").value = WeaponTypeData.RestoreAmountMultiplier;
-				document.getElementById("RestoreAmountAttribute").value = WeaponTypeData.RestoreAmountAttribute;
-				document.getElementById("RestoreAmountBonus").value = WeaponTypeData.RestoreAmountBonus;
-			}
-			else if(templateRestoreMethod == "Proficiency"){
-				document.getElementById("RestoreAmountMultiplier").value = WeaponTypeData.RestoreAmountMultiplier;
-				document.getElementById("RestoreAmountBonus").value = WeaponTypeData.RestoreAmountBonus;
-			}
-		}
-
-		let TemplateMaterials = WeaponTypeData.Materials;
-		let TemplateHasMaterial = 0;
-		for(let tempMaterial of TemplateMaterials){
-			document.getElementById("objectMaterial"+tempMaterial).setAttribute("checked","");
-			TemplateHasMaterial = 1;
-		}
-		createChooseMainMaterialRows();
-
-		if(TemplateHasMaterial == 1){
-			if(WeaponTypeData.MainMaterial != "@@Variable"){
-				document.getElementById("MainMaterial").value = WeaponTypeData.MainMaterial;
-			}
-		}
-
-		document.getElementById("Coating").value = WeaponTypeData.Coating;
-		document.getElementById("Integrity").value = WeaponTypeData.Integrity;
-		document.getElementById("StateOfMatter").value = WeaponTypeData.StateOfMatter;
-		document.getElementById("isFlammable").value = WeaponTypeData.isFlammable;
-		document.getElementById("isMagnetic").value = WeaponTypeData.isMagnetic;
+		updateWithTemplateData(WeaponTypeData);
 	}
 }
 
@@ -342,7 +499,7 @@ async function createWeaponPropertyRows(toggledProperty){
 	let table = document.getElementById("CreateObjectTable");
 
 	if(toggledProperty == "Ammunition"){
-
+		//TODO: Needs to get ammo type options
 		if(document.getElementById("weaponProperty"+toggledProperty).checked){
 			addTableRow("CreateObjectTable",nextRowIndex,"rowWeaponUsableAmmunition","<th>Usable Ammunition:</th><td><div class='check-multiple' style='width:100%'>"+WeaponAmmunitionTypeOptions+"</div></td>");
 			nextRowIndex++;
@@ -361,25 +518,25 @@ async function createWeaponPropertyRows(toggledProperty){
 	}
 }
 
-async function addWeaponDamageTypeRows(){
-	let nextRowIndex = document.getElementById("rowWeaponDamageHeader").rowIndex + 1;
-	let currentInstanceNumber = document.getElementById("weaponDamageInstanceNumber").value;
+async function addDamageTypeRows(rowPrefix){
+	let nextRowIndex = document.getElementById("row"+rowPrefix+"DamageHeader").rowIndex + 1;
+	let currentInstanceNumber = document.getElementById(rowPrefix+"DamageInstanceNumber").value;
 
-	let requestWeaponDamageData = await fetch("macro:pm.GetDamageTypes@lib:pm.a5e.Core", {method: "POST", body: ""});
-	let allWeaponDamageData = JSON.stringify(await requestWeaponDamageData.json());
-	let requestWeaponDamageHTML = await fetch("macro:ut.a5e.GenerateSelectionHTML@lib:pm.a5e.Core", {method: "POST", body: "["+allWeaponDamageData+"]"});
-	let DamageTypeOptions = await requestWeaponDamageHTML.text();
+	let requestDamageData = await fetch("macro:pm.GetDamageTypes@lib:pm.a5e.Core", {method: "POST", body: ""});
+	let allDamageData = JSON.stringify(await requestDamageData.json());
+	let requestDamageHTML = await fetch("macro:ut.a5e.GenerateSelectionHTML@lib:pm.a5e.Core", {method: "POST", body: "["+allDamageData+"]"});
+	let DamageTypeOptions = await requestDamageHTML.text();
 	
-	addTableRow("CreateObjectTable",nextRowIndex,"rowWeaponDamage"+currentInstanceNumber,"<th text-align='center' colspan='2'><input type='number' id='WeaponDamageDieNumber"+currentInstanceNumber+"' name='WeaponDamageDieNumber"+currentInstanceNumber+"' min=0 value=1 style='width:25px'> d <input type='number' id='WeaponDamageDieSize"+currentInstanceNumber+"' name='WeaponDamageDieSize"+currentInstanceNumber+"' min=1 value=6 style='width:25px'> + <input type='number' id='WeaponDamageBonus"+currentInstanceNumber+"' name='WeaponDamageBonus"+currentInstanceNumber+"' min=0 value=0 style='width:25px'> + <select id='WeaponAddDmgMod"+currentInstanceNumber+"' name='WeaponAddDmgMod"+currentInstanceNumber+"'><option value=1>Modifier</option><option value=0>No Modifier</option></select><select id='WeaponDamageType"+currentInstanceNumber+"' name='WeaponDamageType"+currentInstanceNumber+"'>"+DamageTypeOptions+"</select></th>");
+	addTableRow("CreateObjectTable",nextRowIndex,"row"+rowPrefix+"Damage"+currentInstanceNumber,"<th text-align='center' colspan='2'><input type='number' id='"+rowPrefix+"DamageDieNumber"+currentInstanceNumber+"' name='"+rowPrefix+"DamageDieNumber"+currentInstanceNumber+"' min=0 value=1 style='width:25px'> d <input type='number' id='"+rowPrefix+"DamageDieSize"+currentInstanceNumber+"' name='"+rowPrefix+"DamageDieSize"+currentInstanceNumber+"' min=1 value=6 style='width:25px'> + <input type='number' id='"+rowPrefix+"DamageBonus"+currentInstanceNumber+"' name='"+rowPrefix+"DamageBonus"+currentInstanceNumber+"' min=0 value=0 style='width:25px'> + <select id='"+rowPrefix+"AddDmgMod"+currentInstanceNumber+"' name='"+rowPrefix+"AddDmgMod"+currentInstanceNumber+"'><option value=1>Modifier</option><option value=0>No Modifier</option></select><select id='"+rowPrefix+"DamageType"+currentInstanceNumber+"' name='"+rowPrefix+"DamageType"+currentInstanceNumber+"'>"+DamageTypeOptions+"</select></th>");
 
 	currentInstanceNumber++;
-	document.getElementById("weaponDamageInstanceNumber").value = currentInstanceNumber;
+	document.getElementById(rowPrefix+"DamageInstanceNumber").value = currentInstanceNumber;
 }
 
 function removeWeaponDamageTypeRows(){
-	let currentInstanceNumber = document.getElementById("weaponDamageInstanceNumber").value;
+	let currentInstanceNumber = document.getElementById("WeaponDamageInstanceNumber").value;
 	currentInstanceNumber--;
-	document.getElementById("weaponDamageInstanceNumber").value = currentInstanceNumber;
+	document.getElementById("WeaponDamageInstanceNumber").value = currentInstanceNumber;
 
 	let table = document.getElementById("CreateObjectTable");
 	let currentInstanceRowIndex = document.getElementById("rowWeaponDamage"+currentInstanceNumber).rowIndex;
@@ -387,8 +544,8 @@ function removeWeaponDamageTypeRows(){
 	table.deleteRow(currentInstanceRowIndex);
 }
 
-function weaponMagicBonusChanges(){
-	if(document.getElementById("WeaponMagicBonus").value > 0){
+function MagicBonusChanges(){
+	if(document.getElementById("MagicBonus").value > 0){
 		if(document.getElementById("isMagical").checked == false){
 			document.getElementById("isMagical").setAttribute("checked","");
 			createMagicItemRows();
@@ -410,7 +567,7 @@ function createMagicItemRows(){
 		nextRowIndex++;
 	}
 	else{
-		clearUnusedTable("CreateObjectTable","rowIsMagical","rowIsConsumable");
+		clearUnusedTable("CreateObjectTable","rowIsMagical","rowIsWearable");
 	}
 }
 

@@ -59,7 +59,7 @@
 	]
 	
 	[h:AttackData = json.set(AttackData,
-		"Throw Weapon",pm.ThrowWeapon,
+		"ThrowWeapon",pm.ThrowWeapon,
 		"AttackNum",pm.AttackNum,
 		"ParentToken",ParentToken
 	)]

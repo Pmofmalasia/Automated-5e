@@ -30,18 +30,33 @@ function createHTMLSelectOptions(inputData,valueKey){
 	for(let tempObject of inputData){
 		if(arguments.length > 1){
 			if(valueKey == ""){
-				finalOptions = "<option value='"+btoa(JSON.stringify(tempObject))+"'>"+tempObject.DisplayName+"</option>";
+				finalOptions = finalOptions + "<option value='"+btoa(JSON.stringify(tempObject))+"'>"+tempObject.DisplayName+"</option>";
 			}
 			else{
 				let tempObjectKeyValue = tempObject[valueKey];
-				finalOptions = "<option value='"+tempObjectKeyValue+"'>"+tempObject.DisplayName+"</option>";
+				finalOptions = finalOptions + "<option value='"+tempObjectKeyValue+"'>"+tempObject.DisplayName+"</option>";
 			}
 		}
 		else{
-			finalOptions = "<option value='"+tempObject.Name+"'>"+tempObject.DisplayName+"</option>";
+			finalOptions = finalOptions + "<option value='"+tempObject.Name+"'>"+tempObject.DisplayName+"</option>";
 		}
 	}
+	return finalOptions;
+}
 
+function createHTMLMultiselectOptions(inputData,prefix,changeFunction){
+	let finalOptions = "";
+
+	for(let tempObject of inputData){
+		let changeFunctionString = "";
+		let tempName = tempObject.Name;
+
+		if(arguments.length > 3){
+			changeFunctionString = " onchange='"+changeFunction+"("+'"'+tempName+'"'+")'";
+		}
+
+		finalOptions = finalOptions + "<label><input type='checkbox' id='"+prefix+tempName+"' name='"+prefix+tempName+"'"+changeFunctionString+"><span>"+tempObject.DisplayName+"</span></label>";
+	}
 	return finalOptions;
 }
 

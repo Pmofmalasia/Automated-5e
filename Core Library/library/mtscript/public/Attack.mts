@@ -6,11 +6,14 @@
 [h:pm.a5e.OverarchingContext = "Attack"]
 [h:pm.a5e.EffectData = "[]"]
 
+[h:"<!-- TODO: Implement identifying an open hand in a separate way (currently would fail if there is only one hand or 3+ hands with the 2nd hand holding something) -->"]
 [h:Flavor = json.get(wa.Data,"Flavor")]
 [h:Hand = json.get(wa.Data,"Hand")]
 [h:OtherHand = if(Hand==0,1,0)]
 [h:AttackNum = json.get(wa.Data,"AttackNum")]
-[h:ThrowingWeapon = json.get(wa.Data,"Throw Weapon")]
+[h:ThrowingWeapon = json.get(wa.Data,"ThrowWeapon")]
+[h:TwoWeaponFighting = json.get(wa.Data,"TwoWeaponFighting")]
+[h,if(TwoWeaponFighting == ""): TwoWeaponFighting = 0]
 [h:DMOnly = json.get(wa.Data,"DMOnly")]
 [h:DMOnly = 0]
 [h:ShowFullRules = 1]
@@ -27,46 +30,87 @@
 [h:CritMessage = json.get(wa.Data,"CritMessage")]
 [h:CritFailMessage = json.get(wa.Data,"CritFailMessage")]
 
+[h:"<!-- TODO: Switch out name with false name if needed -->"]
 [h:wa.Name = json.get(wa.WeaponUsed,"Name")]
 [h:wa.MagicBonus = json.get(wa.WeaponUsed,"MagicBonus")]
-[h:wa.WeaponType = json.get(wa.WeaponUsed,"Type")]
-[h:wa.DmgDie = json.get(wa.WeaponUsed,"DamageDie")]
-[h:wa.DmgType = json.get(wa.WeaponUsed,"DamageType")]
-[h:wa.DmgDie2 = json.get(wa.WeaponUsed,"SecDamageDie")]
-[h:wa.DmgType2 = json.get(wa.WeaponUsed,"SecDamageType")]
-[h:wa.MeleeRanged = json.get(wa.WeaponUsed,"MeleeRanged")]
-[h:wa.Class = json.get(wa.WeaponUsed,"Class")]
+[h:wa.WeaponType = json.get(wa.WeaponUsed,"WeaponType")]
+[h:wa.Class = json.get(wa.WeaponUsed,"WeaponClass")]
+[h:wa.MeleeRanged = json.get(wa.WeaponUsed,"WeaponMeleeRanged")]
+[h:wa.DamageData = json.get(wa.WeaponUsed,"WeaponDamage")]
 [h:wa.Reach = json.get(wa.WeaponUsed,"Reach")]
 [h:wa.Range = json.get(wa.WeaponUsed,"Range")]
-[h:attack.CritRange = json.get(wa.WeaponUsed,"CritRange")]
-[h:wa.CritMultiplier = 1 + json.get(wa.WeaponUsed,"CritMultiplier")]
-[h:wa.SpecialAbility = json.get(wa.WeaponUsed,"SpecialAbility")]
+[h:wa.LongRange = json.get(wa.WeaponUsed,"LongRange")]
+
+[h:"<!-- TODO: Update attack roll macro to accept these variables instead -->"]
+[h,if(json.get(wa.WeaponUsed,"CritThresh")==""):
+	attack.CritThresh = json.get(wa.WeaponUsed,"CritThresh");
+	attack.CritThresh = 20
+]
+[h,if(json.get(wa.WeaponUsed,"CritThreshReduction")==""):
+	attack.CritThreshReduction = json.get(wa.WeaponUsed,"CritThreshReduction");
+	attack.CritThreshReduction = 0
+]
+
+[h:"<!-- Note: number('') results in 0, so this will function without the key present -->"]
+[h:wa.CritMultiplier = 1 + number(json.get(wa.WeaponUsed,"CritMultiplier"))]
+
 [h:wa.Props = json.get(wa.WeaponUsed,"Props")]
-[h:wa.Magical = json.get(wa.WeaponUsed,"MagicItem")]
+[h:wa.Magical = json.get(wa.WeaponUsed,"isMagical")]
 [h:attack.ProfTest = if(or(json.get(getProperty("a5e.stat.WeaponProficiencies"),wa.WeaponType)==1,json.get(MagicItemStats,wa.WeaponType+"Prof")==1),1,0)]
 [h:attack.ToHitBonus = wa.MagicBonus]
 [h:attack.ProfTest = 1]
 [h:wa.TargetOrigin = ParentToken]
+
 [h:wa.BrutalCrit = 0]
 
 [h:pm.PassiveFunction("AttackProps")]
 [h:pm.PassiveFunction("WeaponAttackProps")]
 
-[h:VersatileTest = if(json.get(wa.Props,"Versatile")>0,if(json.get(getProperty("a5e.stat.Weapon"),OtherHand)==2,if(json.get(getProperty("a5e.stat.Shield"),0)==1,1,0),0),0)]
-[h,if(VersatileTest==1),code:{
+[h,if(!json.isEmpty(wa.DamageData)): wa.DamageData = json.path.put(wa.DamageData,"[0]","BonusCritDice",wa.BrutalCrit)]
+
+[h:VersatileTest = if(json.contains(wa.Props,"Versatile"),if(json.get(getProperty("a5e.stat.HeldItems"),OtherHand)=="",1,0),0)]
+
+[h:"<!-- TODO: Add completely new damage die input for Versatile weaponry, since RAW it isn't just +2 to damage die size, but whatever is in the parenthesis (so could be +4, could apply to one or both damage types, etc.) -->"]
+
+[h,if(VersatileTest==1),CODE:{
 	[wa.DmgDie=substring(wa.DmgDie,0,indexOf(wa.DmgDie,"d")+1)+(number(substring(wa.DmgDie,indexOf(wa.DmgDie,"d")+1))+2)]
 };{}]
 
-[h,if(ThrowingWeapon && json.get(wa.Props,"Thrown")==0),CODE:{
-	[h:wa.DmgDie = "1d4"]
-	[h:wa.Class = "Improvised"]
+[h:"<!-- TODO: Current method is to remove TWF completely to get around the no damage modifier effect (e.g. for the fighting style). Issues are #1: It is still technically TWF, so any effects that would trigger on TWF would not be able to. #2: TWF still adds damage modifier if negative; solution could be changing IsDamageModifier -->"]
+[h,if(TwoWeaponFighting),CODE:{
+	[h:wa.DamageData = json.path.set("")]
 };{}]
 
-[h:PrimeStat = if(and(json.get(wa.Props,"Finesse")>0,json.get(getProperty("a5e.stat.AtrMods"),"Dexterity")>json.get(getProperty("a5e.stat.AtrMods"),"Strength")),"Dexterity","Strength")]
+[h,if(ThrowingWeapon && !json.contains(wa.Props,"Thrown")),CODE:{
+	[h:AllInstanceDamageTypes = json.path.read(wa.DamageData,"[*]['Damage']['DamageType']")]
+	[h:TempAllInstanceDamageTypeOptions = json.path.read(wa.DamageData,"[*]['Damage']['DamageTypeOptions']")]
+	[h:AllInstanceDamageTypeOptions = "[]"]
+	[h,foreach(instance,TempAllInstanceDamageTypeOptions): AllInstanceDamageTypeOptions = json.merge(AllInstanceDamageTypeOptions,instance)]
+	[h:ImprovisedDamageTypes = json.unique(json.merge(AllInstanceDamageTypes,AllInstanceDamageTypeOptions))]
+
+	[h:NewDamageInstance = json.set("",
+		"DamageDieNumber",1,
+		"DamageDieSize",6,
+		"DamageFlatBonus",0,
+		"IsModBonus",1
+	)]
+
+	[h,if(json.length(ImprovisedDamageTypes) > 1),CODE:{
+		[h:NewDamageInstance = json.set(NewDamageInstance,"DamageTypeOptions",ImprovisedDamageTypes)]
+	};{
+		[h,if(json.length(ImprovisedDamageTypes) > 0): NewDamageInstance = json.set(NewDamageInstance,"DamageType",json.get(ImprovisedDamageTypes,0))]
+	}]
+
+	[h,if(!json.isEmpty(wa.DamageData)): wa.DamageData = json.append("",NewDamageInstance)]
+
+	[h:wa.Range = 20]
+	[h:wa.LongRange = 60]
+};{}]
+
+[h:PrimeStat = if(and(json.contains(wa.Props,"Finesse"),json.get(getProperty("a5e.stat.AtrMods"),"Dexterity")>json.get(getProperty("a5e.stat.AtrMods"),"Strength")),"Dexterity","Strength")]
 [h:PrimeStat = if(wa.MeleeRanged=="Ranged","Dexterity",PrimeStat)]
-[h:PrimeStat = if(json.get(wa.Props,"IntMod")>0,"Intelligence",PrimeStat)]
-[h:PrimeStat = if(json.get(wa.Props,"WisMod")>0,"Wisdom",PrimeStat)]
-[h:PrimeStat = if(json.get(wa.Props,"ChaMod")>0,"Charisma",PrimeStat)]
+
+[h:"<!-- TODO: Add other primary stats as a property? Or otherwise? Probably just have a 'Primary Stat' option that isn't a property which defaults to Strength or Dex if ranged. -->"]
 [h,if(json.get(wa.Props,"PrimeStat")!=""): PrimeStat = json.get(wa.Props,"PrimeStat")]
 
 [h:pm.PassiveFunction("AttackStat")]
@@ -75,16 +119,7 @@
 [h:attack.PrimeStatBonus = json.get(getProperty("a5e.stat.AtrMods"),PrimeStat)]
 [h:PrimeStatMod = json.get(getProperty("a5e.stat.AtrMods"),PrimeStat)]
 
-[h:wa.DmgDieSize = number(substring(wa.DmgDie,indexOf(wa.DmgDie,"d")+1))]
-[h:wa.DmgDie2Size = number(substring(wa.DmgDie2,indexOf(wa.DmgDie2,"d")+1))]
-
-[h:wa.DmgDieNum = number(substring(wa.DmgDie,0,indexOf(wa.DmgDie,"d")))]
-[h,if(wa.DmgDie2==""):
-	wa.DmgDie2Num = 0;
-	wa.DmgDie2Num = number(substring(wa.DmgDie2,0,1))
-]
-
-[h,if(AttackNum<0),CODE:{
+[h,if(AttackNum < 0),CODE:{
 	[h:AttackCount = abs(AttackNum)]
 };{
 	[h:AttackCount = AttackNum]
@@ -92,7 +127,7 @@
 	[h:pm.PassiveFunction("WeaponAttackNum")]
 }]
 
-[h:wa.TargetOptions = pm.a5e.TargetCreatureFiltering(json.set("","ParentToken",ParentToken,"Number",1,"Origin",wa.TargetOrigin,"Range",json.set("","Value",if(wa.MeleeRanged=="Ranged",wa.Range,wa.Reach),"Units","Feet")),json.set("","Allegiance",json.set("","NotSelf",1)))]
+[h:wa.TargetOptions = pm.a5e.TargetCreatureFiltering(json.set("","ParentToken",ParentToken,"Number",1,"Origin",wa.TargetOrigin,"Range",json.set("","Value",if(wa.MeleeRanged=="Ranged",wa.LongRange,wa.Reach),"Units","Feet")),json.set("","Allegiance",json.set("","NotSelf",1)))]
 [h:wa.AllTargets = pm.a5e.TargetCreatureTargeting(json.get(wa.TargetOptions,"ValidTargets"),1,AttackCount)]
 [h,if(AttackCount==1),CODE:{
 	[h:wa.TargetList = wa.AllTargets]
@@ -101,25 +136,11 @@
 	[h,count(AttackCount): wa.TargetList = json.merge(wa.TargetList,json.get(wa.AllTargets,roll.count))]
 }]
 
-[h,if(json.get(wa.Props,"DmgMod")==""):
+[h:"<!-- TODO: Change this to instead remove damage mod for bonus light weapon attacks -->"]
+[h,if(json.contains(wa.Props,"DmgMod")):
 	preReworkUseDamageMod = 0;
 	preReworkUseDamageMod = json.get(wa.Props,"DmgMod")
 ]
-[h:preReworkDamageData = json.append("",json.set("",
-	"DamageType",wa.DmgType,
-	"DamageDieNumber",wa.DmgDieNum,
-	"DamageDieSize",wa.DmgDieSize,
-	"DamageFlatBonus",wa.MagicBonus,
-	"BonusCritDice",wa.BrutalCrit,
-	"IsModBonus",preReworkUseDamageMod
-))]
-[h,if(wa.DmgDie2 != "0"): preReworkDamageData = json.append(preReworkDamageData,json.set("",
-	"DamageType",wa.DmgType2,
-	"DamageDieNumber",wa.DmgDie2Num,
-	"DamageDieSize",wa.DmgDie2Size,
-	"DamageFlatBonus",0,
-	"IsModBonus",0
-))]
 
 [h:AllAttacksToHit = "[]"]
 [h:AllAttacksDmg = "[]"]
@@ -130,13 +151,19 @@
 [h:CritFailColor = pm.CritFailColor()]
 [h:LinkColor = pm.LinkColor()]
 
-[h,count(AttackCount),code:{
+[h,count(AttackCount),CODE:{
 	[h,if(json.length(wa.EffectIDs)-1 < roll.count): wa.EffectIDs = json.append(wa.EffectIDs,pm.a5e.GenerateEffectID())]
 	[h:thisAttackTarget = json.get(wa.TargetList,roll.count)]
+	[h,if(wa.MeleeRanged == "Ranged"),CODE:{
+		[h:LongRangeTest = getDistance(thisAttackTarget) > wa.Range]
+		[h:tempPriorDisadvantage = json.get(wa.Data,"Disadvantage")]
+		[h,if(tempPriorDisadvantage == ""): tempPriorDisadvantage = 0]
+		[h,if(LongRangeTest): wa.Data = json.set(wa.Data,"Disadvantage",tempPriorDisadvantage + 1)]
+	};{}]
 
 	[h:AllAttacksToHit = json.append(AllAttacksToHit,pm.a5e.AttackRoll(wa.Data,json.append("","Attack","WeaponAttack"),thisAttackTarget))]
 
-	[h:preReworkNonDamageData = json.set("",
+	[h:wa.NonDamageData = json.set("",
 		"IsSpell",0,
 		"IsWeapon",1,
 		"IsAttack",1,
@@ -146,7 +173,7 @@
 		"PrimeStat",PrimeStat
 	)]
 	[h:thisAttackDamage = "[]"]
-	[h,foreach(tempDamageInstance,preReworkDamageData): thisAttackDamage = json.append(thisAttackDamage,pm.a5e.DamageRoll(tempDamageInstance,preReworkNonDamageData,json.append("","Attack","WeaponAttack")))]
+	[h,foreach(tempDamageInstance,wa.DamageData): thisAttackDamage = json.append(thisAttackDamage,pm.a5e.DamageRoll(tempDamageInstance,wa.NonDamageData,json.append("","Attack","WeaponAttack")))]
 	
 	[h:ModifyDamageRollData = "[]"]
 

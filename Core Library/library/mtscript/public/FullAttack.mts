@@ -20,7 +20,7 @@
 
 [h:AttackData = json.set(AttackData,
 	"WeaponData",WeaponData,
-	"Throw Weapon",0,
+	"ThrowWeapon",0,
 	"AttackNum",1,
 	"DMOnly",0,
 	"ParentToken",ParentToken

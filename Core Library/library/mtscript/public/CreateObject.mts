@@ -27,7 +27,7 @@
 
 <tr id='rowCost'><th><label for='Cost'>Cost:</label></th><td><input type='number' id='Cost' name='Cost' value=0 min=0 style='width:35px'><select id='CostUnits' name='CostUnits'><option value='Copper'>Copper</option><option value='Silver'>Silver</option><option value='Gold' selected>Gold</option><option value='Platinum'>Platinum</option></select></td></tr>
 
-<tr id='rowWeight'><th><label for='Weight'>Weight:</label></th><td><input type='number' id='Weight' name='Weight' value=0 min=0 style='width:35px'> lbs.</td></tr>
+<tr id='rowWeight'><th><label for='Weight'>Weight:</label></th><td><input type='number' id='Weight' name='Weight' step='0.01' value=0 min=0 style='width:35px'> lbs.</td></tr>
 
 <tr id='rowIsMagical'><th><label for='isMagical'>Object is a Magic Item?</label></th><td><input type='checkbox' id='isMagical' name='isMagical' onchange='createMagicItemRows()'></td></tr>
 

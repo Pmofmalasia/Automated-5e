@@ -10,7 +10,7 @@
 [h:Hand = json.get(wa.Data,"Hand")]
 [h:OtherHand = if(Hand==0,1,0)]
 [h:AttackNum = json.get(wa.Data,"AttackNum")]
-[h:ThrowingWeapon = json.get(wa.Data,"Throw Weapon")]
+[h:ThrowingWeapon = json.get(wa.Data,"ThrowWeapon")]
 [h:DMOnly = json.get(wa.Data,"DMOnly")]
 [h:DMOnly = 0]
 [h:ShowFullRules = 1]

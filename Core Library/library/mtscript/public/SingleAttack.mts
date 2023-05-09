@@ -1,10 +1,23 @@
 [h:AttackData = macro.args]
 [h:ParentToken = json.get(AttackData,"ParentToken")]
 [h:switchToken(ParentToken)]
-[h,if(json.contains(AttackData,"WeaponData")):
-	WeaponData = json.get(AttackData,"WeaponData");
-	WeaponData = json.get(getProperty("a5e.stat.Weapon"),json.get(getProperty("a5e.stat.Weapon"),json.get(AttackData,"Hand")))
-]
+[h,if(json.contains(AttackData,"WeaponData")),CODE:{
+	[h:WeaponData = json.get(AttackData,"WeaponData")]
+};{
+	[h:WeaponID = json.get(getProperty("a5e.stat.Weapon"),json.get(getProperty("a5e.stat.HeldItems"),json.get(AttackData,"Hand")))]
+	[h,if(WeaponID == ""),CODE:{
+		[h:WeaponData = json.set("","TODO:","INSERT UNARMED HERE")]
+	};{
+		[h:tempWeaponData = json.path.read(getProperty("a5e.stat.Inventory"),"[*][?(@.ItemID == '"+WeaponID+"')]")]
+		[h,if(json.isEmpty(tempWeaponData)):
+			WeaponData = json.set("","TODO:","INSERT UNARMED HERE");
+			WeaponData = json.get(tempWeaponData,0)
+		]
+	}]
+}]
+
+[h:"<!-- TODO: Perhaps have Unarmed Strike be a property on tokens, which defaults to the usual but can have other options added (particularly Natural Weapons) -->"]
+
 [h:pm.a5e.EffectData = "[]"]
 
 [h:ClassFeatureData = json.set("",
@@ -23,7 +36,7 @@
 
 [h:AttackData = json.set(AttackData,
 	"WeaponData",WeaponData,
-	"Throw Weapon",0,
+	"ThrowWeapon",0,
 	"AttackNum",-1,
 	"DMOnly",0
 )]

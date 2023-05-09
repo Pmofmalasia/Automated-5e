@@ -36,6 +36,7 @@
 
 	[h:allWeaponDamage = "[]"]
 	[h,count(json.get(objectData,"WeaponDamageInstanceNumber")),CODE:{
+		[h:"<!-- TODO: Needs to add processing of DamageTypeOptions if applicable -->"]
 		[h:thisDamageObject = json.set("",
 			"DamageType",json.get(objectData,"WeaponDamageType"+roll.count),
 			"DamageDieNumber",number(json.get(objectData,"WeaponDamageDieNumber"+roll.count)),
@@ -59,6 +60,7 @@
 		[h:objectData = json.set(objectData,"CritThreshReduction",json.get(objectData,"WeaponCritThresh"))]
 	}]
 	[h:objectData = json.remove(objectData,"WeaponCritThreshMethod")]
+	[h:objectData = json.remove(objectData,"WeaponCritThresh")]
 
 	[h:objectData = json.set(objectData,"WeaponDamage",allWeaponDamage)]
 	[h:objectData = json.remove(objectData,"WeaponDamageInstanceNumber")]

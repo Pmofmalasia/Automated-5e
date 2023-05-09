@@ -34,7 +34,7 @@ async function createObjectSubtypeRows(){
 		addTableRow("CreateObjectTable",nextRowIndex,"rowWeaponTags","<th>Weapon Tags:</label></th><td><div class='check-multiple' style='width:100%'>"+WeaponTagOptions+"</div></td>");
 		nextRowIndex++;
 
-		addTableRow("CreateObjectTable",nextRowIndex,"rowWeaponMeleeRanged","<th><label for='WeaponMeleeRanged'>Melee or Ranged Weapon:</label></th><td><select id='WeaponMeleeRanged' name='WeaponMeleeRanged' onchange='createWeaponRangeReachRows("+'rowWeaponMeleeRanged'+")'><option value='Melee'>Melee</option><option value='Ranged'>Ranged</option></select></td>");
+		addTableRow("CreateObjectTable",nextRowIndex,"rowWeaponMeleeRanged","<th><label for='WeaponMeleeRanged'>Melee or Ranged Weapon:</label></th><td><select id='WeaponMeleeRanged' name='WeaponMeleeRanged' onchange='createWeaponRangeReachRows("+'"rowWeaponMeleeRanged"'+")'><option value='Melee'>Melee</option><option value='Ranged'>Ranged</option></select></td>");
 		nextRowIndex++;
 
 		addTableRow("CreateObjectTable",nextRowIndex,"rowWeaponReach","<th><label for='Reach'>Reach:</label></th><td><input type='number' id='Reach' name='Reach' min='0' value='5' style='width:25px'></td>");
@@ -499,7 +499,11 @@ async function createWeaponPropertyRows(toggledProperty){
 	let table = document.getElementById("CreateObjectTable");
 
 	if(toggledProperty == "Ammunition"){
-		//TODO: Needs to get ammo type options
+		let request = await fetch("macro:pm.a5e.GetCoreData@lib:pm.a5e.Core", {method: "POST", body: "['sb.AmmunitionTypes']"});
+		let allAmmunitionTypes = await request.json();
+
+		let WeaponAmmunitionTypeOptions = createHTMLMultiselectOptions(allAmmunitionTypes,"validWeaponAmmunition");
+
 		if(document.getElementById("weaponProperty"+toggledProperty).checked){
 			addTableRow("CreateObjectTable",nextRowIndex,"rowWeaponUsableAmmunition","<th>Usable Ammunition:</th><td><div class='check-multiple' style='width:100%'>"+WeaponAmmunitionTypeOptions+"</div></td>");
 			nextRowIndex++;

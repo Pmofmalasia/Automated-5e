@@ -19,9 +19,10 @@
     }
 ]
 
-[h:"<!-- TODO: Add critrange, decide on using set range vs. subtracting from 20 (or both) -->"]
-[h:attack.CritRange = json.get(attack.Data,"CritRange")]
-[h:attack.FinalCritRange = 20]
+[h:attack.CritThreshSet = json.get(attack.Data,"CritThresh")]
+[h,if(attack.CritThreshSet == ""): attack.CritThreshSet = 20]
+[h:attack.CritThreshReduction = json.get(attack.Data,"CritThreshReduction")]
+[h,if(attack.CritThreshReduction == ""): attack.CritThreshReduction = 0]
 [h:attack.AutoCrit = 0]
 [h:attack.AutoCritFail = 0]
 
@@ -30,7 +31,8 @@
     [h:pm.PassiveFunction(tempPrefix+"CritTargeted",json.set("","ParentToken",attack.Target))]
 }]
 
-[h:CritTest = if(or(attack.AutoCrit,d20EffectiveRoll>=attack.FinalCritRange),1,0)]
+[h:attack.FinalCritRange = attack.CritThreshSet - attack.CritThreshReduction]
+[h:CritTest = if(or(attack.AutoCrit,d20EffectiveRoll >= attack.FinalCritRange),1,0)]
 [h:CritFailTest = if(or(attack.AutoCritFail,d20EffectiveRoll==1),1,0)]
 
 [h:"<!-- TODO: Re-add misc. flat bonuses to the ToHit to the rules string, get PrimeStatBonus, ProfTest, and ToHitBonus into macro -->"]

@@ -41,7 +41,6 @@
 [h:wa.Range = json.get(wa.WeaponUsed,"Range")]
 [h:wa.LongRange = json.get(wa.WeaponUsed,"LongRange")]
 
-[h:"<!-- TODO: Update attack roll macro to accept these variables instead -->"]
 [h,if(json.get(wa.WeaponUsed,"CritThresh")==""):
 	attack.CritThresh = json.get(wa.WeaponUsed,"CritThresh");
 	attack.CritThresh = 20
@@ -193,7 +192,7 @@
 
 [h:WhichAttack=0]
 
-[h:"<!-- TODO: Perhaps set up separate loops for attack and damage rolls with different tables, which are assembled separately depending on the condensed vs. expanded approach -->"]
+[h:"<!-- MAYDO: Perhaps set up separate loops for attack and damage rolls with different tables, which are assembled separately depending on the condensed vs. expanded approach -->"]
 [h:abilityTable = ""]
 [h,count(AttackCount),CODE:{
 	[h:thisAttackTarget = json.get(wa.TargetList,roll.count)]

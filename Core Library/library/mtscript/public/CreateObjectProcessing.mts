@@ -36,7 +36,7 @@
 
 	[h:allWeaponDamage = "[]"]
 	[h,count(json.get(objectData,"WeaponDamageInstanceNumber")),CODE:{
-		[h:"<!-- TODO: Needs to add processing of DamageTypeOptions if applicable -->"]
+		[h:"<!-- TODO: Currently no functionality for choosing among multiple damage types, consider implementing? -->"]
 		[h:thisDamageObject = json.set("",
 			"DamageType",json.get(objectData,"WeaponDamageType"+roll.count),
 			"DamageDieNumber",number(json.get(objectData,"WeaponDamageDieNumber"+roll.count)),

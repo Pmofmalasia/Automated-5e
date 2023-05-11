@@ -520,18 +520,44 @@ async function createWeaponPropertyRows(toggledProperty){
 			table.deleteRow(document.getElementById("rowWeaponThrownRange").rowIndex);
 		}
 	}
+	else if(toggledProperty == "Versatile"){
+		nextRowIndex = document.getElementById("rowWeaponAddDamageInstanceButtons").rowIndex + 1;
+		if(document.getElementById("weaponProperty"+toggledProperty).checked){
+			addTableRow("CreateObjectTable",nextRowIndex,"rowVersatileDamageHeader","<th text-align='center' colspan='2'>Versatile Damage:<input type='hidden' id='VersatileDamageInstanceNumber' name='VersatileDamageInstanceNumber' value=0></th>");
+			nextRowIndex++;
+			for(let i = 0; document.getElementById("WeaponDamageInstanceNumber").value > i; i++){
+				addDamageTypeRows("Versatile");
+				nextRowIndex++;
+				document.getElementById("VersatileDamageDieNumber"+i).value = document.getElementById("WeaponDamageDieNumber"+i).value;
+				document.getElementById("VersatileDamageDieSize"+i).value = document.getElementById("WeaponDamageDieSize"+i).value;
+				document.getElementById("VersatileDamageBonus"+i).value = document.getElementById("WeaponDamageBonus"+i).value;
+				document.getElementById("VersatileAddDmgMod"+i).value = document.getElementById("WeaponAddDmgMod"+i).value;
+				document.getElementById("VersatileDamageType"+i).value = document.getElementById("WeaponDamageType"+i).value;
+			}
+		}
+		else{
+			clearUnusedTable("CreateObjectTable","rowWeaponAddDamageInstanceButtons","rowMagicBonus")
+		}
+	}
 }
 
 async function addDamageTypeRows(rowPrefix){
-	let nextRowIndex = document.getElementById("row"+rowPrefix+"DamageHeader").rowIndex + 1;
 	let currentInstanceNumber = document.getElementById(rowPrefix+"DamageInstanceNumber").value;
+	let nextRowIndex = document.getElementById("row"+rowPrefix+"DamageHeader").rowIndex + 1 + currentInstanceNumber;
 
 	let requestDamageData = await fetch("macro:pm.GetDamageTypes@lib:pm.a5e.Core", {method: "POST", body: ""});
 	let allDamageData = JSON.stringify(await requestDamageData.json());
 	let requestDamageHTML = await fetch("macro:ut.a5e.GenerateSelectionHTML@lib:pm.a5e.Core", {method: "POST", body: "["+allDamageData+"]"});
 	let DamageTypeOptions = await requestDamageHTML.text();
-	
+
 	addTableRow("CreateObjectTable",nextRowIndex,"row"+rowPrefix+"Damage"+currentInstanceNumber,"<th text-align='center' colspan='2'><input type='number' id='"+rowPrefix+"DamageDieNumber"+currentInstanceNumber+"' name='"+rowPrefix+"DamageDieNumber"+currentInstanceNumber+"' min=0 value=1 style='width:25px'> d <input type='number' id='"+rowPrefix+"DamageDieSize"+currentInstanceNumber+"' name='"+rowPrefix+"DamageDieSize"+currentInstanceNumber+"' min=1 value=6 style='width:25px'> + <input type='number' id='"+rowPrefix+"DamageBonus"+currentInstanceNumber+"' name='"+rowPrefix+"DamageBonus"+currentInstanceNumber+"' min=0 value=0 style='width:25px'> + <select id='"+rowPrefix+"AddDmgMod"+currentInstanceNumber+"' name='"+rowPrefix+"AddDmgMod"+currentInstanceNumber+"'><option value=1>Modifier</option><option value=0>No Modifier</option></select><select id='"+rowPrefix+"DamageType"+currentInstanceNumber+"' name='"+rowPrefix+"DamageType"+currentInstanceNumber+"'>"+DamageTypeOptions+"</select></th>");
+	nextRowIndex++;
+
+	if(rowPrefix=="Weapon" && document.getElementById("weaponPropertyVersatile") != null){
+		if(document.getElementById("weaponPropertyVersatile").checked){
+			addDamageTypeRows("Versatile");
+		}
+	}
 
 	currentInstanceNumber++;
 	document.getElementById(rowPrefix+"DamageInstanceNumber").value = currentInstanceNumber;
@@ -544,7 +570,7 @@ function removeWeaponDamageTypeRows(){
 
 	let table = document.getElementById("CreateObjectTable");
 	let currentInstanceRowIndex = document.getElementById("rowWeaponDamage"+currentInstanceNumber).rowIndex;
-	
+
 	table.deleteRow(currentInstanceRowIndex);
 }
 
@@ -560,13 +586,13 @@ function MagicBonusChanges(){
 function createMagicItemRows(){
 	if(document.getElementById("isMagical").checked){
 		let nextRowIndex = document.getElementById("rowIsMagical").rowIndex+1;
-		
+
 		addTableRow("CreateObjectTable",nextRowIndex,"rowIsAttunement","<th><label for='isAttunement'>Requires Attunement:</label></th><td><input type='checkbox' id='isAttunement' name='isAttunement'></td>");
 		nextRowIndex++;
-		
+
 		addTableRow("CreateObjectTable",nextRowIndex,"rowIsSentient","<th><label for='isSentient'>Item is Sentient:</label></th><td><input type='checkbox' id='isSentient' name='isSentient' onchange='createSentientItemRows()'></td>");
 		nextRowIndex++;
-		
+
 		addTableRow("CreateObjectTable",nextRowIndex,"rowIsCursed","<th><label for='isCursed'>Item is Cursed:</label></th><td><input type='checkbox' id='isCursed' name='isCursed'></td>");
 		nextRowIndex++;
 	}
@@ -578,15 +604,15 @@ function createMagicItemRows(){
 function createSentientItemRows(){
 	if(document.getElementById("isSentient").checked){
 		let nextRowIndex = document.getElementById("rowIsSentient").rowIndex+1;
-		
+
 		addTableRow("CreateObjectTable",nextRowIndex,"rowSentientAlignment","<th><label for='sentientAlignment'>Item Alignment:</label></th><td><select id='sentientAlignment' name='sentientAlignment'><option value='LawfulGood'>Lawful Good</option><option value='NeutralGood'>Neutral Good</option><option value='ChaoticGood'>Chaotic Good</option><option value='LawfulNeutral'>Lawful Neutral</option><option value='TrueNeutral'>True Neutral</option><option value='ChaoticNeutral'>Chaotic Neutral</option><option value='LawfulEvil'>Lawful Evil</option><option value='NeutralEvil'>Neutral Evil</option><option value='ChaoticEvil'>Chaotic Evil</option><option value='Unaligned'>Unaligned</option><option value='Undetermined'>Undetermined</option></select></td>");
 		nextRowIndex++;
-		
+
 		//TODO: Add lines for all mental stats here procedurally; add vision/hearing distances; add communication method/language
-		
+
 		addTableRow("CreateObjectTable",nextRowIndex,"rowHasSight","<th><label for='hasSight'>Item can See:</label></th><td><input type='checkbox' id='hasSight' name='hasSight' onchange='createSentientItemSightRows()'></td>");
 		nextRowIndex++;
-		
+
 		addTableRow("CreateObjectTable",nextRowIndex,"rowHasHearing","<th><label for='hasHearing'>Item can Hear:</label></th><td><input type='checkbox' id='hasHearing' name='hasHearing' onchange='createSentientItemHearingRows()'></td>");
 		nextRowIndex++;
 	}
@@ -658,7 +684,7 @@ async function createChooseMainMaterialRows(){
 			chosenMaterials.push(tempMaterial);
 		}
 	}
-//TODO: Add population of ObjectTags here, based on tags on the materials
+//TODO: Add selection of appropriate ObjectTags here, based on tags on the materials
 	if(chosenMaterials.length > 1){
 		let mainMaterialOptions = "";
 		for(let tempChosenMaterial of chosenMaterials){

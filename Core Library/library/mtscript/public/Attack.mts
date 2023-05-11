@@ -6,10 +6,12 @@
 [h:pm.a5e.OverarchingContext = "Attack"]
 [h:pm.a5e.EffectData = "[]"]
 
-[h:"<!-- TODO: Implement identifying an open hand in a separate way (currently would fail if there is only one hand or 3+ hands with the 2nd hand holding something) -->"]
 [h:Flavor = json.get(wa.Data,"Flavor")]
-[h:Hand = json.get(wa.Data,"Hand")]
-[h:OtherHand = if(Hand==0,1,0)]
+[h:ActiveHand = json.get(wa.Data,"Hand")]
+[h:OtherHands = "[]"]
+[h:CurrentHeldItems = getProperty("a5e.stat.HeldItems")]
+[h:TotalHands = json.length(CurrentHeldItems)]
+[h,count(TotalHands): OtherHands = if(roll.count == ActiveHand,OtherHands,json.append(OtherHands,roll.count))]
 [h:AttackNum = json.get(wa.Data,"AttackNum")]
 [h:ThrowingWeapon = json.get(wa.Data,"ThrowWeapon")]
 [h:TwoWeaponFighting = json.get(wa.Data,"TwoWeaponFighting")]
@@ -61,26 +63,34 @@
 [h:wa.TargetOrigin = ParentToken]
 
 [h:wa.BrutalCrit = 0]
+[h:PrimeStat = if(wa.MeleeRanged=="Ranged","Dexterity","Strength")]
 
 [h:pm.PassiveFunction("AttackProps")]
 [h:pm.PassiveFunction("WeaponAttackProps")]
 
 [h,if(!json.isEmpty(wa.DamageData)): wa.DamageData = json.path.put(wa.DamageData,"[0]","BonusCritDice",wa.BrutalCrit)]
 
-[h:VersatileTest = if(json.contains(wa.Props,"Versatile"),if(json.get(getProperty("a5e.stat.HeldItems"),OtherHand)=="",1,0),0)]
-
-[h:"<!-- TODO: Add completely new damage die input for Versatile weaponry, since RAW it isn't just +2 to damage die size, but whatever is in the parenthesis (so could be +4, could apply to one or both damage types, etc.) -->"]
-
-[h,if(VersatileTest==1),CODE:{
-	[wa.DmgDie=substring(wa.DmgDie,0,indexOf(wa.DmgDie,"d")+1)+(number(substring(wa.DmgDie,indexOf(wa.DmgDie,"d")+1))+2)]
+[h,if(json.contains(wa.Props,"Finesse")),CODE:{
+	[h:"<!-- TODO: Currently takes the maximum without choice, in the future may want to add an option for choice via options #1: Always ask, #2 Ask if two are equal, #3 do not compare at all and set choice in an 'Advanced Attack Options' menu -->"]
+	[h:MaxPrimeStat = json.get(getProperty("a5e.stat.AtrMods"),PrimeStat)]
+	[h:PrimeStatOptions = json.append("",PrimeStat,"Dexterity")]
+	[h,foreach(tempStat,PrimeStatOptions),CODE:{
+		[h:changePrimeStatTest = json.get(getProperty("a5e.stat.AtrMods"),tempStat) > MaxPrimeStat]
+		[h,if(changePrimeStatTest): PrimeStat = tempStat]
+		[h,if(changePrimeStatTest): MaxPrimeStat = json.get(getProperty("a5e.stat.AtrMods"),tempStat)]
+	}]
 };{}]
 
-[h:"<!-- TODO: Current method is to remove TWF completely to get around the no damage modifier effect (e.g. for the fighting style). Issues are #1: It is still technically TWF, so any effects that would trigger on TWF would not be able to. #2: TWF still adds damage modifier if negative; solution could be changing IsDamageModifier -->"]
-[h,if(TwoWeaponFighting),CODE:{
-	[h:wa.DamageData = json.path.set("")]
+[h,if(json.contains(wa.Props,"Heavy")),CODE:{
+	[h:TooHeavyTest = pm.a5e.CompareSizes(getSize(ParentToken),"Small")]
+	[h,if(TooHeavyTest): wa.Data = json.set(wa.Data,"Disadvantage",number(json.get(wa.Data,"Disadvantage"))+1)]
 };{}]
+
+[h:"<!-- TODO: May want to change this to an 'AttackNumMax' property in the future, should work nicer with weapons that can be loaded with X number of ammunition -->"]
+[h,if(json.contains(wa.Props,"Loading")): AttackNum = -1]
 
 [h,if(ThrowingWeapon && !json.contains(wa.Props,"Thrown")),CODE:{
+	[h:"<!-- UDF? -->"]
 	[h:AllInstanceDamageTypes = json.path.read(wa.DamageData,"[*]['Damage']['DamageType']")]
 	[h:TempAllInstanceDamageTypeOptions = json.path.read(wa.DamageData,"[*]['Damage']['DamageTypeOptions']")]
 	[h:AllInstanceDamageTypeOptions = "[]"]
@@ -99,15 +109,28 @@
 	};{
 		[h,if(json.length(ImprovisedDamageTypes) > 0): NewDamageInstance = json.set(NewDamageInstance,"DamageType",json.get(ImprovisedDamageTypes,0))]
 	}]
-
 	[h,if(!json.isEmpty(wa.DamageData)): wa.DamageData = json.append("",NewDamageInstance)]
 
 	[h:wa.Range = 20]
 	[h:wa.LongRange = 60]
 };{}]
 
-[h:PrimeStat = if(and(json.contains(wa.Props,"Finesse"),json.get(getProperty("a5e.stat.AtrMods"),"Dexterity")>json.get(getProperty("a5e.stat.AtrMods"),"Strength")),"Dexterity","Strength")]
-[h:PrimeStat = if(wa.MeleeRanged=="Ranged","Dexterity",PrimeStat)]
+[h:"<!-- TODO: Current method is to remove TWF completely to get around the no damage modifier effect (e.g. for the fighting style). Issues are #1: It is still technically TWF, so any effects that would trigger on TWF would not be able to; solution could be adding a variable that bypasses removing the mod. #2: TWF still adds damage modifier if negative; solution could be changing IsDamageModifier -->"]
+[h,if(TwoWeaponFighting),CODE:{
+	[h:wa.DamageData = json.path.set(wa.DamageData,"[*]","IsModBonus",0)]
+};{}]
+
+[h:"<!-- TODO: Will need to ensure that the empty hand is allowed to make attacks in the future -->"]
+[h:EmptyHandTest = 0]
+[h,foreach(tempHand,OtherHands): EmptyHandTest = if(json.get(CurrentHeldItems,tempHand)=="",1,EmptyHandTest)]
+
+[h,if(EmptyHandTest==0 && json.contains(wa.Props,"TwoHanded")),CODE:{
+	[h:"<!-- TODO: Decide how to implement not being able to/cancelling attack -->"]
+};{}]
+
+[h,if(EmptyHandTest==1 && json.contains(wa.Props,"Versatile")),CODE:{
+	[h:"<!-- TODO: Add completely new damage die input for Versatile weaponry, since RAW it isn't just +2 to damage die size, but whatever is in the parenthesis (so could be +4, could apply to one or both damage types, etc.) -->"]
+};{}]
 
 [h:"<!-- TODO: Add other primary stats as a property? Or otherwise? Probably just have a 'Primary Stat' option that isn't a property which defaults to Strength or Dex if ranged. -->"]
 [h,if(json.get(wa.Props,"PrimeStat")!=""): PrimeStat = json.get(wa.Props,"PrimeStat")]
@@ -151,16 +174,17 @@
 [h:LinkColor = pm.LinkColor()]
 
 [h,count(AttackCount),CODE:{
+	[h:thisAttackData = wa.Data]
 	[h,if(json.length(wa.EffectIDs)-1 < roll.count): wa.EffectIDs = json.append(wa.EffectIDs,pm.a5e.GenerateEffectID())]
 	[h:thisAttackTarget = json.get(wa.TargetList,roll.count)]
 	[h,if(wa.MeleeRanged == "Ranged"),CODE:{
 		[h:LongRangeTest = getDistance(thisAttackTarget) > wa.Range]
-		[h:tempPriorDisadvantage = json.get(wa.Data,"Disadvantage")]
+		[h:tempPriorDisadvantage = json.get(thisAttackData,"Disadvantage")]
 		[h,if(tempPriorDisadvantage == ""): tempPriorDisadvantage = 0]
-		[h,if(LongRangeTest): wa.Data = json.set(wa.Data,"Disadvantage",tempPriorDisadvantage + 1)]
+		[h,if(LongRangeTest): thisAttackData = json.set(thisAttackData,"Disadvantage",tempPriorDisadvantage + 1)]
 	};{}]
 
-	[h:AllAttacksToHit = json.append(AllAttacksToHit,pm.a5e.AttackRoll(wa.Data,json.append("","Attack","WeaponAttack"),thisAttackTarget))]
+	[h:AllAttacksToHit = json.append(AllAttacksToHit,pm.a5e.AttackRoll(thisAttackData,json.append("","Attack","WeaponAttack"),thisAttackTarget))]
 
 	[h:wa.NonDamageData = json.set("",
 		"IsSpell",0,

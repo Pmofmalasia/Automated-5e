@@ -4,7 +4,7 @@
 [h,if(json.contains(AttackData,"WeaponData")),CODE:{
 	[h:WeaponData = json.get(AttackData,"WeaponData")]
 };{
-	[h:WeaponID = json.get(getProperty("a5e.stat.Weapon"),json.get(getProperty("a5e.stat.HeldItems"),json.get(AttackData,"Hand")))]
+	[h:WeaponID = json.get(getProperty("a5e.stat.HeldItems"),json.get(AttackData,"Hand"))]
 	[h,if(WeaponID == ""),CODE:{
 		[h:WeaponData = json.set("","TODO:","INSERT UNARMED HERE")]
 	};{

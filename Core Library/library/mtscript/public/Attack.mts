@@ -55,7 +55,7 @@
 [h:"<!-- Note: number('') results in 0, so this will function without the key present -->"]
 [h:wa.CritMultiplier = 1 + number(json.get(wa.WeaponUsed,"CritMultiplier"))]
 
-[h:wa.Props = json.get(wa.WeaponUsed,"Props")]
+[h:wa.Props = json.get(wa.WeaponUsed,"WeaponProperties")]
 [h:wa.Magical = json.get(wa.WeaponUsed,"isMagical")]
 [h:attack.ProfTest = if(or(json.get(getProperty("a5e.stat.WeaponProficiencies"),wa.WeaponType)==1,json.get(MagicItemStats,wa.WeaponType+"Prof")==1),1,0)]
 [h:attack.ToHitBonus = wa.MagicBonus]
@@ -63,7 +63,9 @@
 [h:wa.TargetOrigin = ParentToken]
 
 [h:wa.BrutalCrit = 0]
+[h:"<!-- TODO: Add other primary stats as a property? Or otherwise? Probably just have a 'Primary Stat' option that isn't a property which defaults to Strength or Dex if ranged. -->"]
 [h:PrimeStat = if(wa.MeleeRanged=="Ranged","Dexterity","Strength")]
+[h,if(json.get(wa.Data,"PrimeStat")!=""): PrimeStat = json.get(wa.Data,"PrimeStat")]
 
 [h:pm.PassiveFunction("AttackProps")]
 [h:pm.PassiveFunction("WeaponAttackProps")]
@@ -82,7 +84,7 @@
 };{}]
 
 [h,if(json.contains(wa.Props,"Heavy")),CODE:{
-	[h:TooHeavyTest = pm.a5e.CompareSizes(getSize(ParentToken),"Small")]
+	[h:TooHeavyTest = pm.a5e.CompareSizes(getSize(ParentToken),"Small") <= 0]
 	[h,if(TooHeavyTest): wa.Data = json.set(wa.Data,"Disadvantage",number(json.get(wa.Data,"Disadvantage"))+1)]
 };{}]
 
@@ -132,9 +134,6 @@
 	[h:"<!-- TODO: Add completely new damage die input for Versatile weaponry, since RAW it isn't just +2 to damage die size, but whatever is in the parenthesis (so could be +4, could apply to one or both damage types, etc.) -->"]
 };{}]
 
-[h:"<!-- TODO: Add other primary stats as a property? Or otherwise? Probably just have a 'Primary Stat' option that isn't a property which defaults to Strength or Dex if ranged. -->"]
-[h,if(json.get(wa.Props,"PrimeStat")!=""): PrimeStat = json.get(wa.Props,"PrimeStat")]
-
 [h:pm.PassiveFunction("AttackStat")]
 [h:pm.PassiveFunction("WeaponAttackStat")]
 
@@ -157,12 +156,6 @@
 	[h:wa.TargetList = "[]"]
 	[h,count(AttackCount): wa.TargetList = json.merge(wa.TargetList,json.get(wa.AllTargets,roll.count))]
 }]
-
-[h:"<!-- TODO: Change this to instead remove damage mod for bonus light weapon attacks -->"]
-[h,if(json.contains(wa.Props,"DmgMod")):
-	preReworkUseDamageMod = 0;
-	preReworkUseDamageMod = json.get(wa.Props,"DmgMod")
-]
 
 [h:AllAttacksToHit = "[]"]
 [h:AllAttacksDmg = "[]"]
@@ -224,7 +217,7 @@
 	[h:thisAttackEffectID = json.get(wa.EffectIDs,roll.count)]
 	[h:thisAttackd20Rolls = json.get(thisAttackData,"d20Rolls")]
 	[h:thisAttackFinalRoll = json.get(thisAttackData,"FinalRoll")]
-	[h:thisAttackAdvDis = json.get(thisAttackData,"Advantage")]
+	[h:thisAttackAdvDis = json.get(thisAttackData,"AdvantageBalance")]
 	[h:thisAttackToHit = json.get(thisAttackData,"ToHit")]
 	[h:thisAttackToHitStr = json.get(thisAttackData,"ToHitStr")]
 	[h:thisAttackToHitRules = json.get(thisAttackData,"RulesStr")]

@@ -54,6 +54,34 @@
 		[h:objectData = json.remove(objectData,"WeaponAddDmgMod"+roll.count)]
 	}]
 
+	[h:objectData = json.set(objectData,"WeaponDamage",allWeaponDamage)]
+	[h:objectData = json.remove(objectData,"WeaponDamageInstanceNumber")]
+	[h:objectData = json.remove(objectData,"addDamageType")]
+	[h:objectData = json.remove(objectData,"removeDamageType")]
+
+	[h:VersatileInstanceNumber = json.contains(ChosenWeaponPropertiesArray,"Versatile")*number(json.get(objectData,"VersatileDamageInstanceNumber"))]
+	[h:allVersatileDamage = "[]"]
+	[h,count(VersatileInstanceNumber),CODE:{
+		[h:thisDamageObject = json.set("",
+			"DamageType",json.get(objectData,"VersatileDamageType"+roll.count),
+			"DamageDieNumber",number(json.get(objectData,"VersatileDamageDieNumber"+roll.count)),
+			"DamageDieSize",number(json.get(objectData,"VersatileDamageDieSize"+roll.count)),
+			"DamageFlatBonus",json.get(objectData,"VersatileDamageBonus"+roll.count),
+			"IsModBonus",json.contains(objectData,"VersatileAddDmgMod"+roll.count)
+		)]
+
+		[h:allVersatileDamage = json.append(allVersatileDamage,thisDamageObject)]
+
+		[h:objectData = json.remove(objectData,"VersatileDamageType"+roll.count)]
+		[h:objectData = json.remove(objectData,"VersatileDamageDieNumber"+roll.count)]
+		[h:objectData = json.remove(objectData,"VersatileDamageDieSize"+roll.count)]
+		[h:objectData = json.remove(objectData,"VersatileDamageBonus"+roll.count)]
+		[h:objectData = json.remove(objectData,"VersatileAddDmgMod"+roll.count)]
+	}]
+
+	[h,if(json.contains(ChosenWeaponPropertiesArray,"Versatile")): objectData = json.set(objectData,"VersatileDamage",allVersatileDamage)]
+	[h:objectData = json.remove(objectData,"VersatileDamageInstanceNumber")]
+
 	[h,if(json.get(objectData,"WeaponCritThreshMethod")=="Set"),CODE:{
 		[h:objectData = json.set(objectData,"CritThresh",json.get(objectData,"WeaponCritThresh"))]
 	};{
@@ -62,10 +90,7 @@
 	[h:objectData = json.remove(objectData,"WeaponCritThreshMethod")]
 	[h:objectData = json.remove(objectData,"WeaponCritThresh")]
 
-	[h:objectData = json.set(objectData,"WeaponDamage",allWeaponDamage)]
-	[h:objectData = json.remove(objectData,"WeaponDamageInstanceNumber")]
-	[h:objectData = json.remove(objectData,"addDamageType")]
-	[h:objectData = json.remove(objectData,"removeDamageType")]
+	[h:"<-- TODO: Add weapon crit dice here after deciding on format for how to store data -->"]
 };{}]
 
 [h,if(objectType=="Ammunition"),CODE:{

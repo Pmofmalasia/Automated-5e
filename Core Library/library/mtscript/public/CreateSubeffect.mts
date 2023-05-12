@@ -31,7 +31,7 @@
 
 	[h:PriorSubeffectData = base64.encode(PriorSubeffectData)]
 
-	[h:SubeffectHTML = SubeffectHTML + "<input type='hidden' name='PriorSubeffects' id='PriorSubeffects' value='"+PriorSubeffectData+"'><tr id='rowSubeffectLink'><th><label for='SubeffectLink'>Linked to Subeffect #:</label></th><td><select id='SubeffectLink' name='SubeffectLink' onchange='createSubeffectLinkRows()'>"+SubeffectLinkOptions+"</select></td></tr>"]
+	[h:SubeffectHTML = SubeffectHTML + "<input type='hidden' name='PriorSubeffects' id='PriorSubeffects' value='"+PriorSubeffectData+"'><tr id='rowParentSubeffect'><th><label for='ParentSubeffect'>Linked to Subeffect #:</label></th><td><select id='ParentSubeffect' name='ParentSubeffect' onchange='createParentSubeffectRows()'>"+SubeffectLinkOptions+"</select></td></tr>"]
 };{}]
 
 [h,if(json.type(ExtraData) == "OBJECT"),CODE:{

@@ -117,6 +117,15 @@
 	[h:attack.ProfTest = 1]
 	[h:attack.ToHitBonus = 0]
 
+	[h,if(json.get(SubeffectData,"CritThresh")!=""):
+		attack.CritThresh = json.get(SubeffectData,"CritThresh");
+		attack.CritThresh = 20
+	]
+	[h,if(json.get(SubeffectData,"CritThreshReduction")!=""):
+		attack.CritThreshReduction = json.get(SubeffectData,"CritThreshReduction");
+		attack.CritThreshReduction = 0
+	]
+
 	[h:subeffect.RerollData = json.get(NonSubeffectData,"RerollData")]
 	[h,if(json.length(subeffect.AllTargets)>1):
 		subeffect.AttackData = pm.a5e.AttackRoll(subeffect.RerollData,SubeffectFunctionPrefixes);

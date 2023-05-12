@@ -54,13 +54,16 @@ async function createObjectSubtypeRows(){
 		await addDamageTypeRows("Weapon");
 		nextRowIndex++;
 
-		addTableRow("CreateObjectTable",nextRowIndex,"rowWeaponAddDamageInstanceButtons","<th text-align='center' colspan='2'><input type='button' id='addDamageType' name='addDamageType' value='Add Type' onclick='addDamageTypeRows("+'"Weapon"'+")'>  <input type='button' id='removeDamageType' name='removeDamageType' value='Remove Type' onclick='removeWeaponDamageTypeRows("+'"Weapon"'+")'></th>");
+		addTableRow("CreateObjectTable",nextRowIndex,"rowWeaponAddDamageInstanceButtons","<th text-align='center' colspan='2'><input type='button' id='addDamageType' name='addDamageType' value='Add Type' onclick='addDamageTypeRows("+'"Weapon"'+")'>  <input type='button' id='removeDamageType' name='removeDamageType' value='Remove Type' onclick='removeDamageTypeRows("+'"Weapon"'+")'></th>");
 		nextRowIndex++;
 
 		addTableRow("CreateObjectTable",nextRowIndex,"rowMagicBonus","<th><label for='MagicBonus'>Magic Bonus:</label></th><td>+ <input type='number' id='MagicBonus' name='MagicBonus' min='0' value='0' style='width:25px' onchange='MagicBonusChanges()'></td>");
 		nextRowIndex++;
 
 		addTableRow("CreateObjectTable",nextRowIndex,"rowWeaponCritThresh","<th><label for='WeaponCritThresh'>Critical Threshhold:</label></th><td><input type='number' id='WeaponCritThresh' name='WeaponCritThresh' max='20' min='0' value='20'><select id='WeaponCritThreshMethod' name='WeaponCritThreshMethod'><option value='Set'>Set to Value</option><option value='Reduce'>Reduce by Value</option></select></td>");
+		nextRowIndex++;
+
+		addTableRow("CreateObjectTable",nextRowIndex,"rowWeaponCritDice","<th><label for='WeaponCritDice'>Bonus Crit Dice:</label></th><td><select id='WeaponCritDiceMethod' name='WeaponCritDiceMethod'><option value='Add'>Add</option><option value='Multiply'>Multiply</option></select><input type='number' id='WeaponCritDice' name='WeaponCritDice' min='0' value=0></td>");
 		nextRowIndex++;
 	}
 	else if(ObjectType == "Armor" || ObjectType == "Shield"){
@@ -131,7 +134,7 @@ async function createObjectSubtypeRows(){
 		addTableRow("CreateObjectTable",nextRowIndex,"rowAmmunitionDamageHeader","<th text-align='center' colspan='2'>Additional Damage:<input type='hidden' id='AmmunitionDamageInstanceNumber' name='AmmunitionDamageInstanceNumber' value=0></th>");
 		nextRowIndex++;
 
-		addTableRow("CreateObjectTable",nextRowIndex,"rowAmmunitionAddDamageInstanceButtons","<th text-align='center' colspan='2'><input type='button' id='addDamageType' name='addDamageType' value='Add Type' onclick='addDamageTypeRows("+'"Ammunition"'+")'>  <input type='button' id='removeDamageType' name='removeDamageType' value='Remove Type' onclick='removeAmmunitionDamageTypeRows("+'"Ammunition"'+")'></th>");
+		addTableRow("CreateObjectTable",nextRowIndex,"rowAmmunitionAddDamageInstanceButtons","<th text-align='center' colspan='2'><input type='button' id='addDamageType' name='addDamageType' value='Add Type' onclick='addDamageTypeRows("+'"Ammunition"'+")'>  <input type='button' id='removeDamageType' name='removeDamageType' value='Remove Type' onclick='removeDamageTypeRows("+'"Ammunition"'+")'></th>");
 		nextRowIndex++;
 
 		addTableRow("CreateObjectTable",nextRowIndex,"rowMagicBonus","<th><label for='MagicBonus'>Magic Bonus:</label></th><td>+ <input type='number' id='MagicBonus' name='MagicBonus' min='0' value='0' style='width:25px' onchange='MagicBonusChanges()'></td>");
@@ -523,17 +526,23 @@ async function createWeaponPropertyRows(toggledProperty){
 	else if(toggledProperty == "Versatile"){
 		nextRowIndex = document.getElementById("rowWeaponAddDamageInstanceButtons").rowIndex + 1;
 		if(document.getElementById("weaponProperty"+toggledProperty).checked){
+			let weaponDamageInstanceNumber = Number(document.getElementById("WeaponDamageInstanceNumber").value);
 			addTableRow("CreateObjectTable",nextRowIndex,"rowVersatileDamageHeader","<th text-align='center' colspan='2'>Versatile Damage:<input type='hidden' id='VersatileDamageInstanceNumber' name='VersatileDamageInstanceNumber' value=0></th>");
 			nextRowIndex++;
-			for(let i = 0; document.getElementById("WeaponDamageInstanceNumber").value > i; i++){
-				addDamageTypeRows("Versatile");
+
+			for(let i = 0; i < weaponDamageInstanceNumber; i++){
+				await addDamageTypeRows("Versatile");
 				nextRowIndex++;
+
 				document.getElementById("VersatileDamageDieNumber"+i).value = document.getElementById("WeaponDamageDieNumber"+i).value;
 				document.getElementById("VersatileDamageDieSize"+i).value = document.getElementById("WeaponDamageDieSize"+i).value;
 				document.getElementById("VersatileDamageBonus"+i).value = document.getElementById("WeaponDamageBonus"+i).value;
 				document.getElementById("VersatileAddDmgMod"+i).value = document.getElementById("WeaponAddDmgMod"+i).value;
 				document.getElementById("VersatileDamageType"+i).value = document.getElementById("WeaponDamageType"+i).value;
 			}
+
+			addTableRow("CreateObjectTable",nextRowIndex,"rowVersatileAddDamageInstanceButtons","<th text-align='center' colspan='2'><input type='button' id='addDamageType' name='addDamageType' value='Add Type' onclick='addDamageTypeRows("+'"Versatile"'+")'>  <input type='button' id='removeDamageType' name='removeDamageType' value='Remove Type' onclick='removeDamageTypeRows("+'"Versatile"'+")'></th>");
+			nextRowIndex++;
 		}
 		else{
 			clearUnusedTable("CreateObjectTable","rowWeaponAddDamageInstanceButtons","rowMagicBonus")
@@ -542,7 +551,7 @@ async function createWeaponPropertyRows(toggledProperty){
 }
 
 async function addDamageTypeRows(rowPrefix){
-	let currentInstanceNumber = document.getElementById(rowPrefix+"DamageInstanceNumber").value;
+	let currentInstanceNumber = Number(document.getElementById(rowPrefix+"DamageInstanceNumber").value);
 	let nextRowIndex = document.getElementById("row"+rowPrefix+"DamageHeader").rowIndex + 1 + currentInstanceNumber;
 
 	let requestDamageData = await fetch("macro:pm.GetDamageTypes@lib:pm.a5e.Core", {method: "POST", body: ""});
@@ -563,15 +572,21 @@ async function addDamageTypeRows(rowPrefix){
 	document.getElementById(rowPrefix+"DamageInstanceNumber").value = currentInstanceNumber;
 }
 
-function removeWeaponDamageTypeRows(){
-	let currentInstanceNumber = document.getElementById("WeaponDamageInstanceNumber").value;
+function removeDamageTypeRows(rowPrefix){
+	let currentInstanceNumber = document.getElementById(rowPrefix+"DamageInstanceNumber").value;
 	currentInstanceNumber--;
-	document.getElementById("WeaponDamageInstanceNumber").value = currentInstanceNumber;
+	document.getElementById(rowPrefix+"DamageInstanceNumber").value = currentInstanceNumber;
 
 	let table = document.getElementById("CreateObjectTable");
-	let currentInstanceRowIndex = document.getElementById("rowWeaponDamage"+currentInstanceNumber).rowIndex;
+	let currentInstanceRowIndex = document.getElementById("row"+rowPrefix+"Damage"+currentInstanceNumber).rowIndex;
 
 	table.deleteRow(currentInstanceRowIndex);
+
+	if(rowPrefix=="Weapon" && document.getElementById("weaponPropertyVersatile") != null){
+		if(document.getElementById("weaponPropertyVersatile").checked){
+			removeDamageTypeRows("Versatile");
+		}
+	}
 }
 
 function MagicBonusChanges(){

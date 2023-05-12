@@ -19,6 +19,90 @@
 
 [h:subeffectData = pm.a5e.KeyStringsToNumbers(subeffectData)]
 
+[h,if(json.get(subeffectData,"ParentSubeffect")!="" && json.get(subeffectData,"ParentSubeffect")!=0),CODE:{
+	[h:subeffectData = json.set(subeffectData,"ParentSubeffect",json.get(subeffectData,"ParentSubeffect")-1)]
+	[h,switch(json.get(subeffectData,"ParentPrereqs")),CODE:
+		case "AttackHit":{
+			[h:subeffectData = json.set(subeffectData,"ParentEffectRequirements",json.set("",
+				"Requirement","Attack",
+				"Result","Hit",
+				"Margin",json.get(subeffectData,"PrereqAttackHitMargin")
+			))]
+
+			[h:subeffectData = json.remove(subeffectData,"ParentPrereqs")]
+			[h:subeffectData = json.remove(subeffectData,"PrereqAttackHitMargin")]
+		};
+		case "AttackMiss":{
+			[h:subeffectData = json.set(subeffectData,"ParentEffectRequirements",json.set("",
+				"Requirement","Attack",
+				"Result","Miss",
+				"Margin",json.get(subeffectData,"PrereqAttackMissMargin")
+			))]
+
+			[h:subeffectData = json.remove(subeffectData,"ParentPrereqs")]
+			[h:subeffectData = json.remove(subeffectData,"PrereqAttackHitMargin")]
+		};
+		case "SaveSucceed":{
+			[h:subeffectData = json.set(subeffectData,"ParentEffectRequirements",json.set("",
+				"Requirement","Save",
+				"Result","Pass",
+				"Margin",json.get(subeffectData,"PrereqSaveSucceedMargin")
+			))]
+
+			[h:subeffectData = json.remove(subeffectData,"ParentPrereqs")]
+			[h:subeffectData = json.remove(subeffectData,"PrereqSaveSucceedMargin")]
+		};
+		case "SaveFail":{
+			[h:subeffectData = json.set(subeffectData,"ParentEffectRequirements",json.set("",
+				"Requirement","Save",
+				"Result","Fail",
+				"Margin",json.get(subeffectData,"PrereqSaveFailMargin")
+			))]
+
+			[h:subeffectData = json.remove(subeffectData,"ParentPrereqs")]
+			[h:subeffectData = json.remove(subeffectData,"PrereqSaveFailMargin")]
+		};
+		case "CheckSucceed":{
+			[h:subeffectData = json.set(subeffectData,"ParentEffectRequirements",json.set("",
+				"Requirement","Check",
+				"Result","Pass",
+				"Margin",json.get(subeffectData,"PrereqCheckSucceedMargin")
+			))]
+
+			[h:subeffectData = json.remove(subeffectData,"ParentPrereqs")]
+			[h:subeffectData = json.remove(subeffectData,"PrereqCheckSucceedMargin")]
+		};
+		case "CheckFail":{
+			[h:subeffectData = json.set(subeffectData,"ParentEffectRequirements",json.set("",
+				"Requirement","Check",
+				"Result","Fail",
+				"Margin",json.get(subeffectData,"PrereqCheckFailMargin")
+			))]
+
+			[h:subeffectData = json.remove(subeffectData,"ParentPrereqs")]
+			[h:subeffectData = json.remove(subeffectData,"PrereqCheckFailMargin")]
+		};
+		case "ConditionApplied":{
+			[h:subeffectData = json.set(subeffectData,"ParentEffectRequirements",json.set("",
+				"Requirement","ConditionApplied",
+				"Result",json.get(subeffectData,"PrereqConditionsApplied")
+			))]
+
+			[h:subeffectData = json.remove(subeffectData,"ParentPrereqs")]
+			[h:subeffectData = json.remove(subeffectData,"PrereqConditionsApplied")]
+		};
+		default:{
+			[h:subeffectData = json.set(subeffectData,"ParentEffectRequirements",json.set("",
+				"Requirement",json.get(subeffectData,"ParentPrereqs")
+			))]
+
+			[h:subeffectData = json.remove(subeffectData,"ParentPrereqs")]
+		}
+	]
+};{
+	[h:subeffectData = json.remove(subeffectData,"ParentSubeffect")]
+}]
+
 [h:howMitigate = json.get(subeffectData,"howMitigate")]
 [h:subeffectData = json.remove(subeffectData,"howMitigate")]
 [h,if(howMitigate == "Save"),CODE:{
@@ -558,6 +642,7 @@
 
 [h:totalSubeffects = number(json.get(subeffectData,"TotalSubeffects"))]
 [h:thisSubeffectNum = number(json.get(subeffectData,"WhichSubeffect"))]
+[h:subeffectData = json.set(subeffectData,"WhichIntrinsicSubeffect",thisSubeffectNum)]
 [h:subeffectData = json.remove(subeffectData,"TotalSubeffects")]
 [h:subeffectData = json.remove(subeffectData,"WhichSubeffect")]
 [h:subeffectData = json.remove(subeffectData,"PriorSubeffects")]

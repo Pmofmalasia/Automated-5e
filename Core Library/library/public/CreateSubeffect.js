@@ -2,12 +2,12 @@ function checkEffectType(){
 	return document.getElementById("EffectType").value;
 }
 
-function createSubeffectLinkRows(){
-	let nextRowIndex = document.getElementById("rowSubeffectLink").rowIndex + 1;
-	let ParentSubeffect = getLinkedSubeffect();
+function createParentSubeffectRows(){
+	let nextRowIndex = document.getElementById("rowParentSubeffect").rowIndex + 1;
+	let ParentSubeffect = getParentSubeffect();
 
 	if(ParentSubeffect == "NONE"){
-		clearUnusedTable("CreateSubeffectTable","rowSubeffectLink","Mitigation");
+		clearUnusedTable("CreateSubeffectTable","rowParentSubeffect","Mitigation");
 	}
 	else{
 		let PrereqSelectOptions = "<option value = ''>None</option>";
@@ -38,8 +38,8 @@ function createSubeffectLinkRows(){
 	}
 }
 
-function getLinkedSubeffect(){
-	let ParentSubeffectNumber = Number(document.getElementById("SubeffectLink").value);
+function getParentSubeffect(){
+	let ParentSubeffectNumber = Number(document.getElementById("ParentSubeffect").value);
 
 	if(ParentSubeffectNumber == 0){
 		return "NONE";
@@ -83,14 +83,14 @@ function createParentPrereqRows(){
 	}
 	else if(PrereqChoice == "ConditionApplied"){
 		let ConditionsRequiredOptions = "<option value='All'>All Conditions</option><option value='Any'>Any Condition</option>";
-		let ParentSubeffect = getLinkedSubeffect();
+		let ParentSubeffect = getParentSubeffect();
 		let ParentSubeffectConditionInfo = ParentSubeffect.ConditionInfo;
 
 		for(let tempCondition of ParentSubeffectConditionInfo.Conditions){
 			ConditionsRequiredOptions = ConditionsRequiredOptions + "<option value='"+tempCondition.Name+"'>"+tempCondition.DisplayName+"</option>";
 		}
 
-		addTableRow("CreateSubeffectTable",nextRowIndex,"rowParentPrereqExtra","<th><label for='PrereqConditionsApplied'>Conditions that Must be Applied:</label></th><td><select id='PrereqConditionsApplied' name='PrereqConditionsApplied'></select></td>");
+		addTableRow("CreateSubeffectTable",nextRowIndex,"rowParentPrereqExtra","<th><label for='PrereqConditionsApplied'>Conditions that Must be Applied:</label></th><td><select id='PrereqConditionsApplied' name='PrereqConditionsApplied'>"+ConditionsRequiredOptions+"</select></td>");
 		nextRowIndex++;
 	}
 }
@@ -243,8 +243,8 @@ async function addDamageTypeRows(){
 
 	let UsePriorDamageButton = "";
 
-	if(document.getElementById("SubeffectLink") != null){
-		let ParentSubeffect = getLinkedSubeffect();
+	if(document.getElementById("ParentSubeffect") != null){
+		let ParentSubeffect = getParentSubeffect();
 		if(ParentSubeffect != "NONE"){
 			let ParentSubeffectHasDamage = Object.keys(ParentSubeffect).includes("Damage");
 
@@ -302,7 +302,7 @@ async function generateDamageTypeOptions(){
 
 async function switchToPriorDamage(damageTypeNumber){
 	let damageTypeOptions = await generateDamageTypeOptions();
-	let ParentSubeffect = getLinkedSubeffect();
+	let ParentSubeffect = getParentSubeffect();
 	let ParentSubeffectDamage = ParentSubeffect.Damage;
 	let PriorDamageTypes = [];
 	let PriorDamageTypeOptions = "<option value='TotalDamage'>All</option>";

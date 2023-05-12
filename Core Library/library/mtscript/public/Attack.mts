@@ -43,11 +43,11 @@
 [h:wa.Range = json.get(wa.WeaponUsed,"Range")]
 [h:wa.LongRange = json.get(wa.WeaponUsed,"LongRange")]
 
-[h,if(json.get(wa.WeaponUsed,"CritThresh")==""):
+[h,if(json.get(wa.WeaponUsed,"CritThresh")!=""):
 	attack.CritThresh = json.get(wa.WeaponUsed,"CritThresh");
 	attack.CritThresh = 20
 ]
-[h,if(json.get(wa.WeaponUsed,"CritThreshReduction")==""):
+[h,if(json.get(wa.WeaponUsed,"CritThreshReduction")!=""):
 	attack.CritThreshReduction = json.get(wa.WeaponUsed,"CritThreshReduction");
 	attack.CritThreshReduction = 0
 ]
@@ -131,7 +131,7 @@
 };{}]
 
 [h,if(EmptyHandTest==1 && json.contains(wa.Props,"Versatile")),CODE:{
-	[h:"<!-- TODO: Add completely new damage die input for Versatile weaponry, since RAW it isn't just +2 to damage die size, but whatever is in the parenthesis (so could be +4, could apply to one or both damage types, etc.) -->"]
+	[h:wa.DamageData = json.get(wa.Data,"VersatileDamage")]
 };{}]
 
 [h:pm.PassiveFunction("AttackStat")]

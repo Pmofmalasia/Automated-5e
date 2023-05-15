@@ -67,4 +67,4 @@
 
 [h:EquipItemHTML = EquipItemHTML + "<tr><th text-align='center' colspan='2'><input type='submit' id='submitButton' value='Change Equipment'></th></tr>"]
 
-[h:html.dialog5("Equipment","lib://pm.a5e.core/EquipItem.html?cachelib=false","value="+base64.encode(EquipItemHTML)+"; closebutton=0")]
+[h:html.dialog5("Equipment","lib://pm.a5e.core/EquipItem.html?cachelib=false","value="+base64.encode(EquipItemHTML)+"; width=500; height=400; closebutton=0")]

@@ -36,9 +36,9 @@
 [h:targetsWithAdditionalAttackResolution = "[]"]
 
 [h,if(json.get(effFull,"SpecificTargets")!=""): effTargets = json.get(effFull,"SpecificTargets")]
-[h:ParentEffectData = json.get(effFull,"ParentEffectData")]
-[h,if(ParentEffectData!=""),CODE:{
-	[h,switch(json.get(ParentEffectData,"ParentRequirement")),CODE:
+[h:ParentEffect = json.get(effFull,"ParentSubeffect")]
+[h,if(ParentEffect!=""),CODE:{
+	[h,switch(json.get(effFull,"ParentSubeffectRequirements")),CODE:
 		default:{
 			
 		}

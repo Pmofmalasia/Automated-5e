@@ -33,7 +33,7 @@
 [h:CritFailMessage = json.get(wa.Data,"CritFailMessage")]
 
 [h:"<!-- TODO: Switch out name with false name if needed -->"]
-[h:wa.Name = json.get(wa.WeaponUsed,"Name")]
+[h:wa.Name = json.get(wa.WeaponUsed,"DisplayName")]
 [h:wa.MagicBonus = json.get(wa.WeaponUsed,"MagicBonus")]
 [h:wa.WeaponType = json.get(wa.WeaponUsed,"WeaponType")]
 [h:wa.Class = json.get(wa.WeaponUsed,"WeaponClass")]
@@ -131,7 +131,7 @@
 };{}]
 
 [h,if(EmptyHandTest==1 && json.contains(wa.Props,"Versatile")),CODE:{
-	[h:wa.DamageData = json.get(wa.Data,"VersatileDamage")]
+	[h:wa.DamageData = json.get(wa.WeaponUsed,"VersatileDamage")]
 };{}]
 
 [h:pm.PassiveFunction("AttackStat")]

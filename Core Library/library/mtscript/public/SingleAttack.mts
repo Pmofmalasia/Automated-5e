@@ -25,7 +25,7 @@
 	"ParentToken",ParentToken,
 	"DMOnly",0,
 	"Class","zzWeaponAttack",
-	"Name",json.get(WeaponData,"Name")+" Attack",
+	"Name",json.get(WeaponData,"DisplayName")+" Attack",
 	"FalseName","Weapon Attack",
 	"OnlyRules",0
 )]
@@ -47,7 +47,7 @@
 
 [h:pm.a5e.BaseEffectData = json.set("",
 	"Class","zzWeaponAttack",
-	"DisplayName",json.get(WeaponData,"Name")+" Attack",
+	"DisplayName",json.get(WeaponData,"DisplayName")+" Attack",
 	"Type","WeaponAttack",
 	"ID",pm.a5e.GenerateEffectID(),
 	"ParentToken",ParentToken

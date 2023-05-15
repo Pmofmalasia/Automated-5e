@@ -23,7 +23,7 @@
 	[h:subeffectData = json.set(subeffectData,"ParentSubeffect",json.get(subeffectData,"ParentSubeffect")-1)]
 	[h,switch(json.get(subeffectData,"ParentPrereqs")),CODE:
 		case "AttackHit":{
-			[h:subeffectData = json.set(subeffectData,"ParentEffectRequirements",json.set("",
+			[h:subeffectData = json.set(subeffectData,"ParentSubeffectRequirements",json.set("",
 				"Requirement","Attack",
 				"Result","Hit",
 				"Margin",json.get(subeffectData,"PrereqAttackHitMargin")
@@ -33,7 +33,7 @@
 			[h:subeffectData = json.remove(subeffectData,"PrereqAttackHitMargin")]
 		};
 		case "AttackMiss":{
-			[h:subeffectData = json.set(subeffectData,"ParentEffectRequirements",json.set("",
+			[h:subeffectData = json.set(subeffectData,"ParentSubeffectRequirements",json.set("",
 				"Requirement","Attack",
 				"Result","Miss",
 				"Margin",json.get(subeffectData,"PrereqAttackMissMargin")
@@ -43,7 +43,7 @@
 			[h:subeffectData = json.remove(subeffectData,"PrereqAttackHitMargin")]
 		};
 		case "SaveSucceed":{
-			[h:subeffectData = json.set(subeffectData,"ParentEffectRequirements",json.set("",
+			[h:subeffectData = json.set(subeffectData,"ParentSubeffectRequirements",json.set("",
 				"Requirement","Save",
 				"Result","Pass",
 				"Margin",json.get(subeffectData,"PrereqSaveSucceedMargin")
@@ -53,7 +53,7 @@
 			[h:subeffectData = json.remove(subeffectData,"PrereqSaveSucceedMargin")]
 		};
 		case "SaveFail":{
-			[h:subeffectData = json.set(subeffectData,"ParentEffectRequirements",json.set("",
+			[h:subeffectData = json.set(subeffectData,"ParentSubeffectRequirements",json.set("",
 				"Requirement","Save",
 				"Result","Fail",
 				"Margin",json.get(subeffectData,"PrereqSaveFailMargin")
@@ -63,7 +63,7 @@
 			[h:subeffectData = json.remove(subeffectData,"PrereqSaveFailMargin")]
 		};
 		case "CheckSucceed":{
-			[h:subeffectData = json.set(subeffectData,"ParentEffectRequirements",json.set("",
+			[h:subeffectData = json.set(subeffectData,"ParentSubeffectRequirements",json.set("",
 				"Requirement","Check",
 				"Result","Pass",
 				"Margin",json.get(subeffectData,"PrereqCheckSucceedMargin")
@@ -73,7 +73,7 @@
 			[h:subeffectData = json.remove(subeffectData,"PrereqCheckSucceedMargin")]
 		};
 		case "CheckFail":{
-			[h:subeffectData = json.set(subeffectData,"ParentEffectRequirements",json.set("",
+			[h:subeffectData = json.set(subeffectData,"ParentSubeffectRequirements",json.set("",
 				"Requirement","Check",
 				"Result","Fail",
 				"Margin",json.get(subeffectData,"PrereqCheckFailMargin")
@@ -83,7 +83,7 @@
 			[h:subeffectData = json.remove(subeffectData,"PrereqCheckFailMargin")]
 		};
 		case "ConditionApplied":{
-			[h:subeffectData = json.set(subeffectData,"ParentEffectRequirements",json.set("",
+			[h:subeffectData = json.set(subeffectData,"ParentSubeffectRequirements",json.set("",
 				"Requirement","ConditionApplied",
 				"Result",json.get(subeffectData,"PrereqConditionsApplied")
 			))]
@@ -92,7 +92,7 @@
 			[h:subeffectData = json.remove(subeffectData,"PrereqConditionsApplied")]
 		};
 		default:{
-			[h:subeffectData = json.set(subeffectData,"ParentEffectRequirements",json.set("",
+			[h:subeffectData = json.set(subeffectData,"ParentSubeffectRequirements",json.set("",
 				"Requirement",json.get(subeffectData,"ParentPrereqs")
 			))]
 
@@ -127,13 +127,7 @@
 [h:SaveDamageModifier = "{}"]
 [h,count(damageTypeNumber),CODE:{
 	[h:whichType = roll.count + 1]
-	[h:thisDamageTypeInfo = json.set("",
-		"DamageType",json.get(subeffectData,"DamageType"+whichType),
-		"DamageDieNumber",number(json.get(subeffectData,"DamageDieNum"+whichType)),
-		"DamageDieSize",number(json.get(subeffectData,"DamageDieSize"+whichType)),
-		"DamageFlatBonus",number(json.get(subeffectData,"DamageFlatBonus"+whichType)),
-		"IsModBonus",json.contains(subeffectData,"ModBonus"+whichType)
-	)]
+	[h:thisDamageTypeInfo = "{}"]
 
 	[h,if(json.get(subeffectData,"DamageType"+whichType) == "Multiple Options"),CODE:{
 		[h:thisDamageTypeInfo = json.remove(thisDamageTypeInfo,"DamageType")]
@@ -142,7 +136,20 @@
 		[h,foreach(tempType,allDamageTypes): DamageTypeOptions = if(json.contains(subeffectData,"DamageTypeOptions"+tempType+whichType),json.append(DamageTypeOptions,tempType),DamageTypeOptions)]
 		[h,foreach(tempType,DamageTypeOptions): subeffectData = json.remove(subeffectData,"DamageTypeOptions"+tempType+whichType)]
 		[h:thisDamageTypeInfo = json.set(thisDamageTypeInfo,"DamageTypeOptions",DamageTypeOptions)]
+	};{
+		[h:thisDamageTypeInfo = json.set(thisDamageTypeInfo,"DamageType",json.get(subeffectData,"DamageType"+whichType))]
 	}]
+	
+	[h,if(json.contains(subeffectData,"DamageDieNum"+whichType)):
+		thisDamageTypeInfo = json.set(thisDamageTypeInfo,
+			"DamageDieNumber",number(json.get(subeffectData,"DamageDieNum"+whichType)),
+			"DamageDieSize",number(json.get(subeffectData,"DamageDieSize"+whichType)),
+			"DamageFlatBonus",number(json.get(subeffectData,"DamageFlatBonus"+whichType)),
+			"IsModBonus",json.contains(subeffectData,"ModBonus"+whichType));
+		thisDamageTypeInfo = json.set(thisDamageTypeInfo,
+			"PriorDamagePercent",(json.get(subeffectData,"PriorDamagePercent"+whichType)/100),
+			"PriorDamageType",json.get(subeffectData,"PriorDamageType"+whichType))
+	]
 
 	[h,if(json.get(subeffectData,"isAHL"+whichType)!=0 && json.contains(subeffectData,"isAHL"+whichType)):
 		thisDamageTypeInfo = json.set(thisDamageTypeInfo,
@@ -171,6 +178,8 @@
 	[h:subeffectData = json.remove(subeffectData,"DamageDieSize"+whichType)]
 	[h:subeffectData = json.remove(subeffectData,"DamageFlatBonus"+whichType)]
 	[h:subeffectData = json.remove(subeffectData,"ModBonus"+whichType)]
+	[h:subeffectData = json.remove(subeffectData,"PriorDamagePercent"+whichType)]
+	[h:subeffectData = json.remove(subeffectData,"PriorDamageType"+whichType)]
 	[h:subeffectData = json.remove(subeffectData,"AHLDieSize"+whichType)]
 	[h:subeffectData = json.remove(subeffectData,"AHLDieNum"+whichType)]
 	[h:subeffectData = json.remove(subeffectData,"AHLFlatBonus"+whichType)]

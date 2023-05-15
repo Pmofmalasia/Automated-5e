@@ -249,7 +249,6 @@ async function addDamageTypeRows(){
 			let ParentSubeffectHasDamage = Object.keys(ParentSubeffect).includes("Damage");
 
 			if(ParentSubeffectHasDamage){
-				console.log(damageTypeNumber);
 				UsePriorDamageButton = " <b>OR</b> <input type='button' id='PriorDamageButton' name='PriorDamageButton' value='Base On Prior Damage' onclick='switchToPriorDamage(1)'>";
 			}			
 		}
@@ -318,7 +317,7 @@ async function switchToPriorDamage(damageTypeNumber){
 		}
 	}
 
-	document.getElementById("DamageSet"+damageTypeNumber).innerHTML = "<th text-align='center' colspan='2'> <input type='number' id='PriorDamageModifier"+damageTypeNumber+"' name='PriorDamageModifier"+damageTypeNumber+"' min=0 max=100 style='width:30px' value=100>% of the <select id='PriorDamageType"+damageTypeNumber+"' name='PriorDamageType"+damageTypeNumber+"'>"+PriorDamageTypeOptions+"</select> Damage dealt as <select id='DamageType"+damageTypeNumber+"' name='DamageType"+damageTypeNumber+"'>"+damageTypeOptions+"</select> Damage, <b>OR</b> <input type='button' id='IndependentDamageButton' name='IndependentDamageButton' value='Indepenent Damage' onclick='switchToIndependentDamage("+damageTypeNumber+")'>";
+	document.getElementById("DamageSet"+damageTypeNumber).innerHTML = "<th text-align='center' colspan='2'> <input type='number' id='PriorDamagePercent"+damageTypeNumber+"' name='PriorDamagePercent"+damageTypeNumber+"' min=0 max=100 style='width:30px' value=100>% of the <select id='PriorDamageType"+damageTypeNumber+"' name='PriorDamageType"+damageTypeNumber+"'>"+PriorDamageTypeOptions+"</select> Damage dealt as <select id='DamageType"+damageTypeNumber+"' name='DamageType"+damageTypeNumber+"'>"+damageTypeOptions+"</select> Damage, <b>OR</b> <input type='button' id='IndependentDamageButton' name='IndependentDamageButton' value='Indepenent Damage' onclick='switchToIndependentDamage("+damageTypeNumber+")'>";
 }
 
 async function switchToIndependentDamage(damageTypeNumber){
@@ -588,7 +587,7 @@ async function conditionAlternateDuration(){
 	}
 
 	if(isSameDuration){
-		//This doesn't work because this function just completely doesn't get called and I don't know why.
+		//TODO: This doesn't work because this function just completely doesn't get called and I don't know why.
 		table.deleteRow(document.getElementById("rowAlternateConditionDuration").rowIndex);
 	}
 	else{
@@ -1722,21 +1721,23 @@ async function createMultitargetDistanceToggle(){
 
 async function createTargetTable(primarySecondary){
 	let table = document.getElementById("CreateSubeffectTable");
-	
+	let currentTargetTypeSelection;
+	let startRowIndex;
+
 	if(primarySecondary == 1){
-		var currentTargetTypeSelection = document.getElementById("TargetType").value;
-		var startRowIndex = document.getElementById("Target").rowIndex;
+		currentTargetTypeSelection = document.getElementById("TargetType").value;
+		startRowIndex = document.getElementById("Target").rowIndex;
 	}
 	else if(primarySecondary == 2){
-		var currentTargetTypeSelection = document.getElementById("secondaryTargetType").value;
-		var startRowIndex = document.getElementById("rowSecondaryTarget").rowIndex;
+		currentTargetTypeSelection = document.getElementById("secondaryTargetType").value;
+		startRowIndex = document.getElementById("rowSecondaryTarget").rowIndex;
 	}    
 
 	if(currentTargetTypeSelection == "Creature"){
 		createCreatureTargetTable(primarySecondary);
 	}
 	else if(currentTargetTypeSelection == "Object"){
-
+		createObjectTargetTable(primarySecondary);
 	}
 	else if(currentTargetTypeSelection == "Effect"){
 
@@ -1767,12 +1768,13 @@ async function createTargetTable(primarySecondary){
 async function createCreatureTargetTable(primarySecondary){
 	let table = document.getElementById("CreateSubeffectTable");
 	let currentTargetTypeSelection = document.getElementById("TargetType").value;
+	let startRowID;
 
 	if(primarySecondary==1){
-		var startRowID = "Target";
+		startRowID = "Target";
 	}
 	else if(primarySecondary==2){
-		var startRowID = "rowSecondaryTarget";
+		startRowID = "rowSecondaryTarget";
 	}
 
 	let startRowIndex = document.getElementById(startRowID).rowIndex;
@@ -2008,6 +2010,21 @@ async function createTargetAlignmentTable(){
 	else{
 		clearUnusedTable("CreateSubeffectTable","rowTargetAlignment","submitRow");
 	}
+}
+
+async function createObjectTargetTable(primarySecondary){
+	let table = document.getElementById("CreateSubeffectTable");
+	let currentTargetTypeSelection = document.getElementById("TargetType").value;
+	let startRowID;
+
+	if(primarySecondary==1){
+		startRowID = "Target";
+	}
+	else if(primarySecondary==2){
+		startRowID = "rowSecondaryTarget";
+	}
+	
+	let nextRowIndex = document.getElementById(startRowID).rowIndex + 1;
 }
 
 async function loadUserData() {

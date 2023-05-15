@@ -5,6 +5,14 @@
 
 [h:thisEffectData = json.set("","ID",pm.a5e.GenerateEffectID())]
 
+[h,if(json.get(SubeffectData,"ParentSubeffect")!=""),CODE:{
+	[h:tempParentID = json.path.read(pm.a5e.EffectData,"[*][?(@.WhichIntrinsicSubeffect == '"+json.get(SubeffectData,"ParentSubeffect")+"')]['ID']")]
+	[h,if(!json.isEmpty(tempParentID)): thisEffectData = json.set(thisEffectData,
+		"ParentSubeffect",json.get(tempParentID,0),
+		"ParentSubeffectRequirements",json.get(SubeffectData,"ParentSubeffectRequirements")
+	)]
+};{}]
+
 [h:subeffect.RangeData = json.get(SubeffectData,"Range")]
 [h:subeffect.RangeType = json.get(SubeffectData,"RangeType")]
 [h,if(subeffect.RangeType == "SelfRanged" || subeffect.RangeType == "Ranged"),CODE:{

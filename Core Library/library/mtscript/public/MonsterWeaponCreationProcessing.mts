@@ -3,80 +3,77 @@
 [h:ParentToken = json.get(MonsterWeaponData,"ParentToken")]
 [h:switchToken(ParentToken)]
 
-[h:NewWeaponProps = json.set("",
-    "Ammo",0,
-    "Magic",(json.get(MonsterWeaponData,"WeaponMagicBonus") > 0),
-    "Finesse",0,
-    "Heavy",0,
-    "Light",0,
-    "Loading",0,
-    "Reach",0,
-    "Thrown",0,
-    "Two-Handed",0,
-    "Versatile",0,
-    "IntMod",0,
-    "WisMod",0,
-    "ChaMod",0,
-    "PrimeStat",json.get(MonsterWeaponData,"WeaponStat"),
-    "DmgMod",json.contains(MonsterWeaponData,"WeaponAddDmgMod"),
-    "CastingFocus",0
-)]
+[h,if(json.get(MonsterWeaponData,"WeaponType")=="@@NewType"),CODE:{
+	[h:MonsterWeaponData = json.set(MonsterWeaponData,"WeaponType",pm.RemoveSpecial(json.get(MonsterWeaponData,"NewTypeName")))]
+	[h:MonsterWeaponData = json.remove(MonsterWeaponData,"NewTypeName")]
+	[h:MonsterWeaponData = json.remove(MonsterWeaponData,"isNewTemplate")]
+};{}]
 
-[h:NewWeaponData = json.set("",
-    "Name",json.get(MonsterWeaponData,"DisplayName"),
-    "Type",json.get(MonsterWeaponData,"WeaponType"),
-    "Class",json.get(MonsterWeaponData,"WeaponClass"),
-    "DamageDie",json.get(MonsterWeaponData,"WeaponDamageNumber")+"d"+json.get(MonsterWeaponData,"WeaponDamageDie"),
-    "DamageType",json.get(MonsterWeaponData,"WeaponDamageType"),
-    "SecDamageDie",if(json.get(MonsterWeaponData,"WeaponDamageNumber2")==0,"0",json.get(MonsterWeaponData,"WeaponDamageNumber2")+"d"+json.get(MonsterWeaponData,"WeaponDamageDie2")),
-    "SecDamageType",json.get(MonsterWeaponData,"WeaponDamageType2"),
-    "Type",json.get(MonsterWeaponData,"WeaponType"),
-    "MeleeRanged",if(json.get(MonsterWeaponData,"WeaponMeleeRanged")=="Ranged","Ranged","Melee"),
-    "Type",json.get(MonsterWeaponData,"WeaponType"),
-    "Range",if(json.contains(MonsterWeaponData,"WeaponRange"),json.get(MonsterWeaponData,"WeaponRange"),0),
-    "Reach",if(json.contains(MonsterWeaponData,"WeaponReach"),json.get(MonsterWeaponData,"WeaponReach"),0),
-    "CritRange",20-json.get(MonsterWeaponData,"WeaponCritThresh"),
-    "MagicBonus",json.get(MonsterWeaponData,"WeaponMagicBonus"),
-    "ItemBuffs","[]",
-    "Props",NewWeaponProps
-)]
+
+[h:MonsterWeaponData = ct.a5e.WeaponDataProcessing(MonsterWeaponData)]
 
 [h:closeDialog("MonsterWeaponCreation")]
 
 [h,if(json.get(MonsterWeaponData,"SpecialEffects")!="None"),CODE:{
-	[h:NewWeaponData = json.set(NewWeaponData,"FinalLocation","Inventory")]
-[h:"<!-- Adjust this to take into account EffectNumber and SubeffectNumber -->"]
-    [h:AllWeaponData = json.set(getLibProperty("ct.NewWeapon","pm.a5e.Core"),getPlayerName(),NewWeaponData)]
+	[h:MonsterWeaponData = json.set(MonsterWeaponData,"FinalLocation","Inventory")]
+
+	[h,if(json.get(MonsterWeaponData,"SpecialEffects")=="SameSubeffect"),CODE:{
+		[h:EffectNumber = 1]
+		[h:SubeffectNumber = 1]
+		[h:WhichSubeffect = 1]
+	};{
+		[h:EffectNumber = 1 + json.get(MonsterWeaponData,"EffectNumber")]
+		[h:SubeffectNumber = 1 + json.get(MonsterWeaponData,"SubeffectNumber")]
+		[h,if(json.get(MonsterWeaponData,"SpecialEffects")=="Mixed"):
+			WhichSubeffect = 1;
+			WhichSubeffect = 2
+		]
+	}]
+
+    [h:AllWeaponData = json.set(getLibProperty("ct.NewWeapon","pm.a5e.Core"),getPlayerName(),MonsterWeaponData)]
     [h:setLibProperty("ct.NewWeapon",AllWeaponData,"Lib:pm.a5e.Core")]
     [h,MACRO("CreateSubeffect@Lib:pm.a5e.Core"): json.set("",
         "EffectType","Weapon",
-        "TotalSubeffects",1,
-        "WhichSubeffect",1,
+		"EffectNumber",EffectNumber,
+        "TotalSubeffects",SubeffectNumber,
+        "WhichSubeffect",WhichSubeffect,
         "ParentToken",currentToken(),
 		"ExtraData",json.set("","WeaponSpecialEffectChoice",json.get(MonsterWeaponData,"SpecialEffects"))
     )]
 };{
-    [h:setProperty("a5e.stat.Weapon",json.append(getProperty("a5e.stat.Weapon"),NewWeaponData))]
+	[h:MonsterWeaponData = json.remove(MonsterWeaponData,"ParentToken")]
+	[h:MonsterWeaponData = json.remove(MonsterWeaponData,"SpecialEffects")]
 
-    [h:NewWeaponCommand = '[h,MACRO("SingleAttack@Lib:pm.a5e.Core"): json.set("","ParentToken",currentToken(),"WeaponData",'+"'"+NewWeaponData+"'"+')]']
+	[h,if(json.get(MonsterWeaponData,"WeaponType") == "NaturalWeapon" || json.get(MonsterWeaponData,"WeaponType") == "Unarmed"),CODE:{
+		[h:NaturalWeaponID = eval("1d1000000") + json.get(getInfo("client"),"timeInMs")]
+		[h:MonsterWeaponData = json.set(MonsterWeaponData,
+			"ItemID",NaturalWeaponID
+		)]
 
-    [h:NewWeaponMacroProps = json.set("",
-        "applyToSelected",0,
-        "autoExecute",1,
-        "color","black",
-        "command",NewWeaponCommand,
-        "fontColor","white",
-        "fontSize","1.00em",
-        "includeLabel",0,
-        "group","Combat",
-        "sortBy","",
-        "label",json.get(MonsterWeaponData,"DisplayName"),
-        "maxWidth","",
-        "minWidth",89,
-        "playerEditable",0,
-        "tooltip",'[h:TooltipData=json.set("","tooltipDisplaySizeOverride",200,"WeaponData",'+"'"+NewWeaponData+"'"+')][MACRO("Attack Macro Tooltip@Lib:pm.a5e.Core"):TooltipData]',
-        "delim","json"
-    )]
+		[h:setProperty("a5e.stat.NaturalWeapons",json.append(getProperty("a5e.stat.NaturalWeapons"),MonsterWeaponData))]
 
-    [h:createMacro(NewWeaponMacroProps)]
+		[h:NewWeaponCommand = '[h,MACRO("SingleAttack@Lib:pm.a5e.Core"): json.set("","ParentToken",currentToken(),"NaturalWeaponID",'+NaturalWeaponID+')]']
+
+		[h:NewWeaponMacroProps = json.set("",
+			"applyToSelected",0,
+			"autoExecute",1,
+			"color","black",
+			"command",NewWeaponCommand,
+			"fontColor","white",
+			"fontSize","1.00em",
+			"includeLabel",0,
+			"group","Combat",
+			"sortBy","",
+			"label",json.get(MonsterWeaponData,"DisplayName"),
+			"maxWidth","",
+			"minWidth",89,
+			"playerEditable",0,
+			"tooltip",'[h:TooltipData=json.set("","tooltipDisplaySizeOverride",200,"ParentToken",currentToken(),"NaturalWeaponID",'+NaturalWeaponID+')][MACRO("AttackMacroTooltip@Lib:pm.a5e.Core"):TooltipData]',
+			"delim","json"
+		)]
+
+		[h:createMacro(NewWeaponMacroProps)]		
+	};{
+		[h:setProperty("a5e.stat.Inventory",json.append(getProperty("a5e.stat.Inventory"),MonsterWeaponData))]
+	}]
 }]

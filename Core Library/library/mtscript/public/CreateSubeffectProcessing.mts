@@ -691,8 +691,6 @@
 
 [h,switch(lastSubeffectTest+""+lastEffectTest),CODE:
 	case "11":{
-		[h:broadcast("Making The Effect")]
-		[h:return(0)]
 		[h:closeDialog("SubeffectCreation")]
 		[h,MACRO("CreateFeatureCoreFinalInput@Lib:pm.a5e.Core"): json.set("","EffectType",EffectType,"ExtraData",extraData,"ParentToken",json.get(subeffectData,"ParentToken"))]
 	};

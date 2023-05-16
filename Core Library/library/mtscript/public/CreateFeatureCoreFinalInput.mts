@@ -12,10 +12,13 @@
 
 [h,switch(EffectType),CODE:
     case "Spell":{
-        [h,if(!json.isEmpty(allConditions)): UniqueConditions = json.path.read(allConditions,"[?(@.Name=='"+FeatureName+"' && @.Class=='Spell')]"); UniqueConditions = "[]"]
+        [h,if(!json.isEmpty(allConditions)):
+			UniqueConditions = json.path.read(allConditions,"[?(@.Name=='"+FeatureName+"' && @.Class=='Spell')]");
+			UniqueConditions = "[]"
+		]
     };
     default:{
-        [h:UniqueConditions = 1]
+        [h:UniqueConditions = "[]"]
     }
 ]
 

@@ -31,6 +31,7 @@
 [h:defineFunction("ct.a5e.AoEDataProcessing","ct.a5e.AoEDataProcessing@Lib:pm.a5e.Core",0,0)]
 [h:defineFunction("ct.a5e.ConditionEndTriggerInputProcessing","ct.a5e.ConditionEndTriggerInputProcessing@Lib:pm.a5e.Core",0,0)]
 [h:defineFunction("ct.a5e.CreatureTargetingLimitProcessing","ct.a5e.CreatureTargetingLimitProcessing@Lib:pm.a5e.Core")]
+[h:defineFunction("ct.a5e.WeaponDataProcessing","ct.a5e.WeaponDataProcessing@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.a5e.KeyStringsToNumbers","pm.a5e.KeyStringsToNumbers@Lib:pm.a5e.Core")]
 
 [h:"<!-- Functions for the character sheet -->"]

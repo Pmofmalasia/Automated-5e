@@ -25,18 +25,21 @@ async function createWeaponTableRows(tableID,startRowID){
 	addTableRow(tableID,nextRowIndex,"rowWeaponClass","<th><label for='WeaponClass'>Weapon Class:</label></th><td><select id='WeaponClass' name='WeaponClass'><option value='Simple'>Simple</option><option value='Martial'>Martial</option><option value='Exotic'>Exotic</option><option value='Natural'>Natural</option></select></td>");
 	nextRowIndex++;
 
-	let requestWeaponTagsData = await fetch("macro:pm.a5e.GetCoreData@lib:pm.a5e.Core", {method: "POST", body: "['sb.WeaponTags']"});
-	let allWeaponTagsData = JSON.stringify(await requestWeaponTagsData.json());
-	let requestTagsHTML = await fetch("macro:ut.a5e.GenerateSelectionHTML@lib:pm.a5e.Core", {method: "POST", body: "["+allWeaponTagsData+",1,'weaponTag']"});
-	let WeaponTagOptions = await requestTagsHTML.text();
-
-	addTableRow(tableID,nextRowIndex,"rowWeaponTags","<th>Weapon Tags:</label></th><td><div class='check-multiple' style='width:100%'>"+WeaponTagOptions+"</div></td>");
-	nextRowIndex++;
-
 	addTableRow(tableID,nextRowIndex,"rowWeaponMeleeRanged","<th><label for='WeaponMeleeRanged'>Melee or Ranged:</label></th><td><select id='WeaponMeleeRanged' name='WeaponMeleeRanged' onchange='createWeaponRangeReachRows("+'"'+tableID+'",'+'"rowWeaponMeleeRanged"'+")'><option value='Melee'>Melee</option><option value='Ranged'>Ranged</option></select></td>");
 	nextRowIndex++;
 
 	addTableRow(tableID,nextRowIndex,"rowWeaponReach","<th><label for='Reach'>Reach:</label></th><td><input type='number' id='Reach' name='Reach' min='0' value='5' style='width:25px'></td>");
+	nextRowIndex++;
+
+	let requestAttributes = await fetch("macro:pm.GetAttributes@lib:pm.a5e.Core", {method: "POST", body: ""});
+	let allAttributes = await requestAttributes.json();
+
+	let AttributeOptions = "";
+	for(let tempAttribute of allAttributes){
+		AttributeOptions = AttributeOptions + "<option value='"+tempAttribute.Name+"'>"+tempAttribute.DisplayName+"</option>";
+	}
+
+	addTableRow(tableID,nextRowIndex,"rowWeaponPrimeStat","<th><label for='PrimeStat'>Main Stat:</label></th><td><select id='PrimeStat' name='PrimeStat'>"+AttributeOptions+"</select></td>");
 	nextRowIndex++;
 
 	let requestPropsData = await fetch("macro:pm.a5e.GetCoreData@lib:pm.a5e.Core", {method: "POST", body: "['sb.WeaponProperties']"});
@@ -62,7 +65,14 @@ async function createWeaponTableRows(tableID,startRowID){
 	addTableRow(tableID,nextRowIndex,"rowWeaponCritThresh","<th><label for='WeaponCritThresh'>Critical Threshhold:</label></th><td><input type='number' id='WeaponCritThresh' name='WeaponCritThresh' max='20' min='0' value='20'><select id='WeaponCritThreshMethod' name='WeaponCritThreshMethod'><option value='Set'>Set to Value</option><option value='Reduce'>Reduce by Value</option></select></td>");
 	nextRowIndex++;
 
-	addTableRow(tableID,nextRowIndex,"rowWeaponCritDice","<th><label for='WeaponCritDice'>Bonus Crit Dice:</label></th><td><select id='WeaponCritDiceMethod' name='WeaponCritDiceMethod'><option value='Add'>Add</option><option value='Multiply'>Multiply</option></select><input type='number' id='WeaponCritDice' name='WeaponCritDice' min='0' value=0></td>");
+	addTableRow(tableID,nextRowIndex,"rowWeaponCritDice","<th><label for='WeaponCritDice'>Bonus Crit Dice:</label></th><td><select id='WeaponCritDiceMethod' name='WeaponCritDiceMethod'><option value='Add'>Add</option><option value='Multiply'>Multiply</option></select><input type='number' id='WeaponCritDice' name='WeaponCritDice' min='0' value=0 style='width:25px'></td>");
+	nextRowIndex++;
+	
+	let requestWeaponTagsData = await fetch("macro:pm.a5e.GetCoreData@lib:pm.a5e.Core", {method: "POST", body: "['sb.WeaponTags']"});
+	let allWeaponTagsData = await requestWeaponTagsData.json();
+	let WeaponTagOptions = createHTMLMultiselectOptions(allWeaponTagsData,"weaponTag");
+
+	addTableRow(tableID,nextRowIndex,"rowWeaponTags","<th>Weapon Tags:</label></th><td><div class='check-multiple' style='width:100%'>"+WeaponTagOptions+"</div></td>");
 	nextRowIndex++;
 }
 
@@ -192,15 +202,23 @@ function createWeaponRangeReachRows(tableID,originID){
 	let ReachInnerHTML = "<th><label for='Reach'>Reach:</label></th><td><input type='number' id='Reach' name='Reach' min='0' value='5' style='width:25px'></td>";
 	let RangeInnerHTML = "<th><label for='Range'>Range:</label></th><td><input type='number' id='Range' name='Range' min='0' value='5' style='width:35px'> / <input type='number' id='LongRange' name='LongRange' min='0' value='5' style='width:35px'></td>";
 	if(originID == "rowWeaponMeleeRanged"){
-		clearUnusedTable(tableID,"rowWeaponMeleeRanged","rowWeaponProperties");
+		clearUnusedTable(tableID,"rowWeaponMeleeRanged","rowWeaponPrimeStat");
 
 		if(document.getElementById("WeaponMeleeRanged").value == "Melee"){
 			addTableRow(tableID,nextRowIndex,"rowWeaponReach",ReachInnerHTML);
 			nextRowIndex++;
+
+			if(document.getElementById("PrimeStat").value == "Dexterity"){
+				document.getElementById("PrimeStat").value = "Strength";
+			}
 		}
 		else{
 			addTableRow(tableID,nextRowIndex,"rowWeaponRange",RangeInnerHTML);
 			nextRowIndex++;
+
+			if(document.getElementById("PrimeStat").value == "Strength"){
+				document.getElementById("PrimeStat").value = "Dexterity";
+			}
 		}
 	}
 	else if(originID == "rowWeaponProperties"){

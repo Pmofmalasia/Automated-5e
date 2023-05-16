@@ -1,22 +1,37 @@
 [h:AttackData = macro.args]
 [h:ParentToken = json.get(AttackData,"ParentToken")]
 [h:switchToken(ParentToken)]
-[h,if(json.contains(AttackData,"WeaponData")),CODE:{
-	[h:WeaponData = json.get(AttackData,"WeaponData")]
+
+[h,if(json.get(AttackData,"Hand") == ""),CODE:{
+	[h:AttackData = json.set(AttackData,"Hand",-1)]
+
+	[h,if(json.contains(AttackData,"WeaponData")),CODE:{
+		[h:WeaponData = json.get(AttackData,"WeaponData")]
+	};{
+		[h:NaturalWeaponID = json.get(AttackData,"NaturalWeaponID")]
+		[h:tempNaturalWeaponData = json.path.read(getProperty("a5e.stat.NaturalWeapons"),"[*][?(@.ItemID == '"+NaturalWeaponID+"')]")]
+		[h,if(json.isEmpty(tempNaturalWeaponData)):
+			WeaponData = json.get(getProperty("a5e.stat.NaturalWeapons"),0);
+			WeaponData = json.get(tempNaturalWeaponData,0)
+		]
+	}]
 };{
-	[h:WeaponID = json.get(getProperty("a5e.stat.HeldItems"),json.get(AttackData,"Hand"))]
+	[h:CurrentHeldItems = getProperty("a5e.stat.HeldItems")]
+	[h:ActiveHand = json.get(AttackData,"Hand")]
+	[h,if(ActiveHand >=0 && ActiveHand < json.length(CurrentHeldItems)):
+		WeaponID = json.get(CurrentHeldItems,ActiveHand);
+		WeaponID = ""
+	]
 	[h,if(WeaponID == ""),CODE:{
-		[h:WeaponData = json.set("","TODO:","INSERT UNARMED HERE")]
+		[h:WeaponData = json.get(getProperty("a5e.stat.NaturalWeapons"),0)]
 	};{
 		[h:tempWeaponData = json.path.read(getProperty("a5e.stat.Inventory"),"[*][?(@.ItemID == '"+WeaponID+"')]")]
 		[h,if(json.isEmpty(tempWeaponData)):
-			WeaponData = json.set("","TODO:","INSERT UNARMED HERE");
+			WeaponData = json.get(getProperty("a5e.stat.NaturalWeapons"),0);
 			WeaponData = json.get(tempWeaponData,0)
 		]
 	}]
 }]
-
-[h:"<!-- TODO: Perhaps have Unarmed Strike be a property on tokens, which defaults to the usual but can have other options added (particularly Natural Weapons) -->"]
 
 [h:pm.a5e.EffectData = "[]"]
 

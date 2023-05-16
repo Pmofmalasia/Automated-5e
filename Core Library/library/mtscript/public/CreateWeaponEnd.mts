@@ -1,40 +1,52 @@
-[h:thisWeaponData = json.get(getLibProperty("ct.NewWeapon","Lib:pm.a5e.Core"),getPlayerName())]
-[h:WeaponName = json.get(thisWeaponData,"Name")]
-[h:classesWithWeapon = json.get(thisWeaponData,"ClassesWithWeapon")]
-[h:weaponSourcebook = json.get(thisWeaponData,"Sourcebook")]
+[h:WeaponData = json.get(getLibProperty("ct.NewWeapon","Lib:pm.a5e.Core"),getPlayerName())]
+[h:WeaponName = json.get(WeaponData,"Name")]
+[h:weaponSourcebook = json.get(WeaponData,"Sourcebook")]
 
-[h:thisWeaponData = json.remove(thisWeaponData,"Sourcebook")]
-[h:thisWeaponData = json.remove(thisWeaponData,"multiEffects")]
-[h:thisWeaponData = json.remove(thisWeaponData,"ParentToken")]
+[h:WeaponData = json.remove(WeaponData,"Sourcebook")]
+[h:WeaponData = json.remove(WeaponData,"multiEffects")]
+[h:WeaponData = json.remove(WeaponData,"ParentToken")]
 
-[h:"<!-- Need to add a method of checking for multiple unnamed spell-specific effects to make them be named (or marked as all the same effect). Will likely need to be done prior to calling this macro by shunting off to another one since it would involve another interface. --> "]
+[h:"<!-- Need to add a method of checking for multiple unnamed unique effects to make them be named (or marked as all the same effect). Will likely need to be done prior to calling this macro by shunting off to another one since it would involve another interface. --> "]
 
 [h:setLibProperty("ct.NewWeapon",json.remove(getLibProperty("ct.NewWeapon","Lib:pm.a5e.Core"),getPlayerName()),"Lib:pm.a5e.Core")]
 [h:ParentToken = json.get(macro.args,"ParentToken")]
-[h:switchToken(ParentToken)]
+[h,if(ParentToken == ""),CODE:{
+	[h:"<!-- Adapt CreateObjectProcessing code to here -->"]
+};{
+	[h:switchToken(ParentToken)]
 
-[h:setProperty("a5e.stat.Weapon",json.append(getProperty("a5e.stat.Weapon"),thisWeaponData))]
+	[h,if(json.get(WeaponData,"WeaponType") == "NaturalWeapon" || json.get(WeaponData,"WeaponType") == "Unarmed"),CODE:{
+		[h:NaturalWeaponID = eval("1d1000000") + json.get(getInfo("client"),"timeInMs")]
+		[h:WeaponData = json.set(WeaponData,
+			"ItemID",NaturalWeaponID
+		)]
 
-[h:NewWeaponCommand = '[h,MACRO("SingleAttack@Lib:pm.a5e.Core"): json.set("","ParentToken",currentToken(),"WeaponData",'+"'"+thisWeaponData+"'"+')]']
+		[h:setProperty("a5e.stat.NaturalWeapons",json.append(getProperty("a5e.stat.NaturalWeapons"),WeaponData))]
 
-[h:NewWeaponMacroProps = json.set("",
-    "applyToSelected",0,
-    "autoExecute",1,
-    "color","black",
-    "command",NewWeaponCommand,
-    "fontColor","white",
-    "fontSize","1.00em",
-    "includeLabel",0,
-    "group","Combat",
-    "sortBy","",
-    "label",json.get(thisWeaponData,"DisplayName"),
-    "maxWidth","",
-    "minWidth",89,
-    "playerEditable",0,
-    "tooltip",'[h:TooltipData=json.set("","tooltipDisplaySizeOverride",200,"WeaponData",'+"'"+thisWeaponData+"'"+')][MACRO("Attack Macro Tooltip@Lib:pm.a5e.Core"):TooltipData]',
-    "delim","json"
-)]
+		[h:NewWeaponCommand = '[h,MACRO("SingleAttack@Lib:pm.a5e.Core"): json.set("","ParentToken",currentToken(),"NaturalWeaponID",'+NaturalWeaponID+')]']
 
-[h:createMacro(NewWeaponMacroProps)]
+		[h:NewWeaponMacroProps = json.set("",
+			"applyToSelected",0,
+			"autoExecute",1,
+			"color","black",
+			"command",NewWeaponCommand,
+			"fontColor","white",
+			"fontSize","1.00em",
+			"includeLabel",0,
+			"group","Combat",
+			"sortBy","",
+			"label",json.get(WeaponData,"DisplayName"),
+			"maxWidth","",
+			"minWidth",89,
+			"playerEditable",0,
+			"tooltip",'[h:TooltipData=json.set("","tooltipDisplaySizeOverride",200,"ParentToken",currentToken(),"NaturalWeaponID",'+NaturalWeaponID+')][MACRO("AttackMacroTooltip@Lib:pm.a5e.Core"):TooltipData]',
+			"delim","json"
+		)]
 
-[h:broadcast("Weapon "+json.get(thisWeaponData,"DisplayName")+" created.")]
+		[h:createMacro(NewWeaponMacroProps)]		
+	};{
+		[h:setProperty("a5e.stat.Inventory",json.append(getProperty("a5e.stat.Inventory"),WeaponData))]
+	}]
+}]
+
+[h:broadcast("Weapon "+json.get(WeaponData,"DisplayName")+" created.")]

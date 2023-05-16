@@ -40,7 +40,7 @@ function createParentSubeffectRows(){
 
 function getParentSubeffect(){
 	let ParentSubeffectNumber = Number(document.getElementById("ParentSubeffect").value);
-
+//TODO: At this point, weapons fail because the subeffect created by the attack itself is not available for this function to see. May need to make an exception for weapons (and ammo?)
 	if(ParentSubeffectNumber == 0){
 		return "NONE";
 	}

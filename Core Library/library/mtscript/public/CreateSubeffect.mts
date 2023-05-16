@@ -5,8 +5,6 @@
 [h:thisSubeffectNum = json.get(subeffectData,"WhichSubeffect")]
 [h:ExtraData = json.get(subeffectData,"ExtraData")]
 
-[h:broadcast("Round #"+thisSubeffectNum)]
-
 [h,if(totalSubeffects==1),CODE:{
 	[h:SubeffectHTML = ""]
 };{

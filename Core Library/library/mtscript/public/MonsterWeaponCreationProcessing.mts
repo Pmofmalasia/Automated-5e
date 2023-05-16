@@ -45,7 +45,7 @@
 
 [h,if(json.get(MonsterWeaponData,"SpecialEffects")!="None"),CODE:{
 	[h:NewWeaponData = json.set(NewWeaponData,"FinalLocation","Inventory")]
-
+[h:"<!-- Adjust this to take into account EffectNumber and SubeffectNumber -->"]
     [h:AllWeaponData = json.set(getLibProperty("ct.NewWeapon","pm.a5e.Core"),getPlayerName(),NewWeaponData)]
     [h:setLibProperty("ct.NewWeapon",AllWeaponData,"Lib:pm.a5e.Core")]
     [h,MACRO("CreateSubeffect@Lib:pm.a5e.Core"): json.set("",

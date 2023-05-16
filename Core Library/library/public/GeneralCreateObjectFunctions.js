@@ -129,6 +129,55 @@ function updateWithTemplateData(tableID,TemplateData){
 	}
 }
 
+function MagicBonusChanges(){
+	if(document.getElementById("MagicBonus").value > 0){
+		if(document.getElementById("isMagical").checked != null){
+			if(document.getElementById("isMagical").checked == false){
+				document.getElementById("isMagical").setAttribute("checked","");
+				createMagicItemRows(tableID);
+			}
+		}
+	}
+}
+
+function createMagicItemRows(tableID){
+	if(document.getElementById("isMagical").checked){
+		let nextRowIndex = document.getElementById("rowIsMagical").rowIndex+1;
+
+		addTableRow(tableID,nextRowIndex,"rowIsAttunement","<th><label for='isAttunement'>Requires Attunement:</label></th><td><input type='checkbox' id='isAttunement' name='isAttunement'></td>");
+		nextRowIndex++;
+
+		addTableRow(tableID,nextRowIndex,"rowIsSentient","<th><label for='isSentient'>Item is Sentient:</label></th><td><input type='checkbox' id='isSentient' name='isSentient' onchange='createSentientItemRows("+'"'+tableID+'"'+")'></td>");
+		nextRowIndex++;
+
+		addTableRow(tableID,nextRowIndex,"rowIsCursed","<th><label for='isCursed'>Item is Cursed:</label></th><td><input type='checkbox' id='isCursed' name='isCursed'></td>");
+		nextRowIndex++;
+	}
+	else{
+		clearUnusedTable(tableID,"rowIsMagical","rowIsWearable");
+	}
+}
+
+function createSentientItemRows(tableID){
+	if(document.getElementById("isSentient").checked){
+		let nextRowIndex = document.getElementById("rowIsSentient").rowIndex+1;
+
+		addTableRow(tableID,nextRowIndex,"rowSentientAlignment","<th><label for='sentientAlignment'>Item Alignment:</label></th><td><select id='sentientAlignment' name='sentientAlignment'><option value='LawfulGood'>Lawful Good</option><option value='NeutralGood'>Neutral Good</option><option value='ChaoticGood'>Chaotic Good</option><option value='LawfulNeutral'>Lawful Neutral</option><option value='TrueNeutral'>True Neutral</option><option value='ChaoticNeutral'>Chaotic Neutral</option><option value='LawfulEvil'>Lawful Evil</option><option value='NeutralEvil'>Neutral Evil</option><option value='ChaoticEvil'>Chaotic Evil</option><option value='Unaligned'>Unaligned</option><option value='Undetermined'>Undetermined</option></select></td>");
+		nextRowIndex++;
+
+		//TODO: Add lines for all mental stats here procedurally; add vision/hearing distances; add communication method/language
+
+		addTableRow(tableID,nextRowIndex,"rowHasSight","<th><label for='hasSight'>Item can See:</label></th><td><input type='checkbox' id='hasSight' name='hasSight' onchange='createSentientItemSightRows()'></td>");
+		nextRowIndex++;
+
+		addTableRow(tableID,nextRowIndex,"rowHasHearing","<th><label for='hasHearing'>Item can Hear:</label></th><td><input type='checkbox' id='hasHearing' name='hasHearing' onchange='createSentientItemHearingRows()'></td>");
+		nextRowIndex++;
+	}
+	else{
+		clearUnusedTable(tableID,"rowIsSentient","rowIsCursed");
+	}
+}
+
 async function createChooseMainMaterialRows(tableID){
 	let nextRowIndex = document.getElementById("rowMaterials").rowIndex+1;
 
@@ -146,7 +195,7 @@ async function createChooseMainMaterialRows(tableID){
 			}
 		}
 	}
-//TODO: Add selection of appropriate ObjectTags here, based on tags on the materials
+
 	if(chosenMaterials.length > 1){
 		let mainMaterialOptions = "";
 		for(let tempChosenMaterial of chosenMaterials){

@@ -44,15 +44,21 @@ function createHTMLSelectOptions(inputData,valueKey){
 	return finalOptions;
 }
 
-function createHTMLMultiselectOptions(inputData,prefix,changeFunction){
+function createHTMLMultiselectOptions(inputData,prefix,changeFunction,extraArguments){
 	let finalOptions = "";
 
 	for(let tempObject of inputData){
 		let changeFunctionString = "";
 		let tempName = tempObject.Name;
 
-		if(arguments.length > 3){
-			changeFunctionString = " onchange='"+changeFunction+"("+'"'+tempName+'"'+")'";
+		if(arguments.length > 2){
+			let extraArgumentString = "";
+			if(arguments.length > 3){
+				for(let tempArgument of extraArguments){
+					extraArgumentString = extraArgumentString + ',"'+tempArgument+'"';
+				}
+			}
+			changeFunctionString = " onchange='"+changeFunction+"("+'"'+tempName+'"'+extraArgumentString+")'";
 		}
 
 		finalOptions = finalOptions + "<label><input type='checkbox' id='"+prefix+tempName+"' name='"+prefix+tempName+"'"+changeFunctionString+"><span>"+tempObject.DisplayName+"</span></label>";

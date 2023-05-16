@@ -319,7 +319,7 @@ async function createAmmunitionTypeRows(){
 			document.getElementById("MagicBonus").value = AmmunitionTypeData.MagicBonus;
 		}
 
-		updateWithTemplateData(AmmunitionTypeData);
+		updateWithTemplateData("CreateObjectTable",AmmunitionTypeData);
 	}
 }
 
@@ -390,7 +390,7 @@ async function createArmorTypeRows(ArmorOrShield){
 			document.getElementById("MagicBonus").value = ArmorTypeData.MagicBonus;
 		}
 
-		updateWithTemplateData(ArmorTypeData);
+		updateWithTemplateData("CreateObjectTable",ArmorTypeData);
 	}
 }
 
@@ -470,7 +470,7 @@ async function createWeaponTypeRows(){
 			document.getElementById("WeaponCritThreshMethod").value = "Reduce";
 		}
 
-		updateWithTemplateData(WeaponTypeData);
+		updateWithTemplateData("CreateObjectTable",WeaponTypeData);
 	}
 }
 

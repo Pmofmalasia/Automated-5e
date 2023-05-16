@@ -37,6 +37,8 @@ async function toggleReachRanged(){
 async function loadUserData() {
     let userdata = atob(await MapTool.getUserData());
     document.getElementById('MonsterWeaponCreationTable').innerHTML = userdata;
+
+	createWeaponTableRows("MonsterWeaponCreationTable","")
 }
 
 setTimeout(loadUserData, 1);

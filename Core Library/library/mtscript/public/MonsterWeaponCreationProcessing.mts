@@ -44,13 +44,16 @@
 [h:closeDialog("MonsterWeaponCreation")]
 
 [h,if(json.get(MonsterWeaponData,"SpecialEffects")!="None"),CODE:{
+	[h:NewWeaponData = json.set(NewWeaponData,"FinalLocation","Inventory")]
+
     [h:AllWeaponData = json.set(getLibProperty("ct.NewWeapon","pm.a5e.Core"),getPlayerName(),NewWeaponData)]
     [h:setLibProperty("ct.NewWeapon",AllWeaponData,"Lib:pm.a5e.Core")]
     [h,MACRO("CreateSubeffect@Lib:pm.a5e.Core"): json.set("",
         "EffectType","Weapon",
         "TotalSubeffects",1,
         "WhichSubeffect",1,
-        "ParentToken",currentToken()
+        "ParentToken",currentToken(),
+		"ExtraData",json.set("","WeaponSpecialEffectChoice",json.get(MonsterWeaponData,"SpecialEffects"))
     )]
 };{
     [h:setProperty("a5e.stat.Weapon",json.append(getProperty("a5e.stat.Weapon"),NewWeaponData))]

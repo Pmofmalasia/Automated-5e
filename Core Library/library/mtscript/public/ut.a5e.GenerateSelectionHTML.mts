@@ -11,8 +11,12 @@
 [h,if(isMultiCheckbox),CODE:{
 	[h,foreach(tempIndex,CreationData),CODE:{
 		[h:tempName = json.get(tempIndex,"Name")]
+		[h:AdditionalArgumentsString = ""]
+		[h,if(argCount()>4): AdditionalArguments = arg(4); AdditionalArguments = "[]"]
+		[h,foreach(argument,AdditionalArguments): AdditionalArgumentsString = AdditionalArgumentsString + ',"'+argument+'"']
+
 		[h,if(argCount()>3):
-			SelectionHTML = SelectionHTML + "<label><input type='checkbox' id='"+prefix+tempName+"' name='"+prefix+tempName+"' onchange='"+arg(3)+"("+'"'+tempName+'"'+")'><span>"+json.get(tempIndex,"DisplayName")+"</span></label>";
+			SelectionHTML = SelectionHTML + "<label><input type='checkbox' id='"+prefix+tempName+"' name='"+prefix+tempName+"' onchange='"+arg(3)+"("+'"'+tempName+'"'+AdditionalArgumentsString+")'><span>"+json.get(tempIndex,"DisplayName")+"</span></label>";
 			SelectionHTML = SelectionHTML + "<label><input type='checkbox' id='"+prefix+tempName+"' name='"+prefix+tempName+"'><span>"+json.get(tempIndex,"DisplayName")+"</span></label>"
 		]
 	}]

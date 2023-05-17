@@ -8,6 +8,8 @@ function createParentSubeffectRows(){
 
 	if(ParentSubeffect == "NONE"){
 		clearUnusedTable("CreateSubeffectTable","rowParentSubeffect","Mitigation");
+//TODO: Next: Make createTargetingRows() function AND make it generalized so that other forms can use it. Will need to pull some things directly from the CreateSubeffect.mts macro AND have a method of deciding on AHL/no AHL
+		createTargetingRows("CreateSubeffectTable");
 	}
 	else{
 		let PrereqSelectOptions = "<option value = ''>None</option>";
@@ -35,6 +37,8 @@ function createParentSubeffectRows(){
 
 		addTableRow("CreateSubeffectTable",nextRowIndex,"rowParentPrereqs","<th><label for='ParentPrereqs'>Requirement for This Subeffect to Occur:</label></th><td><select id='ParentPrereqs' name='ParentPrereqs' onchange='createParentPrereqRows()'>"+PrereqSelectOptions+"</select></td>");
 		nextRowIndex++;
+
+
 	}
 }
 

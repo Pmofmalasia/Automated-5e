@@ -1,5 +1,5 @@
 [h:ObjectTypeSelection = ut.a5e.GenerateSelectionHTML(pm.a5e.GetCoreData("sb.ObjectTypes"))]
-[h:ObjectMaterialMultiselection = ut.a5e.GenerateSelectionHTML(pm.a5e.GetCoreData("sb.ObjectMaterials"),1,"objectMaterial","createChooseMainMaterialRows")]
+[h:ObjectMaterialMultiselection = ut.a5e.GenerateSelectionHTML(pm.a5e.GetCoreData("sb.ObjectMaterials"),1,"objectMaterial","createChooseMainMaterialRows",json.append("","CreateObjectsTable"))]
 [h:ObjectMaterialSelection = ut.a5e.GenerateSelectionHTML(pm.a5e.GetCoreData("sb.ObjectMaterials"))]
 
 [h:MaterialTags = pm.a5e.GetCoreData("sb.MaterialTags")]
@@ -29,7 +29,7 @@
 
 <tr id='rowWeight'><th><label for='Weight'>Weight:</label></th><td><input type='number' id='Weight' name='Weight' step='0.01' value=0 min=0 style='width:35px'> lbs.</td></tr>
 
-<tr id='rowIsMagical'><th><label for='isMagical'>Object is a Magic Item?</label></th><td><input type='checkbox' id='isMagical' name='isMagical' onchange='createMagicItemRows()'></td></tr>
+<tr id='rowIsMagical'><th><label for='isMagical'>Object is a Magic Item?</label></th><td><input type='checkbox' id='isMagical' name='isMagical' onchange='createMagicItemRows("+'"CreateObjectTable"'+")'></td></tr>
 
 <tr id='rowIsWearable'><th><label for='isWearable'>Must be Worn/Held for Effect?</label></th><td><input type='checkbox' id='isWearable' name='isWearable'></td></tr>
 

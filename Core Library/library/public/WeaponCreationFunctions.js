@@ -261,7 +261,7 @@ async function createWeaponPropertyRows(toggledProperty,tableID){
 			nextRowIndex++;
 
 			for(let i = 0; i < weaponDamageInstanceNumber; i++){
-				await addDamageTypeRows("Versatile");
+				await addDamageTypeRows(tableID,"Versatile");
 				nextRowIndex++;
 
 				document.getElementById("VersatileDamageDieNumber"+i).value = document.getElementById("WeaponDamageDieNumber"+i).value;
@@ -271,7 +271,7 @@ async function createWeaponPropertyRows(toggledProperty,tableID){
 				document.getElementById("VersatileDamageType"+i).value = document.getElementById("WeaponDamageType"+i).value;
 			}
 
-			addTableRow(tableID,nextRowIndex,"rowVersatileAddDamageInstanceButtons","<th text-align='center' colspan='2'><input type='button' id='addDamageType' name='addDamageType' value='Add Type' onclick='addDamageTypeRows("+'"Versatile"'+")'>  <input type='button' id='removeDamageType' name='removeDamageType' value='Remove Type' onclick='removeDamageTypeRows("+'"Versatile"'+")'></th>");
+			addTableRow(tableID,nextRowIndex,"rowVersatileAddDamageInstanceButtons","<th text-align='center' colspan='2'><input type='button' id='addDamageType' name='addDamageType' value='Add Type' onclick='addDamageTypeRows("+'"'+tableID+'","Versatile"'+")'>  <input type='button' id='removeDamageType' name='removeDamageType' value='Remove Type' onclick='removeDamageTypeRows("+'"'+tableID+'","Versatile"'+")'></th>");
 			nextRowIndex++;
 		}
 		else{

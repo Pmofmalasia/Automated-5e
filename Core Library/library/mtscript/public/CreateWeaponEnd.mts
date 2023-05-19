@@ -4,9 +4,11 @@
 
 [h:WeaponData = json.remove(WeaponData,"Sourcebook")]
 [h:WeaponData = json.remove(WeaponData,"multiEffects")]
+[h:WeaponData = json.remove(WeaponData,"SpecialEffects")]
+[h:WeaponData = json.remove(WeaponData,"FinalLocation")]
 [h:WeaponData = json.remove(WeaponData,"ParentToken")]
 
-[h:"<!-- Need to add a method of checking for multiple unnamed unique effects to make them be named (or marked as all the same effect). Will likely need to be done prior to calling this macro by shunting off to another one since it would involve another interface. --> "]
+[h:"<!-- Need to add a method of checking for multiple unnamed unique effects to make them be named (or marked as all the same effect). Will likely need to be done prior to calling this macro by shunting off to another one since it would involve another interface. -->"]
 
 [h:setLibProperty("ct.NewWeapon",json.remove(getLibProperty("ct.NewWeapon","Lib:pm.a5e.Core"),getPlayerName()),"Lib:pm.a5e.Core")]
 [h:ParentToken = json.get(macro.args,"ParentToken")]
@@ -15,11 +17,14 @@
 };{
 	[h:switchToken(ParentToken)]
 
+	[h:"<!-- Removes the dummy subeffect used to show to the subeffect creation JS -->"]
+	[h:WeaponSubeffects = json.get(WeaponData,"Subeffects")]
+	[h:WeaponSubeffects = json.remove(WeaponSubeffects,0)]
+	[h:WeaponData = json.set(WeaponData,"Subeffects",WeaponSubeffects)]
+
+	[h:ItemID = eval("1d1000000") + json.get(getInfo("client"),"timeInMs")]
+	[h:WeaponData = json.set(WeaponData,"ItemID",ItemID)]
 	[h,if(json.get(WeaponData,"WeaponType") == "NaturalWeapon" || json.get(WeaponData,"WeaponType") == "Unarmed"),CODE:{
-		[h:NaturalWeaponID = eval("1d1000000") + json.get(getInfo("client"),"timeInMs")]
-		[h:WeaponData = json.set(WeaponData,
-			"ItemID",NaturalWeaponID
-		)]
 
 		[h:setProperty("a5e.stat.NaturalWeapons",json.append(getProperty("a5e.stat.NaturalWeapons"),WeaponData))]
 

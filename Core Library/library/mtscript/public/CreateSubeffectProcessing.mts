@@ -553,6 +553,8 @@
 
 [h:subeffectData = json.set(subeffectData,"IgnoreCoverBenefit",json.contains(subeffectData,"IgnoreCoverBenefit"))]
 
+[h:subeffectData = json.set(subeffectData,"UsePriorOrigin",json.contains(subeffectData,"UsePriorOrigin"))]
+
 [h,if(json.get(subeffectData,"RangeType") == "SelfRanged" || json.get(subeffectData,"RangeType") == "Ranged"),CODE:{
 	[h:rangeData = json.set("",
 		"Value",number(json.get(subeffectData,"RangeValue")),
@@ -571,12 +573,13 @@
 	[h:subeffectData = json.remove(subeffectData,"RangeScalingAHL")]
 	[h:subeffectData = json.remove(subeffectData,"RangeValueAHL")]
 	[h:subeffectData = json.set(subeffectData,"Range",rangeData)]
-}]
+};{}]
 
 [h:subeffectData = json.set(subeffectData,"MustTargetAll",json.contains(subeffectData,"MustTargetAll"))]
 
 [h,switch(json.get(subeffectData,"aoeShape")),CODE:
 	case "None":{};
+	case "":{};
 	case "Choose":{
 		[h:AoEShapes = json.append("","Cone","Cube","Cylinder","Half Sphere","Line","Panels","Sphere","Wall")]
 		[h:AoEShapeOptions = "[]"]
@@ -638,10 +641,26 @@
 	};
 	case "FreeHand":{
 
-	}
+	};
+	case "":{
+		[h,if(json.contains(subeffectData,"PriorTargetAll")),CODE:{
+			[h:PriorTargetsData = json.set("","TargetAll",1)]
+		};{
+			[h:PriorTargetsData = json.set("",
+				"TargetAll",0,
+				"TargetNumber",json.get(subeffectData,"PriorTargetNumber")
+			)]
+		}]
+		[h:targetData = json.set(targetData,"PriorTargets",PriorTargetsData)]
+
+		[h:subeffectData = json.remove(subeffectData,"UsePriorTargets")]
+		[h:subeffectData = json.remove(subeffectData,"PriorTargetNumber")]
+		[h:subeffectData = json.remove(subeffectData,"PriorTargetAll")]
+	};
+	default: {}
 ]
 [h:subeffectData = json.remove(subeffectData,"TargetType")]
-[h:"<!-- TODO: Incorporate isSight (can you see the target) into targetData - or maybe not? Since it's kinda info on the caster? Will consider. -->"]
+[h:"<!-- TODO: Incorporate isSight (can you see the target) into targetData - or maybe not? Since it's kinda info on the caster? Will consider. Maybe store in both locations (caster can see, target can be seen). -->"]
 [h:subeffectData = json.set(subeffectData,"TargetLimits",targetData)]
 [h:subeffectData = json.remove(subeffectData,"MaxCover")]
 
@@ -651,10 +670,12 @@
 
 [h:totalSubeffects = number(json.get(subeffectData,"TotalSubeffects"))]
 [h:thisSubeffectNum = number(json.get(subeffectData,"WhichSubeffect"))]
-[h:subeffectData = json.set(subeffectData,"WhichIntrinsicSubeffect",thisSubeffectNum)]
+[h:ParentToken = json.get(subeffectData,"ParentToken")]
+[h:subeffectData = json.set(subeffectData,"WhichIntrinsicSubeffect",thisSubeffectNum - 1)]
 [h:subeffectData = json.remove(subeffectData,"TotalSubeffects")]
 [h:subeffectData = json.remove(subeffectData,"WhichSubeffect")]
 [h:subeffectData = json.remove(subeffectData,"PriorSubeffects")]
+[h:subeffectData = json.remove(subeffectData,"ParentToken")]
 
 [h:thisEffectSubeffectData = json.get(currentEffectData,"Subeffects")]
 [h:thisEffectSubeffectData = json.append(thisEffectSubeffectData,subeffectData)]
@@ -669,10 +690,7 @@
 		[h:setLibProperty("ct.NewSpell",json.set(CurrentFeatureData,getPlayerName(),thisPlayerCurrentFeatureData),"Lib:pm.a5e.Core")]
 
 		[h:baseFeatureData = json.get(thisPlayerCurrentFeatureData,0)]
-		[h:broadcast("Subeffect Num: "+thisSubeffectNum)]
-		[h:broadcast("Total Num: "+totalSubeffects)]
-		[h:lastSubeffectTest = (thisSubeffectNum>=totalSubeffects)]
-		[h:broadcast("Last subeffect: "+lastSubeffectTest)]
+		[h:lastSubeffectTest = (thisSubeffectNum >= totalSubeffects)]
 		[h:lastEffectTest = json.length(thisPlayerCurrentFeatureData) >= json.get(baseFeatureData,"multiEffects")]
 
 		[h:extraData = json.set("","SpellLevel",spellLevel)]
@@ -692,7 +710,7 @@
 [h,switch(lastSubeffectTest+""+lastEffectTest),CODE:
 	case "11":{
 		[h:closeDialog("SubeffectCreation")]
-		[h,MACRO("CreateFeatureCoreFinalInput@Lib:pm.a5e.Core"): json.set("","EffectType",EffectType,"ExtraData",extraData,"ParentToken",json.get(subeffectData,"ParentToken"))]
+		[h,MACRO("CreateFeatureCoreFinalInput@Lib:pm.a5e.Core"): json.set("","EffectType",EffectType,"ExtraData",extraData,"ParentToken",ParentToken)]
 	};
 	case "10":{
 		[h:baseFeatureData = json.set(baseFeatureData,"WhichEffect",json.length(thisPlayerCurrentFeatureData)+1)]
@@ -700,6 +718,6 @@
 	};
 	default:{
 		[h:closeDialog("SubeffectCreation")]
-		[h,MACRO("CreateSubeffect@Lib:pm.a5e.Core"): json.set("","TotalSubeffects",totalSubeffects,"WhichSubeffect",thisSubeffectNum+1,"EffectType",EffectType,"ExtraData",extraData,"ParentToken",json.get(subeffectData,"ParentToken"))]        
+		[h,MACRO("CreateSubeffect@Lib:pm.a5e.Core"): json.set("","TotalSubeffects",totalSubeffects,"WhichSubeffect",thisSubeffectNum+1,"EffectType",EffectType,"ExtraData",extraData,"ParentToken",ParentToken)]        
 	}
 ]

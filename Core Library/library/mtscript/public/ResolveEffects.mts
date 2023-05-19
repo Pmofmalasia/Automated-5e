@@ -9,6 +9,28 @@
 [h:ParentToken = json.get(effFull,"ParentToken")]
 [h:effTargets = json.get(effFull,"Targets")]
 [h:effTargetedConditions = json.get(effFull,"TargetedConditions")]
+
+[h:ParentEffect = json.get(effFull,"ParentSubeffect")]
+[h,if(ParentEffect!=""),CODE:{
+	[h:ParentEffectData = json.get(effFull,"ParentEffectData")]
+
+	[h,switch(json.get(effFull,"ParentSubeffectRequirements")),CODE:
+		default:{
+			
+		}
+	]
+	[h:"<!-- TODO: Add info here such as conditions gained, damage dealt, attack hit, save/check passed, etc. Possible plan: Set ParentEffectData key on LinkedEffects to an output of the result. -->"]
+
+	[h,if(json.type(effTargets)=="OBJECT"),CODE:{
+		[h:PriorEffectTargets = json.get(ParentEffectData,"Targets")]
+		[h,if(json.get(effTargets,"TargetAll") == 1): effTargets = PriorEffectTargets]
+	};{}]
+};{
+	[h,if(json.type(effTargets)=="OBJECT"): assert(0,"Something unexpected happened: Effect Targets is an object without having a Parent Subeffect")]
+}]
+
+[h:LinkedEffects = json.path.read(data.getData("addon:","pm.a5e.core","gd.Effects"),"[*][?(@.ParentEffect == "+effID+")]")]
+
 [h:effConditionGroupID = pm.a5e.CreateConditionID(ParentToken,effTargets)]
 
 [h:effTargetSpecific = json.get(effToResolve,"TargetSpecificEffects")]
@@ -36,17 +58,6 @@
 [h:targetsWithAdditionalAttackResolution = "[]"]
 
 [h,if(json.get(effFull,"SpecificTargets")!=""): effTargets = json.get(effFull,"SpecificTargets")]
-[h:ParentEffect = json.get(effFull,"ParentSubeffect")]
-[h,if(ParentEffect!=""),CODE:{
-	[h,switch(json.get(effFull,"ParentSubeffectRequirements")),CODE:
-		default:{
-			
-		}
-	]
-	[h:"<!-- TODO: Add info here such as conditions gained, damage dealt, attack hit, save/check passed, etc. -->"]
-}]
-
-[h:LinkedEffects = json.path.read(data.getData("addon:","pm.a5e.core","gd.Effects"),"[*][?(@.ParentEffect == "+effID+")]")]
 
 [h:IsTooltip = 0]
 [h:pm.a5e.OverarchingContext = json.get(effFull,"Context")]
@@ -355,6 +366,7 @@
 			"CheckPassed",CheckPassed,
 			"DamageDealt",DamageDealt,
 			"ConditionsSet",ConditionsSet,
+			"Targets",effTargets,
 			"SpecificTargets",json.append("",targetToken),
 			"LinkedEffects",thisTargetLinkedEffects
 		)]

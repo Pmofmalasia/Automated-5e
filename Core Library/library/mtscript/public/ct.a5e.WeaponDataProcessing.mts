@@ -67,6 +67,7 @@
 	[h:WeaponData = json.set(WeaponData,"CritThresh",json.get(WeaponData,"WeaponCritThresh"))]
 };{
 	[h:WeaponData = json.set(WeaponData,"CritThreshReduction",json.get(WeaponData,"WeaponCritThresh"))]
+	[h:WeaponData = json.set(WeaponData,"CritThresh",20)]
 }]
 [h:WeaponData = json.remove(WeaponData,"WeaponCritThreshMethod")]
 [h:WeaponData = json.remove(WeaponData,"WeaponCritThresh")]

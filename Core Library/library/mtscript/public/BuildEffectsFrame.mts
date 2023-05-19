@@ -29,9 +29,11 @@
 		[h:targetName = ""]
 
 		[h:TargetNameArray = "[]"]
-		[h,foreach(tempTarget,targetList): TargetNameArray = json.append(TargetNameArray,if(json.get(effect,"ParentToken") == tempTarget,"Self",getName(tempTarget)))]
+		[h,foreach(tempTarget,targetList),if(json.type(tempTarget)!="OBJECT"): TargetNameArray = json.append(TargetNameArray,if(json.get(effect,"ParentToken") == tempTarget,"Self",getName(tempTarget)))]
+		[h:PriorTargetTest = json.length(TargetNameArray) != json.length(targetList)]
 
 		[h,if(UnlistedTargetTest): TargetNameArray = json.append(TargetNameArray,"Unspecified Target")]
+		[h,if(PriorTargetTest): TargetNameArray = json.append(TargetNameArray,"Prior Target")]
 
 		[h:targetName = pm.a5e.CreateDisplayList(TargetNameArray,"and")]
 		[h,if(length(targetName) > 50): targetName = "Multiple Targets"]

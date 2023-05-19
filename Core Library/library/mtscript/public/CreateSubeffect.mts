@@ -23,7 +23,7 @@
 			[h:PriorSubeffectData = json.get(tempPriorSubeffectData,"Subeffects")]
 		};
 		default: {
-			[h:PriorSubeffectData = thisPlayerCurrentFeatureData]
+			[h:PriorSubeffectData = json.get(thisPlayerCurrentFeatureData,"Subeffects")]
 		}
 	]
 

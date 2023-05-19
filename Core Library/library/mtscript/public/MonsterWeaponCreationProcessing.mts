@@ -12,6 +12,8 @@
 
 [h:MonsterWeaponData = ct.a5e.WeaponDataProcessing(MonsterWeaponData)]
 
+[h:MonsterWeaponData = json.set(MonsterWeaponData,"Type","Weapon")]
+
 [h:closeDialog("MonsterWeaponCreation")]
 
 [h,if(json.get(MonsterWeaponData,"SpecialEffects")!="None"),CODE:{
@@ -29,6 +31,16 @@
 			WhichSubeffect = 2
 		]
 	}]
+
+	[h:DummyAttackSubeffect = json.set("",
+		"MeleeRanged",json.get(MonsterWeaponData,"WeaponMeleeRanged"),
+		"CritThresh",json.get(MonsterWeaponData,"CritThresh")
+	)]
+	[h:DummyWeaponSubeffect = json.set("",
+		"Attack",DummyAttackSubeffect,
+		"Damage",json.get(MonsterWeaponData,"WeaponDamage")
+	)]
+	[h:MonsterWeaponData = json.set(MonsterWeaponData,"Subeffects",json.append("",DummyWeaponSubeffect))]
 
     [h:AllWeaponData = json.set(getLibProperty("ct.NewWeapon","pm.a5e.Core"),getPlayerName(),MonsterWeaponData)]
     [h:setLibProperty("ct.NewWeapon",AllWeaponData,"Lib:pm.a5e.Core")]

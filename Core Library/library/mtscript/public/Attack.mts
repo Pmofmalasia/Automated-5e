@@ -286,15 +286,17 @@
 		"Attack",thisAttackData,
 		"Damage",thisAttackAllDamage,
 		"Targets",json.append("",thisAttackTarget),
-		"ID",thisAttackEffectID
+		"ID",thisAttackEffectID,
+		"WhichIntrinsicSubeffect",WhichAttack
 	))]
+	[h:"<!-- TODO: Major issue - WhichIntrinsicSubeffect always being 0 will cause errors with multiple attacks. This whole method is flawed in the case of multiple attacks: If wIS is incremented each time, then subeffects cannot target it correctly. If not incremented, then subeffects will target ALL attacks, not just one of them. This will apply for missiles also. May need to send a -->"]
 
 	[h:AHLTier = 0]
 	[h:DataForSubeffect = json.set("",
 		"InstancePrefixes",json.append("","Attack","WeaponAttack"),
 		"RerollData",wa.Data
 	)]
-	[h,foreach(tempSubeffect,json.get(wa.WeaponUsed,"Subeffects")): pm.a5e.ExecuteSubeffect(tempSubeffect,json.set("","BaseData",wa.Data))]
+	[h,foreach(tempSubeffect,json.get(wa.WeaponUsed,"Subeffects")): pm.a5e.ExecuteSubeffect(tempSubeffect,json.set("","BaseData",wa.Data,"MultiEffectModifier",WhichAttack))]
 
 	[h:WhichAttack = WhichAttack + 1]
 }]

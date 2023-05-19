@@ -2,11 +2,13 @@
 [h:NonSubeffectData = arg(1)]
 
 [h:SubeffectFunctionPrefixes = json.get(NonSubeffectData,"InstancePrefixes")]
+[h:MultiEffectModifier = number(json.get(NonSubeffectData,"MultiEffectModifier"))]
 
 [h:thisEffectData = json.set("","ID",pm.a5e.GenerateEffectID())]
 
 [h,if(json.get(SubeffectData,"ParentSubeffect")!=""),CODE:{
-	[h:tempParentID = json.path.read(pm.a5e.EffectData,"[*][?(@.WhichIntrinsicSubeffect == '"+json.get(SubeffectData,"ParentSubeffect")+"')]['ID']")]
+	[h:ParentSubeffectNum = json.get(SubeffectData,"ParentSubeffect") + MultiEffectModifier]
+	[h:tempParentID = json.path.read(pm.a5e.EffectData,"[*][?(@.WhichIntrinsicSubeffect == '"+ParentSubeffectNum+"')]['ID']")]
 	[h,if(!json.isEmpty(tempParentID)): thisEffectData = json.set(thisEffectData,
 		"ParentSubeffect",json.get(tempParentID,0),
 		"ParentSubeffectRequirements",json.get(SubeffectData,"ParentSubeffectRequirements")
@@ -82,6 +84,7 @@
 
 [h:subeffect.TargetingData = json.get(SubeffectData,"TargetLimits")]
 [h:subeffect.TargetTypes = json.fields(subeffect.TargetingData,"json")]
+[h:subeffect.TargetTokens = "[]"]
 [h,if(json.contains(subeffect.TargetTypes,"Creature")),CODE:{
 	[h:subeffect.TargetCreatureLimits = json.get(subeffect.TargetingData,"Creature")]
 	[h:subeffect.TargetOptionData = pm.a5e.TargetCreatureFiltering(json.set("","ParentToken",ParentToken,"Origin",subeffect.TargetOrigin,"Range",subeffect.RangeData),subeffect.TargetCreatureLimits)]
@@ -89,13 +92,19 @@
 	[h:subeffect.TargetOptions = json.get(subeffect.TargetOptionData,"ValidTargets")]
 	[h:SelfOnlyTest = json.get(subeffect.TargetOptionData,"SelfOnly")]
 	[h,if(SelfOnlyTest),CODE:{
-		[h:subeffect.AllTargets = subeffect.TargetOptions]
+		[h:subeffect.AllTargetTokens = subeffect.TargetOptions]
 	};{
-		[h:subeffect.AllTargets = pm.a5e.TargetCreatureTargeting(subeffect.TargetOptions,subeffect.TargetNumber,MissileCount)]
+		[h:subeffect.AllTargetTokens = pm.a5e.TargetCreatureTargeting(subeffect.TargetOptions,subeffect.TargetNumber,MissileCount)]
 	}]
 
-	[h:thisEffectData = json.set(thisEffectData,"Targets",subeffect.AllTargets)]
+	[h:subeffect.TargetTokens = json.merge(subeffect.TargetTokens,subeffect.AllTargetTokens)]
 }]
+
+[h,if(json.contains(subeffect.TargetTypes,"PriorTargets")),CODE:{
+	[h:subeffect.TargetTokens = json.merge(subeffect.TargetTokens,json.append("",json.get(subeffect.TargetingData,"PriorTargets")))]
+}]
+
+[h,if(!json.isEmpty(subeffect.TargetTokens)): thisEffectData = json.set(thisEffectData,"Targets",subeffect.TargetTokens)]
 
 [h,if(json.contains(SubeffectData,"Damage")),CODE:{
 	[h:allDamageData = json.get(SubeffectData,"Damage")]

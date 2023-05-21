@@ -61,4 +61,4 @@
 
 <tr><th text-align='center' colspan='2'><input type='submit' id='submitButton' value='Submit'></th></tr>"]
 
-[h:html.dialog5("ObjectCreation","lib://pm.a5e.core/CreateObject.html?cachelib=false","value="+base64.encode(ObjectHTML)+"; closebutton=0; height=800")]
+[h:html.dialog5("ObjectCreation","lib://pm.a5e.core/CreateObject.html?cachelib=false","value="+base64.encode(ObjectHTML)+"; closebutton=0; height=800; width=400")]

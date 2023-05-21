@@ -48,7 +48,9 @@
 [h:AllHeldItemOptions = "<option value=''>Empty</option>" + WeaponSelection + ShieldSelection + FociSelection + ToolSelection]
 [h:CurrentHeldItems = getProperty("a5e.stat.HeldItems")]
 [h,foreach(limb,UsableLimbs),CODE:{
-	[h:EquipItemHTML = EquipItemHTML + "<tr id='rowLimb"+roll.count+"Choice'><th>"+json.get(limb,"DisplayName")+":</th><td><select id='Limb"+roll.count+"Choice' name='Limb"+roll.count+"Choice' value='"+json.get(CurrentHeldItems,roll.count)+"'>"+AllHeldItemOptions+"</select></td></tr>"]
+	[h:thisLimbHeldItem = ""]
+	[h,if(roll.count < json.length(CurrentHeldItems)): thisLimbHeldItem = json.get(CurrentHeldItems,roll.count)]
+	[h:EquipItemHTML = EquipItemHTML + "<tr id='rowLimb"+roll.count+"Choice'><th>"+json.get(limb,"DisplayName")+":</th><td><select id='Limb"+roll.count+"Choice' name='Limb"+roll.count+"Choice' value='"+thisLimbHeldItem+"'>"+AllHeldItemOptions+"</select></td></tr>"]
 }]
 
 [h:AllAttunement = json.path.read(CurrentInventory,"[*][?(@.isAttunement == 1)]")]

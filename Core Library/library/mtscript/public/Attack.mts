@@ -57,7 +57,7 @@
 
 [h:wa.Props = json.get(wa.WeaponUsed,"WeaponProperties")]
 [h:wa.Magical = json.get(wa.WeaponUsed,"isMagical")]
-[h:attack.ProfTest = if(or(json.get(getProperty("a5e.stat.WeaponProficiencies"),wa.WeaponType)==1,json.get(MagicItemStats,wa.WeaponType+"Prof")==1),1,0)]
+[h:attack.ProfTest = if(json.get(getProperty("a5e.stat.WeaponProficiencies"),wa.WeaponType)==1,1,0)]
 [h:attack.ToHitBonus = wa.MagicBonus]
 [h:attack.ProfTest = 1]
 [h:wa.TargetOrigin = ParentToken]
@@ -289,7 +289,7 @@
 		"ID",thisAttackEffectID,
 		"WhichIntrinsicSubeffect",WhichAttack
 	))]
-	[h:"<!-- TODO: Major issue - WhichIntrinsicSubeffect always being 0 will cause errors with multiple attacks. This whole method is flawed in the case of multiple attacks: If wIS is incremented each time, then subeffects cannot target it correctly. If not incremented, then subeffects will target ALL attacks, not just one of them. This will apply for missiles also. May need to send a -->"]
+	[h:"<!-- TODO: Major issue - WhichIntrinsicSubeffect always being 0 will cause errors with multiple attacks. This whole method is flawed in the case of multiple attacks: If wIS is incremented each time, then subeffects cannot target it correctly. If not incremented, then subeffects will target ALL attacks, not just one of them. This will apply for missiles also. Currently incrementing; better solution may be to give a separate EffectID and SubeffectID. -->"]
 
 	[h:AHLTier = 0]
 	[h:DataForSubeffect = json.set("",

@@ -48,8 +48,18 @@
 	[h:objectData = json.set(objectData,"BaseAC",json.get(objectData,"ArmorBaseAC"))]
 	[h:objectData = json.remove(objectData,"ArmorBaseAC")]
 
+	[h,if(json.contains(objectData,"ArmorIsDexterityBonus")),CODE:{
+		[h:objectData = json.set(objectData,
+			"isDexterityBonus",1,
+			"isDexterityCap",!json.contains(objectData,"ArmorNoDexCap")
+		)]
+		[h,if(!json.contains(objectData,"ArmorNoDexCap")): objectData = json.set(objectData,"DexterityCap",json.get(objectData,"ArmorDexCap"))]
+	};{
+		[h:objectData = json.set(objectData,"isDexterityBonus",0)]
+	}]
+	[h:objectData = json.remove(objectData,"ArmorIsDexterityBonus")]
+
 	[h:objectData = json.set(objectData,
-		"isDexterityCap",!json.contains(objectData,"ArmorNoDexCap"),
 		"isStrengthRequirement",!json.contains(objectData,"ArmorNoStrengthReq"),
 		"isStealthDisadvantage",json.contains(objectData,"ArmorStealthDisadvantage")
 	)]

@@ -2,9 +2,10 @@ async function createObjectSubtypeRows(){
 	clearUnusedTable("CreateObjectTable","rowObjectType","rowSize");
 	let nextRowIndex = document.getElementById("rowObjectType").rowIndex+1;
 	let ObjectType = document.getElementById("Type").value;
+	let tableID = "CreateObjectTable";
 
 	if(ObjectType == "Weapon"){
-		createWeaponTableRows("CreateObjectTable","rowObjectType");
+		createWeaponTableRows(tableID,"rowObjectType");
 	}
 	else if(ObjectType == "Armor" || ObjectType == "Shield"){
 		document.getElementById("isWearable").setAttribute("checked","");
@@ -39,7 +40,7 @@ async function createObjectSubtypeRows(){
 		addTableRow("CreateObjectTable",nextRowIndex,"rowArmorBaseAC","<th><label for='ArmorBaseAC'>Base AC:</label></th><td><input type='number' id='ArmorBaseAC' name='ArmorBaseAC' min='0' value='11' style='width:25px'></td>");
 		nextRowIndex++;
 
-		addTableRow("CreateObjectTable",nextRowIndex,"rowArmorDexCap","<th><label for='ArmorDexCap'>Maximum Dexterity Bonus:</label></th><td><input type='number' id='ArmorDexCap' name='ArmorDexCap' min='0' value='2' style='width:25px' disabled><input type='checkbox' id='ArmorNoDexCap' name='ArmorNoDexCap' onchange='toggleFieldEnabled("+'"ArmorDexCap","ArmorNoDexCap"'+")' checked><label for='ArmorNoDexCap'> Unlimited?</label></td>");
+		addTableRow("CreateObjectTable",nextRowIndex,"rowArmorIsDexterityBonus","<th><label for='ArmorIsDexterityBonus'>Allows Dexterity Bonus:</label></th><td><input type='checkbox' id='ArmorIsDexterityBonus' name='ArmorIsDexterityBonus' onchange='createArmorDexterityRows()'></td>");
 		nextRowIndex++;
 
 		addTableRow("CreateObjectTable",nextRowIndex,"rowArmorStrengthReq","<th><label for='ArmorStrengthReq'>Strength Requirement:</label></th><td><input type='number' id='ArmorStrengthReq' name='ArmorStrengthReq' min='0' value='13' style='width:25px' disabled><input type='checkbox' id='ArmorNoStrengthReq' name='ArmorNoStrengthReq' onchange='toggleFieldEnabled("+'"ArmorStrengthReq","ArmorNoStrengthReq"'+")' checked><label for='ArmorNoStrengthReq'> No Requirement?</label></td>");
@@ -215,6 +216,18 @@ async function createArmorTypeRows(ArmorOrShield){
 		}
 
 		updateWithTemplateData("CreateObjectTable",ArmorTypeData);
+	}
+}
+
+function createArmorDexterityRows(tableID){
+	if(document.getElementById("ArmorIsDexterityBonus").checked){
+		let nextRowIndex = document.getElementById("rowArmorIsDexterityBonus").rowIndex + 1;
+
+		addTableRow("CreateObjectTable",nextRowIndex,"rowArmorDexCap","<th><label for='ArmorDexCap'>Maximum Dexterity Bonus:</label></th><td><input type='number' id='ArmorDexCap' name='ArmorDexCap' min='0' value='2' style='width:25px' disabled><input type='checkbox' id='ArmorNoDexCap' name='ArmorNoDexCap' onchange='toggleFieldEnabled("+'"ArmorDexCap","ArmorNoDexCap"'+")' checked><label for='ArmorNoDexCap'> Unlimited?</label></td>");
+		nextRowIndex++;
+	}
+	else{
+		document.getElementById("CreateObjectTable").deleteRow(document.getElementById("rowArmorDexCap").rowIndex);	
 	}
 }
 

@@ -1376,7 +1376,6 @@ async function createLightTable(){
 			addTableRow("CreateSubeffectTable",UseAoESizeIndex,"rowLightUseAoESize","<th><label for='isLightUseAoESize'>Use AoE For Size:</label></th><td><input type='checkbox' id='isLightUseAoESize' name='isLightUseAoESize' onchange='toggleFieldEnabled("+'"lightDistanceValue","isLightUseAoESize"'+")'></td>");
 		}
 	}
-
 }
 
 async function createMoveTargetTable(){

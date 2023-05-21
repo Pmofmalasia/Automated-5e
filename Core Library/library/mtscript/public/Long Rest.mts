@@ -68,11 +68,11 @@
 
 [h:lr.Resources = json.path.read(getProperty("a5e.stat.AllFeatures"),"[?(@.IsActive>0 && @.RestoreLongRest==1)]")]
 [h,foreach(Ability,lr.Resources),CODE:{
-	[h:miResourceBonus = 0]
-	[h:miResourceBonusItems = json.path.read(MagicItemClassBonuses,"[?(@.IsActive>0 && @.Ability=='"+json.get(Ability,"Name")+"' && @.Class=='"+json.get(Ability,"Class")+"' && @.Subclass=='"+json.get(Ability,"Subclass")+"' && @.MaxResourceBonus!=0)]['MaxResourceBonus']")]
-	[h,foreach(item,miResourceBonusItems),CODE:{[h:miResourceBonus=miResourceBonusItems+item]}]
 	[h:ResourceRestored = evalMacro(json.get(Ability,"MaxResource"))]
 	[h,if(json.type(ResourceRestored)=="ARRAY"): ResourceRestored=json.get(ResourceRestored,0)]
+
+	[h:"<!-- TODO: Re-add magic items providing a bonus to the amount of resource restored -->"]
+
 	[h,if(json.type(ResourceRestored)=="OBJECT"),CODE:{
 		[h:ResourceRestoredFinal=ResourceRestored]
 		[h,foreach(tempResource,json.fields(ResourceRestoredFinal,"json")): abilityTable = json.append(abilityTable,json.set("",
@@ -86,7 +86,7 @@
 			"Value",json.get(ResourceRestoredFinal,tempResource)
 		))]
 	};{
-		[h:ResourceRestoredFinal=(ResourceRestored+miResourceBonus)]
+		[h:ResourceRestoredFinal=ResourceRestored]
 		[h:abilityTable = json.append(abilityTable,json.set("",
 			"ShowIfCondensed",1,
 			"Header",json.get(Ability,"DisplayName"),

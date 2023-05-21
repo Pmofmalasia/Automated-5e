@@ -16,6 +16,7 @@
     [h:newID =  json.get(effect,"ID")]
     [h,if(newID == ""): newID = pm.a5e.GenerateEffectID()]
     [h:parentTokenData = json.get(effect,"ParentToken")]
+	[h:ParentSubeffect = json.get(effect,"ParentSubeffect")]
     [h:checkDCData = json.get(effect,"CheckDC")]
     [h:saveDCData = json.get(effect,"SaveDC")]
     [h:attackData = json.get(effect,"Attack")]
@@ -40,6 +41,17 @@
 
         [h,if(whichEffect >= json.length(currentEffectData)): currentEffectData = json.append(currentEffectData,thisEffect); currentEffectData = json.set(currentEffectData,whichEffect,thisEffect)]
     };{}]
+
+	[h,if(ParentSubeffect!=""),CODE:{
+        [h,if(whichEffect >= json.length(currentEffectData)): thisEffect = json.path.set(baseEffectData,".ID",newID); thisEffect = json.get(currentEffectData,whichEffect)]
+
+        [h:thisEffect = json.set(thisEffect,
+			"ParentSubeffect",ParentSubeffect,
+			"ParentSubeffectRequirements",json.get(effect,"ParentSubeffectRequirements")
+		)]
+
+        [h,if(whichEffect >= json.length(currentEffectData)): currentEffectData = json.append(currentEffectData,thisEffect); currentEffectData = json.set(currentEffectData,whichEffect,thisEffect)]
+	};{}]
     
     [h,if(checkDCData!=""),CODE:{
         [h,if(whichEffect >= json.length(currentEffectData)): thisEffect = json.path.set(baseEffectData,".ID",newID); thisEffect = json.get(currentEffectData,whichEffect)]

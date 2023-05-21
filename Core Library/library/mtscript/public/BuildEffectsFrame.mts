@@ -12,12 +12,12 @@
 
 [h,foreach(effect,incompleteEffects),CODE:{
 	[h:NoEffectTest = json.get(effect,"ToResolve") == ""]
-	[h,if(json.get(effect,"ParentEffect") != ""):
-		CurrentParentEffectTest = !json.isEmpty(json.path.read(incompleteEffects,"[*][?(@.ID == "+json.get(effect,"ParentEffect")+")]"));
-		CurrentParentEffectTest = 0
+	[h,if(json.get(effect,"ParentSubeffect") != ""):
+		CurrentParentSubeffectTest = !json.isEmpty(json.path.read(incompleteEffects,"[*][?(@.ID == "+json.get(effect,"ParentSubeffect")+")]"));
+		CurrentParentSubeffectTest = 0
 	]
 
-	[h:NotDisplayedTest = or(NoEffectTest,CurrentParentEffectTest)]
+	[h:NotDisplayedTest = or(NoEffectTest,CurrentParentSubeffectTest)]
 
 	[h,if(NotDisplayedTest),CODE:{};{
 		[h:tempTargetList = json.get(effect,"Targets")]
@@ -52,11 +52,11 @@
 			em.SecondPassDisplay = "Unresolved"
 		]
 
-		[h:LinkedEffectNumber = json.length(json.path.read(incompleteEffects,"[*][?(@.ParentEffect == "+json.get(effect,"ID")+")]"))]
+		[h:LinkedEffectNumber = json.length(json.path.read(incompleteEffects,"[*][?(@.ParentSubeffect == "+json.get(effect,"ID")+")]"))]
 		[h,if(LinkedEffectNumber > 0): em.SecondPassDisplay = em.SecondPassDisplay+ "<br>" + LinkedEffectNumber + " Linked Effect"+if(LinkedEffectNumber==1,"","s")]
 
 		[h:InvolvedTokensDisplay = if(targetName=="Self",parentName+" (self)",parentName+" vs. "+targetName)]
-		[h:em.EffectDisplay = InvolvedTokensDisplay+em.SecondPassDisplay]
+		[h:em.EffectDisplay = InvolvedTokensDisplay]
 
 		[h:thisEffectID = json.get(effect,"ID")]
 		[h:em.TableLines = em.TableLines + "<tr>"+effectsTableCellFormat+parentName+"</td>"+effectsTableCellFormat+targetName+"</td>"+effectsTableCellFormat+em.SecondPassDisplay+"</td></th><td style='padding-left:4px'><input type='button' onclick='doEffect("+json.set("","Effect",thisEffectID,"ResolveHow","NoMod","DisplayName",em.EffectDisplay)+")' value='Resolve Effect'></td><td style='padding-left:4px'><input type='button' onclick='doEffect("+json.set("","Effect",thisEffectID,"ResolveHow","Mods","DisplayName",em.EffectDisplay)+")' value='With Modifications'></td><td style='padding-left:4px'><input type='button' onclick='doEffect("+json.set("","Effect",thisEffectID,"ResolveHow","Remove","DisplayName",em.EffectDisplay)+")' value='Remove Effect'></td></tr>"]

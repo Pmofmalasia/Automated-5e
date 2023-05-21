@@ -3,23 +3,44 @@
 [h:pm.a5e.OverarchingContext = "Stats"]
 [h:IsTooltip = 0]
 
-[h:baseAC = json.get(json.get(getProperty("a5e.stat.Armor"),json.get(getProperty("a5e.stat.Armor"),0)),"BaseAC")]
-[h:dexMax = json.get(json.get(getProperty("a5e.stat.Armor"),json.get(getProperty("a5e.stat.Armor"),0)),"DexMax")]
-[h:bonusAC = json.get(json.get(getProperty("a5e.stat.Armor"),json.get(getProperty("a5e.stat.Armor"),0)),"MagicBonus")]
-[h:shieldAC = if(json.get(json.get(getProperty("a5e.stat.Shield"),json.get(getProperty("a5e.stat.Shield"),0)),"Name")=="None",0,2)+json.get(json.get(getProperty("a5e.stat.Shield"),json.get(getProperty("a5e.stat.Shield"),0)),"MagicBonus")]
+[h:CurrentHeldItems = getProperty("a5e.stat.HeldItems")]
+[h:CurrentInventory = getProperty("a5e.stat.Inventory")]
+[h:EquippedArmorID = getProperty("a5e.stat.EquippedArmor")]
+[h,if(EquippedArmorID == ""):
+	tempEquippedArmorData = "[]";
+	tempEquippedArmorData = json.path.read(CurrentInventory,"[*][?(@.ItemID == "+EquippedArmorID+")]")
+]
+[h,if(json.isEmpty(tempEquippedArmorData)):
+	EquippedArmorData = getProperty("a5e.stat.NaturalArmor");
+	EquippedArmorData = json.get(tempEquippedArmorData,0)
+]
+
+[h:baseAC = json.get(EquippedArmorData,"BaseAC")]
+[h:isDexterityBonus = json.get(EquippedArmorData,"isDexterityBonus")]
+[h:isDexterityCap = json.get(EquippedArmorData,"isDexterityCap")]
+[h:DexterityCap = json.get(EquippedArmorData,"DexterityCap")]
+[h:bonusAC = json.get(EquippedArmorData,"MagicBonus")]
+
+[h:MaximumShieldNumber = 1]
+[h:shieldAC = 0]
+[h:ShieldsEquipped = json.path.read(CurrentInventory,"[*][?(@.Type == 'Shield' && @.ItemID in "+CurrentHeldItems+")]")]
+[h,foreach(tempShield,ShieldsEquipped): shieldAC = max(shieldAC,json.get(tempShield,"BaseAC"))]
+[h:"<!-- TODO: Add support for multiple shields -->"]
 
 [h:setFinalAC = 0]
 [h:setBaseAC = 0]
 [h:setOverrideFinalAC = -1]
 
-[h:"<!-- Temporary magic item calculation for current, old magic items -->"]
-[h:setFinalAC = json.get(MagicItemStats,"sAC")]
-[h:setOverrideFinalAC = json.get(MagicItemStats,"soAC")]
-[h:bonusAC = bonusAC + json.get(MagicItemStats,"bAC")]
-
 [h:pm.PassiveFunction("AC")]
 
-[h:dexBonus = if(dexMax == 0,0,min(dexMax,json.get(getProperty("a5e.stat.AtrMods"),"Dexterity")))]
+[h,if(isDexterityBonus),CODE:{
+	[h,if(isDexterityCap):
+		dexBonus = min(DexterityCap,json.get(getProperty("a5e.stat.AtrMods"),"Dexterity"));
+		dexBonus = json.get(getProperty("a5e.stat.AtrMods"),"Dexterity")
+	]
+};{
+	[h:dexBonus = 0]	
+}]
 [h:baseACFinal = max(baseAC,setBaseAC)]
 
 [h:ACFinal = baseACFinal + dexBonus + bonusAC + shieldAC]

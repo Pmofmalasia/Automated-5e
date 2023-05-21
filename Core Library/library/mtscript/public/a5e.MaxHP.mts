@@ -14,11 +14,6 @@
 [h:setMaxHP = 0]
 [h:setOverrideMaxHP = -1]
 
-[h:"<!-- Temporary magic item calculation for current, old magic items -->"]
-[h:setMaxHP = json.get(MagicItemStats,"sMaxHP")]
-[h:setOverrideMaxHP = json.get(MagicItemStats,"soMaxHP")]
-[h:bonusMaxHP = json.get(MagicItemStats,"bMaxHP")]
-
 [h:pm.PassiveFunction("MaxHP")]
 
 [h:maxHPFinal = (getProperty("a5e.stat.BaseMaxHP") + bonusMaxHP) * multiplierMaxHP]

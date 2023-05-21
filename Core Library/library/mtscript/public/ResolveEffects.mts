@@ -29,7 +29,7 @@
 	[h,if(json.type(effTargets)=="OBJECT"): assert(0,"Something unexpected happened: Effect Targets is an object without having a Parent Subeffect")]
 }]
 
-[h:LinkedEffects = json.path.read(data.getData("addon:","pm.a5e.core","gd.Effects"),"[*][?(@.ParentEffect == "+effID+")]")]
+[h:LinkedEffects = json.path.read(data.getData("addon:","pm.a5e.core","gd.Effects"),"[*][?(@.ParentSubeffect == "+effID+")]")]
 
 [h:effConditionGroupID = pm.a5e.CreateConditionID(ParentToken,effTargets)]
 
@@ -357,7 +357,8 @@
 	}]
 	
 	[h,if(!needsFurtherResolution),CODE:{
-		[h:thisTargetLinkedEffects = json.path.read(LinkedEffects,"[*][?(@.RemainingTargets.[*] == '"+targetToken+"')]")]
+		[h:thisTargetLinkedEffects = json.path.read(LinkedEffects,"[*][?(@.RemainingTargets.[*] == '"+targetToken+"' || @.RemainingTargets.[*].TargetAll != 0)]")]
+		[h:"<!-- Note: For whatever reason, == 1 does not work but !=0 does. Dunno why. -->"]
 
 		[h:NextEffectData = json.set("",
 			"AttackHit",AttackHit,

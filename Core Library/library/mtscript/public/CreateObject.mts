@@ -1,5 +1,5 @@
 [h:ObjectTypeSelection = ut.a5e.GenerateSelectionHTML(pm.a5e.GetCoreData("sb.ObjectTypes"))]
-[h:ObjectMaterialMultiselection = ut.a5e.GenerateSelectionHTML(pm.a5e.GetCoreData("sb.ObjectMaterials"),1,"objectMaterial","createChooseMainMaterialRows",json.append("","CreateObjectsTable"))]
+[h:ObjectMaterialMultiselection = ut.a5e.GenerateSelectionHTML(pm.a5e.GetCoreData("sb.ObjectMaterials"),1,"objectMaterial","createChooseMainMaterialRows",json.append("","CreateObjectTable"))]
 [h:ObjectMaterialSelection = ut.a5e.GenerateSelectionHTML(pm.a5e.GetCoreData("sb.ObjectMaterials"))]
 
 [h:MaterialTags = pm.a5e.GetCoreData("sb.MaterialTags")]
@@ -25,9 +25,9 @@
 
 <tr id='rowRarity'><th><label for='Rarity'>Rarity:</label></th><td><select id='Rarity' name='Rarity'><option value='Mundane'>Mundane</option><option value='Common'>Common</option><option value='Uncommon'>Uncommon</option><option value='Rare'>Rare</option><option value='VeryRare'>Very Rare</option><option value='Legendary'>Legendary</option><option value='Artifact'>Artifact</option></select></td></tr>
 
-<tr id='rowCost'><th><label for='Cost'>Cost:</label></th><td><input type='number' id='Cost' name='Cost' value=0 min=0 style='width:35px'><select id='CostUnits' name='CostUnits'><option value='Copper'>Copper</option><option value='Silver'>Silver</option><option value='Gold' selected>Gold</option><option value='Platinum'>Platinum</option></select></td></tr>
+<tr id='rowCost'><th><label for='Cost'>Cost:</label></th><td><input type='number' id='Cost' name='Cost' value=0 min=0 step='0.01' style='width:35px'><select id='CostUnits' name='CostUnits'><option value='Copper'>Copper</option><option value='Silver'>Silver</option><option value='Gold' selected>Gold</option><option value='Platinum'>Platinum</option></select></td></tr>
 
-<tr id='rowWeight'><th><label for='Weight'>Weight:</label></th><td><input type='number' id='Weight' name='Weight' step='0.01' value=0 min=0 style='width:35px'> lbs.</td></tr>
+<tr id='rowWeight'><th><label for='Weight'>Weight:</label></th><td><input type='number' id='Weight' name='Weight' step='0.001' value=0 min=0 style='width:35px'> lbs.</td></tr>
 
 <tr id='rowIsMagical'><th><label for='isMagical'>Object is a Magic Item?</label></th><td><input type='checkbox' id='isMagical' name='isMagical' onchange='createMagicItemRows("+'"CreateObjectTable"'+")'></td></tr>
 

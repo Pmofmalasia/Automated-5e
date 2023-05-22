@@ -178,9 +178,8 @@ function createSentientItemRows(tableID){
 	}
 }
 
-async function createChooseMainMaterialRows(tableID){
+async function createChooseMainMaterialRows(thisChosenMaterial,tableID){
 	let nextRowIndex = document.getElementById("rowMaterials").rowIndex+1;
-
 	let request = await fetch("macro:pm.a5e.GetCoreData@lib:pm.a5e.Core", {method: "POST", body: "['sb.ObjectMaterials']"});
 	let allMaterials = await request.json();
 
@@ -189,7 +188,7 @@ async function createChooseMainMaterialRows(tableID){
 	for(let tempMaterial of allMaterials){
 		if(document.getElementById("objectMaterial"+tempMaterial.Name).checked){
 			chosenMaterials.push(tempMaterial);
-			for(let tempTag of tempMaterial.ObjectTags)
+			for(let tempTag of tempMaterial.Tags)
 			if(!chosenObjectTags.includes(tempTag)){
 				chosenObjectTags.push(tempTag);
 			}
@@ -214,11 +213,7 @@ async function createChooseMainMaterialRows(tableID){
 	}
 	else{
 		if(document.getElementById("rowMainMaterial") != null){
-			document.getElementById(tableID).deleteRow(nextRowIndex)
+			document.getElementById(tableID).deleteRow(nextRowIndex);
 		}
-	}
-
-	for(let tempMaterial of chosenObjectTags){
-		document.getElementById("objectMaterialTag"+tempMaterial.Name).setAttribute("checked","")
 	}
 }

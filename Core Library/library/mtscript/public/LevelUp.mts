@@ -50,7 +50,7 @@
 [h,if(lu.SubclassTest),CODE:{
 	[h:abort(input(
 		" lu.SubclassChoice | "+pm.GetSubclasses(lu.Class,"DisplayName")+" | Choose a subclass | RADIO | VALUE=STRING "
-		))]
+	))]
 	[h:setProperty("a5e.stat.Subclasses",json.set(getProperty("a5e.stat.Subclasses"),lu.Class,lu.SubclassChoice))]
 };{}]
 

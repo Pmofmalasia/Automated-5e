@@ -63,6 +63,17 @@
 [h,if(json.contains(ChosenWeaponPropertiesArray,"Versatile")): WeaponData = json.set(WeaponData,"VersatileDamage",allVersatileDamage)]
 [h:WeaponData = json.remove(WeaponData,"VersatileDamageInstanceNumber")]
 
+[h,if(json.contains(ChosenWeaponPropertiesArray,"Ammunition")),CODE:{
+	[h:allAmmunitionTypes = pm.a5e.GetCoreData("sb.AmmunitionTypes","Name","json")]
+	[h:ChosenAmmunitionTypesArray = "[]"]
+	[h,foreach(tempAmmunition,allAmmunitionTypes),CODE:{
+		[h,if(json.contains(WeaponData,"validWeaponAmmunition"+tempAmmunition)): ChosenAmmunitionTypesArray = json.append(ChosenAmmunitionTypesArray,tempAmmunition)]
+		[h:WeaponData = json.remove(WeaponData,"validWeaponAmmunition"+tempAmmunition)]
+	}]
+
+	[h:WeaponData = json.set(WeaponData,"CompatibleAmmunition",ChosenAmmunitionTypesArray)]
+};{}]
+
 [h,if(json.get(WeaponData,"WeaponCritThreshMethod")=="Set"),CODE:{
 	[h:WeaponData = json.set(WeaponData,"CritThresh",json.get(WeaponData,"WeaponCritThresh"))]
 };{

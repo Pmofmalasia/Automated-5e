@@ -56,6 +56,7 @@
 [h:wa.CritMultiplier = 1 + number(json.get(wa.WeaponUsed,"CritMultiplier"))]
 
 [h:wa.Subeffects = json.get(wa.WeaponUsed,"Subeffects")]
+[h,if(wa.Subeffects == ""): wa.Subeffects = "[]"]
 [h:wa.Props = json.get(wa.WeaponUsed,"WeaponProperties")]
 [h:wa.Magical = json.get(wa.WeaponUsed,"isMagical")]
 [h:attack.ProfTest = if(json.get(getProperty("a5e.stat.WeaponProficiencies"),wa.WeaponType)==1,1,0)]
@@ -135,19 +136,20 @@
 	[h:wa.DamageData = json.get(wa.WeaponUsed,"VersatileDamage")]
 };{}]
 
-[h,if(json.contains(wa.Props,"Ammunition")),CODE:{
+[h:UsesAmmunitionTest = json.contains(wa.Props,"Ammunition")]
+[h,if(UsesAmmunitionTest),CODE:{
 	[h:wa.AmmunitionID = json.get(wa.WeaponUsed,"AmmunitionID")]
 	[h,if(wa.AmmunitionID == ""),CODE:{
 		[h:AmmunitionData = "{}"]
 	};{
-		[h:tempAmmunitionData = json.path.read(getProperty("a5e.stat.Inventory"),"[*][?(@.ItemID == "+AmmunitionID+")]")]
+		[h:tempAmmunitionData = json.path.read(getProperty("a5e.stat.Inventory"),"[*][?(@.ItemID == "+wa.AmmunitionID+")]")]
 		[h,if(json.isEmpty(tempAmmunitionData)):
 			AmmunitionData = "{}";
 			AmmunitionData = json.get(tempAmmunitionData,0)
 		]
 	}]
 
-	[h:wa.DamageData = json.merge(wa.DamageData,json,get(AmmunitionData,"AmmunitionDamage"))]
+	[h:CurrentAmmoCount = number(json.get(AmmunitionData,"Number"))]
 };{}]
 
 [h:pm.PassiveFunction("AttackStat")]
@@ -175,6 +177,7 @@
 
 [h:AllAttacksToHit = "[]"]
 [h:AllAttacksDmg = "[]"]
+[h:AllAttacksSubeffects = "[]"]
 
 [h:DamageColor = pm.DamageColor()]
 [h:HealingColor = pm.HealingColor()]
@@ -182,10 +185,22 @@
 [h:CritFailColor = pm.CritFailColor()]
 [h:LinkColor = pm.LinkColor()]
 
+[h:SafeAttackCounter = 0]
 [h,count(AttackCount),CODE:{
 	[h:thisAttackData = wa.Data]
-	[h,if(json.length(wa.EffectIDs)-1 < roll.count): wa.EffectIDs = json.append(wa.EffectIDs,pm.a5e.GenerateEffectID())]
-	[h:thisAttackTarget = json.get(wa.TargetList,roll.count)]
+	[h:thisAttackSubeffects = wa.Subeffects]
+	[h:thisAttackDamageData = wa.DamageData]
+	[h,if(json.length(wa.EffectIDs)-1 < SafeAttackCounter): wa.EffectIDs = json.append(wa.EffectIDs,pm.a5e.GenerateEffectID())]
+
+	[h:"<!-- TODO: Add setting to alert if you're out of ammunition, possibly if below a certain number that can be set? And setting to ignore this -->"]
+	[h,if(UsesAmmunitionTest && CurrentAmmoCount > 0),CODE:{
+		[h,if(json.get(AmmunitionData,"AmmunitionDamage")!=""): thisAttackDamageData = json.merge(thisAttackDamageData,json.get(AmmunitionData,"AmmunitionDamage"))]
+		[h,if(json.get(AmmunitionData,"Subeffects")!=""): thisAttackSubeffects = json.merge(thisAttackSubeffects,json.get(AmmunitionData,"Subeffects"))]
+		[h:CurrentAmmoCount = CurrentAmmoCount - 1]
+		[h:setProperty("a5e.stat.Inventory",json.path.set(getProperty("a5e.stat.Inventory"),"[*][?(@.ItemID == "+json.get(AmmunitionData,"ItemID")+")]['Number']",CurrentAmmoCount))]
+	};{}]
+
+	[h:thisAttackTarget = json.get(wa.TargetList,SafeAttackCounter)]
 	[h,if(wa.MeleeRanged == "Ranged"),CODE:{
 		[h:LongRangeTest = getDistance(thisAttackTarget) > wa.Range]
 		[h:tempPriorDisadvantage = json.get(thisAttackData,"Disadvantage")]
@@ -205,7 +220,7 @@
 		"PrimeStat",PrimeStat
 	)]
 	[h:thisAttackDamage = "[]"]
-	[h,foreach(tempDamageInstance,wa.DamageData): thisAttackDamage = json.append(thisAttackDamage,pm.a5e.DamageRoll(tempDamageInstance,wa.NonDamageData,json.append("","Attack","WeaponAttack")))]
+	[h,foreach(tempDamageInstance,thisAttackDamageData): thisAttackDamage = json.append(thisAttackDamage,pm.a5e.DamageRoll(tempDamageInstance,wa.NonDamageData,json.append("","Attack","WeaponAttack")))]
 	
 	[h:ModifyDamageRollData = "[]"]
 
@@ -221,6 +236,8 @@
 	};{}]	
 
 	[h:AllAttacksDmg = json.append(AllAttacksDmg,thisAttackDamage)]
+	[h:AllAttacksSubeffects = json.append(AllAttacksSubeffects,thisAttackSubeffects)]
+	[h:SafeAttackCounter = SafeAttackCounter + 1]
 }]
 
 [h:WhichAttack=0]

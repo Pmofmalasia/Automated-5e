@@ -5,7 +5,7 @@
 
 [h:"<!-- TODO: Re-add magic item changing duration here -->"]
 
-[h:currentFeatureDuration = pm.DurationNum+miDurationBonusFinal]
+[h:currentFeatureDuration = pm.DurationNum]
 
 [h:abilityTable = json.append(abilityTable,(json.set("","ShowIfCondensed",0,"Header","Duration","FalseHeader","","FullContents","","RulesContents",currentFeatureDuration+" "+currentFeatureDurationUnits+if(currentFeatureDuration!=1,"s",""),"RollContents","","DisplayOrder","['Rules','Roll','Full']")))]
 

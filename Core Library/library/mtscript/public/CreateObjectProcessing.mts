@@ -135,21 +135,42 @@
 [h:objectData = json.set(objectData,"ObjectTags",ChosenTags)]
 
 [h:closeDialog("ObjectCreation")]
+
+[h:ObjectID = base64.encode(json.get(objectData,"Name"))+eval("1d1000000")]
+[h:objectData = json.set(objectData,"ObjectID",ObjectID)]
+
+[h:broadcast(!json.contains(objectData,"HasPassiveEffects") && !json.contains(objectData,"HasActiveEffects"))]
 [h,if(!json.contains(objectData,"HasPassiveEffects") && !json.contains(objectData,"HasActiveEffects")),CODE:{
+	[h:broadcast("wrong")]
 	[h,if(newTemplateTest),CODE:{
 		[h:setLibProperty("sb."+objectType+"Types",json.append(getLibProperty("sb."+objectType+"Types","Lib:"+json.get(objectData,"Library")),objectData),"Lib:"+json.get(objectData,"Library"))]
 	};{}]
-
-	[h:ObjectID = base64.encode(json.get(objectData,"Name"))+eval("1d1000000")]
-	[h:objectData = json.set(objectData,"ObjectID",ObjectID)]
 
 	[h:setLibProperty("sb.Objects",json.append(getLibProperty("sb.Objects","Lib:"+json.get(objectData,"Library")),objectData),"Lib:"+json.get(objectData,"Library"))]
 
 	[h:broadcast("Object "+json.get(objectData,"DisplayName")+" has been created.")]
 };{
+	[h:broadcast("out")]
 	[h,if(json.contains(objectData,"HasPassiveEffects")),CODE:{
-		[h:"<!-- Shuttle data to CreatePassiveEffect here (or create feature core) -->"]
-	};{
+		[h:broadcast("in out")]
+		[h:objectData = json.remove(objectData,"HasPassiveEffects")]
+		[h:objectData = json.set(objectData,"Level",0)]
+		[h,macro("Create Feature Core@Lib:pm.a5e.Core"): json.set("","Feature",objectData,"PrereqsTest",0)]
+
+		[h:objectData = json.get(macro.return,"Ability")]
+	};{}]
+
+	[h,if(json.contains(objectData,"HasActiveEffects")),CODE:{
+		[h:objectData = json.remove(objectData,"HasActiveEffects")]
 		[h:"<!-- Shuttle data to CreateEffect here -->"]
+	};{
+		[h:"<!-- Copied here instead of just putting both after the if because eventually will need another solution once FeatureCore is made into a frame5 -->"]
+
+		[h,if(newTemplateTest): setLibProperty("sb."+objectType+"Types",json.append(getLibProperty("sb."+objectType+"Types","Lib:"+json.get(objectData,"Library")),objectData),"Lib:"+json.get(objectData,"Library"))]
+
+		[h:setLibProperty("sb.Objects",json.append(getLibProperty("sb.Objects","Lib:"+json.get(objectData,"Library")),objectData),"Lib:"+json.get(objectData,"Library"))]
+	
+		[h:broadcast("Object "+json.get(objectData,"DisplayName")+" has been created.")]
+		[h,MACRO("Gather Sourcebook Information@Lib:pm.a5e.Core"):""]
 	}]
 }]

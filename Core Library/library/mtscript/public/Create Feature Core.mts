@@ -2,15 +2,17 @@
 [h:ab.ClassList = pm.GetClasses("DisplayName",",")]
 [h:ab.AtrList = pm.GetAttributes("DisplayName")]
 [h:ab.LevelList = "None,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20"]
-
+[h:broadcast("HI")]
 [h:ab.Final = json.get(macro.args,"Feature")]
 [h:ab.Type = json.get(ab.Final,"Type")]
 [h:ab.Prereqs = json.get(macro.args,"PrereqsTest")]
 
+[h:broadcast("HI")]
 [h:ab.Level = json.get(ab.Final,"Level")]
 [h:ab.UpdateLevelOptions = string(ab.Level)]
 [h,count(20-ab.Level): ab.UpdateLevelOptions = listAppend(ab.UpdateLevelOptions,ab.Level+roll.count+1)]
 
+[h:broadcast("HI")]
 [h:ab.Updates = json.remove(ab.Final,"GainOnLevel")]
 [h:ab.Updates = json.remove(ab.Updates,"Optional")]
 [h:ab.Updates = json.remove(ab.Updates,"Multiability")]

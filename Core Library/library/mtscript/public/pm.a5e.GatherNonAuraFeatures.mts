@@ -5,7 +5,7 @@
 
 [h:a5e.ValidItems = json.path.read(getProperty("a5e.stat.Inventory"),"[*][?((@.isWearable == 0 || (@.isWearable == 1 && @.isWorn == 1)) && (@.isAttunement == 0 || (@.isAttunement == 1 && @.AttunedTo == '"+currentToken()+"')))]")]
 [h:a5e.InventoryAbilities = json.path.read(a5e.ValidItems,"[*][?(@.isPassiveEffects == 1)]")]
-[h:a5e. = json.path.put(a5e.InventoryAbilities,"[*]","AbilityType","Item")]
+[h:a5e.InventoryAbilities = json.path.put(a5e.InventoryAbilities,"[*]","AbilityType","Item")]
 [h:a5e.UnifiedAbilities = json.merge(a5e.UnifiedAbilities,a5e.InventoryAbilities)]
 
 [h:a5e.ItemBuffs = json.path.read(a5e.ValidItems,"[*]['ItemBuffs']")]

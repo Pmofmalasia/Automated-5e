@@ -1,17 +1,172 @@
-async function currentEquipment(){
-	for(let i; i<document.getElementById("LimbNumber").value; i++){
-		document.getElementById("Limb"+i+"Choice").value = document.getElementById("Limb"+i+"Choice").value;
+function initialEquipmentRows(tableID,Inventory,HeldItems,Limbs,EquippedArmor,AttunementSlots){
+	createEquippedArmorRow(tableID,Inventory,EquippedArmor);
+	createHeldItemsRows(tableID,Inventory,HeldItems,Limbs);
+	createAttunedItemsRows(tableID,Inventory,AttunementSlots);
+	createWornItemsRows(tableID,Inventory);
+}
+
+function createEquippedArmorRow(tableID,Inventory,EquippedArmor){
+	let nextRowIndex = document.getElementById("rowEquipmentHeader").rowIndex + 1;
+
+	let AllArmor = [];
+	for(let tempItem of Inventory){
+		if(tempItem.Type == "Armor"){
+			AllArmor.push(tempItem);
+		}
 	}
 
-	for(let i; i<document.getElementById("AttuneNumber").value; i++){
-		document.getElementById("AttuneChoice"+i).value = document.getElementById("AttuneChoice"+i).value;
+	let ArmorOptions = createHTMLSelectOptions(AllArmor,"ItemID");
+	ArmorOptions = "<option value=''>None</option>" + ArmorOptions;
+
+	addTableRow(tableID,nextRowIndex,"rowArmorChoice","<th><label for='ArmorChoice'>Armor:</label></th><td><select id='ArmorChoice' name='ArmorChoice' value='"+EquippedArmor+"'>"+ArmorOptions+"</select></td>");
+}
+
+function createHeldItemsRows(tableID,Inventory,HeldItems,Limbs){
+	let nextRowIndex = document.getElementById("rowArmorChoice").rowIndex + 1;
+
+	let AllHoldables = [];
+	let HoldableTypes = ["Weapon","Shield","CastingFocus","Tool"];
+	for(let tempItem of Inventory){
+		if(HoldableTypes.includes(tempItem.Type)){
+			AllHoldables.push(tempItem);
+		}
+	}
+
+	let HoldableOptions = createHTMLSelectOptions(AllHoldables,"ItemID");
+	HoldableOptions = "<option value=''>None</option>" + HoldableOptions;
+
+	for(let i=0; i<Limbs.length; i++){
+		let thisLimbItem = "";
+		if(i < HeldItems.length){
+			thisLimbItem = HeldItems[i];
+		}
+		let thisLimb = Limbs[i];
+
+		addTableRow(tableID,nextRowIndex,"rowLimb"+i+"Choice","<th><label for='Limb"+i+"Choice'>"+thisLimb.DisplayName+":</label></th><td><select id='Limb"+i+"Choice' name='Limb"+i+"Choice' value='"+thisLimbItem+"' onchange='createLimbChoiceRows("+'"'+tableID+'","'+Inventory+'",'+i+")'>"+HoldableOptions+"</select></td>");
+		nextRowIndex++;
+	}
+}
+
+function createLimbChoiceRows(tableID,Inventory,whichLimb){
+	console.log(Inventory);
+	let nextRowIndex = document.getElementById("rowLimb"+whichLimb+"Choice");
+	let itemChoiceID = document.getElementById("Limb"+whichLimb+"Choice").value;
+	console.log(itemChoiceID);
+
+	let chosenItemData;
+	let ammunitionItems = [];
+	for(let tempItem of Inventory){
+		console.log(tempItem);
+		tempItem = JSON.stringify(tempItem);
+		if(tempItem.ItemID == itemChoiceID){
+			chosenItemData = tempItem;
+		}
+		if(tempItem.Type == "Ammunition"){
+			ammunitionItems.push(tempItem);
+		}
+	}
+	console.log(chosenItemData);
+	console.log(ammunitionItems);
+
+	if(chosenItemData.Type == "Weapon"){
+		let chosenItemWeaponProperties = chosenItemData.WeaponProperties;
+		if(chosenItemWeaponProperties.includes("Ammunition")){
+			let validAmmunition = [];
+			let currentAmmunition = chosenItemWeaponProperties.AmmunitionID;
+			if(currentAmmunition == null){
+				currentAmmunition = "";
+			}
+			console.log(currentAmmunition);
+
+			let compatibleAmmunitionTypes = chosenItemWeaponProperties.CompatibleAmmunition;
+			for(let tempItem of ammunitionItems){
+				if(compatibleAmmunitionTypes.includes(tempItem.AmmunitionType)){
+					validAmmunition.push(tempItem);
+				}
+			}
+			console.log(compatibleAmmunitionTypes);
+
+			AmmunitionOptions = createHTMLSelectOptions(validAmmunition,"ItemID");
+			AmmunitionOptions = "<option value=''>None</option>" + AmmunitionOptions;
+
+			addTableRow(tableID,nextRowIndex,"rowAmmunitionChoiceLimb"+whichLimb,"<th><label for='AmmunitionChoiceLimb"+whichLimb+"'>Ammunition Used:</label></th><td><select id='AmmunitionChoiceLimb"+whichLimb+"' name='AmmunitionChoiceLimb"+whichLimb+"' value='"+currentAmmunition+"'>"+AmmunitionOptions+"</select>");
+			nextRowIndex++;
+		}
+	}
+}
+
+function createAttunedItemsRows(tableID,Inventory,AttunementSlots){
+	let nextRowIndex = document.getElementById("rowMagicItemHeader").rowIndex + 1;
+
+	let AttunableItems = [];
+	let AttunedItems = [];
+	for(let tempItem of Inventory){
+		if(tempItem.isAttunement == 1){
+			AttunableItems.push(tempItem);
+		}
+
+		if(tempItem.isAttuned == 1){
+			AttunedItems.push(tempItem);
+		}
+	}
+	let AttunableOptions = createHTMLSelectOptions(AttunableItems,"ItemID");
+	AttunableOptions = "<option value=''>None</option>" + AttunableOptions;
+
+	for(let i=0; i<AttunementSlots; i++){
+		let thisAttunement = "";
+		if(i < AttunedItems.length){
+			thisAttunement = HeldItems[i];
+		}
+
+		addTableRow(tableID,nextRowIndex,"rowAttunementChoice"+i,"<th><label for='AttunementChoice"+i+"'>Attunement Slot #"+(i+1)+":</label></th><td><select id='AttunementChoice"+i+"' name='AttunementChoice"+i+"' value='"+thisAttunement+"'>"+AttunableOptions+"</select></td>");
+		nextRowIndex++;
+	}
+}
+
+function createWornItemsRows(tableID,Inventory){
+	let nextRowIndex = document.getElementById("rowWornItemsHeader").rowIndex + 1;
+
+	let HoldableTypes = ["Weapon","Shield","CastingFocus","Tool","Armor","Ammunition"];
+	for(let tempItem of Inventory){
+		if(HoldableTypes.includes(tempItem.Type) === false){
+			let tempElementName = "WearableChoice"+tempItem.ItemID;
+			let checkedTest = "";
+			if(tempItem.isWorn == 1){
+				checkedTest = " checked";
+			}
+
+			addTableRow(tableID,nextRowIndex,"row"+tempElementName,"<th><label for='"+tempElementName+"'>Wear "+tempItem.DisplayName+":</label></th><td><input type='checkbox' id='"+tempElementName+"' name='"+tempElementName+"'"+checkedTest+"></td>");
+			nextRowIndex++;
+		}
+	}
+
+	//If equal, that means no worn item rows have been made. Header not needed.
+	if(document.getElementById("rowSubmit").rowIndex == nextRowIndex){
+		document.getElementById(tableID).deleteRow(rowWornItemsHeaderIndex);
 	}
 }
 
 async function loadUserData(){
-	let userdata = atob(await MapTool.getUserData());
-	document.getElementById('EquipItemTable').innerHTML = userdata;
-	currentEquipment();
+	let tableID = 'EquipItemTable';
+	let userdata = JSON.parse(atob(await MapTool.getUserData()));
+
+	let nextRowIndex = 0;
+	
+	let ParentToken = userdata.ParentToken;
+	let Limbs = userdata.Limbs;
+	addTableRow(tableID,nextRowIndex,"rowEquipmentHeader","<th text-align='center' colspan='2'>Armor and Held Items</th><input type='hidden' name='ParentToken' id='ParentToken' value='"+ParentToken+"'><input type='hidden' name='LimbNumber' id='LimbNumber' value='"+Limbs.length+"'>");
+	nextRowIndex++;
+
+	addTableRow(tableID,nextRowIndex,"rowMagicItemHeader","<th text-align='center' colspan='2'>Magic Item Attunement</th><input type='hidden' name='AttunementNumber' id='AttunementNumber' value='"+userdata.AttunementSlots+"'>");
+	nextRowIndex++;
+
+	addTableRow(tableID,nextRowIndex,"rowWornItemsHeader","<th text-align='center' colspan='2'>Other Worn Items</th>");
+	nextRowIndex++;
+
+	addTableRow(tableID,nextRowIndex,"rowSubmit","<th text-align='center' colspan='2'><input type='submit' id='submitButton' value='Change Equipment'></th>");
+	nextRowIndex++;
+
+	initialEquipmentRows("EquipItemTable",userdata.Inventory,userdata.HeldItems,userdata.Limbs,userdata.EquippedArmor,userdata.AttunementSlots);
 }
 
 setTimeout(loadUserData, 1);

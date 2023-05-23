@@ -18,6 +18,11 @@
 	[h:thisLimbChoice = json.get(EquipItemData,"Limb"+roll.count+"Choice")]
 	[h:NewHeldItems = json.append(NewHeldItems,thisLimbChoice)]
 	[h,if(thisLimbChoice != ""): NewInventory = json.path.set(NewInventory,"[*][?(@.ItemID == "+thisLimbChoice+")]['isWorn']",1)]
+
+	[h,if(json.contains(EquipItemData,"AmmunitionChoiceLimb"+roll.count)),CODE:{
+		[h:NewInventory = json.path.set(NewInventory,"[*][?(@.ItemID == "+thisLimbChoice+")]['AmmunitionID']",json.get(EquipItemData,"AmmunitionChoiceLimb"+roll.count))]
+		[h:EquipItemData = json.remove(EquipItemData,"AmmunitionChoiceLimb"+roll.count)]
+	};{}]
 }]
 [h:setProperty("a5e.stat.HeldItems",NewHeldItems)]
 

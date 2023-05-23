@@ -55,6 +55,7 @@
 [h:"<!-- Note: number('') results in 0, so this will function without the key present -->"]
 [h:wa.CritMultiplier = 1 + number(json.get(wa.WeaponUsed,"CritMultiplier"))]
 
+[h:wa.Subeffects = json.get(wa.WeaponUsed,"Subeffects")]
 [h:wa.Props = json.get(wa.WeaponUsed,"WeaponProperties")]
 [h:wa.Magical = json.get(wa.WeaponUsed,"isMagical")]
 [h:attack.ProfTest = if(json.get(getProperty("a5e.stat.WeaponProficiencies"),wa.WeaponType)==1,1,0)]
@@ -132,6 +133,21 @@
 
 [h,if(EmptyHandTest==1 && json.contains(wa.Props,"Versatile")),CODE:{
 	[h:wa.DamageData = json.get(wa.WeaponUsed,"VersatileDamage")]
+};{}]
+
+[h,if(json.contains(wa.Props,"Ammunition")),CODE:{
+	[h:wa.AmmunitionID = json.get(wa.WeaponUsed,"AmmunitionID")]
+	[h,if(wa.AmmunitionID == ""),CODE:{
+		[h:AmmunitionData = "{}"]
+	};{
+		[h:tempAmmunitionData = json.path.read(getProperty("a5e.stat.Inventory"),"[*][?(@.ItemID == "+AmmunitionID+")]")]
+		[h,if(json.isEmpty(tempAmmunitionData)):
+			AmmunitionData = "{}";
+			AmmunitionData = json.get(tempAmmunitionData,0)
+		]
+	}]
+
+	[h:wa.DamageData = json.merge(wa.DamageData,json,get(AmmunitionData,"AmmunitionDamage"))]
 };{}]
 
 [h:pm.PassiveFunction("AttackStat")]
@@ -296,7 +312,7 @@
 		"InstancePrefixes",json.append("","Attack","WeaponAttack"),
 		"RerollData",wa.Data
 	)]
-	[h,foreach(tempSubeffect,json.get(wa.WeaponUsed,"Subeffects")): pm.a5e.ExecuteSubeffect(tempSubeffect,json.set("","BaseData",wa.Data,"MultiEffectModifier",WhichAttack))]
+	[h,foreach(tempSubeffect,wa.Subeffects): pm.a5e.ExecuteSubeffect(tempSubeffect,json.set("","BaseData",wa.Data,"MultiEffectModifier",WhichAttack))]
 
 	[h:WhichAttack = WhichAttack + 1]
 }]

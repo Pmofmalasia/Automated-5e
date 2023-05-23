@@ -14,6 +14,12 @@
 	[h,if(json.get(AddItemData,"isWearable")==1): ChosenItem = json.set(ChosenItem,"isWorn",0)]
 }]
 
+[h:WeaponProperties = json.get(ChosenItem,"WeaponProperties")]
+[h:WeaponPropsTest = WeaponProperties != ""]
+[h,if(WeaponPropsTest),CODE:{
+	[h,if(json.contains(WeaponProperties,"Ammunition")): ChosenItem = json.set(ChosenItem,"AmmunitionID","")]
+};{}]
+
 [h,if(json.contains(AddItemData,"isAttunement")): ChosenItem = json.set(ChosenItem,"AttunedTo","")]
 
 [h:newEntryTest = 1]

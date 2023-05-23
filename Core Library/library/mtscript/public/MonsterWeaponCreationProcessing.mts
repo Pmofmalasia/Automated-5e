@@ -9,7 +9,6 @@
 	[h:MonsterWeaponData = json.remove(MonsterWeaponData,"isNewTemplate")]
 };{}]
 
-
 [h:MonsterWeaponData = ct.a5e.WeaponDataProcessing(MonsterWeaponData)]
 
 [h:MonsterWeaponData = json.set(MonsterWeaponData,"Type","Weapon")]

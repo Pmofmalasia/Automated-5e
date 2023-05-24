@@ -11,7 +11,6 @@
 	[h:ChosenItem = json.get(json.path.read(getLibProperty("sb.Objects","Lib:pm.a5e.Core"),"[*][?(@.ObjectID == '"+ItemChoiceID+"')]"),0)]
 	[h,if(json.get(AddItemData,"DisplayName")!=""): ChosenItem = json.set(ChosenItem,"DisplayName",json.get(AddItemData,"DisplayName"))]
 	[h,if(json.get(AddItemData,"FalseName")!=""): ChosenItem = json.set(ChosenItem,"FalseName",json.get(AddItemData,"FalseName"))]
-	[h,if(json.get(AddItemData,"isWearable")==1): ChosenItem = json.set(ChosenItem,"isWorn",0)]
 }]
 
 [h:WeaponProperties = json.get(ChosenItem,"WeaponProperties")]
@@ -20,7 +19,11 @@
 	[h,if(json.contains(WeaponProperties,"Ammunition")): ChosenItem = json.set(ChosenItem,"AmmunitionID","")]
 };{}]
 
-[h,if(json.contains(AddItemData,"isAttunement")): ChosenItem = json.set(ChosenItem,"AttunedTo","")]
+[h,if(json.get(ChosenItem,"isWearable")==1 || json.get(ChosenItem,"isAttunement") == 1):
+	ChosenItem = json.set(ChosenItem,"IsActive",0);
+	ChosenItem = json.set(ChosenItem,"IsActive",1)	
+]
+[h,if(json.get(ChosenItem,"isAttunement")): ChosenItem = json.set(ChosenItem,"AttunedTo","")]
 
 [h:newEntryTest = 1]
 [h:StackingTest = json.get(ChosenItem,"isStackable")]

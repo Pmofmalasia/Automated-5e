@@ -130,7 +130,7 @@
 	[h,if(isChosenTest),CODE:{
 		[h:ChosenTags = json.append(ChosenTags,tempName)]
 		[h:objectData = json.remove(objectData,"objectMaterialTag"+tempName)]
-	}]	
+	}]
 }]
 [h:objectData = json.set(objectData,"ObjectTags",ChosenTags)]
 
@@ -139,9 +139,7 @@
 [h:ObjectID = base64.encode(json.get(objectData,"Name"))+eval("1d1000000")]
 [h:objectData = json.set(objectData,"ObjectID",ObjectID)]
 
-[h:broadcast(!json.contains(objectData,"HasPassiveEffects") && !json.contains(objectData,"HasActiveEffects"))]
 [h,if(!json.contains(objectData,"HasPassiveEffects") && !json.contains(objectData,"HasActiveEffects")),CODE:{
-	[h:broadcast("wrong")]
 	[h,if(newTemplateTest),CODE:{
 		[h:setLibProperty("sb."+objectType+"Types",json.append(getLibProperty("sb."+objectType+"Types","Lib:"+json.get(objectData,"Library")),objectData),"Lib:"+json.get(objectData,"Library"))]
 	};{}]
@@ -150,11 +148,14 @@
 
 	[h:broadcast("Object "+json.get(objectData,"DisplayName")+" has been created.")]
 };{
-	[h:broadcast("out")]
+	[h:objectData = json.set(objectData,
+		"Class","Item",
+		"Subclass","",
+		"Level",0
+	)]
 	[h,if(json.contains(objectData,"HasPassiveEffects")),CODE:{
-		[h:broadcast("in out")]
 		[h:objectData = json.remove(objectData,"HasPassiveEffects")]
-		[h:objectData = json.set(objectData,"Level",0)]
+		[h:objectData = json.set(objectData,"isPassiveFunction",1)]
 		[h,macro("Create Feature Core@Lib:pm.a5e.Core"): json.set("","Feature",objectData,"PrereqsTest",0)]
 
 		[h:objectData = json.get(macro.return,"Ability")]

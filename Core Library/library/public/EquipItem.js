@@ -135,7 +135,7 @@ function createWornItemsRows(tableID,Inventory){
 		if(HoldableTypes.includes(tempItem.Type) === false){
 			let tempElementName = "WearableChoice"+tempItem.ItemID;
 			let checkedTest = "";
-			if(tempItem.isWorn == 1){
+			if(tempItem.IsActive == 1){
 				checkedTest = " checked";
 			}
 

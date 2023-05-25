@@ -282,6 +282,37 @@ async function createRestoreMethodRows(){
 	}
 }
 
+function createActiveEffectsRow(){
+	let nextRowIndex = document.getElementById("rowHasActiveEffects").rowIndex;
+	let ActiveEffectsSelection = document.getElementById("HasActiveEffects").checked;
+
+	if(ActiveEffectsSelection){
+		addTableRow("CreateObjectTable",nextRowIndex,"rowActiveEffectsNumber","<th><label for='ActiveEffectsNumber'>Number of Effects:</label></th><td><input type='number' id='ActiveEffectsNumber' name='ActiveEffectsNumber' value='1' min='1' style='width:25px' onchange='createSubeffectsNumberRow()'></td>");
+		nextRowIndex++;
+
+		addTableRow("CreateObjectTable",nextRowIndex,"rowActiveSubeffectsNumber","<th><label for='ActiveSubeffectsNumber'>Number of Subeffects:</label></th><td><input type='number' id='ActiveSubeffectsNumber' name='ActiveSubeffectsNumber' value='1' min='1' style='width:25px'></td>");
+		nextRowIndex++;
+	}
+	else{
+		clearUnusedTable("CreateObjectTable","rowHasActiveEffects","rowSourcebook");
+	}
+}
+
+function createSubeffectsNumberRow(){
+	let subeffectsRow = document.getElementById("rowActiveEffectsNumber");
+	let priorSubeffectSelection = document.getElementById("ActiveSubeffectsNumber").value;
+	let ActiveEffectsNumber = document.getElementById("ActiveEffectsNumber").value;
+
+	if(ActiveEffectsNumber == 1){
+		subeffectsRow.innerHTML = "<th><label for='ActiveSubeffectsNumber'>Number of Subeffects:</label></th><td><input type='number' id='ActiveSubeffectsNumber' name='ActiveSubeffectsNumber' value='1' min='1' style='width:25px'></td>";
+	}
+	else{
+		subeffectsRow.innerHTML = "<th><label for='ActiveSubeffectsNumber'>Number of Subeffects (First Effect):</label></th><td><input type='number' id='ActiveSubeffectsNumber' name='ActiveSubeffectsNumber' value='1' min='1' style='width:25px'></td>";
+	}
+
+	document.getElementById("ActiveSubeffectsNumber").value = priorSubeffectSelection;
+}
+
 async function loadUserData() {
 	let userdata = atob(await MapTool.getUserData());
 	document.getElementById('CreateObjectTable').innerHTML = userdata;

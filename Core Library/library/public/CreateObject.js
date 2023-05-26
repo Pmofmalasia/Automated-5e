@@ -102,6 +102,11 @@ async function createObjectSubtypeRows(){
 	else if(ObjectType == "Vehicle"){
 		document.getElementById("isWearable").removeAttribute("checked","");
 	}
+	else if(ObjectType == "Wondrous"){
+		document.getElementById("isWearable").removeAttribute("checked","");
+
+		//TODO: Add subtype choice to select other things (e.g. clothing, vehicle, potion) as the actual type of object a wondrous object is
+	}
 }
 
 async function createAmmunitionTypeRows(){
@@ -287,30 +292,12 @@ function createActiveEffectsRow(){
 	let ActiveEffectsSelection = document.getElementById("HasActiveEffects").checked;
 
 	if(ActiveEffectsSelection){
-		addTableRow("CreateObjectTable",nextRowIndex,"rowActiveEffectsNumber","<th><label for='ActiveEffectsNumber'>Number of Effects:</label></th><td><input type='number' id='ActiveEffectsNumber' name='ActiveEffectsNumber' value='1' min='1' style='width:25px' onchange='createSubeffectsNumberRow()'></td>");
-		nextRowIndex++;
-
-		addTableRow("CreateObjectTable",nextRowIndex,"rowActiveSubeffectsNumber","<th><label for='ActiveSubeffectsNumber'>Number of Subeffects:</label></th><td><input type='number' id='ActiveSubeffectsNumber' name='ActiveSubeffectsNumber' value='1' min='1' style='width:25px'></td>");
+		addTableRow("CreateObjectTable",nextRowIndex,"rowActiveEffectsNumber","<th><label for='ActiveEffectsNumber'>Number of Effects:</label></th><td><input type='number' id='ActiveEffectsNumber' name='ActiveEffectsNumber' value='1' min='1' style='width:25px'></td>");
 		nextRowIndex++;
 	}
 	else{
 		clearUnusedTable("CreateObjectTable","rowHasActiveEffects","rowSourcebook");
 	}
-}
-
-function createSubeffectsNumberRow(){
-	let subeffectsRow = document.getElementById("rowActiveEffectsNumber");
-	let priorSubeffectSelection = document.getElementById("ActiveSubeffectsNumber").value;
-	let ActiveEffectsNumber = document.getElementById("ActiveEffectsNumber").value;
-
-	if(ActiveEffectsNumber == 1){
-		subeffectsRow.innerHTML = "<th><label for='ActiveSubeffectsNumber'>Number of Subeffects:</label></th><td><input type='number' id='ActiveSubeffectsNumber' name='ActiveSubeffectsNumber' value='1' min='1' style='width:25px'></td>";
-	}
-	else{
-		subeffectsRow.innerHTML = "<th><label for='ActiveSubeffectsNumber'>Number of Subeffects (First Effect):</label></th><td><input type='number' id='ActiveSubeffectsNumber' name='ActiveSubeffectsNumber' value='1' min='1' style='width:25px'></td>";
-	}
-
-	document.getElementById("ActiveSubeffectsNumber").value = priorSubeffectSelection;
 }
 
 async function loadUserData() {

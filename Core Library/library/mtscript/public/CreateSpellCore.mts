@@ -58,8 +58,6 @@
 
 [h,if(FirstPassTest): spellCreationHTML = spellCreationHTML + "<tr><th><span title='Intended for spells where each effect is significantly different, such as Plant Growth, Control Winds, etc. More minor changes like damage type, creature summoned, etc. do not require a distinct effect. If there is more than one effect, input only features of the spell common to all effects.'><label for='multiEffects'>Number of Distinct Effects:</label></span></th><td><input type='number' id='multiEffects' name='multiEffects' min='1' value='1' style='width:25px'> <input type='checkbox' id='RandomEffect' name='RandomEffect'> Chosen Randomly?</td></tr>"]
 
-[h:spellCreationHTML = spellCreationHTML + "<tr><th><label for='multiSubeffects'><span title='Increase if a spell effect has different parts that have different conditions for resolving. For example, Ice Knife makes an attack against a single target (effect 1), then forces a save against all creatures around them (effect 2); Ray of Sickness makes a spell attack to deal damage (effect 1), then forces that target to make a save against poison if it hits (effect 2); and Vampiric Touch makes an attack to deal damage (effect 1), then heals the caster for half the amount of damage dealt (effect 2).'>Number of Subeffects:</span></label></th><td><input type='number' id='multiSubeffects' name='multiSubeffects' min='1' value='1'></td></tr>"]
-
 [h,if(FirstPassTest),CODE:{
 	[h:spellCreationHTML = spellCreationHTML + "<tr id='rowCastingClasses'><th text-align='center' colspan='2'>Appears on Base Spell List For:</th></tr>"]
 

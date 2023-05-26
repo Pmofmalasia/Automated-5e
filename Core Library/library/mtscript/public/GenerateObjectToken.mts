@@ -18,5 +18,8 @@
 [h:NewObjectTokenID = createToken(NewObjectTokenData)]
 
 [h:switchToken(NewObjectTokenID)]
+[h:setSize(json.get(objectData,"Size"))]
 
 [h:setProperty("a5e.stat.Type",json.get(objectData,"Type"))]
+[h:setProperty("a5e.stat.InventoryData",objectData)]
+[h:setProperty("a5e.stat.Size",json.get(objectData,"Size"))]

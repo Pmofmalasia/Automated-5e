@@ -20,11 +20,9 @@
 
 	[h,if(json.get(MonsterWeaponData,"SpecialEffects")=="SameSubeffect"),CODE:{
 		[h:EffectNumber = 1]
-		[h:SubeffectNumber = 1]
 		[h:WhichSubeffect = 1]
 	};{
 		[h:EffectNumber = 1 + json.get(MonsterWeaponData,"EffectNumber")]
-		[h:SubeffectNumber = 1 + json.get(MonsterWeaponData,"SubeffectNumber")]
 		[h,if(json.get(MonsterWeaponData,"SpecialEffects")=="Mixed"):
 			WhichSubeffect = 1;
 			WhichSubeffect = 2
@@ -46,7 +44,6 @@
     [h,MACRO("CreateSubeffect@Lib:pm.a5e.Core"): json.set("",
         "EffectType","Weapon",
 		"EffectNumber",EffectNumber,
-        "TotalSubeffects",SubeffectNumber,
         "WhichSubeffect",WhichSubeffect,
         "ParentToken",currentToken(),
 		"ExtraData",json.set("","WeaponSpecialEffectChoice",json.get(MonsterWeaponData,"SpecialEffects"))

@@ -1,11 +1,10 @@
 [h:subeffectData = macro.args]
 [h:ParentToken = json.get(subeffectData,"ParentToken")]
 [h:EffectType = json.get(subeffectData,"EffectType")]
-[h:totalSubeffects = json.get(subeffectData,"TotalSubeffects")]
 [h:thisSubeffectNum = json.get(subeffectData,"WhichSubeffect")]
 [h:ExtraData = json.get(subeffectData,"ExtraData")]
 
-[h,if(totalSubeffects==1),CODE:{
+[h,if(thisSubeffectNum > 1),CODE:{
 	[h:SubeffectHTML = ""]
 };{
 	[h:SubeffectHTML = "<tr><th text-align='center' colspan='2'>Subeffect #"+thisSubeffectNum+"</th></tr>"]
@@ -36,7 +35,7 @@
     [h,foreach(tempKey,json.fields(ExtraData)): SubeffectHTML = SubeffectHTML + "<input type='hidden' id='"+tempKey+"' name='"+tempKey+"' value='"+json.get(ExtraData,tempKey)+"'>"]
 };{}]
 
-[h:SubeffectHTML = SubeffectHTML + "<input type='hidden' id='ParentToken' name='ParentToken' value='"+ParentToken+"'><input type='hidden' id='EffectType' name='EffectType' value='"+EffectType+"'><input type='hidden' id='TotalSubeffects' name='TotalSubeffects' value="+totalSubeffects+"><input type='hidden' id='WhichSubeffect' name='WhichSubeffect' value="+thisSubeffectNum+">
+[h:SubeffectHTML = SubeffectHTML + "<input type='hidden' id='ParentToken' name='ParentToken' value='"+ParentToken+"'><input type='hidden' id='EffectType' name='EffectType' value='"+EffectType+"'><input type='hidden' id='WhichSubeffect' name='WhichSubeffect' value="+thisSubeffectNum+">
 
 <tr id='Mitigation'><th><label for='howMitigate'>Make Attack or Force Save?</label></th><td><select id='howMitigate' name='howMitigate' onchange='createMitigationTable()'><option value='Attack'>Make Attack</option><option value='Save'>Force Save</option><option value='Neither' selected>Neither</option></select></td></tr>
 
@@ -50,6 +49,8 @@
 
 [h:"<!-- Note: Targeting rows are now created in JS instead of here -->"]
 
-[h:SubeffectHTML = SubeffectHTML + "<tr id='submitRow'><th text-align='center' colspan='2'><input type='submit' id='submitButton' value='Submit'></th></tr>"]
+[h:SubeffectHTML = SubeffectHTML + "<tr id='rowNeedsNewSubeffect'><th><span title='Check if an effect has different parts that have different conditions for resolving. For example, Ice Knife makes an attack against a single target (effect 1), then forces a save against all creatures around them (effect 2); Ray of Sickness makes a spell attack to deal damage (effect 1), then forces that target to make a save against poison if it hits (effect 2); and Vampiric Touch makes an attack to deal damage (effect 1), then heals the caster for half the amount of damage dealt (effect 2).'><label for='NeedsNewSubeffect'>Needs Additional Component of Same Effect:</label></span></th><td><input type='checkbox' id='NeedsNewSubeffect' name='NeedsNewSubeffect'></td></tr>
+
+<tr id='submitRow'><th text-align='center' colspan='2'><input type='submit' id='submitButton' value='Submit'></th></tr>"]
 
 [h:html.dialog5("SubeffectCreation","lib://pm.a5e.core/CreateSubeffect.html?cachelib=false","value="+base64.encode(SubeffectHTML)+"; closebutton=0; width=675; height=1050")]

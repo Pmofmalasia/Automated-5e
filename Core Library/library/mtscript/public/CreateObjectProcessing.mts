@@ -163,7 +163,12 @@
 
 	[h,if(json.contains(objectData,"HasActiveEffects")),CODE:{
 		[h:objectData = json.remove(objectData,"HasActiveEffects")]
-		[h:"<!-- Shuttle data to CreateEffect here -->"]
+
+		[h,MACRO("CreateSubeffect@Lib:pm.a5e.Core"): json.set("",
+			"WhichSubeffect",1,
+			"WhichEffect",1,
+			"EffectType","Object"
+		)]
 	};{
 		[h:"<!-- Copied here instead of just putting both after the if because eventually will need another solution once FeatureCore is made into a frame5 -->"]
 

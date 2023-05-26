@@ -10,8 +10,14 @@
 		[h:FeatureName = json.get(json.get(thisPlayerCurrentFeatureData,0),"Name")]
 		[h:FeatureDisplayName = json.get(json.get(thisPlayerCurrentFeatureData,0),"DisplayName")]
 	};
-	default:{
+	case "Weapon":{
 		[h:currentEffectData = thisPlayerCurrentFeatureData]
+		[h:FeatureName = json.get(thisPlayerCurrentFeatureData,"Name")]
+		[h:FeatureDisplayName = json.get(thisPlayerCurrentFeatureData,"DisplayName")]
+	};
+	default:{
+		[h:allEffectData = json.get(thisPlayerCurrentFeatureData,"Effects")]
+		[h:currentEffectData = json.get(allEffectData,json.length(allEffectData)-1)]
 		[h:FeatureName = json.get(thisPlayerCurrentFeatureData,"Name")]
 		[h:FeatureDisplayName = json.get(thisPlayerCurrentFeatureData,"DisplayName")]
 	}
@@ -368,6 +374,8 @@
 	[h:subeffectData = json.set(subeffectData,"Summon",SummonData)]
 };{}]
 
+[h:subeffectData = json.remove(subeffectData,"isUncommonEffects")]
+
 [h:ConditionModificationData = ""]
 [h:TargetConditionData = ""]
 [h,if(json.get(subeffectData,"isAffectCondition")!="No" && json.get(subeffectData,"isAffectCondition")!=""),CODE:{
@@ -668,21 +676,21 @@
 
 [h:subeffectData = pm.a5e.KeyStringsToNumbers(subeffectData)]
 
-[h:totalSubeffects = number(json.get(subeffectData,"TotalSubeffects"))]
+[h:NeedsNewSubeffect = json.contains(subeffectData,"NeedsNewSubeffect")]
+[h:subeffectData = json.remove(subeffectData,"NeedsNewSubeffect")]
 [h:thisSubeffectNum = number(json.get(subeffectData,"WhichSubeffect"))]
 [h:ParentToken = json.get(subeffectData,"ParentToken")]
 [h:subeffectData = json.set(subeffectData,"WhichIntrinsicSubeffect",thisSubeffectNum - 1)]
-[h:subeffectData = json.remove(subeffectData,"TotalSubeffects")]
 [h:subeffectData = json.remove(subeffectData,"WhichSubeffect")]
 [h:subeffectData = json.remove(subeffectData,"PriorSubeffects")]
 [h:subeffectData = json.remove(subeffectData,"ParentToken")]
 
-[h:thisEffectSubeffectData = json.get(currentEffectData,"Subeffects")]
-[h:thisEffectSubeffectData = json.append(thisEffectSubeffectData,subeffectData)]
-[h:currentEffectData = json.set(currentEffectData,"Subeffects",thisEffectSubeffectData)]
-
 [h,switch(EffectType),CODE:
 	case "Spell":{
+		[h:thisEffectSubeffectData = json.get(currentEffectData,"Subeffects")]
+		[h:thisEffectSubeffectData = json.append(thisEffectSubeffectData,subeffectData)]
+		[h:currentEffectData = json.set(currentEffectData,"Subeffects",thisEffectSubeffectData)]
+
 		[h:spellLevel = json.get(subeffectData,"SpellLevel")]
 		[h:subeffectData = json.remove(subeffectData,"SpellLevel")]
 
@@ -690,34 +698,51 @@
 		[h:setLibProperty("ct.NewSpell",json.set(CurrentFeatureData,getPlayerName(),thisPlayerCurrentFeatureData),"Lib:pm.a5e.Core")]
 
 		[h:baseFeatureData = json.get(thisPlayerCurrentFeatureData,0)]
-		[h:lastSubeffectTest = (thisSubeffectNum >= totalSubeffects)]
 		[h:lastEffectTest = json.length(thisPlayerCurrentFeatureData) >= json.get(baseFeatureData,"multiEffects")]
 
 		[h:extraData = json.set("","SpellLevel",spellLevel)]
 	};
-	default:{
+	case "Weapon":{
+		[h:thisEffectSubeffectData = json.get(currentEffectData,"Subeffects")]
+		[h:thisEffectSubeffectData = json.append(thisEffectSubeffectData,subeffectData)]
+		[h:currentEffectData = json.set(currentEffectData,"Subeffects",thisEffectSubeffectData)]
+
 		[h:"<!-- Note: Currently, I think this allows for only one effect to be made - it stores the effect as an object instead of an array of multiple effects -->"]
 		[h:thisPlayerCurrentFeatureData = currentEffectData]
 		[h:setLibProperty("ct.New"+EffectType,json.set(CurrentFeatureData,getPlayerName(),thisPlayerCurrentFeatureData),"Lib:pm.a5e.Core")]
 
 		[h:baseFeatureData = thisPlayerCurrentFeatureData]
-		[h:lastSubeffectTest = (thisSubeffectNum>=totalSubeffects)]
+		[h:lastEffectTest = 1]
+		[h:extraData = ""]
+	}
+	default:{
+		[h:thisEffectSubeffectData = json.get(currentEffectData,"Subeffects")]
+		[h:thisEffectSubeffectData = json.append(thisEffectSubeffectData,subeffectData)]
+
+		[h:currentEffectData = json.set(currentEffectData,"Subeffects",subeffectData)]
+
+		[h:allEffectData = json.set(allEffectData,json.length(allEffectData)-1,currentEffectData)]
+		[h:thisPlayerCurrentFeatureData = json.set(thisPlayerCurrentFeatureData,"Effects",allEffectData)]
+
+		[h:setLibProperty("ct.New"+EffectType,json.set(CurrentFeatureData,getPlayerName(),thisPlayerCurrentFeatureData),"Lib:pm.a5e.Core")]
+
+		[h:baseFeatureData = thisPlayerCurrentFeatureData]
 		[h:lastEffectTest = 1]
 		[h:extraData = ""]
 	}
 ]
 
-[h,switch(lastSubeffectTest+""+lastEffectTest),CODE:
-	case "11":{
+[h,switch(NeedsNewSubeffect+""+lastEffectTest),CODE:
+	case "01":{
 		[h:closeDialog("SubeffectCreation")]
 		[h,MACRO("CreateFeatureCoreFinalInput@Lib:pm.a5e.Core"): json.set("","EffectType",EffectType,"ExtraData",extraData,"ParentToken",ParentToken)]
 	};
-	case "10":{
+	case "00":{
 		[h:baseFeatureData = json.set(baseFeatureData,"WhichEffect",json.length(thisPlayerCurrentFeatureData)+1)]
 		[h,MACRO("CreateSpellCore@Lib:pm.a5e.Core"): baseFeatureData]
 	};
 	default:{
 		[h:closeDialog("SubeffectCreation")]
-		[h,MACRO("CreateSubeffect@Lib:pm.a5e.Core"): json.set("","TotalSubeffects",totalSubeffects,"WhichSubeffect",thisSubeffectNum+1,"EffectType",EffectType,"ExtraData",extraData,"ParentToken",ParentToken)]        
+		[h,MACRO("CreateSubeffect@Lib:pm.a5e.Core"): json.set("","WhichSubeffect",thisSubeffectNum+1,"EffectType",EffectType,"ExtraData",extraData,"ParentToken",ParentToken)]        
 	}
 ]

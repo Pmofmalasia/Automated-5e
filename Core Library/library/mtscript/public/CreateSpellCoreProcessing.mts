@@ -153,16 +153,12 @@
     [h:SpellCoreData = json.set(SpellCoreData,"AHLDescription",json.get(baseSpellData,"AHLDescription"))]
 }]
 
-[h:TotalSubeffects = json.get(SpellCoreData,"multiSubeffects")]
-[h:SpellCoreData = json.remove(SpellCoreData,"multiSubeffects")]
-
 [h:newSpellData = json.set(currentSpellData,getPlayerName(),json.append(thisPlayerCurrentSpellData,SpellCoreData))]
 [h:setLibProperty("ct.NewSpell",newSpellData,"Lib:pm.a5e.Core")]
 
 [h:closeDialog("Spell Creation")]
 
 [h,MACRO("CreateSubeffect@Lib:pm.a5e.Core"): json.set("",
-    "TotalSubeffects",TotalSubeffects,
     "WhichSubeffect",1,
     "WhichEffect",json.get(SpellCoreData,"WhichEffect"),
     "EffectType","Spell",

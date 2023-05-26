@@ -1,5 +1,7 @@
 [h:subeffectData = macro.args]
 [h:EffectType = json.get(subeffectData,"EffectType")]
+[h:EffectsNumber = json.get(subeffectData,"EffectsNumber")]
+[h:subeffectData = json.remove(subeffectData,"EffectsNumber")]
 [h:subeffectData = json.remove(subeffectData,"EffectType")]
 [h:CurrentFeatureData = getLibProperty("ct.New"+EffectType,"pm.a5e.Core")]
 [h:thisPlayerCurrentFeatureData = json.get(CurrentFeatureData,getPlayerName())]
@@ -698,7 +700,7 @@
 		[h:setLibProperty("ct.NewSpell",json.set(CurrentFeatureData,getPlayerName(),thisPlayerCurrentFeatureData),"Lib:pm.a5e.Core")]
 
 		[h:baseFeatureData = json.get(thisPlayerCurrentFeatureData,0)]
-		[h:lastEffectTest = json.length(thisPlayerCurrentFeatureData) >= json.get(baseFeatureData,"multiEffects")]
+		[h:lastEffectTest = json.length(thisPlayerCurrentFeatureData) >= EffectsNumber]
 
 		[h:extraData = json.set("","SpellLevel",spellLevel)]
 	};
@@ -727,7 +729,7 @@
 		[h:setLibProperty("ct.New"+EffectType,json.set(CurrentFeatureData,getPlayerName(),thisPlayerCurrentFeatureData),"Lib:pm.a5e.Core")]
 
 		[h:baseFeatureData = thisPlayerCurrentFeatureData]
-		[h:lastEffectTest = 1]
+		[h:lastEffectTest = json.length(allEffectData) == EffectsNumber]
 		[h:extraData = ""]
 	}
 ]
@@ -738,11 +740,16 @@
 		[h,MACRO("CreateFeatureCoreFinalInput@Lib:pm.a5e.Core"): json.set("","EffectType",EffectType,"ExtraData",extraData,"ParentToken",ParentToken)]
 	};
 	case "00":{
-		[h:baseFeatureData = json.set(baseFeatureData,"WhichEffect",json.length(thisPlayerCurrentFeatureData)+1)]
-		[h,MACRO("CreateSpellCore@Lib:pm.a5e.Core"): baseFeatureData]
+		[h:baseFeatureData = json.set(baseFeatureData,
+			"WhichEffect",json.length(thisPlayerCurrentFeatureData)+1,
+			"EffectsNumber",EffectsNumber
+		)]
+
+		[h,MACRO("Create"+EffectType+"@Lib:pm.a5e.Core"): baseFeatureData]
+		[h:"<!-- TODO: Might be able to change to a generic input? Or just tack a little bit on to the start of Subeffects? I think the only thing that actually needs selecting is UseTime? -->"]
 	};
 	default:{
 		[h:closeDialog("SubeffectCreation")]
-		[h,MACRO("CreateSubeffect@Lib:pm.a5e.Core"): json.set("","WhichSubeffect",thisSubeffectNum+1,"EffectType",EffectType,"ExtraData",extraData,"ParentToken",ParentToken)]        
+		[h,MACRO("CreateSubeffect@Lib:pm.a5e.Core"): json.set("","WhichSubeffect",thisSubeffectNum+1,"EffectType",EffectType,"EffectsNumber",EffectsNumber,"ExtraData",extraData,"ParentToken",ParentToken)]        
 	}
 ]

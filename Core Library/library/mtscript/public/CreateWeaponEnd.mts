@@ -3,7 +3,7 @@
 [h:weaponSourcebook = json.get(WeaponData,"Sourcebook")]
 
 [h:WeaponData = json.remove(WeaponData,"Sourcebook")]
-[h:WeaponData = json.remove(WeaponData,"multiEffects")]
+[h:WeaponData = json.remove(WeaponData,"EffectsNumber")]
 [h:WeaponData = json.remove(WeaponData,"SpecialEffects")]
 [h:WeaponData = json.remove(WeaponData,"FinalLocation")]
 [h:WeaponData = json.remove(WeaponData,"ParentToken")]

@@ -2,6 +2,7 @@
 [h:ParentToken = json.get(subeffectData,"ParentToken")]
 [h:EffectType = json.get(subeffectData,"EffectType")]
 [h:thisSubeffectNum = json.get(subeffectData,"WhichSubeffect")]
+[h:EffectsNumber = json.get(subeffectData,"EffectsNumber")]
 [h:ExtraData = json.get(subeffectData,"ExtraData")]
 
 [h,if(thisSubeffectNum > 1),CODE:{

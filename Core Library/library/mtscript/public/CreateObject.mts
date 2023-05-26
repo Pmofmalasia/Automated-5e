@@ -55,7 +55,7 @@
 
 <tr id='rowHasPassiveEffects'><th><label for='HasPassiveEffects'>Object Has Passive Effects:</label></th><td><input type='checkbox' id='HasPassiveEffects' name='HasPassiveEffects'></td></tr>
 
-<tr id='rowHasActiveEffects'><th><label for='HasActiveEffects'>Object Has Active Effects:</label></th><td><input type='checkbox' id='HasActiveEffects' name='HasActiveEffects'></td></tr>
+<tr id='rowHasActiveEffects'><th><label for='HasActiveEffects'>Object Has Active Effects:</label></th><td><input type='checkbox' id='HasActiveEffects' name='HasActiveEffects' onchange='createActiveEffectsRow()'></td></tr>
 
 <tr id='rowSourcebook'><th><label for='Library'>Object Sourcebook:</label></th><td><select id='Library' name='Library'>"+sourcebookOptions+"</select></td></tr>
 

@@ -121,7 +121,7 @@ async function loadUserData() {
 
 async function submitSpellData() {
     let submitData = Object.fromEntries(new FormData(spellCreation));
-    let request = fetch("macro:CreateSpellCoreProcessing@lib:pm.a5e.Core", {method: "POST", body: JSON.stringify(submitData)});
+    let request = fetch("macro:CreateSpellProcessing@lib:pm.a5e.Core", {method: "POST", body: JSON.stringify(submitData)});
     let result = await request.json();
 }
 setTimeout(loadUserData, 1);

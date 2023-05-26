@@ -9,7 +9,7 @@
 	"CastTime","{}"
 )]
 
-[h,MACRO("CreateSpellCore@Lib:pm.a5e.Core"): MasterSpellInputData]
+[h,MACRO("CreateSpell@Lib:pm.a5e.Core"): MasterSpellInputData]
 
 [h:return(0)]
 
@@ -17,7 +17,7 @@
 	[h:FirstPassTest = if(EffectsCounter==0,1,0)]
 	[h:MasterSpellInputData = json.set("","FirstPass",FirstPassTest,"EffectNumber",sMultiEffects,"IsRandomEffect",IsRandomEffect,"sDescriptionTT",sDescriptionTT,"sName",sName,"RangeType",RangeType,"AoEShape",AoEShape,"sDuration",sDuration,"sSchool",sSchool,"IsSummon",IsSummon,"IsAHLSummon",IsAHLSummon,"sList",sList,"sLevel",sLevel,"CastTime",CastTime)]
 
-	[MACRO("CreateSpellCore@Lib:pm.a5e.Core"):MasterSpellInputData]
+	[MACRO("CreateSpell@Lib:pm.a5e.Core"):MasterSpellInputData]
 	
 	[h:sMultiEffects=json.get(macro.return,"EffectNumber")]
 	[h:IsRandomEffect=json.get(macro.return,"IsRandomEffect")]

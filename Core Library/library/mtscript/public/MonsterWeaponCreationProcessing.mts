@@ -19,10 +19,10 @@
 	[h:MonsterWeaponData = json.set(MonsterWeaponData,"FinalLocation","Inventory")]
 
 	[h,if(json.get(MonsterWeaponData,"SpecialEffects")=="SameSubeffect"),CODE:{
-		[h:EffectNumber = 1]
+		[h:EffectsNumber = 1]
 		[h:WhichSubeffect = 1]
 	};{
-		[h:EffectNumber = 1 + json.get(MonsterWeaponData,"EffectNumber")]
+		[h:EffectsNumber = 1 + json.get(MonsterWeaponData,"EffectsNumber")]
 		[h,if(json.get(MonsterWeaponData,"SpecialEffects")=="Mixed"):
 			WhichSubeffect = 1;
 			WhichSubeffect = 2
@@ -43,7 +43,7 @@
     [h:setLibProperty("ct.NewWeapon",AllWeaponData,"Lib:pm.a5e.Core")]
     [h,MACRO("CreateSubeffect@Lib:pm.a5e.Core"): json.set("",
         "EffectType","Weapon",
-		"EffectNumber",EffectNumber,
+		"EffectsNumber",EffectsNumber,
         "WhichSubeffect",WhichSubeffect,
         "ParentToken",currentToken(),
 		"ExtraData",json.set("","WeaponSpecialEffectChoice",json.get(MonsterWeaponData,"SpecialEffects"))

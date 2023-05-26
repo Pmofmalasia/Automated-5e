@@ -162,6 +162,7 @@
     "WhichSubeffect",1,
     "WhichEffect",json.get(SpellCoreData,"WhichEffect"),
     "EffectType","Spell",
+	"EffectsNumber",EffectsNumber,
     "ExtraData",json.set("",
         "SpellLevel",json.get(SpellCoreData,"Level"),
         "SpellName",json.get(SpellCoreData,"Name"))

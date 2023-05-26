@@ -163,10 +163,18 @@
 
 	[h,if(json.contains(objectData,"HasActiveEffects")),CODE:{
 		[h:objectData = json.remove(objectData,"HasActiveEffects")]
+		[h:objectData = json.set(objectData,"isEffectRandom",json.contains(objectData,"isEffectRandom"))]
+		[h:ActiveEffectsNumber = json.get(objectData,"ActiveEffectsNumber")]
+		[h:objectData = json.remove(objectData,"ActiveEffectsNumber")]
+		
+		[h:objectData = json.set(objectData,"NewTemplate",newTemplateTest)]
+
+		[h:setLibProperty("ct.NewObject",json.set(getLibProperty("ct.NewObject","Lib:pm.a5e.Core"),getPlayerName(),objectData),"Lib:pm.a5e.Core")]
 
 		[h,MACRO("CreateSubeffect@Lib:pm.a5e.Core"): json.set("",
 			"WhichSubeffect",1,
 			"WhichEffect",1,
+			"EffectsNumber",ActiveEffectsNumber,
 			"EffectType","Object"
 		)]
 	};{

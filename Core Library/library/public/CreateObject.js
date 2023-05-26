@@ -294,6 +294,9 @@ function createActiveEffectsRow(){
 	if(ActiveEffectsSelection){
 		addTableRow("CreateObjectTable",nextRowIndex,"rowActiveEffectsNumber","<th><label for='ActiveEffectsNumber'>Number of Effects:</label></th><td><input type='number' id='ActiveEffectsNumber' name='ActiveEffectsNumber' value='1' min='1' style='width:25px'></td>");
 		nextRowIndex++;
+
+		addTableRow("CreateObjectTable",nextRowIndex,"rowActiveEffectsRandom","<th><label for='isEffectRandom'>Effect is Random:</label></th><td><input type='checkbox' id='isEffectRandom' name='isEffectRandom'></td>");
+		nextRowIndex++;
 	}
 	else{
 		clearUnusedTable("CreateObjectTable","rowHasActiveEffects","rowSourcebook");

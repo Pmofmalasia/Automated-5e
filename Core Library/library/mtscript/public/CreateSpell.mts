@@ -1,10 +1,11 @@
-[h:WhichEffect = number(json.get(macro.args,"WhichEffect"))]
+[h:CoreSpellData = macro.args]
+[h:WhichEffect = number(json.get(CoreSpellData,"WhichEffect"))]
 [h:FirstPassTest = (WhichEffect == 1)]
-[h:sName = json.get(macro.args,"SpellName")]
-[h:sDuration = json.get(macro.args,"Duration")]
-[h:sCastTime = json.get(macro.args,"CastTime")]
-[h:sSchool = json.get(macro.args,"School")]
-[h:sLevel = json.get(macro.args,"SpellLevel")]
+[h:sName = json.get(CoreSpellData,"SpellName")]
+[h:sDuration = json.get(CoreSpellData,"Duration")]
+[h:sCastTime = json.get(CoreSpellData,"CastTime")]
+[h:sSchool = json.get(CoreSpellData,"School")]
+[h:sLevel = json.get(CoreSpellData,"SpellLevel")]
 
 [h:list1through9 = ""]
 [h,c(9): list1through9 = list1through9 + "<option value="+(roll.count+1)+">"+(roll.count+1)+"</option>"]
@@ -56,7 +57,7 @@
 [h:spellCreationHTML = spellCreationHTML + "<tr><th><label for='sComp'>Somatic Components:</label></th><td><input type='checkbox' id='sComp' name='sComp' value=1></td></tr>"]
 [h:spellCreationHTML = spellCreationHTML + "<tr id='MaterialComponents'><th><label for='mComp'>Material Components:</label></th><td><input type='checkbox' id='mComp' name='mComp' onchange='mCompInput()' value=1></td></tr>"]
 
-[h,if(FirstPassTest): spellCreationHTML = spellCreationHTML + "<tr><th><span title='Intended for spells where each effect is significantly different, such as Plant Growth, Control Winds, etc. More minor changes like damage type, creature summoned, etc. do not require a distinct effect. If there is more than one effect, input only features of the spell common to all effects.'><label for='multiEffects'>Number of Distinct Effects:</label></span></th><td><input type='number' id='multiEffects' name='multiEffects' min='1' value='1' style='width:25px'> <input type='checkbox' id='RandomEffect' name='RandomEffect'> Chosen Randomly?</td></tr>"]
+[h,if(FirstPassTest): spellCreationHTML = spellCreationHTML + "<tr><th><span title='Intended for spells where each effect is significantly different, such as Plant Growth, Control Winds, etc. More minor changes like damage type, creature summoned, etc. do not require a distinct effect. If there is more than one effect, input only features of the spell common to all effects.'><label for='EffectsNumber'>Number of Distinct Effects:</label></span></th><td><input type='number' id='EffectsNumber' name='EffectsNumber' min='1' value='1' style='width:25px'> <input type='checkbox' id='RandomEffect' name='RandomEffect'> Chosen Randomly?</td></tr>"]
 
 [h,if(FirstPassTest),CODE:{
 	[h:spellCreationHTML = spellCreationHTML + "<tr id='rowCastingClasses'><th text-align='center' colspan='2'>Appears on Base Spell List For:</th></tr>"]
@@ -78,8 +79,10 @@
 	<tr id='rowDescription'><th text-align='center' colspan='2'><label for='Description'>Full Spell Description:</label></th colspan='2'></th></tr><tr id='rowSpellTextArea'><th><textarea id='Description' name='Description' rows='10' style='width:177%'></textarea></th>
 
 	<tr id='rowAHLDescription'><th text-align='center' colspan='2'><label for='AHLDescription'>At Higher Levels:</label></th colspan='2'></th></tr><tr id='rowAHLSpellTextArea'><th><textarea id='AHLDescription' name='AHLDescription' rows='3' style='width:177%'></textarea></th>"]
+};{
+	[h:spellCreationHTML = spellCreationHTML + "<input type='hidden' id='EffectsNumber' name='EffectsNumber' value='"+json.get(CoreSpellData,"EffectsNumber")+"'>"]
 }]
 
 [h:spellCreationHTML = spellCreationHTML + "</tr><tr><th text-align='center' colspan='2'><input type='submit' id='submitButton' value='Submit'></th></tr>"]
 
-[h:html.dialog5("Spell Creation","lib://pm.a5e.core/CreateSpellCore.html?cachelib=false","value="+base64.encode(spellCreationHTML)+"; closebutton=0; width=675; height=1050")]
+[h:html.dialog5("Spell Creation","lib://pm.a5e.core/CreateSpell.html?cachelib=false","value="+base64.encode(spellCreationHTML)+"; closebutton=0; width=675; height=1050")]

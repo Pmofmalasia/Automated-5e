@@ -113,7 +113,9 @@
 	 
 	[h:pm.IntTest = if(and(json.get(getProperty("a5e.stat.Attributes",target),"Intelligence")>pm.TargetIntMin,json.get(getProperty("a5e.stat.Attributes",target),"Intelligence")<pm.TargetIntMax),1,0)]
    
-	[h:pm.ValidTargets = if(and(pm.AllegianceTest,pm.TypeTest,pm.SubtypeTest,pm.IntTest,pm.SizeTest),json.append(pm.ValidTargets,target),pm.ValidTargets)]
+	[h:AmountTargetIsVisible = canSeeToken(target,pm.TargetOrigin)]
+	[h:CanSeeTest = !json.isEmpty(AmountTargetIsVisible)]
+	[h,if(CanSeeTest): pm.ValidTargets = if(and(pm.AllegianceTest,pm.TypeTest,pm.SubtypeTest,pm.IntTest,pm.SizeTest),json.append(pm.ValidTargets,target),pm.ValidTargets)]
 }]
 
 [h:macro.return = json.set("","ValidTargets",pm.ValidTargets,"SelfOnly",0)]

@@ -6,12 +6,14 @@
 
 [h:FeatureStoredAsArrayTest = json.type(thisPlayerCurrentFeatureData) == "ARRAY"]
 
-[h:tempAllConditions = json.path.read(thisPlayerCurrentFeatureData,if(FeatureStoredAsArrayTest,"[*]","")+"['Subeffects'][*][?(@.Conditions!=null)]['Conditions']","DEFAULT_PATH_LEAF_TO_NULL")]
-[h:allConditions = "[]"]
-[h,foreach(tempConditions,tempAllConditions): allConditions = json.merge(allConditions,tempConditions)]
-
 [h,switch(EffectType),CODE:
     case "Spell":{
+		[h:"<!-- TODO: This section was supposed to go before the switch, but with the change in how data is stored the json.path fails for new things. Will update once everything has been standardized to the new format. -->"]
+		[h:tempAllConditions = json.path.read(thisPlayerCurrentFeatureData,if(FeatureStoredAsArrayTest,"[*]","")+"['Subeffects'][*][?(@.Conditions!=null)]['Conditions']","DEFAULT_PATH_LEAF_TO_NULL")]
+		[h:allConditions = "[]"]
+		[h,foreach(tempConditions,tempAllConditions): allConditions = json.merge(allConditions,tempConditions)]
+		[h:"<!-- End section -->"]
+
         [h,if(!json.isEmpty(allConditions)):
 			UniqueConditions = json.path.read(allConditions,"[?(@.Name=='"+FeatureName+"' && @.Class=='Spell')]");
 			UniqueConditions = "[]"

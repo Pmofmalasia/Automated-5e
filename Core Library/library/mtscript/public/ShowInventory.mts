@@ -19,7 +19,23 @@
 	[h:tempWeight = json.get(tempItem,"Weight")]
 	[h:tempTotalWeight = number(tempWeight) * number(tempNumber)]
 
-	[h:InventoryHTML = InventoryHTML + "<tr>"+TableCellFormat+tempDisplayName+"</td>"+TableCellFormat+tempNumber+"</td>"+TableCellFormat+"<span title='"+tempWeight+" Each'>"+tempTotalWeight+"</span></td>"+TableCellFormat+"In Dev</td></tr>"]
+	[h:tempUseButton = ""]
+	[h:tempEffects = json.get(tempItem,"Effects")]
+	[h,if(tempEffects != ""),CODE:{
+		[h:tempLink = macroLinkText("ExecuteEffectBorder@Lib:pm.a5e.Core","self-gm",json.set(tempItem,"Effect",json.get(tempEffects,0),"ParentToken",ParentToken),ParentToken)]
+		[h:tempUseButton = "<a href = '"+tempLink+"'>Use</a>"]
+	};{}]
+
+	[h,if(json.get(tempItem,"isActivatable") == 1),CODE:{
+		[h:NeedsActivation = json.get(tempItem,"IsActive") < 1]
+		[h:tempActivationLink = macroLinkText("ActivateItem@Lib:pm.a5e.Core","self-gm",json.set("","Item",json.get(tempItem,"ItemID"),"Activate",NeedsActivation,"ParentToken",ParentToken),ParentToken)]
+		[h,if(tempUseButton != ""): tempUseButton = tempUseButton + " / "]
+		[h:tempUseButton = "<a href = '"+tempActivationLink+"'>"+if(NeedsActivation,"Activate","Deactivate")+"</a>"]
+	};{}]
+
+	[h,if(tempUseButton == ""): tempUseButton = "---"]
+
+	[h:InventoryHTML = InventoryHTML + "<tr>"+TableCellFormat+tempDisplayName+"</td>"+TableCellFormat+tempNumber+"</td>"+TableCellFormat+"<span title='"+tempWeight+" Each'>"+tempTotalWeight+"</span></td>"+TableCellFormat+tempUseButton+"</td></tr>"]
 }]
 
 [h:html.frame5("Inventory","lib://pm.a5e.core/ShowInventory.html?cachelib=false","value="+base64.encode(InventoryHTML)+"; closebutton=0; height=300")]

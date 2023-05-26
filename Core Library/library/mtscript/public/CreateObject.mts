@@ -33,9 +33,11 @@
 
 <tr id='rowIsWearable'><th><label for='isWearable'>Must be Worn/Held for Effect?</label></th><td><input type='checkbox' id='isWearable' name='isWearable'></td></tr>
 
-<tr id='rowIsConsumable'><th><label for='isConsumable'>Object is Consumable?</label></th><td><input type='checkbox' id='isConsumable' name='isConsumable' onchange='createConsumableRows()'></td></tr>
+<tr id='rowIsConsumable'><th><label for='isConsumable'>Object is Consumable?</label></th><td><input type='checkbox' id='isConsumable' name='isConsumable' onchange='createConsumableRows("+'"CreateObjectTable"'+")'></td></tr>
 
-<tr id='rowIsCharges'><th><label for='isCharges'>Object has Charges?</label></th><td><input type='checkbox' id='isCharges' name='isCharges' onchange='createChargesRows()'></td></tr>
+<tr id='rowIsActivatable'><th><label for='isActivatable'>Object Can be Activated/Deactivated?</label></th><td><input type='checkbox' id='isActivatable' name='isActivatable' onchange='createActivatableRows("+'"CreateObjectTable"'+")'></td></tr>
+
+<tr id='rowIsCharges'><th><label for='isCharges'>Object has Charges?</label></th><td><input type='checkbox' id='isCharges' name='isCharges' onchange='createChargesRows("+'"CreateObjectTable"'+")'></td></tr>
 
 <tr id='rowIsStackable'><th><label for='isStackable'>Object Stacks with Others in Inventory?</label></th><td><input type='checkbox' id='isStackable' name='isStackable'></td></tr>
 

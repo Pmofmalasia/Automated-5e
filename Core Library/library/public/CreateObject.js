@@ -236,6 +236,24 @@ function createArmorDexterityRows(tableID){
 	}
 }
 
+function createActivatableRows(tableID){
+	let nextRowIndex = document.getElementById("rowIsActivatable").rowIndex + 1;
+
+	if(document.getElementById("isActivatable").checked){
+		let UseTimeOptionsArray = ["Action","Bonus Action","Reaction","1 Minute","10 Minutes","1 Hour","8 Hours","12 Hours","24 Hours"];
+		let UseTimeOptions = "";
+		for(let tempOption of UseTimeOptionsArray){
+			UseTimeOptions = UseTimeOptions + "<option value='"+tempOption+"'>"+tempOption+"</option>";
+		}
+
+		addTableRow(tableID,nextRowIndex,"rowActivationUseTime","<th><label for='ActivationUseTime'>Activation Time:</label></th><td><select id='ActivationUseTime' name='ActivationUseTime'>"+UseTimeOptions+"</select>");
+		nextRowIndex++;
+	}
+	else{
+
+	}
+}
+
 function createChargesRows(){
 	if(document.getElementById("isCharges").checked){
 		let nextRowIndex = document.getElementById("rowIsCharges").rowIndex+1;
@@ -288,7 +306,7 @@ async function createRestoreMethodRows(){
 }
 
 function createActiveEffectsRow(){
-	let nextRowIndex = document.getElementById("rowHasActiveEffects").rowIndex;
+	let nextRowIndex = document.getElementById("rowHasActiveEffects").rowIndex + 1;
 	let ActiveEffectsSelection = document.getElementById("HasActiveEffects").checked;
 
 	if(ActiveEffectsSelection){

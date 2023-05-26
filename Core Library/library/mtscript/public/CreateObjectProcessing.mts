@@ -82,6 +82,23 @@
 	)]
 };{}]
 
+[h,if(json.contains(objectData,"isActivatable")),CODE:{
+	[h:objectData = json.set(objectData,"isActivatable",json.contains(objectData,"isActivatable"))]
+	[h,switch(json.get(objectData,"ActivationUseTime")):
+		case "Action": objectData = json.set(objectData,"ActivationTime",1,"ActivationTimeUnits","action");
+		case "Bonus Action": objectData = json.set(objectData,"ActivationTime",1,"ActivationTimeUnits","bonus");
+		case "Reaction": objectData = json.set(objectData,"ActivationTime",1,"ActivationTimeUnits","reaction");
+		case "1 Minute": objectData = json.set(objectData,"ActivationTime",1,"ActivationTimeUnits","minute");
+		case "10 Minutes": objectData = json.set(objectData,"ActivationTime",10,"ActivationTimeUnits","minute");
+		case "1 Hour": objectData = json.set(objectData,"ActivationTime",1,"ActivationTimeUnits","hour");
+		case "8 Hours": objectData = json.set(objectData,"ActivationTime",8,"ActivationTimeUnits","hour");
+		case "12 Hours": objectData = json.set(objectData,"ActivationTime",12,"ActivationTimeUnits","hour");
+		case "24 Hours": objectData = json.set(objectData,"ActivationTime",24,"ActivationTimeUnits","hour")
+	]
+	[h:objectData = json.remove(objectData,"ActivationUseTime")]
+};{}]
+
+
 [h,if(json.contains(objectData,"isCharges")),CODE:{
 	[h:"<!-- TODO: Charges data currently doesn't require any processing, but will need it when DepletedEffects are implemented. -->"]
 };{}]
@@ -166,7 +183,7 @@
 		[h:objectData = json.set(objectData,"isEffectRandom",json.contains(objectData,"isEffectRandom"))]
 		[h:ActiveEffectsNumber = json.get(objectData,"ActiveEffectsNumber")]
 		[h:objectData = json.remove(objectData,"ActiveEffectsNumber")]
-		
+	
 		[h:objectData = json.set(objectData,"NewTemplate",newTemplateTest)]
 
 		[h:setLibProperty("ct.NewObject",json.set(getLibProperty("ct.NewObject","Lib:pm.a5e.Core"),getPlayerName(),objectData),"Lib:pm.a5e.Core")]

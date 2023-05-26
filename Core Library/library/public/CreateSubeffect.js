@@ -1460,7 +1460,7 @@ async function loadUserData() {
 	let userdata = atob(await MapTool.getUserData());
 	document.getElementById('CreateSubeffectTable').innerHTML = userdata;
 
-	createTargetingRows("CreateSubeffectTable","submitRow");
+	createTargetingRows("CreateSubeffectTable","rowNeedsNewSubeffect");
 }
 
 setTimeout(loadUserData, 1);

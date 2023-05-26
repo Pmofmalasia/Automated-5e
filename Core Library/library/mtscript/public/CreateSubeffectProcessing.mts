@@ -19,7 +19,10 @@
 	};
 	default:{
 		[h:allEffectData = json.get(thisPlayerCurrentFeatureData,"Effects")]
-		[h:currentEffectData = json.get(allEffectData,json.length(allEffectData)-1)]
+		[h,if(allEffectData!=""):
+			currentEffectData = json.get(allEffectData,json.length(allEffectData)-1);
+			currentEffectData = "{}"
+		]
 		[h:FeatureName = json.get(thisPlayerCurrentFeatureData,"Name")]
 		[h:FeatureDisplayName = json.get(thisPlayerCurrentFeatureData,"DisplayName")]
 	}
@@ -716,14 +719,18 @@
 		[h:baseFeatureData = thisPlayerCurrentFeatureData]
 		[h:lastEffectTest = 1]
 		[h:extraData = ""]
-	}
+	};
 	default:{
 		[h:thisEffectSubeffectData = json.get(currentEffectData,"Subeffects")]
 		[h:thisEffectSubeffectData = json.append(thisEffectSubeffectData,subeffectData)]
 
 		[h:currentEffectData = json.set(currentEffectData,"Subeffects",subeffectData)]
 
-		[h:allEffectData = json.set(allEffectData,json.length(allEffectData)-1,currentEffectData)]
+		[h,if(thisSubeffectNum == 1):
+			allEffectData = json.append(allEffectData,currentEffectData);
+			allEffectData = json.set(allEffectData,json.length(allEffectData)-1,currentEffectData)
+		]
+
 		[h:thisPlayerCurrentFeatureData = json.set(thisPlayerCurrentFeatureData,"Effects",allEffectData)]
 
 		[h:setLibProperty("ct.New"+EffectType,json.set(CurrentFeatureData,getPlayerName(),thisPlayerCurrentFeatureData),"Lib:pm.a5e.Core")]
@@ -745,6 +752,7 @@
 			"EffectsNumber",EffectsNumber
 		)]
 
+		[h:closeDialog("SubeffectCreation")]
 		[h,MACRO("Create"+EffectType+"@Lib:pm.a5e.Core"): baseFeatureData]
 		[h:"<!-- TODO: Might be able to change to a generic input? Or just tack a little bit on to the start of Subeffects? I think the only thing that actually needs selecting is UseTime? -->"]
 	};

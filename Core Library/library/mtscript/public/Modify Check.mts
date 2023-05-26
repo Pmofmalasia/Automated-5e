@@ -21,8 +21,10 @@
 		[h:d20Advantage = json.get(d20Data,"Advantage")]
 		[h:d20Disadvantage = json.get(d20Data,"Disadvantage")]
 		[h:d20AdvantageBalance = if(or(and(d20Disadvantage == 0,d20Advantage == 0),and(d20Disadvantage !=0,d20Advantage != 0)),0,if(d20Disadvantage == 0,1,-1))]
+		[h:broadcast(d20Data)]
     };{
 		[h:d20Data = pm.a5e.d20TestRerollDataProcessing(d20Data,RerollData)]
+		[h:broadcast(d20Data)]
         [h:pm.a5e.d20Roll(d20Data)]
     }]
 };{

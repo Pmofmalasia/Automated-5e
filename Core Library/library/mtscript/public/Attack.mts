@@ -150,7 +150,9 @@
 	}]
 
 	[h:CurrentAmmoCount = number(json.get(AmmunitionData,"Number"))]
-};{}]
+};{
+	[h:CurrentAmmoCount = 0]
+}]
 
 [h:pm.PassiveFunction("AttackStat")]
 [h:pm.PassiveFunction("WeaponAttackStat")]

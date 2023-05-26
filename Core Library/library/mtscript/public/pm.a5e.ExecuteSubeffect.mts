@@ -1,6 +1,5 @@
 [h:SubeffectData = arg(0)]
 [h:NonSubeffectData = arg(1)]
-
 [h:SubeffectFunctionPrefixes = json.get(NonSubeffectData,"InstancePrefixes")]
 [h:MultiEffectModifier = number(json.get(NonSubeffectData,"MultiEffectModifier"))]
 

@@ -619,4 +619,29 @@ async function createObjectTargetTable(tableID,primarySecondary){
 	}
 	
 	let nextRowIndex = document.getElementById(startRowID).rowIndex + 1;
+	let optionLimits = "<option value=''>Not Relevant</option><option value='Inclusive'>Required</option><option value='Exclusive'>Invalid</option>";
+
+	addTableRow(tableID,nextRowIndex,"rowObjectTargetWornCarried","<th><label for='ObjectTargetWornCarried'>Object is Worn or Carried:</label></th><td><select id='ObjectTargetWornCarried' name='ObjectTargetWornCarried'><option value=''>Not Relevant</option><option value='Worn'>Must be Worn</option><option value='NotWorn'>Invalid</option><option value='Ally'>Held by Ally</option><option value='NotWornOrAlly'>Held by Ally or Not Worn</option></select></td>");
+	nextRowIndex++;
+
+	addTableRow(tableID,nextRowIndex,"rowObjectTargetType","<th><label for='ObjectTargetType'>Limit by Object Type:</label></th><td><select id='ObjectTargetType' name='ObjectTargetType' onchange='createObjectTargetTypeRows()'><option value='All'>All Types</option><option value='Inclusive'>Must Be Specific Type(s)</option><option value='Exclusive'>Cannot Be Specific Type(s)</option><option value='Mixture'>Mixture of Both Above</option></select></td>");
+	nextRowIndex++;
+
+	addTableRow(tableID,nextRowIndex,"rowObjectTargetMagical","<th><label for='ObjectTargetMagical'>Object is Magical:</label></th><td><select id='ObjectTargetMagical' name='ObjectTargetMagical'>"+optionLimits+"</select></td>");
+	nextRowIndex++;
+
+	addTableRow(tableID,nextRowIndex,"rowObjectTargetSize","<th><label for='ObjectTargetSizeType'>Object Size Limits:</label></th><td><select id='ObjectTargetSizeType' name='ObjectTargetSizeType'><option value=''>Not Relevant</option><option value='Maximum'>Maximum</option><option value='Minimum'>Minimum</option></select><select id='ObjectTargetSize' name='ObjectTargetSize'><option value='Diminutive'>Diminutive</option><option value='Tiny'>Tiny</option><option value='Small'>Small</option><option value='Medium'>Medium</option><option value='Large'>Large</option><option value='Huge'>Huge</option><option value='Gargantuan'>Gargantuan</option><option value='Colossal'>Colossal</option></select></td>");
+	nextRowIndex++;
+
+	addTableRow(tableID,nextRowIndex,"rowObjectTargetWeight","<th><label for='ObjectTargetWeightType'>Object Weight Limits:</label></th><td><select id='ObjectTargetWeightType' name='ObjectTargetWeightType'><option value=''>Not Relevant</option><option value='Maximum'>Maximum</option><option value='Minimum'>Minimum</option></select><input type='number' id='ObjectTargetWeight' name='ObjectTargetWeight' value=0 min=0 style='width:30px'></td>");
+	nextRowIndex++;
+
+	addTableRow(tableID,nextRowIndex,"rowObjectTargetTags","<th><label for='ObjectTargetType'>Limit by Object Material/Properties:</label></th><td><select id='ObjectTargetType' name='ObjectTargetType' onchange='createObjectTargetTagRows()'><option value='All'>All Types</option><option value='Inclusive'>Must Be Specific Type(s)</option><option value='Exclusive'>Cannot Be Specific Type(s)</option><option value='Mixture'>Mixture of Both Above</option></select></td>");
+	nextRowIndex++;
+
+	addTableRow(tableID,nextRowIndex,"rowObjectTargetFlammable","<th><label for='ObjectTargetFlammable'>Object is Flammable:</label></th><td><select id='ObjectTargetFlammable' name='ObjectTargetFlammable'>"+optionLimits+"</select></td>");
+	nextRowIndex++;
+
+	addTableRow(tableID,nextRowIndex,"rowObjectTargetMagnetic","<th><label for='ObjectTargetMagnetic'>Object is Magnetic:</label></th><td><select id='ObjectTargetMagnetic' name='ObjectTargetMagnetic'>"+optionLimits+"</select></td>");
+	nextRowIndex++;
 }

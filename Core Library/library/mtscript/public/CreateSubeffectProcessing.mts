@@ -634,11 +634,10 @@
 		[h:targetData = json.set(targetData,"Creature",json.set("","TypeInclusive","Humanoid"))]
 	};
 	case "Creature":{
-		[h:CreatureTargetingData = ct.a5e.CreatureTargetingLimitProcessing(subeffectData,targetData)]
+		[h:CreatureTargetingData = ct.a5e.CreatureTargetingLimitProcessing(subeffectData)]
 		[h:subeffectData = json.get(CreatureTargetingData,"Subeffect")]
 		[h:creatureData = json.get(CreatureTargetingData,"Creature")]
 		[h:targetData = json.set(targetData,"Creature",creatureData)]
-		[h:subeffectData = json.remove(subeffectData,"MaxCover")]
 	};
 	case "Object":{
 

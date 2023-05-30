@@ -335,6 +335,9 @@ async function createTargetTable(tableID,primarySecondary){
 	else if(currentTargetTypeSelection == "Object"){
 		createObjectTargetTable(tableID,primarySecondary);
 	}
+	else if(currentTargetTypeSelection == "CreatureObject"){
+		createObjectTargetTable(tableID,primarySecondary);
+	}
 	else if(currentTargetTypeSelection == "Effect"){
 
 	}
@@ -402,7 +405,7 @@ async function createCreatureTargetTable(tableID,primarySecondary){
 
 async function createCreatureTargetTypes(tableID){
 	let table = document.getElementById(tableID);
-	
+
 	let currentTargetCreatureTypeSelection = document.getElementById("targetCreatureTypes").value;
 	let nextRowIndex = document.getElementById("rowCreatureTypes").rowIndex+1;
 
@@ -607,7 +610,6 @@ async function createTargetAlignmentTable(tableID){
 }
 
 async function createObjectTargetTable(tableID,primarySecondary){
-	let table = document.getElementById(tableID);
 	let currentTargetTypeSelection = document.getElementById("TargetType").value;
 	let startRowID;
 
@@ -624,7 +626,8 @@ async function createObjectTargetTable(tableID,primarySecondary){
 	addTableRow(tableID,nextRowIndex,"rowObjectTargetWornCarried","<th><label for='ObjectTargetWornCarried'>Object is Worn or Carried:</label></th><td><select id='ObjectTargetWornCarried' name='ObjectTargetWornCarried'><option value=''>Not Relevant</option><option value='Worn'>Must be Worn</option><option value='NotWorn'>Invalid</option><option value='Ally'>Held by Ally</option><option value='NotWornOrAlly'>Held by Ally or Not Worn</option></select></td>");
 	nextRowIndex++;
 
-	addTableRow(tableID,nextRowIndex,"rowObjectTargetType","<th><label for='ObjectTargetType'>Limit by Object Type:</label></th><td><select id='ObjectTargetType' name='ObjectTargetType' onchange='createObjectTargetTypeRows()'><option value='All'>All Types</option><option value='Inclusive'>Must Be Specific Type(s)</option><option value='Exclusive'>Cannot Be Specific Type(s)</option><option value='Mixture'>Mixture of Both Above</option></select></td>");
+	//TODO: Need a way to both do this and object subtype conveniently
+	addTableRow(tableID,nextRowIndex,"rowObjectTargetType","<th><label for='ObjectTargetType'>Limit by Object Type:</label></th><td><select id='ObjectTargetType' name='ObjectTargetType' onchange='createObjectTargetTypeRows("+'"'+tableID+'"'+")'><option value='All'>All Types</option><option value='Inclusive'>Must Be Type(s)</option><option value='Exclusive'>Cannot Be Type(s)</option><option value='Mixture'>Mixture of Both</option></select><input type='checkbox' id='' name='' onchange=''>Use Subtypes?</td>");
 	nextRowIndex++;
 
 	addTableRow(tableID,nextRowIndex,"rowObjectTargetMagical","<th><label for='ObjectTargetMagical'>Object is Magical:</label></th><td><select id='ObjectTargetMagical' name='ObjectTargetMagical'>"+optionLimits+"</select></td>");
@@ -636,7 +639,7 @@ async function createObjectTargetTable(tableID,primarySecondary){
 	addTableRow(tableID,nextRowIndex,"rowObjectTargetWeight","<th><label for='ObjectTargetWeightType'>Object Weight Limits:</label></th><td><select id='ObjectTargetWeightType' name='ObjectTargetWeightType'><option value=''>Not Relevant</option><option value='Maximum'>Maximum</option><option value='Minimum'>Minimum</option></select><input type='number' id='ObjectTargetWeight' name='ObjectTargetWeight' value=0 min=0 style='width:30px'></td>");
 	nextRowIndex++;
 
-	addTableRow(tableID,nextRowIndex,"rowObjectTargetTags","<th><label for='ObjectTargetType'>Limit by Object Material/Properties:</label></th><td><select id='ObjectTargetType' name='ObjectTargetType' onchange='createObjectTargetTagRows()'><option value='All'>All Types</option><option value='Inclusive'>Must Be Specific Type(s)</option><option value='Exclusive'>Cannot Be Specific Type(s)</option><option value='Mixture'>Mixture of Both Above</option></select></td>");
+	addTableRow(tableID,nextRowIndex,"rowObjectTargetTags","<th><label for='ObjectTargetTags'>Limit by Object Material:</label></th><td><select id='ObjectTargetTags' name='ObjectTargetTags' onchange='createObjectTargetTagRows("+'"'+tableID+'"'+")'><option value='All'>All Types</option><option value='Inclusive'>Must Be Specific Type(s)</option><option value='Exclusive'>Cannot Be Specific Type(s)</option><option value='Mixture'>Mixture of Both Above</option></select></td>");
 	nextRowIndex++;
 
 	addTableRow(tableID,nextRowIndex,"rowObjectTargetFlammable","<th><label for='ObjectTargetFlammable'>Object is Flammable:</label></th><td><select id='ObjectTargetFlammable' name='ObjectTargetFlammable'>"+optionLimits+"</select></td>");
@@ -644,4 +647,117 @@ async function createObjectTargetTable(tableID,primarySecondary){
 
 	addTableRow(tableID,nextRowIndex,"rowObjectTargetMagnetic","<th><label for='ObjectTargetMagnetic'>Object is Magnetic:</label></th><td><select id='ObjectTargetMagnetic' name='ObjectTargetMagnetic'>"+optionLimits+"</select></td>");
 	nextRowIndex++;
+}
+
+async function createObjectTargetTypeRows(tableID){
+	//TODO: Not complete at all, just copied from creature types
+	let table = document.getElementById(tableID);
+	let nextRowIndex = document.getElementById("rowObjectTargetTypes").rowIndex + 1;
+	let currentTargetObjectTypeSelection = document.getElementById("ObjectTargetType").value;
+
+	if(currentTargetObjectTypeSelection == "All"){
+		clearUnusedTable(tableID,"rowObjectTargetType","rowObjectTargetMagical");
+	}
+	else{
+		let request = await fetch("macro:pm.a5e.GetCoreData@lib:pm.a5e.Core", {method: "POST", body: "['sb.ObjectTypes']"});
+		let allObjectTypes = await request.json();
+
+		let ObjectTypeIncludeOptions = "";
+		let ObjectTypeExcludeOptions = "";
+		for(let tempType of allObjectTypes){
+			ObjectTypeIncludeOptions = ObjectTypeIncludeOptions + "<label><input type='checkbox' id='ObjectTypeTargetInclusive"+tempType.Name+"' name='ObjectTypeTargetInclusive"+tempType.Name+"' value=1><span>"+tempType.DisplayName+"</span></label>";
+
+			ObjectTypeExcludeOptions = ObjectTypeExcludeOptions + "<label><input type='checkbox' id='ObjectTypeTargetExclusive"+tempType.Name+"' name='ObjectTypeTargetExclusive"+tempType.Name+"' value=1><span>"+tempType.DisplayName+"</span></label>";
+		}
+
+		let alreadyInclusiveTest = (table.rows.namedItem("rowInclusiveObjectTypes") != null);
+		let alreadyExclusiveTest = (table.rows.namedItem("rowExclusiveObjectTypes") != null);
+
+		if(currentTargetObjectTypeSelection == "Inclusive" || currentTargetObjectTypeSelection == "Mixture"){
+			if(alreadyInclusiveTest){
+				nextRowIndex++;
+			}
+			else{
+				let rowInclusiveObjectTypes = table.insertRow(nextRowIndex);
+				rowInclusiveObjectTypes.id = "rowInclusiveObjectTypes";
+				rowInclusiveObjectTypes.innerHTML = "<th>Required Object Types:</th><td><div class='check-multiple' style='width:100%'>"+ObjectTypeIncludeOptions+"</div></td>";
+				nextRowIndex++;
+			}
+			if(alreadyExclusiveTest && currentTargetObjectTypeSelection == "Inclusive"){
+				clearUnusedTable(tableID,"rowInclusiveObjectTypes","rowTargetSenses");
+			}
+		}
+		else if(alreadyInclusiveTest){
+			nextRowIndex++;
+		}
+		
+		if(currentTargetObjectTypeSelection == "Exclusive" || currentTargetObjectTypeSelection == "Mixture"){
+			if(!alreadyExclusiveTest){
+				let rowExclusiveObjectTypes = table.insertRow(nextRowIndex);
+				rowExclusiveObjectTypes.id = "rowExclusiveObjectTypes";
+				rowExclusiveObjectTypes.innerHTML = "<th>Disallowed Object Types:</th><td><div class='check-multiple' style='width:100%'>"+ObjectTypeExcludeOptions+"</div></td>";
+				nextRowIndex++;
+			}
+			else{
+				nextRowIndex++;
+			}
+			if(alreadyInclusiveTest && currentTargetObjectTypeSelection == "Exclusive"){
+				clearUnusedTable(tableID,"rowObjectTypes","rowExclusiveObjectTypes");
+			}
+		}
+	}
+}
+
+async function createObjectTargetTagRows(tableID){
+	let table = document.getElementById(tableID);
+	let nextRowIndex = document.getElementById("rowObjectTargetTags").rowIndex + 1;
+	let currentTargetObjectTagSelection = document.getElementById("ObjectTargetTags").value;
+
+	if(currentTargetObjectTagSelection == "All"){
+		clearUnusedTable(tableID,"rowObjectTargetTags","rowObjectTargetFlammable");
+	}
+	else{
+		let requestMaterialTags = await fetch("macro:pm.a5e.GetCoreData@lib:pm.a5e.Core", {method: "POST", body: "['sb.MaterialTags']"});
+		let allMaterialTags = await requestMaterialTags.json();
+
+		let requestMaterials = await fetch("macro:pm.a5e.GetCoreData@lib:pm.a5e.Core", {method: "POST", body: "['sb.Materials']"});
+		let allMaterials = await requestMaterials.json();
+
+		let allTags = allMaterialTags.concat(allMaterials);
+
+		let ObjectTypeIncludeOptions = createHTMLMultiselectOptions(allTags,"ObjectTargetTagsInclusive");
+		let ObjectTypeExcludeOptions = createHTMLMultiselectOptions(allTags,"ObjectTargetTagsExclusive");
+
+		let alreadyInclusiveTest = (table.rows.namedItem("rowObjectTargetTagsInclusive") != null);
+		let alreadyExclusiveTest = (table.rows.namedItem("rowObjectTargetTagsExclusive") != null);
+
+		if(currentTargetObjectTagSelection == "Inclusive" || currentTargetObjectTagSelection == "Mixture"){
+			if(alreadyInclusiveTest){
+				nextRowIndex++;
+			}
+			else{
+				addTableRow(tableID,nextRowIndex,"rowObjectTargetTagsInclusive","<th>Required Object Materials:</th><td><div class='check-multiple' style='width:100%'>"+ObjectTypeIncludeOptions+"</div></td>");
+				nextRowIndex++;
+			}
+			if(alreadyExclusiveTest && currentTargetObjectTagSelection == "Inclusive"){
+				table.deleteRow(document.getElementById("rowObjectTargetTagsExclusive").rowIndex);
+			}
+		}
+		else if(alreadyInclusiveTest){
+			nextRowIndex++;
+		}
+		
+		if(currentTargetObjectTagSelection == "Exclusive" || currentTargetObjectTagSelection == "Mixture"){
+			if(!alreadyExclusiveTest){
+				addTableRow(tableID,nextRowIndex,"rowObjectTargetTagsExclusive","<th>Disallowed Object Materials:</th><td><div class='check-multiple' style='width:100%'>"+ObjectTypeExcludeOptions+"</div></td>");
+				nextRowIndex++;
+			}
+			else{
+				nextRowIndex++;
+			}
+			if(alreadyInclusiveTest && currentTargetObjectTagSelection == "Exclusive"){
+				table.deleteRow(document.getElementById("rowObjectTargetTagsInclusive").rowIndex);
+			}
+		}
+	}
 }

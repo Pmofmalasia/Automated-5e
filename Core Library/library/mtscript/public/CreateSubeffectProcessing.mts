@@ -640,10 +640,16 @@
 		[h:targetData = json.set(targetData,"Creature",creatureData)]
 	};
 	case "Object":{
-
+		[h:ObjectTargetingData = ct.a5e.ObjectTargetingLimitProcessing(subeffectData)]
+		[h:subeffectData = json.get(ObjectTargetingData,"Subeffect")]
+		[h:ObjectData = json.get(ObjectTargetingData,"Object")]
+		[h:targetData = json.set(targetData,"Object",ObjectData)]
 	};
 	case "CreatureObject":{
-		[h:targetData = json.set(targetData,"Creature","{}","Object","{}")]
+		[h:ObjectTargetingData = ct.a5e.ObjectTargetingLimitProcessing(subeffectData)]
+		[h:subeffectData = json.get(ObjectTargetingData,"Subeffect")]
+		[h:ObjectData = json.get(ObjectTargetingData,"Object")]
+		[h:targetData = json.set(targetData,"Creature","{}","Object",ObjectData)]
 	};
 	case "Point":{
 

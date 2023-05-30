@@ -32,6 +32,7 @@
 		]
 	}]
 }]
+[h:ThrowWeapon = number(json.get(AttackData,"Throw"))]
 
 [h:pm.a5e.EffectData = "[]"]
 
@@ -40,7 +41,7 @@
 	"ParentToken",ParentToken,
 	"DMOnly",0,
 	"Class","zzWeaponAttack",
-	"Name",json.get(WeaponData,"DisplayName")+" Attack",
+	"Name",if(ThrowWeapon,"Thrown ","")+json.get(WeaponData,"DisplayName")+" Attack",
 	"FalseName","Weapon Attack",
 	"OnlyRules",0
 )]
@@ -51,7 +52,7 @@
 
 [h:AttackData = json.set(AttackData,
 	"WeaponData",WeaponData,
-	"ThrowWeapon",0,
+	"ThrowWeapon",ThrowWeapon,
 	"AttackNum",-1,
 	"DMOnly",0
 )]
@@ -62,7 +63,7 @@
 
 [h:pm.a5e.BaseEffectData = json.set("",
 	"Class","zzWeaponAttack",
-	"DisplayName",json.get(WeaponData,"DisplayName")+" Attack",
+	"DisplayName",if(ThrowWeapon,"Thrown ","")+json.get(WeaponData,"DisplayName")+" Attack",
 	"Type","WeaponAttack",
 	"ID",pm.a5e.GenerateEffectID(),
 	"ParentToken",ParentToken

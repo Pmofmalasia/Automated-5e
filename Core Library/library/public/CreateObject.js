@@ -86,6 +86,18 @@ async function createObjectSubtypeRows(){
 	}
 	else if(ObjectType == "Container"){
 		document.getElementById("isWearable").removeAttribute("checked","");
+
+		let StateOptions = [{"Name":"Solid","DisplayName":"Solids"},{"Name":"Liquid","DisplayName":"Liquids"},{"Name":"Gas","DisplayName":"Gases"}];
+		createHTMLMultiselectOptions(StateOptions,"")
+
+		addTableRow("CreateObjectTable",nextRowIndex,"rowContentsType","<th>Type of Objects Held:</th><td><input type='number' id='ContentsType' name='ContentsType'><option value='Solid'>Solids</option><option value='Liquid'>Liquids</option></select></td>");
+		nextRowIndex++;
+
+		addTableRow("CreateObjectTable",nextRowIndex,"rowContainerWeightCapacity","<th><label for='ContainterWeightCapacity'>Weight Capacity</label></th><td><input type='number' id='ContainterWeightCapacity' name='ContainterWeightCapacity' min=0>lbs.</td>");
+		nextRowIndex++;
+
+		addTableRow("CreateObjectTable",nextRowIndex,"rowContainerVolumeCapacity","<th><label for='ContainterVolumeCapacity'>Volume Capacity</label></th><td><input type='number' id='ContainterVolumeCapacity' name='ContainterVolumeCapacity' min=0></td>");
+		nextRowIndex++;
 	}
 	else if(ObjectType == "Hazard" || ObjectType == "Trap"){
 		document.getElementById("isWearable").removeAttribute("checked","");

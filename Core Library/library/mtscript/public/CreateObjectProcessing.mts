@@ -181,6 +181,7 @@
 	[h,if(json.contains(objectData,"HasActiveEffects")),CODE:{
 		[h:objectData = json.remove(objectData,"HasActiveEffects")]
 		[h:objectData = json.set(objectData,"isEffectRandom",json.contains(objectData,"isEffectRandom"))]
+		[h:"<!-- TODO: May want to add flag to mark effects as part of the random choice to allow for some effects to be randomly chosen, others to be selected. Likely more complex to have an entirely different key ('RandomEffects') due to sorting/searching. -->"]
 		[h:ActiveEffectsNumber = json.get(objectData,"ActiveEffectsNumber")]
 		[h:objectData = json.remove(objectData,"ActiveEffectsNumber")]
 	

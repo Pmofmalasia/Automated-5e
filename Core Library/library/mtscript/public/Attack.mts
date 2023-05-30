@@ -103,7 +103,7 @@
 
 	[h:NewDamageInstance = json.set("",
 		"DamageDieNumber",1,
-		"DamageDieSize",6,
+		"DamageDieSize",4,
 		"DamageFlatBonus",0,
 		"IsModBonus",1
 	)]
@@ -117,7 +117,10 @@
 
 	[h:wa.Range = 20]
 	[h:wa.LongRange = 60]
-};{}]
+	[h:wa.MeleeRanged = "Ranged"]
+};{
+	[h,if(ThrowingWeapon): wa.MeleeRanged = "Ranged"]
+}]
 
 [h:"<!-- TODO: Current method is to remove TWF completely to get around the no damage modifier effect (e.g. for the fighting style). Issues are #1: It is still technically TWF, so any effects that would trigger on TWF would not be able to; solution could be adding a variable that bypasses removing the mod. #2: TWF still adds damage modifier if negative; solution could be changing IsDamageModifier -->"]
 [h,if(TwoWeaponFighting),CODE:{
@@ -208,6 +211,16 @@
 		[h:tempPriorDisadvantage = json.get(thisAttackData,"Disadvantage")]
 		[h,if(tempPriorDisadvantage == ""): tempPriorDisadvantage = 0]
 		[h,if(LongRangeTest): thisAttackData = json.set(thisAttackData,"Disadvantage",tempPriorDisadvantage + 1)]
+	};{}]
+
+	[h,if(ThrowingWeapon && !json.contains(wa.Props,"Returning")),CODE:{
+		[h:"<!-- TODO: Need a test to see if the weapon is still in the attacker's hands (for thrown weapons with multiattack) -->"]
+		[h,MACRO("DropItem@Lib:pm.a5e.Core"): json.set("",
+			"ItemID",json.get(wa.WeaponUsed,"ItemID"),
+			"Number",1,
+			"Location",json.set("","Token",thisAttackTarget),
+			"ParentToken",ParentToken
+		)]
 	};{}]
 
 	[h:AllAttacksToHit = json.append(AllAttacksToHit,pm.a5e.AttackRoll(thisAttackData,json.append("","Attack","WeaponAttack"),thisAttackTarget))]

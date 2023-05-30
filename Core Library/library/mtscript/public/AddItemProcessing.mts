@@ -23,7 +23,7 @@
 	ChosenItem = json.set(ChosenItem,"IsActive",0);
 	ChosenItem = json.set(ChosenItem,"IsActive",1)	
 ]
-[h,if(json.get(ChosenItem,"isAttunement")): ChosenItem = json.set(ChosenItem,"AttunedTo","")]
+[h,if(json.get(ChosenItem,"isAttunement")==1): ChosenItem = json.set(ChosenItem,"AttunedTo","")]
 
 [h:newEntryTest = 1]
 [h:StackingTest = json.get(ChosenItem,"isStackable")]
@@ -41,10 +41,11 @@
 
 		[h:setProperty("a5e.stat.Inventory",json.append(PriorInventory,ChosenItem))]
 	};{
-		[h,count(json.get(AddItemData,"NumberAdded")): setProperty("a5e.stat.Inventory",json.append(PriorInventory,json.set(ChosenItem,
+		[h,count(json.get(AddItemData,"NumberAdded")): PriorInventory = json.append(PriorInventory,json.set(ChosenItem,
 			"ItemID",eval("1d1000000") + json.get(getInfo("client"),"timeInMs"),
 			"Number",1
-		)))]
+		))]
+		[h:setProperty("a5e.stat.Inventory",PriorInventory)]
 	}]
 };{
 	[h:OldEntryData = json.get(SameItemPriorEntry,0)]

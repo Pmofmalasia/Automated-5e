@@ -54,7 +54,6 @@
 			thisCreatureValidConditionsByType = json.path.read(thisCreatureValidConditionsByType,"[*][?("+validConditionTypesExclusive+" nin @.ConditionType)]")
 		]
 	};{}]
-	[h:broadcast(thisCreatureValidConditionsByType)]
 
 	[h,if(validConditionNamesInclusive != ""),CODE:{
 		[h,if(json.type(validConditionNamesInclusive) == "ARRAY"):
@@ -71,10 +70,8 @@
 			thisCreatureValidConditionsByName = json.path.read(thisCreatureValidConditionsByName,"[*][?(@.Name != "+validConditionNamesExclusive+")]")
 		]
 	};{}]
-	[h:broadcast(thisCreatureValidConditionsByName)]
 
 	[h,if((validConditionNamesInclusive != "" || validConditionNamesExclusive != "") && (validConditionTypesInclusive !="" || validConditionTypesExclusive !="")),CODE:{
-		[h:broadcast(validConditionCombineFiltersHow)]
 		[h,if(validConditionCombineFiltersHow == "and"):
 			thisCreatureValidConditions = json.intersection(thisCreatureValidConditionsByName,thisCreatureValidConditionsByType);
 			thisCreatureValidConditions = json.union(thisCreatureValidConditionsByName,thisCreatureValidConditionsByType)
@@ -83,7 +80,6 @@
 		[h,if(validConditionNamesInclusive != "" || validConditionNamesExclusive != ""): thisCreatureValidConditions = thisCreatureValidConditionsByName]
 		[h,if(validConditionTypesInclusive !="" || validConditionTypesExclusive !=""): thisCreatureValidConditions = thisCreatureValidConditionsByType]
 	}]
-	[h:broadcast(thisCreatureValidConditions)]
 
 	[h:thisCreatureValidConditions = json.path.read(thisCreatureValidConditions,"[*][?(@.Tier <= "+validConditionMaxTier+" || @.Tier == null)]","DEFAULT_PATH_LEAF_TO_NULL")]
 

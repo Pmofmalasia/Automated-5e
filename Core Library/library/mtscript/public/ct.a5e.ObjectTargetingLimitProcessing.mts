@@ -5,103 +5,115 @@
 [h:subeffectData = json.remove(subeffectData,"ObjectTargetWornCarried")]
 
 
-[h,switch(json.get(subeffectData,"ObjectTargetWornCarried")),CODE:
+
+
+
+
+[h,if(json.get(subeffectData,"ObjectTargetType") != "All"),CODE:{
+    [h:objectTypeList = pm.a5e.GetCoreData("sb.ObjectTypes","Name","json")]
+    [h:inclusiveObjects = "[]"]
+    [h:exclusiveObjects = "[]"]
+    [h,foreach(tempObject,objectTypeList),CODE:{
+        [h,if(json.contains(subeffectData,"ObjectTypeTargetInclusive"+tempObject)): inclusiveObjects = json.append(inclusiveObjects,tempObject)]
+        [h,if(json.contains(subeffectData,"ObjectTypeTargetExclusive"+tempObject)): exclusiveObjects = json.append(exclusiveObjects,tempObject)]
+        [h:subeffectData = json.remove(subeffectData,"ObjectTypeTargetInclusive"+tempObject)]
+        [h:subeffectData = json.remove(subeffectData,"ObjectTypeTargetExclusive"+tempObject)]
+    }]
+    [h,if(!json.isEmpty(inclusiveObjects)): objectTargetData = json.set(objectTargetData,"TypeInclusive",inclusiveObjects)]
+    [h,if(!json.isEmpty(exclusiveObjects)): objectTargetData = json.set(objectTargetData,"TypeExclusive",exclusiveObjects)]
+    [h:subeffectData = json.remove(subeffectData,"ObjectTargetType")]
+
+	[h:"<!-- TODO: Add subtype options when I decide how the hell the input should look -->"]
+};{}]
+
+
+
+
+
+
+[h,switch(json.get(subeffectData,"ObjectTargetMagical")),CODE:
     case "":{
         
     };
     case "Inclusive":{
-		
+		[h:objectTargetData = json.set(objectTargetData,"Magical",1)]
     };
     case "Exclusive":{
-		
+		[h:objectTargetData = json.set(objectTargetData,"Magical",0)]
     }
 ]
+[h:subeffectData = json.remove(subeffectData,"ObjectTargetMagical")]
 
-[h,if(json.get(subeffectData,"targetCreatureTypes") != "All"),CODE:{
-    [h:creatureTypeList = pm.GetCreatureTypes("Name","json")]
-    [h:inclusiveCreatures = "[]"]
-    [h:exclusiveCreatures = "[]"]
-    [h,foreach(tempCreature,creatureTypeList),CODE:{
-        [h,if(json.contains(subeffectData,"CreatureTypeTargetInclusive"+tempCreature)): inclusiveCreatures = json.append(inclusiveCreatures,tempCreature)]
-        [h,if(json.contains(subeffectData,"CreatureTypeTargetExclusive"+tempCreature)): exclusiveCreatures = json.append(exclusiveCreatures,tempCreature)]
-        [h:subeffectData = json.remove(subeffectData,"CreatureTypeTargetInclusive"+tempCreature)]
-        [h:subeffectData = json.remove(subeffectData,"CreatureTypeTargetExclusive"+tempCreature)]
+[h,switch(json.get(subeffectData,"ObjectTargetSizeType")),CODE:
+    case "":{
+        
+    };
+    case "Maximum":{
+		[h:objectTargetData = json.set(objectTargetData,"SizeMaximum",json.get(subeffectData,"ObjectTargetSize"))]
+    };
+    case "Minimum":{
+		[h:objectTargetData = json.set(objectTargetData,"SizeMinimum",json.get(subeffectData,"ObjectTargetSize"))]
+    }
+]
+[h:subeffectData = json.remove(subeffectData,"ObjectTargetSizeType")]
+[h:subeffectData = json.remove(subeffectData,"ObjectTargetSize")]
+
+[h,switch(json.get(subeffectData,"ObjectTargetWeightType")),CODE:
+    case "":{
+        
+    };
+    case "Maximum":{
+		[h:objectTargetData = json.set(objectTargetData,"WeightMaximum",json.get(subeffectData,"ObjectTargetWeight"))]
+    };
+    case "Minimum":{
+		[h:objectTargetData = json.set(objectTargetData,"WeightMinimum",json.get(subeffectData,"ObjectTargetWeight"))]
+    }
+]
+[h:subeffectData = json.remove(subeffectData,"ObjectTargetWeightType")]
+[h:subeffectData = json.remove(subeffectData,"ObjectTargetWeight")]
+
+[h,if(json.get(subeffectData,"ObjectTargetTags") != "All"),CODE:{
+    [h:MaterialTagList = pm.a5e.GetCoreData("sb.MaterialTags","Name","json")]
+    [h:MaterialList = pm.a5e.GetCoreData("sb.Materials","Name","json")]
+	[h:AllTagsList = json.merge(MaterialTagList,MaterialList)]
+
+    [h:inclusiveObjectTags = "[]"]
+    [h:exclusiveObjectTags = "[]"]
+    [h,foreach(tempObject,AllTagsList),CODE:{
+        [h,if(json.contains(subeffectData,"ObjectTargetTagsInclusive"+tempObject)): inclusiveObjectTags = json.append(inclusiveObjectTags,tempObject)]
+        [h,if(json.contains(subeffectData,"ObjectTargetTagsExclusive"+tempObject)): exclusiveObjectTags = json.append(exclusiveObjectTags,tempObject)]
+        [h:subeffectData = json.remove(subeffectData,"ObjectTargetTagsInclusive"+tempObject)]
+        [h:subeffectData = json.remove(subeffectData,"ObjectTargetTagsExclusive"+tempObject)]
     }]
-    [h,if(!json.isEmpty(inclusiveCreatures)): objectTargetData = json.set(objectTargetData,"TypeInclusive",inclusiveCreatures)]
-    [h,if(!json.isEmpty(exclusiveCreatures)): objectTargetData = json.set(objectTargetData,"TypeExclusive",exclusiveCreatures)]
-    [h:subeffectData = json.remove(subeffectData,"targetCreatureTypes")]
-}]
+    [h,if(!json.isEmpty(inclusiveObjectTags)): objectTargetData = json.set(objectTargetData,"TagsInclusive",inclusiveObjectTags)]
+    [h,if(!json.isEmpty(exclusiveObjectTags)): objectTargetData = json.set(objectTargetData,"TagsExclusive",exclusiveObjectTags)]
+    [h:subeffectData = json.remove(subeffectData,"ObjectTargetTags")]
+};{}]
 
-[h,if(json.contains(subeffectData,"targetCanSee")),CODE:{
-    [h:objectTargetData = json.set(objectTargetData,"Sight",1)]
-    [h:subeffectData = json.remove(subeffectData,"targetCanSee")]
-}]        
-[h,if(json.contains(subeffectData,"targetCanHear")),CODE:{
-    [h:objectTargetData = json.set(objectTargetData,"Hear",1)]
-    [h:subeffectData = json.remove(subeffectData,"targetCanHear")]
-}]        
-[h,if(json.contains(subeffectData,"targetCanUnderstand")),CODE:{
-    [h:objectTargetData = json.set(objectTargetData,"Understand",1)]
-    [h:subeffectData = json.remove(subeffectData,"targetCanUnderstand")]
-}]
+[h,switch(json.get(subeffectData,"ObjectTargetFlammable")),CODE:
+    case "":{
+        
+    };
+    case "Inclusive":{
+		[h:objectTargetData = json.set(objectTargetData,"Flammable",1)]
+    };
+    case "Exclusive":{
+		[h:objectTargetData = json.set(objectTargetData,"Flammable",0)]
+    }
+]
+[h:subeffectData = json.remove(subeffectData,"ObjectTargetFlammable")]
 
-[h,if(json.get(subeffectData,"isTargetCondition") != "None"),CODE:{
-    [h:baseConditionList = pm.a5e.GetBaseConditions("Name","json")]
-    [h:inclusiveConditions = "[]"]
-    [h:exclusiveConditions = "[]"]
-    [h,foreach(tempCondition,baseConditionList),CODE:{
-        [h,if(json.contains(subeffectData,"InclusiveConditions"+tempCondition)): inclusiveConditions = json.append(inclusiveConditions,json.set("","Name",tempCondition,"Class","Condition"))]
-        [h,if(json.contains(subeffectData,"ExclusiveConditions"+tempCondition)): exclusiveConditions = json.append(exclusiveConditions,json.set("","Name",tempCondition,"Class","Condition"))]
-        [h:subeffectData = json.remove(subeffectData,"InclusiveConditions"+tempCondition)]
-        [h:subeffectData = json.remove(subeffectData,"ExclusiveConditions"+tempCondition)]
-    }]
-    [h,if(!json.isEmpty(inclusiveConditions)): objectTargetData = json.set(objectTargetData,"TargetConditionsInclusive",inclusiveConditions)]
-    [h,if(!json.isEmpty(exclusiveConditions)): objectTargetData = json.set(objectTargetData,"TargetConditionsExclusive",exclusiveConditions)]
-    [h:subeffectData = json.remove(subeffectData,"isTargetCondition")]
-}]
+[h,switch(json.get(subeffectData,"ObjectTargetMagnetic")),CODE:
+    case "":{
+        
+    };
+    case "Inclusive":{
+		[h:objectTargetData = json.set(objectTargetData,"Magnetic",1)]
+    };
+    case "Exclusive":{
+		[h:objectTargetData = json.set(objectTargetData,"Magnetic",0)]
+    }
+]
+[h:subeffectData = json.remove(subeffectData,"ObjectTargetMagnetic")]
 
-[h,if(json.contains(subeffectData,"isAbilityScore")),CODE:{
-    [h,foreach(tempAbility,pm.GetAttributes("Name","json")),CODE:{
-        [h,switch(json.get(subeffectData,"is"+tempAbility+"Limit")):
-            case "No": "";
-            case "Minimum": objectTargetData = json.set(objectTargetData,tempAbility+"Min",number(json.get(subeffectData,"min"+tempAbility)));
-            case "Maximum": objectTargetData = json.set(objectTargetData,tempAbility+"Max",number(json.get(subeffectData,"max"+tempAbility)));
-            case "Range": objectTargetData = json.set(objectTargetData,tempAbility+"Min",number(json.get(subeffectData,"min"+tempAbility)),tempAbility+"Max",number(json.get(subeffectData,"max"+tempAbility)))
-        ]
-        [h:subeffectData = json.remove(subeffectData,"min"+tempAbility)]
-        [h:subeffectData = json.remove(subeffectData,"max"+tempAbility)]
-        [h:subeffectData = json.remove(subeffectData,"is"+tempAbility+"Limit")]
-    }]
-    [h:subeffectData = json.remove(subeffectData,"isAbilityScore")]
-}]
-
-[h,if(json.contains(subeffectData,"isAlignment")),CODE:{
-    [h:AlignmentsAllowed = json.set("",
-        "LawfulGood",json.contains(subeffectData,"alignmentLawfulGood"),
-        "LawfulNeutral",json.contains(subeffectData,"alignmentLawfulNeutral"),
-        "LawfulEvil",json.contains(subeffectData,"alignmentLawfulEvil"),
-        "NeutralGood",json.contains(subeffectData,"alignmentNeutralGood"),
-        "NeutralNeutral",json.contains(subeffectData,"alignmentNeutralNeutral"),
-        "NeutralEvil",json.contains(subeffectData,"alignmentNeutralEvil"),
-        "ChaoticGood",json.contains(subeffectData,"alignmentChaoticGood"),
-        "ChaoticNeutral",json.contains(subeffectData,"alignmentChaoticNeutral"),
-        "ChaoticEvil",json.contains(subeffectData,"alignmentChaoticEvil"),
-        "Unaligned",json.contains(subeffectData,"alignmentUnaligned")
-    )]
-    [h:objectTargetData = json.set(objectTargetData,"Alignment",AlignmentsAllowed)]
-    [h:subeffectData = json.remove(subeffectData,"isAlignment")]
-    [h:subeffectData = json.remove(subeffectData,"alignmentLawfulGood")]
-    [h:subeffectData = json.remove(subeffectData,"alignmentLawfulNeutral")]
-    [h:subeffectData = json.remove(subeffectData,"alignmentLawfulEvil")]
-    [h:subeffectData = json.remove(subeffectData,"alignmentNeutralGood")]
-    [h:subeffectData = json.remove(subeffectData,"alignmentNeutralNeutral")]
-    [h:subeffectData = json.remove(subeffectData,"alignmentNeutralEvil")]
-    [h:subeffectData = json.remove(subeffectData,"alignmentChaoticGood")]
-    [h:subeffectData = json.remove(subeffectData,"alignmentChaoticNeutral")]
-    [h:subeffectData = json.remove(subeffectData,"alignmentChaoticEvil")]
-    [h:subeffectData = json.remove(subeffectData,"alignmentUnaligned")]
-}]
-
-[h:objectTargetData = json.set(objectTargetData,"MaxCover",json.get(subeffectData,"MaxCover"))]
-
-[h:macro.return = json.set("","Subeffect",subeffectData,"Creature",objectTargetData)]
+[h:macro.return = json.set("","Subeffect",subeffectData,"Object",objectTargetData)]

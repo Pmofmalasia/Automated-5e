@@ -17,6 +17,15 @@
 	[h:objectData = json.remove(objectData,"NewTypeName")]
 }]
 
+[h,if(objectType == "Wondrous"),CODE:{
+	[h:objectData = json.set(objectData,"isWondrous",1)]
+	[h,if(json.get(objectData,"WondrousType") != ""),CODE:{
+		[h:objectType = json.get(objectData,"WondrousType")]
+		[h:objectData = json.set(objectData,"Type",objectType)]
+	};{}]
+	[h:objectData = json.remove(objectData,"WondrousType")]
+}]
+
 [h,if(objectType=="Weapon"),CODE:{
 	[h:objectData = ct.a5e.WeaponDataProcessing(objectData)]
 };{}]
@@ -100,7 +109,10 @@
 
 
 [h,if(json.contains(objectData,"isCharges")),CODE:{
-	[h:"<!-- TODO: Charges data currently doesn't require any processing, but will need it when DepletedEffects are implemented. -->"]
+	[h:RestoreInstances = json.append("","ShortRest","LongRest","Dawn","Dusk","StartTurn","Initiative")]
+	[h,foreach(instance,RestoreInstances),CODE:{
+		[h,if(json.contains(objectData,"Restore"+instance)): objectData = json.set(objectData,"Restore"+instance,1)]	
+	}]
 };{}]
 [h:objectData = json.remove(objectData,"isCharges")]
 

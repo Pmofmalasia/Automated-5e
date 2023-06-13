@@ -66,7 +66,7 @@
 ))]
 [h:"<!-- For each ability in the abilities array, checks to see if there is a magic item bonus to the max resource, then checks to see if restored on a long rest and sets resource equal to max resource plus any magic item bonuses. Magic item bonuses do not currently work for abilities with multiple resources (therefore stored as objects). -->"]
 
-[h:lr.Resources = json.path.read(getProperty("a5e.stat.AllFeatures"),"[?(@.IsActive>0 && @.RestoreLongRest==1)]")]
+[h:lr.Resources = json.path.read(getProperty("a5e.stat.AllFeatures"),"[?(@.RestoreLongRest==1)]")]
 [h,foreach(Ability,lr.Resources),CODE:{
 	[h:ResourceRestored = evalMacro(json.get(Ability,"MaxResource"))]
 	[h,if(json.type(ResourceRestored)=="ARRAY"): ResourceRestored=json.get(ResourceRestored,0)]
@@ -103,6 +103,44 @@
 	[h,if(needsPutTest):
 		setProperty("a5e.stat.AllFeatures",json.path.put(getProperty("a5e.stat.AllFeatures"),"[?("+pm.a5e.PathFeatureFilter(Ability)+")]","Resource",ResourceRestoredFinal));
 		setProperty("a5e.stat.AllFeatures",json.path.set(getProperty("a5e.stat.AllFeatures"),"[?("+pm.a5e.PathFeatureFilter(Ability)+")]['Resource']",ResourceRestoredFinal))
+	]
+}]
+
+[h:lr.ItemResources = json.path.read(getProperty("a5e.stat.Inventory"),"[?(@.RestoreLongRest==1 || @.RestoreDawn==1)]")]
+[h,foreach(tempItem,lr.ItemResources),CODE:{
+	[h:ResourceRestored = evalMacro(json.get(tempItem,"MaxResource"))]
+	[h,if(json.type(ResourceRestored)=="ARRAY"): ResourceRestored=json.get(ResourceRestored,0)]
+
+	[h,if(json.type(ResourceRestored)=="OBJECT"),CODE:{
+		[h:ResourceRestoredFinal=ResourceRestored]
+		[h,foreach(tempResource,json.fields(ResourceRestoredFinal,"json")): abilityTable = json.append(abilityTable,json.set("",
+			"ShowIfCondensed",1,
+			"Header",json.get(tempItem,"DisplayName")+": "+tempResource,
+			"FalseHeader","",
+			"FullContents","",
+			"RulesContents",json.get(ResourceRestoredFinal,tempResource),
+			"RollContents","",
+			"DisplayOrder","['Rules','Roll','Full']",
+			"Value",json.get(ResourceRestoredFinal,tempResource)
+		))]
+	};{
+		[h:ResourceRestoredFinal=ResourceRestored]
+		[h:abilityTable = json.append(abilityTable,json.set("",
+			"ShowIfCondensed",1,
+			"Header",json.get(tempItem,"DisplayName"),
+			"FalseHeader","",
+			"FullContents","",
+			"RulesContents",ResourceRestoredFinal,
+			"RollContents","",
+			"DisplayOrder","['Rules','Roll','Full']",
+			"Value",ResourceRestoredFinal
+		))]
+	}]
+
+	[h:needsPutTest = !json.isEmpty(json.path.read(getProperty("a5e.stat.Inventory"),"[?("+pm.a5e.PathFeatureFilter(tempItem)+" && @.Resource==null)]","DEFAULT_PATH_LEAF_TO_NULL"))]
+	[h,if(needsPutTest):
+		setProperty("a5e.stat.Inventory",json.path.put(getProperty("a5e.stat.Inventory"),"[?("+pm.a5e.PathFeatureFilter(tempItem)+")]","Resource",ResourceRestoredFinal));
+		setProperty("a5e.stat.Inventory",json.path.set(getProperty("a5e.stat.Inventory"),"[?("+pm.a5e.PathFeatureFilter(tempItem)+")]['Resource']",ResourceRestoredFinal))
 	]
 }]
 

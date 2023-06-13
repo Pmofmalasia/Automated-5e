@@ -73,3 +73,4 @@
 [h:setLibProperty("gd.Effects",'[]',"Lib:pm.a5e.Core")]
 
 [broadcast("First-time setup complete.")]
+[h:"<!-- TODO: Add link to Gather Sourcebook Effects here since it cannot be called in on(First)Init in an addon -->"]

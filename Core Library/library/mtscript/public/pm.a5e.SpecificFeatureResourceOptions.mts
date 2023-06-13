@@ -1,7 +1,27 @@
 [h:resourceInfo = arg(0)]
 [h:resourceUsed = arg(1)]
 [h,if(argCount()>2): pm.ResourceKey = arg(2); pm.ResourceKey = ""]
-[h:matchingFeature = json.get(json.path.read(getProperty("a5e.stat.AllFeatures"),"[*][?(@.Name=='"+json.get(resourceInfo,"Name")+"' && @.Class=='"+json.get(resourceInfo,"Class")+"' && @.Subclass=='"+json.get(resourceInfo,"Subclass")+"')]"),0)]
+
+[h,if(json.get(resourceInfo,"Type") == ""):
+	resourceSource = "Feature";
+	resourceSource = json.get(resourceInfo,"Type")
+]
+[h,switch(resourceSource),CODE:
+	case "Feature":{
+		[h:sourceProperty = "a5e.stat.AllFeatures"]
+		[h:sourcePath = "@.Name=='"+json.get(resourceInfo,"Name")+"' && @.Class=='"+json.get(resourceInfo,"Class")+"' && @.Subclass=='"+json.get(resourceInfo,"Subclass")+"'"]
+	};
+	case "Condition":{
+		[h:sourceProperty = "a5e.stat.Conditions"]
+		[h:sourcePath = "@.Name=='"+json.get(resourceInfo,"Name")+"' && @.Class=='"+json.get(resourceInfo,"Class")+"' && @.Subclass=='"+json.get(resourceInfo,"Subclass")+"'"]
+	};
+	case "Item":{
+		[h:sourceProperty = "a5e.stat.Inventory"]
+		[h:sourcePath = "@.ItemID=='"+json.get(resourceInfo,"ItemID")+"'"]
+	}
+]
+
+[h:matchingFeature = json.get(json.path.read(getProperty(sourceProperty),"[*][?("+sourcePath+")]"),0)]
 
 [h,if(pm.ResourceKey==""),CODE:{
 	[h:pm.MaxResourceBase = evalMacro(json.get(matchingFeature,"MaxResource"))]
@@ -10,13 +30,13 @@
 		[h:macro.return = json.set(matchingFeature,
 			"TempEnoughResource",1,
 			"TempResourceDisplayName",if(json.get(matchingFeature,"ResourceDisplayName")=="",json.get(matchingFeature,"DisplayName"),json.get(matchingFeature,"ResourceDisplayName")),
-			"TempResourceType","Feature"
+			"TempResourceType",resourceSource
 		)]
 	};{
 		[h:macro.return = json.set(matchingFeature,
 			"TempEnoughResource",0,
 			"TempResourceDisplayName",if(json.get(matchingFeature,"ResourceDisplayName")=="",json.get(matchingFeature,"DisplayName"),json.get(matchingFeature,"ResourceDisplayName")),
-			"TempResourceType","Feature"
+			"TempResourceType",resourceSource
 		)]
 	}]
 };{
@@ -28,26 +48,27 @@
 			macro.return = json.set(matchingFeature,
 				"TempResourceKey",pm.ResourceKey,
 				"TempResourceDisplayName",if(json.get(matchingFeature,"ResourceDisplayName")=="",json.get(matchingFeature,"DisplayName"),json.get(matchingFeature,"ResourceDisplayName")),
-				"TempResourceType","Feature",
+				"TempResourceType",resourceSource,
 				"TempEnoughResource",1);
 			macro.return = json.set(matchingFeature,
 				"TempResourceKey",pm.ResourceKey,
 				"TempResourceDisplayName",if(json.get(json.get(matchingFeature,"ResourceDisplayName"),pm.ResourceKey)=="",json.get(matchingFeature,"DisplayName"),json.get(json.get(matchingFeature,"ResourceDisplayName"),pm.ResourceKey)),
-				"TempResourceType","Feature",
+				"TempResourceType",resourceSource,
 				"TempEnoughResource",1)
 		]
 	};{
 		[h:displayNameObjCheck = json.type(json.get(matchingFeature,"ResourceDisplayName"))]
 		[h,if(displayNameObjCheck=="UNKNOWN"):
 			macro.return = json.set(matchingFeature,
-					"TempResourceKey",pm.ResourceKey,
-					"TempResourceDisplayName",if(json.get(matchingFeature,"ResourceDisplayName")=="",json.get(matchingFeature,"DisplayName"),json.get(matchingFeature,"ResourceDisplayName")),
-					"TempResourceType","Feature",
-					"TempEnoughResource",0);
+				"TempResourceKey",pm.ResourceKey,
+				"TempResourceDisplayName",if(json.get(matchingFeature,"ResourceDisplayName")=="",json.get(matchingFeature,"DisplayName"),json.get(matchingFeature,"ResourceDisplayName")),
+				"TempResourceType",resourceSource,
+				"TempEnoughResource",0);
 			macro.return = json.set(matchingFeature,
-					"TempResourceKey",pm.ResourceKey,
-					"TempResourceDisplayName",if(json.get(json.get(matchingFeature,"ResourceDisplayName"),pm.ResourceKey)=="",json.get(matchingFeature,"DisplayName"),json.get(json.get(matchingFeature,"ResourceDisplayName"),pm.ResourceKey)),
-					"TempResourceType","Feature","TempEnoughResource",0)
+				"TempResourceKey",pm.ResourceKey,
+				"TempResourceDisplayName",if(json.get(json.get(matchingFeature,"ResourceDisplayName"),pm.ResourceKey)=="",json.get(matchingFeature,"DisplayName"),json.get(json.get(matchingFeature,"ResourceDisplayName"),pm.ResourceKey)),
+				"TempResourceType",resourceSource,
+				"TempEnoughResource",0)
 		]
 	}]
 }]

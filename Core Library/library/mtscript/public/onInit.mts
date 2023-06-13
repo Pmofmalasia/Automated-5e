@@ -162,6 +162,7 @@
 [h:defineFunction("pm.a5e.GetEffectComponent","pm.a5e.GetEffectComponent@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.a5e.ResolveDCSuccess","pm.a5e.ResolveDCSuccess@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.a5e.ResolveDCFailure","pm.a5e.ResolveDCFailure@Lib:pm.a5e.Core")]
+[h:defineFunction("pm.a5e.UseResource","pm.a5e.UseResource@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.a5e.RechargeRoll","pm.a5e.RechargeRoll@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.a5e.StartAndEndTurnEffects","pm.a5e.StartAndEndTurnEffects@Lib:pm.a5e.Core",0,0)]
 
@@ -263,4 +264,3 @@
 [h:defineFunction("pm.SwitchToken","pm.SwitchToken@Lib:pm.a5e.Core",0,0)]
 
 [h:broadcast("Startup Initialization Complete.")]
-[h,MACRO("Gather Sourcebook Information@Lib:pm.a5e.Core"):""]

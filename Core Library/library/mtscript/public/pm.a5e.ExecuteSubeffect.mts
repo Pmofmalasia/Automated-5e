@@ -14,6 +14,13 @@
 	)]
 };{}]
 
+[h,if(json.contains(SubeffectData,"UseResource")),CODE:{
+	[h:subeffect.ResourceData = pm.a5e.UseResource(json.get(SubeffectData,"UseResource"),IsTooltip)]
+
+	[h:SubeffectData = json.set(SubeffectData,"Resource",json.get(subeffect.ResourceData,"Data"))]
+	[h:abilityTable = json.merge(abilityTable,json.get(subeffect.ResourceData,"Table"))]
+};{}]
+
 [h:subeffect.RangeData = json.get(SubeffectData,"Range")]
 [h:subeffect.RangeType = json.get(SubeffectData,"RangeType")]
 [h,if(subeffect.RangeType == "SelfRanged" || subeffect.RangeType == "Ranged"),CODE:{
@@ -259,7 +266,10 @@
 	[h,if(json.get(subeffect.ConditionEndInfo,"UseMainDuration") == 1): subeffect.ConditionEndInfo = json.set(subeffect.ConditionEndInfo,"Duration",DurationValue,"DurationUnits",lower(DurationUnits))]
 	[h:subeffect.ConditionEndInfo = json.remove(subeffect.ConditionEndInfo,"UseMainDuration")]
 
-	[h:hasSaveDCTest = !json.isEmpty(json.path.read(subeffect.ConditionEndInfo,"[*][?(@.EndTriggers.*.SaveType!=null)]","DEFAULT_PATH_LEAF_TO_NULL"))]
+	[h:"<!-- TODO: Should make sure that the following path is always null if there are no EndTriggers with a save - need to see if this is due to messy data or flaws in json.path -->"]
+	[h:hasSaveDCTest = json.path.read(subeffect.ConditionEndInfo,"[*][?(@.EndTriggers.*.SaveType!=null && @.EndTriggers.*.SaveType!='')]","DEFAULT_PATH_LEAF_TO_NULL")]
+	[h:hasSaveDCTest = json.difference(hasSaveDCTest,json.append("","{}"))]
+	[h:hasSaveDCTest = !json.isEmpty(hasSaveDCTest)]
 
 	[h,if(hasSaveDCTest && !json.contains(SubeffectData,"SaveData")),CODE:{
 		[h:subeffect.SaveDC = 8 + getProperty("a5e.stat.Proficiency") + PrimeStatMod]

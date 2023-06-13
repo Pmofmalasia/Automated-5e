@@ -203,6 +203,8 @@
 
 [h,switch(EffectType):
 	case "Spell": ConditionIdentificationInfo = json.set("","Class","Spell","Subclass",FeatureName);
+	case "Weapon": ConditionIdentificationInfo = json.set("","Class","Item","Subclass",FeatureName);
+	case "Object": ConditionIdentificationInfo = json.set("","Class","Item","Subclass",FeatureName);
 	default: ConditionIdentificationInfo = json.set("","Class","","Subclass","")
 ]
 
@@ -377,6 +379,89 @@
 	[h:subeffectData = json.remove(subeffectData,"summonNumberAHLScaleHow")]
 
 	[h:subeffectData = json.set(subeffectData,"Summon",SummonData)]
+};{}]
+
+[h,if(json.contains(subeffectData,"isUseResource")),CODE:{
+	[h:ResourceData = "{}"]
+	[h:subeffectData = json.remove(subeffectData,"isUseResource")]
+
+	[h,if(json.get(subeffectData,"isUseUniqueResource") > 0),CODE:{
+		[h:UniqueResourceIdentificationData = json.set("",
+			"Name",FeatureName,
+			"Class",json.get(thisPlayerCurrentFeatureData,"Class"),
+			"Subclass",json.get(thisPlayerCurrentFeatureData,"Subclass")
+		)]
+
+		[h,switch(EffectType):
+			case "Object": UniqueResourceIdentificationData = json.set(UniqueResourceIdentificationData,"Type","Item");
+			case "Weapon": UniqueResourceIdentificationData = json.set(UniqueResourceIdentificationData,"Type","Item");
+			case "Condition": UniqueResourceIdentificationData = json.set(UniqueResourceIdentificationData,"Type","Condition");
+			default: UniqueResourceIdentificationData = json.set(UniqueResourceIdentificationData,"Type","Feature")
+		]
+
+		[h:UniqueResourceData = json.set("",
+			"Resource",UniqueResourceIdentificationData,
+			"ResourceUsed",json.get(subeffectData,"UseUniqueResourceMin"),
+			"Increment",json.get(subeffectData,"UseUniqueResourceIncrements")
+		)]
+		[h:subeffectData = json.remove(subeffectData,"UseUniqueResourceMin")]
+		[h:subeffectData = json.remove(subeffectData,"UseUniqueResourceIncrements")]
+
+		[h,if(json.contains(subeffectData,"isNoUniqueResourceUseLimit")):
+			UniqueResourceData = json.set(UniqueResourceData,"ResourceMax",99999);
+			UniqueResourceData = json.set(UniqueResourceData,"ResourceMax",json.get(subeffectData,"UseUniqueResourceMax"))
+		]
+		[h:subeffectData = json.remove(subeffectData,"isNoUniqueResourceUseLimit")]
+		[h:subeffectData = json.remove(subeffectData,"UseUniqueResourceMax")]
+
+		[h,if(json.contains(subeffectData,"UseUniqueResourceKey")): UniqueResourceData = json.set(UniqueResourceData,"ResourceKey",json.get(subeffectData,"UseUniqueResourceKey"))]
+		[h:subeffectData = json.remove(subeffectData,"UseUniqueResourceKey")]
+
+		[h,if(json.get(subeffectData,"isUseUniqueResource") == 1):
+			ResourceData = json.set(ResourceData,"Feature",UniqueResourceData);
+			ResourceData = json.set(ResourceData,"FeatureBackup",UniqueResourceData)
+		]
+		[h:subeffectData = json.remove(subeffectData,"isUseUniqueResource")]
+	};{}]
+
+	[h,if(json.get(subeffectData,"isUseSpellSlots") > 0),CODE:{
+		[h:SpellResourceData = json.set("",
+			"Option",json.get(subeffectData,"isUseSpellSlots"),
+			"SpellLevelMin",json.get(subeffectData,"UseSpellSlotMin")
+		)]
+		[h:subeffectData = json.remove(subeffectData,"UseSpellSlotMin")]
+		[h:subeffectData = json.remove(subeffectData,"isUseSpellSlots")]
+
+		[h,if(!json.contains(subeffectData,"isNoSpellSlotUseLimit")): SpellResourceData = json.set(SpellResourceData,"SpellLevelMax",json.get(subeffectData,"UseSpellSlotMax"))]
+		[h:subeffectData = json.remove(subeffectData,"isNoSpellSlotUseLimit")]
+		[h:subeffectData = json.remove(subeffectData,"UseSpellSlotMax")]
+
+		[h:ResourceData = json.set(ResourceData,"SpellSlots",SpellResourceData)]
+	};{}]
+
+	[h,if(json.get(subeffectData,"isUseHitDice") > 0),CODE:{
+		[h:HitDiceData = json.set("",
+			"Option",json.get(subeffectData,"isUseHitDice"),
+			"ResourceUsed",json.get(subeffectData,"UseHitDiceMin"),
+			"Increment",json.get(subeffectData,"UseHitDiceIncrements")
+		)]
+		[h:subeffectData = json.remove(subeffectData,"isUseHitDice")]
+		[h:subeffectData = json.remove(subeffectData,"UseHitDiceMin")]
+		[h:subeffectData = json.remove(subeffectData,"UseHitDiceIncrements")]
+
+		[h,if(json.contains(subeffectData,"isNoHitDiceUseLimit")):
+			HitDiceData = json.set(HitDiceData,"ResourceMax",99999);
+			HitDiceData = json.set(HitDiceData,"ResourceMax",json.get(subeffectData,"UseHitDiceMax"))
+		]
+		[h:subeffectData = json.remove(subeffectData,"isNoHitDiceUseLimit")]
+		[h:subeffectData = json.remove(subeffectData,"UseHitDiceMax")]
+
+		[h:ResourceData = json.set(ResourceData,"HitDice",HitDiceData)]
+	};{}]
+
+	[h:"<!-- TODO: Add resource selection from feature other than the one being created -->"]
+
+	[h:subeffectData = json.set(subeffectData,"UseResource",ResourceData)]
 };{}]
 
 [h:subeffectData = json.remove(subeffectData,"isUncommonEffects")]
@@ -729,7 +814,7 @@
 		[h:thisEffectSubeffectData = json.get(currentEffectData,"Subeffects")]
 		[h:thisEffectSubeffectData = json.append(thisEffectSubeffectData,subeffectData)]
 
-		[h:currentEffectData = json.set(currentEffectData,"Subeffects",subeffectData)]
+		[h:currentEffectData = json.set(currentEffectData,"Subeffects",thisEffectSubeffectData)]
 
 		[h,if(thisSubeffectNum == 1):
 			allEffectData = json.append(allEffectData,currentEffectData);

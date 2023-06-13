@@ -19,10 +19,15 @@
 	[h:tempWeight = json.get(tempItem,"Weight")]
 	[h:tempTotalWeight = number(tempWeight) * number(tempNumber)]
 
+	[h,if(json.get(tempItem,"MaxResource") == ""):
+		tempNumberDisplay = tempNumber;
+		tempNumberDisplay = json.get(tempItem,"Resource")
+	]
+
 	[h:tempUseButton = ""]
 	[h:tempEffects = json.get(tempItem,"Effects")]
 	[h,if(tempEffects != ""),CODE:{
-		[h:tempLink = macroLinkText("ExecuteEffectBorder@Lib:pm.a5e.Core","self-gm",json.set(tempItem,"Effect",json.get(tempEffects,0),"ParentToken",ParentToken),ParentToken)]
+		[h:tempLink = macroLinkText("UseItem@Lib:pm.a5e.Core","self-gm",json.set(tempItem,"ParentToken",ParentToken),ParentToken)]
 		[h:tempUseButton = "<a href = '"+tempLink+"'>Use</a>"]
 	};{}]
 
@@ -35,7 +40,7 @@
 
 	[h,if(tempUseButton == ""): tempUseButton = "---"]
 
-	[h:InventoryHTML = InventoryHTML + "<tr>"+TableCellFormat+tempDisplayName+"</td>"+TableCellFormat+tempNumber+"</td>"+TableCellFormat+"<span title='"+tempWeight+" Each'>"+tempTotalWeight+"</span></td>"+TableCellFormat+tempUseButton+"</td></tr>"]
+	[h:InventoryHTML = InventoryHTML + "<tr>"+TableCellFormat+tempDisplayName+"</td>"+TableCellFormat+tempNumberDisplay+"</td>"+TableCellFormat+"<span title='"+tempWeight+" Each'>"+tempTotalWeight+"</span></td>"+TableCellFormat+tempUseButton+"</td></tr>"]
 }]
 
 [h:html.frame5("Inventory","lib://pm.a5e.core/ShowInventory.html?cachelib=false","value="+base64.encode(InventoryHTML)+"; closebutton=0; height=300")]

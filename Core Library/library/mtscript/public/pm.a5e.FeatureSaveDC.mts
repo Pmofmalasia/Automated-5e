@@ -62,8 +62,6 @@
 	
 };{}]
 
-[h:pm.DCFinal=if(miSaveDCSetFinal==-1,(pm.DC+miSaveDCBonusFinal),max(miSaveDCSetFinal,(pm.DC+miSaveDCBonusFinal)))]
-
 [h:saveDataFinal = json.set("",
 	"DC",pm.DCFinal,
 	"SaveType",pm.SaveType,

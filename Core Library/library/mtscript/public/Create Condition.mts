@@ -15,7 +15,7 @@
 [h:abort(input(
 	" junkVar | -------------------------------------------- Basic Condition Info -------------------------------------------- |  | LABEL | SPAN=TRUE ",
 	" cn.Name | -- Name Here -- | Enter Condition Name ",
-	" cn.Type | Base Condition,Class Feature,Racial Feature,Spell,Feat,Background | Condition Association | LIST ",
+	" cn.Type | Base Condition,Class Feature,Racial Feature,Spell,Feat,Item,Background | Condition Association | LIST ",
 	" cn.CountsAs | "+CountsAsOptions+" | Also Counts As | LIST | DELIMITER=JSON ",
 	ConditionTagOptions,
 	" otherConditionTag |  | Add Tag not Shown | CHECK ",
@@ -56,7 +56,8 @@
 	case 2: cn.TypeInput=" cn.Class | "+cn.RaceList+" | Class associated with Condition | LIST | VALUE=STRING ## junkVar | Next Screen | Subrace Selection | LABEL";
 	case 3: cn.Class = "Spell";
 	case 4: cn.Class = "Feat";
-	case 5: cn.Class = "Background";
+	case 5: cn.Class = "Item";
+	case 6: cn.Class = "Background";
 	default: cn.Class = ""
 ]
 [h:abort(input(cn.TypeInput))]
@@ -64,12 +65,10 @@
 [h:cn.Final = json.set(cn.Final,"Class",pm.RemoveSpecial(cn.Class))]
 
 [h,SWITCH(cn.Type):
-	case 0: cn.Subclass = "";
 	case 1: cn.TypeInput=" cn.Subclass | None,"+pm.GetSubclasses(cn.Class,"DisplayName")+" | Subclass Associated with Condition | LIST | VALUE=STRING ";
 	case 2: cn.TypeInput=" cn.Subclass | None,"+pm.GetSubraces(cn.Class,"DisplayName")+" | Subrace Associated with Condition | LIST | VALUE=STRING ";
 	case 3: cn.TypeInput = " cn.Subclass |  | Spell Associated with Condition ";
-	case 4: cn.Subclass = "";
-	case 5: cn.Subclass = "";
+	case 5: cn.TypeInput = " cn.Subclass |  | Item Associated with Condition ";
 	default: cn.Subclass = ""
 ]
 [h:abort(input(cn.TypeInput))]

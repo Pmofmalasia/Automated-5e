@@ -35,6 +35,7 @@
 [h:pm.ArmorTags = ""]
 [h:pm.ShieldTypes = ""]
 [h:pm.AmmunitionTypes = ""]
+[h:pm.ClothingTypes = ""]
 [h:pm.ArmorProperties = ""]
 [h:pm.SpellLists = "{}"]
 
@@ -75,7 +76,9 @@
 	[h,if(getLibProperty("sb.ArmorTypes","Lib:"+book)!=""): pm.ArmorTypes = json.merge(pm.ArmorTypes,getLibProperty("sb.ArmorTypes","Lib:"+book))]
 	[h,if(getLibProperty("sb.ShieldTypes","Lib:"+book)!=""): pm.ShieldTypes = json.merge(pm.ShieldTypes,getLibProperty("sb.ShieldTypes","Lib:"+book))]
 	[h,if(getLibProperty("sb.AmmunitionTypes","Lib:"+book)!=""): pm.AmmunitionTypes = json.merge(pm.AmmunitionTypes,getLibProperty("sb.AmmunitionTypes","Lib:"+book))]
+	[h,if(getLibProperty("sb.ClothingTypes","Lib:"+book)!=""): pm.ClothingTypes = json.merge(pm.ClothingTypes,getLibProperty("sb.ClothingTypes","Lib:"+book))]
 	[h,if(getLibProperty("sb.ArmorProperties","Lib:"+book)!=""): pm.ArmorProperties = json.merge(pm.ArmorProperties,getLibProperty("sb.ArmorProperties","Lib:"+book))]
+	
 	[h,if(getLibProperty("sb.ArmorTags","Lib:"+book)!=""): pm.ArmorTags = json.merge(pm.ArmorTags,getLibProperty("sb.ArmorTags","Lib:"+book))]
 	[h:thisBookSpellLists = getLibProperty("sb.SpellLists","Lib:"+book)]
 	[h,foreach(tempClass,json.fields(thisBookSpellLists)),CODE:{
@@ -126,6 +129,7 @@
 [h:setLibProperty("sb.ArmorTags",json.sort(pm.ArmorTags,"a","DisplayName"),"Lib:pm.a5e.Core")]
 [h:setLibProperty("sb.ShieldTypes",json.sort(pm.ShieldTypes,"a","DisplayName"),"Lib:pm.a5e.Core")]
 [h:setLibProperty("sb.AmmunitionTypes",json.sort(pm.AmmunitionTypes,"a","DisplayName"),"Lib:pm.a5e.Core")]
+[h:setLibProperty("sb.ClothingTypes",json.sort(pm.ClothingTypes,"a","DisplayName"),"Lib:pm.a5e.Core")]
 [h:setLibProperty("sb.ArmorProperties",json.sort(pm.ArmorProperties,"a","DisplayName"),"Lib:pm.a5e.Core")]
 [h:setLibProperty("sb.SpellLists",pm.SpellLists,"Lib:pm.a5e.Core")]
 

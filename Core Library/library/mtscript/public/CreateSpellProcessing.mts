@@ -158,6 +158,8 @@
 
 [h:closeDialog("Spell Creation")]
 
+[h:EffectsNumber = json.get(SpellCoreData,"EffectsNumber")]
+
 [h,MACRO("CreateSubeffect@Lib:pm.a5e.Core"): json.set("",
     "WhichSubeffect",1,
     "WhichEffect",json.get(SpellCoreData,"WhichEffect"),

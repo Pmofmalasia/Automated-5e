@@ -21,8 +21,8 @@
 [h:NewObjectTokenData = json.set("",
 	"name",NewObjectTokenName,
 	"tokenImage",NewObjectImage,
-	"X",NewObjectXCoord,
-	"Y",NewObjectYCoord
+	"x",NewObjectXCoord,
+	"y",NewObjectYCoord
 )]
 [h:NewObjectTokenID = createToken(NewObjectTokenData)]
 

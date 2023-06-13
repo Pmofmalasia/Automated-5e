@@ -36,17 +36,19 @@
     [h,foreach(tempKey,json.fields(ExtraData)): SubeffectHTML = SubeffectHTML + "<input type='hidden' id='"+tempKey+"' name='"+tempKey+"' value='"+json.get(ExtraData,tempKey)+"'>"]
 };{}]
 
-[h:SubeffectHTML = SubeffectHTML + "<input type='hidden' id='ParentToken' name='ParentToken' value='"+ParentToken+"'><input type='hidden' id='EffectType' name='EffectType' value='"+EffectType+"'><input type='hidden' id='WhichSubeffect' name='WhichSubeffect' value="+thisSubeffectNum+"><input type='hidden' id='EffectsNumber' name='EffectsNumber' value="+EffectsNumber+">
+[h:SubeffectHTML = SubeffectHTML + "<input type='hidden' id='ParentToken' name='ParentToken' value='"+ParentToken+"'><input type='hidden' id='EffectType' name='EffectType' value='"+EffectType+"'><input type='hidden' id='WhichSubeffect' name='WhichSubeffect' value="+thisSubeffectNum+"><input type='hidden' id='EffectsNumber' name='EffectsNumber' value="+EffectsNumber+">"]
 
-<tr id='Mitigation'><th><label for='howMitigate'>Make Attack or Force Save?</label></th><td><select id='howMitigate' name='howMitigate' onchange='createMitigationTable()'><option value='Attack'>Make Attack</option><option value='Save'>Force Save</option><option value='Neither' selected>Neither</option></select></td></tr>
+[h:SubeffectHTML = SubeffectHTML + "<tr id='Mitigation'><th><label for='howMitigate'>Make Attack or Force Save?</label></th><td><select id='howMitigate' name='howMitigate' onchange='createMitigationTable()'><option value='Attack'>Make Attack</option><option value='Save'>Force Save</option><option value='Neither' selected>Neither</option></select></td></tr>
 
 <tr id='Damage'><th><label for='isDamage'>Heals or Deals Damage?</label></th><td><input type='checkbox' id='isDamage' name='isDamage' value=1 onchange='createDamageTable()'><input type='hidden' id='differentTypes' name='differentTypes' value=0></td></tr>
 
 <tr id='rowCondition'><th><label for='isCondition'>Sets Conditions on Target:</label></th><td><select id='isCondition' name='isCondition' value=1 onchange='createConditionTable()'><option value='None'>None</option><option value='All'>All Selected</option><option value='Choose'>Choose Among Selected</option><option value='Mixture'>Mixture of Both</option></select></td></tr>
 
-<tr id='rowSummons'><th><label for='isSummons'>Summons a Creature?</label></th><td><select id='isSummons' name='isSummons' onchange='createSummonTable()'><option value='No'>No</option><option value='UniqueEffect'>Non-Creature Unique Effect</option><option value='Single'>Single Specific Creature</option><option value='Options'>Creature from List</option><option value='Criteria'>Creature Based on Criteria</option></select></td></tr>
+<tr id='rowSummons'><th><label for='isSummons'>Summons a Creature?</label></th><td><select id='isSummons' name='isSummons' onchange='createSummonTable()'><option value='No'>No</option><option value='UniqueEffect'>Non-Creature Unique Effect</option><option value='Single'>Single Specific Creature</option><option value='Options'>Creature from List</option><option value='Criteria'>Creature Based on Criteria</option></select></td></tr>"]
 
-<tr id='rowUncommonEffects'><th><label for='isUncommonEffects'>Show Additional Effects:</label></th><td><input type='checkbox' id='isUncommonEffects' name='isUncommonEffects' value=1 onchange='createUncommonEffectsRows()'></td></tr>"]
+[h:SubeffectHTML = SubeffectHTML + "<tr id='rowIsUseResource'><th><label for='isUseResource'>Uses a Resource?</label></th><td><input type='checkbox' id='isUseResource' name='isUseResource' onchange='createUseResourceRows()'></td></tr>"]
+
+[h:SubeffectHTML = SubeffectHTML + "<tr id='rowUncommonEffects'><th><label for='isUncommonEffects'>Show Additional Effects:</label></th><td><input type='checkbox' id='isUncommonEffects' name='isUncommonEffects' value=1 onchange='createUncommonEffectsRows()'></td></tr>"]
 
 [h:"<!-- Note: Targeting rows are now created in JS instead of here -->"]
 

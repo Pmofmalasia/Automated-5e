@@ -50,6 +50,7 @@
     "FinalRoll",d20EffectiveRoll,
     "Advantage",d20Advantage,
     "Disadvantage",d20Disadvantage,
+	"AdvantageMessages",d20AdvantageMessageArray,
     "AdvantageBalance",d20AdvantageBalance,
     "ToHit",attack.ToHit,
     "ToHitStr",attack.ToHitStr,

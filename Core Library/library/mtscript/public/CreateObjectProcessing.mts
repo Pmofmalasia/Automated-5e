@@ -113,6 +113,8 @@
 	[h,foreach(instance,RestoreInstances),CODE:{
 		[h,if(json.contains(objectData,"Restore"+instance)): objectData = json.set(objectData,"Restore"+instance,1)]	
 	}]
+
+	[h:objectData = json.set(objectData,"MaxResource","[r:"+json.get(objectData,"MaxResource")+"]")]
 };{}]
 [h:objectData = json.remove(objectData,"isCharges")]
 

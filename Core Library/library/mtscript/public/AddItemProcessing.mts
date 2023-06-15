@@ -25,9 +25,11 @@
 ]
 [h,if(json.get(ChosenItem,"isAttunement")==1): ChosenItem = json.set(ChosenItem,"AttunedTo","")]
 
-[h,switch(json.get(ChosenItem,"InitialChargesMethod")),CODE:
+[h:InitialChargesMethod = json.get(ChosenItem,"InitialChargesMethod")]
+[h,switch(InitialChargesMethod),CODE:
 	case "Full":{
-		[h:ChosenItem = json.set(ChosenItem,"Resource",eval(json.get(ChosenItem,"MaxResource")))]
+		[h:broadcast(json.get(ChosenItem,"MaxResource"))]
+		[h:ChosenItem = json.set(ChosenItem,"Resource",evalMacro(json.get(ChosenItem,"MaxResource")))]
 	};
 	case "Fixed":{
 		[h:ChosenItem = json.set(ChosenItem,"Resource",json.get(ChosenItem,"InitialChargesAmount"))]
@@ -50,7 +52,7 @@
 	[h:NewItemID = eval("1d1000000") + json.get(getInfo("client"),"timeInMs")]
 
 	[h:"<!-- If the item has a subeffect that uses its own resource, put the NewItemID into the subeffect (might be easier to do as it's being used but would be a bit spaghetti-ey) -->"]
-	[h:ChosenItem = json.path.put(ChosenItem,"['Effects'][*]['Subeffects'][*]['UseResource']['Feature']['Resource'][?(@.Name == '"+json.get(ChosenItem,"Name")+"' && @.Class == 'Item')]","ItemID",NewItemID)]
+	[h,if(InitialChargesMethod != ""): ChosenItem = json.path.put(ChosenItem,"['Effects'][*]['Subeffects'][*]['UseResource']['Feature']['Resource'][?(@.Name == '"+json.get(ChosenItem,"Name")+"' && @.Class == 'Item')]","ItemID",NewItemID)]
 
 	[h,if(StackingTest),CODE:{
 		[h:ChosenItem = json.set(ChosenItem,
@@ -70,7 +72,7 @@
 	[h:OldEntryData = json.get(SameItemPriorEntry,0)]
 
 	[h:"<!-- This is here just in case - Items with charges (resources) should not be stackable anyway -->"]
-	[h:ChosenItem = json.path.put(ChosenItem,"['Effects'][*]['Subeffects'][*]['UseResource']['Feature']['Resource'][?(@.Name == '"+json.get(ChosenItem,"Name")+"' && @.Class == 'Item')]","ItemID",json.get(OldEntryData,"ItemID"))]
+	[h,if(InitialChargesMethod != ""): ChosenItem = json.path.put(ChosenItem,"['Effects'][*]['Subeffects'][*]['UseResource']['Feature']['Resource'][?(@.Name == '"+json.get(ChosenItem,"Name")+"' && @.Class == 'Item')]","ItemID",json.get(OldEntryData,"ItemID"))]
 
 	[h:NewNumber = json.get(OldEntryData,"Number") + json.get(AddItemData,"NumberAdded")]
 	[h:NewInventory = json.path.set(PriorInventory,"[*][?(@.ObjectID == '"+ItemChoiceID+"')]['Number']",NewNumber)]

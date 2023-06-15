@@ -10,9 +10,26 @@
 
 [h:d20AllRolls = if(json.get(d20Data,"d20Rolls")=="","[]",json.get(d20Data,"d20Rolls"))]
 [h:d20ExtraRolls = if(json.get(d20Data,"ExtraRolls")=="",0,json.get(d20Data,"ExtraRolls"))]
-[h:d20ForcedAdvantage = if(json.get(d20Data,"ForcedAdvantage")=="",0,json.get(d20Data,"ForcedAdvantage"))]
-[h:d20Advantage = if(json.get(d20Data,"Advantage")=="",0,json.get(d20Data,"Advantage"))]
-[h:d20Disadvantage = if(json.get(d20Data,"Disadvantage")=="",0,json.get(d20Data,"Disadvantage"))]
+
+[h:d20ForcedResult = json.get(d20Data,"ForcedResult")]
+[h:d20MinimumResult = json.get(d20Data,"MinimumResult")]
+[h:d20MaximumResult = json.get(d20Data,"MaximumResult")]
+
+[h,foreach(prefix,d20PassivePrefixes),CODE:{
+	[h:pm.PassiveFunction(prefix+"Roll")]
+	[h,if(d20Target != ""): pm.PassiveFunction(prefix+"RollTargeted",json.set("","ParentToken",d20Target))]  
+}]
+
+[h,if(d20ForcedResult != ""),CODE:{
+	[h:d20ForcedAdvantage = 1]
+	[h:d20Advantage = 0]
+	[h:d20Disadvantage = 0]
+};{
+	[h:d20ForcedAdvantage = if(json.get(d20Data,"ForcedAdvantage")=="",0,json.get(d20Data,"ForcedAdvantage"))]
+	[h:d20Advantage = if(json.get(d20Data,"Advantage")=="",0,json.get(d20Data,"Advantage"))]
+	[h:d20Disadvantage = if(json.get(d20Data,"Disadvantage")=="",0,json.get(d20Data,"Disadvantage"))]	
+}]
+
 [h:d20AdvantageMessageArray = json.get(d20Data,"AdvantageMessageArray")]
 
 [h:d20RolledNum = 1 + d20ExtraRolls]
@@ -35,7 +52,10 @@
         };
         case 0:{
 			[h:d20AdvantageBalance = 0]
-            [h:d20ForcedAdvantageMessage = "Neutral Roll Forced"]
+            [h,if(d20ForcedResult ==""):
+				d20ForcedAdvantageMessage = "Neutral Roll Forced"; 
+				d20ForcedAdvantageMessage = "Result Forced"
+			]
         };
         case 1:{
 			[h:d20AdvantageBalance = 1]
@@ -47,11 +67,22 @@
     [h,if(!json.contains(d20AdvantageMessageArray,d20ForcedAdvantageMessage)): d20AdvantageMessageArray = json.merge("['"+d20ForcedAdvantageMessage+"']",d20AdvantageMessageArray)]
 }]
 
-[h:d20RolledNum = d20RolledNum - json.length(d20AllRolls)]
-[h,if(d20RolledNum < 0),CODE:{
-	[h,count(abs(d20RolledNum)): d20AllRolls = if((json.length(d20AllRolls)-1-roll.count)<1,d20AllRolls,json.remove(d20AllRolls,max(0,json.length(d20AllRolls)-1-roll.count)))]
+[h,if(d20ForcedResult == ""),CODE:{
+	[h:d20RolledNum = d20RolledNum - json.length(d20AllRolls)]
+	[h,if(d20RolledNum < 0),CODE:{
+		[h,count(abs(d20RolledNum)): d20AllRolls = if((json.length(d20AllRolls)-1-roll.count)<1,d20AllRolls,json.remove(d20AllRolls,max(0,json.length(d20AllRolls)-1-roll.count)))]
+	};{
+		[h,count(d20RolledNum): d20AllRolls = json.append(d20AllRolls,1d20)]
+	}]
 };{
-	[h,count(d20RolledNum): d20AllRolls = json.append(d20AllRolls,1d20)]
+	[h:d20AllRolls = json.append("",d20ForcedResult)]
+}]
+
+[h,foreach(tempRoll,d20AllRolls),CODE:{
+	[h:finalRoll = tempRoll]
+	[h,if(d20MinimumResult != ""): finalRoll = if(finalRoll < d20MinimumResult,d20MinimumResult,finalRoll)]
+	[h,if(d20MaximumResult != ""): finalRoll = if(finalRoll > d20MaximumResult,d20MaximumResult,finalRoll)]
+	[h:d20AllRolls = json.set(d20AllRolls,roll.count,finalRoll)]
 }]
 
 [h:d20TotalRolled = json.length(d20AllRolls)]

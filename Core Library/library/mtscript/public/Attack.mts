@@ -55,7 +55,17 @@
 [h:"<!-- Note: number('') results in 0, so this will function without the key present -->"]
 [h:wa.CritMultiplier = 1 + number(json.get(wa.WeaponUsed,"CritMultiplier"))]
 
-[h:wa.Subeffects = json.get(wa.WeaponUsed,"Subeffects")]
+[h:wa.IsActiveTest = or(
+	json.get(wa.WeaponUsed,"isActivatable") == 0,
+	json.get(wa.WeaponUsed,"isActivatable") == "",
+	and(
+		json.get(wa.WeaponUsed,"isActivatable") == 1,
+		json.get(wa.WeaponUsed,"isActive") == 1)
+)]
+[h,if(wa.IsActiveTest):
+	wa.Subeffects = json.get(wa.WeaponUsed,"Subeffects");
+	wa.Subeffects = "[]"
+]
 [h,if(wa.Subeffects == ""): wa.Subeffects = "[]"]
 [h:wa.Props = json.get(wa.WeaponUsed,"WeaponProperties")]
 [h:wa.Magical = json.get(wa.WeaponUsed,"isMagical")]
@@ -239,10 +249,10 @@
 	
 	[h:ModifyDamageRollData = "[]"]
 
-	[h:pm.PassiveFunction("AttackRoll")]
-	[h:pm.PassiveFunction("WeaponAttackRoll")]
-	[h:pm.PassiveFunction("AttackRollTargeted",json.set("","ParentToken",thisAttackTarget))]
-	[h:pm.PassiveFunction("WeaponAttackRollTargeted",json.set("","ParentToken",thisAttackTarget))]
+	[h:pm.PassiveFunction("AttackDamageRoll")]
+	[h:pm.PassiveFunction("WeaponAttackDamageRoll")]
+	[h:pm.PassiveFunction("AttackDamageRollTargeted",json.set("","ParentToken",thisAttackTarget))]
+	[h:pm.PassiveFunction("WeaponAttackDamageRollTargeted",json.set("","ParentToken",thisAttackTarget))]
 	
 	[h,if(!json.isEmpty(ModifyDamageRollData)),CODE:{
 		[h,MACRO("ModifyDamageRoll@Lib:pm.a5e.Core"): json.append("",thisAttackDamage,ModifyDamageRollData)]
@@ -266,6 +276,7 @@
 	[h:thisAttackd20Rolls = json.get(thisAttackData,"d20Rolls")]
 	[h:thisAttackFinalRoll = json.get(thisAttackData,"FinalRoll")]
 	[h:thisAttackAdvDis = json.get(thisAttackData,"AdvantageBalance")]
+	[h:thisAttackAdvantageMessages = json.get(thisAttackData,"AdvantageMessages")]
 	[h:thisAttackToHit = json.get(thisAttackData,"ToHit")]
 	[h:thisAttackToHitStr = json.get(thisAttackData,"ToHitStr")]
 	[h:thisAttackToHitRules = json.get(thisAttackData,"RulesStr")]
@@ -276,21 +287,9 @@
 
 	[h:wa.AdvRerollLink = macroLinkText("Modify Attack Border@Lib:pm.a5e.Core","self-gm",json.set(wa.Data,"Advantage",1,"ForcedAdvantage",1,"d20Rolls",thisAttackd20Rolls,"PreviousDamage",thisAttackAllDamage,"Target",json.get(wa.TargetList,roll.count),"AttackNum",-1,"EffectID",thisAttackEffectID),ParentToken)]
 	[h:wa.DisRerollLink = macroLinkText("Modify Attack Border@Lib:pm.a5e.Core","self-gm",json.set(wa.Data,"Disadvantage",1,"ForcedAdvantage",1,"d20Rolls",thisAttackd20Rolls,"PreviousDamage",thisAttackAllDamage,"Target",thisAttackTarget,"AttackNum",-1,"EffectID",thisAttackEffectID),ParentToken)]
-	
-	[h:ToHitTableLine = json.set("",
-		"ShowIfCondensed",1,
-		"Header","Attack Roll",
-		"FalseHeader","",
-		"FullContents","<span style='"+if(thisAttackCrit,"font-size:2em; color:"+CritColor,if(thisAttackCritFail,"font-size:2em; color:"+CritFailColor,"font-size:1.5em"))+"'>"+thisAttackToHit+"</span>",
-		"RulesContents",thisAttackToHitRules+" = ",
-		"RollContents",thisAttackToHitStr+" = ",
-		"DisplayOrder","['Rules','Roll','Full']",
-		"BonusSectionNum",1,
-		"BonusSectionType1","Rules",
-		"BonusSectionStyling1","",
-		"Value",thisAttackToHit
-	)]
-	
+
+	[h:ToHitTableLine = "{}"]
+
 	[h,if(thisAttackAdvDis == 0),CODE:{
 		[h:ToHitTableLine = json.set(ToHitTableLine,
 			"BonusBody1","Reroll: <a href = '"+wa.AdvRerollLink+"'><span style = 'color:"+LinkColor+"'>Adv.</span></a> / <a href = '"+wa.DisRerollLink+"'><span style = 'color:"+LinkColor+"'>Dis.</span></a>"
@@ -303,6 +302,20 @@
 			"BonusBody1",extraRollsDisplay
 		)]
 	}]
+	
+	[h:ToHitTableLine = json.set(ToHitTableLine,
+		"ShowIfCondensed",1,
+		"Header","Attack Roll",
+		"FalseHeader","",
+		"FullContents","<span style='"+if(thisAttackCrit,"font-size:2em; color:"+CritColor,if(thisAttackCritFail,"font-size:2em; color:"+CritFailColor,"font-size:1.5em"))+"'>"+thisAttackToHit+"</span>",
+		"RulesContents","<span "+if(!json.isEmpty(thisAttackAdvantageMessages),"title='"+pm.a5e.CreateDisplayList(thisAttackAdvantageMessages,"and")+"'","")+">"+thisAttackToHitRules+"</span> = ",
+		"RollContents",thisAttackToHitStr+" = ",
+		"DisplayOrder","['Rules','Roll','Full']",
+		"BonusSectionNum",1,
+		"BonusSectionType1","Rules",
+		"BonusSectionStyling1","",
+		"Value",thisAttackToHit
+	)]
 	
 	[h:abilityTable = json.append(abilityTable,ToHitTableLine)]
 

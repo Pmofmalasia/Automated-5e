@@ -749,6 +749,7 @@
 		" ab.AttackAdv | 0 | Grants (Dis)Advantage on Attacks | CHECK ",
 		" ab.AttackBonus | 0 | Grants Bonus to Attack Rolls | CHECK ",
 		" ab.AttackStat | 0 | Modifies Attack Primary Stat | CHECK ",
+		" ab.AttackRoll | 0 | <html><span title='Effects that change the value of the die, such as a minimum roll value or forcing a particular result. (e.g. Reliable Talent, Portent)'>Modifies Attack Roll</span></html> | CHECK ",
 		" ab.AttackCrit | 0 | Affects Critical Hits | CHECK ",
 		" junkVar | ------------------------------------------------------------ | 0 | LABEL | SPAN=TRUE ",
 		" ab.AttackNumber | 0 | <html><span title='Specifically for effects like Extra Attack - Does not apply to effects that let you make an attack as a bonus action, etc.'>Increases number of attacks granted at once</span></html> | CHECK ",
@@ -756,7 +757,7 @@
 		" ab.AttackRange | 0 | Affects range or reach of the attack | CHECK ",
 		" junkVar | ------------------------------------------------------------ | 0 | LABEL | SPAN=TRUE ",
 		" ab.AttackDamage | 0 | <html><span title='Use for effects that grant a damage type based on the main damage type. For effects that grant damage independent of the main damage type, use effect after attack or after each attack (whichever is appropriate)'>Grants Flat Bonus to Damage</span></html> | CHECK ",
-		" ab.AttackRoll | 0 | <html><span title='Effects that change the value of the die, adding dice to the roll, using max damage, etc. (e.g. Great Weapon Fighting rerolling 1s and 2s, Barbarian - Brutal Critical, Tempest Cleric - Destructive Wrath)'>Modifies dice rolled for damage</span></html> | CHECK ",
+		" ab.AttackDamageRoll | 0 | <html><span title='Effects that change the value of the die, adding dice to the roll, using max damage, etc. (e.g. Great Weapon Fighting rerolling 1s and 2s, Barbarian - Brutal Critical, Tempest Cleric - Destructive Wrath)'>Modifies dice rolled for damage</span></html> | CHECK ",
 		" junkVar | ------------------------------------------------------------ | 0 | LABEL | SPAN=TRUE ",
 		" ab.AfterAttack | 0 | <html><span title='Catch-all for effects that operate independently of the attack itself. Can deal damage, force saving throws, force a condition upon an enemy, just display a message, and more. (e.g. Cleric - Divine Strike, Assassin - Death Strike, Eldritch Knight - Eldritch Strike, and Tempest Cleric - Thunderbolt Strike, respectively)'>Effect occurs after attacks</span></html> | CHECK ",
 		" ab.AfterEachAttack | 0 | <html><span title='Same as above, but triggers on every attack instead of once per turn.'>Effect occurs after every attack</span></html> | CHECK "
@@ -772,6 +773,7 @@
 	[h,if(ab.AttackRange): ab.Final = json.set(ab.Final,"CallAttackRange",ab.AttackRange)]
 	[h,if(ab.AttackDamage): ab.Final = json.set(ab.Final,"CallAttackDamage",ab.AttackDamage)]
 	[h,if(ab.AttackRoll): ab.Final = json.set(ab.Final,"CallAttackRoll",ab.AttackRoll)]
+	[h,if(ab.AttackDamageRoll): ab.Final = json.set(ab.Final,"CallAttackDamageRoll",ab.AttackDamageRoll)]
 	[h,if(ab.AfterAttack): ab.Final = json.set(ab.Final,"CallAfterAttack",ab.AfterAttack)]
 	[h,if(ab.AfterEachAttack): ab.Final = json.set(ab.Final,"CallAfterEachAttack",ab.AfterEachAttack)]
 };{}]
@@ -783,6 +785,7 @@
 		" ab.WeaponAttackAdv | 0 | Grants (Dis)Advantage on Weapon Attacks | CHECK ",
 		" ab.WeaponAttackBonus | 0 | Grants Bonus to Weapon Attack Rolls | CHECK ",
 		" ab.WeaponAttackStat | 0 | Modifies Weapon Attack Primary Stat | CHECK ",
+		" ab.WeaponAttackRoll | 0 | <html><span title='Effects that change the value of the die, such as a minimum roll value or forcing a particular result. (e.g. Reliable Talent, Portent)'>Modifies Attack Roll</span></html> | CHECK ",
 		" ab.WeaponAttackCrit | 0 | Affects Critical Hits | CHECK ",
 		" junkVar | ------------------------------------------------------------ | 0 | LABEL | SPAN=TRUE ",
 		" ab.WeaponAttackNumber | 0 | <html><span title='Specifically for effects like Extra Attack - Does not apply to effects that let you make an attack as a bonus action, etc.'>Increases number of attacks granted by the Attack action</span></html> | CHECK ",
@@ -791,7 +794,7 @@
 		" ab.WeaponAttackRange | 0 | Affects range or reach of the attack | CHECK ",
 		" junkVar | ------------------------------------------------------------ | 0 | LABEL | SPAN=TRUE ",
 		" ab.WeaponAttackDamage | 0 | <html><span title='Use for effects that grant a damage type based on the weapon used. For effects that grant damage independent of the weapons damage type, use effect after attack or after each attack (whichever is appropriate)'>Grants Flat Bonus to Weapon Damage</span></html> | CHECK ",
-		" ab.WeaponAttackRoll | 0 | <html><span title='Effects that change the value of the die, adding dice to the roll, using max damage, etc. (e.g. Great Weapon Fighting rerolling 1s and 2s, Barbarian - Brutal Critical, Tempest Cleric - Destructive Wrath)'>Modifies dice rolled for weapon damage</span></html> | CHECK ",
+		" ab.WeaponAttackDamageRoll | 0 | <html><span title='Effects that change the value of the die, adding dice to the roll, using max damage, etc. (e.g. Great Weapon Fighting rerolling 1s and 2s, Barbarian - Brutal Critical, Tempest Cleric - Destructive Wrath)'>Modifies dice rolled for weapon damage</span></html> | CHECK ",
 		" junkVar | ------------------------------------------------------------ | 0 | LABEL | SPAN=TRUE ",
 		" ab.AfterWeaponAttack | 0 | <html><span title='Catch-all for effects that operate independently of the weapon damage itself. Can deal damage, force saving throws, force a condition upon an enemy, just display a message, and more. (e.g. Cleric - Divine Strike, Assassin - Death Strike, Eldritch Knight - Eldritch Strike, and Tempest Cleric - Thunderbolt Strike, respectively)'>Effect occurs after attacks</span></html> | CHECK ",
 		" ab.AfterEachWeaponAttack | 0 | <html><span title='Same as above, but triggers on every attack instead of once per turn.'>Effect occurs after every attack</span></html> | CHECK "
@@ -807,6 +810,7 @@
 	[h,if(ab.WeaponAttackRange): ab.Final = json.set(ab.Final,"CallWeaponAttackRange",ab.WeaponAttackRange)]
 	[h,if(ab.WeaponAttackDamage): ab.Final = json.set(ab.Final,"CallWeaponAttackDamage",ab.WeaponAttackDamage)]
 	[h,if(ab.WeaponAttackRoll): ab.Final = json.set(ab.Final,"CallWeaponAttackRoll",ab.WeaponAttackRoll)]
+	[h,if(ab.WeaponAttackDamageRoll): ab.Final = json.set(ab.Final,"CallWeaponAttackDamageRoll",ab.WeaponAttackDamageRoll)]
 	[h,if(ab.AfterWeaponAttack): ab.Final = json.set(ab.Final,"CallAfterWeaponAttack",ab.AfterWeaponAttack)]
 	[h,if(ab.AfterEachWeaponAttack): ab.Final = json.set(ab.Final,"CallAfterEachWeaponAttack",ab.AfterEachWeaponAttack)]
 };{}]
@@ -824,9 +828,10 @@
 		" ab.SpellAdv | 0 | Grants (Dis)Advantage on Spell Attacks | CHECK ",
 		" ab.SpellBonus | 0 | Grants Bonus to Spell Attack Rolls | CHECK ",
 		" ab.SpellCrit | 0 | Affects Spell Critical Hits | CHECK ",
+		" ab.SpellRoll | 0 | <html><span title='Effects that change the value of the die, such as a minimum roll value or forcing a particular result. (e.g. Reliable Talent, Portent)'>Modifies Attack Roll</span></html> | CHECK ",
 		" junkVar | ------------------------------------------------------------ | 0 | LABEL | SPAN=TRUE ",
 		" ab.SpellDamage | 0 | <html><span title='Use for effects that grant a damage bonus based on the damage of the spell. (e.g. Cleric - Disciple of Life, Potent Spellcasting) For effects that grant damage independent of the spell&#39;s damage type, use effect after attack or after each attack (whichever is appropriate)'>Grants Flat Bonus to Spell Damage or Healing</span></html> | CHECK ",
-		" ab.SpellRoll | 0 | <html><span title='Effects that change the value of the die, adding dice to the roll, using max damage, etc. (e.g. Elemental Adept feat setting 1s to 2s, Life Cleric - Supreme Healing)'>Modifies dice rolled for weapon damage</span></html> | CHECK ",
+		" ab.SpellDamageRoll | 0 | <html><span title='Effects that change the value of the die, adding dice to the roll, using max damage, etc. (e.g. Elemental Adept feat setting 1s to 2s, Life Cleric - Supreme Healing)'>Modifies dice rolled for weapon damage</span></html> | CHECK ",
 		" junkVar | ------------------------------------------------------------ | 0 | LABEL | SPAN=TRUE ",
 		" ab.AfterSpell | 0 | <html><span title='Catch-all for effects that operate independently of the spell itself. Can deal damage, force saving throws, force a condition upon an enemy, just display a message, and more. Can still have conditions for types of spells they are triggered by. (e.g. Cleric - Divine Strike, Enchantment Wizard - Alter Memories, Cant find a PHB example, and Eldritch Knight - War Magic, respectively)'>Effect occurs after spell is cast</span></html> | CHECK "
 	))]
@@ -839,6 +844,7 @@
 	[h,if(ab.SpellCrit): ab.Final = json.set(ab.Final,"CallSpellCrit",ab.SpellCrit)]
 	[h,if(ab.SpellDamage): ab.Final = json.set(ab.Final,"CallSpellDamage",ab.SpellDamage)]
 	[h,if(ab.SpellRoll): ab.Final = json.set(ab.Final,"CallSpellRoll",ab.SpellRoll)]
+	[h,if(ab.SpellDamageRoll): ab.Final = json.set(ab.Final,"CallSpellDamageRoll",ab.SpellDamageRoll)]
 	[h,if(ab.AfterSpell): ab.Final = json.set(ab.Final,"CallAfterSpell",ab.AfterSpell)]
 };{[h:ab.SpellClass=0]}]
 

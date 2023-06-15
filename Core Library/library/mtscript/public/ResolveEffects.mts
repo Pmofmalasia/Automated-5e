@@ -53,13 +53,14 @@
 [h,if(effSaveDCData==""): effSavesMadeData = "{}"; effSavesMadeData = if(json.get(effSaveDCData,"SavesMade")=="","{}",json.get(effSaveDCData,"SavesMade"))]
 [h,if(effCheckDCData==""): effChecksMadeData = "{}"; effChecksMadeData = if(json.get(effCheckDCData,"ChecksMade")=="","{}",json.get(effCheckDCData,"ChecksMade"))]
 
-[h:needsFurtherResolution = 0]
 [h:remainingTargetsList = json.get(effFull,"RemainingTargets")]
 [h:targetsWithAdditionalAttackResolution = "[]"]
 
 [h,if(json.get(effFull,"SpecificTargets")!=""): effTargets = json.get(effFull,"SpecificTargets")]
+[h:"<!-- TODO: May need a test to make sure the SpecificTargets are actually targets of the effect? But not sure how they would get here in the first place -->"]
 
 [h:IsTooltip = 0]
+[h:AnyTargetNeedsFurtherResolution = 0]
 [h:pm.a5e.OverarchingContext = json.get(effFull,"Context")]
 [h:DamageColor = pm.DamageColor()]
 [h:HealingColor = pm.HealingColor()]
@@ -77,6 +78,7 @@
 	[h:thisTokenConditionInfo = effConditionInfo]
     [h:thisTokenConditionsApplied = effAllConditionIdentifiers]
 
+	[h:needsFurtherResolution = 0]
 	[h:AttackHit = 0]
 	[h:SavePassed = 0]
 	[h:CheckPassed = 0]
@@ -205,7 +207,7 @@
 				));
 				saveChoice = 0
 			]
-			
+
 			[h:finalSaveType = json.get(effSaveDCType,saveChoice)]
 
 			[h,MACRO("Save@Lib:pm.a5e.Core"): json.set("","Save",finalSaveType,"Type","Save","ParentToken",targetToken,"ID",effID)]
@@ -218,23 +220,37 @@
 				SavePassed = (json.get(SaveResult,"Value")=="AutoSuccess");
 				SavePassed = 0
 			]
-			[h,switch(autoResultTest+""+SavePassed):
+			[h:SoloTargetTest = json.length(json.get(effFull,"Targets")) == 1]
+			[h:ResolveAutoResultNow = and(autoResultTest,SoloTargetTest)]
+
+			[h,switch(ResolveAutoResultNow+""+SavePassed):
 				case "11": thisTokenModifiableComponents = pm.a5e.ResolveDCSuccess(json.set("","DCData",thisTokenSaveDCData,"ModifiableComponents",thisTokenModifiableComponents));
 				case "10": thisTokenModifiableComponents = pm.a5e.ResolveDCFailure(json.set("","DCData",thisTokenSaveDCData,"ModifiableComponents",thisTokenModifiableComponents));
 				case "00": needsFurtherResolution = 1
 			]
+			[h,if(!ResolveAutoResultNow): AnyTargetNeedsFurtherResolution = 1]
 		};
 		case "10":{
 			[h:SaveResult = json.get(effSavesMadeData,targetToken)]
-			[h:SavePassed = json.get(SaveResult,"Value")>=json.get(thisTokenSaveDCData,"DC")]
-			[h,if(SavePassed==1):
-				thisTokenModifiableComponents = pm.a5e.ResolveDCSuccess(json.set("","DCData",thisTokenSaveDCData,"ModifiableComponents",thisTokenModifiableComponents));
-				thisTokenModifiableComponents = pm.a5e.ResolveDCFailure(json.set("","DCData",thisTokenSaveDCData,"ModifiableComponents",thisTokenModifiableComponents))
+			[h:SaveResultValue = json.get(SaveResult,"Value")]
+			[h:autoResultTest = !isNumber(SaveResultValue)]
+			[h,if(autoResultTest):
+				SavePassed = (json.get(SaveResult,"Value")=="AutoSuccess");
+				SavePassed = json.get(SaveResult,"Value") >= json.get(thisTokenSaveDCData,"DC")
+			]
+
+			[h:SavesNotMade = json.difference(json.get(effFull,"Targets"),json.fields(effSavesMadeData,"json"))]
+			[h,if(AnyTargetNeedsFurtherResolution == 0): AnyTargetNeedsFurtherResolution = !json.isEmpty(SavesNotMade)]
+
+			[h,switch(AnyTargetNeedsFurtherResolution+""+SavePassed):
+				case "01": thisTokenModifiableComponents = pm.a5e.ResolveDCSuccess(json.set("","DCData",thisTokenSaveDCData,"ModifiableComponents",thisTokenModifiableComponents));
+				case "00": thisTokenModifiableComponents = pm.a5e.ResolveDCFailure(json.set("","DCData",thisTokenSaveDCData,"ModifiableComponents",thisTokenModifiableComponents));
+				default: needsFurtherResolution = 1 
 			]
 
 			[h,if(SavePassed):
-				saveResultText = "<span style='color:"+HealingColor+"'>Success</span>";
-				saveResultText = "<span style='color:"+DamageColor+"'>Failure</span>"
+				saveResultText = "<span style='color:"+HealingColor+"'>"+if(autoResultTest,"Automatic ","")+"Success</span>";
+				saveResultText = "<span style='color:"+DamageColor+"'>"+if(autoResultTest,"Automatic ","")+"Failure</span>"
 			]
 
 			[h:abilityTable = json.append(abilityTable,json.set("",
@@ -297,7 +313,7 @@
 				DCValue = json.get(thisTokenCheckDCData,"DC")
 			]
 
-			[h:CheckPassed = json.get(CheckResult,"Value" >= DCValue)]
+			[h:CheckPassed = (json.get(CheckResult,"Value") >= DCValue)]
 			
 			[h,if(CheckPassed):
 				thisTokenModifiableComponents = pm.a5e.ResolveDCSuccess(json.set("","DCData",thisTokenCheckDCData,"ModifiableComponents",thisTokenModifiableComponents));
@@ -400,6 +416,7 @@
 			"AdditionalAttackResolution",targetsWithAdditionalAttackResolution)
 		)
 	)]
+	[h:effFull = json.remove(effFull,"SpecificTargets")]
 	
 	[h:setLibProperty("gd.Effects",json.path.set(getLibProperty("gd.Effects","Lib:pm.a5e.Core"),"[*][?(@.ID=="+effID+")]",effFull),"Lib:pm.a5e.Core")]
 };{

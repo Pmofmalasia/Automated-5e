@@ -5,9 +5,9 @@ function chooseSpecialEffectNumber(){
 		clearUnusedTable("MonsterWeaponCreationTable","rowSpecialEffects","rowSubmit");
 	}
 	else{
-		let nextRowIndex = document.getElementById("rowSpecialEffects").rowIndex;
+		let nextRowIndex = document.getElementById("rowSpecialEffects").rowIndex + 1;
 
-		addTableRow("MonsterWeaponCreationTable",nextRowIndex,"rowEffectNumber","<th><label for='EffectsNumber'>Different Effects:</label></th><td><input type='text' id='EffectsNumber' name='EffectsNumber'></td>");
+		addTableRow("MonsterWeaponCreationTable",nextRowIndex,"rowEffectNumber","<th><label for='EffectsNumber'>Number of Effects:</label></th><td><input type='number' id='EffectsNumber' name='EffectsNumber' min=1 value=1></td>");
 		nextRowIndex++;
 	}
 }

@@ -5,7 +5,7 @@
 [h:ItemChoiceID = json.get(EquipItemData,"ItemChoice")]
 [h:CurrentInventory = getProperty("a5e.stat.Inventory")]
 
-[h:NewInventory = json.path.set(CurrentInventory,"[*][?(@.isWearable == 1)]['IsActive']",0)]
+[h:NewInventory = json.path.set(CurrentInventory,"[*][?(@.isWearable == 1 || @.isAttunement == 1)]['IsActive']",0)]
 [h:NewInventory = json.path.set(NewInventory,"[*][?(@.isAttunement == 1)]['AttunedTo']","")]
 
 [h:ArmorChoice = json.get(EquipItemData,"ArmorChoice")]

@@ -9,29 +9,76 @@
 [h:ParentToken = json.get(effFull,"ParentToken")]
 [h:effTargets = json.get(effFull,"Targets")]
 [h:effTargetedConditions = json.get(effFull,"TargetedConditions")]
+[h:effConditionGroupID = pm.a5e.CreateConditionID(ParentToken,effTargets)]
+
+[h,if(json.get(effFull,"SpecificTargets")!=""): effTargets = json.get(effFull,"SpecificTargets")]
+[h:remainingTargetsList = json.get(effFull,"RemainingTargets")]
+[h:"<!-- MAYDO: May need a test to make sure the SpecificTargets are actually targets of the effect? But not sure how they would get here in the first place -->"]
 
 [h:ParentEffect = json.get(effFull,"ParentSubeffect")]
 [h,if(ParentEffect!=""),CODE:{
 	[h:ParentEffectData = json.get(effFull,"ParentEffectData")]
+	[h:ParentSubeffectRequirementData = json.get(effFull,"ParentSubeffectRequirements")]
 
-	[h,switch(json.get(effFull,"ParentSubeffectRequirements")),CODE:
+	[h,switch(json.get(ParentSubeffectRequirementData,"Requirement")),CODE:
+		case "Attack":{
+			[h:isHitRequired = (json.get(ParentSubeffectRequirementData,"Result") == "Hit")]
+			[h:ParentSubeffectRequirementsMet = (isHitRequired == json.get(ParentEffectData,"AttackHit"))]
+			[h:AttackHitMargin = json.get(ParentEffectData,"AttackToHit") - json.get(ParentEffectData,"AttackACToHit")]
+			[h,if(isHitRequired == 0): AttackHitMargin = AttackHitMargin * -1]
+			[h,if(AttackHitMargin < json.get(ParentSubeffectRequirementData,"Margin")): ParentSubeffectRequirementsMet = 0]
+		};
+		case "Save":{
+			[h:isPassRequired = (json.get(ParentSubeffectRequirementData,"Result") == "Pass")]
+			[h:ParentSubeffectRequirementsMet = (isPassRequired == json.get(ParentEffectData,"SavePassed"))]
+			[h:SavePassMargin = json.get(ParentEffectData,"SaveValue") - json.get(ParentEffectData,"SaveDCValue")]
+			[h,if(isPassRequired == 0): SavePassMargin = SavePassMargin * -1]
+			[h,if(SavePassMargin < json.get(ParentSubeffectRequirementData,"Margin")): ParentSubeffectRequirementsMet = 0]
+		};
+		case "Check":{
+			[h:isPassRequired = (json.get(ParentSubeffectRequirementData,"Result") == "Pass")]
+			[h:ParentSubeffectRequirementsMet = (isPassRequired == json.get(ParentEffectData,"CheckPassed"))]
+			[h:CheckPassMargin = json.get(ParentEffectData,"CheckValue") - json.get(ParentEffectData,"CheckDCValue")]
+			[h,if(isPassRequired == 0): CheckPassMargin = CheckPassMargin * -1]
+			[h,if(CheckPassMargin < json.get(ParentSubeffectRequirementData,"Margin")): ParentSubeffectRequirementsMet = 0]
+		};
 		default:{
-			
+			[h:ParentSubeffectRequirementsMet = 1]
 		}
 	]
-	[h:"<!-- TODO: Add info here such as conditions gained, damage dealt, attack hit, save/check passed, etc. Possible plan: Set ParentEffectData key on LinkedEffects to an output of the result. -->"]
+	[h:"<!-- TODO: Need to add additional info here for conditions gained/damage/healing. Would be easier on this end to have creation input list all possible effects (from ParentSubeffect) and store as just an array of required effects. However, may prove difficult for effects with choice, which would require the current Any/All option. Also need to add ConditionNotApplied, I think something uses this but forget what. -->"]
 
-	[h,if(json.type(effTargets)=="OBJECT"),CODE:{
-		[h:PriorEffectTargets = json.get(ParentEffectData,"Targets")]
-		[h,if(json.get(effTargets,"TargetAll") == 1): effTargets = PriorEffectTargets]
+	[h,if(!ParentSubeffectRequirementsMet),CODE:{
+		[h,if(json.length(effTargets)==1): titleAddon = " on "+getName(json.get(effTargets,0)); titleAddon = ""]
+		[h:ClassFeatureData = json.set("",
+			"Flavor","",
+			"ParentToken",ParentToken,
+			"DMOnly",0,
+			"Class",if(effClassForDisplay=="",if(effClass=="","zzChecksAndSaves",effClass),effClassForDisplay),
+			"ColorSubtype",effColorSubtype,
+			"Name","Resolve Effects"+titleAddon,
+			"FalseName","",
+			"OnlyRules",0
+		)]
+
+		[h:remainingTargetsList = json.difference(remainingTargetsList,effTargets)]
+		[h:effFull = json.set(effFull,"RemainingTargets",remainingTargetsList)]
+		[h:effFull = json.remove(effFull,"SpecificTargets")]
+
+		[h:"<!-- TODO: Will need to add further info for resolving LinkedEffects of LinkedEffects that do not meet reqs, likely in the form of making a UDF that covers for here and later in ResolveEffects. -->"]
+
+		[h,if(!json.isEmpty(remainingTargetsList)):
+			setLibProperty("gd.Effects",json.path.set(getLibProperty("gd.Effects","Lib:pm.a5e.Core"),"[*][?(@.ID=="+effID+")]",effFull),"Lib:pm.a5e.Core");
+			setLibProperty("gd.Effects",json.path.delete(getLibProperty("gd.Effects","Lib:pm.a5e.Core"),"[*][?(@.ID=="+effID+")]"),"Lib:pm.a5e.Core")
+		]
+
+		[h:return(0,json.set("","Table","[]","FeatureData",ClassFeatureData,"Targets",effTargets))]
 	};{}]
 };{
 	[h,if(json.type(effTargets)=="OBJECT"): assert(0,"Something unexpected happened: Effect Targets is an object without having a Parent Subeffect")]
 }]
 
 [h:LinkedEffects = json.path.read(data.getData("addon:","pm.a5e.core","gd.Effects"),"[*][?(@.ParentSubeffect == "+effID+")]")]
-
-[h:effConditionGroupID = pm.a5e.CreateConditionID(ParentToken,effTargets)]
 
 [h:effTargetSpecific = json.get(effToResolve,"TargetSpecificEffects")]
 [h:effConditionInfo = json.get(effToResolve,"ConditionInfo")]
@@ -53,11 +100,7 @@
 [h,if(effSaveDCData==""): effSavesMadeData = "{}"; effSavesMadeData = if(json.get(effSaveDCData,"SavesMade")=="","{}",json.get(effSaveDCData,"SavesMade"))]
 [h,if(effCheckDCData==""): effChecksMadeData = "{}"; effChecksMadeData = if(json.get(effCheckDCData,"ChecksMade")=="","{}",json.get(effCheckDCData,"ChecksMade"))]
 
-[h:remainingTargetsList = json.get(effFull,"RemainingTargets")]
 [h:targetsWithAdditionalAttackResolution = "[]"]
-
-[h,if(json.get(effFull,"SpecificTargets")!=""): effTargets = json.get(effFull,"SpecificTargets")]
-[h:"<!-- TODO: May need a test to make sure the SpecificTargets are actually targets of the effect? But not sure how they would get here in the first place -->"]
 
 [h:IsTooltip = 0]
 [h:AnyTargetNeedsFurtherResolution = 0]
@@ -80,8 +123,14 @@
 
 	[h:needsFurtherResolution = 0]
 	[h:AttackHit = 0]
+	[h:attackToHit = ""]
+	[h:attackACToHit = getProperty("a5e.stat.AC")]
 	[h:SavePassed = 0]
+	[h:SaveDCValue = ""]
+	[h:SaveResultValue = ""]
 	[h:CheckPassed = 0]
+	[h:CheckResultValue = ""]
+	[h:CheckDCValue = ""]
 	[h:DamageDealt = "{}"]
 	[h:ConditionsSet = "[]"]
 	
@@ -121,7 +170,7 @@
 		[h:attackToHit = json.get(thisTokenAttackData,"ToHit")]
 		[h:attackCrit = json.get(thisTokenAttackData,"CritTest")]
 		[h:attackCritFail = json.get(thisTokenAttackData,"CritFailTest")]
-		[h:hitTarget = and(!attackCritFail,or(attackCrit,attackToHit >= getProperty("a5e.stat.AC")))]
+		[h:hitTarget = and(!attackCritFail,or(attackCrit,attackToHit >= attackACToHit))]
 		[h,if(json.get(thisTokenAttackData,"AdditionalAttackResolution")==""):
 			needsAdditionalAttackResolution = 1;
 			needsAdditionalAttackResolution = !json.contains(json.get(thisTokenAttackData,"AdditionalAttackResolution"),targetToken)
@@ -215,9 +264,10 @@
 			[h:effSavesMadeData = json.set(effSavesMadeData,targetToken,SaveResult)]
 			[h:abilityTable = json.merge(abilityTable,json.get(SaveResult,"Table"))]
 
-			[h:autoResultTest = !isNumber(json.get(SaveResult,"Value"))]
+			[h:SaveResultValue = json.get(SaveResult,"Value")]
+			[h:autoResultTest = !isNumber(SaveResultValue)]
 			[h,if(autoResultTest):
-				SavePassed = (json.get(SaveResult,"Value")=="AutoSuccess");
+				SavePassed = (SaveResultValue=="AutoSuccess");
 				SavePassed = 0
 			]
 			[h:SoloTargetTest = json.length(json.get(effFull,"Targets")) == 1]
@@ -234,9 +284,10 @@
 			[h:SaveResult = json.get(effSavesMadeData,targetToken)]
 			[h:SaveResultValue = json.get(SaveResult,"Value")]
 			[h:autoResultTest = !isNumber(SaveResultValue)]
+			[h:SaveDCValue = json.get(thisTokenSaveDCData,"DC")]
 			[h,if(autoResultTest):
-				SavePassed = (json.get(SaveResult,"Value")=="AutoSuccess");
-				SavePassed = json.get(SaveResult,"Value") >= json.get(thisTokenSaveDCData,"DC")
+				SavePassed = (SaveResultValue=="AutoSuccess");
+				SavePassed = SaveResultValue >= SaveDCValue
 			]
 
 			[h:SavesNotMade = json.difference(json.get(effFull,"Targets"),json.fields(effSavesMadeData,"json"))]
@@ -292,10 +343,11 @@
 			[h:CheckResult = macro.return]
 			[h:effChecksMadeData = json.set(effChecksMadeData,targetToken,CheckResult)]
 			[h:abilityTable = json.merge(abilityTable,json.get(CheckResult,"Table"))]
-			
-			[h:autoResultTest = !isNumber(json.get(CheckResult,"Value"))]
+
+			[h:CheckResultValue = json.get(CheckResult,"Value")]
+			[h:autoResultTest = !isNumber(CheckResultValue)]
 			[h,if(autoResultTest):
-				CheckPassed = (json.get(CheckResult,"Value")=="AutoSuccess");
+				CheckPassed = (CheckResultValue=="AutoSuccess");
 				CheckPassed = 0
 			]
 			[h,switch(autoResultTest+""+CheckPassed):
@@ -309,11 +361,12 @@
 			[h:CheckResult = json.get(effChecksMadeData,targetToken)]
 			[h:ContestedCheckTest = json.type(json.get(thisTokenCheckDCData,"DC")) == "OBJECT"]
 			[h,if(ContestedCheckTest):
-				DCValue = json.get(json.get(thisTokenCheckDCData,"DC"),"Value");
-				DCValue = json.get(thisTokenCheckDCData,"DC")
+				CheckDCValue = json.get(json.get(thisTokenCheckDCData,"DC"),"Value");
+				CheckDCValue = json.get(thisTokenCheckDCData,"DC")
 			]
 
-			[h:CheckPassed = (json.get(CheckResult,"Value") >= DCValue)]
+			[h:CheckResultValue = json.get(CheckResult,"Value")]
+			[h:CheckPassed = (CheckResultValue >= CheckDCValue)]
 			
 			[h,if(CheckPassed):
 				thisTokenModifiableComponents = pm.a5e.ResolveDCSuccess(json.set("","DCData",thisTokenCheckDCData,"ModifiableComponents",thisTokenModifiableComponents));
@@ -356,7 +409,7 @@
 		[h:abilityTable = json.merge(abilityTable,json.get(macro.return,"Table"))]
 		[h:DamageDealt = json.get(macro.return,"Damage")]
 	};{}]
-	
+
 	[h,foreach(conditionSet,thisTokenConditionInfo),CODE:{
 		[h,MACRO("ApplyCondition@Lib:pm.a5e.Core"): json.set(conditionSet,
 			"GroupID",effConditionGroupID,
@@ -371,16 +424,26 @@
 		[h,MACRO("ModifyConditions@Lib:pm.a5e.Core"): json.set(thisTokenConditionModificationInfo,"Conditions",thisTokenTargetedConditions,"ParentToken",targetToken)]
 		[h:abilityTable = json.merge(abilityTable,json.get(macro.return,"Table"))]
 	}]
-	
-	[h,if(!needsFurtherResolution),CODE:{
-		[h:thisTargetLinkedEffects = json.path.read(LinkedEffects,"[*][?(@.RemainingTargets.[*] == '"+targetToken+"' || @.RemainingTargets.[*].TargetAll != 0)]")]
-		[h:"<!-- Note: For whatever reason, == 1 does not work but !=0 does. Dunno why. -->"]
 
+	[h,if(!needsFurtherResolution),CODE:{
+		[h,if(0): thisTargetLinkedEffects = json.path.read(LinkedEffects,"[*][?(@.RemainingTargets.[*] == '"+targetToken+"')]")]
+		[h:"<!-- BUGFIX json.path: Above statement can replace below loop once json.paths are fixed -->"]
+
+		[h:thisTargetLinkedEffects = "[]"]
+		[h,foreach(tempLinkedEffect,LinkedEffects): thisTargetLinkedEffects = if(json.contains(json.get(tempLinkedEffect,"RemainingTargets"),targetToken),json.append(thisTargetLinkedEffects,tempLinkedEffect),thisTargetLinkedEffects)]
+
+		[h:"<!-- TODO: Pass information about how much the attack hit by, save failed by, etc. -->"]
 		[h:NextEffectData = json.set("",
 			"AttackHit",AttackHit,
 			"AttackCrit",attackCrit,
+			"AttackToHit",attackToHit,
+			"AttackACToHit",attackACToHit,
 			"SavePassed",SavePassed,
+			"SaveValue",SaveResultValue,
+			"SaveDCValue",SaveDCValue,
 			"CheckPassed",CheckPassed,
+			"CheckValue",CheckResultValue,
+			"CheckDCValue",CheckDCValue,
 			"DamageDealt",DamageDealt,
 			"ConditionsSet",ConditionsSet,
 			"Targets",effTargets,

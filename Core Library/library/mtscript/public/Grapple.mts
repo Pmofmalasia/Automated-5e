@@ -33,7 +33,7 @@
 
 [h:gr.thisEffect = json.set(gr.thisEffect,"Targets",gr.Target)]
 
-[h:"<!-- Needs EndInfo: 
+[h:"<!-- TODO: Needs EndInfo: 
 	- Ends when letting go with that hand/equipping something (equipment rework)
 	- Ends with successful contested check by target (needs support for ending conditions with check/save)
 	- Ends if targets are moved out of range of the grapple (needs movement support in general)

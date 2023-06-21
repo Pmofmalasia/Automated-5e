@@ -73,7 +73,7 @@
 
 [h:tempNewAbilitiesWithPrereqs = json.path.read(tempNewAbilities,"[*][?(@.Prereqs!=null)]","DEFAULT_PATH_LEAF_TO_NULL")]
 [h,foreach(feature,tempNewAbilitiesWithPrereqs),CODE:{
-	[h:pm.a5e.CheckFeaturePrereqs(json.get(feature,"Prereqs"),"ParentToken",ParentToken)]
+	[h:pm.a5e.CheckFeaturePrereqs(json.set("",json.get(feature,"Prereqs"),"ParentToken",ParentToken))]
 	[h,if(!macro.return): tempNewAbilities = json.path.delete(tempNewAbilities,"[*][?(@.Name=='"+json.get(feature,"Name")+"' && @.Class=='"+json.get(feature,"Class")+"' && @.Subclass=='"+json.get(feature,"Subclass")+"')]")]
 }]
 

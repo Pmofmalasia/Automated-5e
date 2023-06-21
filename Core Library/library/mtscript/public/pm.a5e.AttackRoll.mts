@@ -56,5 +56,6 @@
     "ToHitStr",attack.ToHitStr,
     "RulesStr",attack.ToHitRulesStr,
     "CritTest",CritTest,
-    "CritFailTest",CritFailTest
+    "CritFailTest",CritFailTest,
+	"Subeffects",thisAttackSubeffects
 ))]

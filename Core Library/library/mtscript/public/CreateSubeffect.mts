@@ -23,7 +23,9 @@
 			[h:PriorSubeffectData = json.get(tempPriorSubeffectData,"Subeffects")]
 		};
 		default: {
-			[h:PriorSubeffectData = json.get(thisPlayerCurrentFeatureData,"Subeffects")]
+			[h:AllPriorEffectData = json.get(thisPlayerCurrentFeatureData,"Effects")]
+			[h:CurrentEffectData = json.get(AllPriorEffectData,json.length(AllPriorEffectData)-1)]
+			[h:PriorSubeffectData = json.get(CurrentEffectData,"Subeffects")]
 		}
 	]
 

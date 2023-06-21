@@ -3,11 +3,11 @@
 [h,foreach(effect,incompleteEffects),CODE:{
 	[h:targetList = json.get(effect,"Targets")]
 	[h:targetName = ""]
-	[h,switch(json.length(targetList)):
+	[h,switch(json.length(targetList)+"REMOVELATER"):
 		case 1: targetName = getName(json.get(targetList,0));
 		case 2: targetName = getName(json.get(targetList,0))+" and "+getName(json.get(targetList,1));
 		case 3: targetName = getName(json.get(targetList,0))+", "+getName(json.get(targetList,1))+", and "+getName(json.get(targetList,2));
-		default: targetName = "Multiple Targets"
+		default: targetName = "Multiple Targets (Forced here, come fix this)"
 	]
 	
 	[h,if(json.get(effect,"ParentToken")==""):

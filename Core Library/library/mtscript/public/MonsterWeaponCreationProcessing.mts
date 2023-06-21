@@ -22,7 +22,7 @@
 		[h:EffectsNumber = 1]
 		[h:WhichSubeffect = 1]
 	};{
-		[h:EffectsNumber = 1 + json.get(MonsterWeaponData,"EffectsNumber")]
+		[h:EffectsNumber = json.get(MonsterWeaponData,"EffectsNumber")]
 		[h,if(json.get(MonsterWeaponData,"SpecialEffects")=="Mixed"):
 			WhichSubeffect = 1;
 			WhichSubeffect = 2
@@ -35,9 +35,10 @@
 	)]
 	[h:DummyWeaponSubeffect = json.set("",
 		"Attack",DummyAttackSubeffect,
-		"Damage",json.get(MonsterWeaponData,"WeaponDamage")
+		"Damage",json.get(MonsterWeaponData,"WeaponDamage"),
+		"isDummySubeffect",1
 	)]
-	[h:MonsterWeaponData = json.set(MonsterWeaponData,"Subeffects",json.append("",DummyWeaponSubeffect))]
+	[h:MonsterWeaponData = json.set(MonsterWeaponData,"Effects",json.append("",json.set("","Subeffects",json.append("",DummyWeaponSubeffect))))]
 
     [h:AllWeaponData = json.set(getLibProperty("ct.NewWeapon","pm.a5e.Core"),getPlayerName(),MonsterWeaponData)]
     [h:setLibProperty("ct.NewWeapon",AllWeaponData,"Lib:pm.a5e.Core")]

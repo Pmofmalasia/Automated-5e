@@ -216,7 +216,7 @@
 	]
 }]
 
-[h:spell.AHL = eLevel - SpellLevel]
+[h:AHLTier = eLevel - SpellLevel]
 
 [h:FinalSpellData = json.get(SpellData,sSpellChoice)]
 [h:"<!--- Dialogue --->"]
@@ -251,7 +251,7 @@
 	[h:DurationString = DurationValue+" "+DurationUnits+if(DurationValue==1,"","s")]
 }]
 
-[h,count(spell.AHL),CODE:{
+[h,count(AHLTier),CODE:{
 	[h:tempHasAHLDurationTest = json.contains(FinalSpellData,"AHLDurationLevel"+(SpellLevel+roll.count+1))]
 	[h,if(tempHasAHLDurationTest),CODE:{
 		[h:tempAHLDurationData = json.get(FinalSpellData,"AHLDurationLevel"+(SpellLevel+roll.count+1))]
@@ -390,7 +390,7 @@
 ))]
 
 [h:pm.a5e.EffectData = "[]"]
-[h,foreach(tempSubeffect,SpellSubeffects): pm.a5e.SpellcastingSubeffect(tempSubeffect)]
+[h,foreach(tempSubeffect,SpellSubeffects): pm.a5e.ExecuteSubeffect(tempSubeffect,json.set("","InstancePrefixes",json.append("","Spell")))]
 
 [h:pm.PassiveFunction("AfterSpell")]
 

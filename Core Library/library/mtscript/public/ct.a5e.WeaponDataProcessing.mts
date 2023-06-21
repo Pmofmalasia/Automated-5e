@@ -85,4 +85,21 @@
 
 [h:"<-- TODO: Add weapon crit dice here after deciding on format for how to store data -->"]
 
+[h:"<-- TODO: Change this to use isWeaponEffect once processing function is shifted -->"]
+[h,if(json.contains(WeaponData,"HasActiveEffects")),CODE:{
+	[h:WeaponData = json.set(WeaponData,"isWeaponEffectRandom",json.contains(WeaponData,"isEffectRandom"))]
+
+	[h:DummyAttackSubeffect = json.set("",
+		"MeleeRanged",json.get(WeaponData,"WeaponMeleeRanged"),
+		"CritThresh",json.get(WeaponData,"CritThresh")
+	)]
+	[h:DummyWeaponSubeffect = json.set("",
+		"Attack",DummyAttackSubeffect,
+		"Damage",json.get(WeaponData,"WeaponDamage"),
+		"isDummySubeffect",1
+	)]
+
+	[h:WeaponData = json.set(WeaponData,"Effects",json.append("",json.set("","Subeffects",json.append("",DummyWeaponSubeffect))))]
+};{}]
+
 [h:return(0,WeaponData)]

@@ -1,4 +1,3 @@
-[h:"<!-- TODO: Needs adaptive window theming when getInfo(Theme) is more set in stone -->"]
 [h:pm.TooltipBorder(json.set("",
     "Class","zzWeaponAttack",
     "Name","Effect Management",

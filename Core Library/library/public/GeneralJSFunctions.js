@@ -25,10 +25,15 @@ function toggleFieldEnabled(toDisable,checkboxID){
 	}
 }
 
-function createHTMLSelectOptions(inputData,valueKey){
+function createHTMLSelectOptions(inputData,valueKey,idKey,idPrefix){
 	let finalOptions = "";
 	for(let tempObject of inputData){
 		if(arguments.length > 1){
+			let tempIDString = "";
+			if(arguments.length > 2){
+				tempIDString = " id='"+idPrefix+tempObject[idKey]+"'";
+			}
+
 			if(valueKey == ""){
 				finalOptions = finalOptions + "<option value='"+btoa(JSON.stringify(tempObject))+"'>"+tempObject.DisplayName+"</option>";
 			}

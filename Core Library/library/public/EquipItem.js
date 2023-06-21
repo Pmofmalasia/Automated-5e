@@ -18,7 +18,9 @@ function createEquippedArmorRow(tableID,Inventory,EquippedArmor){
 	let ArmorOptions = createHTMLSelectOptions(AllArmor,"ItemID");
 	ArmorOptions = "<option value=''>None</option>" + ArmorOptions;
 
-	addTableRow(tableID,nextRowIndex,"rowArmorChoice","<th><label for='ArmorChoice'>Armor:</label></th><td><select id='ArmorChoice' name='ArmorChoice' value='"+EquippedArmor+"'>"+ArmorOptions+"</select></td>");
+	addTableRow(tableID,nextRowIndex,"rowArmorChoice","<th><label for='ArmorChoice'>Armor:</label></th><td><select id='ArmorChoice' name='ArmorChoice'>"+ArmorOptions+"</select></td>");
+
+	document.getElementById("ArmorChoice").value = EquippedArmor;
 }
 
 function createHeldItemsRows(tableID,Inventory,HeldItems,Limbs){
@@ -44,7 +46,9 @@ function createHeldItemsRows(tableID,Inventory,HeldItems,Limbs){
 
 		addTableRow(tableID,nextRowIndex,"rowLimb"+i+"Choice","<th><label for='Limb"+i+"Choice'>"+thisLimb.DisplayName+":</label></th><td><select id='Limb"+i+"Choice' name='Limb"+i+"Choice' value='"+thisLimbItem+"'>"+HoldableOptions+"</select></td>");
 
-		document.getElementById("Limb"+i+"Choice").onchange = function(){createLimbChoiceRows(tableID,Inventory,i);};
+		thisLimbSelectElement = document.getElementById("Limb"+i+"Choice");
+		thisLimbSelectElement.value = thisLimbItem;
+		thisLimbSelectElement.onchange = function(){createLimbChoiceRows(tableID,Inventory,i);};
 		nextRowIndex++;
 	}
 }
@@ -107,23 +111,26 @@ function createAttunedItemsRows(tableID,Inventory,AttunementSlots){
 	for(let tempItem of Inventory){
 		if(tempItem.isAttunement == 1){
 			AttunableItems.push(tempItem);
-		}
 
-		if(tempItem.isAttuned == 1){
-			AttunedItems.push(tempItem);
+			if(tempItem.IsActive == 1 && tempItem.AttunedTo == document.getElementById("ParentToken").value){
+				AttunedItems.push(tempItem.ItemID);
+			}
 		}
 	}
+
 	let AttunableOptions = createHTMLSelectOptions(AttunableItems,"ItemID");
 	AttunableOptions = "<option value=''>None</option>" + AttunableOptions;
 
 	for(let i=0; i<AttunementSlots; i++){
 		let thisAttunement = "";
 		if(i < AttunedItems.length){
-			thisAttunement = HeldItems[i];
+			thisAttunement = AttunedItems[i];
 		}
 
-		addTableRow(tableID,nextRowIndex,"rowAttunementChoice"+i,"<th><label for='AttunementChoice"+i+"'>Attunement Slot #"+(i+1)+":</label></th><td><select id='AttunementChoice"+i+"' name='AttunementChoice"+i+"' value='"+thisAttunement+"'>"+AttunableOptions+"</select></td>");
+		addTableRow(tableID,nextRowIndex,"rowAttunementChoice"+i,"<th><label for='AttunementChoice"+i+"'>Attunement Slot #"+(i+1)+":</label></th><td><select id='AttunementChoice"+i+"' name='AttunementChoice"+i+"'>"+AttunableOptions+"</select></td>");
 		nextRowIndex++;
+
+		document.getElementById("AttunementChoice"+i).value = thisAttunement;
 	}
 }
 
@@ -132,7 +139,7 @@ function createWornItemsRows(tableID,Inventory){
 
 	let HoldableTypes = ["Weapon","Shield","CastingFocus","Tool","Armor","Ammunition"];
 	for(let tempItem of Inventory){
-		if(HoldableTypes.includes(tempItem.Type) === false){
+		if(HoldableTypes.includes(tempItem.Type) === false && tempItem.isAttunement != 1){
 			let tempElementName = "WearableChoice"+tempItem.ItemID;
 			let checkedTest = "";
 			if(tempItem.IsActive == 1){

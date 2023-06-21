@@ -28,12 +28,10 @@
     };
     case "Targets":{
         [h:targetData = json.get(json.get(allEffectData,whichEffect),"Targets")]
-        [h:"<!-- May want to add ability to return total number of targets here? -->"]
         [h:macro.return = targetData]
     };
     case "TargetOptions":{
         [h:targetOptionData = json.get(json.get(allEffectData,whichEffect),"TargetOptions")]
-        [h:"<!-- May want to add ability to return total number of targetOptions here? -->"]
         [h:macro.return = targetOptionData]
     };
     case "Range":{

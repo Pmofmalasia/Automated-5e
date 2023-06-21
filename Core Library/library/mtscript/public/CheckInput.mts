@@ -35,4 +35,4 @@
 
 [h:CheckInputHTML = CheckInputHTML + "<tr id='rowSubmit'><th text-align='center' colspan='2'><input type='submit' id='submitButton' value='Make Check'></tr>"]
 
-[h:html.dialog5("CheckInput","lib://pm.a5e.core/CheckInput.html?cachelib=false","value="+base64.encode(CheckInputHTML)+"; width=500; height=250; closebutton=0")]
+[h:html.dialog5("CheckInput","lib://pm.a5e.core/CheckInput.html?cachelib=false","value="+base64.encode(CheckInputHTML)+"; width=500; height=285; closebutton=0")]

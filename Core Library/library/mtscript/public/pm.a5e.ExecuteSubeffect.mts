@@ -21,14 +21,50 @@
 	[h:abilityTable = json.merge(abilityTable,json.get(subeffect.ResourceData,"Table"))]
 };{}]
 
+[h:"<!-- TODO:AoE Temporary while AOE is being fully implemented (in MT, not by me) -->"]
+[h,if(json.contains(SubeffectData,"AoE")),CODE:{
+	[h:subeffect.AoEData = json.get(SubeffectData,"AoE")]
+	[h,switch(json.get(subeffect.AoEData,"Shape")),CODE:
+		case "Cone":{
+			[h:temp.RangeBonus = json.get(subeffect.AoEData,"SizeValue")]
+		};
+		case "Cube":{
+			[h:temp.RangeBonus = json.get(subeffect.AoEData,"SizeValue")]
+		};
+		case "Cylinder":{
+			[h:temp.RangeBonus = max(json.get(subeffect.AoEData,"RadiusValue"),json.get(subeffect.AoEData,"HeightValue"))]
+		};
+		case "Half Sphere":{
+			[h:temp.RangeBonus = json.get(subeffect.AoEData,"SizeValue")]
+		};
+		case "Line":{
+			[h:temp.RangeBonus = max(json.get(subeffect.AoEData,"LengthValue"),json.get(subeffect.AoEData,"WidthValue"))]
+		};
+		case "Panels":{
+
+		};
+		case "Sphere":{
+			[h:temp.RangeBonus = json.get(subeffect.AoEData,"SizeValue")]
+		};
+		case "Wall":{
+			[h:temp.RangeBonus = max(json.get(subeffect.AoEData,"LengthValue"),json.get(subeffect.AoEData,"WidthValue"),json.get(subeffect.AoEData,"HeightValue"))]
+		};
+		default:{
+
+		}
+	]
+};{
+	[h:temp.RangeBonus = 0]
+}]
+
 [h:subeffect.RangeData = json.get(SubeffectData,"Range")]
 [h:subeffect.RangeType = json.get(SubeffectData,"RangeType")]
 [h,if(subeffect.RangeType == "SelfRanged" || subeffect.RangeType == "Ranged"),CODE:{
 	[h,if(json.get(subeffect.RangeData,"AHLScaling")>0):
-		subeffect.AHLRange = json.get(subeffect.RangeData,"AHLValue") * (AHLTier / json.get(subeffect.RangeData,"AHLScaling"));
+		subeffect.AHLRange = json.get(subeffect.RangeData,"AHLValue") * floor(AHLTier / json.get(subeffect.RangeData,"AHLScaling"));
 		subeffect.AHLRange = 0
 	]
-	[h:subeffect.RangeData = json.set(subeffect.RangeData,"Value",json.get(subeffect.RangeData,"Value") + subeffect.AHLRange)]
+	[h:subeffect.RangeData = json.set(subeffect.RangeData,"Value",json.get(subeffect.RangeData,"Value") + subeffect.AHLRange + temp.RangeBonus)]
 
 	[h,if(subeffect.RangeType == "SelfRanged"):
 		subeffect.RangeDisplay = "Self ("+json.get(subeffect.RangeData,"Value")+" "+json.get(subeffect.RangeData,"Units")+")";
@@ -36,16 +72,21 @@
 	]
 };{
 	[h,if(subeffect.RangeType == "Touch"),CODE:{
-		[h:subeffect.RangeData = json.set(subeffect.RangeData,"Value",5,"Units","Feet")]
+		[h:subeffect.RangeData = json.set(subeffect.RangeData,"Value",5 + temp.RangeBonus,"Units","Feet")]
 		[h:subeffect.RangeDisplay = "Touch"]
 	};{
-		[h:subeffect.RangeData = json.set(subeffect.RangeData,"Value",0,"Units","Feet")]
-		[h:subeffect.RangeDisplay = "Self"]
+		[h:subeffect.RangeData = "{}"]
+		[h:subeffect.RangeDisplay = "Prior Target"]
 	}]
+
+	[h,if(subeffect.RangeType == "Self"),CODE:{
+		[h:subeffect.RangeData = json.set(subeffect.RangeData,"Value",0 + temp.RangeBonus,"Units","Feet")]
+		[h:subeffect.RangeDisplay = "Self"]
+	};{}]
 }]
 
-[h:"<!-- TODO: Add AOE display to this line -->"]
-[h:abilityTable = json.append(abilityTable,json.set("",
+[h:"<!-- TODO: Add AOE display to this line. May need to rethink using subeffect.RangeData as the indicator for adding this line when done. -->"]
+[h,if(!json.isEmpty(subeffect.RangeData)): abilityTable = json.append(abilityTable,json.set("",
 	"ShowIfCondensed",0,
 	"Header","Range",
 	"FalseHeader","",
@@ -60,7 +101,7 @@
 };{
 	[h:subeffect.TargetNumber = json.get(SubeffectData,"TargetNumber")]
 	[h,if(json.get(SubeffectData,"TargetNumberAHLScaling") != 0 && AHLTier > 0),CODE:{
-		[h:subeffect.TargetNumber = subeffect.TargetNumber + (json.get(SubeffectData,"TargetNumberAHL") * (AHLTier / json.get(SubeffectData,"TargetNumberAHLScaling")))]
+		[h:subeffect.TargetNumber = subeffect.TargetNumber + (json.get(SubeffectData,"TargetNumberAHL") * floor(AHLTier / json.get(SubeffectData,"TargetNumberAHLScaling")))]
 	};{}]
 }]
 
@@ -79,12 +120,12 @@
 }]
 
 [h,if(json.contains(SubeffectData,"TargetOrigin")),CODE:{
-
+	
 };{
 	[h:subeffect.TargetOrigin = ParentToken]
 }]
 
-[h:"<!-- TODO: Need a 'Must affect all valid targets' option, likely trigger input based on whether 'unlimited' targets is checked -->"]
+[h:"<!-- TODO:AoE Remove AoE check from MustTargetAll check once implemented in MT -->"]
 [h:MissileCount = 1]
 [h:"<!-- TODO: Need better solution for missiles - missiles loop should create new effects, allow for target selection all in one step. Multiple AoEs should NOT be treated as missiles, since they use the same damage rolls. -->"]
 
@@ -100,14 +141,28 @@
 	[h,if(SelfOnlyTest),CODE:{
 		[h:subeffect.AllTargetTokens = subeffect.TargetOptions]
 	};{
-		[h:subeffect.AllTargetTokens = pm.a5e.TargetCreatureTargeting(subeffect.TargetOptions,subeffect.TargetNumber,MissileCount)]
+		[h,if(json.get(SubeffectData,"MustTargetAll") == 1 && !json.contains(SubeffectData,"AoE")): 
+			subeffect.AllTargetTokens = subeffect.TargetOptions;
+			subeffect.AllTargetTokens = pm.a5e.TargetCreatureTargeting(subeffect.TargetOptions,subeffect.TargetNumber,MissileCount)
+		]
 	}]
 
 	[h:subeffect.TargetTokens = json.merge(subeffect.TargetTokens,subeffect.AllTargetTokens)]
 }]
 
 [h,if(json.contains(subeffect.TargetTypes,"PriorTargets")),CODE:{
-	[h:subeffect.TargetTokens = json.merge(subeffect.TargetTokens,json.append("",json.get(subeffect.TargetingData,"PriorTargets")))]
+	[h:subeffect.LinkedPriorTargets = pm.a5e.GetEffectComponent(pm.a5e.EffectData,"Targets",json.get(SubeffectData,"ParentSubeffect"))]
+	[h:subeffect.PriorTargetingData = json.get(subeffect.TargetingData,"PriorTargets")]
+
+	[h,if(json.get(subeffect.PriorTargetingData,"TargetAll")),CODE:{
+		[h:subeffect.PriorTargetsChosen = subeffect.LinkedPriorTargets]
+	};{
+		[h:"<!-- TODO: May require some filtering here if not all are valid. This whole CODE block means that in the future if target changing is implemented, it will need to change subsequent targeting as well. Better to do it this way than change targeting during resolution of effects due to the input required. -->"]
+
+		[h:subeffect.AllTargetTokens = pm.a5e.TargetCreatureTargeting(subeffect.PriorTargetsChosen,json.get(subeffect.PriorTargetingData,"TargetNumber"),MissileCount)]
+	}]
+
+	[h:subeffect.TargetTokens = json.merge(subeffect.TargetTokens,subeffect.PriorTargetsChosen)]
 }]
 
 [h,if(!json.isEmpty(subeffect.TargetTokens)): thisEffectData = json.set(thisEffectData,"Targets",subeffect.TargetTokens)]
@@ -195,6 +250,7 @@
 
 		};
 		default:{
+			[h:"<!-- TODO: This is here temporarily while finding a better way to route the Spellcasting macro to here -->"]
 			[h:subeffect.SaveDC = 8 + getProperty("a5e.stat.Proficiency") + PrimeStatMod]
 
 			[h:pm.PassiveFunction("SpellSaveDC")]
@@ -226,7 +282,6 @@
 [h:subeffect.DamageInfo = "[]"]
 [h,foreach(tempDamageInstance,json.get(SubeffectData,"Damage")),CODE:{
 	[h:thisDamageTypeInfo = pm.a5e.DamageRoll(tempDamageInstance,SubeffectNonDamageProperties,SubeffectFunctionPrefixes)]
-	[h:"<!-- TODO: SubeffectFunctionPrefixes won't work here because spells don't know if they're a spell attack or not before they enter subeffects (technically they could, but meh). This would be solved by eliminating separate instances for Spell vs. Weapon vs. Attack damage, and just tracking these things better and using them to filter out things that don't apply. Requires a lot of work in making sure variables overlap enough for spells vs. attacks, though. -->"]
 
 	[h:subeffect.DamageInfo = json.append(subeffect.DamageInfo,thisDamageTypeInfo)]
 
@@ -368,5 +423,64 @@
 	
 	[h:pm.Summons(subeffect.SummonData,SummonCustomization)]
 }]
+
+[h,if(json.contains(SubeffectData,"Movement")),CODE:{
+	[h:subeffect.MovementData = json.get(SubeffectData,"Movement")]
+
+	[h:subeffect.MovementValue = json.get(subeffect.MovementData,"Value")]
+	[h,if(json.get(subeffect.MovementData,"AHLScaling") != 0 && AHLTier != 0),CODE:{
+		[h:subeffect.MovementValue = subeffect.MovementValue + json.get(subeffect.MovementData,"AHLValue") * floor(AHLTier / json.get(subeffect.MovementData,"AHLScaling"))]
+	};{}]
+
+	[h,switch(json.get(subeffect.MovementData,"Direction")),CODE:
+		case "Choice":{
+			[h:subeffect.MovementDirection = "Any"]
+			[h,switch(json.get(subeffect.MovementData,"Type")):
+				case "Physical": subeffect.MovementDirectionMessage = "";
+				case "Teleportation": subeffect.MovementDirectionMessage = "Teleport";
+				case "Extraplanar": subeffect.MovementDirectionMessage = "Extraplanar Teleport";
+			]
+		};
+		case "Away":{
+			[h:subeffect.MovementDirection = "Away"]
+			[h:subeffect.MovementDirectionMessage = "Push"]
+		};
+		case "Towards":{
+			[h:subeffect.MovementDirection = "Towards"]
+			[h:subeffect.MovementDirectionMessage = "Pull"]
+		};
+		case "Random4":{
+			[h:RandomDirection = eval("1d4")]
+			[h:subeffect.MovementDirection = table("Direction",RandomDirection)]
+			[h:subeffect.MovementDirectionMessage = subeffect.MovementDirection]
+		};
+		case "Random8":{
+			[h:RandomDirection = eval("1d8")]
+			[h:subeffect.MovementDirection = table("Direction",RandomDirection)]
+			[h:subeffect.MovementDirectionMessage = subeffect.MovementDirection]
+		}
+	]
+
+	[h:subeffect.MovementMessage = if(subeffect.MovementDirectionMessage != "",subeffect.MovementDirectionMessage+" ","") + if(subeffect.MovementValue != "",subeffect.MovementValue+" "+json.get(subeffect.MovementData,"Units"),"")]
+
+	[h:subeffect.FinalMovementData = json.set("",
+		"Value",subeffect.MovementValue,
+		"Units",json.get(subeffect.MovementData,"Units"),
+		"Type",json.get(subeffect.MovementData,"Type"),
+		"Direction",subeffect.MovementDirection
+	)]
+
+	[h:thisEffectData = json.set(thisEffectData,"Movement",subeffect.FinalMovementData)]
+
+	[h:abilityTable = json.append(abilityTable,json.set("",
+		"ShowIfCondensed",1,
+		"Header","Movement",
+		"FalseHeader","",
+		"FullContents",subeffect.MovementMessage,
+		"RulesContents","",
+		"RollContents","",
+		"DisplayOrder","['Rules','Roll','Full']"
+	))]
+};{}]
 
 [h:pm.a5e.EffectData = json.append(pm.a5e.EffectData,thisEffectData)]

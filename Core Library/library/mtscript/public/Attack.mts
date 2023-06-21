@@ -12,6 +12,7 @@
 [h:CurrentHeldItems = getProperty("a5e.stat.HeldItems")]
 [h:TotalHands = json.length(CurrentHeldItems)]
 [h,count(TotalHands): OtherHands = if(roll.count == ActiveHand,OtherHands,json.append(OtherHands,roll.count))]
+[h:OtherHandsIDs = json.remove(CurrentHeldItems,ActiveHand)]
 [h:AttackNum = json.get(wa.Data,"AttackNum")]
 [h:ThrowingWeapon = json.get(wa.Data,"ThrowWeapon")]
 [h:TwoWeaponFighting = json.get(wa.Data,"TwoWeaponFighting")]
@@ -37,11 +38,13 @@
 [h:wa.MagicBonus = json.get(wa.WeaponUsed,"MagicBonus")]
 [h:wa.WeaponType = json.get(wa.WeaponUsed,"WeaponType")]
 [h:wa.Class = json.get(wa.WeaponUsed,"WeaponClass")]
-[h:wa.MeleeRanged = json.get(wa.WeaponUsed,"WeaponMeleeRanged")]
 [h:wa.DamageData = json.get(wa.WeaponUsed,"WeaponDamage")]
 [h:wa.Reach = json.get(wa.WeaponUsed,"Reach")]
 [h:wa.Range = json.get(wa.WeaponUsed,"Range")]
 [h:wa.LongRange = json.get(wa.WeaponUsed,"LongRange")]
+[h:wa.WeaponMeleeRanged = json.get(wa.WeaponUsed,"WeaponMeleeRanged")]
+[h:wa.MeleeRanged = wa.WeaponMeleeRanged]
+[h:"<!-- Note: wa.WeaponMeleeRanged is whether the weapon itself is a melee/ranged weapon, while wa.MeleeRanged is whether the attack is a melee/ranged attack. Distinction mostly for throwing weapons. -->"]
 
 [h,if(json.get(wa.WeaponUsed,"CritThresh")!=""):
 	attack.CritThresh = json.get(wa.WeaponUsed,"CritThresh");
@@ -60,13 +63,14 @@
 	json.get(wa.WeaponUsed,"isActivatable") == "",
 	and(
 		json.get(wa.WeaponUsed,"isActivatable") == 1,
-		json.get(wa.WeaponUsed,"isActive") == 1)
+		json.get(wa.WeaponUsed,"IsActive") == 1)
 )]
 [h,if(wa.IsActiveTest):
-	wa.Subeffects = json.get(wa.WeaponUsed,"Subeffects");
-	wa.Subeffects = "[]"
+	wa.WeaponEffects = json.get(wa.WeaponUsed,"WeaponEffects");
+	wa.WeaponEffects = "[]"
 ]
-[h,if(wa.Subeffects == ""): wa.Subeffects = "[]"]
+[h,if(wa.WeaponEffects == ""): wa.WeaponEffects = "[]"]
+
 [h:wa.Props = json.get(wa.WeaponUsed,"WeaponProperties")]
 [h:wa.Magical = json.get(wa.WeaponUsed,"isMagical")]
 [h:attack.ProfTest = if(json.get(getProperty("a5e.stat.WeaponProficiencies"),wa.WeaponType)==1,1,0)]
@@ -138,8 +142,9 @@
 };{}]
 
 [h:"<!-- TODO: Will need to ensure that the empty hand is allowed to make attacks in the future -->"]
-[h:EmptyHandTest = 0]
-[h,foreach(tempHand,OtherHands): EmptyHandTest = if(json.get(CurrentHeldItems,tempHand)=="",1,EmptyHandTest)]
+[h:NonEmptyHandIDs = json.difference(OtherHandsIDs,json.append("",""))]
+[h:AllHandsEmpty = json.isEmpty(NonEmptyHandIDs)]
+[h:EmptyHandTest = !json.isEmpty(json.difference(OtherHandsIDs,NonEmptyHandIDs))]
 
 [h,if(EmptyHandTest==0 && json.contains(wa.Props,"TwoHanded")),CODE:{
 	[h:"<!-- TODO: Decide how to implement not being able to/cancelling attack -->"]
@@ -203,11 +208,20 @@
 [h:SafeAttackCounter = 0]
 [h,count(AttackCount),CODE:{
 	[h:thisAttackData = wa.Data]
-	[h:thisAttackSubeffects = wa.Subeffects]
 	[h:thisAttackDamageData = wa.DamageData]
 	[h,if(json.length(wa.EffectIDs)-1 < SafeAttackCounter): wa.EffectIDs = json.append(wa.EffectIDs,pm.a5e.GenerateEffectID())]
+	
+	[h,if(json.length(wa.WeaponEffects) > 1),CODE:{
+		[h:"<!-- TODO: Implement an input for which effect to use, or randomization -->"]
+	};{
+		[h,if(json.length(wa.WeaponEffects) == 1):
+			thisAttackSubeffects = json.get(json.get(wa.WeaponEffects,0),"Subeffects");
+			thisAttackSubeffects = "[]"
+		]
+	}]
 
-	[h:"<!-- TODO: Add setting to alert if you're out of ammunition, possibly if below a certain number that can be set? And setting to ignore this -->"]
+	[h:"<!-- TODO: Add setting to alert if you're out of ammunition, possibly also a warning if nearing empty if below a certain number that can be set? And setting to ignore this -->"]
+	[h:"<!-- TODO: Need to update Ammo subeffects to new data format -->"]
 	[h,if(UsesAmmunitionTest && CurrentAmmoCount > 0),CODE:{
 		[h,if(json.get(AmmunitionData,"AmmunitionDamage")!=""): thisAttackDamageData = json.merge(thisAttackDamageData,json.get(AmmunitionData,"AmmunitionDamage"))]
 		[h,if(json.get(AmmunitionData,"Subeffects")!=""): thisAttackSubeffects = json.merge(thisAttackSubeffects,json.get(AmmunitionData,"Subeffects"))]
@@ -221,6 +235,9 @@
 		[h:tempPriorDisadvantage = json.get(thisAttackData,"Disadvantage")]
 		[h,if(tempPriorDisadvantage == ""): tempPriorDisadvantage = 0]
 		[h,if(LongRangeTest): thisAttackData = json.set(thisAttackData,"Disadvantage",tempPriorDisadvantage + 1)]
+		[h,if(getDistance(thisAttackTarget) <= 5): thisAttackData = json.set(thisAttackData,"Disadvantage",tempPriorDisadvantage + 1)]
+
+		[h:"<!-- TODO: These should be set as variables so that effects (e.g. cbow expert) can specifically remove the disadvantage from this instance. -->"]
 	};{}]
 
 	[h,if(ThrowingWeapon && !json.contains(wa.Props,"Returning")),CODE:{
@@ -282,6 +299,8 @@
 	[h:thisAttackToHitRules = json.get(thisAttackData,"RulesStr")]
 	[h:thisAttackCrit = json.get(thisAttackData,"CritTest")]
 	[h:thisAttackCritFail = json.get(thisAttackData,"CritFailTest")]
+	
+	[h:thisAttackSubeffects = json.get(thisAttackData,"Subeffects")]
 
 	[h:thisAttackAllDamage = json.path.put(json.get(AllAttacksDmg,roll.count),"[*]","UseCrit",thisAttackCrit)]
 
@@ -316,7 +335,7 @@
 		"BonusSectionStyling1","",
 		"Value",thisAttackToHit
 	)]
-	
+
 	[h:abilityTable = json.append(abilityTable,ToHitTableLine)]
 
 	[h,foreach(tempDamageInstance,thisAttackAllDamage),CODE:{
@@ -357,7 +376,7 @@
 		"InstancePrefixes",json.append("","Attack","WeaponAttack"),
 		"RerollData",wa.Data
 	)]
-	[h,foreach(tempSubeffect,wa.Subeffects): pm.a5e.ExecuteSubeffect(tempSubeffect,json.set("","BaseData",wa.Data,"MultiEffectModifier",WhichAttack))]
+	[h,foreach(tempSubeffect,thisAttackSubeffects): pm.a5e.ExecuteSubeffect(tempSubeffect,json.set("","BaseData",wa.Data,"MultiEffectModifier",WhichAttack))]
 
 	[h:WhichAttack = WhichAttack + 1]
 }]

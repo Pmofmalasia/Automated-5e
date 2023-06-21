@@ -12,7 +12,7 @@
             whichEffect = json.get(whichEffect,roll.count)
         ]
     };{}]
-    
+
     [h:newID =  json.get(effect,"ID")]
     [h,if(newID == ""): newID = pm.a5e.GenerateEffectID()]
     [h:parentTokenData = json.get(effect,"ParentToken")]
@@ -33,6 +33,7 @@
     [h:targetedConditionsData = json.get(effect,"TargetedConditions")]
     [h:effectTargetData = json.get(effect,"TargetedEffects")]
     [h:effectTargetOptionData = json.get(effect,"TargetedEffectOptions")]
+    [h:effectMovementData = json.get(effect,"Movement")]
 
     [h,if(parentTokenData!=""),CODE:{
         [h,if(whichEffect >= json.length(currentEffectData)): thisEffect = json.path.set(baseEffectData,".ID",newID); thisEffect = json.get(currentEffectData,whichEffect)]
@@ -223,6 +224,14 @@
             thisEffect = json.set(thisEffect,"TargetedEffectOptions",json.merge(json.get(thisEffect,"TargetedEffectOptions"),effectTargetOptionData))
         ]
     
+        [h,if(whichEffect >= json.length(currentEffectData)): currentEffectData = json.append(currentEffectData,thisEffect); currentEffectData = json.set(currentEffectData,whichEffect,thisEffect)]
+    };{}]
+    
+    [h,if(effectMovementData!=""),CODE:{
+        [h,if(whichEffect >= json.length(currentEffectData)): thisEffect = json.path.set(baseEffectData,".ID",newID); thisEffect = json.get(currentEffectData,whichEffect)]
+
+        [h:thisEffect = json.set(thisEffect,"Movement",effectMovementData)]
+
         [h,if(whichEffect >= json.length(currentEffectData)): currentEffectData = json.append(currentEffectData,thisEffect); currentEffectData = json.set(currentEffectData,whichEffect,thisEffect)]
     };{}]
     

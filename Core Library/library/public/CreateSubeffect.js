@@ -68,7 +68,7 @@ function getParentSubeffect(){
 	}
 }
 
-function createParentPrereqRows(){
+async function createParentPrereqRows(){
 	let nextRowIndex = document.getElementById("rowParentPrereqs").rowIndex + 1;
 	let PrereqChoice = document.getElementById("ParentPrereqs").value;
 	
@@ -108,6 +108,30 @@ function createParentPrereqRows(){
 		}
 
 		addTableRow("CreateSubeffectTable",nextRowIndex,"rowParentPrereqExtra","<th><label for='PrereqConditionsApplied'>Conditions that Must be Applied:</label></th><td><select id='PrereqConditionsApplied' name='PrereqConditionsApplied'>"+ConditionsRequiredOptions+"</select></td>");
+		nextRowIndex++;
+	}
+	else if(PrereqChoice == "Damage"){
+		let ParentSubeffect = getParentSubeffect();
+		let ParentSubeffectDamage = ParentSubeffect.Damage;
+		let PriorDamageTypes = [];
+		let PriorDamageTypeOptions = "<option value='TotalDamage'>All</option>";
+
+		for(let tempInstance of ParentSubeffectDamage){
+			let tempRequest = await fetch("macro:pm.GetDisplayName@lib:pm.a5e.Core",{method:"POST",body:"['"+tempInstance.DamageType+"','sb.DamageTypes']"});
+			let tempDisplayType = await tempRequest.text();
+			let tempTypeName = tempInstance.Name;
+	
+			if(PriorDamageTypes.includes(tempTypeName) == false){
+				PriorDamageTypes = PriorDamageTypes.push(tempTypeName);
+				PriorDamageTypeOptions = PriorDamageTypeOptions + "<option value='"+tempTypeName+"'>"+tempDisplayType+"</option>";
+			}
+		}
+
+		addTableRow("CreateSubeffectTable",nextRowIndex,"rowParentPrereqExtra","<th><label for='PrereqDamageDealtMinimum'>Minimum Damage Dealt:</label></th><td><input type='number' id='PrereqDamageDealtMinimum' name='PrereqDamageDealtMinimum' value=1 min=1 style='width:35px'><select id='PrereqDamageDealtType' name='PrereqDamageDealtType'>"+PriorDamageTypeOptions+"</select></td>");
+		nextRowIndex++;
+	}
+	else if(PrereqChoice == "Healing"){
+		addTableRow("CreateSubeffectTable",nextRowIndex,"rowParentPrereqExtra","<th><label for='PrereqHealingMinimum'>Minimum Healing Done:</label></th><td><input type='number' id='PrereqHealingMinimum' name='PrereqHealingMinimum' value=1 min=1 style='width:35px'></td>");
 		nextRowIndex++;
 	}
 }
@@ -173,13 +197,13 @@ async function createMitigationTable(){
 			rowSavePreventMove.id = "rowSavePreventMove";
 			rowSavePreventMove.innerHTML = "<th><label for='savePreventMove'>Save Prevents Movement:</label></th><select id='savePreventMove' name='savePreventMove'><option value=2>Prevent Completely</option><option value=1>Halved Movement</option><option value=0>Move Not Affected</option></select></td></tr>";
 		}
-		
+
 		if(document.getElementById("isSetHP").checked){
 			let savePreventSetHPIndex = document.getElementById("rowSetHPAmount").rowIndex + 1;
 		
 			addTableRow("CreateSubeffectTable",savePreventSetHPIndex,"rowSavePreventSetHP","<th><label for='savePreventSetHP'>Save Prevents HP Change:</label></th><td><input type='checkbox' id='savePreventSetHP' name='savePreventSetHP'></td>");
 		}
-		
+
 		if(document.getElementById("InstantKill").checked){
 			let savePreventInstantKillIndex = document.getElementById("rowInstantKill").rowIndex + 1;
 

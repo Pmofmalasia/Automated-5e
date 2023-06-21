@@ -50,7 +50,7 @@ function createPriorTargetsRows(tableID){
 		addTableRow("CreateSubeffectTable",nextRowIndex,"rowUsePriorOrigin","<th><label for='UsePriorOrigin'>New Subeffect Originates from Old Target:</label></th><td><input type='checkbox' id='UsePriorOrigin' name='UsePriorOrigin' onchange='createPriorOriginRows("+'"CreateSubeffectTable"'+")'></td>");
 		nextRowIndex++;
 
-		createTargetingRows("CreateSubeffectTable","submitRow");
+		createTargetingRows("CreateSubeffectTable","rowTargetingEnd");
 	}
 }
 
@@ -358,7 +358,7 @@ async function createTargetTable(tableID,primarySecondary){
 		secondaryTargetSelection = document.getElementById("secondaryTargetType").remove(10);
 	}
 	else{
-		clearUnusedTable(tableID,"Target","submitRow");
+		clearUnusedTable(tableID,"Target","rowTargetingEnd");
 	}
 }
 
@@ -605,7 +605,7 @@ async function createTargetAlignmentTable(tableID){
 		rowAlignmentsOther.innerHTML = "<td text-align='center' colspan='3'><input type='checkbox' id='alignmentUnaligned' name='alignmentUnaligned'><label for='alignmentUnaligned'>Unaligned</label></td>";
 	}
 	else{
-		clearUnusedTable(tableID,"rowTargetAlignment","submitRow");
+		clearUnusedTable(tableID,"rowTargetAlignment","rowTargetingEnd");
 	}
 }
 
@@ -623,7 +623,7 @@ async function createObjectTargetTable(tableID,primarySecondary){
 	let nextRowIndex = document.getElementById(startRowID).rowIndex + 1;
 	let optionLimits = "<option value=''>Not Relevant</option><option value='Inclusive'>Required</option><option value='Exclusive'>Invalid</option>";
 
-	addTableRow(tableID,nextRowIndex,"rowObjectTargetWornCarried","<th><label for='ObjectTargetWornCarried'>Object is Worn or Carried:</label></th><td><select id='ObjectTargetWornCarried' name='ObjectTargetWornCarried'><option value=''>Not Relevant</option><option value='Worn'>Must be Worn</option><option value='NotWorn'>Invalid</option><option value='Ally'>Held by Ally</option><option value='NotWornOrAlly'>Held by Ally or Not Worn</option></select></td>");
+	addTableRow(tableID,nextRowIndex,"rowObjectTargetWornCarried","<th><label for='ObjectTargetWornCarried'>Object is Worn or Carried:</label></th><td><select id='ObjectTargetWornCarried' name='ObjectTargetWornCarried'><option value=''>Not Relevant</option><option value='Worn'>Must be Worn</option><option value='NotWorn'>Is Not Worn</option><option value='Ally'>Held by Ally</option><option value='NotWornOrAlly'>Held by Ally or Not Worn</option></select></td>");
 	nextRowIndex++;
 
 	//TODO: Need a way to both do this and object subtype conveniently

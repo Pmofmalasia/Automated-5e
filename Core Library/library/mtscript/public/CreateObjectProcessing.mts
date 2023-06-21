@@ -170,6 +170,9 @@
 [h:ObjectID = base64.encode(json.get(objectData,"Name"))+eval("1d1000000")]
 [h:objectData = json.set(objectData,"ObjectID",ObjectID)]
 
+[h:"<!-- TODO: Make isWeaponEffect lead into creating a subeffect if present, for effects that specifically occur after weapon attacks. Route this to a key WeaponEffects, then change the result of HasActiveEffects back to the Effects key for weapons (for effects that can be activated independently of making attacks) -->"]
+[h:objectData = json.remove(objectData,"isWeaponEffect")]
+
 [h,if(!json.contains(objectData,"HasPassiveEffects") && !json.contains(objectData,"HasActiveEffects")),CODE:{
 	[h,if(newTemplateTest),CODE:{
 		[h:setLibProperty("sb."+objectType+"Types",json.append(getLibProperty("sb."+objectType+"Types","Lib:"+json.get(objectData,"Library")),objectData),"Lib:"+json.get(objectData,"Library"))]
@@ -203,8 +206,9 @@
 
 		[h:setLibProperty("ct.NewObject",json.set(getLibProperty("ct.NewObject","Lib:pm.a5e.Core"),getPlayerName(),objectData),"Lib:pm.a5e.Core")]
 
+		[h:"<!-- TODO: Remove objectType==Weapon when the better system for implementing WeaponEffects is implemented -->"]
 		[h,MACRO("CreateSubeffect@Lib:pm.a5e.Core"): json.set("",
-			"WhichSubeffect",1,
+			"WhichSubeffect",1+(objectType=="Weapon"),
 			"WhichEffect",1,
 			"EffectsNumber",ActiveEffectsNumber,
 			"EffectType","Object"

@@ -1,5 +1,5 @@
 [h:subeffectData = arg(0)]
-[h:objectTargetData = arg(1)]
+[h:objectTargetData = "{}"]
 
 [h:objectTargetData = json.set(objectTargetData,"Carried",json.get(subeffectData,"ObjectTargetWornCarried"))]
 [h:subeffectData = json.remove(subeffectData,"ObjectTargetWornCarried")]
@@ -87,8 +87,8 @@
     }]
     [h,if(!json.isEmpty(inclusiveObjectTags)): objectTargetData = json.set(objectTargetData,"TagsInclusive",inclusiveObjectTags)]
     [h,if(!json.isEmpty(exclusiveObjectTags)): objectTargetData = json.set(objectTargetData,"TagsExclusive",exclusiveObjectTags)]
-    [h:subeffectData = json.remove(subeffectData,"ObjectTargetTags")]
 };{}]
+[h:subeffectData = json.remove(subeffectData,"ObjectTargetTags")]
 
 [h,switch(json.get(subeffectData,"ObjectTargetFlammable")),CODE:
     case "":{

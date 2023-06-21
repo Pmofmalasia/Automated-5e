@@ -1,7 +1,7 @@
 [h:SpellSubeffectData = arg(0)]
 [h:thisEffectData = json.set("","ID",pm.a5e.GenerateEffectID())]
 
-[h:"<!-- Note: Temporary while AOE is being fully implemented-->"]
+[h:"<!-- Note: Temporary while AOE is being fully implemented (in MT, not by me) -->"]
 [h,if(json.contains(SpellSubeffectData,"AoE")),CODE:{
 	[h:subeffect.AoEData = json.get(SpellSubeffectData,"AoE")]
 	[h,switch(json.get(subeffect.AoEData,"Shape")),CODE:

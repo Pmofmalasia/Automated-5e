@@ -12,11 +12,6 @@
 		[h:FeatureName = json.get(json.get(thisPlayerCurrentFeatureData,0),"Name")]
 		[h:FeatureDisplayName = json.get(json.get(thisPlayerCurrentFeatureData,0),"DisplayName")]
 	};
-	case "Weapon":{
-		[h:currentEffectData = thisPlayerCurrentFeatureData]
-		[h:FeatureName = json.get(thisPlayerCurrentFeatureData,"Name")]
-		[h:FeatureDisplayName = json.get(thisPlayerCurrentFeatureData,"DisplayName")]
-	};
 	default:{
 		[h:allEffectData = json.get(thisPlayerCurrentFeatureData,"Effects")]
 		[h,if(allEffectData!=""):
@@ -101,6 +96,26 @@
 
 			[h:subeffectData = json.remove(subeffectData,"ParentPrereqs")]
 			[h:subeffectData = json.remove(subeffectData,"PrereqConditionsApplied")]
+		};
+		case "Damage":{
+			[h:subeffectData = json.set(subeffectData,"ParentSubeffectRequirements",json.set("",
+				"Requirement",json.get(subeffectData,"ParentPrereqs"),
+				"DamageType",json.get(subeffectData,"PrereqDamageDealtType"),
+				"Minimum",json.get(subeffectData,"PrereqDamageDealtMinimum")
+			))]
+
+			[h:subeffectData = json.remove(subeffectData,"ParentPrereqs")]
+			[h:subeffectData = json.remove(subeffectData,"PrereqDamageDealtMinimum")]
+			[h:subeffectData = json.remove(subeffectData,"PrereqDamageDealtType")]
+		};
+		case "Healing":{
+			[h:subeffectData = json.set(subeffectData,"ParentSubeffectRequirements",json.set("",
+				"Requirement",json.get(subeffectData,"ParentPrereqs"),
+				"Minimum",json.get(subeffectData,"PrereqHealingMinimum")
+			))]
+
+			[h:subeffectData = json.remove(subeffectData,"ParentPrereqs")]
+			[h:subeffectData = json.remove(subeffectData,"PrereqHealingMinimum")]
 		};
 		default:{
 			[h:subeffectData = json.set(subeffectData,"ParentSubeffectRequirements",json.set("",
@@ -797,19 +812,6 @@
 
 		[h:extraData = json.set("","SpellLevel",spellLevel)]
 	};
-	case "Weapon":{
-		[h:thisEffectSubeffectData = json.get(currentEffectData,"Subeffects")]
-		[h:thisEffectSubeffectData = json.append(thisEffectSubeffectData,subeffectData)]
-		[h:currentEffectData = json.set(currentEffectData,"Subeffects",thisEffectSubeffectData)]
-
-		[h:"<!-- Note: Currently, I think this allows for only one effect to be made - it stores the effect as an object instead of an array of multiple effects -->"]
-		[h:thisPlayerCurrentFeatureData = currentEffectData]
-		[h:setLibProperty("ct.New"+EffectType,json.set(CurrentFeatureData,getPlayerName(),thisPlayerCurrentFeatureData),"Lib:pm.a5e.Core")]
-
-		[h:baseFeatureData = thisPlayerCurrentFeatureData]
-		[h:lastEffectTest = 1]
-		[h:extraData = ""]
-	};
 	default:{
 		[h:thisEffectSubeffectData = json.get(currentEffectData,"Subeffects")]
 		[h:thisEffectSubeffectData = json.append(thisEffectSubeffectData,subeffectData)]
@@ -824,7 +826,6 @@
 		[h:thisPlayerCurrentFeatureData = json.set(thisPlayerCurrentFeatureData,"Effects",allEffectData)]
 
 		[h:setLibProperty("ct.New"+EffectType,json.set(CurrentFeatureData,getPlayerName(),thisPlayerCurrentFeatureData),"Lib:pm.a5e.Core")]
-
 		[h:baseFeatureData = thisPlayerCurrentFeatureData]
 		[h:lastEffectTest = json.length(allEffectData) == EffectsNumber]
 		[h:extraData = ""]

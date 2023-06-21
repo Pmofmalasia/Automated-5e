@@ -22,7 +22,7 @@ async function createWeaponTableRows(tableID,startRowID){
 		nextRowIndex++;
 	}
 
-	addTableRow(tableID,nextRowIndex,"rowWeaponClass","<th><label for='WeaponClass'>Weapon Class:</label></th><td><select id='WeaponClass' name='WeaponClass'><option value='Simple'>Simple</option><option value='Martial'>Martial</option><option value='Exotic'>Exotic</option><option value='Natural'>Natural</option></select></td>");
+	addTableRow(tableID,nextRowIndex,"rowWeaponClass","<th><label for='WeaponClass'>Weapon Class:</label></th><td><select id='WeaponClass' name='WeaponClass'><option value='Simple'>Simple</option><option value='Martial'>Martial</option><option value='Exotic'>Exotic</option><option value='Natural'>Natural</option><option value='Improvised'>Improvised</option></select></td>");
 	nextRowIndex++;
 
 	addTableRow(tableID,nextRowIndex,"rowWeaponMeleeRanged","<th><label for='WeaponMeleeRanged'>Melee or Ranged:</label></th><td><select id='WeaponMeleeRanged' name='WeaponMeleeRanged' onchange='createWeaponRangeReachRows("+'"'+tableID+'",'+'"rowWeaponMeleeRanged"'+")'><option value='Melee'>Melee</option><option value='Ranged'>Ranged</option></select></td>");
@@ -73,6 +73,9 @@ async function createWeaponTableRows(tableID,startRowID){
 	let WeaponTagOptions = createHTMLMultiselectOptions(allWeaponTagsData,"weaponTag");
 
 	addTableRow(tableID,nextRowIndex,"rowWeaponTags","<th>Weapon Tags:</label></th><td><div class='check-multiple' style='width:100%'>"+WeaponTagOptions+"</div></td>");
+	nextRowIndex++;
+
+	addTableRow(tableID,nextRowIndex,"rowWeaponEffect","<th><label for='isWeaponEffect'>Additional Effect on Hit:</label></th><td><input type='checkbox' id='isWeaponEffect' name='isWeaponEffect'></td>");
 	nextRowIndex++;
 }
 

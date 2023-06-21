@@ -14,13 +14,24 @@
 	[h:d20ThisEffect = json.set("","ToResolve","{}")]
 }]
 
-[h:CurrentSaveDisplay = json.get(d20Data,"Save")]
-[h:CurrentSave = pm.RemoveSpecial(CurrentSaveDisplay)]
-[h,SWITCH(d20Type):
-	case "Save": PrimeStat = CurrentSave;
-	case "Concentration": PrimeStat = "Constitution";
-	case "Death": PrimeStat = "None";
-	default: PrimeStat = "None"
+[h:CurrentSave = json.get(d20Data,"Save")]
+[h,SWITCH(d20Type),CODE:
+	case "Save": {
+		[h:CurrentSaveDisplay = pm.GetDisplayName(CurrentSave,"sb.Attributes")]
+		[h:PrimeStat = CurrentSave]
+	};
+	case "Concentration": {
+		[h:CurrentSaveDisplay = "Concentration"]
+		[h:PrimeStat = "Constitution"]
+	};
+	case "Death": {
+		[h:CurrentSaveDisplay = "Death"]
+		[h:PrimeStat = "None"]
+	};
+	default: {
+		[h:CurrentSaveDisplay = CurrentSave]
+		[h:PrimeStat = "None"]
+	}
 ]
 
 [h:DamageColor = pm.DamageColor()]

@@ -1,6 +1,7 @@
 [h:pm.ValidTargets = json.get(arg(0),"ValidTargets")]
-[h:pm.SingleTarget = json.get(arg(0),"SingleTarget")]
+[h:pm.TargetNumber = json.get(arg(0),"TargetNumber")]
 [h:pm.TargetingInstances = json.get(arg(0),"TargetingInstances")]
+[h:pm.SingleTarget = if(pm.TargetNumber==1,1,0)]
 
 [h,if(pm.SingleTarget),CODE:{
     [h:pm.TargetOptions = "[]"]

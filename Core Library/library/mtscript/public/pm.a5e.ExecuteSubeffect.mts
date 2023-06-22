@@ -165,6 +165,24 @@
 	[h:subeffect.TargetTokens = json.merge(subeffect.TargetTokens,subeffect.PriorTargetsChosen)]
 }]
 
+[h,if(json.contains(subeffect.TargetTypes,"Object")),CODE:{
+	[h:subeffect.TargetObjectLimits = json.get(subeffect.TargetingData,"Object")]
+	[h:subeffect.TargetOptionData = pm.a5e.TargetHeldObjectFiltering(json.set("","ParentToken",ParentToken,"Origin",subeffect.TargetOrigin,"Range",subeffect.RangeData),subeffect.TargetObjectLimits)]
+	
+	[h:subeffect.TargetOptions = json.get(subeffect.TargetOptionData,"ValidTargets")]
+	[h:SelfOnlyTest = json.get(subeffect.TargetOptionData,"SelfOnly")]
+	[h,if(SelfOnlyTest),CODE:{
+		[h:subeffect.AllTargetTokens = subeffect.TargetOptions]
+	};{
+		[h,if(json.get(SubeffectData,"MustTargetAll") == 1 && !json.contains(SubeffectData,"AoE")): 
+			subeffect.AllTargetTokens = subeffect.TargetOptions;
+			subeffect.AllTargetTokens = pm.a5e.TargetObjectTargeting(subeffect.TargetOptions,subeffect.TargetNumber,MissileCount)
+		]
+	}]
+
+	[h:subeffect.TargetTokens = json.merge(subeffect.TargetTokens,subeffect.AllTargetTokens)]
+}]
+
 [h,if(!json.isEmpty(subeffect.TargetTokens)): thisEffectData = json.set(thisEffectData,"Targets",subeffect.TargetTokens)]
 
 [h,if(json.contains(SubeffectData,"Damage")),CODE:{

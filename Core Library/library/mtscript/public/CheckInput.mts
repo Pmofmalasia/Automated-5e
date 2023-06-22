@@ -27,7 +27,13 @@
 			tempEffectSkillDisplay = "("+json.length(tempEffectSkill)+" options)";
 			tempEffectSkillDisplay = "("+pm.GetDisplayName(tempEffectSkill,"sb.Skills")+")"
 		]
-		[h:EffectsForcingCheckOptions = "<option value='"+tempEffectID+"'>"+tempEffectName+" "+tempEffectSkillDisplay+"</option>"]
+
+		[h,if(json.get(tempEffect,"ParentSubeffect")==""): 
+			NoActiveParentTest = 1;
+			NoActiveParentTest = json.isEmpty(json.path.read(data.getData("addon:","pm.a5e.core","gd.Effects"),"[*][?(@.ID == "+json.get(tempEffect,"ParentSubeffect")+")]"))
+		]
+
+		[h,if(NoActiveParentTest): EffectsForcingCheckOptions = "<option value='"+tempEffectID+"'>"+tempEffectName+" "+tempEffectSkillDisplay+"</option>"]
 	}]
 
 	[h:CheckInputHTML = CheckInputHTML + "<tr id='rowEffectIDChoice'><th><label for='EffectIDChoice'>Make Check for Effect:</label></th><td><select id='EffectIDChoice' name='EffectIDChoice' onchange='createRegularCheckRows("+'"CheckInputTable"'+")'>"+EffectsForcingCheckOptions+"<option value=''>Other Check Not Linked to Effect</option></select></td></tr>"]

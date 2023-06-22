@@ -113,6 +113,7 @@
 
 [h:abilityTable = "[]"]
 [h,foreach(targetToken,effTargets),CODE:{
+	[h:switchToken(targetToken)]
     [h:thisTokenInputDisplay = "junkVar | "+getTokenImage("",targetToken)+" | Resolving Effects on "+getName(targetToken)+" | LABEL | ICON=TRUE "]
 	[h:thisTokenAttackData = effAttackData]
 	[h:thisTokenSaveDCData = effSaveDCData]
@@ -153,7 +154,6 @@
 		"ConditionsApplied",thisTokenConditionsApplied,
 		"TargetSpecific",thisTokenTargetSpecificEffects
 	)]
-	[h:switchToken(targetToken)]
 
 	[h,if(json.length(effTargets)>1):
 		abilityTable = json.append(abilityTable,json.set("",

@@ -34,7 +34,7 @@
 	[h:objectTagsExclusive = json.get(ObjectFilterData,"TagsExclusive")]
 }]
 
-[h:allValidItems = "{}"]
+[h:allValidItemsByCreature = "{}"]
 [h,foreach(creature,TargetCreatures),CODE:{
 	[h:thisCreatureValidObjects = getProperty("a5e.stat.Inventory",creature)]
 
@@ -69,7 +69,7 @@
 		[h,if(validSizeTest): thisCreatureFinalValidObjects = json.append(thisCreatureFinalValidObjects,tempItem)]
 	}]
 
-	[h:allValidItems = json.set(allValidItems,creature,thisCreatureFinalValidObjects)]
+	[h:allValidItemsByCreature = json.set(allValidItemsByCreature,creature,thisCreatureFinalValidObjects)]
 }]
 
-[h:macro.return = allValidItems]
+[h:macro.return = allValidItemsByCreature]

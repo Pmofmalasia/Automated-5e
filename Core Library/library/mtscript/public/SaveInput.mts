@@ -26,7 +26,13 @@
 			tempEffectSkillDisplay = "("+json.length(tempEffectSkill)+" options)";
 			tempEffectSkillDisplay = "("+pm.GetDisplayName(tempEffectSkill,"sb.Skills")+")"
 		]
-		[h:EffectsForcingSaveOptions = "<option value='"+tempEffectID+"'>"+tempEffectName+" "+tempEffectSkillDisplay+"</option>"]
+
+		[h,if(json.get(tempEffect,"ParentSubeffect")==""): 
+			NoActiveParentTest = 1;
+			NoActiveParentTest = json.isEmpty(json.path.read(data.getData("addon:","pm.a5e.core","gd.Effects"),"[*][?(@.ID == "+json.get(tempEffect,"ParentSubeffect")+")]"))
+		]
+
+		[h,if(NoActiveParentTest): EffectsForcingSaveOptions = "<option value='"+tempEffectID+"'>"+tempEffectName+" "+tempEffectSkillDisplay+"</option>"]
 	}]
 
 	[h:SaveInputHTML = SaveInputHTML + "<tr id='rowEffectIDChoice'><th><label for='EffectIDChoice'>Make Save for Effect:</label></th><td><select id='EffectIDChoice' name='EffectIDChoice' onchange='createRegularSaveRows("+'"SaveInputTable"'+")'>"+EffectsForcingSaveOptions+"<option value=''>Other Save Not Linked to Effect</option></select></td></tr>"]

@@ -78,12 +78,17 @@
     [h,if(json.get(damage.NonDamageData,"Target")!=""): pm.PassiveFunction(tempPrefix+"DamageTargeted",json.set("","ParentToken",json.get(damage.NonDamageData,"Target")))]
 }]
 
-[h:damage.RulesFinal = damage.Rules+if(damage.AddedRolledRules=="",""," + "+damage.AddedRolledRules)+if(damage.FlatBonusRules=="",""," + "+damage.FlatBonusRules)+if(damage.AddedFlatBonusRules=="",""," + "+damage.AddedFlatBonusRules)]
-[h:damage.CritRulesFinal = damage.Rules+" + "+damage.CritRules+if(damage.AddedRolledRules=="",""," + "+damage.AddedRolledRules+" + "+damage.AddedRolledRules)+if(damage.FlatBonusRules=="",""," + "+damage.FlatBonusRules)+if(damage.AddedFlatBonusRules=="",""," + "+damage.AddedFlatBonusRules)]
+[h:damage.RulesFinal = damage.Rules + damage.AddedRolledRules + if(damage.FlatBonusRules=="",""," + "+damage.FlatBonusRules) + damage.AddedFlatBonusRules]
+[h:damage.CritRulesFinal = damage.Rules+" + "+damage.CritRules + damage.AddedRolledRules + damage.AddedRolledRules+if(damage.FlatBonusRules=="",""," + "+damage.FlatBonusRules) + damage.AddedFlatBonusRules]
 
 [h:damage.FinalDice = json.merge(damage.AllDice,damage.AddedRolledDice)]
 [h:damage.Array = "[]"]
-[h,foreach(die,damage.FinalDice): damage.Array = json.append(damage.Array,eval("1d"+die))]
+[h,foreach(die,damage.FinalDice),CODE:{
+	[h,if(die > 0):
+		damage.Array = json.append(damage.Array,eval("1d"+die));
+		damage.Array = json.append(damage.Array,-eval("1d"+abs(die)))
+	]
+}]
 [h,if(json.isEmpty(damage.AddedFlatBonus)):
     damage.TotalAddedFlatBonus = damage.FlatBonusTotal;
     damage.TotalAddedFlatBonus = math.arraySum(damage.AddedFlatBonus) + damage.FlatBonusTotal
@@ -103,7 +108,12 @@
 [h:"<!-- TODO: Temporarily separate out addedRolledDice and regular rolled dice array so the order can be natty dice, natty crit dice, added dice, added crit dice in the array -->"]
 [h:damage.FinalCritDice = json.merge(damage.AllCritDice,damage.AddedRolledDice)]
 [h:damage.CritArray = "[]"]
-[h,foreach(die,damage.FinalCritDice): damage.CritArray = json.append(damage.CritArray,eval("1d"+die))]
+[h,foreach(die,damage.FinalCritDice),CODE:{
+	[h,if(die > 0):
+		damage.CritArray = json.append(damage.CritArray,eval("1d"+die));
+		damage.CritArray = json.append(damage.CritArray,-eval("1d"+abs(die)))
+	]
+}]
 [h,if(json.isEmpty(damage.CritArray)):
     damage.CritTotal = damage.Total;
     damage.CritTotal = math.arraySum(damage.CritArray) + damage.Total

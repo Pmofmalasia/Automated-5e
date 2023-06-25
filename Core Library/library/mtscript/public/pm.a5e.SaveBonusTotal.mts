@@ -20,10 +20,11 @@
 		[h:ProfType = 0]
 	}
 ]
+[h:roundingMethod = "floor"]
 
 [h:pm.PassiveFunction("SaveProf")]
 
-[h:ProfBonus = ProfType*getProperty("a5e.stat.Proficiency")]
+[h:ProfBonus = eval(roundingMethod+"("+(ProfType*getProperty("a5e.stat.Proficiency"))+")")]
 [h,SWITCH(ProfType+""):
 	case "0.5": ProfTypeStr = "Half Prof";
 	case "1": ProfTypeStr = "Prof";

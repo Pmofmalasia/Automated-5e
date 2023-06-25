@@ -91,9 +91,45 @@
 	)]
 };{}]
 
+[h,switch(json.get(objectData,"isNonstandardEquip")),CODE:
+	case "":{
+		[h:objectData = json.set(objectData,
+			"DonTime",json.set("","Value",1,"Units","interaction"),
+			"DoffTime",json.set("","Value",1,"Units","interaction"),
+			"DropTime",json.set("","Value","","Units","instant")
+		)]
+	};
+	case "Custom":{
+		[h:tempEquipTypeArray = json.append("","Don","Doff","Drop")]
+		[h,foreach(equipType,tempEquipTypeArray),CODE:{
+			[h,switch(json.get(objectData,equipType+"Time")):
+				case "Free": thisEquipTypeData = json.set("","Value","","Units","instant");
+				case "Item Interaction": thisEquipTypeData = json.set("","Value",1,"Units","interaction");
+				case "Action": thisEquipTypeData = json.set("","Value",1,"Units","action");
+				case "Bonus Action": thisEquipTypeData = json.set("","Value",1,"Units","bonus");
+				case "Reaction": thisEquipTypeData = json.set("","Value",1,"Units","reaction");
+				case "1 Minute": thisEquipTypeData = json.set("","Value",1,"Units","minute");
+				case "10 Minutes": thisEquipTypeData = json.set("","Value",10,"Units","minute");
+				case "1 Hour": thisEquipTypeData = json.set("","Value",1,"Units","hour");
+				case "8 Hours": thisEquipTypeData = json.set("","Value",8,"Units","hour");
+				case "12 Hours": thisEquipTypeData = json.set("","Value",12,"Units","hour");
+				case "24 Hours": thisEquipTypeData = json.set("","Value",24,"Units","hour")
+			]
+			[h:objectData = json.set(objectData,equipType+"Time",thisEquipTypeData)]
+			[h:objectData = json.remove(objectData,equipType+"Time")]
+		}]
+	};
+	case "Cannot":{
+		[h:objectData = json.set(objectData,"isNotDoffable",1)]
+	}
+]
+[h:objectData = json.remove(objectData,"isNonstandardEquip")]
+
 [h,if(json.contains(objectData,"isActivatable")),CODE:{
 	[h:objectData = json.set(objectData,"isActivatable",json.contains(objectData,"isActivatable"))]
 	[h,switch(json.get(objectData,"ActivationUseTime")):
+		case "Free": objectData = json.set(objectData,"ActivationTime","","ActivationTimeUnits","");
+		case "Item Interaction": objectData = json.set(objectData,"ActivationTime",1,"ActivationTimeUnits","interaction");
 		case "Action": objectData = json.set(objectData,"ActivationTime",1,"ActivationTimeUnits","action");
 		case "Bonus Action": objectData = json.set(objectData,"ActivationTime",1,"ActivationTimeUnits","bonus");
 		case "Reaction": objectData = json.set(objectData,"ActivationTime",1,"ActivationTimeUnits","reaction");
@@ -105,16 +141,49 @@
 		case "24 Hours": objectData = json.set(objectData,"ActivationTime",24,"ActivationTimeUnits","hour")
 	]
 	[h:objectData = json.remove(objectData,"ActivationUseTime")]
+
+	[h,switch(json.get(objectData,"ActivationComponents")):
+		case "None": objectData = json.set(objectData,"ActivationVerbalComponent",0,"ActivationSomaticComponent",0);
+		case "Verbal": objectData = json.set(objectData,"ActivationVerbalComponent",1,"ActivationSomaticComponent",0);
+		case "Somatic": objectData = json.set(objectData,"ActivationVerbalComponent",0,"ActivationSomaticComponent",1);
+		case "Both": objectData = json.set(objectData,"ActivationVerbalComponent",1,"ActivationSomaticComponent",1)
+	]
+	[h:objectData = json.remove(objectData,"ActivationComponents")]
 };{}]
 
+[h,switch(json.get(objectData,"isCharges")),CODE:
+	case "None":{};
+	case "One":{
+		[h:objectData = json.set(objectData,"MaxResource","[r:"+json.get(objectData,"MaxResource")+"]")]
+	};
+	case "Multiple":{
+		[h:MaxResourceString = "[r:json.set(''"]
+		[h:ResourceDisplayNameString = "[r:json.set(''"]
+		[h,count(json.get(objectData,"MultiResourceNumber") + 1),CODE:{
+			[h:tempResourceDisplayName = json.get(objectData,"ResourceDisplayName"+roll.count)]
+			[h:tempResourceName = pm.RemoveSpecial(tempResourceDisplayName)]
+			[h:MaxResourceString = MaxResourceString + ",'" + tempResourceName + "'," + json.get(objectData,"MaxResource"+roll.count)]
+			[h:ResourceDisplayNameString = ResourceDisplayNameString + ",'" + tempResourceName + "','" + tempResourceDisplayName + "'"]
 
-[h,if(json.contains(objectData,"isCharges")),CODE:{
+			[h:objectData = json.remove(objectData,"ResourceDisplayName"+roll.count)]
+			[h:objectData = json.remove(objectData,"MaxResource"+roll.count)]
+		}]
+		[h:MaxResourceString = MaxResourceString + ")]"]
+		[h:ResourceDisplayNameString = ResourceDisplayNameString + ")]"]
+
+		[h:objectData = json.set(objectData,
+			"MaxResource",MaxResourceString,
+			"ResourceDisplayName",ResourceDisplayNameString
+		)]
+		[h:objectData = json.remove(objectData,"MultiResourceNumber")]
+	}
+]
+
+[h,if(json.get(objectData,"isCharges") != "None"),CODE:{
 	[h:RestoreInstances = json.append("","ShortRest","LongRest","Dawn","Dusk","StartTurn","Initiative")]
 	[h,foreach(instance,RestoreInstances),CODE:{
 		[h,if(json.contains(objectData,"Restore"+instance)): objectData = json.set(objectData,"Restore"+instance,1)]	
 	}]
-
-	[h:objectData = json.set(objectData,"MaxResource","[r:"+json.get(objectData,"MaxResource")+"]")]
 };{}]
 [h:objectData = json.remove(objectData,"isCharges")]
 

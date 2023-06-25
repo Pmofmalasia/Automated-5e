@@ -4,9 +4,24 @@
 	NewObjectTokenName = json.get(objectData,"FalseName")
 ]
 [h:NewObjectTokenType = json.get(objectData,"Type")]
-[h,switch(NewObjectTokenType):
-	default: NewObjectImage = "asset://cae048d4f31ef38cac5ba0df1378c67d";
-]
+
+[h:IKnowWhatTheFuckImDoing = 0]
+[h,if(IKnowWhatTheFuckImDoing),CODE:{
+	[h:NewObjectImage = "lib://pm.a5e.core/ObjectImages/"+NewObjectTokenType+"/"+json.get(objectData,NewObjectTokenType+"Type")]
+	[h:ImagePresentTest = 
+		js.eval("
+		let http = new XMLHttpRequest();
+
+		http.open('GET', arg[0], true);
+		http.send();
+
+		return http.status != 404;",NewObjectImage
+	)]
+	[h,if(!ImagePresentTest): NewObjectImage = "asset://cae048d4f31ef38cac5ba0df1378c67d"]	
+};{
+	[h:NewObjectImage = "asset://cae048d4f31ef38cac5ba0df1378c67d"]
+}]
+
 [h:"<!-- TODO: get image from table based on token type -->"]
 
 [h:NewObjectLocation = json.get(objectData,"Location")]

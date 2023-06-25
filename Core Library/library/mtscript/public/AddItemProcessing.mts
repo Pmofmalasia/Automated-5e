@@ -49,25 +49,28 @@
 };{}]
 
 [h,if(newEntryTest),CODE:{
-	[h:NewItemID = eval("1d1000000") + json.get(getInfo("client"),"timeInMs")]
-
-	[h:"<!-- If the item has a subeffect that uses its own resource, put the NewItemID into the subeffect (might be easier to do as it's being used but would be a bit spaghetti-ey) -->"]
-	[h,if(InitialChargesMethod != ""): ChosenItem = json.path.put(ChosenItem,"['Effects'][*]['Subeffects'][*]['UseResource']['Feature']['Resource'][?(@.Name == '"+json.get(ChosenItem,"Name")+"' && @.Class == 'Item')]","ItemID",NewItemID)]
-
 	[h,if(StackingTest),CODE:{
-		[h:ChosenItem = json.set(ChosenItem,
+		[h:NumberAdded = json.get(AddItemData,"NumberAdded")]
+		[h:NumberOfEntries = 1]
+	};{
+		[h:NumberAdded = 1]
+		[h:NumberOfEntries = json.get(AddItemData,"NumberAdded")]
+	}]
+
+	[h,count(NumberOfEntries),CODE:{
+		[h:NewItemID = eval("1d1000000") + json.get(getInfo("client"),"timeInMs")]
+		[h:TempChosenItem = json.set(ChosenItem,
 			"ItemID",NewItemID,
-			"Number",json.get(AddItemData,"NumberAdded")
+			"Number",NumberAdded
 		)]
 
-		[h:setProperty("a5e.stat.Inventory",json.append(PriorInventory,ChosenItem))]
-	};{
-		[h,count(json.get(AddItemData,"NumberAdded")): PriorInventory = json.append(PriorInventory,json.set(ChosenItem,
-			"ItemID",NewItemID,
-			"Number",1
-		))]
-		[h:setProperty("a5e.stat.Inventory",PriorInventory)]
+		[h:"<!-- If the item has a subeffect that uses its own resource, put the NewItemID into the subeffect (might be easier to do as it's being used but would be a bit spaghetti-ey) -->"]
+		[h,if(InitialChargesMethod != ""): TempChosenItem = json.path.put(TempChosenItem,"['Effects'][*]['Subeffects'][*]['UseResource']['Feature']['Resource'][?(@.Name == '"+json.get(ChosenItem,"Name")+"' && @.Class == 'Item')]","ItemID",NewItemID)]
+
+		[h:PriorInventory = json.append(PriorInventory,TempChosenItem)]
 	}]
+	
+	[h:setProperty("a5e.stat.Inventory",PriorInventory)]
 };{
 	[h:OldEntryData = json.get(SameItemPriorEntry,0)]
 
@@ -82,3 +85,4 @@
 [h:broadcast(json.get(AddItemData,"NumberAdded")+" "+json.get(ChosenItem,"DisplayName")+" added to the inventory of "+getName(ParentToken))]
 
 [h:closeDialog("AddItem")]
+

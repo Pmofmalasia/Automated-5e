@@ -56,7 +56,6 @@
 [h:defineFunction("pm.a5e.MaxSpellSlots","pm.a5e.MaxSpellSlots@Lib:pm.a5e.Core")]
 [h:defineFunction("stat.a5e.DisplayStatTest","stat.a5e.DisplayStatTest@Lib:pm.a5e.Core")]
 
-
 [h:"<!-- Functions for Abilities -->"]
 [h:defineFunction("ability.json.get","ability.json.get@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.a5e.FeatureAddSpell","pm.a5e.FeatureAddSpell@Lib:pm.a5e.Core",0,0)]
@@ -136,8 +135,21 @@
 [h:defineFunction("pm.a5e.FeatureSpellClass","pm.a5e.FeatureSpellClass@Lib:pm.a5e.Core",0,0)]
 [h:defineFunction("pm.a5e.GrantAdvantage","pm.a5e.GrantAdvantage@Lib:pm.a5e.Core",0,0)]
 [h:defineFunction("pm.a5e.GrantDisadvantage","pm.a5e.GrantDisadvantage@Lib:pm.a5e.Core",0,0)]
-[h:defineFunction("pm.a5e.PassiveFeatureCheckBonus","pm.a5e.PassiveFeatureCheckBonus@Lib:pm.a5e.Core",0,0)]
-[h:defineFunction("pm.a5e.PassiveFeatureSaveBonus","pm.a5e.PassiveFeatureSaveBonus@Lib:pm.a5e.Core",0,0)]
+[h:defineFunction("pm.a5e.PassiveFeatureCheckBonus","pass.a5e.CheckBonus@Lib:pm.a5e.Core",0,0)]
+[h:defineFunction("pass.a5e.AttackBonus","pass.a5e.AttackBonus@Lib:pm.a5e.Core",0,0)]
+[h:defineFunction("pass.a5e.CheckBonus","pass.a5e.CheckBonus@Lib:pm.a5e.Core",0,0)]
+[h:defineFunction("pass.a5e.SaveBonus","pass.a5e.SaveBonus@Lib:pm.a5e.Core",0,0)]
+[h:defineFunction("pass.a5e.DamageBonus","pass.a5e.DamageBonus@Lib:pm.a5e.Core",0,0)]
+[h:defineFunction("pass.a5e.SpeedBonus","pass.a5e.SpeedBonus@Lib:pm.a5e.Core",0,0)]
+[h:defineFunction("pass.a5e.ACBonus","pass.a5e.ACBonus@Lib:pm.a5e.Core",0,0)]
+[h:defineFunction("pass.a5e.MaxHPBonus","pass.a5e.MaxHPBonus@Lib:pm.a5e.Core",0,0)]
+[h:defineFunction("pass.a5e.AdjustProficiency","pass.a5e.AdjustProficiency@Lib:pm.a5e.Core",0,0)]
+[h:defineFunction("pass.a5e.d20AutoResult","pass.a5e.d20AutoResult@Lib:pm.a5e.Core",0,0)]
+[h:defineFunction("pass.a5e.AdjustCriticalThreshhold","pass.a5e.AdjustCriticalThreshhold@Lib:pm.a5e.Core",0,0)]
+
+[h:"<!-- Functions for getting information about a token -->"]
+[h:defineFunction("pm.a5e.GetEquippedArmorInfo","pm.a5e.GetEquippedArmorInfo@Lib:pm.a5e.Core")]
+[h:defineFunction("pm.a5e.HasConditions","pm.a5e.HasConditions@Lib:pm.a5e.Core")]
 
 [h:"<!-- Functions for resolving effects on targets -->"]
 [h:defineFunction("pm.a5e.AdvanceTime","pm.a5e.AdvanceTime@Lib:pm.a5e.Core")]
@@ -256,9 +268,6 @@
 [h:defineFunction("pm.a5e.CheckBonusTotal","pm.a5e.CheckBonusTotal@Lib:pm.a5e.Core",0,0)]
 [h:defineFunction("pm.a5e.SaveProperties","pm.a5e.SaveProperties@Lib:pm.a5e.Core",0,0)]
 [h:defineFunction("pm.a5e.SaveBonusTotal","pm.a5e.SaveBonusTotal@Lib:pm.a5e.Core",0,0)]
-
-[h:"<!-- Functions for Conditions -->"]
-[h:defineFunction("pm.a5e.HasConditions","pm.a5e.HasConditions@Lib:pm.a5e.Core")]
 
 [h:"<!-- Functions for Trusted Bypass -->"]
 [h:defineFunction("pm.SwitchToken","pm.SwitchToken@Lib:pm.a5e.Core",0,0)]

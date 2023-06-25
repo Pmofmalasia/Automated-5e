@@ -79,7 +79,10 @@
 [h,if(speedSetOverride!=-1),CODE:{
 	[h:SpeedFinal = speedSetOverride]
 };{
-	[h,if(speedMultiplier < 0): speedMultiplier = (1/(abs(speedMultiplier)+1)); speedMultiplier = speedMultiplier+1]
+	[h,if(speedMultiplier < 0):
+		speedMultiplier = (1/(abs(speedMultiplier)+1));
+		speedMultiplier = speedMultiplier+1
+	]
 	[h:SpeedFinal = (speedBase + speedBonus) * speedMultiplier]
 	[h:SpeedFinal = max(speedSet,SpeedFinal)]
 }]

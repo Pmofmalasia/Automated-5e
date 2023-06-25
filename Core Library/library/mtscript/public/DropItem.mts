@@ -4,6 +4,7 @@
 [h:DroppedItem = json.get(DropItemData,"ItemID")]
 [h:DroppedNumber = number(json.get(DropItemData,"Number"))]
 [h:DropLocation = json.get(DropItemData,"Location")]
+[h:isLeaveToken = json.get(DropItemData,"LeaveToken")]
 
 [h:ItemData = json.path.read(getProperty("a5e.stat.Inventory"),"[*][?(@.ItemID == "+DroppedItem+")]")]
 [h,if(json.isEmpty(ItemData)):
@@ -24,6 +25,15 @@
 [h:setProperty("a5e.stat.Inventory",NewInventory)]
 [h:ItemData = json.set(ItemData,"Number",FinalDroppedNumber)]
 
-[h,MACRO("GenerateObjectToken@Lib:pm.a5e.Core"): json.set(ItemData,"Location",DropLocation)]
+[h,if(getProperty("a5e.stat.EquippedArmor") == DroppedItem): setProperty("a5e.stat.EquippedArmor","")]
+[h:NewHeldItems = getProperty("a5e.stat.HeldItems")]
+[h,foreach(heldItem,getProperty("a5e.stat.HeldItems")),CODE:{
+	[h,if(heldItem == DroppedItem): NewHeldItems = json.set(NewHeldItems,roll.count,"")]
+}]
+[h:setProperty("a5e.stat.HeldItems",NewHeldItems)]
+
+[h,if(isLeaveToken),CODE:{
+	[h,MACRO("GenerateObjectToken@Lib:pm.a5e.Core"): json.set(ItemData,"Location",DropLocation)]
+}]
 
 [h:macro.return = json.set("","ItemID",DroppedItem,"ItemRemaining",NewInventoryNumber)]

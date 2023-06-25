@@ -246,7 +246,8 @@
 			"ItemID",json.get(wa.WeaponUsed,"ItemID"),
 			"Number",1,
 			"Location",json.set("","Token",thisAttackTarget),
-			"ParentToken",ParentToken
+			"ParentToken",ParentToken,
+			"LeaveToken",1
 		)]
 	};{}]
 

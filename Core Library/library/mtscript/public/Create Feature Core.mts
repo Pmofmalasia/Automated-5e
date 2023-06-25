@@ -452,6 +452,9 @@
 	" ab.UseTime | 0 | Affects time required to use abilities | CHECK ",
 	" ab.ChangePrereqs | 0 | Affects requirements for other features to be activated | CHECK ",
 	" junkVar | --------------------------------------------------------------------------------------------------------------------- | 0 | LABEL | SPAN=TRUE ",
+	" ab.EffectResolve | 0 | Effect triggers after resolving another effect | CHECK ",
+	" ab.EffectResolveTargeted | 0 | Effect triggers after effect resolved on you | CHECK ",
+	" junkVar | --------------------------------------------------------------------------------------------------------------------- | 0 | LABEL | SPAN=TRUE ",
 	" ab.Damaged | 0 | Effect triggers when damaged | CHECK ",
 	" ab.CondGain | 0 | Effect triggers when gaining a condition | CHECK ",
 	" ab.CondEnd | 0 | Effect triggers when ending a condition | CHECK ",
@@ -949,6 +952,75 @@
 
 [h,if(ab.ChangePrereqs): ab.Final = json.set(ab.Final,"ChangePrereqs",1)]
 
+[h:"<!-- TODO: When adapting these to final input, attack/save/check ones should be rolled into other attack/save/check stuff -->"]
+[h,if(ab.EffectResolve),CODE:{
+	[h:abort(input(
+		" junkVar | Choose triggers for a feature after effect resolves | 0 | LABEL | SPAN=TRUE ",
+		" junkVar | ------------------------------------------------------------ | 0 | LABEL | SPAN=TRUE ",
+		" ab.EffectResolveAttack | No,On Hit,On Miss,Both | Triggers after attacking | LIST ",
+		" ab.EffectResolveSave | No,On Pass,On Fail,Both | Triggers after forcing saving throw | LIST ",
+		" ab.EffectResolveCheck | No,On Pass,On Fail,Both | Triggers after forcing check | LIST ",
+		" ab.EffectResolveAny | 0 | Triggers after resolving any effect | CHECK "
+	))]
+
+	[h,switch(ab.EffectResolveAttack):
+		case 0: "";
+		case 1: ab.Final = json.set(ab.Final,"AttackOnHit",1);
+		case 2: ab.Final = json.set(ab.Final,"AttackOnMiss",1);
+		case 3: ab.Final = json.set(ab.Final,"AttackOnHit",1,"AttackOnMiss",1);
+	]
+
+	[h,switch(ab.EffectResolveSave):
+		case 0: "";
+		case 1: ab.Final = json.set(ab.Final,"SaveSuccess",1);
+		case 2: ab.Final = json.set(ab.Final,"SaveFailure",1);
+		case 3: ab.Final = json.set(ab.Final,"SaveSuccess",1,"SaveFailure",1);
+	]
+
+	[h,switch(ab.EffectResolveCheck):
+		case 0: "";
+		case 1: ab.Final = json.set(ab.Final,"CheckSuccess",1);
+		case 2: ab.Final = json.set(ab.Final,"CheckFailure",1);
+		case 3: ab.Final = json.set(ab.Final,"CheckSuccess",1,"CheckFailure",1);
+	]
+
+	[h,if(ab.EffectResolveAny): ab.Final = json.set(ab.Final,"CallAfterEffect",ab.EffectResolveAny)]
+};{}]
+
+[h,if(ab.EffectResolveTargeted),CODE:{
+	[h:abort(input(
+		" junkVar | Choose triggers for a feature after effect targeting you resolves | 0 | LABEL | SPAN=TRUE ",
+		" junkVar | ------------------------------------------------------------ | 0 | LABEL | SPAN=TRUE ",
+		" ab.EffectResolveAttackTargeted | No,On Hit,On Miss,Both | Triggers after attacked | LIST ",
+		" ab.EffectResolveSaveTargeted | No,On Pass,On Fail,Both | Triggers after making saving throw | LIST ",
+		" ab.EffectResolveCheckTargeted | No,On Pass,On Fail,Both | Triggers after making check | LIST ",
+		" ab.EffectResolveAnyTargeted | 0 | Triggers after any effect resolves on you | CHECK "
+	))]
+
+	[h,switch(ab.EffectResolveAttackTargeted):
+		case 0: "";
+		case 1: ab.Final = json.set(ab.Final,"AttackOnHitTargeted",1);
+		case 2: ab.Final = json.set(ab.Final,"AttackOnMissTargeted",1);
+		case 3: ab.Final = json.set(ab.Final,"AttackOnHitTargeted",1,"AttackOnMissTargeted",1);
+	]
+
+	[h,switch(ab.EffectResolveSaveTargeted):
+		case 0: "";
+		case 1: ab.Final = json.set(ab.Final,"SaveSuccessTargeted",1);
+		case 2: ab.Final = json.set(ab.Final,"SaveFailureTargeted",1);
+		case 3: ab.Final = json.set(ab.Final,"SaveSuccessTargeted",1,"SaveFailureTargeted",1);
+	]
+
+	[h,switch(ab.EffectResolveCheckTargeted):
+		case 0: "";
+		case 1: ab.Final = json.set(ab.Final,"CheckSuccessTargeted",1);
+		case 2: ab.Final = json.set(ab.Final,"CheckFailureTargeted",1);
+		case 3: ab.Final = json.set(ab.Final,"CheckSuccessTargeted",1,"CheckFailureTargeted",1);
+	]
+
+	[h,if(ab.EffectResolveAnyTargeted): ab.Final = json.set(ab.Final,"CallAfterEffectTargeted",ab.EffectResolveAnyTargeted)]
+};{}]
+
 [h,if(ab.Damaged),CODE:{
 	[h:abort(input(
 		" junkVar | Choose triggers for a feature after taking damage | 0 | LABEL | SPAN=TRUE ",
@@ -1003,9 +1075,15 @@
 };{}]
 
 [h,if(ab.CondGain),CODE:{
-	[h:ab.Final = json.set(ab.Final,
-		"CallCondGain",1
-	)]
+	[h:abort(input(
+		" junkVar | Choose triggers for a feature after gaining a condition | 0 | LABEL | SPAN=TRUE ",
+		" junkVar | ------------------------------------------------------------ | 0 | LABEL | SPAN=TRUE ",
+		" ab.CondGain | 0 | Triggers after gaining a condition | CHECK ",
+		" ab.CondGainThis | 0 | Triggers after gaining this condition | CHECK "
+	))]
+
+	[h,if(ab.CondGain) :ab.Final = json.set(ab.Final,"CallCondGain",1)]
+	[h,if(ab.CondGainThis): ab.Final = json.set(ab.Final,"CallCondGainThis",1)]
 };{}]
 
 [h,if(ab.CondEnd),CODE:{

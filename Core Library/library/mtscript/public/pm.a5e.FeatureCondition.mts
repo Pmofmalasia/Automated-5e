@@ -2,7 +2,7 @@
 [h:pm.ConditionNum = json.length(pm.ConditionNames)]
 [h:pm.ChoiceNumber = if(json.get(arg(1),"ChoiceNumber")=="",0,json.get(arg(1),"ChoiceNumber"))]
 
-[h:pm.IsToggle = json.get(arg(2),"Toggle")]
+[h:pm.IsToggle = number(json.get(arg(2),"Toggle"))]
 [h:pm.Duration = json.get(arg(2),"Value")]
 [h:pm.DurationUnits = json.get(arg(2),"Units")]
 [h:pm.AdvancePoint = json.get(arg(2),"AdvancePoint")]

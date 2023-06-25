@@ -36,16 +36,32 @@
     };
     case "Range":{
         [h:rangeData = json.get(json.get(allEffectData,whichEffect),"Range")]
-        [h,if(json.type(componentToGetData)=="OBJECT"): rangeData = json.get(rangeData,json.get(componentToGetData,"SecondaryKey"))]
+        [h,if(json.type(componentToGetData)=="OBJECT"),CODE:{
+			[h,if(json.type(rangeData)=="OBJECT"):
+				rangeData = json.get(rangeData,json.get(componentToGetData,"SecondaryKey"));
+				rangeData = json.set("","Units","Variable")
+			]
+		};{}]
         [h:macro.return = rangeData]
     };
     case "Duration":{
         [h:durationData = json.get(json.get(allEffectData,whichEffect),"Duration")]
-        [h,if(json.type(componentToGetData)=="OBJECT"): durationData = json.get(durationData,json.get(componentToGetData,"SecondaryKey"))]
+        [h,if(json.type(componentToGetData)=="OBJECT"),CODE:{
+			[h,if(json.type(durationData)=="OBJECT"):
+				durationData = json.get(durationData,json.get(componentToGetData,"SecondaryKey"));
+				durationData = json.set("","Units","Variable")
+			]
+		};{}]
         [h:macro.return = durationData]
     };
     case "Resource":{
         [h:resourceData = json.get(json.get(allEffectData,whichEffect),"Resource")]
+		[h,if(json.type(resourceData)!="OBJECT"),CODE:{
+			[h,if(json.get(componentToGetData,"SecondaryKey") == "HitDieSize"):
+				return(0,6);
+				return(0,0)
+			]
+		};{}]
         [h,switch(json.get(componentToGetData,"SecondaryKey")),CODE:
             case "":{
                 [h:macro.return = resourceData]
@@ -78,7 +94,12 @@
     };
     case "Roll":{
         [h:rollData = json.get(json.get(allEffectData,whichEffect),"Roll")]
-        [h,if(json.type(componentToGetData)=="OBJECT"): rollData = json.get(rollData,json.get(componentToGetData,"SecondaryKey"))]
+        [h,if(json.type(componentToGetData)=="OBJECT"),CODE:{
+			[h,if(json.type(rollData)=="OBJECT"):
+				rollData = json.get(rollData,json.get(componentToGetData,"SecondaryKey"));
+				rollData = 0
+			]
+		};{}]
         [h:macro.return = rollData]
     };
     case "Damage":{

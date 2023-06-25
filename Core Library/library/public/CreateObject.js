@@ -276,46 +276,111 @@ function createArmorDexterityRows(tableID){
 	}
 }
 
+function createNonstandardEquipRows(tableID){
+	let nextRowIndex = document.getElementById("rowIsNonstandardEquip").rowIndex + 1;
+
+	if(document.getElementById("isNonstandardEquip").value == "Custom"){
+		let UseTimeOptionsArray = ["Free","Item Interaction","Action","Bonus Action","Reaction","1 Minute","10 Minutes","1 Hour","8 Hours","12 Hours","24 Hours"];
+		let UseTimeOptions = "";
+		for(let tempOption of UseTimeOptionsArray){
+			UseTimeOptions = UseTimeOptions + "<option value='"+tempOption+"'>"+tempOption+"</option>";
+		}
+
+		addTableRow(tableID,nextRowIndex,"rowDonTime","<th><label for='DonTime'>Don Time:</label></th><td><select id='DonTime' name='DonTime'>"+UseTimeOptions+"</select>");
+		document.getElementById("DonTime").value = "Item Interaction";
+		nextRowIndex++;
+
+		addTableRow(tableID,nextRowIndex,"rowDoffTime","<th><label for='DoffTime'>Doff Time:</label></th><td><select id='DoffTime' name='DoffTime'>"+UseTimeOptions+"</select>");
+		document.getElementById("DoffTime").value = "Item Interaction";
+		nextRowIndex++;
+
+		addTableRow(tableID,nextRowIndex,"rowDropTime","<th><label for='DropTime'>Drop Time:</label></th><td><select id='DropTime' name='DropTime'>"+UseTimeOptions+"</select>");
+		document.getElementById("DropTime").value = "Free";
+		nextRowIndex++;
+	}
+	else{
+		clearUnusedTable("CreateObjectTable","rowIsNonstandardEquip","rowIsConsumable");
+	}
+}
+
 function createActivatableRows(tableID){
 	let nextRowIndex = document.getElementById("rowIsActivatable").rowIndex + 1;
 
 	if(document.getElementById("isActivatable").checked){
-		let UseTimeOptionsArray = ["Action","Bonus Action","Reaction","1 Minute","10 Minutes","1 Hour","8 Hours","12 Hours","24 Hours"];
+		let UseTimeOptionsArray = ["Free","Item Interaction","Action","Bonus Action","Reaction","1 Minute","10 Minutes","1 Hour","8 Hours","12 Hours","24 Hours"];
 		let UseTimeOptions = "";
 		for(let tempOption of UseTimeOptionsArray){
 			UseTimeOptions = UseTimeOptions + "<option value='"+tempOption+"'>"+tempOption+"</option>";
 		}
 
 		addTableRow(tableID,nextRowIndex,"rowActivationUseTime","<th><label for='ActivationUseTime'>Activation Time:</label></th><td><select id='ActivationUseTime' name='ActivationUseTime'>"+UseTimeOptions+"</select>");
+		document.getElementById("ActivationUseTime").value = "Bonus Action";
+		nextRowIndex++;
+
+		addTableRow(tableID,nextRowIndex,"rowActivationComponents","<th><label for='ActivationComponents'>Activation Requirements:</label></th><td><select id='ActivationComponents' name='ActivationComponents'><option value='None'>No Components</option><option value='Verbal'>Command Word (Verbal)</option><option value='Somatic'>Interaction (Somatic)</option><option value='Both'>Verbal and Somatic</option></select>");
 		nextRowIndex++;
 	}
 	else{
-
+		clearUnusedTable("CreateObjectTable","rowIsActivatable","rowIsCharges");
 	}
 }
 
-function createChargesRows(){
-	if(document.getElementById("isCharges").checked){
-		let nextRowIndex = document.getElementById("rowIsCharges").rowIndex+1;
-
-		addTableRow("CreateObjectTable",nextRowIndex,"rowMaxCharges","<th><label for='MaxResource'>Maximum Number of Charges:</label></th><td><input type='number' id='MaxResource' name='MaxResource' min='0' value='0' style='width:35px'></td>");
-		nextRowIndex++;
-
-		addTableRow("CreateObjectTable",nextRowIndex,"rowRestoreWhen","<th>Instances When Resource Recharges:</th><td><div class='check-multiple' style='width:100%'><label><input type='checkbox' id='RestoreShortRest' name='RestoreShortRest'><span>Short Rest</span></label><label><input type='checkbox' id='RestoreLongRest' name='RestoreLongRest'><span>Long Rest</span></label><label><input type='checkbox' id='RestoreDawn' name='RestoreDawn'><span>Dawn</span></label><label><input type='checkbox' id='RestoreDusk' name='RestoreDusk'><span>Dusk</span></label><label><input type='checkbox' id='RestoreStartTurn' name='RestoreStartTurn'><span>Start of Turn</span></label><label><input type='checkbox' id='RestoreInitiative' name='RestoreInitiative'><span>Rolling Initiative</span></label></div></td>");
-		nextRowIndex++;
-
-		addTableRow("CreateObjectTable",nextRowIndex,"rowRestoreMethod","<th><label for='RestoreMethod'>Recharge Method:</label></th><td><select id='RestoreMethod' name='RestoreMethod' onchange='createRestoreMethodRows()'><option value='Full'>Fully Recharge</option><option value='Fixed'>Fixed Amount Regained</option><option value='Rolled'>Rolled Amount</option><option value='Chance'>Chance to Recharge</option><option value='Attribute'>Based on Attribute</option><option value='Proficiency'>Based on Proficiency</option></select></td>");
-		nextRowIndex++;
-
-		addTableRow("CreateObjectTable",nextRowIndex,"rowInitialChargesMethod","<th><label for='InitialChargesMethod'>Charges When Gained:</label></th><td><select id='InitialChargesMethod' name='InitialChargesMethod' onchange='createInitialChargesMethodRows()'><option value='Full'>Fully Charged</option><option value='Fixed'>Fixed Amount</option><option value='Rolled'>Rolled Amount</option></select></td>");
-		nextRowIndex++;
-
-		addTableRow("CreateObjectTable",nextRowIndex,"rowHasDepletedEffect","<th><label for='HasDepletedEffect'>Effect Occurs when Charges Depleted:</label></th><td><input type='checkbox' id='HasDepletedEffect' name='HasDepletedEffect' onchange='createChargeDepletedRows()'></td>");
-		nextRowIndex++;
+function createChargesRows(tableID){
+	if(document.getElementById("isCharges").value == "None"){
+		clearUnusedTable(tableID,"rowIsCharges","rowMaterials");
 	}
 	else{
-		clearUnusedTable("CreateObjectTable","rowIsCharges","rowMaterials");
+		let nextRowIndex = document.getElementById("rowIsCharges").rowIndex+1;
+		if(document.getElementById("isCharges").value == "One"){
+			addTableRow(tableID,nextRowIndex,"rowMaxCharges","<th><label for='MaxResource'>Maximum Number of Charges:</label></th><td><input type='number' id='MaxResource' name='MaxResource' min='0' value='0' style='width:35px'></td>");
+			nextRowIndex++;
+		}
+		else{
+			addTableRow(tableID,nextRowIndex,"rowMultiResource0","<th text-align='center' colspan='2'><input type='hidden' id='MultiResourceNumber' name='MultiResourceNumber'><label for='ResourceDisplayName0'>Resource #1 Name:</label><input type='text' id='ResourceDisplayName0' name='ResourceDisplayName0'> Maximum Charges:<input type='number' id='MaxResource0' name='MaxResource0' min='0' value='0' style='width:35px'></th>");
+			nextRowIndex++;
+			
+			addTableRow(tableID,nextRowIndex,"rowMultiResourceButtons","<th text-align='center' colspan='2'><input type='button' value='Add Resource' onclick='addMultiResourceRows("+'"'+tableID+'"'+")'>  <input type='button' value='Remove Resource' onclick='removeMultiResourceRows("+'"'+tableID+'"'+")'></th>");
+			nextRowIndex++;
+		}
+
+		if(document.getElementById("rowRestoreWhen") == null){
+			addTableRow(tableID,nextRowIndex,"rowRestoreWhen","<th>Instances When Resource Recharges:</th><td><div class='check-multiple' style='width:100%'><label><input type='checkbox' id='RestoreShortRest' name='RestoreShortRest'><span>Short Rest</span></label><label><input type='checkbox' id='RestoreLongRest' name='RestoreLongRest'><span>Long Rest</span></label><label><input type='checkbox' id='RestoreDawn' name='RestoreDawn'><span>Dawn</span></label><label><input type='checkbox' id='RestoreDusk' name='RestoreDusk'><span>Dusk</span></label><label><input type='checkbox' id='RestoreStartTurn' name='RestoreStartTurn'><span>Start of Turn</span></label><label><input type='checkbox' id='RestoreInitiative' name='RestoreInitiative'><span>Rolling Initiative</span></label></div></td>");
+			nextRowIndex++;
+
+			addTableRow(tableID,nextRowIndex,"rowRestoreMethod","<th><label for='RestoreMethod'>Recharge Method:</label></th><td><select id='RestoreMethod' name='RestoreMethod' onchange='createRestoreMethodRows()'><option value='Full'>Fully Recharge</option><option value='Fixed'>Fixed Amount Regained</option><option value='Rolled'>Rolled Amount</option><option value='Chance'>Chance to Recharge</option><option value='Attribute'>Based on Attribute</option><option value='Proficiency'>Based on Proficiency</option></select></td>");
+			nextRowIndex++;
+
+			addTableRow(tableID,nextRowIndex,"rowInitialChargesMethod","<th><label for='InitialChargesMethod'>Charges When Gained:</label></th><td><select id='InitialChargesMethod' name='InitialChargesMethod' onchange='createInitialChargesMethodRows()'><option value='Full'>Fully Charged</option><option value='Fixed'>Fixed Amount</option><option value='Rolled'>Rolled Amount</option></select></td>");
+			nextRowIndex++;
+
+			addTableRow(tableID,nextRowIndex,"rowHasDepletedEffect","<th><label for='HasDepletedEffect'>Effect Occurs when Charges Depleted:</label></th><td><input type='checkbox' id='HasDepletedEffect' name='HasDepletedEffect' onchange='createChargeDepletedRows()'></td>");
+			nextRowIndex++;			
+		}
+		else if(document.getElementById("isCharges").value == "One"){
+			clearUnusedTable(tableID,"rowMaxCharges","rowRestoreWhen");
+		}
+		else if(document.getElementById("isCharges").value == "Multiple"){
+			clearUnusedTable(tableID,"rowMultiResourceButtons","rowRestoreWhen");
+		}
 	}
+}
+
+function addMultiResourceRows(tableID){
+	let NewResourceNumber = Number(document.getElementById("MultiResourceNumber").value);
+	NewResourceNumber = NewResourceNumber + 1;
+	let nextRowIndex = document.getElementById("rowMultiResource"+(NewResourceNumber - 1)).rowIndex + 1;
+	document.getElementById("MultiResourceNumber").value = NewResourceNumber;
+	
+	addTableRow(tableID,nextRowIndex,"rowMultiResource"+NewResourceNumber,"<th text-align='center' colspan='2'><label for='ResourceDisplayName"+NewResourceNumber+"'>Resource #"+(NewResourceNumber+1)+" Name:</label><input type='text' id='ResourceDisplayName"+NewResourceNumber+"' name='ResourceDisplayName"+NewResourceNumber+"'> Maximum Charges:<input type='number' id='MaxResource"+NewResourceNumber+"' name='MaxResource"+NewResourceNumber+"' min='0' value='0' style='width:35px'></th>");
+	nextRowIndex++;
+}
+
+function removeMultiResourceRows(tableID){
+	let lastResourceRowID = document.getElementById("rowMultiResourceButtons").rowIndex - 1;
+	document.getElementById(tableID).deleteRow(lastResourceRowID);
+	let NewResourceNumber = Number(document.getElementById("MultiResourceNumber").value);
+	NewResourceNumber = NewResourceNumber - 1;
+	document.getElementById("MultiResourceNumber").value = NewResourceNumber;
 }
 
 async function createRestoreMethodRows(){

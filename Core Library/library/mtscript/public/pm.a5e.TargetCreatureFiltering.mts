@@ -1,6 +1,7 @@
 [h:ParentToken = json.get(arg(0),"ParentToken")]
 [h:switchToken(ParentToken)]
 [h:pm.TargetOrigin = json.get(arg(0),"Origin")]
+[h,if(pm.TargetOrigin == ""): pm.TargetOrigin = ParentToken]
 [h:rangeData = json.get(arg(0),"Range")]
 
 [h,if(json.type(rangeData)=="OBJECT"),CODE:{

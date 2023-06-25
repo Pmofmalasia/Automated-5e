@@ -118,6 +118,19 @@
 	}]
 	[h,foreach(updateKey,lu.TempUpdates),CODE:{
 		[h:lu.ValidKeyTest = !json.isEmpty(json.path.read(getProperty("a5e.stat.AllFeatures"),"[*][?(@.Class  == '"+json.get(ability,"Class")+"' && (@.Subclass == '' || @.Subclass == '"+json.get(ability,"Subclass")+"') && @.Name == '"+json.get(ability,"Name")+"')]['"+updateKey+"']"))]
+
+		[h,if(updateKey == "ButtonInfo"):
+			thisFeaturePriorButtons = json.path.read(getProperty("a5e.stat.AllFeatures"),"[*][?(@.Class  == '"+json.get(ability,"Class")+"' && @.Subclass == '"+json.get(ability,"Subclass")+"' && @.Name == '"+json.get(ability,"Name")+"')]['"+updateKey+"']");
+			thisFeaturePriorButtons = "[]"
+		]
+
+		[h,if(!json.isEmpty(thisFeaturePriorButtons)): thisFeaturePriorButtons = json.get(thisFeaturePriorButtons,0)]
+		[h,if(!json.isEmpty(thisFeaturePriorButtons)):
+			thisFeatureNewButtons = json.difference(json.get(json.get(ability,lu.NewLevel),updateKey),thisFeaturePriorButtons);
+			thisFeatureNewButtons = "[]"
+		]
+		[h:lu.NewButtons = json.merge(lu.NewButtons,thisFeatureNewButtons)]
+
 		[h,if(lu.ValidKeyTest):
 			setProperty("a5e.stat.AllFeatures",json.path.set(getProperty("a5e.stat.AllFeatures"),"[*][?(@.Class  == '"+json.get(ability,"Class")+"' && (@.Subclass == '' || @.Subclass == '"+json.get(ability,"Subclass")+"') && @.Name == '"+json.get(ability,"Name")+"')]['"+updateKey+"']",json.get(json.get(ability,lu.NewLevel),updateKey)));
 			setProperty("a5e.stat.AllFeatures",json.path.put(getProperty("a5e.stat.AllFeatures"),"[*][?(@.Class  == '"+json.get(ability,"Class")+"' && (@.Subclass == '' || @.Subclass == '"+json.get(ability,"Subclass")+"') && @.Name == '"+json.get(ability,"Name")+"')]",updateKey,json.get(json.get(ability,lu.NewLevel),updateKey)))

@@ -125,4 +125,11 @@
 
 [h:pm.PassiveFunction("CondGain")]
 
+[h:"<!-- Repeat GatherAbilities to capture newly gained conditions. OldUnifiedAbilities may be used to identify newly gained conditions, though may not be required. -->"]
+[h:a5e.OldUnifiedAbilities = a5e.UnifiedAbilities]
+[h:a5e.NewUnifiedAbilities = a5e.GatherAbilities(ParentToken)]
+[h:a5e.UnifiedAbilities = json.difference(a5e.NewUnifiedAbilities,a5e.OldUnifiedAbilities)]
+
+[h:pm.PassiveFunction("CondGainThis")]
+
 [h:macro.return = json.set("","Table",abilityTable,"Conditions",a5e.Conditions,"ConditionDisplay",ConditionsAppliedDisplay)]

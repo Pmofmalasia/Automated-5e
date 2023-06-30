@@ -17,13 +17,13 @@
 
 [h,switch(LevelBasedMaxLevel),CODE:
     case "":{};
-    case "All":{[h:LevelBasedMaxLevel = pm.a5e.MaxSpellLevel()]};
+    case "All":{[h:LevelBasedMaxLevel = pm.a5e.MaxSpellLevel("All",0)]};
     case "FilterClassesMax":{
         [h:LevelBasedMaxLevel = 0]
         [h,if(json.type(ClassFilter)=="UNKNOWN"): tempClassFilter = json.append("",ClassFilter)]
-        [h,foreach(tempClass,tempClassFilter): LevelBasedMaxLevel = max(LevelBasedMaxLevel,pm.a5e.MaxSpellLevel(tempClass))]
+        [h,foreach(tempClass,tempClassFilter): LevelBasedMaxLevel = max(LevelBasedMaxLevel,pm.a5e.MaxSpellLevel(tempClass,1))]
     };
-    default:{[h:LevelBasedMaxLevel = pm.a5e.MaxSpellLevel(LevelBasedMaxLevel)]}
+    default:{[h:LevelBasedMaxLevel = pm.a5e.MaxSpellLevel(LevelBasedMaxLevel,1)]}
 ]
 
 [h,switch(json.type(ClassFilter)),CODE:

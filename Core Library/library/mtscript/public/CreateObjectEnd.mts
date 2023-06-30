@@ -20,6 +20,7 @@
 
 	[h:"<!-- TODO: Remove this shifting of Subeffects to ObjectEffects when fixed (see CreateObjectProcessing note) -->"]
 	[h:ObjectData = json.set(ObjectData,"WeaponEffects",ObjectEffects)]
+	[h:ObjectData = json.set(ObjectData,"isWeaponEffectRandom",json.get(ObjectData,"isEffectRandom"))]
 	[h:ObjectData = json.remove(ObjectData,"Effects")]
 	[h:ObjectData = json.remove(ObjectData,"isEffectRandom")]
 };{}]
@@ -34,7 +35,7 @@
 };{
 	[h:switchToken(ParentToken)]
 
-	[h:ItemID = eval("1d1000000") + json.get(getInfo("client"),"timeInMs")]
+	[h:ItemID = eval("1d10000") + json.get(getInfo("client"),"timeInMs")]
 	[h:ObjectData = json.set(ObjectData,"ItemID",ItemID)]
 	[h:setProperty("a5e.stat.Inventory",json.append(getProperty("a5e.stat.Inventory"),ObjectData))]
 }]

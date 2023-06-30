@@ -1,5 +1,5 @@
 [h:EffectData = macro.args]
-[h:IsTooltip = 0]
+[h:IsTooltip = number(json.get(EffectData,"IsTooltip"))]
 [h:ParentToken = json.get(EffectData,"ParentToken")]
 [h:switchToken(ParentToken)]
 [h:a5e.UnifiedAbilities = a5e.GatherAbilities(ParentToken)]

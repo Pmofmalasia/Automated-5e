@@ -2,9 +2,8 @@
 [h:timeAdvancedUnits = json.get(arg(0),"TimeUnits")]
 [h:ParentToken = json.get(arg(0),"ParentToken")]
 [h,if(ParentToken!=""): switchToken(ParentToken)]
-[h:ability = json.get(arg(0),"Ability")]
+[h:currentDuration = json.get(arg(0),"Duration")]
 
-[h:currentDuration = json.get(ability,"Duration")]
 [h:currentRounds = (json.get(currentDuration,"year")*10*60*24*365)+(json.get(currentDuration,"day")*10*60*24)+(json.get(currentDuration,"hour")*10*60)+(json.get(currentDuration,"minute")*10)+json.get(currentDuration,"round")]
 
 [h,switch(timeAdvancedUnits):

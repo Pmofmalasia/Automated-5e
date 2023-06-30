@@ -1,5 +1,5 @@
 [h:basicTargetData = arg(1)]
-[h:targetFilters = arg(2)]
+[h,if(argCount()>2): targetFilters = arg(2); targetFilters = "{}"]
 [h:pm.a5e.FeatureComponentStdVars(arg(0))]
 
 [h,if(IsTooltip),CODE:{};{
@@ -7,7 +7,8 @@
 	
 	[h:FeatureTargetOptions = json.get(FeatureTargetOptionData,"ValidTargets")]
 	[h:SelfOnlyTest = json.get(FeatureTargetOptionData,"SelfOnly")]
-	[h,if(SelfOnlyTest),CODE:{
+	[h:MustTargetAll = number(json.get(basicTargetData,"TargetAll"))]
+	[h,if(SelfOnlyTest || MustTargetAll),CODE:{
 		[h:pm.FeatureTargets = FeatureTargetOptions]
 	};{
 		[h:pm.FeatureTargets = pm.a5e.TargetCreatureTargeting(FeatureTargetOptions,json.get(basicTargetData,"Number"))]

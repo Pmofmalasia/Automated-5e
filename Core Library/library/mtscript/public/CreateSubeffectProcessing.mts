@@ -132,15 +132,39 @@
 [h:howMitigate = json.get(subeffectData,"howMitigate")]
 [h:subeffectData = json.remove(subeffectData,"howMitigate")]
 [h,if(howMitigate == "Save"),CODE:{
-	[h:SaveData = json.set("","SaveType",json.get(subeffectData,"SaveType"))]
+	[h:SaveData = json.set("",
+		"SaveType",json.get(subeffectData,"SaveType"),
+		"DCMethod",json.get(subeffectData,"SaveDCMethod")
+	)]
+
+	[h,switch(json.get(subeffectData,"SaveDCMethod")):
+		case "Stat": SaveData = json.set(SaveData,"DCStat",json.get(subeffectData,"SaveDCStat"));
+		case "SetValue": SaveData = json.set(SaveData,"DC",json.get(subeffectData,"SaveDC"));
+		default: ""
+	]
+
 	[h:subeffectData = json.remove(subeffectData,"SaveType")]
+	[h:subeffectData = json.remove(subeffectData,"SaveDCMethod")]
+	[h:subeffectData = json.remove(subeffectData,"SaveDCStat")]
+	[h:subeffectData = json.remove(subeffectData,"SaveDC")]
 }]
 
 [h,if(howMitigate == "Attack"),CODE:{
 	[h:AttackData = json.set("",
 		"MeleeRanged",json.get(subeffectData,"MeleeRanged"),
-		"CritThresh",number(json.get(subeffectData,"CritThresh"))
+		"CritThresh",number(json.get(subeffectData,"CritThresh")),
+		"ToHitMethod",json.get(subeffectData,"ToHitMethod")
 	)]
+
+	[h,switch(json.get(subeffectData,"ToHitMethod")):
+		case "Stat": AttackData = json.set(AttackData,"ToHitStat",json.get(subeffectData,"ToHitStat"));
+		case "SetValue": AttackData = json.set(AttackData,"ToHitBonus",json.get(subeffectData,"ToHitBonus"));
+		default: ""
+	]
+
+	[h:subeffectData = json.remove(subeffectData,"ToHitMethod")]
+	[h:subeffectData = json.remove(subeffectData,"ToHitStat")]
+	[h:subeffectData = json.remove(subeffectData,"ToHitBonus")]
 	[h:subeffectData = json.remove(subeffectData,"MeleeRanged")]
 	[h:subeffectData = json.remove(subeffectData,"CritThresh")]
 	[h:subeffectData = json.set(subeffectData,"Attack",AttackData)]
@@ -165,7 +189,7 @@
 	};{
 		[h:thisDamageTypeInfo = json.set(thisDamageTypeInfo,"DamageType",json.get(subeffectData,"DamageType"+whichType))]
 	}]
-	
+
 	[h,if(json.contains(subeffectData,"DamageDieNum"+whichType)):
 		thisDamageTypeInfo = json.set(thisDamageTypeInfo,
 			"DamageDieNumber",number(json.get(subeffectData,"DamageDieNum"+whichType)),
@@ -220,6 +244,7 @@
 	case "Spell": ConditionIdentificationInfo = json.set("","Class","Spell","Subclass",FeatureName);
 	case "Weapon": ConditionIdentificationInfo = json.set("","Class","Item","Subclass",FeatureName);
 	case "Object": ConditionIdentificationInfo = json.set("","Class","Item","Subclass",FeatureName);
+	case "Feature": ConditionIdentificationInfo = json.set("","Class",json.get(thisPlayerCurrentFeatureData,"Class"),"Subclass",json.get(thisPlayerCurrentFeatureData,"Subclass"));
 	default: ConditionIdentificationInfo = json.set("","Class","","Subclass","")
 ]
 
@@ -229,10 +254,10 @@
 [h:conditionsAlwaysAdded = "[]"]
 [h:EffectSpecificConditions = "[]"]
 [h,if(isCondition == "All" || isCondition == "Mixture"),CODE:{
-	[h:conditionsAlwaysAdded = "[]"]
 	[h,foreach(tempCondition,allBaseConditions),CODE:{
-		[h,if(json.contains(subeffectData,"AlwaysAdded"+tempCondition)): conditionsAlwaysAdded = json.append(conditionsAlwaysAdded,json.set("","Name",json.get(tempCondition,"Name"),"DisplayName",json.get(tempCondition,"DisplayName"),"Class","Condition","AlwaysAdded",1))]
-		[h:subeffectData = json.remove(subeffectData,"AlwaysAdded"+tempCondition)]
+		[h:tempConditionName = json.get(tempCondition,"Name")]
+		[h,if(json.contains(subeffectData,"AlwaysAdded"+tempConditionName)): conditionsAlwaysAdded = json.append(conditionsAlwaysAdded,json.set("","Name",tempConditionName,"DisplayName",json.get(tempCondition,"DisplayName"),"Class","Condition","AlwaysAdded",1))]
+		[h:subeffectData = json.remove(subeffectData,"AlwaysAdded"+tempConditionName)]
 	}]
 	
 	[h,switch(json.contains(subeffectData,"AlwaysAddedEffectSpecific")+""+json.contains(subeffectData,"isEffectSpecificAlwaysAddedMultiple")),CODE:
@@ -255,8 +280,9 @@
 [h:conditionOptions = "[]"]
 [h,if(isCondition == "Choose" || isCondition == "Mixture"),CODE:{
 	[h,foreach(tempCondition,allBaseConditions),CODE:{
-		[h,if(json.contains(subeffectData,"ConditionOption"+tempCondition)): conditionOptions = json.append(conditionOptions,json.set("","Name",json.get(tempCondition,"Name"),"DisplayName",json.get(tempCondition,"DisplayName"),"Condition","AlwaysAdded",0))]
-		[h:subeffectData = json.remove(subeffectData,"ConditionOption"+tempCondition)]
+		[h:tempConditionName = json.get(tempCondition,"Name")]
+		[h,if(json.contains(subeffectData,"ConditionOption"+tempConditionName)): conditionOptions = json.append(conditionOptions,json.set("","Name",tempConditionName,"DisplayName",json.get(tempCondition,"DisplayName"),"Condition","AlwaysAdded",0))]
+		[h:subeffectData = json.remove(subeffectData,"ConditionOption"+tempConditionName)]
 	}]
 
 	[h,switch(json.contains(subeffectData,"ConditionOptionEffectSpecific")+""+json.contains(subeffectData,"isEffectSpecificConditionOptionMultiple")),CODE:
@@ -290,7 +316,7 @@
 	[h:subeffectData = json.remove(subeffectData,"isConditionNonDurationEnd")]
 	[h,if(json.contains(subeffectData,"isEndConditionTempHPLost")): ConditionEndTriggers = json.set("","TempHPLost",1); ConditionEndTriggers = "{}"]
 	[h:subeffectData = json.remove(subeffectData,"TempHPLost")]
-	[h:"<!-- TODO/Note: The below loop will likely be temporary, as the 'conditional' portion will likely need to be customized to each instance once completed. But for now, it's easier to just loop it. -->"]
+	[h:"<!-- TODO: Note - The below loop will likely be temporary, as the 'conditional' portion will likely need to be customized to each instance once completed. But for now, it's easier to just loop it. -->"]
 	[h:conditionEndInstances = json.append("","Action","StartTurn","EndTurn","AfterAttack","AfterSpell","AfterForceSave","AfterDamage","AfterMoving","AfterAttacked","AfterDamaged","AfterShortRest","AfterLongRest","AfterGainCondition","AfterEndCondition","AfterChangeEquipment")]
 	[h,foreach(tempInstance,conditionEndInstances): ct.a5e.ConditionEndTriggerInputProcessing(tempInstance)]
 	[h:conditionEndInfo = json.set(conditionEndInfo,"EndTriggers",ConditionEndTriggers)]
@@ -322,7 +348,7 @@
 		[h:SaveData = json.set(SaveData,"ConditionsResisted",json.set("","Inclusive","All"))]
 	};
 	case "Different": {
-		[h:"<!-- TODO later -->"]
+		[h:"<!-- TODO: later -->"]
 	}
 ]
 [h:subeffectData = json.remove(subeffectData,"conditionSaveEffect")]
@@ -801,8 +827,8 @@
 		[h:thisEffectSubeffectData = json.append(thisEffectSubeffectData,subeffectData)]
 		[h:currentEffectData = json.set(currentEffectData,"Subeffects",thisEffectSubeffectData)]
 
-		[h:spellLevel = json.get(subeffectData,"SpellLevel")]
-		[h:subeffectData = json.remove(subeffectData,"SpellLevel")]
+		[h:spellLevel = json.get(subeffectData,"ExtraDataSpellLevel")]
+		[h:subeffectData = json.remove(subeffectData,"ExtraDataSpellLevel")]
 
 		[h:thisPlayerCurrentFeatureData = json.set(thisPlayerCurrentFeatureData,json.length(thisPlayerCurrentFeatureData)-1,currentEffectData)]
 		[h:setLibProperty("ct.NewSpell",json.set(CurrentFeatureData,getPlayerName(),thisPlayerCurrentFeatureData),"Lib:pm.a5e.Core")]
@@ -828,7 +854,13 @@
 		[h:setLibProperty("ct.New"+EffectType,json.set(CurrentFeatureData,getPlayerName(),thisPlayerCurrentFeatureData),"Lib:pm.a5e.Core")]
 		[h:baseFeatureData = thisPlayerCurrentFeatureData]
 		[h:lastEffectTest = json.length(allEffectData) == EffectsNumber]
+
+		[h:ExtraDataKeys = json.fromList(json.get(subeffectData,"ExtraDataKeys"))]
 		[h:extraData = ""]
+		[h,foreach(tempKey,ExtraDataKeys),CODE:{
+			[h:extraData = json.set(extraData,tempKey,json.get(subeffectData,"ExtraData"+tempKey))]
+			[h:subeffectData = json.remove(subeffectData,"ExtraData"+tempKey)]
+		}]
 	}
 ]
 

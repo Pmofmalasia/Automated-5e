@@ -54,7 +54,7 @@
 	[h:MonsterWeaponData = json.remove(MonsterWeaponData,"SpecialEffects")]
 
 	[h,if(json.get(MonsterWeaponData,"WeaponType") == "NaturalWeapon" || json.get(MonsterWeaponData,"WeaponType") == "Unarmed"),CODE:{
-		[h:NaturalWeaponID = eval("1d1000000") + json.get(getInfo("client"),"timeInMs")]
+		[h:NaturalWeaponID = eval("1d10000") + json.get(getInfo("client"),"timeInMs")]
 		[h:MonsterWeaponData = json.set(MonsterWeaponData,
 			"ItemID",NaturalWeaponID
 		)]

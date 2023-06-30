@@ -52,7 +52,7 @@
 [h:cn.TypeInput=""]
 [h,SWITCH(cn.Type):
 	case 0: cn.Class = "Condition";
-	case 1: cn.TypeInput=" cn.Class | "+cn.ClassList+" | Class associated with Condition | LIST | VALUE=STRING ## junkVar | Next Screen | Subclass Selection | LABEL";
+	case 1: cn.TypeInput=" cn.Class | "+cn.ClassList+",Monster | Class associated with Condition | LIST | VALUE=STRING ## junkVar | Next Screen | Subclass Selection | LABEL";
 	case 2: cn.TypeInput=" cn.Class | "+cn.RaceList+" | Class associated with Condition | LIST | VALUE=STRING ## junkVar | Next Screen | Subrace Selection | LABEL";
 	case 3: cn.Class = "Spell";
 	case 4: cn.Class = "Feat";
@@ -64,12 +64,25 @@
 
 [h:cn.Final = json.set(cn.Final,"Class",pm.RemoveSpecial(cn.Class))]
 
-[h,SWITCH(cn.Type):
-	case 1: cn.TypeInput=" cn.Subclass | None,"+pm.GetSubclasses(cn.Class,"DisplayName")+" | Subclass Associated with Condition | LIST | VALUE=STRING ";
-	case 2: cn.TypeInput=" cn.Subclass | None,"+pm.GetSubraces(cn.Class,"DisplayName")+" | Subrace Associated with Condition | LIST | VALUE=STRING ";
-	case 3: cn.TypeInput = " cn.Subclass |  | Spell Associated with Condition ";
-	case 5: cn.TypeInput = " cn.Subclass |  | Item Associated with Condition ";
-	default: cn.Subclass = ""
+[h,SWITCH(cn.Type),CODE:
+	case 1:{
+		[h,if(cn.Class == "Monster"):
+			cn.TypeInput=" cn.Subclass |  | Monster Associated with Condition ";
+			cn.TypeInput=" cn.Subclass | None,"+pm.GetSubclasses(cn.Class,"DisplayName")+" | Subclass Associated with Condition | LIST | VALUE=STRING "
+		]
+	};
+	case 2:{
+		[h:cn.TypeInput=" cn.Subclass | None,"+pm.GetSubraces(cn.Class,"DisplayName")+" | Subrace Associated with Condition | LIST | VALUE=STRING "]
+	};
+	case 3:{
+		[h:cn.TypeInput = " cn.Subclass |  | Spell Associated with Condition "]
+	};
+	case 5:{
+		[h:cn.TypeInput = " cn.Subclass |  | Item Associated with Condition "]
+	};
+	default:{
+		[h:cn.Subclass = ""]
+	}
 ]
 [h:abort(input(cn.TypeInput))]
 

@@ -7,19 +7,22 @@
 
 [h:IKnowWhatTheFuckImDoing = 0]
 [h,if(IKnowWhatTheFuckImDoing),CODE:{
-	[h:NewObjectImage = "lib://pm.a5e.core/ObjectImages/"+NewObjectTokenType+"/"+json.get(objectData,NewObjectTokenType+"Type")]
-	[h:ImagePresentTest = 
-		js.eval("
-		let http = new XMLHttpRequest();
-
-		http.open('GET', arg[0], true);
-		http.send();
-
-		return http.status != 404;",NewObjectImage
-	)]
+	[h:NewObjectImage = "ObjectImages/"+NewObjectTokenType+"/"+json.get(objectData,NewObjectTokenType+"Type")+".png"]
+	[h:ImagePresentTest = js.evalURI("isAssetPresent","lib://pm.a5e.core/isAssetPresent.js",NewObjectImage)]
 	[h,if(!ImagePresentTest): NewObjectImage = "asset://cae048d4f31ef38cac5ba0df1378c67d"]	
 };{
-	[h:NewObjectImage = "asset://cae048d4f31ef38cac5ba0df1378c67d"]
+	[h:BugIsFixed = 0]
+	[h,if(BugIsFixed),CODE:{
+		[h:NewObjectImage = "ObjectImages/"+NewObjectTokenType+"/"+json.get(objectData,NewObjectTokenType+"Type")+".PNG"]
+		[h:AllAddonFiles = library.getContents("pm.a5e.core")]
+		[h,if(json.contains(AllAddonFiles,"public/"+NewObjectImage)): 
+			NewObjectImage = "lib://pm.a5e.core/"+NewObjectImage;
+			NewObjectImage = "asset://cae048d4f31ef38cac5ba0df1378c67d"
+		]		
+	};{
+		[h:NewObjectImage = "asset://cae048d4f31ef38cac5ba0df1378c67d"]
+	}]
+
 }]
 
 [h:"<!-- TODO: get image from table based on token type -->"]

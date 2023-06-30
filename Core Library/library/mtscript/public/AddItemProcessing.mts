@@ -28,7 +28,6 @@
 [h:InitialChargesMethod = json.get(ChosenItem,"InitialChargesMethod")]
 [h,switch(InitialChargesMethod),CODE:
 	case "Full":{
-		[h:broadcast(json.get(ChosenItem,"MaxResource"))]
 		[h:ChosenItem = json.set(ChosenItem,"Resource",evalMacro(json.get(ChosenItem,"MaxResource")))]
 	};
 	case "Fixed":{
@@ -58,7 +57,7 @@
 	}]
 
 	[h,count(NumberOfEntries),CODE:{
-		[h:NewItemID = eval("1d1000000") + json.get(getInfo("client"),"timeInMs")]
+		[h:NewItemID = eval("1d10000") + json.get(getInfo("client"),"timeInMs")]
 		[h:TempChosenItem = json.set(ChosenItem,
 			"ItemID",NewItemID,
 			"Number",NumberAdded

@@ -137,13 +137,34 @@ async function createParentPrereqRows(){
 }
 
 async function createMitigationTable(){
-	let table = document.getElementById("CreateSubeffectTable");
+	let tableID = "CreateSubeffectTable";
+	let table = document.getElementById(tableID);
 	let nextMitigationRowIndex = document.getElementById("Mitigation").rowIndex + 1;
 
 	if(document.getElementById("howMitigate").value == "Attack"){
-		clearUnusedTable("CreateSubeffectTable","Mitigation","Damage");
-		let attackTableRow1 = table.insertRow(nextMitigationRowIndex);nextMitigationRowIndex++;
-		attackTableRow1.innerHTML = "<th><label for='MeleeRanged'>Melee or Ranged Attack:</label></th><select id='MeleeRanged' name='MeleeRanged'><option value='Melee'>Melee</option><option value='Ranged'>Ranged</option></select></td>";
+		clearUnusedTable(tableID,"Mitigation","Damage");
+
+		if(checkEffectType() == "Spell"){
+			addTableRow(tableID,nextMitigationRowIndex,"rowToHitMethod","<th><label for='ToHitMethod'>Method of Choosing To Hit:</label></th><select id='ToHitMethod' name='ToHitMethod' onchange='createToHitMethodRow("+'"'+tableID+'"'+")'><option value='Stat'>Stat-Based</option><option value='SpellAttack'>Spell Attack Bonus</option><option value='SetValue'>Preset Value</option></select></td>");
+			nextMitigationRowIndex++;
+
+			document.getElementById("rowToHitMethod").setAttribute("hidden","");
+			document.getElementById("ToHitMethod").value = "SpellAttack";
+		}
+		else{
+			addTableRow(tableID,nextMitigationRowIndex,"rowToHitMethod","<th><label for='ToHitMethod'>Method of Choosing To Hit:</label></th><select id='ToHitMethod' name='ToHitMethod' onchange='createToHitMethodRow("+'"'+tableID+'"'+")'><option value='Stat'>Stat-Based</option><option value='SpellAttack'>Spell Attack Bonus</option><option value='SetValue'>Preset Value</option></select></td>");
+			nextMitigationRowIndex++;
+
+			let request = await fetch("macro:pm.GetAttributes@lib:pm.a5e.Core",{method: "POST", body: ""});
+			let AllAttributes = await request.json();
+			let AttributeOptions = createHTMLSelectOptions(AllAttributes);
+
+			addTableRow(tableID,nextMitigationRowIndex,"rowToHitBonus","<th><label for='ToHitStat'>Stat Used:</label></th><select id='ToHitStat' name='ToHitStat'>"+AttributeOptions+"</select></td>");
+			nextMitigationRowIndex++;
+		}
+
+		addTableRow(tableID,nextMitigationRowIndex,"rowMeleeRanged","<th><label for='MeleeRanged'>Melee or Ranged Attack:</label></th><select id='MeleeRanged' name='MeleeRanged'><option value='Melee'>Melee</option><option value='Ranged'>Ranged</option></select></td>");
+		nextMitigationRowIndex++;
 
 		let attackTableRow2 = table.insertRow(nextMitigationRowIndex);nextMitigationRowIndex++;
 		attackTableRow2.innerHTML = "<th>Crit Threshhold:</th><td><input type='number' id='CritThresh' name='CritThresh' max='20' min='1' value='20'></td>";
@@ -155,15 +176,27 @@ async function createMitigationTable(){
 		clearUnusedTable("CreateSubeffectTable","Mitigation","Damage");
 		let saveTableRows = table.insertRow(nextMitigationRowIndex);
 
-		let request = await fetch("macro:pm.GetAttributes@lib:pm.a5e.Core",{method: "POST", body: "['DisplayName','json']"});
+		let request = await fetch("macro:pm.GetAttributes@lib:pm.a5e.Core",{method: "POST", body: "[]"});
 		let saveTypes = await request.json();
+		let saveOptions = createHTMLSelectOptions(saveTypes);
 
-		let saveOptions = "";
-		for(let tempSave of saveTypes){
-			saveOptions += "<option value='"+tempSave+"'>"+tempSave+"</option>";
-		}
 		saveTableRows.innerHTML = "<th>Save Type:</th><select id='SaveType' name='SaveType'>"+saveOptions+"</select></td>";
 		nextMitigationRowIndex++;
+
+		if(checkEffectType() == "Spell"){
+			addTableRow(tableID,nextMitigationRowIndex,"rowSaveDCMethod","<th><label for='SaveDCMethod'>Method of Choosing Save DC:</label></th><select id='SaveDCMethod' name='SaveDCMethod' onchange='createSaveDCMethodRow("+'"'+tableID+'"'+")'><option value='Stat'>Stat-Based</option><option value='SpellAttack'>Spell Attack Bonus</option><option value='SetValue'>Preset Value</option></select></td>");
+			nextMitigationRowIndex++;
+
+			document.getElementById("rowSaveDCMethod").setAttribute("hidden","");
+			document.getElementById("SaveDCMethod").value = "SpellAttack";
+		}
+		else{
+			addTableRow(tableID,nextMitigationRowIndex,"rowSaveDCMethod","<th><label for='SaveDCMethod'>Method of Choosing Save DC:</label></th><select id='SaveDCMethod' name='SaveDCMethod' onchange='createSaveDCMethodRow("+'"'+tableID+'"'+")'><option value='Stat'>Stat-Based</option><option value='SpellAttack'>Spell Attack Bonus</option><option value='SetValue'>Preset Value</option></select></td>");
+			nextMitigationRowIndex++;
+
+			addTableRow(tableID,nextMitigationRowIndex,"rowSaveDC","<th><label for='SaveDCStat'>Stat Used:</label></th><select id='SaveDCStat' name='SaveDCStat'>"+saveOptions+"</select></td>");
+			nextMitigationRowIndex++;
+		}
 
 		addTableRow("CreateSubeffectTable",nextMitigationRowIndex,"rowIsConditionalAdvantage","<th>Conditional (Dis)advantage:</th><input type='checkbox' id='isConditionalSaveAdvantage' name='isConditionalSaveAdvantage' onchange='createConditionalSaveAdvantageRows()'></td>");
 		nextMitigationRowIndex++;
@@ -241,6 +274,44 @@ async function createMitigationTable(){
 		}
 	}
 }
+
+async function createToHitMethodRow(tableID){
+	let nextRowIndex = document.getElementById("rowToHitMethod").rowIndex + 1;
+	let MethodChoice = document.getElementById("ToHitMethod").value;
+	clearUnusedTable(tableID,"rowToHitMethod","rowMeleeRanged");
+
+	if(MethodChoice == "Stat"){
+		let request = await fetch("macro:pm.GetAttributes@lib:pm.a5e.Core",{method: "POST", body: ""});
+		let AllAttributes = await request.json();
+		let AttributeOptions = createHTMLSelectOptions(AllAttributes);
+
+		addTableRow(tableID,nextRowIndex,"rowToHitBonus","<th><label for='ToHitStat'>Stat Used:</label></th><select id='ToHitStat' name='ToHitStat'>"+AttributeOptions+"</select></td>");
+		nextRowIndex++;
+	}
+	else if(MethodChoice == "SetValue"){
+		addTableRow(tableID,nextRowIndex,"rowToHitBonus","<th><label for='ToHitBonus'>To Hit Bonus:</label></th><input type='number' id='ToHitBonus' name='ToHitBonus' value=0></td>");
+		nextRowIndex++;
+	}
+} 
+
+async function createSaveDCMethodRow(tableID){
+	let nextRowIndex = document.getElementById("rowSaveDCMethod").rowIndex + 1;
+	let MethodChoice = document.getElementById("SaveDCMethod").value;
+	clearUnusedTable(tableID,"rowSaveDCMethod","rowIsConditionalAdvantage");
+
+	if(MethodChoice == "Stat"){
+		let request = await fetch("macro:pm.GetAttributes@lib:pm.a5e.Core",{method: "POST", body: ""});
+		let AllAttributes = await request.json();
+		let AttributeOptions = createHTMLSelectOptions(AllAttributes);
+
+		addTableRow(tableID,nextRowIndex,"rowSaveDC","<th><label for='SaveDCStat'>Stat Used:</label></th><select id='SaveDCStat' name='SaveDCStat'>"+AttributeOptions+"</select></td>");
+		nextRowIndex++;
+	}
+	else if(MethodChoice == "SetValue"){
+		addTableRow(tableID,nextRowIndex,"rowSaveDC","<th><label for='SaveDC'>Save DC:</label></th><input type='number' id='SaveDC' name='SaveDC' value=0></td>");
+		nextRowIndex++;
+	}
+} 
 
 async function createAHLSelect(ahlSelectID){
 	let ahlSelectHTML = "";
@@ -358,7 +429,7 @@ async function switchToPriorDamage(damageTypeNumber){
 		}
 	}
 
-	document.getElementById("DamageSet"+damageTypeNumber).innerHTML = "<th text-align='center' colspan='2'> <input type='number' id='PriorDamagePercent"+damageTypeNumber+"' name='PriorDamagePercent"+damageTypeNumber+"' min=0 max=100 style='width:30px' value=100>% of the <select id='PriorDamageType"+damageTypeNumber+"' name='PriorDamageType"+damageTypeNumber+"'>"+PriorDamageTypeOptions+"</select> Damage dealt as <select id='DamageType"+damageTypeNumber+"' name='DamageType"+damageTypeNumber+"'>"+damageTypeOptions+"</select> Damage, <b>OR</b> <input type='button' id='IndependentDamageButton' name='IndependentDamageButton' value='Indepenent Damage' onclick='switchToIndependentDamage("+damageTypeNumber+")'>";
+	document.getElementById("DamageSet"+damageTypeNumber).innerHTML = "<th text-align='center' colspan='2'> <input type='number' id='PriorDamagePercent"+damageTypeNumber+"' name='PriorDamagePercent"+damageTypeNumber+"' min=0 max=100 style='width:30px' value=100>% of <select id='PriorDamageType"+damageTypeNumber+"' name='PriorDamageType"+damageTypeNumber+"'>"+PriorDamageTypeOptions+"</select> Damage dealt as <select id='DamageType"+damageTypeNumber+"' name='DamageType"+damageTypeNumber+"'>"+damageTypeOptions+"</select> Damage, <b>OR</b> <input type='button' id='IndependentDamageButton' name='IndependentDamageButton' value='Indepenent Damage' onclick='switchToIndependentDamage("+damageTypeNumber+")'>";
 }
 
 async function switchToIndependentDamage(damageTypeNumber){

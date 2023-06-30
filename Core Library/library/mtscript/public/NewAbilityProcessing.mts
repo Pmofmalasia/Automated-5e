@@ -269,11 +269,9 @@
 }]
 
 [h:"<!-- Add buttons gained to list -->"]
-[h:lu.NewButtons = ""]
-[h,if(json.isEmpty(lu.NewAbilities)): lu.ButtonAbilities = ""; lu.ButtonAbilities = json.path.read(lu.NewAbilities,"[*][?(@.ButtonInfo != null)]","DEFAULT_PATH_LEAF_TO_NULL")]
-[h,foreach(ability,lu.ButtonAbilities),CODE:{
-	[h,foreach(button,json.get(ability,"ButtonInfo")): lu.NewButtons = json.append(lu.NewButtons,button)]
-}]
+[h:lu.NewButtons = "[]"]
+[h,if(json.isEmpty(lu.NewAbilities)): lu.ButtonAbilities = "[]"; lu.ButtonAbilities = json.path.read(lu.NewAbilities,"[*][?(@.ButtonInfo != null)]","DEFAULT_PATH_LEAF_TO_NULL")]
+[h,foreach(ability,lu.ButtonAbilities): lu.NewButtons = json.merge(lu.NewButtons,json.get(ability,"ButtonInfo"))]
 
 [h:"<!-- Add new spells gained from outside of the regular class spell list to an array. Does not currently transfer marker data, will wait until after spell data storage is reworked. -->"]
 [h:lu.NewSpells = "[]"]

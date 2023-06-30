@@ -131,23 +131,25 @@
 
 [h:subeffect.TargetingData = json.get(SubeffectData,"TargetLimits")]
 [h:subeffect.TargetTypes = json.fields(subeffect.TargetingData,"json")]
+[h:UseAllValidTargetsTest = and(json.get(SubeffectData,"MustTargetAll") == 1,!json.contains(SubeffectData,"AoE"))]
+
 [h:subeffect.TargetTokens = "[]"]
+[h:subeffect.MultipleTargetTypeTargets = "{}"]
 [h,if(json.contains(subeffect.TargetTypes,"Creature")),CODE:{
 	[h:subeffect.TargetCreatureLimits = json.get(subeffect.TargetingData,"Creature")]
 	[h:subeffect.TargetOptionData = pm.a5e.TargetCreatureFiltering(json.set("","ParentToken",ParentToken,"Origin",subeffect.TargetOrigin,"Range",subeffect.RangeData),subeffect.TargetCreatureLimits)]
 	
+	[h:"<!-- Note: SelfOnlyTest and UseValidTargetsTest could be combined, kept for readability -->"]
 	[h:subeffect.TargetOptions = json.get(subeffect.TargetOptionData,"ValidTargets")]
 	[h:SelfOnlyTest = json.get(subeffect.TargetOptionData,"SelfOnly")]
 	[h,if(SelfOnlyTest),CODE:{
-		[h:subeffect.AllTargetTokens = subeffect.TargetOptions]
+		[h:subeffect.TargetTokens = json.merge(subeffect.TargetTokens,subeffect.TargetOptions)]
 	};{
-		[h,if(json.get(SubeffectData,"MustTargetAll") == 1 && !json.contains(SubeffectData,"AoE")): 
-			subeffect.AllTargetTokens = subeffect.TargetOptions;
-			subeffect.AllTargetTokens = pm.a5e.TargetCreatureTargeting(subeffect.TargetOptions,subeffect.TargetNumber,MissileCount)
+		[h,if(UseAllValidTargetsTest): 
+			subeffect.TargetTokens = json.merge(subeffect.TargetTokens,subeffect.TargetOptions);
+			subeffect.MultipleTargetTypeTargets = json.set(subeffect.MultipleTargetTypeTargets,"Creature",subeffect.TargetOptions)
 		]
 	}]
-
-	[h:subeffect.TargetTokens = json.merge(subeffect.TargetTokens,subeffect.AllTargetTokens)]
 }]
 
 [h,if(json.contains(subeffect.TargetTypes,"PriorTargets")),CODE:{
@@ -155,33 +157,42 @@
 	[h:subeffect.PriorTargetingData = json.get(subeffect.TargetingData,"PriorTargets")]
 
 	[h,if(json.get(subeffect.PriorTargetingData,"TargetAll")),CODE:{
-		[h:subeffect.PriorTargetsChosen = subeffect.LinkedPriorTargets]
+		[h:subeffect.TargetTokens = json.merge(subeffect.TargetTokens,subeffect.LinkedPriorTargets)]
 	};{
 		[h:"<!-- TODO: May require some filtering here if not all are valid. This whole CODE block means that in the future if target changing is implemented, it will need to change subsequent targeting as well. Better to do it this way than change targeting during resolution of effects due to the input required. -->"]
-
-		[h:subeffect.AllTargetTokens = pm.a5e.TargetCreatureTargeting(subeffect.PriorTargetsChosen,json.get(subeffect.PriorTargetingData,"TargetNumber"),MissileCount)]
-	}]
-
-	[h:subeffect.TargetTokens = json.merge(subeffect.TargetTokens,subeffect.PriorTargetsChosen)]
-}]
-
-[h,if(json.contains(subeffect.TargetTypes,"Object")),CODE:{
-	[h:subeffect.TargetObjectLimits = json.get(subeffect.TargetingData,"Object")]
-	[h:subeffect.TargetOptionData = pm.a5e.TargetHeldObjectFiltering(json.set("","ParentToken",ParentToken,"Origin",subeffect.TargetOrigin,"Range",subeffect.RangeData),subeffect.TargetObjectLimits)]
-	
-	[h:subeffect.TargetOptions = json.get(subeffect.TargetOptionData,"ValidTargets")]
-	[h:SelfOnlyTest = json.get(subeffect.TargetOptionData,"SelfOnly")]
-	[h,if(SelfOnlyTest),CODE:{
-		[h:subeffect.AllTargetTokens = subeffect.TargetOptions]
-	};{
-		[h,if(json.get(SubeffectData,"MustTargetAll") == 1 && !json.contains(SubeffectData,"AoE")): 
-			subeffect.AllTargetTokens = subeffect.TargetOptions;
-			subeffect.AllTargetTokens = pm.a5e.TargetObjectTargeting(subeffect.TargetOptions,subeffect.TargetNumber,MissileCount)
+		[h,if(UseAllValidTargetsTest): 
+			subeffect.TargetTokens = json.merge(subeffect.TargetTokens,subeffect.LinkedPriorTargets);
+			subeffect.PriorTargetsChosen = "[]"
 		]
 	}]
 
-	[h:subeffect.TargetTokens = json.merge(subeffect.TargetTokens,subeffect.AllTargetTokens)]
+	[h:"<!-- TODO: Will need to support PriorTargets in targeting, see that macro. Move the below statement to replace the empty array in the above if() -->"]
+	[h,if(0): subeffect.MultipleTargetTypeTargets = json.set(subeffect.MultipleTargetTypeTargets,"PriorTargets",subeffect.PriorTargetsChosen)]
 }]
+
+[h:"<!-- TODO: Will need to replace first arg of TargetHeldObjectFiltering with a list of creatures, gotten from creaturefiltering from object-specific limits on creatures -->"]
+[h,if(json.contains(subeffect.TargetTypes,"Object")),CODE:{
+	[h:subeffect.TargetObjectLimits = json.get(subeffect.TargetingData,"Object")]
+	[h:subeffect.ObjectTargetOptions = pm.a5e.TargetHeldObjectFiltering(json.set("","ParentToken",ParentToken,"Origin",subeffect.TargetOrigin,"Range",subeffect.RangeData),subeffect.TargetObjectLimits)]
+
+	[h,if(UseAllValidTargetsTest): 
+		subeffect.TargetTokens = json.merge(subeffect.TargetTokens,subeffect.ObjectTargetOptions);
+		subeffect.MultipleTargetTypeTargets = json.set(subeffect.MultipleTargetTypeTargets,"Object",subeffect.ObjectTargetOptions)
+	]
+}]
+
+[h,if(!json.isEmpty(subeffect.MultipleTargetTypeTargets)),CODE:{
+	[h:subeffect.MultiTypeTargetingData = json.set("",
+		"ValidTargets",subeffect.MultipleTargetTypeTargets,
+		"TargetingInstances",MissileCount,
+		"TargetNumber",subeffect.TargetNumber
+	)]
+	[h,MACRO("MixedTypeTargeting@Lib:pm.a5e.Core"): subeffect.MultiTypeTargetingData]
+	[h:subeffect.TargetTokens = macro.return]
+
+	[h:"<!-- TODO: Temporary bypass of the data format single-target missiles are output in, will need to rework the below line when doing missiles. -->"]
+	[h,if(subeffect.TargetNumber == 1): subeffect.TargetTokens = json.get(subeffect.TargetTokens,0)]
+};{}]
 
 [h,if(!json.isEmpty(subeffect.TargetTokens)): thisEffectData = json.set(thisEffectData,"Targets",subeffect.TargetTokens)]
 
@@ -210,15 +221,34 @@
 
 [h:subeffect.IsAttack = json.contains(SubeffectData,"Attack")]
 [h,if(subeffect.IsAttack),CODE:{
-	[h:attack.ProfTest = 1]
+	[h:subeffect.AttackData = json.get(SubeffectData,"Attack")]
 	[h:attack.ToHitBonus = 0]
+	[h:attack.ProfTest = 1]
 
-	[h,if(json.get(SubeffectData,"CritThresh")!=""):
-		attack.CritThresh = json.get(SubeffectData,"CritThresh");
+	[h:"<!-- TODO: Might make sense to reassess using PrimeStatMod here (and in general) -->"]
+	[h,switch(json.get(subeffect.AttackData,"ToHitMethod")),CODE:
+		case "SpellAttack":{
+			[h:"<!-- TODO: Will need method of choosing spell class for non-spell things using the spell save DC -->"]
+			[h:PrimeStatMod = PrimeStatMod]
+		};
+		case "Stat":{
+			[h:PrimeStatMod = json.get(getProperty("a5e.stat.AtrMods"),json.get(thisSubeffectSaveData,"ToHitStat"))]
+		};
+		case "SetValue":{
+			[h:attack.ToHitBonus = json.get(thisSubeffectSaveData,"ToHitBonus")]
+			[h:attack.ProfTest = 0]
+		};
+		default:{
+			[h:PrimeStatMod = PrimeStatMod]
+		}
+	]
+
+	[h,if(json.get(subeffect.AttackData,"CritThresh")!=""):
+		attack.CritThresh = json.get(subeffect.AttackData,"CritThresh");
 		attack.CritThresh = 20
 	]
-	[h,if(json.get(SubeffectData,"CritThreshReduction")!=""):
-		attack.CritThreshReduction = json.get(SubeffectData,"CritThreshReduction");
+	[h,if(json.get(subeffect.AttackData,"CritThreshReduction")!=""):
+		attack.CritThreshReduction = json.get(subeffect.AttackData,"CritThreshReduction");
 		attack.CritThreshReduction = 0
 	]
 
@@ -259,13 +289,16 @@
 	[h:thisSubeffectSaveData = json.get(SubeffectData,"SaveData")]
 	[h,switch(json.get(thisSubeffectSaveData,"DCMethod")),CODE:
 		case "SpellSave":{
+			[h:"<!-- TODO: Will need method of choosing spell class for non-spell things using the spell save DC -->"]
+			[h:subeffect.SaveDC = 8 + getProperty("a5e.stat.Proficiency") + PrimeStatMod]
 
+			[h:pm.PassiveFunction("SpellSaveDC")]
 		};
-		case "AbilityScore":{
-
+		case "Stat":{
+			[h:subeffect.SaveDC = 8 + getProperty("a5e.stat.Proficiency") + json.get(getProperty("a5e.stat.AtrMods"),json.get(thisSubeffectSaveData,"DCStat"))]
 		};
 		case "SetValue":{
-
+			[h:subeffect.SaveDC = json.get(thisSubeffectSaveData,"DC")]
 		};
 		default:{
 			[h:"<!-- TODO: This is here temporarily while finding a better way to route the Spellcasting macro to here -->"]

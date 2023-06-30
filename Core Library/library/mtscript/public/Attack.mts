@@ -6,13 +6,20 @@
 [h:pm.a5e.OverarchingContext = "Attack"]
 [h:pm.a5e.EffectData = "[]"]
 
-[h:Flavor = json.get(wa.Data,"Flavor")]
 [h:ActiveHand = json.get(wa.Data,"Hand")]
 [h:OtherHands = "[]"]
 [h:CurrentHeldItems = getProperty("a5e.stat.HeldItems")]
 [h:TotalHands = json.length(CurrentHeldItems)]
-[h,count(TotalHands): OtherHands = if(roll.count == ActiveHand,OtherHands,json.append(OtherHands,roll.count))]
-[h:OtherHandsIDs = json.remove(CurrentHeldItems,ActiveHand)]
+[h,if(ActiveHand >= 0),CODE:{
+	[h,count(TotalHands): OtherHands = if(roll.count == ActiveHand,OtherHands,json.append(OtherHands,roll.count))]
+	[h:OtherHandsIDs = json.remove(CurrentHeldItems,ActiveHand)]
+};{
+	[h:"<!-- Note: ActiveHand -1 indicates natural weapon not using a hand -->"]
+	[h,count(TotalHands): OtherHands = json.append(OtherHands,roll.count)]
+	[h:OtherHandsIDs = CurrentHeldItems]
+}]
+
+[h:Flavor = json.get(wa.Data,"Flavor")]
 [h:AttackNum = json.get(wa.Data,"AttackNum")]
 [h:ThrowingWeapon = json.get(wa.Data,"ThrowWeapon")]
 [h:TwoWeaponFighting = json.get(wa.Data,"TwoWeaponFighting")]
@@ -81,7 +88,7 @@
 [h:wa.BrutalCrit = 0]
 [h:"<!-- TODO: Add other primary stats as a property? Or otherwise? Probably just have a 'Primary Stat' option that isn't a property which defaults to Strength or Dex if ranged. -->"]
 [h:PrimeStat = if(wa.MeleeRanged=="Ranged","Dexterity","Strength")]
-[h,if(json.get(wa.Data,"PrimeStat")!=""): PrimeStat = json.get(wa.Data,"PrimeStat")]
+[h,if(json.get(wa.WeaponUsed,"PrimeStat")!=""): PrimeStat = json.get(wa.WeaponUsed,"PrimeStat")]
 
 [h:pm.PassiveFunction("AttackProps")]
 [h:pm.PassiveFunction("WeaponAttackProps")]

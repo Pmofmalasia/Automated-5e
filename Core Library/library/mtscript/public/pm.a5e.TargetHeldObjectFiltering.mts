@@ -15,7 +15,7 @@
 };{
 	[h,switch(json.get(ObjectFilterData,"Carried")):
 		case "": objectCarriedFilter = "";
-		case "NotWorn": return(0,"{}");
+		case "NotWorn": return(0,"[]");
 		case "Worn": objectCarriedFilter = "";
 		default: objectCarriedFilter = "Ally"
 	]
@@ -34,13 +34,22 @@
 	[h:objectTagsExclusive = json.get(ObjectFilterData,"TagsExclusive")]
 }]
 
-[h:allValidItemsByCreature = "{}"]
+[h:allValidItems = "[]"]
 [h,foreach(creature,TargetCreatures),CODE:{
-	[h:thisCreatureValidObjects = getProperty("a5e.stat.Inventory",creature)]
-
 	[h,if(objectCarriedFilter == "Ally"),CODE:{
-		[h,if(getProperty("a5e.stat.WhichTeam") != getProperty("a5e.stat.WhichTeam")): thisCreatureValidObjects = "[]"]
-	};{}]
+		[h,if(getProperty("a5e.stat.WhichTeam") == getProperty("a5e.stat.WhichTeam",creature)): 
+			thisCreatureValidObjects = getProperty("a5e.stat.Inventory",creature);
+			thisCreatureValidObjects = "[]"
+		]
+	};{
+		[h:thisCreatureWornItems = getProperty("a5e.stat.HeldItems",creature)]
+		[h:thisCreatureWornItems = json.difference(thisCreatureWornItems,json.append("",""))]
+		[h:thisCreatureWornItems = json.append(thisCreatureWornItems,getProperty("a5e.stat.EquippedArmor",creature))]
+		[h,if(getProperty("a5e.stat.WhichTeam") == getProperty("a5e.stat.WhichTeam",creature)): 
+			thisCreatureValidObjects = getProperty("a5e.stat.Inventory",creature);
+			thisCreatureValidObjects = json.path.read(getProperty("a5e.stat.Inventory",creature),"[*][?(@.ItemID in "+thisCreatureWornItems+")]")
+		]
+	}]
 
 	[h,if(objectFlammableFilter != ""): thisCreatureValidObjects = json.path.read(thisCreatureValidObjects,"[*][?(@.isFlammable == "+objectFlammableFilter+")]")]
 	[h,if(objectMagicalFilter != ""): thisCreatureValidObjects = json.path.read(thisCreatureValidObjects,"[*][?(@.isMagical == "+objectMagicalFilter+")]")]
@@ -50,11 +59,11 @@
 	[h,if(objectMinWeight != ""): thisCreatureValidObjects = json.path.read(thisCreatureValidObjects,"[*][?(@.Weight >= "+objectMinWeight+")]")]
 
 	[h,if(objectTagsExclusive != ""),CODE:{
-		[h:thisCreatureValidObjects = json.path.read(thisCreatureValidObjects,"[*][?(@.MaterialTags noneof "+validConditionTypesExclusive+" && @.MainMaterial nin "+validConditionTypesExclusive+")]")]
+		[h:thisCreatureValidObjects = json.path.read(thisCreatureValidObjects,"[*][?(@.MaterialTags noneof "+objectTagsExclusive+" && @.MainMaterial nin "+objectTagsExclusive+")]")]
 	};{}]
 
 	[h,if(objectTagsInclusive != ""),CODE:{
-		[h:thisCreatureValidObjects = json.path.read(thisCreatureValidObjects,"[*][?(@.MaterialTags anyof "+validConditionTypesInclusive+" && @.MainMaterial in "+validConditionTypesInclusive+")]")]
+		[h:thisCreatureValidObjects = json.path.read(thisCreatureValidObjects,"[*][?(@.MaterialTags anyof "+objectTagsInclusive+" && @.MainMaterial in "+objectTagsInclusive+")]")]
 	};{}]
 
 	[h:needsSizeComparison = (objectMaxSize != "" && objectMinSize != "")]
@@ -69,7 +78,7 @@
 		[h,if(validSizeTest): thisCreatureFinalValidObjects = json.append(thisCreatureFinalValidObjects,tempItem)]
 	}]
 
-	[h:allValidItemsByCreature = json.set(allValidItemsByCreature,creature,thisCreatureFinalValidObjects)]
+	[h:allValidItems = json.merge(allValidItems,json.path.put(thisCreatureFinalValidObjects,"[*]","HeldBy",creature))]
 }]
 
-[h:macro.return = allValidItemsByCreature]
+[h:macro.return = allValidItems]

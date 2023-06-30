@@ -104,6 +104,7 @@
 	))]
 
 	[h:CheckDataFinal = json.set("","DC",pm.DCFinal)]
+	[h:abilityTable = json.merge(abilityTable,checkDCTable)]
 }]
 
 [h:CheckDataFinal = json.set(CheckDataFinal,
@@ -118,8 +119,6 @@
 )]
 
 [h:effectsToMerge = json.append("",json.set("","CheckDC",CheckDataFinal))]
-
-[h:abilityTable = json.merge(abilityTable,checkDCTable)]
 
 [h:return(!IsTooltip)]
 

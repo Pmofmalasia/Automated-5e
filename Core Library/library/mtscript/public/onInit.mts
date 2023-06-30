@@ -163,6 +163,8 @@
 [h:defineFunction("pm.a5e.TargetCreatureTargeting","pm.a5e.TargetCreatureTargeting@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.a5e.TargetConditionFiltering","pm.a5e.TargetConditionFiltering@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.a5e.TargetConditionTargeting","pm.a5e.TargetConditionTargeting@Lib:pm.a5e.Core")]
+[h:defineFunction("pm.a5e.TargetHeldObjectFiltering","pm.a5e.TargetHeldObjectFiltering@Lib:pm.a5e.Core")]
+[h:defineFunction("pm.a5e.TargetObjectTargeting","pm.a5e.TargetHeldObjectFiltering@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.a5e.InputTargeting","pm.a5e.InputTargeting@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.a5e.GenerateEffectID","pm.a5e.GenerateEffectID@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.a5e.d20TestRerollDataProcessing","pm.a5e.d20TestRerollDataProcessing@Lib:pm.a5e.Core")]

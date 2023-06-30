@@ -83,7 +83,7 @@
 		speedMultiplier = (1/(abs(speedMultiplier)+1));
 		speedMultiplier = speedMultiplier+1
 	]
-	[h:SpeedFinal = (speedBase + speedBonus) * speedMultiplier]
+	[h:SpeedFinal = floor(speedBase + speedBonus) * speedMultiplier]
 	[h:SpeedFinal = max(speedSet,SpeedFinal)]
 }]
 
@@ -92,7 +92,7 @@
 };{
 	[h,if(burrowMultiplier < 0): burrowMultiplier = (1/(abs(burrowMultiplier)+1)); burrowMultiplier = burrowMultiplier+1]
 	[h:BurrowFinal = max(burrowBase,(burrowEqualsWalking*SpeedFinal))]
-	[h:BurrowFinal = (BurrowFinal + burrowBonus) * burrowMultiplier]
+	[h:BurrowFinal = floor(BurrowFinal + burrowBonus) * burrowMultiplier]
 	[h:BurrowFinal = max(burrowSet,BurrowFinal)]
 }]
 
@@ -101,7 +101,7 @@
 };{
 	[h,if(climbMultiplier < 0): climbMultiplier = (1/(abs(climbMultiplier)+1)); climbMultiplier = climbMultiplier+1]
 	[h:ClimbFinal = max(climbBase,(climbEqualsWalking*SpeedFinal))]
-	[h:ClimbFinal = (ClimbFinal + climbBonus) * climbMultiplier]
+	[h:ClimbFinal = floor(ClimbFinal + climbBonus) * climbMultiplier]
 	[h:ClimbFinal = max(climbSet,ClimbFinal)]
 }]
 
@@ -110,7 +110,7 @@
 };{
 	[h,if(flyMultiplier < 0): flyMultiplier = (1/(abs(flyMultiplier)+1)); flyMultiplier = flyMultiplier+1]
 	[h:FlyFinal = max(flyBase,(flyEqualsWalking*SpeedFinal))]
-	[h:FlyFinal = (FlyFinal + flyBonus) * flyMultiplier]
+	[h:FlyFinal = floor(FlyFinal + flyBonus) * flyMultiplier]
 	[h:FlyFinal = max(flySet,FlyFinal)]
 }]
 
@@ -119,7 +119,7 @@
 };{
 	[h,if(swimMultiplier < 0): swimMultiplier = (1/(abs(swimMultiplier)+1)); swimMultiplier = swimMultiplier+1]
 	[h:SwimFinal = max(swimBase,(swimEqualsWalking*SpeedFinal))]
-	[h:SwimFinal = (SwimFinal + swimBonus) * swimMultiplier]
+	[h:SwimFinal = floor(SwimFinal + swimBonus) * swimMultiplier]
 	[h:SwimFinal = max(swimSet,SwimFinal)]
 }]
 

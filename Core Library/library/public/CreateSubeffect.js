@@ -315,8 +315,8 @@ async function createSaveDCMethodRow(tableID){
 
 async function createAHLSelect(ahlSelectID){
 	let ahlSelectHTML = "";
-	if(document.getElementById("SpellLevel")!=null){
-		if(document.getElementById("SpellLevel").value == "0"){
+	if(document.getElementById("ExtraDataSpellLevel")!=null){
+		if(document.getElementById("ExtraDataSpellLevel").value == "0"){
 			ahlSelectHTML = "<select id='"+ahlSelectID+"' name='"+ahlSelectID+"'><option value='0'>No Increase</option><option value='1'>Every Interval</option><option value='2'>Every Other Interval</option><option value='3'>Every Three Intervals</option></select>";
 		}
 		else{
@@ -379,7 +379,7 @@ async function addDamageTypeRows(){
 	isAHLRow.id = "rowIsAHL"+damageTypeNumber;
    
 	if(checkEffectType()=="Spell"){
-		if(document.getElementById("SpellLevel").value == "0"){
+		if(document.getElementById("ExtraDataSpellLevel").value == "0"){
 			isAHLRow.innerHTML = "<th>Damage Increases AHL:</th><td><select id='isAHL"+damageTypeNumber+"' name='isAHL"+damageTypeNumber+"' onchange='createAHLDamage("+damageTypeNumber+")'><option value='0'>No Increase</option><option value='1'>Every Interval</option><option value='2'>Every Other Interval</option><option value='3'>Every Three Intervals</option></select></td>";
 		}
 		else{

@@ -116,7 +116,6 @@
 				case "24 Hours": thisEquipTypeData = json.set("","Value",24,"Units","hour")
 			]
 			[h:objectData = json.set(objectData,equipType+"Time",thisEquipTypeData)]
-			[h:objectData = json.remove(objectData,equipType+"Time")]
 		}]
 	};
 	case "CannotDrop":{

@@ -19,5 +19,8 @@
 	};
 	case "Neutral":{
 		[h:return(0,0)]
+	};
+	default:{
+		[h:return(0,0)]
 	}
 ]

@@ -23,7 +23,7 @@
     [h,foreach(object,ObjectTargetOptionArray),CODE:{
 		[h:"<!-- Strings represent TokenIDs for objects on the map. -->"]
 		[h,if(json.type(object) == "OBJECT"):
-			TargetOptions = json.append(TargetOptions,json.get(item,"DisplayName")+" Held By "+getName(json.get(item,"HeldBy")));
+			TargetOptions = json.append(TargetOptions,getName(json.get(object,"HeldBy"))+"'s "+json.get(object,"DisplayName"));
 			TargetOptions = json.append(TargetOptions,getName(object)+" "+getTokenImage("",object))
 		]
 	}]
@@ -38,7 +38,7 @@
 
 	[h,foreach(target,CreatureTargetOptionArray): tInput = listAppend(tInput," choice"+target+" |  | "+getName(target)+" | CHECK ","##")]
 
-    [h,foreach(item,ObjectTargetOptionArray): tInput = listAppend(tInput," choice"+json.get(item,"HeldBy")+json.get(item,"ItemID")+" |  | "+json.get(item,"DisplayName")+" Held By "+getName(json.get(item,"HeldBy"))+" | CHECK ","##")]
+    [h,foreach(item,ObjectTargetOptionArray): tInput = listAppend(tInput," choice"+json.get(item,"HeldBy")+json.get(item,"ItemID")+" |  | "+getName(json.get(item,"HeldBy"))+"'s "+json.get(item,"DisplayName")+" | CHECK ","##")]
 }]
 
 [h:abort(input(tInput))]
@@ -69,7 +69,7 @@
 };{
     [h:FinalTargetsChosen = "[]"]
 
-    [h,foreach(target,pm.ValidTargets): FinalTargetsChosen = if(eval("choice"+target),json.append(FinalTargetsChosen,target),FinalTargetsChosen)]
+    [h,foreach(target,CreatureTargetOptionArray): FinalTargetsChosen = if(eval("choice"+target),json.append(FinalTargetsChosen,target),FinalTargetsChosen)]
 
     [h,foreach(item,ObjectTargetOptionArray): FinalTargetsChosen = if(eval("choice"+json.get(item,"HeldBy")+json.get(item,"ItemID")),json.append(FinalTargetsChosen,item),FinalTargetsChosen)]
 

@@ -13,7 +13,11 @@
 [h:CritFailColor = pm.CritFailColor()]
 [h:LinkColor = pm.LinkColor()]
 
+[h:"<!-- TODO: Need a better way to actually set these values and not just placeholders -->"]
 [h:AHLTier = 0]
+[h:PrimeStat = "None"]
+[h:PrimeStatMod = 0]
+
 [h:EffectSubeffects = json.get(EffectData,"Subeffects")]
 [h,foreach(tempSubeffect,EffectSubeffects): pm.a5e.ExecuteSubeffect(tempSubeffect,json.set("","BaseData",EffectData))]
 

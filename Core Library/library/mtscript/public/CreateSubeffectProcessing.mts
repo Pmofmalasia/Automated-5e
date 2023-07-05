@@ -740,70 +740,10 @@
 [h:subeffectData = json.remove(subeffectData,"aoeShape")]
 
 [h:targetData = "{}"]
-[h,switch(json.get(subeffectData,"TargetType")),CODE:
-	case "AnyCreature":{
-		[h:targetData = json.set(targetData,"Creature","{}")]
-	};
-	case "AnyOtherCreature":{
-		[h:targetData = json.set(targetData,"Creature",json.set("","Allegiance",json.set("","Self",0)))]
-	};
-	case "AlliedCreature":{
-		[h:targetData = json.set(targetData,"Creature",json.set("","Allegiance",json.set("","Ally",1,"Self",1)))]
-	};
-	case "SelfOnly":{
-		[h:targetData = json.set(targetData,"Creature",json.set("","Allegiance",json.set("","Self",1)))]
-	};
-	case "EnemyCreature":{
-		[h:targetData = json.set(targetData,"Creature",json.set("","Allegiance",json.set("","Foe",1)))]
-	};
-	case "HumanoidCreature":{
-		[h:targetData = json.set(targetData,"Creature",json.set("","TypeInclusive","Humanoid"))]
-	};
-	case "Creature":{
-		[h:CreatureTargetingData = ct.a5e.CreatureTargetingLimitProcessing(subeffectData)]
-		[h:subeffectData = json.get(CreatureTargetingData,"Subeffect")]
-		[h:creatureData = json.get(CreatureTargetingData,"Creature")]
-		[h:targetData = json.set(targetData,"Creature",creatureData)]
-	};
-	case "Object":{
-		[h:ObjectTargetingData = ct.a5e.ObjectTargetingLimitProcessing(subeffectData)]
-		[h:subeffectData = json.get(ObjectTargetingData,"Subeffect")]
-		[h:ObjectData = json.get(ObjectTargetingData,"Object")]
-		[h:targetData = json.set(targetData,"Object",ObjectData)]
-	};
-	case "CreatureObject":{
-		[h:ObjectTargetingData = ct.a5e.ObjectTargetingLimitProcessing(subeffectData)]
-		[h:subeffectData = json.get(ObjectTargetingData,"Subeffect")]
-		[h:ObjectData = json.get(ObjectTargetingData,"Object")]
-		[h:targetData = json.set(targetData,"Creature","{}","Object",ObjectData)]
-	};
-	case "Point":{
+[h:AllTargetingData = ct.a5e.AllTargetingOptionsProcessing(subeffectData,targetData,"TargetType")]
+[h:subeffectData = json.get(AllTargetingData,"Subeffect")]
+[h:targetData = json.get(AllTargetingData,"Targeting")]
 
-	};
-	case "Effect":{
-
-	};
-	case "FreeHand":{
-
-	};
-	case "":{
-		[h,if(json.contains(subeffectData,"PriorTargetAll")),CODE:{
-			[h:PriorTargetsData = json.set("","TargetAll",1)]
-		};{
-			[h:PriorTargetsData = json.set("",
-				"TargetAll",0,
-				"TargetNumber",json.get(subeffectData,"PriorTargetNumber")
-			)]
-		}]
-		[h:targetData = json.set(targetData,"PriorTargets",PriorTargetsData)]
-
-		[h:subeffectData = json.remove(subeffectData,"UsePriorTargets")]
-		[h:subeffectData = json.remove(subeffectData,"PriorTargetNumber")]
-		[h:subeffectData = json.remove(subeffectData,"PriorTargetAll")]
-	};
-	default: {}
-]
-[h:subeffectData = json.remove(subeffectData,"TargetType")]
 [h:"<!-- TODO: Incorporate isSight (can you see the target) into targetData - or maybe not? Since it's kinda info on the caster? Will consider. Maybe store in both locations (caster can see, target can be seen). -->"]
 [h:subeffectData = json.set(subeffectData,"TargetLimits",targetData)]
 [h:subeffectData = json.remove(subeffectData,"MaxCover")]
@@ -829,6 +769,7 @@
 
 		[h:spellLevel = json.get(subeffectData,"ExtraDataSpellLevel")]
 		[h:subeffectData = json.remove(subeffectData,"ExtraDataSpellLevel")]
+		[h:subeffectData = json.remove(subeffectData,"ExtraDataKeys")]
 
 		[h:thisPlayerCurrentFeatureData = json.set(thisPlayerCurrentFeatureData,json.length(thisPlayerCurrentFeatureData)-1,currentEffectData)]
 		[h:setLibProperty("ct.NewSpell",json.set(CurrentFeatureData,getPlayerName(),thisPlayerCurrentFeatureData),"Lib:pm.a5e.Core")]
@@ -861,6 +802,7 @@
 			[h:extraData = json.set(extraData,tempKey,json.get(subeffectData,"ExtraData"+tempKey))]
 			[h:subeffectData = json.remove(subeffectData,"ExtraData"+tempKey)]
 		}]
+		[h:subeffectData = json.remove(subeffectData,"ExtraDataKeys")]
 	}
 ]
 

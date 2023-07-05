@@ -57,8 +57,30 @@
 [h:AttributeList = pm.GetAttributes()]
 [h,foreach(TempAttribute,AttributeList): setProperty("a5e.stat.BaseAttributes",json.set(getProperty("a5e.stat.BaseAttributes"),json.get(TempAttribute,"Name"),json.get(MonsterData,"Attribute"+json.get(TempAttribute,"Name"))))]
 
-[h:"<!-- TODO: Update AC after updates to equipment -->"]
-[h:setProperty("a5e.stat.Armor",json.append("",1,json.set("","Name","None","MagicBonus",0,"Type","None","ArmorTier","None","BaseAC",json.get(MonsterData,"AC"),"DexMax",0,"StrReq",0,"StealthDis",0,"MagicItem",0,"ItemBuffs","")))]
+[h,if(json.contains(MonsterData,"isNaturalArmor")),CODE:{
+	[h:"<!-- Note: DMG pg 276 states that a monster's natural armor bonus 10 + DEX + natural armor bonus. -->"]
+	[h:NewNaturalArmor = json.set(getProperty("a5e.stat.NaturalArmor"),
+		"BaseAC",json.get(MonsterData,"AC") - floor((json.get(MonsterData,"AttributeDexterity") - 10)/2)
+	)]
+	[h:setProperty("a5e.stat.NaturalArmor",NewNaturalArmor)]
+};{
+	[h:AddArmorData = json.set("",
+		"ItemChoice",json.get(MonsterData,"ArmorChoice"),
+		"ParentToken",ParentToken,
+		"NumberAdded",1
+	)]
+	[h,MACRO("AddItemProcessing@Lib:pm.a5e.Core"): AddArmorData]
+
+	[h,if(json.contains(MonsterData,"isShield")),CODE:{
+		[h:"<!-- U2hpZWxk477685 is the ObjectID for the base shield -->"]
+		[h:AddShieldData = json.set("",
+			"ItemChoice","U2hpZWxk477685",
+			"ParentToken",ParentToken,
+			"NumberAdded",1
+		)]
+		[h,MACRO("AddItemProcessing@Lib:pm.a5e.Core"): AddShieldData]
+	};{}]
+}]
 
 [h:tempHitDieObject = json.set("","1d6",0,"1d8",0,"1d10",0,"1d12",0)]
 [h:HitDieNum = json.get(MonsterData,"HitDieNum")]

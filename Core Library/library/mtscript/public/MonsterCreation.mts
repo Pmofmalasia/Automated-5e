@@ -33,7 +33,7 @@
     </select>
 </td></tr>"]
 
-[h:"<!-- TODO: Add natural armor vs. equipment when equipment is set up; need new way to calculate AC/Speed/Proficiency without using regular calculations -->"]
+[h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowIsNaturalArmor'><th><label for='isNaturalArmor'>Has Natural Armor:</label></th><td><input type='checkbox' id='isNaturalArmor' name='isNaturalArmor' onchange='createArmorChoiceRows()' checked></td></tr>"]
 [h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowAC'><th><label for='AC'>AC:</label></th><td><input type='number' id='AC' name='AC' min='1' style='width:25px'></td></tr>"]
 
 [h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowMaxHP'><th><label for='MaxHP'>Maximum HP:</label></th><td><input type='number' id='MaxHP' name='MaxHP' min='1' style='width:40px'></td></tr>"]

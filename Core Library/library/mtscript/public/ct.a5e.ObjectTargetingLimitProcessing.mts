@@ -1,7 +1,26 @@
 [h:subeffectData = arg(0)]
 [h:objectTargetData = "{}"]
 
-[h:objectTargetData = json.set(objectTargetData,"Carried",json.get(subeffectData,"ObjectTargetWornCarried"))]
+[h,switch(json.get(subeffectData,"ObjectTargetWornCarried")):
+	case "NotWorn": objectTargetData = json.set(objectTargetData,"Carried",0);
+	case "Worn": objectTargetData = json.set(objectTargetData,"Carried",1);
+	default: ""
+]
+
+[h,if(json.get(subeffectData,"ObjectTargetWornCarried") != "NotWorn"),CODE:{
+	[h,if(json.contains(subeffectData,"isUseCreatureTargetingLimits")),CODE:{
+		[h:objectTargetData = json.set(objectTargetData,"UseCreatureTargetingLimitsForHeld",1)]
+		[h:objectTargetData = json.remove(subeffectData,"isUseCreatureTargetingLimits")]
+	};{
+		[h:objectTargetData = json.set(objectTargetData,"UseCreatureTargetingLimitsForHeld",0)]
+		[h:HeldItemCreatureData = ct.a5e.AllTargetingOptionsProcessing(subeffectData,"{}","HoldingCreatureLimits","HoldingObject")]
+		[h:subeffectData = json.get(HeldItemCreatureData,"Subeffect")]
+		[h:HeldItemCreatureFilter = json.get(HeldItemCreatureData,"Targeting")]
+		[h:HeldItemCreatureFilter = json.get(HeldItemCreatureFilter,"Creature")]
+		
+		[h:objectTargetData = json.set(objectTargetData,"CarryingCreatureFilter",HeldItemCreatureFilter)]
+	}]
+}]
 [h:subeffectData = json.remove(subeffectData,"ObjectTargetWornCarried")]
 
 
@@ -72,10 +91,10 @@
 [h:subeffectData = json.remove(subeffectData,"ObjectTargetWeightType")]
 [h:subeffectData = json.remove(subeffectData,"ObjectTargetWeight")]
 
-[h,if(json.get(subeffectData,"ObjectTargetTags") != "All"),CODE:{
+[h,if(json.get(subeffectData,"ObjectTarget") != "All"),CODE:{
     [h:MaterialTagList = pm.a5e.GetCoreData("sb.MaterialTags","Name","json")]
-    [h:MaterialList = pm.a5e.GetCoreData("sb.Materials","Name","json")]
-	[h:AllTagsList = json.merge(MaterialTagList,MaterialList)]
+    [h:ObjectTagList = pm.a5e.GetCoreData("sb.ObjectTags","Name","json")]
+	[h:AllTagsList = json.merge(MaterialTagList,ObjectTagList)]
 
     [h:inclusiveObjectTags = "[]"]
     [h:exclusiveObjectTags = "[]"]

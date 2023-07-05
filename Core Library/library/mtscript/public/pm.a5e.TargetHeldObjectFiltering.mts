@@ -59,11 +59,63 @@
 	[h,if(objectMinWeight != ""): thisCreatureValidObjects = json.path.read(thisCreatureValidObjects,"[*][?(@.Weight >= "+objectMinWeight+")]")]
 
 	[h,if(objectTagsExclusive != ""),CODE:{
-		[h:thisCreatureValidObjects = json.path.read(thisCreatureValidObjects,"[*][?(@.MaterialTags noneof "+objectTagsExclusive+" && @.MainMaterial nin "+objectTagsExclusive+")]")]
+		[h:thisCreatureValidObjects = js.eval("
+			let ValidObjects = [];
+			let TagFilter = args[1];
+			for(let tempObject of args[0]){
+				let thisObjectValidTest = true;
+				for(let tempObjectTag of tempObject.ObjectTags){
+					for(let tempFilter of TagFilter){
+						if(tempFilter === tempObjectTag){
+							thisObjectValidTest = false;
+						}
+					}
+				}
+
+				if(thisObjectValidTest){
+					ValidObjects.push(tempObject);
+				}
+			}
+
+			return ValidObjects;
+		",thisCreatureValidObjects,objectTagsExclusive)]
+
+		[h,if(0):thisCreatureValidObjects = json.path.read(thisCreatureValidObjects,"[*][?(@.MaterialTags noneof "+objectTagsExclusive+" && @.MainMaterial nin "+objectTagsExclusive+")]")]
 	};{}]
 
 	[h,if(objectTagsInclusive != ""),CODE:{
-		[h:thisCreatureValidObjects = json.path.read(thisCreatureValidObjects,"[*][?(@.MaterialTags anyof "+objectTagsInclusive+" && @.MainMaterial in "+objectTagsInclusive+")]")]
+		[h:thisCreatureValidObjects = js.eval("
+			let ValidObjects = [];
+			let TagFilter = args[1];
+
+			for(let tempObject of args[0]){
+				let thisObjectNumberFound = 0;
+				for(let tempObjectTag of tempObject.ObjectTags){
+					for(let tempFilter of TagFilter){
+						if(tempFilter === tempObjectTag){
+							thisObjectNumberFound++;
+						}
+					}
+				}
+
+				if(args[2] == 'All'){
+					if(thisObjectNumberFound === TagFilter.length){
+						ValidObjects.push(tempObject);
+					}
+				}
+				else{
+					if(thisObjectNumberFound >= args[2]){
+						ValidObjects.push(tempObject);
+					}
+				}
+
+			}
+
+			return ValidObjects;
+		",thisCreatureValidObjects,objectTagsInclusive,"All")]
+		[h:broadcast(thisCreatureValidObjects)]
+
+		[h,if(0):thisCreatureValidObjects = json.path.read(thisCreatureValidObjects,"[*][?(@.MaterialTags anyof "+objectTagsInclusive+" && @.MainMaterial in "+objectTagsInclusive+")]")]
 	};{}]
 
 	[h:needsSizeComparison = (objectMaxSize != "" && objectMinSize != "")]

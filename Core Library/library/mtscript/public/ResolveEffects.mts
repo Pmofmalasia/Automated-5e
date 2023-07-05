@@ -112,9 +112,16 @@
 [h:LinkColor = pm.LinkColor()]
 
 [h:abilityTable = "[]"]
-[h,foreach(targetToken,effTargets),CODE:{
+[h,foreach(tempTarget,effTargets),CODE:{
+	[h,if(json.type(tempTarget) == "OBJECT"),CODE:{
+		[h,if(json.get(tempTarget,"HeldBy") != ""): targetToken = json.get(tempTarget,"HeldBy")]
+		[h,if(json.get(tempTarget,"HeldBy") != ""): thisTokenDisplayName = getName(targetToken)+"'s "+json.get(tempTarget,"DisplayName")]
+	};{
+		[h:targetToken = tempTarget]
+		[h:thisTokenDisplayName = getName(targetToken)]
+	}]
 	[h:switchToken(targetToken)]
-    [h:thisTokenInputDisplay = "junkVar | "+getTokenImage("",targetToken)+" | Resolving Effects on "+getName(targetToken)+" | LABEL | ICON=TRUE "]
+    [h:thisTokenInputDisplay = "junkVar | "+getTokenImage("",targetToken)+" | Resolving Effects on "+thisTokenDisplayName+" | LABEL | ICON=TRUE "]
 	[h:thisTokenAttackData = effAttackData]
 	[h:thisTokenSaveDCData = effSaveDCData]
 	[h:thisTokenCheckDCData = effCheckDCData]
@@ -135,12 +142,12 @@
 	[h:DamageDealt = "{}"]
 	[h:ConditionsSet = "[]"]
 	
+	[h:"<!-- TODO: The following two (TargetedConditions and TargetSpecific) will need to be updated for objects -->"]
 	[h,if(effTargetedConditions==""):
 		thisTokenTargetedConditions = "[]";
 		thisTokenTargetedConditions = json.get(effTargetedConditions,targetToken)
 	]
 	[h:thisTokenConditionModificationInfo = effConditionModificationInfo]
-
 	[h,if(json.type(effTargetSpecific)=="OBJECT"):
 		thisTokenTargetSpecificEffects = json.get(effTargetSpecific,targetToken);
 		thisTokenTargetSpecificEffects = ""
@@ -405,7 +412,7 @@
 	}]
 
 	[h,if(thisTokenDamageDealt!=""),CODE:{
-		[h,MACRO("ChangeHP@Lib:pm.a5e.Core"): json.set("","DamageDealt",thisTokenDamageDealt,"IsCrit",attackCrit,"ParentToken",targetToken)]
+		[h,MACRO("ChangeHP@Lib:pm.a5e.Core"): json.set("","DamageDealt",thisTokenDamageDealt,"IsCrit",attackCrit,"ParentToken",targetToken,"SourceToken",ParentToken)]
 		[h:abilityTable = json.merge(abilityTable,json.get(macro.return,"Table"))]
 		[h:DamageDealt = json.get(macro.return,"Damage")]
 	};{}]

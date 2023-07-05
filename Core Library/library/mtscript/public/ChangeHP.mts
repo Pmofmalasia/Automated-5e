@@ -20,6 +20,7 @@
 	hp.ConcSaveBonus = json.get(hp.Data,"ConcSaveBonus")
 ]
 
+[h:"<!-- Not sure why the intersection with all damage types is required but there must have been a reason? -->"]
 [h:hp.TypesDealt = json.intersection(json.append(pm.GetDamageTypes("Name","json"),"None","Healing","TempHP"),json.unique(json.path.read(hp.DamageDealt,"[*]['DamageType']")))]
 [h:hp.DmgModData = pm.a5e.DamageModCalc(hp.Data)]
 
@@ -260,10 +261,10 @@
 [h,if(getProperty("a5e.stat.Concentration")!="" && TotalDamage>0 && !hp.BypassConc),CODE:{
 	[h:hp.ConcDC = max(10,floor(TotalDamage/2))]
 	[h,MACRO("Save@Lib:pm.a5e.Core"): 
-	json.set(hp.Data,
-	"Save","Concentration Save",
-	"Type","Concentration",
-	"ParentToken",ParentToken
+		json.set(hp.Data,
+		"Save","Concentration Save",
+		"Type","Concentration",
+		"ParentToken",ParentToken
 	)]
 	
 	[h:hp.ConcSave = json.get(macro.return,"Value")]
@@ -284,7 +285,8 @@
 	
 	[h:abilityTable = json.merge(abilityTable,json.get(macro.return,"Table"))]
 	
-	[h,if(!hp.PassedSave),CODE:{
+	[h:"<!-- TODO: More complete concentration implementation, e.g. use ResolveEffects -->"]
+	[h,if(!hp.PassedSave && 0),CODE:{
 		[h,macro("End Concentration@Lib:pm.a5e.Core"): hp.Data]
 	};{}]
 };{}]

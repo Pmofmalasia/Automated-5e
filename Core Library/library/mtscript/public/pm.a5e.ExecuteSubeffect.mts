@@ -133,35 +133,39 @@
 [h:subeffect.TargetTypes = json.fields(subeffect.TargetingData,"json")]
 [h:UseAllValidTargetsTest = and(json.get(SubeffectData,"MustTargetAll") == 1,!json.contains(SubeffectData,"AoE"))]
 
-[h:subeffect.TargetTokens = "[]"]
+[h:subeffect.AllTargets = "[]"]
 [h:subeffect.MultipleTargetTypeTargets = "{}"]
+[h:subeffect.CreatureTargetOptions = "[]"]
 [h,if(json.contains(subeffect.TargetTypes,"Creature")),CODE:{
 	[h:subeffect.TargetCreatureLimits = json.get(subeffect.TargetingData,"Creature")]
 	[h:subeffect.TargetOptionData = pm.a5e.TargetCreatureFiltering(json.set("","ParentToken",ParentToken,"Origin",subeffect.TargetOrigin,"Range",subeffect.RangeData),subeffect.TargetCreatureLimits)]
 	
 	[h:"<!-- Note: SelfOnlyTest and UseValidTargetsTest could be combined, kept for readability -->"]
-	[h:subeffect.TargetOptions = json.get(subeffect.TargetOptionData,"ValidTargets")]
+	[h:subeffect.CreatureTargetOptions = json.get(subeffect.TargetOptionData,"ValidTargets")]
 	[h:SelfOnlyTest = json.get(subeffect.TargetOptionData,"SelfOnly")]
 	[h,if(SelfOnlyTest),CODE:{
-		[h:subeffect.TargetTokens = json.merge(subeffect.TargetTokens,subeffect.TargetOptions)]
+		[h:subeffect.AllTargets = json.merge(subeffect.AllTargets,subeffect.CreatureTargetOptions)]
 	};{
 		[h,if(UseAllValidTargetsTest): 
-			subeffect.TargetTokens = json.merge(subeffect.TargetTokens,subeffect.TargetOptions);
-			subeffect.MultipleTargetTypeTargets = json.set(subeffect.MultipleTargetTypeTargets,"Creature",subeffect.TargetOptions)
+			subeffect.AllTargets = json.merge(subeffect.AllTargets,subeffect.CreatureTargetOptions);
+			subeffect.MultipleTargetTypeTargets = json.set(subeffect.MultipleTargetTypeTargets,"Creature",subeffect.CreatureTargetOptions)
 		]
 	}]
 }]
 
 [h,if(json.contains(subeffect.TargetTypes,"PriorTargets")),CODE:{
 	[h:subeffect.LinkedPriorTargets = pm.a5e.GetEffectComponent(pm.a5e.EffectData,"Targets",json.get(SubeffectData,"ParentSubeffect"))]
+
+	[h:"<!-- TODO: Will need to filter out non-creature PriorTargets in the future -->"]
+	[h:subeffect.CreatureTargetOptions = json.merge(subeffect.CreatureTargetOptions,subeffect.LinkedPriorTargets)]
 	[h:subeffect.PriorTargetingData = json.get(subeffect.TargetingData,"PriorTargets")]
 
 	[h,if(json.get(subeffect.PriorTargetingData,"TargetAll")),CODE:{
-		[h:subeffect.TargetTokens = json.merge(subeffect.TargetTokens,subeffect.LinkedPriorTargets)]
+		[h:subeffect.AllTargets = json.merge(subeffect.AllTargets,subeffect.LinkedPriorTargets)]
 	};{
 		[h:"<!-- TODO: May require some filtering here if not all are valid. This whole CODE block means that in the future if target changing is implemented, it will need to change subsequent targeting as well. Better to do it this way than change targeting during resolution of effects due to the input required. -->"]
 		[h,if(UseAllValidTargetsTest): 
-			subeffect.TargetTokens = json.merge(subeffect.TargetTokens,subeffect.LinkedPriorTargets);
+			subeffect.AllTargets = json.merge(subeffect.AllTargets,subeffect.LinkedPriorTargets);
 			subeffect.PriorTargetsChosen = "[]"
 		]
 	}]
@@ -173,10 +177,25 @@
 [h:"<!-- TODO: Will need to replace first arg of TargetHeldObjectFiltering with a list of creatures, gotten from creaturefiltering from object-specific limits on creatures -->"]
 [h,if(json.contains(subeffect.TargetTypes,"Object")),CODE:{
 	[h:subeffect.TargetObjectLimits = json.get(subeffect.TargetingData,"Object")]
-	[h:subeffect.ObjectTargetOptions = pm.a5e.TargetHeldObjectFiltering(json.set("","ParentToken",ParentToken,"Origin",subeffect.TargetOrigin,"Range",subeffect.RangeData),subeffect.TargetObjectLimits)]
+	[h:subeffect.ObjectTargetOptions = "[]"]
+
+	[h:"<!-- Note: Empty string 'Carried' key means that it does not matter if an item is worn or carried - resulting in 2 if statements instead of 1. -->"]
+	[h:CarriedLimits = json.get(subeffect.TargetObjectLimits,"Carried")]
+	[h,if(CarriedLimits!=0),CODE:{
+		[h,if(json.get(subeffect.TargetObjectLimits,"UseCreatureTargetingLimitsForHeld")): 
+			subeffect.HeldItemCreatureOptions = subeffect.CreatureTargetOptions;
+			subeffect.HeldItemCreatureOptions = json.get(pm.a5e.TargetCreatureFiltering(json.set("","ParentToken",ParentToken,"Origin",subeffect.TargetOrigin,"Range",subeffect.RangeData),json.get(subeffect.TargetObjectLimits,"CarryingCreatureFilter")),"ValidTargets")
+		]
+
+		[h:subeffect.ObjectTargetOptions = json.merge(subeffect.ObjectTargetOptions,pm.a5e.TargetHeldObjectFiltering(subeffect.HeldItemCreatureOptions,subeffect.TargetObjectLimits))]
+	};{}]
+
+	[h,if(CarriedLimits!=1),CODE:{
+		[h:"<!-- TODO: Add targeting for non-held items -->"]
+	};{}]
 
 	[h,if(UseAllValidTargetsTest): 
-		subeffect.TargetTokens = json.merge(subeffect.TargetTokens,subeffect.ObjectTargetOptions);
+		subeffect.AllTargets = json.merge(subeffect.AllTargets,subeffect.ObjectTargetOptions);
 		subeffect.MultipleTargetTypeTargets = json.set(subeffect.MultipleTargetTypeTargets,"Object",subeffect.ObjectTargetOptions)
 	]
 }]
@@ -188,13 +207,13 @@
 		"TargetNumber",subeffect.TargetNumber
 	)]
 	[h,MACRO("MixedTypeTargeting@Lib:pm.a5e.Core"): subeffect.MultiTypeTargetingData]
-	[h:subeffect.TargetTokens = macro.return]
+	[h:subeffect.AllTargets = macro.return]
 
 	[h:"<!-- TODO: Temporary bypass of the data format single-target missiles are output in, will need to rework the below line when doing missiles. -->"]
-	[h,if(subeffect.TargetNumber == 1): subeffect.TargetTokens = json.get(subeffect.TargetTokens,0)]
+	[h,if(subeffect.TargetNumber == 1): subeffect.AllTargets = json.get(subeffect.AllTargets,0)]
 };{}]
 
-[h,if(!json.isEmpty(subeffect.TargetTokens)): thisEffectData = json.set(thisEffectData,"Targets",subeffect.TargetTokens)]
+[h,if(!json.isEmpty(subeffect.AllTargets)): thisEffectData = json.set(thisEffectData,"Targets",subeffect.AllTargets)]
 
 [h,if(json.contains(SubeffectData,"Damage")),CODE:{
 	[h:allDamageData = json.get(SubeffectData,"Damage")]
@@ -243,25 +262,22 @@
 		}
 	]
 
-	[h,if(json.get(subeffect.AttackData,"CritThresh")!=""):
-		attack.CritThresh = json.get(subeffect.AttackData,"CritThresh");
-		attack.CritThresh = 20
-	]
-	[h,if(json.get(subeffect.AttackData,"CritThreshReduction")!=""):
-		attack.CritThreshReduction = json.get(subeffect.AttackData,"CritThreshReduction");
-		attack.CritThreshReduction = 0
-	]
+	[h:"<!-- Note: Critical hit threshhold info is handled in AttackRoll macro -->"]
 
+	[h:"<!-- Note: May need to filter subeffect.AllTargets somehow to remove non-token options, as they will likely not play well with attacks. -->"]
 	[h:subeffect.RerollData = json.get(NonSubeffectData,"RerollData")]
+	[h,if(subeffect.RerollData == ""): subeffect.RerollData = "{}"]
+
+	[h:thisAttackData = json.merge(subeffect.RerollData,subeffect.AttackData)]
 	[h,if(json.length(subeffect.AllTargets)>1):
-		subeffect.AttackData = pm.a5e.AttackRoll(subeffect.RerollData,SubeffectFunctionPrefixes);
-		subeffect.AttackData = pm.a5e.AttackRoll(subeffect.RerollData,SubeffectFunctionPrefixes,json.get(subeffect.AllTargets,0))		
+		subeffect.AttackData = pm.a5e.AttackRoll(thisAttackData,SubeffectFunctionPrefixes);
+		subeffect.AttackData = pm.a5e.AttackRoll(thisAttackData,SubeffectFunctionPrefixes,json.get(subeffect.AllTargets,0))		
 	]
 	[h:attack.CritTest = json.get(subeffect.AttackData,"CritTest")]
 	[h:attack.CritFailTest = json.get(subeffect.AttackData,"CritFailTest")]
 
-	[h:sp.AdvRerollLink = macroLinkText("AttackReroll@Lib:pm.a5e.Core","self-gm",subeffect.RerollData,ParentToken)]
-	[h:sp.DisRerollLink = macroLinkText("AttackReroll@Lib:pm.a5e.Core","self-gm",subeffect.RerollData,ParentToken)]
+	[h:subeffect.AdvRerollLink = macroLinkText("AttackReroll@Lib:pm.a5e.Core","self-gm",subeffect.RerollData,ParentToken)]
+	[h:subeffect.DisRerollLink = macroLinkText("AttackReroll@Lib:pm.a5e.Core","self-gm",subeffect.RerollData,ParentToken)]
 [h:"<!-- TODO: Will need to reorganize reroll link positioning to collect all info -->"]
 
 	[h:ToHitTableLine = json.set("",
@@ -275,7 +291,7 @@
 	)]
 	
 	[h,if(json.get(subeffect.AttackData,"AdvantageBalance")==0):
-		ToHitTableLine = json.set(ToHitTableLine,"BonusBody1","Reroll: <a href = '"+sp.AdvRerollLink+"'><span style = 'color:"+LinkColor+"'>Adv.</span></a> / <a href = '"+sp.DisRerollLink+"'><span style = 'color:"+LinkColor+"'>Dis.</span></a>");
+		ToHitTableLine = json.set(ToHitTableLine,"BonusBody1","Reroll: <a href = '"+subeffect.AdvRerollLink+"'><span style = 'color:"+LinkColor+"'>Adv.</span></a> / <a href = '"+subeffect.DisRerollLink+"'><span style = 'color:"+LinkColor+"'>Dis.</span></a>");
 		ToHitTableLine = json.set(ToHitTableLine,"BonusBody1","(Roll #1: "+(roll1+thisAttackToHit-if(thisAttackAdvDis==1,max(roll1,roll2),min(roll1,roll2)))+" / Roll #2: "+(roll2+thisAttackToHit-if(thisAttackAdvDis==1,max(roll1,roll2),min(roll1,roll2)))+")")
 	]
 	
@@ -327,7 +343,8 @@
 	"IsWeapon",pm.a5e.OverarchingContext=="Attack",
 	"IsAttack",subeffect.IsAttack,
 	"Modifier",1,
-	"ScalingBase",AHLTier
+	"ScalingBase",AHLTier,
+	"PrimeStat",PrimeStat
 )]
 
 [h:subeffect.DamageInfo = "[]"]
@@ -367,6 +384,7 @@
 	}]
 
 	[h:subeffect.Conditions = pm.a5e.ChooseCondition(json.get(tempConditionInfo,"Conditions"),subeffect.ConditionChoiceNumber)]
+	[h:subeffect.Conditions = json.path.set(subeffect.Conditions,"[*][?(@.HasTiers == 1)]['Level']",AHLTier + 1)]
 
 	[h:subeffect.ConditionEndInfo = json.get(tempConditionInfo,"EndInfo")]
 	[h,if(json.get(subeffect.ConditionEndInfo,"UseMainDuration") == 1): subeffect.ConditionEndInfo = json.set(subeffect.ConditionEndInfo,"Duration",DurationValue,"DurationUnits",lower(DurationUnits))]

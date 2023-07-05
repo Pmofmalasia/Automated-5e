@@ -31,7 +31,7 @@
 	[h:FormattingData = pm.MacroFormat(ClassFeatureData)]
 	[h:output.PC = json.get(json.get(FormattingData,"Output"),"Player")]
 	[h:output.GM = json.get(json.get(FormattingData,"Output"),"GM")]
-	
+
 	[h:SaveData = json.set("",
 		"Save",SaveChoice,
 		"Type","Save",
@@ -42,7 +42,7 @@
 		"ForcedAdvantage",or(AdvantageChoice==0,AdvantageChoice==4),
 		"PCOutput",outputTargets
 	)]
-	
+
 	[h,MACRO("Save@Lib:pm.a5e.Core"): SaveData]
 	[h:SaveData = macro.return]
 	[h:abilityTable = json.get(SaveData,"Table")]

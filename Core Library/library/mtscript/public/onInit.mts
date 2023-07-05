@@ -30,6 +30,7 @@
 [h:defineFunction("pm.WeaponSelectionPreset","pm.WeaponSelectionPreset@Lib:pm.a5e.Core")]
 [h:defineFunction("ct.a5e.AoEDataProcessing","ct.a5e.AoEDataProcessing@Lib:pm.a5e.Core",0,0)]
 [h:defineFunction("ct.a5e.ConditionEndTriggerInputProcessing","ct.a5e.ConditionEndTriggerInputProcessing@Lib:pm.a5e.Core",0,0)]
+[h:defineFunction("ct.a5e.AllTargetingOptionsProcessing","ct.a5e.AllTargetingOptionsProcessing@Lib:pm.a5e.Core")]
 [h:defineFunction("ct.a5e.CreatureTargetingLimitProcessing","ct.a5e.CreatureTargetingLimitProcessing@Lib:pm.a5e.Core")]
 [h:defineFunction("ct.a5e.ObjectTargetingLimitProcessing","ct.a5e.ObjectTargetingLimitProcessing@Lib:pm.a5e.Core")]
 [h:defineFunction("ct.a5e.WeaponDataProcessing","ct.a5e.WeaponDataProcessing@Lib:pm.a5e.Core")]
@@ -55,6 +56,7 @@
 [h:defineFunction("pm.SpellSlots","pm.SpellSlots@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.a5e.MaxSpellSlots","pm.a5e.MaxSpellSlots@Lib:pm.a5e.Core")]
 [h:defineFunction("stat.a5e.DisplayStatTest","stat.a5e.DisplayStatTest@Lib:pm.a5e.Core")]
+[h:defineFunction("pm.a5e.Limbs","pm.a5e.Limbs@Lib:pm.a5e.Core")]
 
 [h:"<!-- Functions for Abilities -->"]
 [h:defineFunction("ability.json.get","ability.json.get@Lib:pm.a5e.Core")]
@@ -155,6 +157,7 @@
 [h:defineFunction("pm.a5e.AdvanceTime","pm.a5e.AdvanceTime@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.a5e.ChooseCondition","pm.a5e.ChooseCondition@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.a5e.CreateConditionID","pm.a5e.CreateConditionID@Lib:pm.a5e.Core")]
+[h:defineFunction("pm.a5e.AdjustHP","pm.a5e.AdjustHP@Lib:pm.a5e.Core",0,0)]
 [h:defineFunction("pm.a5e.DamageModCalc","pm.a5e.DamageModCalc@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.a5e.DamageModCalcStep2","pm.a5e.DamageModCalcStep2@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.a5e.ConditionImmunityCalc","pm.a5e.ConditionImmunityCalc@Lib:pm.a5e.Core")]
@@ -179,6 +182,7 @@
 [h:defineFunction("pm.a5e.UseResource","pm.a5e.UseResource@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.a5e.RechargeRoll","pm.a5e.RechargeRoll@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.a5e.StartAndEndTurnEffects","pm.a5e.StartAndEndTurnEffects@Lib:pm.a5e.Core",0,0)]
+[h:defineFunction("pm.a5e.GenerateEffectDisplay","pm.a5e.GenerateEffectDisplay@Lib:pm.a5e.Core")]
 
 [h:"<!-- Functions for general use -->"]
 [h:defineFunction("pm.DieRoller","pm.DieRoller@Lib:pm.a5e.Core")]
@@ -262,7 +266,6 @@
 [h:defineFunction("pm.a5e.DamageRoll","pm.a5e.DamageRoll@Lib:pm.a5e.Core",0,0)]
 [h:defineFunction("pm.a5e.AttackRoll","pm.a5e.AttackRoll@Lib:pm.a5e.Core",0,0)]
 [h:defineFunction("pm.a5e.ExecuteSubeffect","pm.a5e.ExecuteSubeffect@Lib:pm.a5e.Core",0,0)]
-[h:defineFunction("pm.a5e.AttackSubeffect","pm.a5e.AttackSubeffect@Lib:pm.a5e.Core",0,0)]
 
 [h:"<!-- Functions for Checks and Saves -->"]
 [h:defineFunction("pm.a5e.d20Roll","pm.a5e.d20Roll@Lib:pm.a5e.Core",0,0)]

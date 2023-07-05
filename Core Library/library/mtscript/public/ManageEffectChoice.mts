@@ -15,7 +15,7 @@
 				[h:broadcast("This feature does not exist yet!")]
 			};
 			case "Remove":{
-				[h:jsonPATH = "[*][?(@.ID=="+chosenEffect+" || @.ParentEffect=="+chosenEffect+")]"]
+				[h:jsonPATH = "[*][?(@.ID=="+chosenEffect+" || @.ParentSubeffect=="+chosenEffect+")]"]
 				[h:setLibProperty("gd.Effects",json.path.delete(incompleteEffects,jsonPATH),"Lib:pm.a5e.Core")]
 				[h,MACRO("BuildEffectsFrame@Lib:pm.a5e.Core"): ""]
 				[h:broadcast("Effect "+EffectDisplay+" removed.","gm")]

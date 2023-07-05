@@ -35,6 +35,7 @@
 };{
 	[h:ch.Choice = json.get(ch.ToolOptions,iTools-1)]
 }]
+[h:ch.Choice = pm.RemoveSpecial(ch.Choice)]
 
 [h:"<!-- Note: If changes are made to outputTargets, a new method may need to be used to determine if it is GM only or not. Also may need a different method anyway for passive Tools. -->"]
 [h:ClassFeatureData = json.set("",

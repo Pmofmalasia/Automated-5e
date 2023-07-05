@@ -19,46 +19,15 @@
 	[h:NotDisplayedTest = or(NoEffectTest,CurrentParentSubeffectTest)]
 
 	[h,if(NotDisplayedTest),CODE:{};{
-		[h:tempTargetList = json.get(effect,"Targets")]
-		[h,if(json.type(tempTargetList)=="ARRAY"):
-			targetList = json.path.delete(tempTargetList,"[?(@=='')]");
-			targetList = tempTargetList
-		]
-		[h:UnlistedTargetTest = json.length(tempTargetList) != json.length(targetList)]
-		[h:targetName = ""]
-
-		[h:TargetNameArray = "[]"]
-		[h,foreach(tempTarget,targetList),if(json.type(tempTarget)!="OBJECT"): TargetNameArray = json.append(TargetNameArray,if(json.get(effect,"ParentToken") == tempTarget,"Self",getName(tempTarget)))]
-		[h:PriorTargetTest = json.length(TargetNameArray) != json.length(targetList)]
-
-		[h,if(UnlistedTargetTest): TargetNameArray = json.append(TargetNameArray,"Unspecified Target")]
-		[h,if(PriorTargetTest): TargetNameArray = json.append(TargetNameArray,"Prior Target")]
-
-		[h:targetName = pm.a5e.CreateDisplayList(TargetNameArray,"and")]
-		[h,if(length(targetName) > 50): targetName = "Multiple Targets"]
-		
-		[h,if(json.get(effect,"ParentToken")==""):
-			parentName = "World";
-			parentName = getName(json.get(effect,"ParentToken"))
-		]
-		
-		[h:effectsToResolve = json.get(effect,"ToResolve")]
-		[h,if(json.get(effectsToResolve,"CheckDC")!=""): em.SecondPassDisplay = if(!json.isEmpty(json.get(json.get(effectsToResolve,"CheckDC"),"ChecksMade")),"Checks",""); em.SecondPassDisplay = ""]
-		[h,if(json.get(effectsToResolve,"SaveDC")!=""): em.SecondPassDisplay = if(!json.isEmpty(json.get(json.get(effectsToResolve,"SaveDC"),"SavesMade")),listAppend(em.SecondPassDisplay,"Saves"),em.SecondPassDisplay)]
-		[h:em.SecondPassDisplay = pm.a5e.CreateDisplayList(em.SecondPassDisplay,"and")]
-		[h,if(em.SecondPassDisplay!=""):
-			em.SecondPassDisplay = em.SecondPassDisplay+" Made";
-			em.SecondPassDisplay = "Unresolved"
-		]
-
-		[h:LinkedEffectNumber = json.length(json.path.read(incompleteEffects,"[*][?(@.ParentSubeffect == "+json.get(effect,"ID")+")]"))]
-		[h,if(LinkedEffectNumber > 0): em.SecondPassDisplay = em.SecondPassDisplay+ "<br>" + LinkedEffectNumber + " Linked Effect"+if(LinkedEffectNumber==1,"","s")]
-
-		[h:InvolvedTokensDisplay = if(targetName=="Self",parentName+" (self)",parentName+" vs. "+targetName)]
-		[h:em.EffectDisplay = InvolvedTokensDisplay]
+		[h:EffectDisplayInfo = pm.a5e.GenerateEffectDisplay(effect)]
+		[h:EffectParentTokenName = json.get(EffectDisplayInfo,"ParentTokenName")]
+		[h:EffectTargetList = json.get(EffectDisplayInfo,"TargetList")]
+		[h:EffectStatusDisplay = json.get(EffectDisplayInfo,"StatusDisplay")]
+		[h:EffectDisplayName = json.get(EffectDisplayInfo,"EffectDisplay")]
 
 		[h:thisEffectID = json.get(effect,"ID")]
-		[h:em.TableLines = em.TableLines + "<tr>"+effectsTableCellFormat+parentName+"</td>"+effectsTableCellFormat+targetName+"</td>"+effectsTableCellFormat+em.SecondPassDisplay+"</td></th><td style='padding-left:4px'><input type='button' onclick='doEffect("+json.set("","Effect",thisEffectID,"ResolveHow","NoMod","DisplayName",em.EffectDisplay)+")' value='Resolve'></td><td style='padding-left:4px'><input type='button' onclick='doEffect("+json.set("","Effect",thisEffectID,"ResolveHow","Mods","DisplayName",em.EffectDisplay)+")' value='+ Modify'></td><td style='padding-left:4px'><input type='button' onclick='doEffect("+json.set("","Effect",thisEffectID,"ResolveHow","Remove","DisplayName",em.EffectDisplay)+")' value='Remove'></td></tr>"]
+		[h:BaseResolutionInfo = json.set("","Effect",thisEffectID,"DisplayName",EffectDisplayName)]
+		[h:em.TableLines = em.TableLines + "<tr>"+effectsTableCellFormat+EffectParentTokenName+"</td>"+effectsTableCellFormat+EffectTargetList+"</td>"+effectsTableCellFormat+EffectStatusDisplay+"</td></th><td style='padding-left:4px'><input type='button' onclick='doEffect("+json.set(BaseResolutionInfo,"ResolveHow","NoMod")+")' value='Resolve'></td><td style='padding-left:4px'><input type='button' onclick='doEffect("+json.set(BaseResolutionInfo,"ResolveHow","Mods")+")' value='+ Modify'></td><td style='padding-left:4px'><input type='button' onclick='doEffect("+json.set(BaseResolutionInfo,"ResolveHow","Remove")+")' value='Remove'></td></tr>"]
 	}]
 }]
 

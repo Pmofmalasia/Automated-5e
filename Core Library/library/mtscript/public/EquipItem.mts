@@ -5,16 +5,7 @@
 
 [h:a5e.UnifiedAbilities = a5e.GatherAbilities(ParentToken)]
 
-[h:StandardLimb = json.set("","Length",5,"Limits","{}")]
-[h:UsableLimbs = json.append("",
-	json.set(StandardLimb,
-		"Name","MainHand",
-		"DisplayName","Main Hand"),
-	json.set(StandardLimb,
-		"Name","OffHand",
-		"DisplayName","Off Hand")
-)]
-[h:pm.PassiveFunction("Limbs")]
+[h:UsableLimbs = pm.a5e.Limbs(ParentToken)]
 
 [h:AttunementSlots = 3]
 [h:pm.PassiveFunction("AttunementSlots")]

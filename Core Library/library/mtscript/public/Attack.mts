@@ -258,7 +258,9 @@
 		)]
 	};{}]
 
-	[h:AllAttacksToHit = json.append(AllAttacksToHit,pm.a5e.AttackRoll(thisAttackData,json.append("","Attack","WeaponAttack"),thisAttackTarget))]
+	[h:thisAttackToHitData = pm.a5e.AttackRoll(thisAttackData,json.append("","Attack","WeaponAttack"),thisAttackTarget)]
+	[h:thisAttackToHitData = json.set(thisAttackToHitData,"Subeffects",thisAttackSubeffects)]
+	[h:AllAttacksToHit = json.append(AllAttacksToHit,thisAttackToHitData)]
 
 	[h:wa.NonDamageData = json.set("",
 		"IsSpell",0,

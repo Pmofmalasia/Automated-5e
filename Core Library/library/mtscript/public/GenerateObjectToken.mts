@@ -1,8 +1,11 @@
 [h:objectData = macro.args]
-[h,if(json.get(objectData,"FalseName")==""):
-	NewObjectTokenName = json.get(objectData,"DisplayName");
-	NewObjectTokenName = json.get(objectData,"FalseName")
-]
+[h,if(json.get(objectData,"FalseName")==""),CODE:{
+	[h:NewObjectTokenName = json.get(objectData,"DisplayName")]
+	[h:NewObjectGMName = ""]
+};{
+	[h:NewObjectTokenName = json.get(objectData,"FalseName")]
+	[h:NewObjectGMName = json.get(objectData,"DisplayName")]	
+}]
 [h:NewObjectTokenType = json.get(objectData,"Type")]
 
 [h:IKnowWhatTheFuckImDoing = 0]
@@ -45,6 +48,11 @@
 [h:NewObjectTokenID = createToken(NewObjectTokenData)]
 
 [h:switchToken(NewObjectTokenID)]
+[h:setPropertyType("A5EObject")]
+[h:setLayer("OBJECT")]
+[h,if(NewObjectGMName != ""): setGMName(NewObjectGMName)]
+[h:setProperty("a5e.stat.Name",json.get(objectData,"Name"))]
+[h:setProperty("a5e.stat.ItemID",json.get(objectData,"ItemID"))]
 [h:setProperty("a5e.stat.InventoryData",objectData)]
 
 [h:objectSize = json.get(objectData,"Size")]

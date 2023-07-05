@@ -30,7 +30,7 @@
 			case "Item": ResourceOrigin = "a5e.stat.Inventory";
 			case "Condition": ResourceOrigin = "a5e.stat.ConditionList"
 		]
-		
+
 		[h,if(ResourceType == "Item"),CODE:{
 			[h:ResourceData = json.path.read(getProperty(ResourceOrigin),"[*][?(@.ItemID=="+json.get(CheckResourceData,"ItemID")+")]['Resource']")]
 			[h,if(json.isEmpty(ResourceData)):

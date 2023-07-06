@@ -25,10 +25,7 @@
 	};{
 		[h:NewObjectImage = "asset://cae048d4f31ef38cac5ba0df1378c67d"]
 	}]
-
 }]
-
-[h:"<!-- TODO: get image from table based on token type -->"]
 
 [h:NewObjectLocation = json.get(objectData,"Location")]
 [h:NewObjectXCoord = json.get(NewObjectLocation,"X")]
@@ -53,7 +50,7 @@
 [h,if(NewObjectGMName != ""): setGMName(NewObjectGMName)]
 [h:setProperty("a5e.stat.Name",json.get(objectData,"Name"))]
 [h:setProperty("a5e.stat.ItemID",json.get(objectData,"ItemID"))]
-[h:setProperty("a5e.stat.InventoryData",objectData)]
+[h:setProperty("a5e.stat.Inventory",json.append("",objectData))]
 
 [h:objectSize = json.get(objectData,"Size")]
 [h:setSize(objectSize)]

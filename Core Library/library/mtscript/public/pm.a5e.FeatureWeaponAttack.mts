@@ -22,12 +22,13 @@
 			
 		};
 		case "AnyValidEquipped": {
+			[h:WeaponListDisplay = pm.a5e.CreateDisplayList(json.path.read(getProperty("a5e.stat.Inventory"),"[*][?(@.ItemID in "+getProperty("a5e.stat.HeldItems")+")]['DisplayName']"),"or")]
 			[h:weaponAttackTableLine = json.set("",
 				"ShowIfCondensed",1,
 				"Header","Weapon Options",
 				"FalseHeader","",
 				"FullContents","",
-				"RulesContents",json.get(json.get(getProperty("a5e.stat.Weapon"),json.get(getProperty("a5e.stat.Weapon"),0)),"Name")+" or "+json.get(json.get(getProperty("a5e.stat.Weapon"),json.get(getProperty("a5e.stat.Weapon"),1)),"Name"),
+				"RulesContents",WeaponListDisplay,
 				"RollContents","",
 				"DisplayOrder","['Rules','Roll','Full']"
 			)]
@@ -47,10 +48,13 @@
 			
 		};
 		case "AnyValidEquipped": {
+			[h:WeaponOptions = json.path.read(getProperty("a5e.stat.Inventory"),"[*][?(@.ItemID in "+getProperty("a5e.stat.HeldItems")+")]")]
+			[h:WeaponOptionsDisplay = "[]"]
+			[h,foreach(tempWeapon,WeaponOptions): WeaponOptionsDisplay = json.append(WeaponOptionsDisplay,json.get(tempWeapon,"DisplayName"))]
 			[h:abort(input(
-				"choice.Weapon | "+json.get(json.get(getProperty("a5e.stat.Weapon"),json.get(getProperty("a5e.stat.Weapon"),0)),"Name")+","+json.get(json.get(getProperty("a5e.stat.Weapon"),json.get(getProperty("a5e.stat.Weapon"),1)),"Name")+" | Choose a Weapon | RADIO "
-				))]
-			[h:WeaponData = json.get(getProperty("a5e.stat.Weapon"),json.get(getProperty("a5e.stat.Weapon"),choice.Weapon))]
+				"choice.Weapon | "+WeaponOptions+" | Choose a Weapon | RADIO | DELIMITER=JSON "
+			))]
+			[h:WeaponData = json.get(WeaponOptions,choice.Weapon)]
 			[h:AttackData = json.set("",
 				"Hand",choice.Weapon,
 				"WeaponData",WeaponData

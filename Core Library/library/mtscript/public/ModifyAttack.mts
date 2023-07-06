@@ -52,7 +52,7 @@
 [h:pm.PassiveFunction("AttackProps")]
 [h:pm.PassiveFunction("WeaponAttackProps")]
 
-[h:VersatileTest = if(json.get(wa.Props,"Versatile")>0,if(json.get(getProperty("a5e.stat.Weapon"),OtherHand)==2,if(json.get(getProperty("a5e.stat.Shield"),0)==1,1,0),0),0)]
+[h:VersatileTest = 0]
 [h,if(VersatileTest==1),code:{
 	[wa.DmgDie=substring(wa.DmgDie,0,indexOf(wa.DmgDie,"d")+1)+(number(substring(wa.DmgDie,indexOf(wa.DmgDie,"d")+1))+2)]
 };{}]

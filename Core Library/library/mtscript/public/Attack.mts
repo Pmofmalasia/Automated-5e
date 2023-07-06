@@ -247,17 +247,6 @@
 		[h:"<!-- TODO: These should be set as variables so that effects (e.g. cbow expert) can specifically remove the disadvantage from this instance. -->"]
 	};{}]
 
-	[h,if(ThrowingWeapon && !json.contains(wa.Props,"Returning")),CODE:{
-		[h:"<!-- TODO: Need a test to see if the weapon is still in the attacker's hands (for thrown weapons with multiattack) -->"]
-		[h,MACRO("DropItem@Lib:pm.a5e.Core"): json.set("",
-			"ItemID",json.get(wa.WeaponUsed,"ItemID"),
-			"Number",1,
-			"Location",json.set("","Token",thisAttackTarget),
-			"ParentToken",ParentToken,
-			"LeaveToken",1
-		)]
-	};{}]
-
 	[h:thisAttackToHitData = pm.a5e.AttackRoll(thisAttackData,json.append("","Attack","WeaponAttack"),thisAttackTarget)]
 	[h:thisAttackToHitData = json.set(thisAttackToHitData,"Subeffects",thisAttackSubeffects)]
 	[h:AllAttacksToHit = json.append(AllAttacksToHit,thisAttackToHitData)]
@@ -390,6 +379,17 @@
 
 	[h:WhichAttack = WhichAttack + 1]
 }]
+
+[h,if(ThrowingWeapon && !json.contains(wa.Props,"Returning")),CODE:{
+	[h:"<!-- TODO: Need a test to see if the weapon is still in the attacker's hands (for thrown weapons with multiattack). Also likely move this back into the loop. -->"]
+	[h,MACRO("DropItem@Lib:pm.a5e.Core"): json.set("",
+		"ItemID",json.get(wa.WeaponUsed,"ItemID"),
+		"Number",1,
+		"Location",json.set("","Token",thisAttackTarget),
+		"ParentToken",ParentToken,
+		"LeaveToken",1
+	)]
+};{}]
 
 [h:pm.PassiveFunction("AfterAttack")]
 [h:pm.PassiveFunction("AfterWeaponAttack")]

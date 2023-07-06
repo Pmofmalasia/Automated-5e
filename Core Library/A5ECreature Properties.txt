@@ -41,13 +41,10 @@ __EQUIPMENT__:__________
 a5e.stat.AC:[r:a5e.AC()]
 a5e.stat.Inventory:[]
 a5e.stat.EquippedArmor
-a5e.stat.NaturalWeapons:[]
+a5e.stat.NaturalWeapons:[{"DisplayName":"Unarmed Strike","FalseName":"","Type":"Weapon","WeaponType":"UnarmedStrike","WeaponClass":"Natural","WeaponMeleeRanged":"Melee","Reach":5,"PrimeStat":"Strength","MagicBonus":0,"WeaponCritDiceMethod":"Add","WeaponCritDice":0,"Size":"Diminutive","Rarity":"Mundane","Cost":0,"CostUnits":"Gold","Weight":0,"isWearable":1,"Coating":"","Integrity":"Resilient","StateOfMatter":"Solid","Library":"SRD","Name":"UnarmedStrike","WeaponTags":[],"WeaponProperties":[],"WeaponDamage":[{"DamageType":"Bludgeoning","DamageDieNumber":0,"DamageDieSize":1,"DamageFlatBonus":1,"IsModBonus":1}],"CritThresh":20,"isMagical":0,"isNotDoffable":1,"Materials":["Flesh"],"MainMaterial":"Flesh","isFlammable":0,"isMagnetic":0,"isStackable":0,"isConsumable":0,"ObjectTags":[],"ObjectID":"VW5hcm1lZFN0cmlrZQ==851596","ItemID":0}]
 a5e.stat.NaturalArmor:{"DisplayName":"Natural Armor","FalseName":"","Type":"Armor","ArmorTier":"Unarmored","ArmorType":"NaturalArmor","MagicBonus":0,"Size":"Medium","Rarity":"Mundane","Cost":0,"CostUnits":"Gold","Weight":0,"isWearable":0,"Coating":"","Integrity":"Resilient","StateOfMatter":"Solid","Library":"SRD","Name":"NaturalArmor","BaseAC":10,"isDexterityBonus":1,"isDexterityCap":0,"isStrengthRequirement":0,"isStealthDisadvantage":0,"isMagical":0,"Materials":["Flesh"],"isFlammable":0,"isMagnetic":0,"isStackable":0,"isConsumable":0,"ObjectTags":["Raw","Organic"]}
 a5e.stat.HeldItems:["",""]
 a5e.stat.AttunedItems:[]
-a5e.stat.Armor:[1,{"Name":"None","MagicBonus":0,"Type":"None","ArmorTier":"None","BaseAC":10,"DexMax":99,"StrReq":0,"StealthDis":0,"MagicItem":0,"ItemBuffs":""}]
-a5e.stat.Shield:[1,{"Name":"None","MagicBonus":0,"ItemBuffs":""}]
-a5e.stat.Weapon:[2,2,{"Name":"Unarmed","MagicBonus":0,"Type":"Unarmed","DamageDie":"1d1","DamageType":"Bludgeoning","SecDamageDie":0,"SecDamageType":"None","MeleeRanged":"Melee","Range":0,"Reach":"5","CritRange":0,"CritMultiplier":0,"SpecialAbility":"","Props":{"Magic":0,"Finesse":0,"Monk":0,"Ammo":0,"Heavy":0,"Light":0,"Loading":0,"Reach":0,"Thrown":0,"Two-Handed":0,"Versatile":0,"IntMod":0,"WisMod":0,"ChaMod":0},"MagicItem":0,"ItemBuffs":""}]
 __SKILLS__:__________
 a5e.stat.BaseSaves:{}
 a5e.stat.Saves:[r:a5e.SaveProficiency()]

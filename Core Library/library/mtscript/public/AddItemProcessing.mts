@@ -64,8 +64,8 @@
 		)]
 
 		[h:"<!-- If the item has a subeffect that uses its own resource, put the NewItemID into the subeffect -->"]
-		[h:NeedsEffectFeatureResourceTest = !json.isEmpty(json.path.read(TempChosenItem,"[?(@.Effects.*.Subeffects.*.UseResource.Feature != null)]","DEFAULT_PATH_LEAF_TO_NULL"))]
-		[h:NeedsWeaponEffectFeatureResourceTest = !json.isEmpty(json.path.read(TempChosenItem,"[?(@.WeaponEffects.*.Subeffects.*.UseResource.Feature != null)]","DEFAULT_PATH_LEAF_TO_NULL"))]
+		[h:NeedsEffectFeatureResourceTest = and(!json.isEmpty(json.path.read(TempChosenItem,"[?(@.Effects.*.Subeffects.*.UseResource.Feature != null)]","DEFAULT_PATH_LEAF_TO_NULL")),json.get(TempChosenItem,"Effects")!="")]
+		[h:NeedsWeaponEffectFeatureResourceTest = and(!json.isEmpty(json.path.read(TempChosenItem,"[?(@.WeaponEffects.*.Subeffects.*.UseResource.Feature != null)]","DEFAULT_PATH_LEAF_TO_NULL")),json.get(TempChosenItem,"WeaponEffects")!="")]
 		[h,if(NeedsEffectFeatureResourceTest): TempChosenItem = json.path.put(TempChosenItem,"['Effects'][*]['Subeffects'][*]['UseResource']['Feature']['Resource'][?(@.Name == '"+json.get(TempChosenItem,"Name")+"' && @.Class == 'Item')]","ItemID",NewItemID)]
 		[h,if(NeedsWeaponEffectFeatureResourceTest): TempChosenItem = json.path.put(TempChosenItem,"['WeaponEffects'][*]['Subeffects'][*]['UseResource']['Feature']['Resource'][?(@.Name == '"+json.get(TempChosenItem,"Name")+"' && @.Class == 'Item')]","ItemID",NewItemID)]
 

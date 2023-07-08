@@ -34,50 +34,70 @@
 }]
 [h:ThrowWeapon = number(json.get(AttackData,"Throw"))]
 
-[h:pm.a5e.EffectData = "[]"]
+[h:IsTooltip = number(json.get(AttackData,"IsTooltip"))]
+[h,if(IsTooltip),CODE:{
+	[h,macro("WeaponAttackTooltip@Lib:pm.a5e.Core"): AttackData]
+	[h:abilityTable = json.get(macro.return,"Table")]
+	[h:AttackDescription = json.get(macro.return,"Description")]
 
-[h:ClassFeatureData = json.set("",
-	"Flavor",json.get(WeaponData,"Flavor"),
-	"ParentToken",ParentToken,
-	"DMOnly",0,
-	"Class","zzWeaponAttack",
-	"Name",if(ThrowWeapon,"Thrown ","")+json.get(WeaponData,"DisplayName")+" Attack",
-	"FalseName","Weapon Attack",
-	"OnlyRules",0
-)]
+	[h:ClassFeatureData = json.set("",
+		"Flavor",json.get(WeaponData,"Flavor"),
+		"ParentToken",ParentToken,
+		"DMOnly",0,
+		"Class","zzWeaponAttack",
+		"Name","Current Weapon: "+if(ThrowWeapon,"Throwing ","")+json.get(WeaponData,"DisplayName"),
+		"FalseName","Weapon Attack",
+		"Effect",AttackDescription,
+		"abilityTable",json.remove(abilityTable,0)
+	)]
+	[r:pm.TooltipOutput(ClassFeatureData)]
+};{
+	[h:pm.a5e.EffectData = "[]"]
 
-[h:FormattingData = pm.MacroFormat(ClassFeatureData)]
-[h:output.PC = json.get(json.get(FormattingData,"Output"),"Player")]
-[h:output.GM = json.get(json.get(FormattingData,"Output"),"GM")]
+	[h:ClassFeatureData = json.set("",
+		"Flavor",json.get(WeaponData,"Flavor"),
+		"ParentToken",ParentToken,
+		"DMOnly",0,
+		"Class","zzWeaponAttack",
+		"Name",if(ThrowWeapon,"Thrown ","")+json.get(WeaponData,"DisplayName")+" Attack",
+		"FalseName","Weapon Attack",
+		"OnlyRules",0
+	)]
 
-[h:AttackData = json.set(AttackData,
-	"WeaponData",WeaponData,
-	"ThrowWeapon",ThrowWeapon,
-	"AttackNum",-1,
-	"DMOnly",0
-)]
+	[h:FormattingData = pm.MacroFormat(ClassFeatureData)]
+	[h:output.PC = json.get(json.get(FormattingData,"Output"),"Player")]
+	[h:output.GM = json.get(json.get(FormattingData,"Output"),"GM")]
 
-[h,macro("Attack@Lib:pm.a5e.Core"): AttackData]
-[h:abilityTable = json.get(macro.return,"Table")]
-[h:effectsToMerge = json.get(macro.return,"Effect")]
+	[h:AttackData = json.set(AttackData,
+		"WeaponData",WeaponData,
+		"ThrowWeapon",ThrowWeapon,
+		"AttackNum",-1,
+		"DMOnly",0
+	)]
 
-[h:pm.a5e.BaseEffectData = json.set("",
-	"Class","zzWeaponAttack",
-	"DisplayName",if(ThrowWeapon,"Thrown ","")+json.get(WeaponData,"DisplayName")+" Attack",
-	"Type","WeaponAttack",
-	"ID",pm.a5e.GenerateEffectID(),
-	"ParentToken",ParentToken
-)]
+	[h,macro("Attack@Lib:pm.a5e.Core"): AttackData]
+	[h:abilityTable = json.get(macro.return,"Table")]
+	[h:effectsToMerge = json.get(macro.return,"Effect")]
 
-[h,MACRO("Build Effect@Lib:pm.a5e.Core"): json.set("","CurrentEffects",pm.a5e.EffectData,"ToMerge",effectsToMerge,"BaseEffect",pm.a5e.BaseEffectData)]
-[h:pm.a5e.EffectData = macro.return]
-[h,if(!json.isEmpty(pm.a5e.EffectData)): setLibProperty("gd.Effects",json.merge(getLibProperty("gd.Effects","Lib:pm.a5e.Core"),pm.a5e.EffectData),"Lib:pm.a5e.Core")]
+	[h:pm.a5e.BaseEffectData = json.set("",
+		"Class","zzWeaponAttack",
+		"DisplayName",if(ThrowWeapon,"Thrown ","")+json.get(WeaponData,"DisplayName")+" Attack",
+		"Type","WeaponAttack",
+		"ID",pm.a5e.GenerateEffectID(),
+		"ParentToken",ParentToken
+	)]
 
-[h,MACRO("BuildEffectsFrame@Lib:pm.a5e.Core"): ""]
+	[h,MACRO("Build Effect@Lib:pm.a5e.Core"): json.set("","CurrentEffects",pm.a5e.EffectData,"ToMerge",effectsToMerge,"BaseEffect",pm.a5e.BaseEffectData)]
+	[h:pm.a5e.EffectData = macro.return]
+	[h,if(!json.isEmpty(pm.a5e.EffectData)): setLibProperty("gd.Effects",json.merge(getLibProperty("gd.Effects","Lib:pm.a5e.Core"),pm.a5e.EffectData),"Lib:pm.a5e.Core")]
 
-[h:output.Temp = pm.AbilityTableProcessing(abilityTable,FormattingData,1)]
-[h:output.PC = output.PC + json.get(output.Temp,"Player")+"</div></div>"]
-[h:output.GM = output.GM + json.get(output.Temp,"GM")+"</div></div>"]
+	[h,MACRO("BuildEffectsFrame@Lib:pm.a5e.Core"): ""]
 
-[h:broadcastAsToken(output.GM,"gm")]
-[h:broadcastAsToken(output.PC,"not-gm")]
+	[h:output.Temp = pm.AbilityTableProcessing(abilityTable,FormattingData,1)]
+	[h:output.PC = output.PC + json.get(output.Temp,"Player")+"</div></div>"]
+	[h:output.GM = output.GM + json.get(output.Temp,"GM")+"</div></div>"]
+
+	[h:broadcastAsToken(output.GM,"gm")]
+	[h:broadcastAsToken(output.PC,"not-gm")]	
+}]
+

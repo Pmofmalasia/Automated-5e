@@ -1,11 +1,11 @@
 [h:TradedItemsData = macro.args]
-[h:TradedItem = json.get(TradedItemsData,"Item")]
+[h:TradedItemID = json.get(TradedItemsData,"Item")]
 [h:NumberTraded = json.get(TradedItemsData,"Number")]
 [h:ItemGivenTo = json.get(TradedItemsData,"GiveTo")]
 [h:ItemTakenFrom = json.get(TradedItemsData,"TakeFrom")]
-[h:TradedItemID = json.get(TradedItem,"ItemID")]
-[h:switchToken(ItemGivenTo)]
 
+[h:TradedItem = json.get(json.path.read(getProperty("a5e.stat.Inventory",ItemTakenFrom),"[*][?(@.ItemID == "+TradedItemID+")]"),0)]
+[h:switchToken(ItemGivenTo)]
 [h:PriorInventory = getProperty("a5e.stat.Inventory")]
 
 [h:TradedItem = json.set(TradedItem,"Number",NumberTraded)]
@@ -16,7 +16,7 @@
 }]
 
 [h:newEntryTest = 1]
-[h:StackingTest = json.get(ChosenItem,"isStackable")]
+[h:StackingTest = json.get(TradedItem,"isStackable")]
 [h,if(StackingTest),CODE:{
 	[h:SameItemPriorEntry = json.path.read(PriorInventory,"[*][?(@.ObjectID == '"+TradedItemID+"')]")]
 	[h:newEntryTest = json.isEmpty(SameItemPriorEntry)]
@@ -32,8 +32,8 @@
 	}]
 
 	[h,count(NumberOfEntries),CODE:{
-		[h:TempChosenItem = json.set(ChosenItem,"Number",NumberAdded)]
-		[h:PriorInventory = json.append(PriorInventory,TempChosenItem)]
+		[h:TempTradedItem = json.set(TradedItem,"Number",NumberAdded)]
+		[h:PriorInventory = json.append(PriorInventory,TempTradedItem)]
 	}]
 
 	[h:setProperty("a5e.stat.Inventory",PriorInventory)]
@@ -46,20 +46,18 @@
 
 [h,if(ItemTakenFrom != ""),CODE:{
 	[h:switchToken(ItemTakenFrom)]
-	[h:TakenFromInventory = getProperty("a5e.stat.Inventory")]
-	[h:TakenFromItemData = json.get(json.path.read(TakenFromInventory,"[*][?(@.ItemID == '"+TradedItemID+"')]"),0)]
-	[h:OldTakenFromNumber = json.get(TakenFromItemData,"Number")]
-	[h:NewNumber = OldTakenFromNumber - NumberTraded]
-	[h,if(NewNumber == 0):
-		TakenFromInventory = json.path.delete(TakenFromInventory,"[*][?(@.ItemID == '"+TradedItemID+"')]");
-		TakenFromInventory = json.path.set(TakenFromInventory,"[*][?(@.ItemID == '"+TradedItemID+"')]['Number']",NewNumber)
-	]
 
-	[h:RemoveObjectOnMapTest = and(NewNumber == 0,getPropertyType() == "A5EObject",getProperty("a5e.stat.ItemID") == TradedItemID)]
-	[h,if(RemoveObjectOnMapTest): 
-		removeToken(ItemTakenFrom);
-		setProperty("a5e.stat.Inventory",TakenFromInventory)
-	]
+	[h:DropItemData = json.set("",
+		"ParentToken",ItemTakenFrom,
+		"ItemID",TradedItemID,
+		"Number",NumberTraded,
+		"LeaveToken",0
+	)]
+	[h,MACRO("DropItem@Lib:pm.a5e.Core"): DropItemData]
+	[h:DroppedItemReturnData = macro.return]
+
+	[h:RemoveObjectOnMapTest = and(json.get(DroppedItemReturnData,"ItemRemaining") == 0,getPropertyType() == "A5EObject",getProperty("a5e.stat.ItemID") == TradedItemID)]
+	[h,if(RemoveObjectOnMapTest): removeToken(ItemTakenFrom)]
 
 	[h:switchToken(ItemGivenTo)]
 };{}]

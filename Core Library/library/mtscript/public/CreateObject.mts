@@ -41,6 +41,8 @@
 
 <tr id='rowIsCharges'><th><label for='isCharges'>Object has Charges?</label></th><td><select id='isCharges' name='isCharges' onchange='createChargesRows("+'"CreateObjectTable"'+")'><option value='None'>None</option><option value='One'>Single Type</option><option value='Multiple'>Multiple Types</option></select></td></tr>
 
+<tr id='rowIsCastSpells'><th><label for='isCastSpells'>Object Can Cast Spells?</label></th><td><input type='checkbox' id='isCastSpells' name='isCastSpells' onchange='createCastSpellsRows("+'"CreateObjectTable"'+")'><input type='hidden' id='CastSpellNumber' name='CastSpellNumber' value=0></td></tr>
+
 <tr id='rowIsStackable'><th><label for='isStackable'>Object Stacks with Others in Inventory?</label></th><td><input type='checkbox' id='isStackable' name='isStackable'></td></tr>
 
 <tr id='rowMaterials'><th>Materials Used:</th><td><div class='check-multiple' style='width:100%'>"+ObjectMaterialMultiselection+"</div></td></tr>

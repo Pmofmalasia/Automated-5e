@@ -327,7 +327,7 @@ function createActivatableRows(tableID){
 
 function createChargesRows(tableID){
 	if(document.getElementById("isCharges").value == "None"){
-		clearUnusedTable(tableID,"rowIsCharges","rowMaterials");
+		clearUnusedTable(tableID,"rowIsCharges","rowCastSpells");
 	}
 	else{
 		let nextRowIndex = document.getElementById("rowIsCharges").rowIndex+1;
@@ -422,6 +422,152 @@ async function createInitialChargesMethodRows(){
 	}
 	else if(document.getElementById("InitialChargesMethod").value == "Rolled"){
 		addTableRow("CreateObjectTable",nextRowIndex,"rowInitialChargesAmount","<th><label for='InitialChargesAmountDieNumber'>Initial Charges:</label></th><td><input type='number' id='InitialChargesAmountDieNumber' name='InitialChargesAmountDieNumber' min='0' value='1' style='width:25px'> d <input type='number' id='InitialChargesAmountDieSize' name='InitialChargesAmountDieSize' min='0' value='6' style='width:25px'> + <input type='number' id='InitialChargesAmountBonus' name='InitialChargesAmountBonus' value=0 style='width:25px'></td>");
+	}
+}
+
+async function createCastSpellsRows(tableID){
+	let nextRowIndex = document.getElementById("rowIsCastSpells").rowIndex + 1;
+
+	if(document.getElementById("isCastSpells").checked){
+		addTableRow(tableID,nextRowIndex,"rowSpellButtons","<th text-align='center' colspan='2'><input type='button' value='Add Spell' onclick='addSpellSelectionRows("+'"'+tableID+'"'+")'>  <input type='button' value='Remove Spell' onclick='removeSpellSelectionRows("+'"'+tableID+'"'+")'></th>");
+		nextRowIndex++;
+
+		addSpellSelectionRows(tableID);
+			
+		addTableRow(tableID,nextRowIndex,"rowCastSpellModifierHow","<th>Spell Attack/DC Modifier Method:</th><td><select id='CastSpellModifierHow' name='CastSpellModifierHow' onchange='createCastSpellModifierRows("+'"'+tableID+'"'+")'><option value='AnyClass'>Any Class Spell Modifier</option><option value='SpecificClass'>Specific Class Spell Modifier</option><option value='PresetModifier'>Preset Modifier</option><option value='Stat'>Based on a Stat</option></select>");
+		nextRowIndex++;
+
+		//TODO: Add any modifications to spells
+	}
+	else{
+		clearUnusedTable("CreateObjectTable","rowIsCastSpells","rowIsStackable");
+	}
+}
+
+async function addSpellSelectionRows(tableID){
+	let nextRowIndex = document.getElementById("rowSpellButtons").rowIndex;
+	let SpellNumber = Number(document.getElementById("CastSpellNumber").value);
+	let request = await fetch("macro:pm.a5e.GetBaseSpellData@lib:pm.a5e.Core", {"method":"POST","body":""});
+	let allSpells = await request.json();
+	allSpellOptions = createHTMLSelectOptions(allSpells);
+	let firstSpellData = allSpells[0];
+	let firstSpellLevel = Number(firstSpellData.Level);
+	
+	let levelInput = "";
+	let AHLInput = "";
+	if(firstSpellLevel == 0){
+		levelInput = "<input type='hidden' id='CastSpellLevel"+SpellNumber+"' name='CastSpellLevel"+SpellNumber+"' value=0>";
+		AHLInput = "<input type='hidden' id='CanAHLSpell"+SpellNumber+"' name='CanAHLSpell"+SpellNumber+"' value=0>";
+	}
+	else{
+		levelInput = "; starting at level <select id='CastSpellLevel"+SpellNumber+"' name='CastSpellLevel"+SpellNumber+"'>";
+		for(let i=firstSpellLevel; i<=9; i++){
+			levelInput = levelInput + "<option value='"+i+"'>"+i+"</option>";
+		}
+		levelInput = levelInput + "</select>";
+		AHLInput = "; <select id='CanAHLSpell"+SpellNumber+"' name='CanAHLSpell"+SpellNumber+"' onchange='toggleSpellAHLResource("+SpellNumber+")'><option value='"+SpellNumber+"'>Cannot</option><option value='1'>Can</option></select> spend <input type='number' id='SpellResourceAHL"+SpellNumber+"' name='SpellResourceAHL"+SpellNumber+"' style='width:25px' value='"+SpellNumber+"' disabled> charge(s) per higher level.";
+	}
+
+	addTableRow(tableID,nextRowIndex,"rowCastSpell"+SpellNumber+"","<th text-align='center' colspan='2' id='headerCastSpell"+SpellNumber+"'>Cast <select id='CastSpellName"+SpellNumber+"' name='CastSpellName"+SpellNumber+"' onchange='adjustSpellLevelOptions("+SpellNumber+")'>"+allSpellOptions+"</select>"+levelInput+"</th>");
+	nextRowIndex++;
+
+	addTableRow(tableID,nextRowIndex,"rowSpellResource"+SpellNumber+"","<th text-align='center' colspan='2' id='headerSpellResource"+SpellNumber+"'>Uses <input type='number' id='SpellResource"+SpellNumber+"' name='SpellResource"+SpellNumber+"' style='width:25px' value=1> charge(s)"+AHLInput+"</th>");
+	nextRowIndex++;
+
+	SpellNumber++;
+	document.getElementById("CastSpellNumber").value = SpellNumber;
+}
+
+function removeSpellSelectionRows(tableID){
+	let SpellNumber = Number(document.getElementById("CastSpellNumber").value) - 1;
+	clearUnusedTable(tableID,"rowSpellResource"+(SpellNumber-1),"rowSpellButtons");
+	document.getElementById("CastSpellNumber").value = SpellNumber;
+}
+
+async function adjustSpellLevelOptions(SpellNumber){
+	let request = await fetch("macro:pm.a5e.GetBaseSpellData@lib:pm.a5e.Core", {"method":"POST","body":""});
+	let allSpells = await request.json();
+
+	let WhichSpell = document.getElementById("CastSpellName"+SpellNumber).selectedIndex;
+	let SpellData = allSpells[WhichSpell];
+	let SpellLevel = Number(SpellData.Level);
+	document.getElementById("CastSpellLevel"+SpellNumber).selectedIndex = 0;
+	let PriorSpellLevel = document.getElementById("CastSpellLevel"+SpellNumber).value;
+
+	if(PriorSpellLevel != SpellLevel){
+		let levelInput = "";
+		let AHLInput = "";
+		if(SpellLevel == 0){
+			let CastSpellRowText = document.getElementById("rowCastSpell"+SpellNumber).innerHTML;
+			CastSpellRowText = CastSpellRowText.split(";")[0];
+			levelInput = "<input type='hidden' id='CastSpellLevel"+SpellNumber+"' name='CastSpellLevel"+SpellNumber+"' value=0>";
+			CastSpellRowText = CastSpellRowText + levelInput;
+			document.getElementById("rowCastSpell"+SpellNumber).innerHTML = CastSpellRowText;
+			document.getElementById("CastSpellName"+SpellNumber).value = SpellData.Name;
+
+			let SpellResourceRowText = document.getElementById("rowSpellResource"+SpellNumber).innerHTML;
+			SpellResourceRowText = SpellResourceRowText.split(";")[0];
+			AHLInput = "<input type='hidden' id='CanAHLSpell"+SpellNumber+"' name='CanAHLSpell"+SpellNumber+"' value=0>";
+			SpellResourceRowText = SpellResourceRowText + AHLInput;
+			document.getElementById("rowSpellResource"+SpellNumber).innerHTML = SpellResourceRowText;
+		}
+		else{
+			let levelOptions;
+			for(let i=SpellLevel; i<=9; i++){
+				levelOptions = levelOptions + "<option value='"+i+"'>"+i+"</option>";
+			}
+
+			if(PriorSpellLevel == 0){
+				levelInput = "; starting at level <select id='CastSpellLevel"+SpellNumber+"' name='CastSpellLevel"+SpellNumber+"'>"+levelOptions+ "</select>";
+				AHLInput = "; <select id='CanAHLSpell"+SpellNumber+"' name='CanAHLSpell"+SpellNumber+"' onchange='toggleSpellAHLResource("+SpellNumber+")'><option value='"+SpellNumber+"'>Cannot</option><option value='1'>Can</option></select> spend <input type='number' id='SpellResourceAHL"+SpellNumber+"' name='SpellResourceAHL"+SpellNumber+"' style='width:25px' value='"+SpellNumber+"' disabled> charge(s) per higher level.";
+
+				document.getElementById("CastSpellLevel"+SpellNumber).remove();
+				document.getElementById("CanAHLSpell"+SpellNumber).remove();
+
+				document.getElementById("headerCastSpell"+SpellNumber).innerHTML = document.getElementById("headerCastSpell"+SpellNumber).innerHTML + levelInput;
+
+				document.getElementById("headerSpellResource"+SpellNumber).innerHTML = document.getElementById("headerSpellResource"+SpellNumber).innerHTML + AHLInput;
+				document.getElementById("CastSpellName"+SpellNumber).value = SpellData.Name;
+			}
+			else{
+				document.getElementById("CastSpellLevel"+SpellNumber).innerHTML = levelOptions;
+			}
+		}
+	}
+}
+
+function toggleSpellAHLResource(SpellNumber){
+	if(document.getElementById("CanAHLSpell"+SpellNumber).value == 0){
+		document.getElementById("SpellResourceAHL"+SpellNumber).setAttribute("disabled","");
+	}
+	else{
+		document.getElementById("SpellResourceAHL"+SpellNumber).removeAttribute("disabled","");
+	}
+}
+
+async function createCastSpellModifierRows(tableID){
+	clearUnusedTable(tableID,"rowCastSpellModifierHow","rowIsStackable");
+	let nextRowIndex = document.getElementById("rowCastSpellModifierHow").rowIndex + 1;
+
+	if(document.getElementById("CastSpellModifierHow").value == "PresetModifier"){
+		addTableRow(tableID,nextRowIndex,"rowCastSpellModifier","<th>Spell Flat Modifier:</th><td><input type='number' id='CastSpellFlatModifier' name='CastSpellFlatModifier' style='width:25px'></td>");
+		nextRowIndex++;
+	}
+	else if(document.getElementById("CastSpellModifierHow").value == "SpecificClass"){
+		let request = await fetch("macro:pm.GetClasses@Lib:pm.a5e.Core",{"method":"POST","body":""});
+		let allClasses = await request.json();
+		let allClassOptions = createHTMLMultiselectOptions(allClasses,"CastSpellClass");
+
+		addTableRow(tableID,nextRowIndex,"rowCastSpellModifier","<th>Allowed Casting Classes:</th><td><div class='check-multiple' style='width:100%'>"+allClassOptions+"</div></td>");
+		nextRowIndex++;
+	}
+	else if(document.getElementById("CastSpellModifierHow").value == "Stat"){
+		let request = await fetch("macro:pm.GetAttributes@Lib:pm.a5e.Core",{"method":"POST","body":""});
+		let AllAttributes = await request.json();
+		let allAttributeOptions = createHTMLMultiselectOptions(AllAttributes,"CastSpellStat");
+
+		addTableRow(tableID,nextRowIndex,"rowCastSpellModifier","<th>Allowed Casting Stats:</th><td><div class='check-multiple' style='width:100%'>"+allAttributeOptions+"</div></td>");
+		nextRowIndex++;
 	}
 }
 

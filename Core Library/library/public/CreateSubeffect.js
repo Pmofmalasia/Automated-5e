@@ -221,7 +221,7 @@ async function createMitigationTable(){
 			let nextRowIndex = document.getElementById("rowSummons").rowIndex;
 			let rowConditionSave = table.insertRow(nextRowIndex);
 			rowConditionSave.id = "rowConditionSave";
-			rowConditionSave.innerHTML = "<th><label for='conditionSaveEffect'>Conditions Applied on Save:</label></th><select id='conditionSaveEffect' name='conditionSaveEffect' onchange='createConditionSaveTable()'><option value='0'>All Applied</option><option value='1'>Some Applied</option><option value='2' select>None Applied</option><option value='Different'>Different Condition Applied</option></select></td>";
+			rowConditionSave.innerHTML = "<th><label for='conditionSaveEffect'>Conditions Applied on Save:</label></th><select id='conditionSaveEffect' name='conditionSaveEffect' onchange='createConditionSaveTable()'><option value='0'>All Applied</option><option value='1'>Some Applied</option><option value='2' selected>None Applied</option><option value='Different'>Different Condition Applied</option></select></td>";
 		}
 		
 		if(document.getElementById("isMoveTarget").checked){

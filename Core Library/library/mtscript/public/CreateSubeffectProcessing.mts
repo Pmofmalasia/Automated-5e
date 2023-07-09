@@ -590,6 +590,9 @@
 [h,if(TargetConditionData != ""): subeffectData = json.set(subeffectData,"TargetConditionLimits",TargetConditionData)]
 [h,if(ConditionModificationData != ""): subeffectData = json.set(subeffectData,"ConditionModificationInfo",ConditionModificationData)]
 
+[h:"<!-- TODO: Add this stuff here -->"]
+[h:subeffectData = json.remove(subeffectData,"isAffectSpell")]
+
 [h,switch(json.get(subeffectData,"lightType")),CODE:
 	case "None":{};
 	case "":{};

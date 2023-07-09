@@ -53,15 +53,13 @@
 		[h:targetData = json.set(targetData,"Object",ObjectData)]
 	};
 	case "CreatureObject":{
-		[h:CreatureTargetingData = ct.a5e.CreatureTargetingLimitProcessing(subeffectData)]
+		[h:CreatureTargetingData = ct.a5e.AllTargetingOptionsProcessing(subeffectData,targetData,"CreatureTargetType")]
 		[h:subeffectData = json.get(CreatureTargetingData,"Subeffect")]
-		[h:creatureData = json.get(CreatureTargetingData,"Creature")]
-		[h:targetData = json.set(targetData,"Creature",creatureData)]
+		[h:targetData = json.get(CreatureTargetingData,"Targeting")]
 
-		[h:ObjectTargetingData = ct.a5e.ObjectTargetingLimitProcessing(subeffectData)]
+		[h:ObjectTargetingData = ct.a5e.AllTargetingOptionsProcessing(subeffectData,targetData,"ObjectTargetLimits")]
 		[h:subeffectData = json.get(ObjectTargetingData,"Subeffect")]
-		[h:ObjectData = json.get(ObjectTargetingData,"Object")]
-		[h:targetData = json.set(targetData,"Creature","{}","Object",ObjectData)]
+		[h:targetData = json.get(ObjectTargetingData,"Targeting")]
 	};
 	case "Point":{
 		[h:targetData = json.set(targetData,"Point",json.set("","OnGround",json.contains(subeffectData,"pointOnGround")))]

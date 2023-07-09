@@ -26,7 +26,7 @@
 
 	[h:tempUseButton = ""]
 	[h:tempEffects = json.get(tempItem,"Effects")]
-	[h,if(tempEffects != ""),CODE:{
+	[h,if(tempEffects != "" && json.get(tempItem,"IsActive")),CODE:{
 		[h:tempLink = macroLinkText("UseItem@Lib:pm.a5e.Core","self-gm",json.set(tempItem,"ParentToken",ParentToken),ParentToken)]
 		[h:tempUseButton = "<a href = '"+tempLink+"'>Use</a>"]
 	};{}]
@@ -36,6 +36,12 @@
 		[h:tempActivationLink = macroLinkText("ActivateItem@Lib:pm.a5e.Core","self-gm",json.set("","Item",json.get(tempItem,"ItemID"),"Activate",NeedsActivation,"ParentToken",ParentToken),ParentToken)]
 		[h,if(tempUseButton != ""): tempUseButton = tempUseButton + " / "]
 		[h:tempUseButton = "<a href = '"+tempActivationLink+"'>"+if(NeedsActivation,"Activate","Deactivate")+"</a>"]
+	};{}]
+
+	[h,if(json.get(tempItem,"ItemSpellcasting") != "" && json.get(tempItem,"IsActive")),CODE:{
+		[h:tempActivationLink = macroLinkText("ItemSpellcastingInput@Lib:pm.a5e.Core","self-gm",json.set("","ItemID",json.get(tempItem,"ItemID"),"ParentToken",ParentToken,"IsTooltip",0),ParentToken)]
+		[h,if(tempUseButton != ""): tempUseButton = tempUseButton + " / "]
+		[h:tempUseButton = "<a href = '"+tempActivationLink+"'>Cast Spell</a>"]
 	};{}]
 
 	[h,if(tempUseButton == ""): tempUseButton = "---"]

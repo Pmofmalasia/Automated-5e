@@ -91,7 +91,7 @@
 [h:subeffectData = json.remove(subeffectData,"ObjectTargetWeightType")]
 [h:subeffectData = json.remove(subeffectData,"ObjectTargetWeight")]
 
-[h,if(json.get(subeffectData,"ObjectTarget") != "All"),CODE:{
+[h,if(json.get(subeffectData,"ObjectTargetTags") != "All"),CODE:{
     [h:MaterialTagList = pm.a5e.GetCoreData("sb.MaterialTags","Name","json")]
     [h:ObjectTagList = pm.a5e.GetCoreData("sb.ObjectTags","Name","json")]
 	[h:AllTagsList = json.merge(MaterialTagList,ObjectTagList)]

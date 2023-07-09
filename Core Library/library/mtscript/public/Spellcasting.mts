@@ -89,8 +89,8 @@
 	[h:ClassOptions = json.append(ClassOptions,"None")]
 };{
 	[h:ClassOptionsArray = json.append("",ForcedClass)]
-	[h:ClassOptions = json.append("",ForcedClass)]
-	[h,if(ForcedClass!=""): ClassOptionsArray = ForcedClass]
+	[h:ClassOptions = json.append("",pm.GetDisplayName(ForcedClass,"sb.Classes"))]
+	[h:"<!-- Note: removed line here that set ClassOptionsArray equal to ForcedClass if ForcedClass != '' (always). Not sure what it did but come here if something breaks. -->"]
 }]
 
 [h,if(ForcedLevel==""),CODE:{
@@ -283,7 +283,7 @@
 		"ParentToken",ParentToken
 	)]
 	
-	[MACRO("End Concentration@Lib:Spellbook"): FlavorData]
+	[MACRO("End Concentration@Lib:pm.a5e.Core"): FlavorData]
 };{}]
 
 [h:"<!--- Cancel Old Spell Notice --->"]
@@ -291,6 +291,9 @@
 [h:"<!-- PrimeStat selection has multiple failsafes for selection. Currently, sClassSelectData should always be an object with either CastAsClass or PrimeStat present. The other paths serve as backups with possible future use. -->"]
 [h,if(json.type(sClassSelectData)=="UNKNOWN"),CODE:{
 	[h:PrimeStat = json.get(getLibProperty("sb.CastingAbilities","Lib:pm.a5e.Core"),sClassSelect)]
+	[h:PrimeStat = if(PrimeStat=="","None",PrimeStat)]
+	[h,if(PrimeStat == "None"): PrimeStatMod = 0; PrimeStatMod = json.get(getProperty("a5e.stat.AtrMods"),PrimeStat)]
+	[h:pm.PassiveFunction("SpellStat")]
 };{
 	[h,if(json.get(sClassSelectData,"CastAsClass")==""),CODE:{
 		[h,if(json.get(sClassSelectData,"PrimeStat")==""):
@@ -300,14 +303,19 @@
 	};{
 		[h:PrimeStat = json.get(getLibProperty("sb.CastingAbilities","Lib:pm.a5e.Core"),json.get(sClassSelectData,"CastAsClass"))]
 	}]
+
+	[h,if(json.get(sClassSelectData,"Class") == "Item" && json.get(sClassSelectData,"CastAsClass") == ""),CODE:{
+		[h:ItemData = json.get(sClassSelectData,"ItemData")]
+		[h:pm.a5e.ItemSpellcastingPrimeStat()]
+	};{
+		[h:PrimeStat = if(PrimeStat=="","None",PrimeStat)]
+		[h,if(PrimeStat == "None"): PrimeStatMod = 0; PrimeStatMod = json.get(getProperty("a5e.stat.AtrMods"),PrimeStat)]
+		[h:pm.PassiveFunction("SpellStat")]
+	}]
 }]
 
-[h:PrimeStat = if(PrimeStat=="","None",PrimeStat)]
-[h,if(PrimeStat == "None"): PrimeStatMod = 0; PrimeStatMod = json.get(getProperty("a5e.stat.AtrMods"),PrimeStat)]
-[h:pm.PassiveFunction("SpellStat")]
-
-[h,if(and(isConcentrationLost,isConcentration==1)): setState("Concentrating",1)]
-[h,if(and(isConcentrationLost,isConcentration==1)): setProperty("a5e.stat.Concentration",SpellName)]
+[h,if(and(!isConcentrationLost,isConcentration==1)): setState("Concentrating",1)]
+[h,if(and(!isConcentrationLost,isConcentration==1)): setProperty("a5e.stat.Concentration",SpellName)]
 
 [h:CompendiumLink=concat('<a style="color:'+TextColor+';" href=',BaseLink,replace(SpellDisplayName,' ','-'),'>',SpellDisplayName,'</a>')]
 

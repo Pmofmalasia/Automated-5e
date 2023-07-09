@@ -184,7 +184,87 @@
 		[h,if(json.contains(objectData,"Restore"+instance)): objectData = json.set(objectData,"Restore"+instance,1)]	
 	}]
 };{}]
+
+[h:objectSpellsAllowed = "[]"]
+[h:differentSpellsNumber = number(json.get(objectData,"CastSpellNumber"))]
+[h,count(json.contains(objectData,"isCastSpells") * differentSpellsNumber),CODE:{
+	[h:thisSpellLevel = json.get(objectData,"CastSpellLevel"+roll.count)]
+	[h:thisSpellData = json.set("",
+		"Name",pm.RemoveSpecial(json.get(objectData,"CastSpellName"+roll.count)),
+		"Level",thisSpellLevel
+	)]
+	[h:thisSpellResourceUsed = json.get(objectData,"CastSpellResource"+roll.count)]
+
+	[h:objectData = json.remove(objectData,"CastSpellResource"+roll.count)]
+	[h:objectData = json.remove(objectData,"CastSpellName"+roll.count)]
+	[h:objectData = json.remove(objectData,"CastSpellLevel"+roll.count)]
+
+	[h,if(json.contains(objectData,"CanAHLSpell"+roll.count)):
+		isAHLAllowed = json.get(objectData,"CanAHLSpell"+roll.count);
+		isAHLAllowed = 0
+	]
+	[h:NoResourceUsedTest = or(json.get(objectData,"isCharges") == "None",and(thisSpellResourceUsed == 0,!isAHLAllowed))]
+	[h,if(!NoResourceUsedTest),CODE:{
+		[h:broadcast("Resource is used")]
+		[h:resourceIdentifiers = json.set("","Name",ObjectName,"Class","Item","Subclass","")]
+		[h:thisSpellResource = json.set("",
+			"Resource",resourceIdentifiers,
+			"ResourceUsed",thisSpellResourceUsed
+		)]
+
+		[h,if(isAHLAllowed):
+			thisSpellResource = json.set(thisSpellResource,
+				"Increment",json.get(objectData,"SpellResourceAHL"+roll.count),
+				"ResourceMax",(9-SpellLevel)*json.get(objectData,"SpellResourceAHL"+roll.count) + thisSpellResourceUsed);
+			thisSpellResource = json.set(thisSpellResource,
+				"Increment",1,
+				"ResourceMax",thisSpellResourceUsed)
+		]
+
+		[h,if(json.contains(objectData,"CastSpellResourceKey"+roll.count)): thisSpellResource = json.set(thisSpellResource,"ResourceKey",pm.RemoveSpecial(json.get(objectData,"CastSpellResourceKey"+roll.count)))]
+
+		[h:FinalResourceData = json.set("","Feature",thisSpellResource)]
+		[h:thisSpellData = json.set(thisSpellData,"UseResource",FinalResourceData)]
+
+		[h:objectData = json.remove(objectData,"SpellResourceAHL"+roll.count)]
+		[h:objectData = json.remove(objectData,"CanAHLSpell"+roll.count)]
+		[h:objectData = json.remove(objectData,"CastSpellResourceKey"+roll.count)]
+	};{}]
+
+	[h:objectSpellsAllowed = json.append(objectSpellsAllowed,thisSpellData)]
+}]
+
+[h,if(json.contains(objectData,"isCastSpells")),CODE:{
+	[h:broadcast("modifier stuff")]
+	[h:objectData = json.set(objectData,"ItemSpellcasting",objectSpellsAllowed)]
+	[h:calcModifierHow = json.get(objectData,"CastSpellModifierHow")]
+	[h:objectData = json.remove(objectData,"CastSpellModifierHow")]
+	[h:objectData = json.set(objectData,"ItemSpellcastingModifierMethod",calcModifierHow)]
+	[h,switch(calcModifierHow),CODE:
+		case "SetValue":{
+			[h:objectData = json.set(objectData,"ItemSpellcastingModifier",json.get(objectData,"CastSpellFlatModifier"))]
+			[h:objectData = json.remove(objectData,"CastSpellFlatModifier")]
+		};
+		case "Stat":{
+			[h:AllowedStats = "[]"]
+			[h:AllStats = pm.GetAttributes("Name","json")]
+			[h,foreach(stat,AllStats): AllowedStats = if(json.contains(objectData,"CastSpellStat"+stat),json.append(AllowedStats,stat),AllowedStats)]
+			[h,foreach(stat,AllStats): objectData = json.remove(objectData,"CastSpellStat"+stat)]
+			[h:objectData = json.set(objectData,"ItemSpellcastingPrimeStatOptions",AllowedStats)]
+		};
+		case "SpecificClass":{
+			[h:AllowedClasses = "[]"]
+			[h:AllClasses = pm.GetClasses("Name","json")]
+			[h,foreach(tempClass,AllClasses): AllowedClasses = if(json.contains(objectData,"CastSpellClass"+tempClass),json.append(AllowedClasses,tempClass),AllowedClasses)]
+			[h,foreach(tempClass,AllClasses): objectData = json.remove(objectData,"CastSpellClass"+tempClass)]
+			[h:objectData = json.set(objectData,"ItemSpellcastingClassOptions",AllowedClasses)]
+		};
+		default:{}
+	]
+};{}]
 [h:objectData = json.remove(objectData,"isCharges")]
+[h:objectData = json.remove(objectData,"isCastSpells")]
+[h:objectData = json.remove(objectData,"CastSpellNumber")]
 
 [h:ChosenMaterials = "[]"]
 [h:AllMaterials = pm.a5e.GetCoreData("sb.ObjectMaterials","Name","json")]

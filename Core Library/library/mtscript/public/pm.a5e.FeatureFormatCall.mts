@@ -1,4 +1,5 @@
 [h:abilityInfo = json.set(abilityInfo,"OnlyRules",if(json.path.read(abilityTable,"[?(@.RollContents != '' || @.FullContents != '')]['Header']")=="[]",1,0))]
+
 [h:pm.MacroFormat(abilityInfo)]
 [h:pm.ProcessingData = macro.return]
 

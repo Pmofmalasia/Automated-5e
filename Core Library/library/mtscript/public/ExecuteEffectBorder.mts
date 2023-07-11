@@ -41,9 +41,10 @@
 
 [h,MACRO("BuildEffectsFrame@Lib:pm.a5e.Core"): ""]
 
+[h:EffectDescription = base64.decode(json.get(EffectData,"Description"))]
 [h:output.Temp = pm.AbilityTableProcessing(abilityTable,FormattingData,1)]
-[h:output.PC = output.PC + json.get(output.Temp,"Player")+"</div></div>"]
-[h:output.GM = output.GM + json.get(output.Temp,"GM")+"</div></div>"]
+[h:output.PC = output.PC + json.get(output.Temp,"Player")+EffectDescription+"</div></div>"]
+[h:output.GM = output.GM + json.get(output.Temp,"GM")+EffectDescription+"</div></div>"]
 
 [h:broadcastAsToken(output.GM,"gm")]
 [h:broadcastAsToken(output.PC,"not-gm")]

@@ -266,6 +266,7 @@
 [h:defineFunction("pm.a5e.DamageRoll","pm.a5e.DamageRoll@Lib:pm.a5e.Core",0,0)]
 [h:defineFunction("pm.a5e.AttackRoll","pm.a5e.AttackRoll@Lib:pm.a5e.Core",0,0)]
 [h:defineFunction("pm.a5e.ExecuteSubeffect","pm.a5e.ExecuteSubeffect@Lib:pm.a5e.Core",0,0)]
+[h:defineFunction("pm.a5e.ExecuteSubeffectMissilesLoop","pm.a5e.ExecuteSubeffectMissilesLoop@Lib:pm.a5e.Core",0,0)]
 [h:defineFunction("pm.a5e.ItemSpellcastingPrimeStat","pm.a5e.ItemSpellcastingPrimeStat@Lib:pm.a5e.Core",0,0)]
 
 [h:"<!-- Functions for Checks and Saves -->"]

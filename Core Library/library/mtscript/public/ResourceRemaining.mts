@@ -25,7 +25,7 @@
 		}]
 	};
 	default:{
-		[h,switch(ResourceType):
+		[h,switch(json.get(CheckResourceData,"ResourceSource")):
 			case "Feature": ResourceOrigin = "a5e.stat.AllFeatures";
 			case "Item": ResourceOrigin = "a5e.stat.Inventory";
 			case "Condition": ResourceOrigin = "a5e.stat.ConditionList"

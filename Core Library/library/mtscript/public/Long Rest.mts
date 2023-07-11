@@ -137,10 +137,10 @@
 		))]
 	}]
 
-	[h:needsPutTest = !json.isEmpty(json.path.read(getProperty("a5e.stat.Inventory"),"[?("+pm.a5e.PathFeatureFilter(tempItem)+" && @.Resource==null)]","DEFAULT_PATH_LEAF_TO_NULL"))]
+	[h:needsPutTest = !json.isEmpty(json.path.read(getProperty("a5e.stat.Inventory"),"[?(@.ItemID=='"+json.get(tempItem,"ItemID")+"' && @.Resource==null)]","DEFAULT_PATH_LEAF_TO_NULL"))]
 	[h,if(needsPutTest):
-		setProperty("a5e.stat.Inventory",json.path.put(getProperty("a5e.stat.Inventory"),"[?("+pm.a5e.PathFeatureFilter(tempItem)+")]","Resource",ResourceRestoredFinal));
-		setProperty("a5e.stat.Inventory",json.path.set(getProperty("a5e.stat.Inventory"),"[?("+pm.a5e.PathFeatureFilter(tempItem)+")]['Resource']",ResourceRestoredFinal))
+		setProperty("a5e.stat.Inventory",json.path.put(getProperty("a5e.stat.Inventory"),"[?(@.ItemID=='"+json.get(tempItem,"ItemID")+"')]","Resource",ResourceRestoredFinal));
+		setProperty("a5e.stat.Inventory",json.path.set(getProperty("a5e.stat.Inventory"),"[?(@.ItemID=='"+json.get(tempItem,"ItemID")+"')]['Resource']",ResourceRestoredFinal))
 	]
 }]
 

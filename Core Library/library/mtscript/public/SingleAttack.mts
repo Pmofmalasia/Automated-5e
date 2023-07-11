@@ -2,7 +2,7 @@
 [h:ParentToken = json.get(AttackData,"ParentToken")]
 [h:switchToken(ParentToken)]
 
-[h,if(json.get(AttackData,"Hand") == ""),CODE:{
+[h,if(json.get(AttackData,"Hand") == "" || json.get(AttackData,"Hand") == -1),CODE:{
 	[h:AttackData = json.set(AttackData,"Hand",-1)]
 
 	[h,if(json.contains(AttackData,"WeaponData")),CODE:{
@@ -34,6 +34,13 @@
 }]
 [h:ThrowWeapon = number(json.get(AttackData,"Throw"))]
 
+[h:AttackData = json.set(AttackData,
+	"WeaponData",WeaponData,
+	"ThrowWeapon",ThrowWeapon,
+	"AttackNum",-1,
+	"DMOnly",0
+)]
+
 [h:IsTooltip = number(json.get(AttackData,"IsTooltip"))]
 [h,if(IsTooltip),CODE:{
 	[h,macro("WeaponAttackTooltip@Lib:pm.a5e.Core"): AttackData]
@@ -48,7 +55,7 @@
 		"Name","Current Weapon: "+if(ThrowWeapon,"Throwing ","")+json.get(WeaponData,"DisplayName"),
 		"FalseName","Weapon Attack",
 		"Effect",AttackDescription,
-		"abilityTable",json.remove(abilityTable,0)
+		"abilityTable",abilityTable
 	)]
 	[r:pm.TooltipOutput(ClassFeatureData)]
 };{
@@ -68,12 +75,6 @@
 	[h:output.PC = json.get(json.get(FormattingData,"Output"),"Player")]
 	[h:output.GM = json.get(json.get(FormattingData,"Output"),"GM")]
 
-	[h:AttackData = json.set(AttackData,
-		"WeaponData",WeaponData,
-		"ThrowWeapon",ThrowWeapon,
-		"AttackNum",-1,
-		"DMOnly",0
-	)]
 
 	[h,macro("Attack@Lib:pm.a5e.Core"): AttackData]
 	[h:abilityTable = json.get(macro.return,"Table")]

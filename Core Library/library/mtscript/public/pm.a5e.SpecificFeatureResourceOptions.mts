@@ -2,9 +2,9 @@
 [h:resourceUsed = arg(1)]
 [h,if(argCount()>2): pm.ResourceKey = arg(2); pm.ResourceKey = ""]
 
-[h,if(json.get(resourceInfo,"Type") == ""):
+[h,if(json.get(resourceInfo,"ResourceSource") == ""):
 	resourceSource = "Feature";
-	resourceSource = json.get(resourceInfo,"Type")
+	resourceSource = json.get(resourceInfo,"ResourceSource")
 ]
 [h,switch(resourceSource),CODE:
 	case "Feature":{
@@ -30,13 +30,15 @@
 		[h:macro.return = json.set(matchingFeature,
 			"TempEnoughResource",1,
 			"TempResourceDisplayName",if(json.get(matchingFeature,"ResourceDisplayName")=="",json.get(matchingFeature,"DisplayName"),json.get(matchingFeature,"ResourceDisplayName")),
-			"TempResourceType",resourceSource
+			"TempResourceType","Feature",
+			"TempResourceSource",resourceSource
 		)]
 	};{
 		[h:macro.return = json.set(matchingFeature,
 			"TempEnoughResource",0,
 			"TempResourceDisplayName",if(json.get(matchingFeature,"ResourceDisplayName")=="",json.get(matchingFeature,"DisplayName"),json.get(matchingFeature,"ResourceDisplayName")),
-			"TempResourceType",resourceSource
+			"TempResourceType","Feature",
+			"TempResourceSource",resourceSource
 		)]
 	}]
 };{
@@ -48,12 +50,14 @@
 			macro.return = json.set(matchingFeature,
 				"TempResourceKey",pm.ResourceKey,
 				"TempResourceDisplayName",if(json.get(matchingFeature,"ResourceDisplayName")=="",json.get(matchingFeature,"DisplayName"),json.get(matchingFeature,"ResourceDisplayName")),
-				"TempResourceType",resourceSource,
+				"TempResourceType","Feature",
+				"TempResourceSource",resourceSource,
 				"TempEnoughResource",1);
 			macro.return = json.set(matchingFeature,
 				"TempResourceKey",pm.ResourceKey,
 				"TempResourceDisplayName",if(json.get(json.get(matchingFeature,"ResourceDisplayName"),pm.ResourceKey)=="",json.get(matchingFeature,"DisplayName"),json.get(json.get(matchingFeature,"ResourceDisplayName"),pm.ResourceKey)),
-				"TempResourceType",resourceSource,
+				"TempResourceType","Feature",
+				"TempResourceSource",resourceSource,
 				"TempEnoughResource",1)
 		]
 	};{
@@ -62,12 +66,14 @@
 			macro.return = json.set(matchingFeature,
 				"TempResourceKey",pm.ResourceKey,
 				"TempResourceDisplayName",if(json.get(matchingFeature,"ResourceDisplayName")=="",json.get(matchingFeature,"DisplayName"),json.get(matchingFeature,"ResourceDisplayName")),
-				"TempResourceType",resourceSource,
+				"TempResourceType","Feature",
+				"TempResourceSource",resourceSource,
 				"TempEnoughResource",0);
 			macro.return = json.set(matchingFeature,
 				"TempResourceKey",pm.ResourceKey,
 				"TempResourceDisplayName",if(json.get(json.get(matchingFeature,"ResourceDisplayName"),pm.ResourceKey)=="",json.get(matchingFeature,"DisplayName"),json.get(json.get(matchingFeature,"ResourceDisplayName"),pm.ResourceKey)),
-				"TempResourceType",resourceSource,
+				"TempResourceType","Feature",
+				"TempResourceSource",resourceSource,
 				"TempEnoughResource",0)
 		]
 	}]

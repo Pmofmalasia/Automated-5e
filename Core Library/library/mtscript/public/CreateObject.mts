@@ -53,6 +53,8 @@
 
 <tr id='rowStateOfMatter'><th><label for='StateOfMatter'>State of Matter:</label></th><td><select id='StateOfMatter' name='StateOfMatter'><option value='Solid'>Solid</option><option value='Liquid'>Liquid</option><option value='Gas'>Gas</option><option value='Plasma'>Plasma</option></select></td></tr>
 
+<tr id='rowIsLockable'><th><label for='isLockable'>Object is Lockable:</label></th><td><input type='checkbox' id='isLockable' name='isLockable'></td></tr>
+
 <tr id='rowIsFlammable'><th><label for='isFlammable'>Object is Flammable:</label></th><td><input type='checkbox' id='isFlammable' name='isFlammable'></td></tr>
 
 <tr id='rowIsMagnetic'><th><label for='isMagnetic'>Object is Magnetic:</label></th><td><input type='checkbox' id='isMagnetic' name='isMagnetic'></td></tr>
@@ -64,6 +66,8 @@
 <tr id='rowHasActiveEffects'><th><label for='HasActiveEffects'>Object Has Active Effects:</label></th><td><input type='checkbox' id='HasActiveEffects' name='HasActiveEffects' onchange='createActiveEffectsRow()'></td></tr>
 
 <tr id='rowSourcebook'><th><label for='Library'>Object Sourcebook:</label></th><td><select id='Library' name='Library'>"+sourcebookOptions+"</select></td></tr>
+
+<tr id='rowDescription'><th text-align='center' colspan='2'><label for='Description'>Full Item Description:</label></th colspan='2'></th></tr><tr id='rowItemTextArea'><th><textarea id='Description' name='Description' rows='10' style='width:155%'></textarea></th>
 
 <tr><th text-align='center' colspan='2'><input type='submit' id='submitButton' value='Submit'></th></tr>"]
 

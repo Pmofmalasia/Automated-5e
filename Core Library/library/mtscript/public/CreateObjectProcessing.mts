@@ -83,6 +83,10 @@
 	[h:objectData = json.remove(objectData,"ArmorStrengthReq")]
 }]
 
+[h,if(objectType=="Container"),CODE:{
+
+};{}]
+
 [h:objectData = json.set(objectData,"isMagical",json.contains(objectData,"isMagical"))]
 [h,if(json.get(objectData,"isMagical")),CODE:{
 	[h:objectData = json.set(objectData,
@@ -185,6 +189,8 @@
 	}]
 };{}]
 
+[h:"<!-- TODO: Add Depleted Effects here -->"]
+
 [h:objectSpellsAllowed = "[]"]
 [h:differentSpellsNumber = number(json.get(objectData,"CastSpellNumber"))]
 [h,count(json.contains(objectData,"isCastSpells") * differentSpellsNumber),CODE:{
@@ -205,8 +211,7 @@
 	]
 	[h:NoResourceUsedTest = or(json.get(objectData,"isCharges") == "None",and(thisSpellResourceUsed == 0,!isAHLAllowed))]
 	[h,if(!NoResourceUsedTest),CODE:{
-		[h:broadcast("Resource is used")]
-		[h:resourceIdentifiers = json.set("","Name",ObjectName,"Class","Item","Subclass","")]
+		[h:resourceIdentifiers = json.set("","Name",ObjectName,"Class","Item","Subclass","","ResourceSource","Item")]
 		[h:thisSpellResource = json.set("",
 			"Resource",resourceIdentifiers,
 			"ResourceUsed",thisSpellResourceUsed
@@ -215,10 +220,10 @@
 		[h,if(isAHLAllowed):
 			thisSpellResource = json.set(thisSpellResource,
 				"Increment",json.get(objectData,"SpellResourceAHL"+roll.count),
-				"ResourceMax",(9-SpellLevel)*json.get(objectData,"SpellResourceAHL"+roll.count) + thisSpellResourceUsed);
+				"ResourceUsedMax",(9-thisSpellLevel)*json.get(objectData,"SpellResourceAHL"+roll.count) + thisSpellResourceUsed);
 			thisSpellResource = json.set(thisSpellResource,
 				"Increment",1,
-				"ResourceMax",thisSpellResourceUsed)
+				"ResourceUsedMax",thisSpellResourceUsed)
 		]
 
 		[h,if(json.contains(objectData,"CastSpellResourceKey"+roll.count)): thisSpellResource = json.set(thisSpellResource,"ResourceKey",pm.RemoveSpecial(json.get(objectData,"CastSpellResourceKey"+roll.count)))]
@@ -235,7 +240,6 @@
 }]
 
 [h,if(json.contains(objectData,"isCastSpells")),CODE:{
-	[h:broadcast("modifier stuff")]
 	[h:objectData = json.set(objectData,"ItemSpellcasting",objectSpellsAllowed)]
 	[h:calcModifierHow = json.get(objectData,"CastSpellModifierHow")]
 	[h:objectData = json.remove(objectData,"CastSpellModifierHow")]
@@ -293,6 +297,7 @@
 
 [h:objectData = json.set(objectData,
 	"isWearable",json.contains(objectData,"isWearable"),
+	"isLockable",json.contains(objectData,"isLockable"),
 	"isFlammable",json.contains(objectData,"isFlammable"),
 	"isMagnetic",json.contains(objectData,"isMagnetic"),
 	"isStackable",json.contains(objectData,"isStackable"),
@@ -312,6 +317,11 @@
 	}]
 }]
 [h:objectData = json.set(objectData,"ObjectTags",ChosenTags)]
+
+[h:tempDescription = pm.EvilChars(json.get(objectData,"Description"))]
+[h:tempDescription = replace(encode(tempDescription),"%0A","<br>")]
+[h:tempDescription = decode(tempDescription)]
+[h:objectData = json.set(objectData,"Description",base64.encode(tempDescription))]
 
 [h:closeDialog("ObjectCreation")]
 

@@ -47,20 +47,24 @@
 	[h:FinalTargetsChosen = "[]"]
 	[h,count(TargetingInstances),CODE:{
 		[h:TargetType = ""]
+		[h,if(sameTarget):
+			thisTargetChoice = TargetChoice0;
+			thisTargetChoice = eval("TargetChoice"+roll.count)
+		]
 		[h:CumulativeTargetNum = PriorTargetOptionNumber]
-		[h,if(eval("TargetChoice"+roll.count) < CumulativeTargetNum && TargetType == ""): TargetType = "PriorTarget"]
+		[h,if(thisTargetChoice < CumulativeTargetNum && TargetType == ""): TargetType = "PriorTarget"]
 		[h:CumulativeTargetNum = CumulativeTargetNum + CreatureTargetOptionNumber]
-		[h,if(eval("TargetChoice"+roll.count) < CumulativeTargetNum && TargetType == ""): TargetType = "Creature"]
+		[h,if(thisTargetChoice < CumulativeTargetNum && TargetType == ""): TargetType = "Creature"]
 		[h:CumulativeTargetNum = CumulativeTargetNum + ObjectTargetOptionNumber]
-		[h,if(eval("TargetChoice"+roll.count) < CumulativeTargetNum && TargetType == ""): TargetType = "Object"]
+		[h,if(thisTargetChoice < CumulativeTargetNum && TargetType == ""): TargetType = "Object"]
 		[h:CumulativeTargetNum = CumulativeTargetNum + EffectTargetOptionNumber]
-		[h,if(eval("TargetChoice"+roll.count) < CumulativeTargetNum && TargetType == ""): TargetType = "Effect"]
+		[h,if(thisTargetChoice < CumulativeTargetNum && TargetType == ""): TargetType = "Effect"]
 
 		[h,switch(TargetType):
-			case "PriorTarget": FinalTargetsChosen = json.append(FinalTargetsChosen,json.append("",json.get(PriorTargetOptionArray,eval("TargetChoice"+roll.count))));
-			case "Creature": FinalTargetsChosen = json.append(FinalTargetsChosen,json.append("",json.get(CreatureTargetOptionArray,eval("TargetChoice"+roll.count))));
-			case "Object": FinalTargetsChosen = json.append(FinalTargetsChosen,json.append("",json.get(ObjectTargetOptionArray,eval("TargetChoice"+roll.count))));
-			case "Effect": FinalTargetsChosen = json.append(FinalTargetsChosen,json.append("",json.get(EffectTargetOptionArray,eval("TargetChoice"+roll.count))));
+			case "PriorTarget": FinalTargetsChosen = json.append(FinalTargetsChosen,json.append("",json.get(PriorTargetOptionArray,thisTargetChoice)));
+			case "Creature": FinalTargetsChosen = json.append(FinalTargetsChosen,json.append("",json.get(CreatureTargetOptionArray,thisTargetChoice)));
+			case "Object": FinalTargetsChosen = json.append(FinalTargetsChosen,json.append("",json.get(ObjectTargetOptionArray,thisTargetChoice)));
+			case "Effect": FinalTargetsChosen = json.append(FinalTargetsChosen,json.append("",json.get(EffectTargetOptionArray,thisTargetChoice)));
 			case "": FinalTargetsChosen = json.append(FinalTargetsChosen,json.append("",""))
 		]		
 	}]

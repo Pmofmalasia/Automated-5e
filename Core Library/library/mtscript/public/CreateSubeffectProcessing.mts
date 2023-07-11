@@ -143,10 +143,13 @@
 		default: ""
 	]
 
+	[h,if(json.contains(subeffectData,"isChooseFailure")): subeffectData = json.set(subeffectData,"isChooseFailure",1)]
+
 	[h:subeffectData = json.remove(subeffectData,"SaveType")]
 	[h:subeffectData = json.remove(subeffectData,"SaveDCMethod")]
 	[h:subeffectData = json.remove(subeffectData,"SaveDCStat")]
 	[h:subeffectData = json.remove(subeffectData,"SaveDC")]
+	[h:subeffectData = json.remove(subeffectData,"isChooseFailure")]
 }]
 
 [h,if(howMitigate == "Attack"),CODE:{
@@ -434,10 +437,10 @@
 		)]
 
 		[h,switch(EffectType):
-			case "Object": UniqueResourceIdentificationData = json.set(UniqueResourceIdentificationData,"Type","Item");
-			case "Weapon": UniqueResourceIdentificationData = json.set(UniqueResourceIdentificationData,"Type","Item");
-			case "Condition": UniqueResourceIdentificationData = json.set(UniqueResourceIdentificationData,"Type","Condition");
-			default: UniqueResourceIdentificationData = json.set(UniqueResourceIdentificationData,"Type","Feature")
+			case "Object": UniqueResourceIdentificationData = json.set(UniqueResourceIdentificationData,"ResourceSource","Item");
+			case "Weapon": UniqueResourceIdentificationData = json.set(UniqueResourceIdentificationData,"ResourceSource","Item");
+			case "Condition": UniqueResourceIdentificationData = json.set(UniqueResourceIdentificationData,"ResourceSource","Condition");
+			default: UniqueResourceIdentificationData = json.set(UniqueResourceIdentificationData,"ResourceSource","Feature")
 		]
 
 		[h:UniqueResourceData = json.set("",
@@ -449,8 +452,8 @@
 		[h:subeffectData = json.remove(subeffectData,"UseUniqueResourceIncrements")]
 
 		[h,if(json.contains(subeffectData,"isNoUniqueResourceUseLimit")):
-			UniqueResourceData = json.set(UniqueResourceData,"ResourceMax",99999);
-			UniqueResourceData = json.set(UniqueResourceData,"ResourceMax",json.get(subeffectData,"UseUniqueResourceMax"))
+			UniqueResourceData = json.set(UniqueResourceData,"ResourceUsedMax",99999);
+			UniqueResourceData = json.set(UniqueResourceData,"ResourceUsedMax",json.get(subeffectData,"UseUniqueResourceMax"))
 		]
 		[h:subeffectData = json.remove(subeffectData,"isNoUniqueResourceUseLimit")]
 		[h:subeffectData = json.remove(subeffectData,"UseUniqueResourceMax")]
@@ -491,8 +494,8 @@
 		[h:subeffectData = json.remove(subeffectData,"UseHitDiceIncrements")]
 
 		[h,if(json.contains(subeffectData,"isNoHitDiceUseLimit")):
-			HitDiceData = json.set(HitDiceData,"ResourceMax",99999);
-			HitDiceData = json.set(HitDiceData,"ResourceMax",json.get(subeffectData,"UseHitDiceMax"))
+			HitDiceData = json.set(HitDiceData,"ResourceUsedMax",99999);
+			HitDiceData = json.set(HitDiceData,"ResourceUsedMax",json.get(subeffectData,"UseHitDiceMax"))
 		]
 		[h:subeffectData = json.remove(subeffectData,"isNoHitDiceUseLimit")]
 		[h:subeffectData = json.remove(subeffectData,"UseHitDiceMax")]
@@ -741,6 +744,8 @@
 	}
 ]
 [h:subeffectData = json.remove(subeffectData,"aoeShape")]
+
+[h:subeffectData = json.remove(subeffectData,"isMissiles")]
 
 [h:targetData = "{}"]
 [h:AllTargetingData = ct.a5e.AllTargetingOptionsProcessing(subeffectData,targetData,"TargetType")]

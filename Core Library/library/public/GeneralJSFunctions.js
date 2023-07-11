@@ -17,12 +17,23 @@ function addTableRow(tableID,rowIndex,rowID,rowHTML){
 }
 
 function toggleFieldEnabled(toDisable,checkboxID){
-	if(document.getElementById(checkboxID).checked){
-		document.getElementById(toDisable).setAttribute("disabled","");
+	let toDisableIDs = toDisable;
+	if(typeof toDisable != "object"){
+		toDisableIDs = [toDisable];
 	}
 	else{
-		document.getElementById(toDisable).removeAttribute("disabled","");
+		toDisableIDs = toDisable;
 	}
+
+	for(let thisDisableID of toDisableIDs){
+		if(document.getElementById(checkboxID).checked){
+			document.getElementById(thisDisableID).setAttribute("disabled","");
+		}
+		else{
+			document.getElementById(thisDisableID).removeAttribute("disabled","");
+		}
+	}
+
 }
 
 function createHTMLSelectOptions(inputData,valueKey,idKey,idPrefix){

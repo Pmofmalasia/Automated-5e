@@ -11,7 +11,7 @@
 	[h:pm.FeatureResource = json.get(pm.FeatureResourceData,"Resource")]
 	[h:pm.FeatureResourceUsed = json.get(pm.FeatureResourceData,"ResourceUsed")]
 	[h:pm.FeatureResourceUsedMax = if(json.get(pm.FeatureResourceData,"ResourceUsedMax")=="",pm.FeatureResourceUsed,json.get(pm.FeatureResourceData,"ResourceUsedMax"))]
-	[h:pm.FeatureResourceSource = if(json.get(pm.FeatureResourceData,"ResourceSource")=="","Feature",json.get(pm.FeatureResourceData,"ResourceSource"))]
+	[h:pm.FeatureResourceSource = if(json.get(pm.FeatureResource,"ResourceSource")=="","Feature",json.get(pm.FeatureResource,"ResourceSource"))]
 };{
 	[h:pm.FeatureResource = ""]
 	[h:pm.FeatureResourceUsed = 1]
@@ -487,7 +487,7 @@
 	[h,SWITCH(resourceToDisplay):
 		case "Spell Slots": resourceTable = json.append("",json.set("","ShowIfCondensed",1,"Header","Spell Slots Remaining","FalseHeader","","FullContents","","RulesContents","<b><span style='font-size:1.25em;'>"+pm.SpellSlots()+"</span></b>","RollContents","","DisplayOrder","['Rules','Roll','Full']"));
 		case "Hit Dice": resourceTable = json.append("",json.set("","ShowIfCondensed",1,"Header","Hit Dice Remaining","FalseHeader","","FullContents","","RulesContents","<b><span style='font-size:1.25em;'>"+a5e.HitDieDisplay()+"</span></b>","RollContents","","DisplayOrder","['Rules','Roll','Full']"));
-		case "Feature": resourceTable = featureBackupResourceTable
+		default: resourceTable = featureBackupResourceTable
 	]
 	[h:abilityTable = json.merge(abilityTable,resourceTable)]
 	[h:currentFeatureSpellLevel = pm.SpellLevelMin]
@@ -545,7 +545,7 @@
 	[h,SWITCH(resourceToDisplay):
 		case "Spell Slots": resourceTable = json.append("",json.set("","ShowIfCondensed",1,"Header","Spell Slots Remaining","FalseHeader","","FullContents","","RulesContents","<b><span style='font-size:1.25em;'>"+pm.SpellSlots()+"</span></b>","RollContents","","DisplayOrder","['Rules','Roll','Full']"));
 		case "Hit Dice": resourceTable = json.append("",json.set("","ShowIfCondensed",1,"Header","Hit Dice Remaining","FalseHeader","","FullContents","","RulesContents","<b><span style='font-size:1.25em;'>"+a5e.HitDieDisplay()+"</span></b>","RollContents","","DisplayOrder","['Rules','Roll','Full']"));
-		case "Feature": resourceTable = featureResourceTable
+		default: resourceTable = featureResourceTable
 	]
 	[h:abilityTable = json.merge(abilityTable,resourceTable)]
 	[h:currentFeatureSpellLevel = pm.SpellLevelMin]
@@ -723,10 +723,10 @@
 			)]
 		}]
 	};
-	default:{
+	case "Feature":{
 		[h:"<!-- Note: Default is for feature resources, but covers features, conditions, and items. -->"]
 
-		[h,switch(json.get(ResourceSelected,"TempResourceType")):
+		[h,switch(json.get(ResourceSelected,"TempResourceSource")):
 			case "Feature": sourceProperty = "a5e.stat.AllFeatures";
 			case "Item": sourceProperty = "a5e.stat.Inventory";
 			case "Condition": sourceProperty = "a5e.stat.Conditions"
@@ -734,7 +734,11 @@
 
 		[h,if(json.get(ResourceSelected,"TempResourceKey")==""),CODE:{
 			[h:ResourceAmount = json.get(ResourceSelected,"Resource") - ResourceUsed]
-			[h:setProperty(sourceProperty,json.path.set(getProperty(sourceProperty),"[*][?(@.Name=='"+json.get(ResourceSelected,"Name")+"' && @.Class=='"+json.get(ResourceSelected,"Class")+"' && @.Subclass=='"+json.get(ResourceSelected,"Subclass")+"')]['Resource']",ResourceAmount))]
+			[h,if(json.get(ResourceSelected,"TempResourceSource") == "Item"):
+				UpdatedResourceInfo = json.path.set(getProperty(sourceProperty),"[*][?(@.ItemID=='"+json.get(ResourceSelected,"ItemID")+"')]['Resource']",ResourceAmount);	
+				UpdatedResourceInfo = json.path.set(getProperty(sourceProperty),"[*][?(@.Name=='"+json.get(ResourceSelected,"Name")+"' && @.Class=='"+json.get(ResourceSelected,"Class")+"' && @.Subclass=='"+json.get(ResourceSelected,"Subclass")+"')]['Resource']",ResourceAmount)
+			]
+			[h:setProperty(sourceProperty,UpdatedResourceInfo)]
 
 			[h:abilityTable = json.append(abilityTable,json.set("",
 				"ShowIfCondensed",1,
@@ -753,7 +757,11 @@
 			)]
 		};{
 			[h:ResourceAmount = max(json.get(json.get(ResourceSelected,"Resource"),json.get(ResourceSelected,"TempResourceKey")) - ResourceUsed,0)]
-			[h:setProperty(sourceProperty,json.path.set(getProperty(sourceProperty),"[*][?(@.Name=='"+json.get(ResourceSelected,"Name")+"' && @.Class=='"+json.get(ResourceSelected,"Class")+"' && @.Subclass=='"+json.get(ResourceSelected,"Subclass")+"')]['Resource']['"+json.get(ResourceSelected,"TempResourceKey")+"']",ResourceAmount))]
+			[h,if(json.get(ResourceSelected,"TempResourceSource") == "Item"):
+				UpdatedResourceInfo = json.path.set(getProperty(sourceProperty),"[*][?(@.ItemID=='"+json.get(ResourceSelected,"ItemID")+"')]['Resource']['"+json.get(ResourceSelected,"TempResourceKey")+"']",ResourceAmount);	
+				UpdatedResourceInfo = json.path.set(getProperty(sourceProperty),"[*][?(@.Name=='"+json.get(ResourceSelected,"Name")+"' && @.Class=='"+json.get(ResourceSelected,"Class")+"' && @.Subclass=='"+json.get(ResourceSelected,"Subclass")+"')]['Resource']['"+json.get(ResourceSelected,"TempResourceKey")+"']",ResourceAmount)
+			]
+			[h:setProperty(sourceProperty,UpdatedResourceInfo)]
 
 			[h:abilityTable = json.append(abilityTable,json.set("",
 				"ShowIfCondensed",1,

@@ -95,17 +95,16 @@ async function createObjectSubtypeRows(tableID,IDSuffix){
 	else if(ObjectType == "Container"){
 		document.getElementById("isWearable").checked = false;
 
-		let StateOptions = [{"Name":"Solid","DisplayName":"Solids"},{"Name":"Liquid","DisplayName":"Liquids"},{"Name":"Gas","DisplayName":"Gases"}];
-		createHTMLMultiselectOptions(StateOptions,"");
-
-		addTableRow(tableID,nextRowIndex,"rowContentsType","<th>Type of Objects Held:</th><td><select id='ContentsType' name='ContentsType'><option value='Solid'>Solids</option><option value='Liquid'>Liquids</option></select></td>");
+		addTableRow(tableID,nextRowIndex,"rowContainerWeightCapacity","<th><label for='ContainterWeightCapacity'>Weight Capacity:</label></th><td><input type='number' id='ContainterWeightCapacity' name='ContainterWeightCapacity' min=0 style='width:35px'>lbs. <input type='checkbox' id='isContainterWeightCapacity' name='isContainterWeightCapacity' onchange='toggleFieldEnabled("+'"ContainterWeightCapacity","isContainterWeightCapacity"'+")'> No limit</td>");
+		nextRowIndex++;
+	
+		addTableRow(tableID,nextRowIndex,"rowContainerSolidVolumeCapacity","<th><label for='ContainterSolidVolumeCapacity'>Solid Volume Capacity:</label></th><td><input type='number' id='ContainterSolidVolumeCapacity' name='ContainterSolidVolumeCapacity' min=0 style='width:35px'><select id='ContainterSolidVolumeCapacityUnits' name='ContainterSolidVolumeCapacityUnits'><option value='cubicfeet'>Cubic Feet</option></select><input type='checkbox' id='isContainterSolidVolumeCapacity' name='isContainterSolidVolumeCapacity' onchange='toggleFieldEnabled(["+'"ContainterSolidVolumeCapacity","ContainterSolidVolumeCapacityUnits"],"isContainterSolidVolumeCapacity"'+")'>No Solids</td>");
 		nextRowIndex++;
 
-		addTableRow(tableID,nextRowIndex,"rowContainerWeightCapacity","<th><label for='ContainterWeightCapacity'>Weight Capacity</label></th><td><input type='number' id='ContainterWeightCapacity' name='ContainterWeightCapacity' min=0>lbs.</td>");
+		addTableRow(tableID,nextRowIndex,"rowContainerFluidVolumeCapacity","<th><label for='ContainterFluidVolumeCapacity'>Fluid Volume Capacity:</label></th><td><input type='number' id='ContainterFluidVolumeCapacity' name='ContainterFluidVolumeCapacity' min=0 style='width:35px'><select id='ContainterFluidVolumeCapacityUnits' name='ContainterFluidVolumeCapacityUnits'><option value='ounce'>Ounces</option><option value='pint'>Pints</option><option value='gallon'>Gallons</option><option value='milliliter'>Milliliters</option><option value='liter'>Liters</option></select><input type='checkbox' id='isContainterFluidVolumeCapacity' name='isContainterFluidVolumeCapacity' onchange='toggleFieldEnabled(["+'"ContainterFluidVolumeCapacity","ContainterFluidVolumeCapacityUnits"],"isContainterFluidVolumeCapacity"'+")'>No Fluids</td>");
 		nextRowIndex++;
 
-		addTableRow(tableID,nextRowIndex,"rowContainerVolumeCapacity","<th><label for='ContainterVolumeCapacity'>Volume Capacity</label></th><td><input type='number' id='ContainterVolumeCapacity' name='ContainterVolumeCapacity' min=0></td>");
-		nextRowIndex++;
+		//TODO: Add bag of holding weight limitation stuff here
 	}
 	else if(ObjectType == "Hazard" || ObjectType == "Trap"){
 		document.getElementById("isWearable").checked = false;

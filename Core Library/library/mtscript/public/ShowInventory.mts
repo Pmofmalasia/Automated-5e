@@ -13,7 +13,7 @@
 
 [h,foreach(tempItem,CurrentInventory),CODE:{
 	[h:tempDisplayName = json.get(tempItem,"DisplayName")]
-	[h,if(length(tempDisplayName) > 15): tempDisplayName = "<span title='"+tempDisplayName+"'>"+substring(tempDisplayName,0,12)+"...</span>"]
+	[h,if(length(tempDisplayName) > 21): tempDisplayName = "<span title='"+tempDisplayName+"'>"+substring(tempDisplayName,0,18)+"...</span>"]
 
 	[h:tempNumber = json.get(tempItem,"Number")]
 	[h:tempWeight = json.get(tempItem,"Weight")]

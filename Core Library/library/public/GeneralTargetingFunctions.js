@@ -1,4 +1,6 @@
-function createTargetingRows(tableID,startRowID){
+//Note: This depends on some functions in CreateSubeffect.js
+
+async function createTargetingRows(tableID,startRowID){
 	let nextRowIndex = document.getElementById(startRowID).rowIndex;
 
 	addTableRow(tableID,nextRowIndex,"Range","<th><label for='RangeType'>Range Type:</label></th><td><select id='RangeType' name='RangeType' onchange='createRangeTable("+'"'+tableID+'"'+")'><option value='Self'>Self</option><option value='SelfRanged'>Self with Range</option><option value='Touch'>Touch</option><option value='Ranged'>Ranged</option><option value='UnlimitedRange'>Unlimited Range</option></td>");
@@ -7,11 +9,13 @@ function createTargetingRows(tableID,startRowID){
 	addTableRow(tableID,nextRowIndex,"AoE","<th><label for='aoeShape'>Area of Effect Shape:</label></th><td><select id='aoeShape' name='aoeShape' onchange='createAoETable("+'"'+tableID+'"'+",1)'><option value='None'>None</option><option value='Cone'>Cone</option><option value='Cube'>Cube</option><option value='Cylinder'>Cylinder</option><option value='Half Sphere'>Half Sphere</option><option value='Line'>Line</option><option value='Panels'>Panels</option><option value='Sphere'>Sphere</option><option value='Wall'>Wall</option><option value='Choose'>Multiple Options</option></td>");
 	nextRowIndex++;
 
-	addTableRow(tableID,nextRowIndex,"rowTargetNumber","<th><label for='TargetNumber'>Maximum Number of Targets:</label></th><td><input type='number' id='TargetNumber' name='TargetNumber' value=1 min=1 style='width:25px'><input type='checkbox' id='isTargetNumberUnlimited' name='isTargetNumberUnlimited' value=1 onchange='createTargetNumberToggle()'>Unlimited</td>");
+	addTableRow(tableID,nextRowIndex,"rowTargetNumber","<th><label for='TargetNumber'>Maximum Number of Targets:</label></th><td><input type='number' id='TargetNumber' name='TargetNumber' value=1 min=1 style='width:25px'><input type='checkbox' id='isTargetNumberUnlimited' name='isTargetNumberUnlimited' value=1 onchange='createTargetNumberToggle("+'"'+tableID+'"'+")'>Unlimited</td>");
 	nextRowIndex++;
 
 	if(checkEffectType()=="Spell"){
-		addTableRow(tableID,nextRowIndex,"rowTargetNumberAHL","<th><label for='TargetNumberAHL'>Increased Target Number AHL:</label></th><td><input type='number' id='TargetNumberAHL' name='TargetNumberAHL' value=0 min=0 style='width:25px'><select id='TargetNumberAHLScaling' name='TargetNumberAHLScaling'><option value='0'>No Increase</option><option value='1'>Every Level</option><option value='2'>Every Other Level</option><option value='3'>Every Three Levels</option></select></td>");
+		let TargetNumberAHLScalingSelect = await createAHLSelect("TargetNumberAHLScaling");
+
+		addTableRow(tableID,nextRowIndex,"rowTargetNumberAHL","<th><label for='TargetNumberAHL'>Increased Target Number AHL:</label></th><td><input type='number' id='TargetNumberAHL' name='TargetNumberAHL' value=0 min=0 style='width:25px'>"+TargetNumberAHLScalingSelect+"</td>");
 		nextRowIndex++;		
 	}
 
@@ -21,7 +25,7 @@ function createTargetingRows(tableID,startRowID){
 	addTableRow(tableID,nextRowIndex,"rowMultitargetDistance","<tr id='rowMultitargetDistance'><th><label for='MultitargetDistance'>Maximum Distance Between Targets:</label></th><td><input type='number' id='MultitargetDistance' name='MultitargetDistance' value=5 min=0 style='width:25px' disabled><input type='checkbox' id='isMultitargetDistanceUnlimited' name='isMultitargetDistanceUnlimited' value=1 checked onchange='toggleFieldEnabled("+'"MultitargetDistance","isMultitargetDistanceUnlimited"'+")'>Same as Overall Range</td></tr>");
 	nextRowIndex++;
 
-	addTableRow(tableID,nextRowIndex,"Missiles","<th><label for='isMissiles'>Is it a Missile Effect?</label></th><td><input type='checkbox' id='isMissiles' name='isMissiles' value=1></td>");
+	addTableRow(tableID,nextRowIndex,"rowMissiles","<th><label for='isMissiles'>Is it a Missile Effect?</label></th><td><input type='checkbox' id='isMissiles' name='isMissiles' onchange='createMissilesRows("+'"'+tableID+'"'+")'></td>");
 	nextRowIndex++;
 
 	addTableRow(tableID,nextRowIndex,"rowTargetCover","<th><label for='MaxCover'>Most Cover Target Can Be Behind:</th><td><select name='MaxCover' id='MaxCover'><option value='None'>None</option><option value='Half'>Half</option><option value='ThreeQuarters' selected>Three-Quarters</option><option value='Full'>Full</option></select></td>");
@@ -294,7 +298,7 @@ async function createAoETable(tableID,whichShape){
 	}
 }
 
-async function createTargetNumberToggle(){
+async function createTargetNumberToggle(tableID){
 	let table = document.getElementById(tableID);
 
 	if(document.getElementById("isTargetNumberUnlimited").checked){
@@ -314,6 +318,27 @@ async function createTargetNumberToggle(){
 		}
 
 		document.getElementById("TargetNumber").removeAttribute("disabled","");
+	}
+}
+
+async function createMissilesRows(tableID){
+	if(document.getElementById("isMissiles").checked){
+		let nextRowIndex = document.getElementById("rowMissiles").rowIndex + 1;
+
+		addTableRow(tableID,nextRowIndex,"rowMissileNumber","<th><label for='MissileNumber'>Number of Missiles:</label></th><td><input type='number' id='MissileNumber' name='MissileNumber' value=1 min=1 style='width:25px'></td>");
+		nextRowIndex++;
+
+		if(checkEffectType()=="Spell"){
+			let MissilesAHLSelect = await createAHLSelect("MissilesAHLScaling");
+			addTableRow(tableID,nextRowIndex,"rowMissilesAHL","<th><label for='MissileNumberAHL'>Additional Missiles At Higher Levels:</label></th><td><input type='number' id='MissileNumberAHL' name='MissileNumberAHL' value=1 min=0 style='width:25px'>"+MissilesAHLSelect+"</td>");
+			nextRowIndex++;
+		}
+
+		addTableRow(tableID,nextRowIndex,"rowMissileSameDamageRoll","<th><label for='isMissileSameDamageRoll'>Same Damage Roll for Each Missile?</label></th><td><select id='isMissileSameDamageRoll' name='isMissileSameDamageRoll'><option value=''>Use Default Rules</option><option value='1'>Same Damage Roll</option><option value='0'>Different Damage Rolls</option></select></td>");
+		nextRowIndex++;
+	}
+	else{
+		clearUnusedTable(tableID,"rowMissiles","rowTargetCover");
 	}
 }
 

@@ -367,6 +367,18 @@
 		[h:ab.AtrPreChoices = json.set(ab.AtrPreChoices,"AllOrOne",ab.AttrPrereqCount)]
 		[h:ab.PrereqsFinal = json.set(ab.PrereqsFinal,"Attributes",ab.AtrPreChoices)]
 	};{}]
+
+	[h,if(ab.SpellPrereq),CODE:{
+		[h:abort(input(
+			" junkVar | ---------------------- Spellcasting Prerequisite Info ---------------------- |  | LABEL | SPAN=TRUE ",
+			" ab.AnySpellcasting |  | Requires the ability to cast any spell |  CHECK ",
+			" ab.SpecificSpell |  | Requires the ability to cast a specific spell |  CHECK "
+		))]
+
+		[h,if(ab.AnySpellcasting): ab.PrereqsFinal = json.set(ab.PrereqsFinal,"Spellcasting","Any")]
+		[h,if(ab.SpecificSpell): ab.PrereqsFinal = json.set(ab.PrereqsFinal,"SpecificSpell","Any")]
+	};{}]
+
 	[h:ab.Final = json.set(ab.Final,"Prereqs",ab.PrereqsFinal)]
 };{}]
 
@@ -447,7 +459,7 @@
 	" ab.Spells | 0 | Affects spells | CHECK ",
 	" ab.OtherAbilities | 0 | Affects other features | CHECK ",
 	" ab.OtherConditions | 0 | Affects conditions you have set on others | CHECK ",
-	" ab.Targeting | 0 | Affects ability to target you | CHECK ",
+	" ab.Targeting | 0 | Affects ability to target creatures | CHECK ",
 	" ab.WhenTargeted | 0 | Effect triggers when you are targeted | CHECK ",
 	" ab.UseTime | 0 | Affects time required to use abilities | CHECK ",
 	" ab.ChangePrereqs | 0 | Affects requirements for other features to be activated | CHECK ",
@@ -930,7 +942,17 @@
 	}]
 }]
 
-[h,if(ab.Targeting): ab.Final = json.set(ab.Final,"CallTargeting",1)]
+[h,if(ab.Targeting),CODE:{
+	[h:abort(input(
+		" junkVar | Choose triggers affecting targeting | 0 | LABEL | SPAN=TRUE ",
+		" junkVar | ------------------------------------------------------------ | 0 | LABEL | SPAN=TRUE ",
+		" ab.TargetFilter | | You targeting others | CHECK ",
+		" ab.TargetFilterTargeted | | Others targeting you | CHECK "
+	))]
+
+	[h,if(ab.TargetFilter): ab.Final = json.set(ab.Final,"CallTargetFilter",1)]
+	[h,if(ab.TargetFilterTargeted): ab.Final = json.set(ab.Final,"CallTargetFilterTargeted",1)]
+};{}]
 
 [h,if(ab.WhenTargeted),CODE:{
 	[h:abort(input(

@@ -38,13 +38,43 @@
 [h:PrimeStat = if(wa.MeleeRanged=="Ranged","Dexterity","Strength")]
 [h,if(json.get(wa.WeaponUsed,"PrimeStat")!=""): PrimeStat = json.get(wa.WeaponUsed,"PrimeStat")]
 
+[h:BorderColorOverride=json.get(macro.args,"BorderColorOverride")]
+[h:TitleFontColorOverride=json.get(macro.args,"TitleFontColorOverride")]
+[h:TitleFont=json.get(macro.args,"TitleFont")]
+[h:BodyFont=json.get(macro.args,"BodyFont")]
+[h:tooltipDisplaySizeOverride=json.get(macro.args,"tooltipDisplaySizeOverride")]
 [h:pm.TooltipVars()]
 
 [h:TooltipPermissions=if(or(DMOnly==0,isGM()),1,0)]
 
-[r,if(Frame.tooltip && TooltipPermissions),CODE:{
-	[r,frame5("Ability Info"):{
-		[r:'<html><div style="background-color: '+if(BorderColorOverride=="","#000000",BorderColorOverride)+'; color: '+if(TitleFontColorOverride=="","#FFFFFF",TitleFontColorOverride)+'; padding-top:2px; padding-bottom:10px; padding-left:8px; padding-right:8px; font-family:'+TitleFont.tooltip+'; "><b>Current Weapon</b> - '+json.get(wa.WeaponUsed,"Name")+'<div style="background-color:'+BodyBackgroundFinal.tooltip+'; color: '+BodyTextFinal.tooltip+'; padding:2px; font-family:'+BodyFont.tooltip+';"><table style="font-size:1em; color: '+BodyTextFinal.tooltip+';"><tr><th style="'+FrameAccentFormat+'"><b>To Hit</b> '+VerticalFormat+'+'+(getProperty("a5e.stat.Proficiency")+PrimeStat)+'</td></tr><tr><th style="'+FrameAccentFormat+'"><b>'+json.get(wa.WeaponUsed,"DamageType")+' Damage</b>'+VerticalFormat+json.get(wa.WeaponUsed,"DamageDieNumber")+"d"+json.get(wa.WeaponUsed,"DamageDieSize")+'</td></tr><tr><th style="'+FrameAccentFormat+'"><b>'+if(wa.MeleeRanged=="Ranged","Range","Reach")+'</b>'+VerticalFormat+if(wa.MeleeRanged=="Ranged",json.get(wa.WeaponUsed,"Range")+"/"+json.get(wa.WeaponUsed,"LongRange"),json.get(wa.WeaponUsed,"Reach"))+'</td></tr></div></div></html>']}]
-};{}]
+[h:abilityTable = "[]"]
 
-[r,if(Mouseover.tooltip && TooltipPermissions),CODE:{[r:'<html><div style="background-color: '+if(BorderColorOverride=="","#000000",BorderColorOverride)+'; color: '+if(TitleFontColorOverride=="","#FFFFFF",TitleFontColorOverride)+'; padding-top:2px; padding-bottom:10px; padding-left:8px; padding-right:8px; font-family:'+TitleFont.tooltip+'; '+width.Setting+'"><b>Current Weapon</b> - '+json.get(WeaponData,"Name")+'<div style="background-color:'+BodyBackgroundFinal.tooltip+'; color: '+BodyTextFinal.tooltip+'; padding:2px; font-family:'+BodyFont.tooltip+';"><table style="font-size:1em; color: '+BodyTextFinal.tooltip+';"><tr><th style="'+AccentFormat+'"><b>To Hit</b> '+VerticalFormat+'+'+(getProperty("a5e.stat.Proficiency")+PrimeStat)+'</td></tr><tr><th style="'+AccentFormat+'"><b>'+json.get(WeaponData,"DamageType")+' Damage</b>'+VerticalFormat+json.get(WeaponData,"DamageDie")+'</td></tr>'+if(json.get(WeaponData,"SecDamageDie")=="0","","<tr><th style='"+AccentFormat+"'><b>"+json.get(WeaponData,"SecDamageType")+" Damage</b>"+VerticalFormat+json.get(WeaponData,"SecDamageDie")+"</td></tr>")+'<tr><th style="'+AccentFormat+'"><b>Range</b>'+VerticalFormat+'5</td></tr></div></div></html>']};{}]
+[h:abilityTable = json.append(abilityTable,json.set("",
+	"ShowIfCondensed",1,
+	"Header","To Hit",
+	"FullContents","",
+	"RollContents","",
+	"RulesContents","+"+(getProperty("a5e.stat.Proficiency")+json.get(getProperty("a5e.stat.AtrMods"),PrimeStat)),
+	"DisplayOrder","['Rules','Roll','Full']"
+))]
+
+[h,foreach(damageInstance,json.get(wa.WeaponUsed,"WeaponDamage")): 
+	abilityTable = json.append(abilityTable,json.set("",
+		"ShowIfCondensed",1,
+		"Header",json.get(damageInstance,"DamageType")+" Damage",
+		"FullContents","",
+		"RollContents","",
+		"RulesContents",json.get(damageInstance,"DamageDieNumber")+"d"+json.get(damageInstance,"DamageDieSize")+if(json.get(damageInstance,"IsModBonus") == 1," + "+json.get(getProperty("a5e.stat.AtrMods"),PrimeStat),""),
+		"DisplayOrder","['Rules','Roll','Full']"
+))]
+
+[h:abilityTable = json.append(abilityTable,json.set("",
+	"ShowIfCondensed",1,
+	"Header",if(wa.MeleeRanged=="Ranged","Range","Reach"),
+	"FullContents","",
+	"RollContents","",
+	"RulesContents",if(wa.MeleeRanged=="Ranged",json.get(wa.WeaponUsed,"Range")+"/"+json.get(wa.WeaponUsed,"LongRange"),json.get(wa.WeaponUsed,"Reach")),
+	"DisplayOrder","['Rules','Roll','Full']"
+))]
+
+[h:macro.return = json.set("","Table",abilityTable,"Description",json.get(wa.WeaponUsed,"Description"))]

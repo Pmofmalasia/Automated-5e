@@ -402,8 +402,6 @@
 
 [h:pm.PassiveFunction("AfterSpell")]
 
-[h:SpellDescriptionData = json.set(NonSpellData,"Description",CompleteSpellDescription,"SpellDisplayName",SpellDisplayName,"ForcedLevel",sLevelSelect)]
-
 [h,if(IsCantrip),CODE:{};{
 	[h,switch(json.get(sLevelSelectData,"ResourceType")),CODE:
 		case "Spell Slots":{
@@ -417,6 +415,7 @@
 	]
 }]
 
+[h:SpellDescriptionData = json.set(NonSpellData,"Description",CompleteSpellDescription,"SpellDisplayName",SpellDisplayName,"ForcedLevel",sLevelSelect,"Source",sSource)]
 [h:sDescriptionLink = macroLinkText("spellDescription@Lib:pm.a5e.Core",if(DMOnly,"gm","all"),SpellDescriptionData,ParentToken)]
 [h:SpellDescriptionFinal = if(sRulesShow==0,"<a style='color:"+LinkColor+";' href='"+sDescriptionLink+"'>Click to show full spell text</a>",CompleteSpellDescription)]
 

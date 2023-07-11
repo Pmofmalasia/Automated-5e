@@ -184,11 +184,11 @@ async function createMitigationTable(){
 		nextMitigationRowIndex++;
 
 		if(checkEffectType() == "Spell"){
-			addTableRow(tableID,nextMitigationRowIndex,"rowSaveDCMethod","<th><label for='SaveDCMethod'>Method of Choosing Save DC:</label></th><select id='SaveDCMethod' name='SaveDCMethod' onchange='createSaveDCMethodRow("+'"'+tableID+'"'+")'><option value='Stat'>Stat-Based</option><option value='SpellAttack'>Spell Attack Bonus</option><option value='SetValue'>Preset Value</option></select></td>");
+			addTableRow(tableID,nextMitigationRowIndex,"rowSaveDCMethod","<th><label for='SaveDCMethod'>Method of Choosing Save DC:</label></th><select id='SaveDCMethod' name='SaveDCMethod' onchange='createSaveDCMethodRow("+'"'+tableID+'"'+")'><option value='Stat'>Stat-Based</option><option value='SpellSave'>Spell Attack Bonus</option><option value='SetValue'>Preset Value</option></select></td>");
 			nextMitigationRowIndex++;
 
 			document.getElementById("rowSaveDCMethod").setAttribute("hidden","");
-			document.getElementById("SaveDCMethod").value = "SpellAttack";
+			document.getElementById("SaveDCMethod").value = "SpellSave";
 		}
 		else{
 			addTableRow(tableID,nextMitigationRowIndex,"rowSaveDCMethod","<th><label for='SaveDCMethod'>Method of Choosing Save DC:</label></th><select id='SaveDCMethod' name='SaveDCMethod' onchange='createSaveDCMethodRow("+'"'+tableID+'"'+")'><option value='Stat'>Stat-Based</option><option value='SpellAttack'>Spell Attack Bonus</option><option value='SetValue'>Preset Value</option></select></td>");
@@ -199,6 +199,9 @@ async function createMitigationTable(){
 		}
 
 		addTableRow("CreateSubeffectTable",nextMitigationRowIndex,"rowIsConditionalAdvantage","<th>Conditional (Dis)advantage:</th><input type='checkbox' id='isConditionalSaveAdvantage' name='isConditionalSaveAdvantage' onchange='createConditionalSaveAdvantageRows()'></td>");
+		nextMitigationRowIndex++;
+
+		addTableRow("CreateSubeffectTable",nextMitigationRowIndex,"rowIsChooseFailure","<th>Can Choose to Fail:</th><input type='checkbox' id='isChooseFailure' name='isChooseFailure'></td>");
 		nextMitigationRowIndex++;
 
 		if(document.getElementById("isDamage").checked){
@@ -322,6 +325,9 @@ async function createAHLSelect(ahlSelectID){
 		else{
 			ahlSelectHTML = "<select id='"+ahlSelectID+"' name='"+ahlSelectID+"'><option value='0'>No Increase</option><option value='1'>Every Level</option><option value='2'>Every Other Level</option><option value='3'>Every Three Levels</option></select>";
 		}
+	}
+	else{
+		ahlSelectHTML = "<select id='"+ahlSelectID+"' name='"+ahlSelectID+"'><option value='0'>No Increase</option><option value='1'>Every Level</option><option value='2'>Every Other Level</option><option value='3'>Every Three Levels</option></select>";		
 	}
 	return ahlSelectHTML;
 }

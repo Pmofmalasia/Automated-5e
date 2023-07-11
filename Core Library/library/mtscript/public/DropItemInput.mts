@@ -8,7 +8,7 @@
 [h:abort(input(
 	" dropChoice | "+ItemDropOptions+" | Item to Drop | LIST | DELIMITER=JSON ",
 	" dropNumber | 1 | Number to Drop ",
-	" isLeaveToken |  | Leave Behind Token | CHECK "
+	" isLeaveToken | 1 | Leave Behind Token | CHECK "
 ))]
 [h:assert(isNumber(dropNumber),"You need to input a number!")]
 

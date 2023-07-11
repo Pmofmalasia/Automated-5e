@@ -5,6 +5,7 @@
 [h:a5e.UnifiedAbilities = a5e.GatherAbilities(ParentToken)]
 [h:pm.a5e.OverarchingContext = "Attack"]
 [h:pm.a5e.EffectData = "[]"]
+[h:pm.a5e.LinkedEffectData = "[]"]
 
 [h:ActiveHand = json.get(wa.Data,"Hand")]
 [h:OtherHands = "[]"]

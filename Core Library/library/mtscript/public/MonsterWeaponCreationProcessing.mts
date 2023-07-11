@@ -3,6 +3,8 @@
 [h:ParentToken = json.get(MonsterWeaponData,"ParentToken")]
 [h:switchToken(ParentToken)]
 
+[h:MonsterWeaponData = json.set(MonsterWeaponData,"Name",pm.RemoveSpecial(json.get(MonsterWeaponData,"DisplayName")))]
+
 [h,if(json.get(MonsterWeaponData,"WeaponType")=="@@NewType"),CODE:{
 	[h:MonsterWeaponData = json.set(MonsterWeaponData,"WeaponType",pm.RemoveSpecial(json.get(MonsterWeaponData,"NewTypeName")))]
 	[h:MonsterWeaponData = json.remove(MonsterWeaponData,"NewTypeName")]

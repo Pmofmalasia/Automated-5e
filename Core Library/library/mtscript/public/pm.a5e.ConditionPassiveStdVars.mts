@@ -1,7 +1,7 @@
 [h:cond.abilityName = pm.RemoveSpecial(cond.abilityName)]
 [h:cond.abilitySubclass = pm.RemoveSpecial(cond.abilitySubclass)]
 [h:cond.Context = arg(0)]
-[h:cond.Info = json.get(json.path.read(getProperty("a5e.stat.ConditionList"),"[?(@.Name=='"+cond.abilityName+"' && @.Class=='"+cond.abilityClass+"' && @.Subclass=='"+cond.abilitySubclass+"' && @.IsActive>0)]"),0)]
+[h:cond.Info = pass.abilityInfo]
 [h:cond.Library = json.get(cond.Info,"Library")]
 
 [h:cond.DisplayObject = json.get(cond.Info,"Settings")]
@@ -25,6 +25,7 @@
 [h:cond.ShowFullRules=if(IsTooltip,1,if(cond.ShowFullRulesOverride=="",if(number(getLibProperty("ChatIndividual","Lib:pm.a5e.Core")),getProperty("a5e.stat.FullAbilityRules"),getLibProperty("FullAbilityRules","Lib:pm.a5e.Core")),cond.ShowFullRulesOverride))]
 
 [h:cond.SetBy = json.get(cond.Info,"SetBy")]
+[h:cond.OnItem = json.get(cond.Info,"ItemID")]
 [h:cond.abilityInfo = json.set(cond.Info,
 	"DisplayName",cond.abilityDisplayName,
 	"Tooltip",IsTooltip,

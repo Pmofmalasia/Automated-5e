@@ -20,4 +20,20 @@
 
 [h,MACRO("ExecuteEffectBorder@Lib:pm.a5e.Core"): json.set(UseItemData,"Effect",ChosenEffect)]
 
+[h,if(json.get(UseItemData,"isConsumable")),CODE:{
+	[h:AmountConsumed = 1]
+	[h:ItemID = json.get(UseItemData,"ItemID")]
+	[h:NewNumber = json.get(UseItemData,"Number") - AmountConsumed]
+	[h:NewInventory = json.path.set(getProperty("a5e.stat.Inventory"),"[*][?(@.ItemID == '"+ItemID+"')]['Number']",NewNumber)]
+	[h:setProperty("a5e.stat.Inventory",NewInventory)]
+
+	[h,if(json.get(UseItemData,"ContainerLeftBehind") != ""),CODE:{
+		[h,MACRO("AddItemProcessing@Lib:pm.a5e.Core"): json.set("",
+			"ParentToken",json.get(UseItemData,"ParentToken"),
+			"ItemChoice",json.get(UseItemData,"ContainerLeftBehind"),
+			"NumberAdded",AmountConsumed
+		)]
+	}]
+};{}]
+
 [h,MACRO("ShowInventory@Lib:pm.a5e.Core"): json.set("","ParentToken",json.get(UseItemData,"ParentToken"))]

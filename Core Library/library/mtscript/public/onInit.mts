@@ -40,6 +40,7 @@
 [h:defineFunction("a5e.AC","a5e.AC@Lib:pm.a5e.Core")]
 [h:defineFunction("a5e.AttributeCalc","a5e.AttributeCalc@Lib:pm.a5e.Core")]
 [h:defineFunction("a5e.CastingLevel","a5e.CastingLevel@Lib:pm.a5e.Core")]
+[h:defineFunction("stat.a5e.CarryCapacity","stat.a5e.CarryCapacity@Lib:pm.a5e.Core")]
 [h:defineFunction("a5e.DamageMod","a5e.DamageMod@Lib:pm.a5e.Core")]
 [h:defineFunction("a5e.DamageModDisplay","a5e.DamageModDisplay@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.a5e.ConditionImmunities","pm.a5e.ConditionImmunities@Lib:pm.a5e.Core")]
@@ -69,6 +70,7 @@
 [h:defineFunction("pm.a5e.FeatureEffectTargeting","pm.a5e.FeatureEffectTargeting@Lib:pm.a5e.Core",0,0)]
 [h:defineFunction("pm.a5e.FeatureSpecificEffect","pm.a5e.FeatureSpecificEffect@Lib:pm.a5e.Core",0,0)]
 [h:defineFunction("pm.a5e.FeatureEffectFiltering","pm.a5e.FeatureEffectFiltering@Lib:pm.a5e.Core",0,0)]
+[h:defineFunction("pm.a5e.FeatureObjectTargeting","pm.a5e.FeatureObjectTargeting@Lib:pm.a5e.Core",0,0)]
 [h:defineFunction("pm.a5e.FeatureDamage","pm.a5e.FeatureDamage@Lib:pm.a5e.Core",0,0)]
 [h:defineFunction("pm.a5e.FeatureDamageRoll","pm.a5e.FeatureDamageRoll@Lib:pm.a5e.Core",0,0)]
 

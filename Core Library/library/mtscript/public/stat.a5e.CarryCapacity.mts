@@ -1,3 +1,8 @@
+[h:ParentToken = json.get(arg(0),"ParentToken")]
+[h:a5e.UnifiedAbilities = a5e.GatherAbilities(ParentToken)]
+[h:pm.a5e.OverarchingContext = "Stats"]
+[h:IsTooltip = 0]
+
 [h:BaseCarryStrength = json.get(getProperty("a5e.stat.Attributes"),"Strength")]
 [h:BaseCarrySize = getSize()]
 [h:BaseCarryBonus = 0]
@@ -19,3 +24,5 @@
 
 [h:FinalMaxCarryWeight = BaseCarryStrength * 15 * BaseSizeMultiplier]
 [h:FinalMaxPushWeight = BaseCarryStrength * 30 * BaseSizeMultiplier]
+
+[h:return(0,json.set("","Carry",FinalMaxCarryWeight,"Push",FinalMaxPushWeight))]

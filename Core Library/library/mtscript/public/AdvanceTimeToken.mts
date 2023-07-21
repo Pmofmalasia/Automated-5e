@@ -22,7 +22,30 @@
 	[h:ConditionsExpired = json.unique(json.path.read(getProperty("a5e.stat.ConditionList"),"[*][?(@.Duration.Expired==1)]['GroupID']"))]
 
 	[h,if(json.isEmpty(ConditionsExpired)),CODE:{};{
-		[h,MACRO("EndCondition@Lib:pm.a5e.Core"): json.set("","GroupID",ConditionsExpired,"ParentToken",tempToken)]
+		[h,MACRO("EndCondition@Lib:pm.a5e.Core"): json.set("","GroupID",ConditionsExpired,"Target",tempToken)]
+		[h:thisTokenNewTableLines = json.merge(thisTokenNewTableLines,json.get(macro.return,"Table"))]
+	}]
+
+	[h:ItemsWtihConditions = json.path.read(getProperty("a5e.stat.Inventory"),"[*][?(@.ItemConditions != null && @.ItemConditions != '')]","DEFAULT_PATH_LEAF_TO_NULL")]
+	[h:AdjustedItems = "[]"]
+	[h:ExpiredItems = "[]"]
+	[h,foreach(item,ItemsWtihConditions),CODE:{
+		[h:UpdatedItem = item]
+		[h:thisItemConditions = json.get(item,"ItemConditions")]
+		[h:itemConditionsWithDuration = "[]"]
+		[h,foreach(tempItemCondition,thisItemConditions),if(json.get(tempItemCondition,"Duration") != ""): itemConditionsWithDuration = json.append(itemConditionsWithDuration,tempItemCondition)]
+		[h,foreach(tempItemCondition,itemConditionsWithDuration): UpdatedItem = json.path.set(UpdatedItem,"['ItemConditions'][?(@.GroupID =='"+json.get(tempItemCondition,"GroupID")+"')]['Duration']",pm.a5e.AdvanceTime(json.set(TimeAdvancedData,"Duration",json.get(tempItemCondition,"Duration"))))]
+
+		[h:setProperty("a5e.stat.Inventory",json.path.set(getProperty("a5e.stat.Inventory"),"[*][?(@.ItemID == '"+json.get(UpdatedItem,"ItemID")+"')]",UpdatedItem))]		
+		[h:AdjustedItems = json.append(AdjustedItems,UpdatedItem)]
+
+		[h:AnyExpiredTest = !json.isEmpty(json.path.read(UpdatedItem,"['ItemConditions'][*][?(@.Duration.Expired == 1)]"))]
+		[h,if(AnyExpiredTest): ExpiredItems = json.append(ExpiredItems,UpdatedItem)]
+	}]
+
+	[h,foreach(item,ExpiredItems),CODE:{
+		[h:thisItemConditionsExpired = json.path.read(item,"['ItemConditions'][?(@.Duration.Expired == 1)]['GroupID']")]
+		[h,MACRO("EndCondition@Lib:pm.a5e.Core"): json.set("","GroupID",thisItemConditionsExpired,"Target",json.set(item,"HeldBy",tempToken))]
 		[h:thisTokenNewTableLines = json.merge(thisTokenNewTableLines,json.get(macro.return,"Table"))]
 	}]
 

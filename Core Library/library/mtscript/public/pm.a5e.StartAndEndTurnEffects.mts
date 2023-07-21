@@ -50,7 +50,7 @@
 }]
 
 [h,if(json.isEmpty(pm.ConditionsExpired)),CODE:{};{
-	[h,MACRO("EndCondition@Lib:pm.a5e.Core"): json.set("","GroupID",pm.ConditionsExpired,"ParentToken",ParentToken)]
+	[h,MACRO("EndCondition@Lib:pm.a5e.Core"): json.set("","GroupID",pm.ConditionsExpired,"Target",ParentToken)]
 	[h:abilityTable = json.merge(abilityTable,json.get(macro.return,"Table"))]
 }]
 
@@ -77,7 +77,7 @@
 	[h:switchToken(target)]
 	[h:pm.ConditionsExpired = json.unique(json.path.read(getProperty("a5e.stat.ConditionList"),"[*][?(@.Duration.Expired==1)]['GroupID']"))]
 	[h,if(json.isEmpty(pm.ConditionsExpired)),CODE:{};{
-		[h,MACRO("EndCondition@Lib:pm.a5e.Core"): json.set("","GroupID",pm.ConditionsExpired,"ParentToken",target)]
+		[h,MACRO("EndCondition@Lib:pm.a5e.Core"): json.set("","GroupID",pm.ConditionsExpired,"Target",target)]
 		[h:setConditionsRemoved = json.merge(setConditionsRemoved,json.get(macro.return,"Removed"))]
 	}]
 }]

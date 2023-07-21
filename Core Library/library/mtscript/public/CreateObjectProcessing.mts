@@ -84,7 +84,27 @@
 }]
 
 [h,if(objectType=="Container"),CODE:{
+	[h,if(!json.contains(objectData,"isContainterSolidVolumeCapacity")),CODE:{
+		[h:objectData = json.set(objectData,"SolidCapacity",json.set("",
+			"Value",json.get(objectData,"ContainterSolidVolumeCapacity"),
+			"Units",json.get(objectData,"ContainterSolidVolumeCapacityUnits")
+		))]
+	};{}]
+	[h:objectData = json.remove(objectData,"isContainterSolidVolumeCapacity")]
+	[h:objectData = json.remove(objectData,"ContainterSolidVolumeCapacity")]
+	[h:objectData = json.remove(objectData,"ContainterSolidVolumeCapacityUnits")]
 
+	[h,if(!json.contains(objectData,"isContainterFluidVolumeCapacity")),CODE:{
+		[h:objectData = json.set(objectData,"FluidCapacity",json.set("",
+			"Value",json.get(objectData,"ContainterFluidVolumeCapacity"),
+			"Units",json.get(objectData,"ContainterFluidVolumeCapacityUnits")
+		))]
+	};{}]
+	[h:objectData = json.remove(objectData,"isContainterFluidVolumeCapacity")]
+	[h:objectData = json.remove(objectData,"ContainterFluidVolumeCapacity")]
+	[h:objectData = json.remove(objectData,"ContainterFluidVolumeCapacityUnits")]
+
+	[h:objectData = json.set(objectData,"isContainerIgnoreWeight",json.contains(objectData,"isContainerIgnoreWeight"))]
 };{}]
 
 [h:objectData = json.set(objectData,"isMagical",json.contains(objectData,"isMagical"))]
@@ -127,6 +147,8 @@
 	}
 ]
 [h:objectData = json.remove(objectData,"isNonstandardEquip")]
+
+[h:objectData = json.remove(objectData,"isLeaveBehindContainer")]
 
 [h,if(json.contains(objectData,"isActivatable")),CODE:{
 	[h:objectData = json.set(objectData,"isActivatable",json.contains(objectData,"isActivatable"))]

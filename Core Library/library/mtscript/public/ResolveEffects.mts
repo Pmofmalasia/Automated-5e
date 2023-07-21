@@ -116,9 +116,11 @@
 	[h,if(json.type(tempTarget) == "OBJECT"),CODE:{
 		[h,if(json.get(tempTarget,"HeldBy") != ""): targetToken = json.get(tempTarget,"HeldBy")]
 		[h,if(json.get(tempTarget,"HeldBy") != ""): thisTokenDisplayName = getName(targetToken)+"'s "+json.get(tempTarget,"DisplayName")]
+		[h:targetDataKey = json.get(tempTarget,"ItemID") + "" + targetToken]
 	};{
 		[h:targetToken = tempTarget]
 		[h:thisTokenDisplayName = getName(targetToken)]
+		[h:targetDataKey = targetToken]
 	}]
 	[h:switchToken(targetToken)]
     [h:thisTokenInputDisplay = "junkVar | "+getTokenImage("",targetToken)+" | Resolving Effects on "+thisTokenDisplayName+" | LABEL | ICON=TRUE "]
@@ -165,7 +167,7 @@
 	[h,if(json.length(effTargets)>1):
 		abilityTable = json.append(abilityTable,json.set("",
 		"ShowIfCondensed",1,
-		"Header",token.name,
+		"Header",thisTokenDisplayName,
 		"FalseHeader","",
 		"FullContents","",
 		"RulesContents","",
@@ -180,7 +182,7 @@
 		[h:hitTarget = and(!attackCritFail,or(attackCrit,attackToHit >= attackACToHit))]
 		[h,if(json.get(thisTokenAttackData,"AdditionalAttackResolution")==""):
 			needsAdditionalAttackResolution = 1;
-			needsAdditionalAttackResolution = !json.contains(json.get(thisTokenAttackData,"AdditionalAttackResolution"),targetToken)
+			needsAdditionalAttackResolution = !json.contains(json.get(thisTokenAttackData,"AdditionalAttackResolution"),targetDataKey)
 		]
 		[h:ResolveOnHitEffects = needsAdditionalAttackResolution * hitTarget]
 		[h:ResolveOnMissEffects = needsAdditionalAttackResolution * !hitTarget]
@@ -244,7 +246,7 @@
 		[h,if(AdditionalAttackResolution): targetsWithAdditionalAttackResolution = json.append(targetsWithAdditionalAttackResolution,targetToken)]
 	};{}]
 
-	[h,if(thisTokenSaveDCData!=""): needsToSave = json.get(effSavesMadeData,targetToken)==""; needsToSave = 0]
+	[h,if(thisTokenSaveDCData!=""): needsToSave = json.get(effSavesMadeData,targetDataKey)==""; needsToSave = 0]
 
 	[h:"<!-- Wish this could be an if/else but CODE block limits say no -->"]
 	[h,switch((thisTokenSaveDCData!="")+""+(needsToSave)),CODE:
@@ -268,7 +270,7 @@
 
 			[h,MACRO("Save@Lib:pm.a5e.Core"): json.set("","Save",finalSaveType,"Type","Save","ParentToken",targetToken,"ID",effID)]
 			[h:SaveResult = macro.return]
-			[h:effSavesMadeData = json.set(effSavesMadeData,targetToken,SaveResult)]
+			[h:effSavesMadeData = json.set(effSavesMadeData,targetDataKey,SaveResult)]
 			[h:abilityTable = json.merge(abilityTable,json.get(SaveResult,"Table"))]
 
 			[h:SaveResultValue = json.get(SaveResult,"Value")]
@@ -288,7 +290,7 @@
 			[h,if(!ResolveAutoResultNow): AnyTargetNeedsFurtherResolution = 1]
 		};
 		case "10":{
-			[h:SaveResult = json.get(effSavesMadeData,targetToken)]
+			[h:SaveResult = json.get(effSavesMadeData,targetDataKey)]
 			[h:SaveResultValue = json.get(SaveResult,"Value")]
 			[h:autoResultTest = !isNumber(SaveResultValue)]
 			[h:SaveDCValue = json.get(thisTokenSaveDCData,"DC")]
@@ -324,7 +326,7 @@
 		default:{}
 	]
 
-	[h,if(thisTokenCheckDCData!=""): needsToCheck = json.get(effChecksMadeData,targetToken)==""; needsToCheck = 0]
+	[h,if(thisTokenCheckDCData!=""): needsToCheck = json.get(effChecksMadeData,targetDataKey)==""; needsToCheck = 0]
 
 	[h,switch((thisTokenCheckDCData!="")+""+(needsToCheck)),CODE:
 		case "11":{
@@ -348,7 +350,7 @@
 			[h:"<!-- TODO: Add ability to select output targets (DM only, everyone, roller + DM) here, likely through some default settings -->"]
 			[h,MACRO("Check@Lib:pm.a5e.Core"): json.set(finalCheckDCData,"ParentToken",targetToken,"ID",effID)]
 			[h:CheckResult = macro.return]
-			[h:effChecksMadeData = json.set(effChecksMadeData,targetToken,CheckResult)]
+			[h:effChecksMadeData = json.set(effChecksMadeData,targetDataKey,CheckResult)]
 			[h:abilityTable = json.merge(abilityTable,json.get(CheckResult,"Table"))]
 
 			[h:CheckResultValue = json.get(CheckResult,"Value")]
@@ -365,7 +367,7 @@
 		};
 		case "10":{
 			[h:"<!-- Separate storage format for contested checks is so that it can be recognized on the effect filtering side of things as a contested check; as well as retain data needed to modify the check setting the DC -->"]
-			[h:CheckResult = json.get(effChecksMadeData,targetToken)]
+			[h:CheckResult = json.get(effChecksMadeData,targetDataKey)]
 			[h:ContestedCheckTest = json.type(json.get(thisTokenCheckDCData,"DC")) == "OBJECT"]
 			[h,if(ContestedCheckTest):
 				CheckDCValue = json.get(json.get(thisTokenCheckDCData,"DC"),"Value");
@@ -408,10 +410,11 @@
 		[h:thisTokenConditionInfo = "[]"]
 		[h:thisTokenConditionModificationInfo = "{}"]
 	};{
-		[h:remainingTargetsList = json.difference(remainingTargetsList,json.append("",targetToken))]
+		[h:remainingTargetsList = json.difference(remainingTargetsList,json.append("",tempTarget))]
 	}]
 
-	[h,if(thisTokenDamageDealt!=""),CODE:{
+	[h:"<!-- TODO: Temporary bypass to not deal damage to held items. Will decide to change or keep. -->"]
+	[h,if(thisTokenDamageDealt!="" && json.type(tempTarget) == "UNKNOWN"),CODE:{
 		[h,MACRO("ChangeHP@Lib:pm.a5e.Core"): json.set("","DamageDealt",thisTokenDamageDealt,"IsCrit",attackCrit,"ParentToken",targetToken,"SourceToken",ParentToken)]
 		[h:abilityTable = json.merge(abilityTable,json.get(macro.return,"Table"))]
 		[h:DamageDealt = json.get(macro.return,"Damage")]
@@ -420,7 +423,7 @@
 	[h,foreach(conditionSet,thisTokenConditionInfo),CODE:{
 		[h,MACRO("ApplyCondition@Lib:pm.a5e.Core"): json.set(conditionSet,
 			"GroupID",effConditionGroupID,
-			"Target",targetToken,
+			"Target",tempTarget,
 			"SetBy",ParentToken
 		)]
 		[h:abilityTable = json.merge(abilityTable,json.get(macro.return,"Table"))]
@@ -428,16 +431,16 @@
 	}]
 
 	[h,if(!json.isEmpty(thisTokenConditionModificationInfo)),CODE:{
-		[h,MACRO("ModifyConditions@Lib:pm.a5e.Core"): json.set(thisTokenConditionModificationInfo,"Conditions",thisTokenTargetedConditions,"ParentToken",targetToken)]
+		[h,MACRO("ModifyConditions@Lib:pm.a5e.Core"): json.set(thisTokenConditionModificationInfo,"Conditions",thisTokenTargetedConditions,"Target",tempTarget)]
 		[h:abilityTable = json.merge(abilityTable,json.get(macro.return,"Table"))]
 	}]
 
 	[h,if(!needsFurtherResolution),CODE:{
 		[h,if(0): thisTargetLinkedEffects = json.path.read(LinkedEffects,"[*][?(@.RemainingTargets.[*] == '"+targetToken+"')]")]
-		[h:"<!-- BUGFIX json.path: Above statement can replace below loop once json.paths are fixed -->"]
+		[h:"<!-- BUGFIX json.path: Above statement or similar can replace below loop once json.paths are fixed -->"]
 
 		[h:thisTargetLinkedEffects = "[]"]
-		[h,foreach(tempLinkedEffect,LinkedEffects): thisTargetLinkedEffects = if(json.contains(json.get(tempLinkedEffect,"RemainingTargets"),targetToken),json.append(thisTargetLinkedEffects,tempLinkedEffect),thisTargetLinkedEffects)]
+		[h,foreach(tempLinkedEffect,LinkedEffects): thisTargetLinkedEffects = if(json.contains(json.get(tempLinkedEffect,"RemainingTargets"),tempTarget),json.append(thisTargetLinkedEffects,tempLinkedEffect),thisTargetLinkedEffects)]
 
 		[h:"<!-- TODO: Pass information about how much the attack hit by, save failed by, etc. -->"]
 		[h:NextEffectData = json.set("",
@@ -454,7 +457,7 @@
 			"DamageDealt",DamageDealt,
 			"ConditionsSet",ConditionsSet,
 			"Targets",effTargets,
-			"SpecificTargets",json.append("",targetToken),
+			"SpecificTargets",json.append("",tempTarget),
 			"LinkedEffects",thisTargetLinkedEffects
 		)]
 		[h,MACRO("ResolveLinkedEffectSingle@Lib:pm.a5e.Core"): NextEffectData]

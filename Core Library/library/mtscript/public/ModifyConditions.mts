@@ -1,13 +1,23 @@
 [h:ModifyConditionsData = macro.args]
 [h:ConditionGroupsToModify = json.get(ModifyConditionsData,"Conditions")]
-[h:ParentToken = json.get(ModifyConditionsData,"ParentToken")]
+[h:TargetData = json.get(macro.args,"Target")]
+[h,if(json.type(TargetData) == "OBJECT"),CODE:{
+	[h:ParentToken = json.get(TargetData,"HeldBy")]
+	[h:TargetType = "Item"]
+	[h:TargetID = json.get(TargetData,"ItemID")]
+};{
+	[h:ParentToken = if(TargetData=="",currentToken(),TargetData)]
+	[h:TargetType = "Token"]
+	[h:TargetID = ParentToken]
+}]
+[h:switchToken(ParentToken)]
 [h:ModifyMethod = json.get(ModifyConditionsData,"Method")]
 
 [h:"<!-- TODO: Implement more than just ending conditions -->"]
 [h,switch(ModifyMethod),CODE:
 	case "End":{
 		[h:tempEndConditionData = json.set("",
-			"ParentToken",ParentToken,
+			"Target",TargetData,
 			"GroupID",ConditionGroupsToModify
 		)]
 		[h,MACRO("EndCondition@Lib:pm.a5e.Core"): tempEndConditionData]

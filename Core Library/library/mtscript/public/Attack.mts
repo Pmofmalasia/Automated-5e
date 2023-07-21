@@ -82,7 +82,6 @@
 [h:wa.Props = json.get(wa.WeaponUsed,"WeaponProperties")]
 [h:wa.Magical = json.get(wa.WeaponUsed,"isMagical")]
 [h:attack.ProfTest = if(json.get(getProperty("a5e.stat.WeaponProficiencies"),wa.WeaponType)==1,1,0)]
-[h:attack.ToHitBonus = wa.MagicBonus]
 [h:attack.ProfTest = 1]
 [h:wa.TargetOrigin = ParentToken]
 
@@ -93,6 +92,13 @@
 
 [h:pm.PassiveFunction("AttackProps")]
 [h:pm.PassiveFunction("WeaponAttackProps")]
+
+[h:attack.ToHitBonus = wa.MagicBonus]
+[h,if(!json.isEmpty(wa.DamageData)),CODE:{
+	[h:FirstInstance = json.get(wa.DamageData,0)]
+	[h:FirstInstance = json.set(FirstInstance,"DamageFlatBonus",json.get(FirstInstance,"DamageFlatBonus") + wa.MagicBonus)]
+	[h:wa.DamageData = json.set(wa.DamageData,0,FirstInstance)]
+};{}]
 
 [h,if(!json.isEmpty(wa.DamageData)): wa.DamageData = json.path.put(wa.DamageData,"[0]","BonusCritDice",wa.BrutalCrit)]
 
@@ -399,7 +405,7 @@
 
 [h:RemovedConditionGroups = json.path.read(a5e.stat.ConditionGroups,"[*][?(@.EndTriggers.AfterAttack != null && @.EndTriggers.AfterAttack != 0)]['GroupID']","DEFAULT_PATH_LEAF_TO_NULL")]
 [h,if(!json.isEmpty(RemovedConditionGroups)),CODE:{
-	[h,macro("EndCondition@Lib:pm.a5e.Core"): json.set("","GroupID",RemovedConditionGroups,"ParentToken",ParentToken)]
+	[h,macro("EndCondition@Lib:pm.a5e.Core"): json.set("","GroupID",RemovedConditionGroups,"Target",ParentToken)]
 	[h:pm.RemovedConditions = json.get(macro.return,"Removed")]
 	[h:abilityTable = json.merge(abilityTable,json.get(macro.return,"Table"))]
 };{}]

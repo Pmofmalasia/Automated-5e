@@ -1,6 +1,7 @@
 [h:TargetCreatures = arg(0)]
 [h:ObjectFilterData = arg(1)]
 
+[h:"<!-- TODO: Add filtering by object type/subtype when done in input/processing -->"]
 [h,if(json.isEmpty(ObjectFilterData)),CODE:{
 	[h:objectCarriedFilter = ""]
 	[h:objectFlammableFilter = ""]

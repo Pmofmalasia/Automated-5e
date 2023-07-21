@@ -53,7 +53,7 @@
 
 <tr id='rowStateOfMatter'><th><label for='StateOfMatter'>State of Matter:</label></th><td><select id='StateOfMatter' name='StateOfMatter'><option value='Solid'>Solid</option><option value='Liquid'>Liquid</option><option value='Gas'>Gas</option><option value='Plasma'>Plasma</option></select></td></tr>
 
-<tr id='rowIsLockable'><th><label for='isLockable'>Object is Lockable:</label></th><td><input type='checkbox' id='isLockable' name='isLockable'></td></tr>
+<tr id='rowIsLockable'><th><label for='isLockable'>Object is Lockable:</label></th><td><input type='checkbox' id='isLockable' name='isLockable' onchange='createLockRows("+'"CreateObjectTable"'+")'></td></tr>
 
 <tr id='rowIsFlammable'><th><label for='isFlammable'>Object is Flammable:</label></th><td><input type='checkbox' id='isFlammable' name='isFlammable'></td></tr>
 

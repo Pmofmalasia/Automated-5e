@@ -1,9 +1,9 @@
 [h:pass.abilityName = pm.RemoveSpecial(pass.abilityName)]
 [h:pass.abilitySubclass = pm.RemoveSpecial(pass.abilitySubclass)]
 [h:pass.Context = arg(0)]
-[h:pass.ItemInfo = json.get(json.path.read(getProperty("a5e.stat.Inventory"),"[*][?(@.Name=='"+pass.abilityName+"' && @.Class=='"+pass.abilityClass+"' && @.Subclass=='"+pass.AbilitySubclass+"')]"),0)]
-[h:pass.DisplayObject = json.get(pass.ItemInfo,"Settings")]
+[h:pass.DisplayObject = json.get(pass.abilityInfo,"Settings")]
 [h,if(pass.DisplayObject == ""): pass.DisplayObject = "{}"]
+[h:"<!-- Note: pass.abilityInfo is set in pm.PassiveFunction -->"]
 
 [h:pass.Flavor=json.get(pass.DisplayObject,"Flavor")]
 [h:pass.DMOnly=if(json.get(pass.DisplayObject,"DMOnly")=="",if(getProperty("a5e.stat.Allegiance")=="Enemy",min(number(getLibProperty("HideEnemyMacros","Lib:pm.a5e.Core")),1),if(getProperty("a5e.stat.Allegiance")=="Ally",min(number(getLibProperty("HideAllyMacros","Lib:pm.a5e.Core")),1),0)),json.get(pass.DisplayObject,"DMOnly"))]
@@ -21,7 +21,7 @@
 [h:pass.ForcedSummonHandout=json.get(pass.DisplayObject,"ForcedSummonHandout")]
 [h:pass.ShowFullRules=if(IsTooltip,1,if(pass.ShowFullRulesOverride=="",if(number(getLibProperty("ChatIndividual","Lib:pm.a5e.Core")),getProperty("a5e.stat.FullAbilityRules"),getLibProperty("FullAbilityRules","Lib:pm.a5e.Core")),pass.ShowFullRulesOverride))]
 
-[h:pass.abilityInfo = json.set(pass.ItemInfo,
+[h:pass.abilityInfo = json.set(pass.abilityInfo,
 	"DisplayName",pass.abilityDisplayName,
 	"Context",pass.Context,
 	"OverarchingContext",pm.a5e.OverarchingContext,

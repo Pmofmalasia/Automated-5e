@@ -27,5 +27,5 @@
 		]
 	}]
 
-	[h:damage.AddedFlatBonusRules = json.append(damage.AddedFlatBonusRules,if(PlusOrMinus == "Plus" < 0," + "," - ") + json.get(PassiveFeatureData,"DisplayName"))]
+	[h:damage.AddedFlatBonusRules = damage.AddedFlatBonusRules + if(PlusOrMinus == "Plus"," + "," - ") + json.get(PassiveFeatureData,"DisplayName")]
 }]

@@ -20,6 +20,7 @@
 	ConditionTagOptions,
 	" otherConditionTag |  | Add Tag not Shown | CHECK ",
 	" cn.HasTiers |  | Condition Has Multiple Tiers With Varying Effects | CHECK ",
+	" cn.HasMaster |  | Condition Has Associated Master Feature | CHECK ",
 	" cn.HasAssociatedConditions |  | Always Adds Other Conditions When Gained | CHECK ",
 	" cn.Source | "+cn.Sourcebooks+" | Associated Sourcebook | LIST | VALUE=STRING "
 ))]
@@ -32,7 +33,7 @@
 	[h:ConditionTagsChosen = json.append(ConditionTagsChosen,macro.return)]
 };{}]
 
-[h:cn.SourceLib = json.get(json.path.read(getLibProperty("ms.Sources","Lib:pm.a5e.Core"),"[?(@.Name=='"+pm.RemoveSpecial(cn.Source)+"')]['Library']"),0)]
+[h:cn.SourceLib = json.get(json.path.read(getLibProperty("ms.Sources","Lib:pm.a5e.Core"),"[*][?(@.Name=='"+pm.RemoveSpecial(cn.Source)+"')]['Library']"),0)]
 [h:cn.DisplayName = cn.Name]
 [h:cn.Name = pm.RemoveSpecial(cn.Name)]
 [h:cn.Final = json.set("",
@@ -70,9 +71,11 @@
 			cn.TypeInput=" cn.Subclass |  | Monster Associated with Condition ";
 			cn.TypeInput=" cn.Subclass | None,"+pm.GetSubclasses(cn.Class,"DisplayName")+" | Subclass Associated with Condition | LIST | VALUE=STRING "
 		]
+		[h,if(cn.HasMaster): cn.TypeInput = cn.TypeInput + " ## cn.MasterCreated | No,Yes,Yes - Same Class/Subclass Combo | Is the master feature already added to the core library? | RADIO | SELECT=2"]
 	};
 	case 2:{
 		[h:cn.TypeInput=" cn.Subclass | None,"+pm.GetSubraces(cn.Class,"DisplayName")+" | Subrace Associated with Condition | LIST | VALUE=STRING "]
+		[h,if(cn.HasMaster): cn.TypeInput = cn.TypeInput + " ## cn.MasterCreated | No,Yes,Yes - Same Class/Subclass Combo | Is the master feature already added to the core library? | RADIO | SELECT=2"]
 	};
 	case 3:{
 		[h:cn.TypeInput = " cn.Subclass |  | Spell Associated with Condition "]
@@ -88,6 +91,40 @@
 
 [h:cn.Subclass = if(cn.Subclass == "None","",pm.RemoveSpecial(cn.Subclass))]
 [h:cn.Final = json.set(cn.Final,"Subclass",cn.Subclass)]
+
+[h,if(cn.HasMaster && or(cn.Type == 1, cn.Type == 2)),CODE:{
+	[h,if(cn.MasterCreated>0),CODE:{
+		[h,if(cn.MasterCreated==2): cn.MasterInput=""; cn.MasterInput=" cn.MasterClass | "+cn.ClassList+" | Class associated with Master Feature | LIST | VALUE=STRING ## junkVar | Next Screen | Subclass Selection | LABEL"]
+		[h:abort(input(cn.MasterInput))]
+		
+		[h,if(cn.MasterCreated==2): cn.MasterInput=""; cn.MasterInput=" cn.MasterSubclass | None,"+pm.GetSubclasses(cn.MasterClass,"DisplayName")+" | Subclass associated with Master Feature | LIST | VALUE=STRING "]
+		[h:abort(input(cn.MasterInput))]
+
+		[h,if(cn.MasterCreated==2): cn.MasterClass = cn.Class]
+		[h,if(cn.MasterCreated==2): cn.MasterSubclass = cn.Subclass; cn.MasterSubclass = pm.RemoveSpecial(cn.MasterSubclass)]
+		[h:cn.MasterOptions = json.toList(json.path.read(getLibProperty("sb.Abilities","Lib:pm.a5e.Core"),"[*][?(@.Class=='"+cn.MasterClass+"' && (@.Subclass==''|| @.Subclass=='"+cn.MasterSubclass+"'))]['DisplayName']"))]
+
+		[h:abort(input(
+			" cn.MasterName | "+cn.MasterOptions+" | Name of Master Feature | LIST | VALUE=STRING "))]
+
+		[h:cn.MasterFeature = json.set("","Name",pm.RemoveSpecial(cn.MasterName),"DisplayName",cn.MasterName,"Class",cn.MasterClass,"Subclass",if(cn.MasterSubclass=="None","",pm.RemoveSpecial(cn.MasterSubclass)))]
+	};{
+		[h:abort(input(
+			" cn.MasterName | -- Name Here -- | Enter master feature name ",
+			" cn.MasterClass | "+cn.ClassList+" | Class associated with Master Feature | LIST | VALUE=STRING ",
+		" junkVar | Next Screen | Subclass Selection | LABEL "
+		))]
+			
+		[h:cn.MasterSubclass="None"]
+		[h:abort(input(
+			" cn.MasterSubclass | None,"+pm.GetSubclasses(cn.Class,"DisplayName")+" | Subclass associated with Master Feature | LIST | VALUE=STRING "
+			))]
+
+		[h:cn.MasterFeature = json.set("","Name",pm.RemoveSpecial(cn.MasterName),"DisplayName",cn.MasterName,"Class",cn.MasterClass,"Subclass",if(cn.MasterSubclass=="None","",pm.RemoveSpecial(cn.MasterSubclass)))]
+	}]
+
+	[h:cn.Final = json.set(cn.Final,"Master",cn.MasterFeature)]
+};{}]
 
 [h,if(cn.HasTiers): cn.Final = json.set(cn.Final,"HasTiers",cn.HasTiers)]
 

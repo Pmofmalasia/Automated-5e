@@ -81,8 +81,8 @@
 	[h:OldEntryID = json.get(OldEntryData,"ItemID")]
 
 	[h:"<!-- This is here just in case - Items with charges (resources) should not be stackable anyway -->"]
-	[h:NeedsEffectFeatureResourceTest = !json.isEmpty(json.path.read(ChosenItem,"[?(@.Effects.*.Subeffects.*.UseResource.Feature != null)]","DEFAULT_PATH_LEAF_TO_NULL"))]
-	[h:NeedsWeaponEffectFeatureResourceTest = !json.isEmpty(json.path.read(ChosenItem,"[?(@.WeaponEffects.*.Subeffects.*.UseResource.Feature != null)]","DEFAULT_PATH_LEAF_TO_NULL"))]
+	[h:NeedsEffectFeatureResourceTest = and(!json.isEmpty(json.path.read(ChosenItem,"[?(@.Effects.*.Subeffects.*.UseResource.Feature != null)]","DEFAULT_PATH_LEAF_TO_NULL")),json.get(ChosenItem,"Effects")!="")]
+	[h:NeedsWeaponEffectFeatureResourceTest = and(!json.isEmpty(json.path.read(ChosenItem,"[?(@.WeaponEffects.*.Subeffects.*.UseResource.Feature != null)]","DEFAULT_PATH_LEAF_TO_NULL")),json.get(ChosenItem,"WeaponEffects")!="")]
 	[h:NeedsSpellFeatureResourceTest = and(!json.isEmpty(json.path.read(ChosenItem,"[?(@.ItemSpellcasting.*.UseResource.Feature != null)]","DEFAULT_PATH_LEAF_TO_NULL")),json.get(ChosenItem,"ItemSpellcasting")!="")]
 
 	[h,if(NeedsEffectFeatureResourceTest): ChosenItem = json.path.put(ChosenItem,"['Effects'][*]['Subeffects'][*]['UseResource']['Feature']['Resource'][?(@.Name == '"+json.get(ChosenItem,"Name")+"' && @.Class == 'Item')]","ItemID",OldEntryID)]

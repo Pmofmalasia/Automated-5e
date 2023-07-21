@@ -1,5 +1,4 @@
 [h:pm.ConditionNames = json.get(arg(1),"Conditions")]
-[h:pm.ConditionNum = json.length(pm.ConditionNames)]
 [h:pm.ChoiceNumber = if(json.get(arg(1),"ChoiceNumber")=="",0,json.get(arg(1),"ChoiceNumber"))]
 
 [h:pm.IsToggle = number(json.get(arg(2),"Toggle"))]
@@ -11,6 +10,20 @@
 
 [h,if(argCount()>3): pm.ConditionEndTriggers = if(arg(3)=="","{}",arg(3)); pm.ConditionEndTriggers = ""]
 [h:pm.a5e.FeatureComponentStdVars(arg(0))]
+
+[h,if(json.type(pm.ConditionNames) == "OBJECT"): pm.ConditionNames = json.append("",pm.ConditionNames)]
+[h:AssociatedConditionsInfo = json.path.read(pm.ConditionNames,"[*][?(@.AssociatedConditions == 1)]")]
+[h,if(!json.isEmpty(AssociatedConditionsInfo)),CODE:{
+	[h:AssociatedConditions = json.path.read(data.getData("addon:","pm.a5e.core","sb.Conditions"),"[*][?(@.Master.Name == '"+currentFeatureName+"' && @.Master.Class == '"+currentFeatureClass+"' && @.Master.Subclass == '"+currentFeatureSubclass+"')]")]
+	[h:assert(!json.isEmpty(pm.ConditionNames),"No associated conditions found!")]
+
+	[h:AssociatedConditionsInfo = json.get(AssociatedConditionsInfo,0)]
+	[h:AssociatedConditions = json.path.put(AssociatedConditions,"[*]","AlwaysAdded",json.get(AssociatedConditionsInfo,"AlwaysAdded"))]
+
+	[h:pm.ConditionNames = json.path.delete(pm.ConditionNames,"[*][?(@.AssociatedConditions == 1)]")]
+	[h:pm.ConditionNames = json.merge(pm.ConditionNames,AssociatedConditions)]
+};{}]
+[h:pm.ConditionNum = json.length(pm.ConditionNames)]
 
 [h:pm.ConditionEndInfo = json.set("",
 	"Duration",pm.Duration,
@@ -78,7 +91,7 @@
 		};
 		case "01":{
 			[h:pm.CurrentID = json.get(pm.GroupIDTest,0)]
-			[h,MACRO("EndCondition@Lib:pm.a5e.Core"): json.set("","GroupID",pm.CurrentID,"ParentToken",ParentToken)]
+			[h,MACRO("EndCondition@Lib:pm.a5e.Core"): json.set("","GroupID",pm.CurrentID,"Target",ParentToken)]
 			[h:abilityTable = json.get(macro.return,"Table")]
 
 			[h:setProperty("a5e.stat.AllFeatures",json.path.delete(getProperty("a5e.stat.AllFeatures"),"[*][?(@.Name == '"+currentFeatureName+"' && @.Class == '"+currentFeatureClass+"' && @.Subclass == '"+currentFeatureSubclass+"')]['GroupID']"))]

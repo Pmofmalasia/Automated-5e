@@ -28,9 +28,10 @@
 	[h,switch(json.get(ability,"AbilityType")):
 		case "Feature": a5efunctionName = "pm."+json.get(ability,"Name")+json.get(ability,"Class")+json.get(ability,"Subclass")+"Passive";
 		case "Condition": a5efunctionName = "pm."+json.get(ability,"Name")+json.get(ability,"Class")+json.get(ability,"Subclass")+"ConditionPassive";
+		case "ItemCondition": a5efunctionName = "pm."+json.get(ability,"Name")+json.get(ability,"Class")+json.get(ability,"Subclass")+"ConditionPassive";
 		default: a5efunctionName = "pm."+json.get(ability,"Name")+json.get(ability,"Class")+json.get(ability,"Subclass")+"Passive"
 	]
-	
+	[h:pass.abilityInfo = ability]
 	[h:AbilityCallingInstanceValue = json.get(ability,"Call"+a5e.CallingInstance)]
 	[h:pm.ValidFunction = isFunctionDefined(a5efunctionName)]
 	[h:pm.SpecificAbilityTest = json.type(AbilityCallingInstanceValue)]

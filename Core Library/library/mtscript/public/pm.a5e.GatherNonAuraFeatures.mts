@@ -8,8 +8,10 @@
 [h:a5e.InventoryAbilities = json.path.put(a5e.InventoryAbilities,"[*]","AbilityType","Item")]
 [h:a5e.UnifiedAbilities = json.merge(a5e.UnifiedAbilities,a5e.InventoryAbilities)]
 
-[h:a5e.ItemConditions = json.path.read(a5e.ValidItems,"[*]['ItemConditions']")]
-[h:a5e.ItemConditions = json.path.put(a5e.ItemConditions,"[*]","AbilityType","ItemBuff")]
+[h:a5e.TempItemConditions = json.path.read(a5e.ValidItems,"[*]['ItemConditions']")]
+[h:a5e.ItemConditions = "[]"]
+[h,foreach(tempCondition,a5e.TempItemConditions): a5e.ItemConditions = json.merge(a5e.ItemConditions,tempCondition)]
+[h:a5e.ItemConditions = json.path.put(a5e.ItemConditions,"[*]","AbilityType","ItemCondition")]
 [h:a5e.UnifiedAbilities = json.merge(a5e.UnifiedAbilities,a5e.ItemConditions)]
 
 [h:macro.return = a5e.UnifiedAbilities]

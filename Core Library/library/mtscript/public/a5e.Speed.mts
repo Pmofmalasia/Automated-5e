@@ -3,8 +3,7 @@
 [h:pm.a5e.OverarchingContext = "Stats"]
 [h:IsTooltip = 0]
 
-[h:"<!-- Note to self: should just do all movement types here, so that calculations for one movement type based on another do not need to be done multiple times on the character sheet -->"]
-[h:"<!-- Additional Note to self: The multipliers are 0 to be able to account for fractions later. -->"]
+[h:"<!-- Note to self: The multipliers are 0 to be able to account for fractions later. -->"]
 
 [h:ArmorTooHeavyTest = 0]
 [h:CurrentInventory = getProperty("a5e.stat.Inventory")]
@@ -24,20 +23,13 @@
 };{}]
 
 [h:speedBase = getProperty("a5e.stat.BaseSpeed")]
-[h,if(ArmorTooHeavyTest):
-	speedBonus = -10;
-	speedBonus = 0
-]
+[h:speedBonus = 0]
 [h:speedSet = 0]
 [h:speedMultiplier = 0]
 [h:speedSetOverride = -1]
 
 [h:burrowEqualsWalking = 0]
 [h:burrowBase = getProperty("a5e.stat.BaseBurrowSpeed")]
-[h,if(ArmorTooHeavyTest):
-	burrowBonus = -10;
-	burrowBonus = 0
-]
 [h:burrowBonus = 0]
 [h:burrowSet = 0]
 [h:burrowMultiplier = 0]
@@ -45,20 +37,14 @@
 
 [h:climbEqualsWalking = 0]
 [h:climbBase = getProperty("a5e.stat.BaseClimbSpeed")]
-[h,if(ArmorTooHeavyTest):
-	climbBonus = -10;
-	climbBonus = 0
-]
+[h:climbBonus = 0]
 [h:climbSet = 0]
 [h:climbMultiplier = 0]
 [h:climbSetOverride = -1]
 
 [h:flyEqualsWalking = 0]
 [h:flyBase = getProperty("a5e.stat.BaseFlySpeed")]
-[h,if(ArmorTooHeavyTest):
-	flyBonus = -10;
-	flyBonus = 0
-]
+[h:flyBonus = 0]
 [h:flySet = 0]
 [h:flyMultiplier = 0]
 [h:flySetOverride = -1]
@@ -66,15 +52,20 @@
 
 [h:swimEqualsWalking = 0]
 [h:swimBase = getProperty("a5e.stat.BaseSwimSpeed")]
-[h,if(ArmorTooHeavyTest):
-	swimBonus = -10;
-	swimBonus = 0
-]
+[h:swimBonus = 0]
 [h:swimSet = 0]
 [h:swimMultiplier = 0]
 [h:swimSetOverride = -1]
 
 [h:pm.PassiveFunction("Speed")]
+
+[h,if(ArmorTooHeavyTest),CODE:{
+	[h:speedBonus = speedBonus - 10]
+	[h:burrowBonus = burrowBonus - 10]
+	[h:climbBonus = climbBonus - 10]
+	[h:flyBonus = flyBonus - 10]
+	[h:swimBonus = swimBonus - 10]
+};{}]
 
 [h,if(speedSetOverride!=-1),CODE:{
 	[h:SpeedFinal = speedSetOverride]

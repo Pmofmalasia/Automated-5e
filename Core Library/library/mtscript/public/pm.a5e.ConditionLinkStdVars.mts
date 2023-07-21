@@ -3,7 +3,7 @@
 [h:abilityPriorData = arg(0)]
 [h:ParentToken=json.get(abilityPriorData,"ParentToken")]
 
-[h:abilityInfo = json.path.read(getProperty("a5e.stat.ConditionList"),"[?(@.Name=='"+abilityName+"' && @.Class=='"+abilityClass+"' && @.Subclass=='"+abilitySubclass+"' && @.IsActive>0)]")]
+[h:abilityInfo = json.path.read(getProperty("a5e.stat.ConditionList"),"[*][?(@.Name=='"+abilityName+"' && @.Class=='"+abilityClass+"' && @.Subclass=='"+abilitySubclass+"' && @.IsActive>0)]")]
 
 [h,if(json.isEmpty(abilityInfo)):
 	assert(0,"Condition "+abilityDisplayName+" not found on "+getName(ParentToken)+"!");
@@ -12,6 +12,7 @@
 
 [h:cond.Library = json.get(abilityInfo,"Library")]
 [h:cond.SetBy = json.get(abilityInfo,"SetBy")]
+[h:cond.OnItem = json.get(abilityInfo,"ItemID")]
 
 [h:DisplayObject = json.get(abilityInfo,"Settings")]
 [h,if(DisplayObject == ""): DisplayObject = "{}"]

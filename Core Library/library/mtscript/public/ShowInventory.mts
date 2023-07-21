@@ -11,6 +11,7 @@
 
 [h:InventoryHTML = "<tr><th style = '"+FrameAccentFormat+"'>Item</th><th style = '"+FrameAccentFormat+"'>Number</th><th style = '"+FrameAccentFormat+"'>Weight</th><th style = '"+FrameAccentFormat+"'>Use?</th></tr>"]
 
+[h:TotalWeight = 0]
 [h,foreach(tempItem,CurrentInventory),CODE:{
 	[h:tempDisplayName = json.get(tempItem,"DisplayName")]
 	[h,if(length(tempDisplayName) > 21): tempDisplayName = "<span title='"+tempDisplayName+"'>"+substring(tempDisplayName,0,18)+"...</span>"]
@@ -47,6 +48,14 @@
 	[h,if(tempUseButton == ""): tempUseButton = "---"]
 
 	[h:InventoryHTML = InventoryHTML + "<tr>"+TableCellFormat+tempDisplayName+"</td>"+TableCellFormat+tempNumberDisplay+"</td>"+TableCellFormat+"<span title='"+tempWeight+" Each'>"+tempTotalWeight+"</span></td>"+TableCellFormat+tempUseButton+"</td></tr>"]
+
+	[h:TotalWeight = TotalWeight + tempTotalWeight]
 }]
+
+[h:InventoryHTML = InventoryHTML + "<tr><th style = '"+FrameAccentFormat+"'>Weight Data</th><th style = '"+FrameAccentFormat+"'>Total Carried</th><th style = '"+FrameAccentFormat+"'>Carry Capacity</th><th style = '"+FrameAccentFormat+"'>Push Capacity</th></tr>"]
+
+[h:WeightData = stat.a5e.CarryCapacity(json.set("","ParentToken",ParentToken))]
+
+[h:InventoryHTML = InventoryHTML + "<tr>"+TableCellFormat+" --- </td>"+TableCellFormat+TotalWeight+"</td>"+TableCellFormat+json.get(WeightData,"Carry")+"</td>"+TableCellFormat+json.get(WeightData,"Push")+"</td></tr>"]
 
 [h:html.frame5("Inventory","lib://pm.a5e.core/ShowInventory.html?cachelib=false","value="+base64.encode(InventoryHTML)+"; closebutton=0; height=300")]

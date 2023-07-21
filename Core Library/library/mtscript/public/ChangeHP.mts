@@ -155,7 +155,7 @@
 	[h,if(hp.Resuscitated),CODE:{
 		[h:DeadOrDyingGroups = json.path.read(getProperty("a5e.stat.ConditionList"),"[*][?(@.Name == 'Dead' || @.Name=='Dying')]['GroupID']")]
 
-		[h,MACRO("EndCondition@Lib:pm.a5e.Core"): json.set("","GroupID",DeadOrDyingGroups,"ParentToken",ParentToken)]
+		[h,MACRO("EndCondition@Lib:pm.a5e.Core"): json.set("","GroupID",DeadOrDyingGroups,"Target",ParentToken)]
 		[h:NoHPConditionTable = json.get(macro.return,"Table")]
 	};{}]
 }]

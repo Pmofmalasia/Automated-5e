@@ -696,6 +696,40 @@
 	[h:subeffectData = json.remove(subeffectData,"savePreventInstantKill")]
 };{}]
 
+[h,if(json.contains(subeffectData,"isDifficultTerrain")),CODE:{
+	[h,if(json.contains(subeffectData,"isDifficultTerrainUseAoESize")):
+		DifficultTerrainData = json.set("","UseAoESize",1);
+		DifficultTerrainData = json.set("",
+			"Value",json.get(subeffectData,"DifficultTerrainDistanceValue"),
+			"Units",json.get(subeffectData,"DifficultTerrainDistanceUnits"))
+	]
+
+	[h:DifficultTerrainData = json.set(DifficultTerrainData,"Multiplier",json.get(subeffectData,"DifficultTerrainMultiplier"))]
+
+	[h:subeffectData = json.set(subeffectData,"DifficultTerrain",DifficultTerrainData)]
+
+	[h:subeffectData = json.remove(subeffectData,"isDifficultTerrain")]
+	[h:subeffectData = json.remove(subeffectData,"isDifficultTerrainUseAoESize")]
+	[h:subeffectData = json.remove(subeffectData,"DifficultTerrainDistanceValue")]
+	[h:subeffectData = json.remove(subeffectData,"DifficultTerrainDistanceUnits")]
+	[h:subeffectData = json.remove(subeffectData,"DifficultTerrainMultiplier")]
+};{}]
+
+
+[h,switch(json.get(subeffectData,"isCreateObject")),CODE:
+	case "Unique":{
+
+	};
+	case "Specific":{
+		
+	};
+	case "Type":{
+		
+	};
+	default: {}
+]
+[h:subeffectData = json.remove(subeffectData,"isCreateObject")]
+
 [h:subeffectData = json.set(subeffectData,"IgnoreCoverBenefit",json.contains(subeffectData,"IgnoreCoverBenefit"))]
 
 [h:subeffectData = json.set(subeffectData,"UsePriorOrigin",json.contains(subeffectData,"UsePriorOrigin"))]

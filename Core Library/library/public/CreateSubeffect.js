@@ -1117,7 +1117,10 @@ async function createUncommonEffectsRows(){
 		addTableRow("CreateSubeffectTable",nextRowIndex,"rowInstantKill","<th><label for='InstantKill'>Instantly Kills Target?</label></th><td><input type='checkbox' id='InstantKill' name='InstantKill' onchange='createInstantKillRows()'></td>");
 		nextRowIndex++;
 
-		addTableRow("CreateSubeffectTable",nextRowIndex,"rowIsCreateObject","<th><label for='isCreateObject'>Creates an Object?</label></th><td><input type='checkbox' id='isCreateObject' name='isCreateObject' value=1 onchange='createCreateObjectTable()'></td>");
+		addTableRow("CreateSubeffectTable",nextRowIndex,"rowIsDifficultTerrain","<th><label for='isDifficultTerrain'>Creates Difficult Terrain?</label></th><td><input type='checkbox' id='isDifficultTerrain' name='isDifficultTerrain' onchange='createDifficultTerrainRows("+'"CreateSubeffectTable"'+")'></td>");
+		nextRowIndex++;
+
+		addTableRow("CreateSubeffectTable",nextRowIndex,"rowIsCreateObject","<th><label for='isCreateObject'>Creates an Object?</label></th><td><select id='isCreateObject' name='isCreateObject' onchange='createCreateObjectTable()'><option value='No'>No</option><option value='Unique'>Unique Item</option><option value='Specific'>Specific Item</option><option value='Type'>Items by Criteria</select></td>");
 		nextRowIndex++;
 
 		addTableRow("CreateSubeffectTable",nextRowIndex,"rowIsWeaponAttack","<th><label for='isWeaponAttack'>Makes a Weapon Attack?</label></th><td><input type='checkbox' id='isWeaponAttack' name='isWeaponAttack' value=1 onchange='createWeaponAttackTable()'></td>");
@@ -1595,7 +1598,7 @@ async function createMoveTargetTable(){
 	}
 }
 
-async function createSetHPRows(){
+function createSetHPRows(){
 	let nextRowIndex = document.getElementById("rowSetHP").rowIndex + 1;
 
 	if(document.getElementById("isSetHP").checked){
@@ -1612,7 +1615,7 @@ async function createSetHPRows(){
 	}
 }
 
-async function createInstantKillRows(){
+function createInstantKillRows(){
 	let nextRowIndex = document.getElementById("rowInstantKill").rowIndex + 1;
 	if(document.getElementById("howMitigate").value=="Save" && document.getElementById("InstantKill").checked){
 		addTableRow("CreateSubeffectTable",nextRowIndex,"rowSavePreventInstantKill","<th><label for='savePreventInstantKill'>Save Prevents Instant Kill:</label></th><td><input type='checkbox' id='savePreventInstantKill' name='savePreventInstantKill'></td>");
@@ -1623,17 +1626,48 @@ async function createInstantKillRows(){
 	}
 }
 
-async function createCreateObjectTable(){
-	let table = document.getElementById("CreateSubeffectTable");
-	let startRowIndex = document.getElementById("rowIsCreateObject").rowIndex;
-//TODO: Object creation once equipment/item stuff is done
-	if(document.getElementById("isCreateObject").checked){
-		let rowCreateObjectInfo = table.insertRow(startRowIndex+1);
-		rowCreateObjectInfo.id = "rowCreateObjectInfo";
-		rowCreateObjectInfo.innerHTML = "<th style='colspan:2'>Note: There is currently no data collection for what type of objects are created by spells.</th>";
+function createDifficultTerrainRows(tableID){
+	let nextRowIndex = document.getElementById("rowIsDifficultTerrain").rowIndex + 1;
+
+	if(document.getElementById("isDifficultTerrain").checked){
+		addTableRow(tableID,nextRowIndex,"rowDifficultTerrainMultiplier","<th><label for='DifficultTerrainMultiplier'>Multiplier for Movement in Terrain</label></th><td><input type='number' id='DifficultTerrainMultiplier' name='DifficultTerrainMultiplier' value=2 style='width:25px'></td>");
+		nextRowIndex++;
+
+		addTableRow(tableID,nextRowIndex,"rowDifficultTerrainRange","<th><label for='DifficultTerrainDistanceValue'>Size of Difficult Terrain:</label></th><td><input type='number' id='DifficultTerrainDistanceValue' name='DifficultTerrainDistanceValue' min=0 value=30 style='width:25px'><select id='DifficultTerrainDistanceUnits' name='DifficultTerrainDistanceUnits'><option value='Feet'>Feet</option><option value='Miles'>Miles</option></select></td>");
+		nextRowIndex++;
+
+		if(document.getElementById("aoeShape").value != "None"){
+			addTableRow(tableID,nextRowIndex,"rowDifficultTerrainUseAoESize","<th><label for='isDifficultTerrainUseAoESize'>Use AoE For Size:</label></th><td><input type='checkbox' id='isDifficultTerrainUseAoESize' name='isDifficultTerrainUseAoESize' onchange='toggleFieldEnabled("+'["DifficultTerrainDistanceValue","DifficultTerrainDistanceUnits"],"isDifficultTerrainUseAoESize"'+")'></td>");
+			nextRowIndex++;
+		}
 	}
 	else{
-		clearUnusedTable("CreateSubeffectTable","rowIsCreateObject","rowIsWeaponAttack");
+		clearUnusedTable("CreateSubeffectTable","rowIsDifficultTerrain","rowIsCreateObject");
+	}
+}
+
+async function createCreateObjectTable(){
+	let nextRowIndex = document.getElementById("rowIsCreateObject").rowIndex + 1;
+	clearUnusedTable("CreateSubeffectTable","rowIsCreateObject","rowIsWeaponAttack");
+	let CreateObjectSeleciton = document.getElementById("isCreateObject").value;
+
+	if(CreateObjectSeleciton == "Unique"){
+		addTableRow("CreateSubeffectTable",nextRowIndex,"rowCreateObject","<th><label for='ValidObjectMethod")
+		let rowCreateObjectInfo = table.insertRow(nextRowIndex);
+		rowCreateObjectInfo.id = "rowCreateObjectInfo";
+		rowCreateObjectInfo.innerHTML = "<th style='colspan:2'>Note: There is currently no data collection for what type of objects are created by spells.</th>";
+		nextRowIndex++;
+	}
+	else if(CreateObjectSeleciton == "Specific"){
+		let request = await fetch("macro:pm.a5e.GetCoreData@lib:pm.a5e.Core", {method: "POST", body: "['sb.Objects','Name','json']"});
+		let allObjects = await request.json();
+		let ObjectSelectionOptions = createHTMLSelectOptions(allObjects,"ObjectID");
+
+		addTableRow("CreateSubeffectTable",nextRowIndex,"rowCreateObject","<th><label for='CreatedObject'>Object Created:</label></th><td><select id='CreatedObject' name='CreatedObject'>"+ObjectSelectionOptions+"</select></td>");
+		nextRowIndex++;
+	}
+	else if(CreateObjectSeleciton == "Type"){
+
 	}
 }
 

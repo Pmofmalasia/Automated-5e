@@ -17,7 +17,8 @@
 
 [h:abort(input(
 	" junkVar | --------------------- Miscellaneous Choices on Gaining Feature --------------------- |  | LABEL | SPAN=TRUE ",
-	" ab.IsSpellList | None,Preset Spells,Chosen When Gained,Mix of Both | <html><span title='Note: This ONLY applies for abilities that grant the spell for use with spell slots or as a cantrip (e.g. would NOT apply for tiefling innate spells, but would for cleric domain spells)'>Feature adds known spells</span></html> | LIST ",
+	" ab.IsSpellList | None,Preset Spells,Chosen When Gained,Mix of Both | <html><span title='Note: This ONLY applies for abilities that grant the spell for use with spell slots or as a cantrip (e.g. would NOT apply for tiefling innate spells, but would for cleric domain spells)'>Feature adds known/always prepared spells</span></html> | LIST ",
+	" ab.IsSpellOptions | None,Preset Spells,Chosen When Gained,Mix of Both | <html><span title='Note: This ONLY applies for abilities that grant the spell for use with spell slots or as a cantrip (e.g. would NOT apply for tiefling innate spells, but would for cleric domain spells)'>Feature adds spells to choose from</span></html> | LIST ",
 	" ab.IsFightingStyles | 0 | Feature grants access to fighting styles | CHECK ",
 	" junkVar | ------------------------------------------------------------------------------------------------------- |  | LABEL | SPAN=TRUE ",
 	" ab.PrimeAttribute | None,"+ab.AtrList+",Variable | <html><span title='Variable option is mostly for feats that have you choose a stat. NOTE: This selection will not also grant the +1 or whatever bonus to that stat, that must be done separately later.'>Primary stat for feature</span></html> | LIST | VALUE=STRING ",
@@ -124,6 +125,9 @@
 [h:DoneAddingSpellsTest = 0]
 [h:ab.SpellOptionsUpdates = "{}"]
 [h:ab.SpellOptions = ""]
+
+[h:"<!-- TODO: This (and any if statements involving ab.IsSpellOptions) is a temp fix for the old interface. Will need to add a separate check for ab.IsSpellOptions in final interface. Will also need to pick WHICH filter to add to (e.g. not to both cantrips and leveled spells) -->"]
+[h:ab.IsSpellList = ab.IsSpellOptions]
 [h,while(DoneAddingSpellsTest < 2 && ab.IsSpellList>=2),CODE:{
 	[h:NewFilterLevel = ab.Level]
 	[h:ReuseFilter = 0]
@@ -167,7 +171,10 @@
 }]
 
 [h,if(ab.IsSpellList>=2),CODE:{
-	[h:ab.Final = json.set(ab.Final,"SpellOptions",ab.SpellOptions)]
+	[h,if(ab.IsSpellOptions > 0): 
+		ab.Final = json.set(ab.Final,"AddedSpellOptions",ab.SpellOptions);
+		ab.Final = json.set(ab.Final,"SpellOptions",ab.SpellOptions)
+	]
 	[h,foreach(tempLevel,json.fields(ab.SpellOptionsUpdates)): ab.Updates = json.set(ab.Updates,tempLevel,json.set(json.get(ab.Updates,tempLevel),"SpellOptions",json.get(ab.SpellOptionsUpdates,tempLevel)))]
 };{
 	[h:ab.SpellOptions=""]
@@ -175,6 +182,16 @@
 
 [h,if(ab.IsSpellList>=1),CODE:{
 	[h:ab.Final = json.set(ab.Final,"CallSpellClass",1)]
+};{}]
+
+[h,if(ab.IsSpellOptions >= 1),CODE:{
+	[h:abort(input(
+		" pickSpellOptionsFeature |  | Feature Added to Name ",
+		" pickSpellOptionsClass |  | Feature Added to Class ",
+		" pickSpellOptionsSubclass |  | Feature Added to Subclass "
+	))]
+
+	[h:ab.Final = json.set(ab.Final,"AddedSpellOptionsFeature",json.set("","Name",pm.RemoveSpecial(pickSpellOptionsFeature),"Class",pm.RemoveSpecial(pickSpellOptionsClass),"Subclass",pm.RemoveSpecial(pickSpellOptionsSubclass)))]
 };{}]
 
 [h:"<!-- Need to check the library of the fighting styles so fighting styles from different libraries from the base ability are added to a duplicate ability on the same library -->"]
@@ -445,6 +462,7 @@
 	" ab.DamageMod | 0 | Affects damage modifiers (e.g. Resistances) | CHECK ",
 	" ab.CondImmun | 0 | Affects condition immunities | CHECK ",
 	" ab.Speed | 0 | Affects movement speed | CHECK ",
+	" ab.CarryCapacity | 0 | Affects carrying capacity | CHECK ",
 	" ab.Languages | 0 | Affects languages known | CHECK ",
 	" ab.Senses | 0 | Affects senses | CHECK ",
 	" junkVar | --------------------------------------------------------------------------------------------------------------------- | 0 | LABEL | SPAN=TRUE ",
@@ -462,6 +480,7 @@
 	" ab.Targeting | 0 | Affects ability to target creatures | CHECK ",
 	" ab.WhenTargeted | 0 | Effect triggers when you are targeted | CHECK ",
 	" ab.UseTime | 0 | Affects time required to use abilities | CHECK ",
+	" ab.InteractTime | 0 | Affects time required to interact with objects | CHECK ",
 	" ab.ChangePrereqs | 0 | Affects requirements for other features to be activated | CHECK ",
 	" junkVar | --------------------------------------------------------------------------------------------------------------------- | 0 | LABEL | SPAN=TRUE ",
 	" ab.EffectResolve | 0 | Effect triggers after resolving another effect | CHECK ",
@@ -660,6 +679,8 @@
 		"CallSpeed",1
 	)]
 };{}]
+
+[h,if(ab.CarryCapacity): ab.Final = json.set(ab.Final,"CallCarryCapacity",1)]
 
 [h,if(ab.Languages),CODE:{
 	[h:ab.Final = json.set(ab.Final,
@@ -971,6 +992,8 @@
 };{}]
 
 [h,if(ab.UseTime): ab.Final = json.set(ab.Final,"UseTime",1)]
+
+[h,if(ab.InteractTime): ab.Final = json.set(ab.Final,"InteractTime",1)]
 
 [h,if(ab.ChangePrereqs): ab.Final = json.set(ab.Final,"ChangePrereqs",1)]
 

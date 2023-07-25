@@ -993,7 +993,15 @@
 
 [h,if(ab.UseTime): ab.Final = json.set(ab.Final,"UseTime",1)]
 
-[h,if(ab.InteractTime): ab.Final = json.set(ab.Final,"InteractTime",1)]
+[h,if(ab.InteractTime),CODE:{
+	[h:abort(input(
+		" ab.InteractTime |  | Affects time to don/doff/drop items | CHECK ",
+		" ab.DrawWeapon |  | Affects time to draw and attack with an item | CHECK "
+	))]
+
+	[h,if(ab.InteractTime): ab.Final = json.set(ab.Final,"InteractTime",1)]
+	[h,if(ab.DrawWeapon): ab.Final = json.set(ab.Final,"DrawWeapon",1)]
+};{}]
 
 [h,if(ab.ChangePrereqs): ab.Final = json.set(ab.Final,"ChangePrereqs",1)]
 

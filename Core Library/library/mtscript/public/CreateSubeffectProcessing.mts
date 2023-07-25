@@ -193,16 +193,24 @@
 		[h:thisDamageTypeInfo = json.set(thisDamageTypeInfo,"DamageType",json.get(subeffectData,"DamageType"+whichType))]
 	}]
 
-	[h,if(json.contains(subeffectData,"DamageDieNum"+whichType)):
-		thisDamageTypeInfo = json.set(thisDamageTypeInfo,
+	[h,if(json.contains(subeffectData,"DamageDieNum"+whichType)),CODE:{
+		[h:thisDamageTypeInfo = json.set(thisDamageTypeInfo,
 			"DamageDieNumber",number(json.get(subeffectData,"DamageDieNum"+whichType)),
 			"DamageDieSize",number(json.get(subeffectData,"DamageDieSize"+whichType)),
 			"DamageFlatBonus",number(json.get(subeffectData,"DamageFlatBonus"+whichType)),
-			"IsModBonus",json.contains(subeffectData,"ModBonus"+whichType));
-		thisDamageTypeInfo = json.set(thisDamageTypeInfo,
+			"IsModBonus",json.contains(subeffectData,"ModBonus"+whichType)
+		)]
+	};{
+		[h,if(json.get("PriorDamageType"+whichType) == "TotalDamage"):
+			damageTypeToGet = "All";
+			damageTypeToGet = json.append("",json.get(subeffectData,"PriorDamageType"+whichType))
+		]
+
+		[h:thisDamageTypeInfo = json.set(thisDamageTypeInfo,
 			"PriorDamagePercent",(json.get(subeffectData,"PriorDamagePercent"+whichType)/100),
-			"PriorDamageType",json.get(subeffectData,"PriorDamageType"+whichType))
-	]
+			"PriorDamageType",damageTypeToGet
+		)]
+	}]
 
 	[h,if(json.get(subeffectData,"isAHL"+whichType)!=0 && json.contains(subeffectData,"isAHL"+whichType)):
 		thisDamageTypeInfo = json.set(thisDamageTypeInfo,
@@ -805,13 +813,13 @@
 
 [h,switch(EffectType),CODE:
 	case "Spell":{
-		[h:thisEffectSubeffectData = json.get(currentEffectData,"Subeffects")]
-		[h:thisEffectSubeffectData = json.append(thisEffectSubeffectData,subeffectData)]
-		[h:currentEffectData = json.set(currentEffectData,"Subeffects",thisEffectSubeffectData)]
-
 		[h:spellLevel = json.get(subeffectData,"ExtraDataSpellLevel")]
 		[h:subeffectData = json.remove(subeffectData,"ExtraDataSpellLevel")]
 		[h:subeffectData = json.remove(subeffectData,"ExtraDataKeys")]
+
+		[h:thisEffectSubeffectData = json.get(currentEffectData,"Subeffects")]
+		[h:thisEffectSubeffectData = json.append(thisEffectSubeffectData,subeffectData)]
+		[h:currentEffectData = json.set(currentEffectData,"Subeffects",thisEffectSubeffectData)]
 
 		[h:thisPlayerCurrentFeatureData = json.set(thisPlayerCurrentFeatureData,json.length(thisPlayerCurrentFeatureData)-1,currentEffectData)]
 		[h:setLibProperty("ct.NewSpell",json.set(CurrentFeatureData,getPlayerName(),thisPlayerCurrentFeatureData),"Lib:pm.a5e.Core")]
@@ -822,6 +830,22 @@
 		[h:extraData = json.set("","SpellLevel",spellLevel)]
 	};
 	default:{
+		[h:ExtraDataKeys = json.fromList(json.get(subeffectData,"ExtraDataKeys"))]
+		[h:extraData = ""]
+		[h,foreach(tempKey,ExtraDataKeys),CODE:{
+			[h:extraData = json.set(extraData,tempKey,json.get(subeffectData,"ExtraData"+tempKey))]
+			[h:subeffectData = json.remove(subeffectData,"ExtraData"+tempKey)]
+		}]
+		[h:subeffectData = json.remove(subeffectData,"ExtraDataKeys")]
+
+		[h,if(json.contains(subeffectData,"EffectDisplayName")),CODE:{
+			[h:EffectDisplayName = json.get(subeffectData,"EffectDisplayName")]
+			[h:currentEffectData = json.set(currentEffectData,
+				"Name",pm.RemoveSpecial(EffectDisplayName),
+				"DisplayName",EffectDisplayName
+			)]
+		}]
+
 		[h:thisEffectSubeffectData = json.get(currentEffectData,"Subeffects")]
 		[h:thisEffectSubeffectData = json.append(thisEffectSubeffectData,subeffectData)]
 
@@ -837,14 +861,6 @@
 		[h:setLibProperty("ct.New"+EffectType,json.set(CurrentFeatureData,getPlayerName(),thisPlayerCurrentFeatureData),"Lib:pm.a5e.Core")]
 		[h:baseFeatureData = thisPlayerCurrentFeatureData]
 		[h:lastEffectTest = json.length(allEffectData) == EffectsNumber]
-
-		[h:ExtraDataKeys = json.fromList(json.get(subeffectData,"ExtraDataKeys"))]
-		[h:extraData = ""]
-		[h,foreach(tempKey,ExtraDataKeys),CODE:{
-			[h:extraData = json.set(extraData,tempKey,json.get(subeffectData,"ExtraData"+tempKey))]
-			[h:subeffectData = json.remove(subeffectData,"ExtraData"+tempKey)]
-		}]
-		[h:subeffectData = json.remove(subeffectData,"ExtraDataKeys")]
 	}
 ]
 
@@ -855,12 +871,15 @@
 	};
 	case "00":{
 		[h:baseFeatureData = json.set(baseFeatureData,
-			"WhichEffect",json.length(thisPlayerCurrentFeatureData)+1,
-			"EffectsNumber",EffectsNumber
+			"EffectsNumber",EffectsNumber,
+			"WhichSubeffect",1,
+			"EffectType",EffectType,
+			"ExtraData",extraData,
+			"ParentToken",ParentToken
 		)]
 
 		[h:closeDialog("SubeffectCreation")]
-		[h,MACRO("Create"+EffectType+"@Lib:pm.a5e.Core"): baseFeatureData]
+		[h,MACRO("CreateSubeffect@Lib:pm.a5e.Core"): baseFeatureData]
 		[h:"<!-- TODO: Might be able to change to a generic input? Or just tack a little bit on to the start of Subeffects? I think the only thing that actually needs selecting is UseTime? -->"]
 	};
 	default:{

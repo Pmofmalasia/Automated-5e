@@ -5,12 +5,17 @@
 [h:ItemChoiceID = json.get(AddItemData,"ItemChoice")]
 [h:PriorInventory = getProperty("a5e.stat.Inventory")]
 
-[h,if(ItemChoiceID=="@@ImpromptuItem"),CODE:{
-	[h:ChosenItem = "<!-- To implement later -->"]
+[h,if(json.type(ItemChoiceID) == "OBJECT"),CODE:{
+	[h:ChosenItem = ItemChoiceID]
+	[h:ItemChoiceID = json.get(ChosenItem,"ObjectID")]
 };{
-	[h:ChosenItem = json.get(json.path.read(getLibProperty("sb.Objects","Lib:pm.a5e.Core"),"[*][?(@.ObjectID == '"+ItemChoiceID+"')]"),0)]
-	[h,if(json.get(AddItemData,"DisplayName")!=""): ChosenItem = json.set(ChosenItem,"DisplayName",json.get(AddItemData,"DisplayName"))]
-	[h,if(json.get(AddItemData,"FalseName")!=""): ChosenItem = json.set(ChosenItem,"FalseName",json.get(AddItemData,"FalseName"))]
+	[h,if(ItemChoiceID=="@@ImpromptuItem"),CODE:{
+		[h:ChosenItem = "<!-- To implement later -->"]
+	};{
+		[h:ChosenItem = json.get(json.path.read(getLibProperty("sb.Objects","Lib:pm.a5e.Core"),"[*][?(@.ObjectID == '"+ItemChoiceID+"')]"),0)]
+		[h,if(json.get(AddItemData,"DisplayName")!=""): ChosenItem = json.set(ChosenItem,"DisplayName",json.get(AddItemData,"DisplayName"))]
+		[h,if(json.get(AddItemData,"FalseName")!=""): ChosenItem = json.set(ChosenItem,"FalseName",json.get(AddItemData,"FalseName"))]
+	}]	
 }]
 
 [h:WeaponProperties = json.get(ChosenItem,"WeaponProperties")]

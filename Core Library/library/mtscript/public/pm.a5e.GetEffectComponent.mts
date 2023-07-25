@@ -103,14 +103,19 @@
         [h:macro.return = rollData]
     };
     case "Damage":{
+		[h:damageData = json.get(json.get(allEffectData,whichEffect),"Damage")]
         [h,if(json.type(componentToGetData)=="OBJECT"),CODE:{
-            [h:"<-- May need extra code blocks to have option to get multiple damage types totaled up (needs looping) AND have option to return all damage types dealt. Might be able to just do it by having blank one be set to blank array and be 'ignored' -->"]
-        };{
-            [h:damageData = json.get(json.get(allEffectData,whichEffect),"Damage")]
-            [h:totalDamage = 0]
-            [h,foreach(damageType,json.fields(damageData,"json")): totalDamage = totalDamage + if(damageType!="Healing" && damageType!="TempHP",json.get(damageData,damageType),0)]
-            [h:macro.return = totalDamage]
-        }]
+			[h:typesToGet = json.get(componentToGetData,"Types")]
+			[h:tempDamageData = "{}"]
+			[h,foreach(allowedType,typesToGet): tempDamageData = json.set(tempDamageData,allowedType,json.get(damageData,allowedType))]
+			[h:damageData = tempDamageData]
+        };{}]
+		[h:damageData = json.remove(damageData,"Healing")]
+		[h:damageData = json.remove(damageData,"TempHP")]
+
+		[h:totalDamage = 0]
+		[h,foreach(damageType,json.fields(damageData,"json")): totalDamage = totalDamage + json.get(damageData,damageType)]
+		[h:return(0,totalDamage)]	
     };
     case "Condition":{
         

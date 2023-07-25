@@ -144,7 +144,7 @@ function createMagicItemRows(tableID){
 	if(document.getElementById("isMagical").checked){
 		let nextRowIndex = document.getElementById("rowIsMagical").rowIndex+1;
 
-		addTableRow(tableID,nextRowIndex,"rowIsAttunement","<th><label for='isAttunement'>Requires Attunement:</label></th><td><input type='checkbox' id='isAttunement' name='isAttunement'></td>");
+		addTableRow(tableID,nextRowIndex,"rowIsAttunement","<th><label for='isAttunement'>Requires Attunement:</label></th><td><select id='isAttunement' name='isAttunement' onchange='createAttunementRequirementRows("+'"'+tableID+'"'+")'><option value=0>No</option><option value='1'>Yes</option><option value='2'>Yes, With Requirements</option></select></td>");
 		nextRowIndex++;
 
 		addTableRow(tableID,nextRowIndex,"rowIsSentient","<th><label for='isSentient'>Item is Sentient:</label></th><td><input type='checkbox' id='isSentient' name='isSentient' onchange='createSentientItemRows("+'"'+tableID+'"'+")'></td>");
@@ -155,6 +155,33 @@ function createMagicItemRows(tableID){
 	}
 	else{
 		clearUnusedTable(tableID,"rowIsMagical","rowIsWearable");
+	}
+}
+
+async function createAttunementRequirementRows(tableID){
+	if(document.getElementById("isAttunement").value == 2){
+		let nextRowIndex = document.getElementById("rowIsAttunement").rowIndex + 1;
+
+		let classesRequest = await fetch("macro:pm.GetClasses@lib:pm.a5e.Core", {method: "POST", body: ""});
+		let allClasses = await classesRequest.json();
+		let allClassOptions = createHTMLMultiselectOptions(allClasses,"AttunementClass");
+		addTableRow(tableID,nextRowIndex,"rowAttunementRequirementClasses","<th>Required Classes</th><td><div class='check-multiple' style='width:100%'>"+allClassOptions+"</div></td>");
+		nextRowIndex++;
+
+		let RacesRequest = await fetch("macro:pm.GetRaces@lib:pm.a5e.Core", {method: "POST", body: ""});
+		let allRaces = await RacesRequest.json();
+		let allRaceOptions = createHTMLMultiselectOptions(allRaces,"AttunementRace");
+		addTableRow(tableID,nextRowIndex,"rowAttunementRequirementRaces","<th>Required Races</th><td><div class='check-multiple' style='width:100%'>"+allRaceOptions+"</div></td>");
+		nextRowIndex++;
+
+		let CreatureTypesRequest = await fetch("macro:pm.GetCreatureTypes@lib:pm.a5e.Core", {method: "POST", body: ""});
+		let allCreatureTypes = await CreatureTypesRequest.json();
+		let allCreatureTypeOptions = createHTMLMultiselectOptions(allCreatureTypes,"AttunementRace");
+		addTableRow(tableID,nextRowIndex,"rowAttunementRequirementCreatureTypes","<th>Required Creature Types</th><td><div class='check-multiple' style='width:100%'>"+allCreatureTypeOptions+"</div></td>");
+		nextRowIndex++;
+	}
+	else{
+		clearUnusedTable(tableID,"rowIsAttunement","rowIsSentient");
 	}
 }
 

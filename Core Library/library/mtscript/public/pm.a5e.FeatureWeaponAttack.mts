@@ -52,7 +52,7 @@
 			[h:WeaponOptionsDisplay = "[]"]
 			[h,foreach(tempWeapon,WeaponOptions): WeaponOptionsDisplay = json.append(WeaponOptionsDisplay,json.get(tempWeapon,"DisplayName"))]
 			[h:abort(input(
-				"choice.Weapon | "+WeaponOptions+" | Choose a Weapon | RADIO | DELIMITER=JSON "
+				"choice.Weapon | "+WeaponOptionsDisplay+" | Choose a Weapon | RADIO | DELIMITER=JSON "
 			))]
 			[h:WeaponData = json.get(WeaponOptions,choice.Weapon)]
 			[h:AttackData = json.set("",

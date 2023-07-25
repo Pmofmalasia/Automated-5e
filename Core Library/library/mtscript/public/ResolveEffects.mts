@@ -500,7 +500,21 @@
 
 [h,if(ParentToken!=""): switchToken(ParentToken)]
 
-[h,if(json.length(effTargets)==1): titleAddon = " on "+getName(json.get(effTargets,0)); titleAddon = ""]
+[h,if(json.length(effTargets)==1),CODE:{
+	[h:onlyTarget = json.get(effTargets,0)]
+
+	[h,if(json.type(onlyTarget) == "OBJECT"),CODE:{
+		[h,if(json.get(onlyTarget,"HeldBy") != ""): targetToken = json.get(onlyTarget,"HeldBy")]
+		[h,if(json.get(onlyTarget,"HeldBy") != ""): onlyTokenDisplayName = getName(targetToken)+"'s "+json.get(onlyTarget,"DisplayName")]
+	};{
+		[h:targetToken = onlyTarget]
+		[h:onlyTokenDisplayName = getName(targetToken)]
+	}]
+
+	[h:titleAddon = " on "+onlyTokenDisplayName]
+};{
+	[h:titleAddon = ""]
+}]
 [h:ClassFeatureData = json.set("",
 	"Flavor","",
 	"ParentToken",ParentToken,

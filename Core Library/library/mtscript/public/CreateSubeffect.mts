@@ -5,10 +5,12 @@
 [h:EffectsNumber = json.get(subeffectData,"EffectsNumber")]
 [h:ExtraData = json.get(subeffectData,"ExtraData")]
 
-[h,if(thisSubeffectNum > 1),CODE:{
-	[h:SubeffectHTML = ""]
-};{
-	[h:SubeffectHTML = "<tr><th text-align='center' colspan='2'>Subeffect #"+thisSubeffectNum+"</th></tr>"]
+[h:SubeffectHTML = ""]
+[h,if(EffectsNumber > 1),CODE:{
+	[h:SubeffectHTML = SubeffectHTML + "<tr id='rowEffectName'><th>This Effect's Name:</th><td><input type='text' id='EffectDisplayName' name='EffectDisplayName'></td></tr>"]
+};{}]
+[h,if(thisSubeffectNum > 1),CODE:{};{
+	[h:SubeffectHTML = SubeffectHTML + "<tr><th text-align='center' colspan='2'>Subeffect #"+thisSubeffectNum+"</th></tr>"]
 }]
 
 [h,if(thisSubeffectNum > 1),CODE:{

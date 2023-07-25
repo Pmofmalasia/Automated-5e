@@ -109,11 +109,42 @@
 
 [h:objectData = json.set(objectData,"isMagical",json.contains(objectData,"isMagical"))]
 [h,if(json.get(objectData,"isMagical")),CODE:{
-	[h:objectData = json.set(objectData,
-		"isAttunement",json.contains(objectData,"isAttunement"),
-		"isCursed",json.contains(objectData,"isCursed")
-	)]
+	[h:objectData = json.set(objectData,"isCursed",json.contains(objectData,"isCursed"))]
 };{}]
+
+[h,switch(json.get(objectData,"isAttunement")),CODE:
+	case 1:{
+		[h:objectData = json.set(objectData,"isAttunement",1)]
+	};
+	case 2:{
+		[h:allAttunementRequirements = ""]
+		[h:requiredAttunementClasses = "[]"]
+		[h,foreach(tempClass,pm.GetClasses("Name","json")),CODE:{
+			[h,if(json.contains(objectData,"AttunementClass"+tempClass)): requiredAttunementClasses = json.append(requiredAttunementClasses,tempClass)]
+			[h:objectData = json.remove(objectData,"AttunementClass"+tempClass)]
+		}]
+		[h,if(!json.isEmpty(requiredAttunementClasses)): allAttunementRequirements = json.set(allAttunementRequirements,"Class",requiredAttunementClasses)]
+
+		[h:requiredAttunementRaces = "[]"]
+		[h,foreach(tempRace,pm.GetRaces("Name","json")),CODE:{
+			[h,if(json.contains(objectData,"AttunementRace"+tempRace)): requiredAttunementRaces = json.append(requiredAttunementRaces,tempRace)]
+			[h:objectData = json.remove(objectData,"AttunementRace"+tempRace)]
+		}]
+		[h,if(!json.isEmpty(requiredAttunementRaces)): allAttunementRequirements = json.set(allAttunementRequirements,"Race",requiredAttunementRaces)]
+
+		[h:requiredAttunementCreatureTypes = "[]"]
+		[h,foreach(tempCreatureType,pm.GetCreatureTypes("Name","json")),CODE:{
+			[h,if(json.contains(objectData,"AttunementCreatureType"+tempCreatureType)): requiredAttunementCreatureTypes = json.append(requiredAttunementCreatureTypes,tempCreatureType)]
+			[h:objectData = json.remove(objectData,"AttunementCreatureType"+tempCreatureType)]
+		}]
+		[h,if(!json.isEmpty(requiredAttunementCreatureTypes)): allAttunementRequirements = json.set(allAttunementRequirements,"CreatureType",requiredAttunementCreatureTypes)]
+
+		[h:objectData = json.set(objectData,"AttunementRequirements",allAttunementRequirements)]
+	};
+	default:{
+		[h:objectData = json.set(objectData,"isAttunement",0)]
+	}
+]
 
 [h,switch(json.get(objectData,"isNonstandardEquip")),CODE:
 	case "":{

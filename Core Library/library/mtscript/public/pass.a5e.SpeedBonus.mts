@@ -4,24 +4,24 @@
 [h,if(json.contains(passSpeedData,"All")),CODE:{
 	[h:passAllTypesData = json.get(passSpeedData,"All")]
 
-	[h:priorSpeedData = json.get(passSpeedData,"Speed")]
-	[h:priorBurrowData = json.get(passSpeedData,"Burrow")]
-	[h:priorClimbData = json.get(passSpeedData,"Climb")]
-	[h:priorFlyData = json.get(passSpeedData,"Fly")]
-	[h:priorSwimData = json.get(passSpeedData,"Swim")]
+	[h:additionalSpeedData = json.get(passSpeedData,"Speed")]
+	[h:additionalBurrowData = json.get(passSpeedData,"Burrow")]
+	[h:additionalClimbData = json.get(passSpeedData,"Climb")]
+	[h:additionalFlyData = json.get(passSpeedData,"Fly")]
+	[h:additionalSwimData = json.get(passSpeedData,"Swim")]
 
-	[h,if(priorSpeedData == ""): priorSpeedData = "{}"]
-	[h,if(priorBurrowData == ""): priorBurrowData = "{}"]
-	[h,if(priorClimbData == ""): priorClimbData = "{}"]
-	[h,if(priorFlyData == ""): priorFlyData = "{}"]
-	[h,if(priorSwimData == ""): priorSwimData = "{}"]
+	[h,if(additionalSpeedData == ""): additionalSpeedData = "{}"]
+	[h,if(additionalBurrowData == ""): additionalBurrowData = "{}"]
+	[h,if(additionalClimbData == ""): additionalClimbData = "{}"]
+	[h,if(additionalFlyData == ""): additionalFlyData = "{}"]
+	[h,if(additionalSwimData == ""): additionalSwimData = "{}"]
 
 	[h:"<!-- Note: This order prefers keeping the specific bonus (e.g only to burrowing) over the general bonus (from the All key) -->"]
-	[h:newSpeedData = json.merge(passAllTypesData,priorSpeedData)]
-	[h:newBurrowData = json.merge(passAllTypesData,priorBurrowData)]
-	[h:newClimbData = json.merge(passAllTypesData,priorClimbData)]
-	[h:newFlyData = json.merge(passAllTypesData,priorFlyData)]
-	[h:newSwimData = json.merge(passAllTypesData,priorSwimData)]
+	[h:newSpeedData = json.merge(passAllTypesData,additionalSpeedData)]
+	[h:newBurrowData = json.merge(passAllTypesData,additionalBurrowData)]
+	[h:newClimbData = json.merge(passAllTypesData,additionalClimbData)]
+	[h:newFlyData = json.merge(passAllTypesData,additionalFlyData)]
+	[h:newSwimData = json.merge(passAllTypesData,additionalSwimData)]
 
 	[h:passSpeedData = json.set(passSpeedData,
 		"Speed",newSpeedData,
@@ -73,6 +73,8 @@
 	[h,if(json.contains(passFlyData,"Set")): flySet = max(flySet,json.get(passFlyData,"Set"))]
 	[h,if(json.contains(passFlyData,"SetOverride")): flySetOverride = if(flySetOverride == -1,json.get(passFlyData,"SetOverride"),min(flySetOverride,json.get(passFlyData,"SetOverride")))]
 	[h,if(json.contains(passFlyData,"Multiplier")): flyMultiplier = flyMultiplier + json.get(passFlyData,"Multiplier")]
+
+	[h,if(json.contains(passFlyData,"Hover")): IsHover = max(IsHover,json.get(passFlyData,"Hover"))]
 };{}]
 
 [h,if(json.contains(passSpeedData,"Swim")),CODE:{

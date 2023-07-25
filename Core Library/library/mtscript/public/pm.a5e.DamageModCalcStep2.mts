@@ -3,6 +3,12 @@
 [h:hp.Source = json.get(hp.Data,"SourceType")]
 [h:switchToken(json.get(hp.Data,"ParentToken"))]
 
+[h:modifierDamageTypes = json.get(modifierInstance,"DamageTypes")]
+[h,if(json.contains(modifierDamageTypes,"All")),CODE:{
+	[h:modifierDamageTypes = json.remove(modifierDamageTypes,json.indexOf(modifierDamageTypes,"All"))]
+	[h:modifierDamageTypes = json.merge(modifierDamageTypes,pm.GetDamageTypes("Name","json"))]
+};{}]
+
 [h:AllSourcesTest = if(json.get(modifierInstance,"All")==1,1,0)]
 
 [h:"<!-- Damage modifiers are calculated in instances - at this level, there is only one instance of damage, but instances of effects that modify the damage. This is because separate features that provide damage modifiers may only be *situationally* better than the other, as opposed to strictly better. Therefore, each feature that can provide damage modification is checked to see what provides the best benefit. That being said, all of this feels like insanity and hopefully there is a better way. -->"]
@@ -10,7 +16,7 @@
 [h:"<!-- Additional note: I think Physical damage does not need a separate note from magical, since if something is not magical then it is physical by default, but will need to consider this. --> "]
 
 [h,if(AllSourcesTest),CODE:{
-	[h:macro.return = json.get(modifierInstance,"DamageTypes")]
+	[h:return(0,modifierDamageTypes)]
 };{
 	[h:hp.TempDmgModTest = 1]
 	[h:tempSourceToken = json.get(hp.Data,"SourceToken")]
@@ -50,8 +56,14 @@
 			[h,if(json.get(modifierInstance,"IncludeMaterial")!=""): hp.TempDmgModTest = json.contains(json.get(modifierInstance,"IncludeMaterial"),json.get(hp.Data,"Material"))]
 			[h,if(json.get(modifierInstance,"ExcludeMaterial")!=""): hp.TempDmgModTest = !json.contains(json.get(modifierInstance,"ExcludeMaterial"),json.get(hp.Data,"Material"))]
 		};
-		default:{}
+		default:{
+			[h:hp.TempDmgModTest = or(json.get(modifierInstance,"MeleeRanged")=="",json.get(modifierInstance,"MeleeRanged") == json.get(hp.Data,"MeleeRanged"))]
+			[h:hp.TempDmgModTest = or(json.get(modifierInstance,"Magical")=="",json.get(modifierInstance,"Magical") == json.get(hp.Data,"Magical"))]
+		}
 	]
 
-	[h,if(hp.TempDmgModTest): macro.return = json.get(modifierInstance,"DamageTypes"); macro.return = "[]"]
+	[h,if(hp.TempDmgModTest):
+		return(0,modifierDamageTypes);
+		return(0,"[]")
+	]
 }]

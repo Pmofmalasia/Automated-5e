@@ -13,8 +13,14 @@
 [h:output.GM = output.GM + json.get(output.Temp,"GM")+"</div></div>"]
 
 [h,if(json.length(effTargets)==1),CODE:{
-    [h:broadcastAsToken(output.GM,"gm",",",json.get(effTargets,0))]
-    [h:broadcastAsToken(output.PC,"not-gm",",",json.get(effTargets,0))]
+	[h:onlyTarget = json.get(effTargets,0)]
+	[h,if(json.type(onlyTarget) == "OBJECT"),CODE:{
+		[h,if(json.get(onlyTarget,"HeldBy") != ""): targetToken = json.get(onlyTarget,"HeldBy")]
+	};{
+		[h:targetToken = onlyTarget]
+	}]
+    [h:broadcastAsToken(output.GM,"gm",",",targetToken)]
+    [h:broadcastAsToken(output.PC,"not-gm",",",targetToken)]
 };{
     [h:broadcastAsToken(output.GM,"gm")]
     [h:broadcastAsToken(output.PC,"not-gm")]

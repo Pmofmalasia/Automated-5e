@@ -4,7 +4,7 @@
 
 [h:ItemDropOptions = "[]"]
 [h,foreach(item,getProperty("a5e.stat.Inventory")): ItemDropOptions = json.append(ItemDropOptions,json.get(item,"DisplayName"))]
-
+[h:assert(json.length(ItemDropOptions) > 0,"You have no items to drop!")]
 [h:abort(input(
 	" dropChoice | "+ItemDropOptions+" | Item to Drop | LIST | DELIMITER=JSON ",
 	" dropNumber | 1 | Number to Drop ",

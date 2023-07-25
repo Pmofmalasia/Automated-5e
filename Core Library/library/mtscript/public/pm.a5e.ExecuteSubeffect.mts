@@ -34,7 +34,7 @@
 		case "Cylinder":{
 			[h:temp.RangeBonus = max(json.get(subeffect.AoEData,"RadiusValue"),json.get(subeffect.AoEData,"HeightValue"))]
 		};
-		case "Half Sphere":{
+		case "HalfSphere":{
 			[h:temp.RangeBonus = json.get(subeffect.AoEData,"SizeValue")]
 		};
 		case "Line":{
@@ -50,7 +50,7 @@
 			[h:temp.RangeBonus = max(json.get(subeffect.AoEData,"LengthValue"),json.get(subeffect.AoEData,"WidthValue"),json.get(subeffect.AoEData,"HeightValue"))]
 		};
 		default:{
-
+			[h:temp.RangeBonus = 0]
 		}
 	]
 };{

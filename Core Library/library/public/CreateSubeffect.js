@@ -201,6 +201,9 @@ async function createMitigationTable(){
 		addTableRow("CreateSubeffectTable",nextMitigationRowIndex,"rowIsConditionalAdvantage","<th>Conditional (Dis)advantage:</th><input type='checkbox' id='isConditionalSaveAdvantage' name='isConditionalSaveAdvantage' onchange='createConditionalSaveAdvantageRows()'></td>");
 		nextMitigationRowIndex++;
 
+		addTableRow("CreateSubeffectTable",nextMitigationRowIndex,"rowIsConditionalAutomaticSave","<th>Conditional Auto-Success/Failure:</th><input type='checkbox' id='isConditionalAutomaticSave' name='isConditionalAutomaticSave' onchange='createConditionalAutomaticSaveRows()'></td>");
+		nextMitigationRowIndex++;
+
 		addTableRow("CreateSubeffectTable",nextMitigationRowIndex,"rowIsChooseFailure","<th>Can Choose to Fail:</th><input type='checkbox' id='isChooseFailure' name='isChooseFailure'></td>");
 		nextMitigationRowIndex++;
 
@@ -412,7 +415,7 @@ async function generateDamageTypeOptions(){
 	for(let tempType of damageTypes){
 		damageTypeOptions = damageTypeOptions + "<option value='"+tempType+"'>"+tempType+"</option>";
 	}
-	damageTypeOptions = damageTypeOptions + "<option value='Healing'>Healing</option><option value='Temp HP'>Temp HP</option>";
+	damageTypeOptions = damageTypeOptions + "<option value='Healing'>Healing</option><option value='TempHP'>Temp HP</option>";
 
 	return damageTypeOptions;
 }

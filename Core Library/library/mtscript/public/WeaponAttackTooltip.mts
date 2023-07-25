@@ -77,4 +77,4 @@
 	"DisplayOrder","['Rules','Roll','Full']"
 ))]
 
-[h:macro.return = json.set("","Table",abilityTable,"Description",json.get(wa.WeaponUsed,"Description"))]
+[h:macro.return = json.set("","Table",abilityTable,"Description",base64.decode(json.get(wa.WeaponUsed,"Description")))]

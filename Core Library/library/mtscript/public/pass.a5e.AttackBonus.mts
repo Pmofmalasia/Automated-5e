@@ -19,11 +19,14 @@
 
 	[h:attack.ToHitStr = attack.ToHitStr + passBonusString]
 };{
-	[h,if(!isNumber(passAttackBonus)): passBonusNum = json.get(getProperty("a5e.stat.AtrMods"),passAttackBonus)]
+	[h,if(!isNumber(passAttackBonus)):
+		passBonusNum = json.get(getProperty("a5e.stat.AtrMods"),passAttackBonus);
+		passBonusNum = passAttackBonus
+	]
 
 	[h,if(PlusOrMinus == "Minus"): passBonusNum = passBonusNum * -1]
 
 	[h:attack.ToHit = attack.ToHit + passBonusNum]
 	[h:attack.ToHitStr = attack.ToHitStr + pm.PlusMinus(passBonusNum,0)]
-	[h:attack.ToHitRulesStr = attack.ToHitRulesStr + if(PlusOrMinus == "Plus" < 0," + "," - ") + json.get(PassiveFeatureData,"DisplayName")]
+	[h:attack.ToHitRulesStr = attack.ToHitRulesStr + if(PlusOrMinus == "Plus"," + "," - ") + json.get(PassiveFeatureData,"DisplayName")]
 }]

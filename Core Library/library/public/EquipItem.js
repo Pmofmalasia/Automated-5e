@@ -27,7 +27,7 @@ function createHeldItemsRows(tableID,Inventory,HeldItems,Limbs){
 	let nextRowIndex = document.getElementById("rowArmorChoice").rowIndex + 1;
 
 	let AllHoldables = [];
-	let HoldableTypes = ["Weapon","Shield","CastingFocus","Tool"];
+	let HoldableTypes = ["Weapon","Shield","CastingFocus","Tool","Rod","Staff"];
 	for(let tempItem of Inventory){
 		if(HoldableTypes.includes(tempItem.Type)){
 			AllHoldables.push(tempItem);
@@ -137,9 +137,9 @@ function createAttunedItemsRows(tableID,Inventory,AttunementSlots){
 function createWornItemsRows(tableID,Inventory){
 	let nextRowIndex = document.getElementById("rowWornItemsHeader").rowIndex + 1;
 
-	let HoldableTypes = ["Weapon","Shield","CastingFocus","Tool","Armor","Ammunition"];
+	let HoldableTypes = ["Weapon","Shield","CastingFocus","Tool","Armor","Ammunition","Rod","Staff"];
 	for(let tempItem of Inventory){
-		if(HoldableTypes.includes(tempItem.Type) === false && tempItem.isAttunement != 1){
+		if(HoldableTypes.includes(tempItem.Type) === false && tempItem.isAttunement != 1 && tempItem.isWearable == 1){
 			let tempElementName = "WearableChoice"+tempItem.ItemID;
 			let checkedTest = "";
 			if(tempItem.IsActive == 1){

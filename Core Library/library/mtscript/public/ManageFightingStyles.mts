@@ -76,11 +76,11 @@
 [h:ClassFeatureData = json.set("",
 	"Flavor","",
 	"ParentToken",ParentToken,
-	"DMOnly",0,
+	"DMOnly",(getProperty("a5e.stat.Allegiance") == "Enemy"),
 	"Class","FightingStyle",
 	"Name","Manage Fighting Styles",
 	"FalseName","",
-	"OnlyRules",0
+	"OnlyRules",1
 	)]
 
 [h:FormattingData = pm.MacroFormat(ClassFeatureData)]

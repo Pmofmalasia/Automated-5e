@@ -36,7 +36,7 @@
 	[h:ClassFeatureData = json.set("",
 		"Flavor",if(CheckDescription=="",Flavor,CheckDescription),
 		"ParentToken",ParentToken,
-		"DMOnly",if(outputTargets=="none",1,0),
+		"DMOnly",(getProperty("a5e.stat.Allegiance") == "Enemy"),
 		"Class","zzChecksAndSaves",
 		"Name","Skill Check",
 		"FalseName","",

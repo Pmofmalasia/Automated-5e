@@ -23,7 +23,7 @@
 
 [h:ChangeHPHTML = ChangeHPHTML + "<tr id='rowAddSourceInfo'><th><label for='AddSourceInfo'>Apply Detailed Damage Info?</label></th><td><input type='checkbox' id='AddSourceInfo' name='AddSourceInfo' onchange='addSourceInfo()'></td></tr>"]
 
-[h:ChangeHPHTML = ChangeHPHTML + "<tr id='rowOutputTargets'><th><label for='OutputTargets'>Who Sees the Result?</label></th><td><select id='OutputTargets' name='OutputTargets'><option value='Everyone'>Everyone</option>"+if(isGM(),"","<option value='YouAndDM'>You and DM</option>")+"<option value='DMOnly'>DM Only</option></select></td></tr>"]
+[h:ChangeHPHTML = ChangeHPHTML + "<tr id='rowOutputTargets'><th><label for='OutputTargets'>Who Sees the Result?</label></th><td><select id='OutputTargets' name='OutputTargets'><option value='Everyone'"+if(getProperty("a5e.stat.Allegiance") != "Enemy"," selected","")+">Everyone</option>"+if(isGM(),"","<option value='YouAndDM'>You and DM</option>")+"<option value='DMOnly'"+if(getProperty("a5e.stat.Allegiance") == "Enemy"," selected","")+">DM Only</option></select></td></tr>"]
 
 [h:ChangeHPHTML = ChangeHPHTML + "<tr><th text-align='center' colspan='2'><input type='submit' id='submitButton' value='Submit'></th></tr>"]
 

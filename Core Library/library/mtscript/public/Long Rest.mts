@@ -157,7 +157,7 @@
 [h:ClassFeatureData = json.set("",
 	"Flavor",Flavor,
 	"ParentToken",json.get(lr.Data,"ParentToken"),
-	"DMOnly",json.get(lr.Data,"DMOnly"),
+	"DMOnly",(getProperty("a5e.stat.Allegiance") == "Enemy"),
 	"BorderColorOverride",if(json.get(lr.Data,"BorderColorOverride")=="","#444444",json.get(lr.Data,"BorderColorOverride")),
 	"TitleFontColorOverride",if(json.get(lr.Data,"TitleFontColorOverride")=="","#FFFFFF",json.get(lr.Data,"TitleFontColorOverride")),
 	"AccentBackgroundOverride",json.get(lr.Data,"AccentBackgroundOverride"),

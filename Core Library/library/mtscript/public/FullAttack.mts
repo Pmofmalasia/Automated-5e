@@ -7,7 +7,7 @@
 [h:ClassFeatureData = json.set("",
 	"Flavor",json.get(WeaponData,"Flavor"),
 	"ParentToken",ParentToken,
-	"DMOnly",0,
+	"DMOnly",(getProperty("a5e.stat.Allegiance") == "Enemy"),
 	"Class","zzWeaponAttack",
 	"Name",json.get(WeaponData,"Name")+" Attack",
 	"FalseName","Weapon Attack",
@@ -22,7 +22,7 @@
 	"WeaponData",WeaponData,
 	"ThrowWeapon",0,
 	"AttackNum",1,
-	"DMOnly",0,
+	"DMOnly",(getProperty("a5e.stat.Allegiance") == "Enemy"),
 	"ParentToken",ParentToken
 )]
 

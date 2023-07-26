@@ -6,7 +6,7 @@
 [h:ClassFeatureData = json.set("",
 	"Flavor",json.get(EffectData,"Flavor"),
 	"ParentToken",ParentToken,
-	"DMOnly",0,
+	"DMOnly",(getProperty("a5e.stat.Allegiance") == "Enemy"),
 	"Class",json.get(EffectData,"Class"),
 	"Name",json.get(EffectData,"DisplayName"),
 	"FalseName","",
@@ -19,7 +19,7 @@
 
 [h:EffectToExecute = json.get(EffectData,"Effect")]
 [h:EffectToExecute = json.set(EffectToExecute,
-	"DMOnly",0,
+	"DMOnly",(getProperty("a5e.stat.Allegiance") == "Enemy"),
 	"ParentToken",ParentToken
 )]
 

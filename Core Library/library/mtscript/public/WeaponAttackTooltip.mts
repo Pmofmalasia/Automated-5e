@@ -26,7 +26,7 @@
 [h:TwoWeaponFighting = json.get(wa.Data,"TwoWeaponFighting")]
 [h,if(TwoWeaponFighting == ""): TwoWeaponFighting = 0]
 [h:DMOnly = json.get(wa.Data,"DMOnly")]
-[h:DMOnly = 0]
+[h:DMOnly = (getProperty("a5e.stat.Allegiance") == "Enemy")]
 [h:ShowFullRules = 1]
 [h:wa.WeaponUsed = json.get(wa.Data,"WeaponData")]
 [h:wa.EffectIDs = json.get(wa.Data,"ID")]

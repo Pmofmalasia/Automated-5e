@@ -103,7 +103,7 @@
 	[h:hp.NewTemp = max(0,getProperty("a5e.stat.TempHP") - TotalDamage)]
 	[h:hp.TempDiff = getProperty("a5e.stat.TempHP") - hp.NewTemp]
 	[h:setProperty("a5e.stat.TempHP",hp.NewTemp)]
-	[h:RemainingDamage = RemainingDamage - hp.TempDiff]
+	[h:RemainingDamage = TotalDamage - hp.TempDiff]
 	[h:hp.TempEndTest = (getProperty("a5e.stat.TempHP")==0)]
 }]
 

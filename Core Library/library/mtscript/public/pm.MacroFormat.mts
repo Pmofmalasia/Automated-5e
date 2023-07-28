@@ -13,6 +13,7 @@
 [h:TitleFont=json.get(arg(0),"TitleFont")]
 [h:BodyFont=json.get(arg(0),"BodyFont")]
 [h:FalseName=json.get(arg(0),"FalseName")]
+[h,if(FalseName == ""): FalseName = abilityDisplayName]
 [h:OnlyRules=json.get(arg(0),"OnlyRules")]
 [h:ParentToken=json.get(arg(0),"ParentToken")]
 [h,if(ParentToken!=""): switchToken(ParentToken)]

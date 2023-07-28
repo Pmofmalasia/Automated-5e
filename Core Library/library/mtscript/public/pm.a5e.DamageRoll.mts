@@ -68,12 +68,18 @@
 [h:damage.FlatBonusTotal = damage.PrimeStatBonus + damage.FlatBonus]
 
 [h:damage.PriorPercentBonus = 0]
+[h:damage.PriorCritPercentBonus = 0]
 [h,if(json.contains(damage.ThisInstance,"PriorDamagePercent")),CODE:{
-	[h:damage.ParentDamage = pm.a5e.GetEffectComponent(pm.a5e.EffectData,json.set("","Main","Damage","Types",json.get(damage.ThisInstance,"PriorDamageType")),ParentSubeffectNum)]
+	[h:getPriorDamageData = json.set("","Main","Damage")]
+
+	[h:damage.PriorDamageData = pm.a5e.GetEffectComponent(pm.a5e.EffectData,getPriorDamageData,ParentSubeffectNum)]
+	[h:damage.PriorDamage = json.get(damage.PriorDamageData,"Total")]
+	[h:damage.ParentCritDamage = json.get(damage.PriorDamageData,"CritTotal")]
 
 	[h:damage.PriorPercent = number(json.get(damage.ThisInstance,"PriorDamagePercent"))]
 
-	[h:damage.PriorPercentBonus = floor(damage.PriorPercent * damage.ParentDamage)]
+	[h:damage.PriorPercentBonus = floor(damage.PriorPercent * damage.PriorDamage)]
+	[h:damage.PriorCritPercentBonus = floor(damage.PriorPercent * damage.ParentCritDamage)]
 
 	[h,switch(damage.PriorPercent):
 		case 1: damage.PriorPercentRules = "Prior Damage";

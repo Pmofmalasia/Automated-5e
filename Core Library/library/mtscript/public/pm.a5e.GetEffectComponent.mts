@@ -104,18 +104,27 @@
     };
     case "Damage":{
 		[h:damageData = json.get(json.get(allEffectData,whichEffect),"Damage")]
-        [h,if(json.type(componentToGetData)=="OBJECT"),CODE:{
-			[h:typesToGet = json.get(componentToGetData,"Types")]
-			[h:tempDamageData = "{}"]
-			[h,foreach(allowedType,typesToGet): tempDamageData = json.set(tempDamageData,allowedType,json.get(damageData,allowedType))]
-			[h:damageData = tempDamageData]
-        };{}]
-		[h:damageData = json.remove(damageData,"Healing")]
-		[h:damageData = json.remove(damageData,"TempHP")]
+        [h:typesToGet = json.get(componentToGetData,"Types")]
+		[h:isCrit = json.get(componentToGetData,"isCrit")]
 
-		[h:totalDamage = 0]
-		[h,foreach(damageType,json.fields(damageData,"json")): totalDamage = totalDamage + json.get(damageData,damageType)]
-		[h:return(0,totalDamage)]	
+		[h,if(typesToGet != ""):
+			validDamageInstances = json.path.read(damageData,"[*][?(@.DamageType in "+typesToGet+")]");
+			validDamageInstances = json.path.read(damageData,"[*][?(@.DamageType nin "+json.append("","Healing","TempHP")+")]")
+		]
+
+		[h,if(isCrit != ""),CODE:{
+			[h,if(json.isEmpty(validDamageInstances)):
+				returnedDamageFinal = 0;
+				returnedDamageFinal = math.arraySum(json.path.read(validDamageInstances,"[*]['"+if(isCrit,"Crit","")+"Total']"))
+			]
+		};{
+			[h,if(json.isEmpty(validDamageInstances)): return(0,json.set("","Total",0,"CritTotal",0))]
+			[h:returnedDamage = math.arraySum(json.path.read(validDamageInstances,"[*]['Total']"))]
+			[h:returnedCritDamage = math.arraySum(json.path.read(validDamageInstances,"[*]['CritTotal']"))]
+			[h:returnedDamageFinal = json.set("","Total",returnedDamage,"CritTotal",returnedCritDamage)]
+		}]
+
+		[h:return(0,returnedDamageFinal)]	
     };
     case "Condition":{
         

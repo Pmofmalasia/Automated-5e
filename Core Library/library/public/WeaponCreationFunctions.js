@@ -10,7 +10,7 @@ async function createWeaponTableRows(tableID,startRowID){
 
 	let WeaponTypeOptions = "";
 	for(let tempWeaponType of allWeaponTypes){
-		WeaponTypeOptions = WeaponTypeOptions + "<option value='"+tempWeaponType.Name+"'>"+tempWeaponType.DisplayName+"</option>";
+		WeaponTypeOptions = WeaponTypeOptions + "<option value='"+tempWeaponType.Name+"'>"+tempWeaponType.DisplayName+"</option><option value='NaturalWeapon'>Natural Weapon</option><option value='Unarmed'>Unarmed</option>";
 	}
 
 	addTableRow(tableID,nextRowIndex,"rowWeaponType","<th><label for='WeaponType'>Weapon Type:</label></th><td><select id='WeaponType' name='WeaponType' onchange='createWeaponTypeRows("+'"'+tableID+'"'+")'><option value='@@NewType'>New Type</option>"+WeaponTypeOptions+"</select></td>");

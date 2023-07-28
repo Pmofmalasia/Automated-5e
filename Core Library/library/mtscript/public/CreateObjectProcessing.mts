@@ -107,6 +107,26 @@
 	[h:objectData = json.set(objectData,"isContainerIgnoreWeight",json.contains(objectData,"isContainerIgnoreWeight"))]
 };{}]
 
+[h,if(objectType=="Tool"),CODE:{
+	[h,if(json.contains(objectData,"isNewToolSubtypeTemplate")),CODE:{
+		[h:newToolDisplayName = json.get(objectData,"NewToolTypeDisplayName")]
+		[h:newToolName = pm.RemoveSpecial(newToolDisplayName)]
+		[h:newToolData = json.set("",
+			"Name",newToolName,
+			"DisplayName",newToolDisplayName,
+			"ToolType",json.get(objectData,"ToolType")
+		)]
+		[h:oldToolList = getLibProperty("sb.Tools","Lib:"+json.get(objectData,"Library"))]
+		[h:newToolList = json.sort(json.append(oldToolList,newToolData),"a","DisplayName")]
+		[h:setLibProperty("sb.Tools",newToolList,"Lib:"+json.get(objectData,"Library"))]
+
+		[h:objectData = json.set(objectData,"ToolSubtype",newToolName)]
+
+		[h:objectData = json.remove(objectData,"NewToolTypeDisplayName")]
+		[h:objectData = json.remove(objectData,"isNewToolSubtypeTemplate")]
+	}]
+};{}]
+
 [h:objectData = json.set(objectData,"isMagical",json.contains(objectData,"isMagical"))]
 [h,if(json.get(objectData,"isMagical")),CODE:{
 	[h:objectData = json.set(objectData,"isCursed",json.contains(objectData,"isCursed"))]

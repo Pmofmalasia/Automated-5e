@@ -54,7 +54,7 @@
 			"maxWidth","",
 			"minWidth",89,
 			"playerEditable",0,
-			"tooltip",'[h,MACRO("SingleAttack@Lib:pm.a5e.Core"): json.set("","ParentToken",currentToken(),"NaturalWeaponID",'+ItemID+',"IsTooltip",1)]',
+			"tooltip",'[MACRO("SingleAttack@Lib:pm.a5e.Core"): json.set("","ParentToken",currentToken(),"NaturalWeaponID",'+ItemID+',"IsTooltip",1)]',
 			"delim","json"
 		)]
 

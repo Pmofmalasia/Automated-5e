@@ -75,7 +75,7 @@ TempAllDmgModifiers:[r:a5e.DamageMod()]
 *#dPassivePerception (Passive Perception):{10+json.get(getProperty('a5e.stat.AtrMods'),"Wisdom")+(getProperty("a5e.stat.Proficiency")*json.get(getProperty("a5e.stat.Skills"),"Perception"))}
 *#dPassiveInvestigation (Passive Investigation):{10+json.get(getProperty('a5e.stat.AtrMods'),"Intelligence")+(getProperty("a5e.stat.Proficiency")*json.get(getProperty("a5e.stat.Skills"),"Investigation"))}
 *dConcentration (Concentration):[r,if(stat.a5e.DisplayStatTest()): getProperty("a5e.stat.Concentration")]
-*dSpellSlots (Spell Slots):[r,if(stat.a5e.DisplayStatTest()): if(a5e.CastingLevel()>0,pm.SpellSlots(),"")]
+*dSpellSlots (Spell Slots):[r,if(stat.a5e.DisplayStatTest()): if(pm.a5e.MaxSpellLevel("All",1)>0,pm.SpellSlots(),"")]
 __CLASS ABILITIES__:__________
 a5e.stat.AllFeatures:[]
 a5e.stat.ConditionList:[]

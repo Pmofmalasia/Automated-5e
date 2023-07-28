@@ -45,8 +45,12 @@
 	EffectDescription = base64.decode(json.get(EffectData,"Description"));
 	EffectDescription = base64.decode(json.get(EffectToExecute,"Description"))
 ]
+
+[h:"<!-- TODO: Fix this, temporary -->"]
+[h,if(getProperty("a5e.stat.Allegiance") == "Enemy"): PlayerEffectDescription = ""; PlayerEffectDescription = EffectDescription]
+
 [h:output.Temp = pm.AbilityTableProcessing(abilityTable,FormattingData,1)]
-[h:output.PC = output.PC + json.get(output.Temp,"Player")+EffectDescription+"</div></div>"]
+[h:output.PC = output.PC + json.get(output.Temp,"Player")+PlayerEffectDescription+"</div></div>"]
 [h:output.GM = output.GM + json.get(output.Temp,"GM")+EffectDescription+"</div></div>"]
 
 [h:broadcastAsToken(output.GM,"gm")]

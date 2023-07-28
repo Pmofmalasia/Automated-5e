@@ -36,7 +36,14 @@ async function createObjectSubtypeRows(tableID,IDSuffix){
 			nextRowIndex++;
 		}
 
-		addTableRow(tableID,nextRowIndex,"rowArmorBaseAC","<th><label for='ArmorBaseAC'>Base AC:</label></th><td><input type='number' id='ArmorBaseAC' name='ArmorBaseAC' min='0' value='11' style='width:25px'></td>");
+		let StartingAC;
+		if(ObjectType == "Armor"){
+			StartingAC = 11;
+		}
+		else{
+			StartingAC = 2;
+		}
+		addTableRow(tableID,nextRowIndex,"rowArmorBaseAC","<th><label for='ArmorBaseAC'>Base AC:</label></th><td><input type='number' id='ArmorBaseAC' name='ArmorBaseAC' min='0' value='"+StartingAC+"' style='width:25px'></td>");
 		nextRowIndex++;
 
 		addTableRow(tableID,nextRowIndex,"rowArmorIsDexterityBonus","<th><label for='ArmorIsDexterityBonus'>Allows Dexterity Bonus:</label></th><td><input type='checkbox' id='ArmorIsDexterityBonus' name='ArmorIsDexterityBonus' onchange='createArmorDexterityRows()'></td>");
@@ -124,6 +131,18 @@ async function createObjectSubtypeRows(tableID,IDSuffix){
 	}
 	else if(ObjectType == "Tool"){
 		document.getElementById("isWearable").checked = false;
+
+		let request = await fetch("macro:pm.a5e.GetCoreData@lib:pm.a5e.Core", {method: "POST", body: "['sb.ToolTypes']"});
+		let allToolTypes = await request.json();
+		let ToolTypeSelection = createHTMLSelectOptions(allToolTypes);
+
+		addTableRow(tableID,nextRowIndex,"rowToolType","<th><label for='ToolType'>Tool Type:</label></th><td><select id='ToolType' name='ToolType' onchange='updateToolSubtypeOptions("+'"'+tableID+'"'+")'>"+ToolTypeSelection+"<option value=''>None</option></select></td>");
+		nextRowIndex++;
+
+		addTableRow(tableID,nextRowIndex,"rowToolSubtype","<th><label for='ToolSubtype'>Tool Subtype:</label></th><td><select id='ToolSubtype' name='ToolSubtype' onchange='createNewToolRows("+'"'+tableID+'"'+")'><option value=''>New Tool</option></select></td>");
+		nextRowIndex++;
+
+		updateToolSubtypeOptions(tableID);
 	}
 	else if(ObjectType == "Vehicle"){
 		document.getElementById("isWearable").checked = false;
@@ -144,7 +163,7 @@ async function createObjectSubtypeRows(tableID,IDSuffix){
 		let ObjectTypeSelection = createHTMLSelectOptions(nonWondrousTypes);
 		ObjectTypeSelection = "<option value=''>No Other</option>" + ObjectTypeSelection;
 
-		addTableRow(tableID,nextRowIndex,"rowObjectWondrousType","<tr id='rowObjectWondrousType'><th><label for='WondrousType'>Wondrous Object Type:</label></th><td><select id='WondrousType' name='WondrousType' onchange='createObjectSubtypeRows("+'"CreateObjectTable","WondrousType"'+")'>"+ObjectTypeSelection+"</select></td></tr>");
+		addTableRow(tableID,nextRowIndex,"rowObjectWondrousType","<th><label for='WondrousType'>Wondrous Object Type:</label></th><td><select id='WondrousType' name='WondrousType' onchange='createObjectSubtypeRows("+'"CreateObjectTable","WondrousType"'+")'>"+ObjectTypeSelection+"</select></td>");
 		nextRowIndex++;
 	}
 }
@@ -334,6 +353,38 @@ async function createLeaveBehindContainerRow(tableID){
 	}
 	else{
 		clearUnusedTable(tableID,"rowIsLeaveBehindContainer","rowIsActivatable");
+	}
+}
+
+async function updateToolSubtypeOptions(tableID){
+	let requestTools = await fetch("macro:pm.a5e.GetCoreData@lib:pm.a5e.Core", {method: "POST", body: "['sb.Tools']"});
+	let allTools = await requestTools.json();
+
+	let selectedToolType = document.getElementById("ToolType").value;
+	let validToolSubtypes = allTools.filter(function(toolSubtypes){
+		return toolSubtypes.ToolType == selectedToolType;
+	});
+	let ToolSelection = createHTMLSelectOptions(validToolSubtypes);
+
+	document.getElementById("ToolSubtype").innerHTML = ToolSelection+"<option value=''>New Tool</option>";
+
+	if((ToolSelection == "" && document.getElementById("rowNewToolType") != null) || ToolSelection != ""){
+		createNewToolRows(tableID);
+	}
+}
+
+function createNewToolRows(tableID){
+	if(document.getElementById("ToolSubtype").value == ""){
+		let nextRowIndex = document.getElementById("rowToolSubtype").rowIndex + 1;
+
+		addTableRow(tableID,nextRowIndex,"rowNewToolType","<th><label for='NewToolTypeDisplayName'>New Tool Subtype Name:</label></th><td><input type='text' id='NewToolTypeDisplayName' name='NewToolTypeDisplayName'></td>");
+		nextRowIndex++;
+
+		addTableRow(tableID,nextRowIndex,"rowIsNewToolSubtypeTemplate","<th><label for='isNewToolSubtypeTemplate'>Add as Template:</label></th><td><input type='checkbox' id='isNewToolSubtypeTemplate' name='isNewToolSubtypeTemplate'></td>");
+		nextRowIndex++;
+	}
+	else{
+		clearUnusedTable(tableID,"rowToolSubtype","rowSize");
 	}
 }
 

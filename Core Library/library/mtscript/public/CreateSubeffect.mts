@@ -60,6 +60,8 @@
 
 [h:SubeffectHTML = SubeffectHTML + "<tr id='rowNeedsNewSubeffect'><th><span title='Check if an effect has different parts that have different conditions for resolving. For example, Ice Knife makes an attack against a single target (effect 1), then forces a save against all creatures around them (effect 2); Ray of Sickness makes a spell attack to deal damage (effect 1), then forces that target to make a save against poison if it hits (effect 2); and Vampiric Touch makes an attack to deal damage (effect 1), then heals the caster for half the amount of damage dealt (effect 2).'><label for='NeedsNewSubeffect'>Needs Additional Component of Same Effect:</label></span></th><td><input type='checkbox' id='NeedsNewSubeffect' name='NeedsNewSubeffect'></td></tr>
 
+<tr id='rowIsPersistentEffect'><th><span title='Check if an effect needs to make additional rolls/force others to make them if not linked to an effect at a later time, e.g. many AoE effects that persist'><label for='isPersistentEffect'>Has a Persistent Effect:</label></span></th><td><select id='isPersistentEffect' name='isPersistentEffect' onchange='createPersistentEffectRows("+'"CreateSubeffectTable"'+")'><option value=''>None</option><option value='Same'>Same Effect</option><option value='Different'>Different Effect</option></select></td></tr>
+
 <tr id='submitRow'><th text-align='center' colspan='2'><input type='submit' id='submitButton' value='Submit'></th></tr>"]
 
 [h:html.dialog5("SubeffectCreation","lib://pm.a5e.core/CreateSubeffect.html?cachelib=false","value="+base64.encode(SubeffectHTML)+"; closebutton=0; width=675; height=1050")]

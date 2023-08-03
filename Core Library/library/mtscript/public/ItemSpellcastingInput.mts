@@ -13,7 +13,7 @@
 		[h:SpellOptions = json.append(SpellOptions,pm.GetDisplayName(json.get(spell,"Name"),"sb.Spells"))]
 	}]
 
-	[h:abort(input(" SpellChoice | "+SpellOptions+" | Choose a Spell | RADIO "))]
+	[h:abort(input(" SpellChoice | "+SpellOptions+" | Choose a Spell | RADIO | DELIMITER=JSON "))]
 
 	[h:SpellChoice = json.get(SpellOptionsData,SpellChoice)]
 };{

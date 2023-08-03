@@ -46,6 +46,11 @@
 			[h:ParentSubeffectRequirementsMet = 1]
 		}
 	]
+
+	[h,if(json.get(effFull,"ParentCrit") != ""):
+		UseParentCrit = 1;
+		UseParentCrit = 0
+	]
 	[h:"<!-- TODO: Need to add additional info here for conditions gained/damage/healing. Would be easier on this end to have creation input list all possible effects (from ParentSubeffect) and store as just an array of required effects. However, may prove difficult for effects with choice, which would require the current Any/All option. Also need to add ConditionNotApplied, I think something uses this but forget what. -->"]
 
 	[h,if(!ParentSubeffectRequirementsMet),CODE:{
@@ -75,6 +80,7 @@
 		[h:return(0,json.set("","Table","[]","FeatureData",ClassFeatureData,"Targets",effTargets))]
 	};{}]
 };{
+	[h:UseParentCrit = 0]
 	[h,if(json.type(effTargets)=="OBJECT"): assert(0,"Something unexpected happened: Effect Targets is an object without having a Parent Subeffect")]
 }]
 
@@ -200,7 +206,7 @@
 		))]
 	};{
 		[h:hitTarget = 1]
-		[h:attackCrit = 0]
+		[h:attackCrit = json.get(effFull,"ParentCrit")]
 		[h:ResolveOnHitEffects = 0]
 		[h:ResolveOnMissEffects = 0]
 	}]

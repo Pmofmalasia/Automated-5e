@@ -2,12 +2,9 @@
 [h:resourceUsed = arg(1)]
 [h:resourceSource = arg(2)]
 
-[h,switch(resourceSource):
-	case "Feature": sourceProperty = "a5e.stat.AllFeatures";
-	case "Item": sourceProperty = "a5e.stat.Inventory";
-	case "Condition": sourceProperty = "a5e.stat.Conditions";
-]
-
+[h:ResourceSourceData = pm.a5e.ResourceSourceData(resourceSource,json.set("","Name",resourceName))]
+[h:sourceProperty = json.get(ResourceSourceData,"Property")]
+[h:sourcePath = json.get(ResourceSourceData,"Path")]
 [h:allMatchingFeatures = json.path.read(getProperty(sourceProperty),"[*][?(@.ResourceName=='"+resourceName+"' || (@.Name=='"+resourceName+"' && @.ResourceName==null))]","DEFAULT_PATH_LEAF_TO_NULL")]
 			
 [h:pm.MaxResourceIndex = 0]

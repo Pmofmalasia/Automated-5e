@@ -17,7 +17,7 @@
 		[h:pm.PassiveFunction("SpellStat")]
 	};
 	case "SpecificClass":{
-		[h:validClasses = json.path.read(a5e.UnifiedAbilities,"[*][?(@.UniqueSpellList == 1 && @.CallSharedDC != '' && @.CallSpellClass == 1 && @.Class in "+validClasses+")]['Class']")]
+		[h:validClasses = json.path.read(a5e.UnifiedAbilities,"[*][?(@.UniqueSpellList == 1 && @.CallSharedDC != '' && @.CallSpellClass == 1 && @.Class in "+json.get(ItemData,"ItemSpellcastingClassOptions")+")]['Class']")]
 		[h:PrimeStat = "None"]
 		[h:PrimeStatValue = 0]
 		[h,foreach(tempClass,validClasses),CODE:{

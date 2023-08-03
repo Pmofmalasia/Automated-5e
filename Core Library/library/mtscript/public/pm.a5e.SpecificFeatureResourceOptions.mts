@@ -6,22 +6,10 @@
 	resourceSource = "Feature";
 	resourceSource = json.get(resourceInfo,"ResourceSource")
 ]
-[h,switch(resourceSource),CODE:
-	case "Feature":{
-		[h:sourceProperty = "a5e.stat.AllFeatures"]
-		[h:sourcePath = "@.Name=='"+json.get(resourceInfo,"Name")+"' && @.Class=='"+json.get(resourceInfo,"Class")+"' && @.Subclass=='"+json.get(resourceInfo,"Subclass")+"'"]
-	};
-	case "Condition":{
-		[h:sourceProperty = "a5e.stat.Conditions"]
-		[h:sourcePath = "@.Name=='"+json.get(resourceInfo,"Name")+"' && @.Class=='"+json.get(resourceInfo,"Class")+"' && @.Subclass=='"+json.get(resourceInfo,"Subclass")+"'"]
-	};
-	case "Item":{
-		[h:sourceProperty = "a5e.stat.Inventory"]
-		[h:sourcePath = "@.ItemID=='"+json.get(resourceInfo,"ItemID")+"'"]
-	}
-]
-
-[h:matchingFeature = json.get(json.path.read(getProperty(sourceProperty),"[*][?("+sourcePath+")]"),0)]
+[h:ResourceSourceData = pm.a5e.ResourceSourceData(resourceSource,resourceInfo)]
+[h:sourceProperty = json.get(ResourceSourceData,"Property")]
+[h:sourcePath = json.get(ResourceSourceData,"Path")]
+[h:matchingFeature = json.get(json.path.read(getProperty(sourceProperty),sourcePath),0)]
 
 [h,if(pm.ResourceKey==""),CODE:{
 	[h:pm.MaxResourceBase = evalMacro(json.get(matchingFeature,"MaxResource"))]

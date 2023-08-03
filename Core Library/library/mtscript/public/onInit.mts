@@ -58,6 +58,7 @@
 [h:defineFunction("pm.a5e.MaxSpellSlots","pm.a5e.MaxSpellSlots@Lib:pm.a5e.Core")]
 [h:defineFunction("stat.a5e.DisplayStatTest","stat.a5e.DisplayStatTest@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.a5e.Limbs","pm.a5e.Limbs@Lib:pm.a5e.Core")]
+[h:defineFunction("pm.a5e.TokenActiveConditions","pm.a5e.TokenActiveConditions@Lib:pm.a5e.Core")]
 
 [h:"<!-- Functions for Abilities -->"]
 [h:defineFunction("ability.json.get","ability.json.get@Lib:pm.a5e.Core")]
@@ -150,6 +151,7 @@
 [h:defineFunction("pass.a5e.AdjustProficiency","pass.a5e.AdjustProficiency@Lib:pm.a5e.Core",0,0)]
 [h:defineFunction("pass.a5e.d20AutoResult","pass.a5e.d20AutoResult@Lib:pm.a5e.Core",0,0)]
 [h:defineFunction("pass.a5e.AdjustCriticalThreshhold","pass.a5e.AdjustCriticalThreshhold@Lib:pm.a5e.Core",0,0)]
+[h:defineFunction("pass.a5e.AnyResourceRemaining","pass.a5e.AnyResourceRemaining@Lib:pm.a5e.Core",0,0)]
 
 [h:"<!-- Functions for getting information about a token -->"]
 [h:defineFunction("pm.a5e.GetEquippedArmorInfo","pm.a5e.GetEquippedArmorInfo@Lib:pm.a5e.Core")]
@@ -182,6 +184,8 @@
 [h:defineFunction("pm.a5e.ResolveDCSuccess","pm.a5e.ResolveDCSuccess@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.a5e.ResolveDCFailure","pm.a5e.ResolveDCFailure@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.a5e.UseResource","pm.a5e.UseResource@Lib:pm.a5e.Core")]
+[h:defineFunction("pm.a5e.RestoreResource","pm.a5e.RestoreResource@Lib:pm.a5e.Core")]
+[h:defineFunction("pm.a5e.EventResourceRestoration","pm.a5e.EventResourceRestoration@Lib:pm.a5e.Core",0,0)]
 [h:defineFunction("pm.a5e.RechargeRoll","pm.a5e.RechargeRoll@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.a5e.StartAndEndTurnEffects","pm.a5e.StartAndEndTurnEffects@Lib:pm.a5e.Core",0,0)]
 [h:defineFunction("pm.a5e.GenerateEffectDisplay","pm.a5e.GenerateEffectDisplay@Lib:pm.a5e.Core")]
@@ -196,6 +200,7 @@
 [h:defineFunction("pm.StandardRange","pm.StandardRange@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.StandardDuration","pm.StandardDuration@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.a5e.PathFeatureFilter","pm.a5e.PathFeatureFilter@Lib:pm.a5e.Core")]
+[h:defineFunction("pm.a5e.ResourceSourceData","pm.a5e.ResourceSourceData@Lib:pm.a5e.Core")]
 [h:defineFunction("ut.a5e.GenerateSelectionHTML","ut.a5e.GenerateSelectionHTML@Lib:pm.a5e.Core")]
 
 [h:"<!-- Functions for Leveling -->"]

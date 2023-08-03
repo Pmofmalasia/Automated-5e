@@ -7,12 +7,26 @@
 
 [h,if(json.get(SubeffectData,"ParentSubeffect")!=""),CODE:{
 	[h:ParentSubeffectNum = json.get(SubeffectData,"ParentSubeffect") + MultiEffectModifier]
-	[h:tempParentID = json.path.read(pm.a5e.EffectData,"[*][?(@.WhichIntrinsicSubeffect == '"+ParentSubeffectNum+"')]['ID']")]
-	[h,if(!json.isEmpty(tempParentID)): thisEffectData = json.set(thisEffectData,
-		"ParentSubeffect",json.get(tempParentID,0),
-		"ParentSubeffectRequirements",json.get(SubeffectData,"ParentSubeffectRequirements")
+	[h:subeffect.ParentEffectData = json.get(json.path.read(pm.a5e.EffectData,"[*][?(@.WhichIntrinsicSubeffect == '"+ParentSubeffectNum+"')]"),0)]
+	[h:ParentSubeffectRequirements = json.get(SubeffectData,"ParentSubeffectRequirements")]
+
+	[h:thisEffectData = json.set(thisEffectData,
+		"ParentSubeffect",json.get(subeffect.ParentEffectData,"ID"),
+		"ParentSubeffectRequirements",ParentSubeffectRequirements
 	)]
-};{}]
+
+	[h,if(json.get(ParentSubeffectRequirements,"Requirement") == "Attack"),CODE:{
+		[h:UseParentCrit = and(
+			json.get(ParentSubeffectRequirements,"Result") == "Hit",
+			!json.contains(SubeffectData,"Attack"),
+			!json.contains(SubeffectData,"SaveData")
+		)]
+	};{
+		[h:UseParentCrit = 0]
+	}]
+};{
+	[h:UseParentCrit = 0]
+}]
 
 [h,if(json.contains(SubeffectData,"UseResource")),CODE:{
 	[h:subeffect.ResourceData = pm.a5e.UseResource(json.get(SubeffectData,"UseResource"),IsTooltip)]

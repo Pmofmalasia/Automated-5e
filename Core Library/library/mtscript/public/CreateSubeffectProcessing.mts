@@ -807,9 +807,11 @@
 [h:thisSubeffectNum = number(json.get(subeffectData,"WhichSubeffect"))]
 [h:ParentToken = json.get(subeffectData,"ParentToken")]
 [h:subeffectData = json.set(subeffectData,"WhichIntrinsicSubeffect",thisSubeffectNum - 1)]
+[h:isPersistentEffect = json.get(subeffectData,"isPersistentEffect")]
 [h:subeffectData = json.remove(subeffectData,"WhichSubeffect")]
 [h:subeffectData = json.remove(subeffectData,"PriorSubeffects")]
 [h:subeffectData = json.remove(subeffectData,"ParentToken")]
+[h:subeffectData = json.remove(subeffectData,"isPersistentEffect")]
 
 [h,switch(EffectType),CODE:
 	case "Spell":{
@@ -846,6 +848,8 @@
 			)]
 		}]
 
+		[h,if(isPersistentEffect == "Same"): subeffectData = json.set(subeffectData,"PersistentEffect",1)]
+
 		[h:thisEffectSubeffectData = json.get(currentEffectData,"Subeffects")]
 		[h:thisEffectSubeffectData = json.append(thisEffectSubeffectData,subeffectData)]
 
@@ -864,26 +868,30 @@
 	}
 ]
 
-[h,switch(NeedsNewSubeffect+""+lastEffectTest),CODE:
-	case "01":{
-		[h:closeDialog("SubeffectCreation")]
-		[h,MACRO("CreateFeatureCoreFinalInput@Lib:pm.a5e.Core"): json.set("","EffectType",EffectType,"ExtraData",extraData,"ParentToken",ParentToken)]
-	};
-	case "00":{
-		[h:baseFeatureData = json.set(baseFeatureData,
-			"EffectsNumber",EffectsNumber,
-			"WhichSubeffect",1,
-			"EffectType",EffectType,
-			"ExtraData",extraData,
-			"ParentToken",ParentToken
-		)]
+[h,if(isPersistentEffect == "Different"),CODE:{
+	
+};{
+	[h,switch(NeedsNewSubeffect+""+lastEffectTest),CODE:
+		case "01":{
+			[h:closeDialog("SubeffectCreation")]
+			[h,MACRO("CreateFeatureCoreFinalInput@Lib:pm.a5e.Core"): json.set("","EffectType",EffectType,"ExtraData",extraData,"ParentToken",ParentToken)]
+		};
+		case "00":{
+			[h:baseFeatureData = json.set(baseFeatureData,
+				"EffectsNumber",EffectsNumber,
+				"WhichSubeffect",1,
+				"EffectType",EffectType,
+				"ExtraData",extraData,
+				"ParentToken",ParentToken
+			)]
 
-		[h:closeDialog("SubeffectCreation")]
-		[h,MACRO("CreateSubeffect@Lib:pm.a5e.Core"): baseFeatureData]
-		[h:"<!-- TODO: Might be able to change to a generic input? Or just tack a little bit on to the start of Subeffects? I think the only thing that actually needs selecting is UseTime? -->"]
-	};
-	default:{
-		[h:closeDialog("SubeffectCreation")]
-		[h,MACRO("CreateSubeffect@Lib:pm.a5e.Core"): json.set("","WhichSubeffect",thisSubeffectNum+1,"EffectType",EffectType,"EffectsNumber",EffectsNumber,"ExtraData",extraData,"ParentToken",ParentToken)]        
-	}
-]
+			[h:closeDialog("SubeffectCreation")]
+			[h,MACRO("CreateSubeffect@Lib:pm.a5e.Core"): baseFeatureData]
+			[h:"<!-- TODO: Might be able to change to a generic input? Or just tack a little bit on to the start of Subeffects? I think the only thing that actually needs selecting is UseTime? -->"]
+		};
+		default:{
+			[h:closeDialog("SubeffectCreation")]
+			[h,MACRO("CreateSubeffect@Lib:pm.a5e.Core"): json.set("","WhichSubeffect",thisSubeffectNum+1,"EffectType",EffectType,"EffectsNumber",EffectsNumber,"ExtraData",extraData,"ParentToken",ParentToken)]        
+		}
+	]	
+}]

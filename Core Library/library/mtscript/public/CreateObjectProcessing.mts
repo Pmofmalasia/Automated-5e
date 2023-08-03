@@ -137,6 +137,7 @@
 		[h:objectData = json.set(objectData,"isAttunement",1)]
 	};
 	case 2:{
+		[h:objectData = json.set(objectData,"isAttunement",1)]
 		[h:allAttunementRequirements = ""]
 		[h:requiredAttunementClasses = "[]"]
 		[h,foreach(tempClass,pm.GetClasses("Name","json")),CODE:{
@@ -234,22 +235,21 @@
 	};
 	case "Multiple":{
 		[h:MaxResourceString = "[r:json.set(''"]
-		[h:ResourceDisplayNameString = "[r:json.set(''"]
+		[h:ResourceDisplayNames = "{}"]
 		[h,count(json.get(objectData,"MultiResourceNumber") + 1),CODE:{
 			[h:tempResourceDisplayName = json.get(objectData,"ResourceDisplayName"+roll.count)]
 			[h:tempResourceName = pm.RemoveSpecial(tempResourceDisplayName)]
 			[h:MaxResourceString = MaxResourceString + ",'" + tempResourceName + "'," + json.get(objectData,"MaxResource"+roll.count)]
-			[h:ResourceDisplayNameString = ResourceDisplayNameString + ",'" + tempResourceName + "','" + tempResourceDisplayName + "'"]
+			[h:ResourceDisplayNames = json.set(ResourceDisplayNames,tempResourceName+ tempResourceDisplayName)]
 
 			[h:objectData = json.remove(objectData,"ResourceDisplayName"+roll.count)]
 			[h:objectData = json.remove(objectData,"MaxResource"+roll.count)]
 		}]
 		[h:MaxResourceString = MaxResourceString + ")]"]
-		[h:ResourceDisplayNameString = ResourceDisplayNameString + ")]"]
 
 		[h:objectData = json.set(objectData,
 			"MaxResource",MaxResourceString,
-			"ResourceDisplayName",ResourceDisplayNameString
+			"ResourceDisplayName",ResourceDisplayNames
 		)]
 		[h:objectData = json.remove(objectData,"MultiResourceNumber")]
 	}
@@ -282,6 +282,7 @@
 		isAHLAllowed = json.get(objectData,"CanAHLSpell"+roll.count);
 		isAHLAllowed = 0
 	]
+
 	[h:NoResourceUsedTest = or(json.get(objectData,"isCharges") == "None",and(thisSpellResourceUsed == 0,!isAHLAllowed))]
 	[h,if(!NoResourceUsedTest),CODE:{
 		[h:resourceIdentifiers = json.set("","Name",ObjectName,"Class","Item","Subclass","","ResourceSource","Item")]

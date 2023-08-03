@@ -34,6 +34,14 @@
 
 [h,if(isLeaveToken),CODE:{
 	[h,MACRO("GenerateObjectToken@Lib:pm.a5e.Core"): json.set(ItemData,"Location",DropLocation)]
+};{
+	[h:RestorationData = json.set("",
+		"ItemChoice",ItemData,
+		"NumberAdded",json.get(ItemData,"Number"),
+		"ParentToken",ParentToken
+	)]
+	[h:restoreItemLink = macroLinkText("AddItemProcessing@Lib:pm.a5e.Core",if(DMOnlyLink,"gm","all"),ItemData,ParentToken)]
+	[h:broadcast("<a href='"+restoreItemLink+"'>Return Item to "+getName(ParentToken)+"?</a>")]
 }]
 
 [h:macro.return = json.set("","ItemID",DroppedItem,"ItemRemaining",NewInventoryNumber)]

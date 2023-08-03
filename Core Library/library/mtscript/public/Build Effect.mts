@@ -51,6 +51,8 @@
 			"ParentSubeffectRequirements",json.get(effect,"ParentSubeffectRequirements")
 		)]
 
+		[h,if(json.contains(effect,"ParentCrit")): thisEffect = json.set(thisEffect,"ParentCrit",json.get(effect,"ParentCrit"))]
+
         [h,if(whichEffect >= json.length(currentEffectData)): currentEffectData = json.append(currentEffectData,thisEffect); currentEffectData = json.set(currentEffectData,whichEffect,thisEffect)]
 	};{}]
     

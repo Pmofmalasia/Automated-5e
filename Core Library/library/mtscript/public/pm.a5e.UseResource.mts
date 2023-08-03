@@ -726,11 +726,9 @@
 	case "Feature":{
 		[h:"<!-- Note: Default is for feature resources, but covers features, conditions, and items. -->"]
 
-		[h,switch(json.get(ResourceSelected,"TempResourceSource")):
-			case "Feature": sourceProperty = "a5e.stat.AllFeatures";
-			case "Item": sourceProperty = "a5e.stat.Inventory";
-			case "Condition": sourceProperty = "a5e.stat.Conditions"
-		]
+		[h:ResourceSourceData = pm.a5e.ResourceSourceData(json.get(ResourceSelected,"TempResourceSource"),ResourceSelected)]
+		[h:sourceProperty = json.get(ResourceSourceData,"Property")]
+		[h:sourcePath = json.get(ResourceSourceData,"Path")]
 
 		[h,if(json.get(ResourceSelected,"TempResourceKey")==""),CODE:{
 			[h:ResourceAmount = json.get(ResourceSelected,"Resource") - ResourceUsed]

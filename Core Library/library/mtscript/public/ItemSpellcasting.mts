@@ -12,7 +12,7 @@
 [h,if(SpellcastingOptionsNumber > 1): abilityDisplayName = abilityDisplayName + ": Cast "+pm.GetDisplayName(SpellName,"sb.Spells")]
 [h:abilityClass = "Item"]
 [h:abilitySubclass = ""]
-[h:abilityFalseName = "Class Feature"]
+[h:abilityFalseName = "Item Effect"]
 [h:FeatureFullDescription = ""]
 [h:FeatureAbridgedDescription = ""]
 [h:pm.a5e.ItemStdVars(SpellData)]

@@ -471,7 +471,7 @@ function removeMultiResourceRows(tableID){
 async function createRestoreMethodRows(){
 	clearUnusedTable("CreateObjectTable","rowRestoreMethod","rowInitialChargesMethod");
 	let nextRowIndex = document.getElementById("rowRestoreMethod").rowIndex+1;
-	
+
 	if(document.getElementById("RestoreMethod").value == "Fixed"){
 		addTableRow("CreateObjectTable",nextRowIndex,"rowRestoreAmount","<th><label for='RestoreAmount'>Amount Recharged:</label></th><td><input type='number' id='RestoreAmount' name='RestoreAmount' min='0' value='1' style='width:35px'></td>");
 	}
@@ -551,7 +551,7 @@ async function addSpellSelectionRows(tableID){
 		}
 		levelInput = levelInput + "</select>";
 
-		AHLInput = "; <select id='CanAHLSpell"+SpellNumber+"' name='CanAHLSpell"+SpellNumber+"' onchange='toggleSpellAHLResource("+SpellNumber+")'><option value='"+SpellNumber+"'>Cannot</option><option value='1'>Can</option></select> spend <input type='number' id='SpellResourceAHL"+SpellNumber+"' name='SpellResourceAHL"+SpellNumber+"' style='width:25px' value='"+SpellNumber+"' disabled> charge(s) per higher level.";
+		AHLInput = "; <select id='CanAHLSpell"+SpellNumber+"' name='CanAHLSpell"+SpellNumber+"' onchange='toggleSpellAHLResource("+SpellNumber+")'><option value='0'>Cannot</option><option value='1'>Can</option></select> spend <input type='number' id='SpellResourceAHL"+SpellNumber+"' name='SpellResourceAHL"+SpellNumber+"' style='width:25px' value='0' disabled> charge(s) per higher level.";
 	}
 	levelInput = levelInput + "</span>";
 	AHLInput = AHLInput + "</span>";

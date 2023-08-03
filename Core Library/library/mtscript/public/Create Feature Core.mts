@@ -413,7 +413,6 @@
 	[h,if(ab.RestoreRechargeRoll),CODE:{
 		[h:"<!-- TODO: When converted to dialog, add functionality for more die sizes --> "]
 		[h:abort(input(
-			" RechargeCharges | 0,1,2,3,4,5,6 | Uses Before Recharge | LIST | SELECT=1 ",
 			" RechargeNumber | 0,1,2,3,4,5,6 | Minimum Number for Recharge | LIST | SELECT=5 "
 		))]
 

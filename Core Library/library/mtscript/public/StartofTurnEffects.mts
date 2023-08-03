@@ -6,6 +6,7 @@
 [h:abilityTable = "[]"]
 [h:pm.a5e.OverarchingContext = "StartTurn"]
 
+[h:"<!-- TODO: Roll this in with EventResourceRestoration in the future when inputs are updated since it has restoration by chance as well -->"]
 [h,foreach(feature,json.path.read(a5e.UnifiedAbilities,"[*][?(@.RechargeRoll!=null)]","DEFAULT_PATH_LEAF_TO_NULL")),CODE:{
 	[h:NeedsRecharge = (json.get(feature,"Resource") != evalMacro(json.get(feature,"MaxResource")))]
 	[h,if(NeedsRecharge),CODE:{
@@ -13,6 +14,8 @@
 		[h:abilityTable = json.merge(abilityTable,json.get(RechargeRollData,"Table"))]
 	};{}]
 }]
+
+[h:pm.a5e.EventResourceRestoration("StartTurn")]
 
 [h:pm.a5e.StartAndEndTurnEffects("Start")]
 

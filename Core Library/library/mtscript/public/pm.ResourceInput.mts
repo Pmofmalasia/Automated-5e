@@ -3,6 +3,7 @@
 [h:ab.MultiResourceTest = if(ab.ResourceType == "Multiple Resources",1,0)]
 [h:ab.ContinueLoopTest = 1]
 [h:ab.ResourceFinal = if(ab.MultiResourceTest,"[r:json.set(''","[r:")]
+[h:ab.AllDisplayNames = ""]
 
 [h:ab.Level = json.get(ab.ResourceInfo,"Level")]
 [h:ab.UpdateLevelOptions = string(ab.Level)]
@@ -17,17 +18,20 @@
 [h,while(ab.ContinueLoopTest==1),CODE:{
 	[h,if(ab.MultiResourceTest == 1),CODE:{
 		[h:abort(input(
-			" ab.ResourceName | -- Name Here -- | Enter name for this resource ",
+			" ab.ResourceDisplayName | -- Name Here -- | Enter name for this resource ",
 			" ab.ResourceType | 1,Other Flat Number,Attribute Based,Linearly Class Level Based,Non-Linearly Class Level Based,Proficiency Based,Custom | Amount of Resource | LIST | VALUE=STRING ",
 			" ab.ResourceLevelGained | "+ab.UpdateLevelOptions+" | Level When Resource is Gained | LIST | VALUE=STRING ",
 			" ab.ResourceDone |  | Finish adding new resources | CHECK "
 		))]
 		[h:ab.MultiResourceTest = 1]
+		[h:ab.ResourceName = pm.RemoveSpecial(ab.ResourceDisplayName)]
+		[h:ab.AllDisplayNames = json.set(ab.AllDisplayNames,ab.ResourceName,ab.ResourceDisplayName)]
 		[h:ab.ResourceFinal = if(ab.ResourceLevelGained == ab.Level,ab.ResourceFinal+",'"+ab.ResourceName+"',",ab.ResourceFinal)]
 		[h,foreach(tempLevel,listDelete(ab.UpdateLevelOptions,0)): set("ab.UpdateLevel"+tempLevel,if(tempLevel>=ab.ResourceLevelGained,eval("ab.UpdateLevel"+tempLevel)+",'"+ab.ResourceName+"',",eval("ab.UpdateLevel"+tempLevel)))]
 		[h:ab.ContinueLoopTest = !ab.ResourceDone]
 		[h:ab.UpdateTest = max(ab.UpdateTest,if(or(ab.ResourceType == "Non-Linearly Class Level Based",ab.ResourceLevelGained != ab.Level),1,0))]
 	};{
+		[h:ab.AllDisplayNames = ""]
 		[h:ab.ResourceLevelGained = ab.Level]
 		[h:ab.UpdateTest = if(ab.ResourceType == "Non-Linearly Class Level Based",1,0)]
 		[h:ab.ContinueLoopTest = 0]
@@ -94,4 +98,4 @@
 
 [h:"<!-- Prevents features that don't gain a multiresource until future levels from causing errors -->"]
 [h,if(ab.ResourceFinal == "[r:json.set('')]"): ab.ResourceFinal = ""]
-[h:macro.return = json.set("","Base",ab.ResourceFinal,"Updates",ab.ResourceUpdates)]
+[h:macro.return = json.set("","Base",ab.ResourceFinal,"Updates",ab.ResourceUpdates,"DisplayName",ab.AllDisplayNames)]

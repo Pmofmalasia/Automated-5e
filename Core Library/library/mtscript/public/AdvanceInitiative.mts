@@ -19,10 +19,10 @@
 [h,if(nextInitiativePosition == numInitTokens): nextInitiativePosition = 0]
 [h:tokenStartingTurn = json.get(json.get(initTokens, nextInitiativePosition), "tokenId")]
 
-[h,MACRO("End of Turn Effects@Lib:pm.a5e.Core"): tokenEndingTurn]
+[h,MACRO("EndofTurnEffects@Lib:pm.a5e.Core"): tokenEndingTurn]
 [h:abilityTable = macro.return]
 
-[h,MACRO("Start of Turn Effects@Lib:pm.a5e.Core"): tokenStartingTurn]
+[h,MACRO("StartofTurnEffects@Lib:pm.a5e.Core"): tokenStartingTurn]
 [h:abilityTable = json.merge(abilityTable,macro.return)]
 
 [h,if(json.length(abilityTable)>2),CODE:{

@@ -86,7 +86,7 @@
 		"RollContents",json.get(subeffect.AttackData,"ToHitStr")+" = ",
 		"DisplayOrder","['Rules','Roll','Full']"
 	)]
-	
+
 	[h,if(json.get(subeffect.AttackData,"AdvantageBalance")==0):
 		ToHitTableLine = json.set(ToHitTableLine,"BonusBody1","Reroll: <a href = '"+subeffect.AdvRerollLink+"'><span style = 'color:"+LinkColor+"'>Adv.</span></a> / <a href = '"+subeffect.DisRerollLink+"'><span style = 'color:"+LinkColor+"'>Dis.</span></a>");
 		ToHitTableLine = json.set(ToHitTableLine,"BonusBody1","(Roll #1: "+(roll1+thisAttackToHit-if(thisAttackAdvDis==1,max(roll1,roll2),min(roll1,roll2)))+" / Roll #2: "+(roll2+thisAttackToHit-if(thisAttackAdvDis==1,max(roll1,roll2),min(roll1,roll2)))+")")
@@ -95,7 +95,12 @@
 	[h:abilityTable = json.append(abilityTable,ToHitTableLine)]
 	[h:thisEffectData = json.set(thisEffectData,"Attack",subeffect.AttackData)]
 };{
-	[h:attack.CritTest = 0]
+	[h,if(UseParentCrit),CODE:{
+		[h:attack.CritTest = json.path.read(subeffect.ParentEffectData,"['Attack']['CritTest']")]
+		[h:thisEffectData = json.set(thisEffectData,"ParentCrit",attack.CritTest)]
+	};{
+		[h:attack.CritTest = 0]
+	}]
 }]
 
 [h,if(json.contains(SubeffectData,"SaveData")),CODE:{

@@ -3,12 +3,16 @@
 [h:EffectType = json.get(subeffectData,"EffectType")]
 [h:thisSubeffectNum = json.get(subeffectData,"WhichSubeffect")]
 [h:EffectsNumber = json.get(subeffectData,"EffectsNumber")]
+[h:isPersistentEffect = number(json.get(subeffectData,"isPersistentEffect"))]
 [h:ExtraData = json.get(subeffectData,"ExtraData")]
 
 [h:SubeffectHTML = ""]
+[h,if(isPersistentEffect): SubeffectHTML = SubeffectHTML + "<input type='hidden' id='isPersistentEffect' name='isPersistentEffect' value=1><input type='hidden' id='MainEffectsNumber' name='MainEffectsNumber' value='"+json.get(subeffectData,"MainEffectsNumber")+"'><input type='hidden' id='MainNeedsNewSubeffect' name='MainNeedsNewSubeffect' value="+json.get(subeffectData,"MainNeedsNewSubeffect")+"><tr><th text-align='center' colspan='2'>Persistent Effect</th></tr>"]
+
 [h,if(EffectsNumber > 1),CODE:{
 	[h:SubeffectHTML = SubeffectHTML + "<tr id='rowEffectName'><th>This Effect's Name:</th><td><input type='text' id='EffectDisplayName' name='EffectDisplayName'></td></tr>"]
 };{}]
+
 [h,if(thisSubeffectNum > 1),CODE:{};{
 	[h:SubeffectHTML = SubeffectHTML + "<tr><th text-align='center' colspan='2'>Subeffect #"+thisSubeffectNum+"</th></tr>"]
 }]
@@ -56,11 +60,13 @@
 
 [h:SubeffectHTML = SubeffectHTML + "<tr id='rowUncommonEffects'><th><label for='isUncommonEffects'>Show Additional Effects:</label></th><td><input type='checkbox' id='isUncommonEffects' name='isUncommonEffects' value=1 onchange='createUncommonEffectsRows()'></td></tr>"]
 
+[h,if(isPersistentEffect): SubeffectHTML = SubeffectHTML + "<tr id='rowUseInitialTargets'><th><label for='UseInitialTargets'>Use Same Targets as Linked Effect:</label></th><td><input type='checkbox' id='UseInitialTargets' name='UseInitialTargets' onchange='createInitialTargetsRows("+'"CreateSubeffectTable","Initial"'+")'></td></tr>"]
+
 [h:"<!-- Note: Targeting rows are now created in JS instead of here -->"]
 
 [h:SubeffectHTML = SubeffectHTML + "<tr id='rowNeedsNewSubeffect'><th><span title='Check if an effect has different parts that have different conditions for resolving. For example, Ice Knife makes an attack against a single target (effect 1), then forces a save against all creatures around them (effect 2); Ray of Sickness makes a spell attack to deal damage (effect 1), then forces that target to make a save against poison if it hits (effect 2); and Vampiric Touch makes an attack to deal damage (effect 1), then heals the caster for half the amount of damage dealt (effect 2).'><label for='NeedsNewSubeffect'>Needs Additional Component of Same Effect:</label></span></th><td><input type='checkbox' id='NeedsNewSubeffect' name='NeedsNewSubeffect'></td></tr>
 
-<tr id='rowIsPersistentEffect'><th><span title='Check if an effect needs to make additional rolls/force others to make them if not linked to an effect at a later time, e.g. many AoE effects that persist'><label for='isPersistentEffect'>Has a Persistent Effect:</label></span></th><td><select id='isPersistentEffect' name='isPersistentEffect' onchange='createPersistentEffectRows("+'"CreateSubeffectTable"'+")'><option value=''>None</option><option value='Same'>Same Effect</option><option value='Different'>Different Effect</option></select></td></tr>
+<tr id='rowNeedsPersistentEffect'><th><span title='Check if an effect needs to make additional rolls/force others to make them if not linked to an effect at a later time, e.g. many AoE effects that persist'><label for='needsPersistentEffect'>Has a Persistent Effect:</label></span></th><td><select id='needsPersistentEffect' name='needsPersistentEffect' onchange='createPersistentEffectRows("+'"CreateSubeffectTable"'+")'><option value=''>None</option><option value='Same'>Same Effect</option><option value='Different'>Different Effect</option></select></td></tr>
 
 <tr id='submitRow'><th text-align='center' colspan='2'><input type='submit' id='submitButton' value='Submit'></th></tr>"]
 

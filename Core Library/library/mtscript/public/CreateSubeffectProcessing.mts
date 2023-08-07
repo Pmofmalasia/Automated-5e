@@ -3,25 +3,20 @@
 [h:EffectsNumber = json.get(subeffectData,"EffectsNumber")]
 [h:subeffectData = json.remove(subeffectData,"EffectsNumber")]
 [h:subeffectData = json.remove(subeffectData,"EffectType")]
-[h:CurrentFeatureData = getLibProperty("ct.New"+EffectType,"pm.a5e.Core")]
-[h:thisPlayerCurrentFeatureData = json.get(CurrentFeatureData,getPlayerName())]
+[h:isPersistentEffect = json.contains(subeffectData,"isPersistentEffect")]
 
-[h,switch(EffectType),CODE:
-	case "Spell":{
-		[h:currentEffectData = json.get(thisPlayerCurrentFeatureData,json.length(thisPlayerCurrentFeatureData)-1)]
-		[h:FeatureName = json.get(json.get(thisPlayerCurrentFeatureData,0),"Name")]
-		[h:FeatureDisplayName = json.get(json.get(thisPlayerCurrentFeatureData,0),"DisplayName")]
-	};
-	default:{
-		[h:allEffectData = json.get(thisPlayerCurrentFeatureData,"Effects")]
-		[h,if(allEffectData!=""):
-			currentEffectData = json.get(allEffectData,json.length(allEffectData)-1);
-			currentEffectData = "{}"
-		]
-		[h:FeatureName = json.get(thisPlayerCurrentFeatureData,"Name")]
-		[h:FeatureDisplayName = json.get(thisPlayerCurrentFeatureData,"DisplayName")]
-	}
+[h:CurrentFeatureData = getLibProperty("ct.New"+if(isPersistentEffect,"Persistent","")+EffectType,"pm.a5e.Core")]
+[h,if(CurrentFeatureData == ""): CurrentFeatureData = "{}"]
+[h:thisPlayerCurrentFeatureData = json.get(CurrentFeatureData,getPlayerName())]
+[h,if(thisPlayerCurrentFeatureData == ""): thisPlayerCurrentFeatureData = "{}"]
+
+[h:allEffectData = json.get(thisPlayerCurrentFeatureData,"Effects")]
+[h,if(allEffectData!=""):
+	currentEffectData = json.get(allEffectData,json.length(allEffectData)-1);
+	currentEffectData = "{}"
 ]
+[h:FeatureName = json.get(thisPlayerCurrentFeatureData,"Name")]
+[h:FeatureDisplayName = json.get(thisPlayerCurrentFeatureData,"DisplayName")]
 
 [h:subeffectData = pm.a5e.KeyStringsToNumbers(subeffectData)]
 
@@ -723,7 +718,6 @@
 	[h:subeffectData = json.remove(subeffectData,"DifficultTerrainMultiplier")]
 };{}]
 
-
 [h,switch(json.get(subeffectData,"isCreateObject")),CODE:
 	case "Unique":{
 
@@ -807,91 +801,138 @@
 [h:thisSubeffectNum = number(json.get(subeffectData,"WhichSubeffect"))]
 [h:ParentToken = json.get(subeffectData,"ParentToken")]
 [h:subeffectData = json.set(subeffectData,"WhichIntrinsicSubeffect",thisSubeffectNum - 1)]
-[h:isPersistentEffect = json.get(subeffectData,"isPersistentEffect")]
 [h:subeffectData = json.remove(subeffectData,"WhichSubeffect")]
 [h:subeffectData = json.remove(subeffectData,"PriorSubeffects")]
 [h:subeffectData = json.remove(subeffectData,"ParentToken")]
-[h:subeffectData = json.remove(subeffectData,"isPersistentEffect")]
 
-[h,switch(EffectType),CODE:
-	case "Spell":{
-		[h:spellLevel = json.get(subeffectData,"ExtraDataSpellLevel")]
-		[h:subeffectData = json.remove(subeffectData,"ExtraDataSpellLevel")]
-		[h:subeffectData = json.remove(subeffectData,"ExtraDataKeys")]
+[h:needsPersistentEffect = json.get(subeffectData,"needsPersistentEffect")]
+[h:MainEffectsNumber = number(json.get(subeffectData,"MainEffectsNumber"))]
+[h:MainNeedsNewSubeffect = json.get(subeffectData,"MainNeedsNewSubeffect")]
+[h:PersistentEffectsNumber = number(json.get(subeffectData,"PersistentEffectsNumber"))]
+[h:subeffectData = json.remove(subeffectData,"needsPersistentEffect")]
+[h:subeffectData = json.remove(subeffectData,"MainEffectsNumber")]
+[h:subeffectData = json.remove(subeffectData,"MainNeedsNewSubeffect")]
+[h:subeffectData = json.remove(subeffectData,"PersistentEffectsNumber")]
 
-		[h:thisEffectSubeffectData = json.get(currentEffectData,"Subeffects")]
-		[h:thisEffectSubeffectData = json.append(thisEffectSubeffectData,subeffectData)]
-		[h:currentEffectData = json.set(currentEffectData,"Subeffects",thisEffectSubeffectData)]
 
-		[h:thisPlayerCurrentFeatureData = json.set(thisPlayerCurrentFeatureData,json.length(thisPlayerCurrentFeatureData)-1,currentEffectData)]
-		[h:setLibProperty("ct.NewSpell",json.set(CurrentFeatureData,getPlayerName(),thisPlayerCurrentFeatureData),"Lib:pm.a5e.Core")]
+[h:ExtraDataKeys = json.fromList(json.get(subeffectData,"ExtraDataKeys"))]
+[h:extraData = ""]
+[h,foreach(tempKey,ExtraDataKeys),CODE:{
+	[h:extraData = json.set(extraData,tempKey,json.get(subeffectData,"ExtraData"+tempKey))]
+	[h:subeffectData = json.remove(subeffectData,"ExtraData"+tempKey)]
+}]
+[h:subeffectData = json.remove(subeffectData,"ExtraDataKeys")]
 
-		[h:baseFeatureData = json.get(thisPlayerCurrentFeatureData,0)]
-		[h:lastEffectTest = json.length(thisPlayerCurrentFeatureData) >= EffectsNumber]
+[h,if(json.contains(subeffectData,"EffectDisplayName")),CODE:{
+	[h:EffectDisplayName = json.get(subeffectData,"EffectDisplayName")]
+	[h:currentEffectData = json.set(currentEffectData,
+		"Name",pm.RemoveSpecial(EffectDisplayName),
+		"DisplayName",EffectDisplayName
+	)]
+}]
 
-		[h:extraData = json.set("","SpellLevel",spellLevel)]
-	};
-	default:{
-		[h:ExtraDataKeys = json.fromList(json.get(subeffectData,"ExtraDataKeys"))]
-		[h:extraData = ""]
-		[h,foreach(tempKey,ExtraDataKeys),CODE:{
-			[h:extraData = json.set(extraData,tempKey,json.get(subeffectData,"ExtraData"+tempKey))]
-			[h:subeffectData = json.remove(subeffectData,"ExtraData"+tempKey)]
-		}]
-		[h:subeffectData = json.remove(subeffectData,"ExtraDataKeys")]
+[h,if(needsPersistentEffect == "Same"): subeffectData = json.set(subeffectData,"PersistentEffects",1)]
 
-		[h,if(json.contains(subeffectData,"EffectDisplayName")),CODE:{
-			[h:EffectDisplayName = json.get(subeffectData,"EffectDisplayName")]
-			[h:currentEffectData = json.set(currentEffectData,
-				"Name",pm.RemoveSpecial(EffectDisplayName),
-				"DisplayName",EffectDisplayName
-			)]
-		}]
+[h:thisEffectSubeffectData = json.get(currentEffectData,"Subeffects")]
+[h:thisEffectSubeffectData = json.append(thisEffectSubeffectData,subeffectData)]
 
-		[h,if(isPersistentEffect == "Same"): subeffectData = json.set(subeffectData,"PersistentEffect",1)]
+[h:currentEffectData = json.set(currentEffectData,"Subeffects",thisEffectSubeffectData)]
 
-		[h:thisEffectSubeffectData = json.get(currentEffectData,"Subeffects")]
-		[h:thisEffectSubeffectData = json.append(thisEffectSubeffectData,subeffectData)]
-
-		[h:currentEffectData = json.set(currentEffectData,"Subeffects",thisEffectSubeffectData)]
-
-		[h,if(thisSubeffectNum == 1):
-			allEffectData = json.append(allEffectData,currentEffectData);
-			allEffectData = json.set(allEffectData,json.length(allEffectData)-1,currentEffectData)
-		]
-
-		[h:thisPlayerCurrentFeatureData = json.set(thisPlayerCurrentFeatureData,"Effects",allEffectData)]
-
-		[h:setLibProperty("ct.New"+EffectType,json.set(CurrentFeatureData,getPlayerName(),thisPlayerCurrentFeatureData),"Lib:pm.a5e.Core")]
-		[h:baseFeatureData = thisPlayerCurrentFeatureData]
-		[h:lastEffectTest = json.length(allEffectData) == EffectsNumber]
-	}
+[h,if(thisSubeffectNum == 1):
+	allEffectData = json.append(allEffectData,currentEffectData);
+	allEffectData = json.set(allEffectData,json.length(allEffectData)-1,currentEffectData)
 ]
 
-[h,if(isPersistentEffect == "Different"),CODE:{
-	
-};{
-	[h,switch(NeedsNewSubeffect+""+lastEffectTest),CODE:
-		case "01":{
-			[h:closeDialog("SubeffectCreation")]
-			[h,MACRO("CreateFeatureCoreFinalInput@Lib:pm.a5e.Core"): json.set("","EffectType",EffectType,"ExtraData",extraData,"ParentToken",ParentToken)]
-		};
-		case "00":{
-			[h:baseFeatureData = json.set(baseFeatureData,
-				"EffectsNumber",EffectsNumber,
-				"WhichSubeffect",1,
-				"EffectType",EffectType,
-				"ExtraData",extraData,
-				"ParentToken",ParentToken
-			)]
+[h:thisPlayerCurrentFeatureData = json.set(thisPlayerCurrentFeatureData,"Effects",allEffectData)]
 
-			[h:closeDialog("SubeffectCreation")]
-			[h,MACRO("CreateSubeffect@Lib:pm.a5e.Core"): baseFeatureData]
-			[h:"<!-- TODO: Might be able to change to a generic input? Or just tack a little bit on to the start of Subeffects? I think the only thing that actually needs selecting is UseTime? -->"]
-		};
-		default:{
-			[h:closeDialog("SubeffectCreation")]
-			[h,MACRO("CreateSubeffect@Lib:pm.a5e.Core"): json.set("","WhichSubeffect",thisSubeffectNum+1,"EffectType",EffectType,"EffectsNumber",EffectsNumber,"ExtraData",extraData,"ParentToken",ParentToken)]        
-		}
-	]	
+[h:setLibProperty("ct.New"+if(isPersistentEffect,"Persistent","")+EffectType,json.set(CurrentFeatureData,getPlayerName(),thisPlayerCurrentFeatureData),"Lib:pm.a5e.Core")]
+[h:baseFeatureData = thisPlayerCurrentFeatureData]
+[h:lastEffectTest = json.length(allEffectData) == EffectsNumber]
+
+[h,if(NeedsNewSubeffect),CODE:{
+	[h:baseFeatureData = json.set("",
+		"WhichSubeffect",thisSubeffectNum+1,
+		"EffectType",EffectType,
+		"EffectsNumber",EffectsNumber,
+		"ExtraData",extraData,
+		"ParentToken",ParentToken
+	)]
+};{
+	[h:baseFeatureData = json.set(baseFeatureData,
+		"EffectsNumber",EffectsNumber,
+		"WhichSubeffect",1,
+		"EffectType",EffectType,
+		"ExtraData",extraData,
+		"ParentToken",ParentToken
+	)]
+}]
+
+[h,if(needsPersistentEffect == "Different"),CODE:{
+	[h:baseFeatureData = json.set(baseFeatureData,
+		"isPersistentEffect",1,
+		"MainEffectsNumber",EffectsNumber,
+		"MainNeedsNewSubeffect",NeedsNewSubeffect,
+		"EffectsNumber",PersistentEffectsNumber,
+		"WhichSubeffect",1
+	)]
+
+	[h:initialFeatureData = json.set("",
+		"Name",FeatureName,
+		"DisplayName",FeatureDisplayName,
+		"Class",json.get(thisPlayerCurrentFeatureData,"Class"),
+		"Subclass",json.get(thisPlayerCurrentFeatureData,"Subclass")
+	)]
+
+	[h:setLibProperty("ct.NewPersistent"+EffectType,json.set(getLibProperty("ct.NewPersistent"+EffectType,"Lib:pm.a5e.Core"),getPlayerName(),initialFeatureData),"Lib:pm.a5e.Core")]
+};{
+	[h,if(isPersistentEffect): baseFeatureData = json.set(baseFeatureData,
+		"isPersistentEffect",1,
+		"MainEffectsNumber",MainEffectsNumber,
+		"MainNeedsNewSubeffect",MainNeedsNewSubeffect
+	)]
+}]
+
+[h:broadcast("Main needs subeff"+ MainNeedsNewSubeffect)]
+
+[h:broadcast(lastEffectTest)]
+[h:broadcast(NeedsNewSubeffect)]
+[h,if(lastEffectTest && !NeedsNewSubeffect),CODE:{
+	[h:broadcast("last and no new subeff")]
+	[h,if(isPersistentEffect),CODE:{
+		[h:broadcast("persistent")]
+		[h:MainFeatureData = getLibProperty("ct.New"+EffectType,"pm.a5e.Core")]
+		[h,if(MainFeatureData == ""): MainFeatureData = "{}"]
+		[h:thisPlayerMainFeatureData = json.get(MainFeatureData,getPlayerName())]
+
+		[h:allMainEffectData = json.get(thisPlayerMainFeatureData,"Effects")]
+		[h:currentMainEffectData = json.get(allMainEffectData,json.length(allMainEffectData)-1)]
+
+		[h:currentMainSubeffectData = json.get(currentMainEffectData,json.length(currentMainEffectData)-1)]
+
+		[h:currentMainEffectData = json.set(currentMainSubeffectData,"PersistentEffects",allEffectData)]
+
+		[h:lastEffectTest = (json.length(allMainEffectData) >= MainEffectsNumber)]
+		[h:NeedsNewSubeffect = json.get(subeffectData,"MainNeedsNewSubeffect")]
+
+		[h:baseFeatureData = json.set(baseFeatureData,
+			"EffectsNumber",MainEffectsNumber,
+			"WhichSubeffect",if(NeedsNewSubeffect,json.length(currentMainSubeffectData),1)
+			"isPersistentEffect",0,
+			"MainEffectsNumber",0,
+			"MainNeedsNewSubeffect",0
+		)]
+	};{}]
+
+	[h:closeDialog("SubeffectCreation")]
+	[h,if(lastEffectTest && !MainNeedsNewSubeffect && !needsPersistentEffect),CODE:{
+		[h:broadcast("done")]
+		[h,MACRO("CreateFeatureCoreFinalInput@Lib:pm.a5e.Core"): json.set("","EffectType",EffectType,"ExtraData",extraData,"ParentToken",ParentToken)]
+	};{
+		[h:broadcast("back to main")]
+		[h,MACRO("CreateSubeffect@Lib:pm.a5e.Core"): baseFeatureData]
+	}]
+};{
+	[h:broadcast("new eff or subeff")]
+	[h:closeDialog("SubeffectCreation")]
+	[h,MACRO("CreateSubeffect@Lib:pm.a5e.Core"): baseFeatureData]
 }]

@@ -4,7 +4,7 @@
 [h:Flavor = json.get(AllSpellData,"Flavor")]
 [h:SpellName = json.get(AllSpellData,"Spell")]
 [h:SpellData = pm.a5e.GetSpecificSpell(SpellName)]
-[h:SpellLevel = json.get(json.get(SpellData,0),"Level")]
+[h:SpellLevel = json.get(SpellData,"Level")]
 [h:DMOnly = (getProperty("a5e.stat.Allegiance") == "Enemy")]
 
 [h:AllSpellData = json.set(AllSpellData,"SpellData",SpellData)]

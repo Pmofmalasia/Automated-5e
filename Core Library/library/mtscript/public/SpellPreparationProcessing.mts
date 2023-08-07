@@ -33,6 +33,5 @@
     [h:UnchangedSpells = json.intersection(thisFeaturePriorSpellSelections,SpellsChosenMerged)]
     [h:NewSpells = json.difference(SpellsChosenMerged,UnchangedSpells)]
     [h:OldSpells = json.difference(thisFeaturePriorSpellSelections,UnchangedSpells)]
-
     [h,MACRO("RefreshSpellMacroButtons@Lib:pm.a5e.Core"): json.set("","Add",NewSpells,"Remove",OldSpells,"ParentToken",ParentToken,"Source",json.get(tempFeature,"MagicSource"))]
 }]

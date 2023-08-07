@@ -6,14 +6,10 @@
 [h:a5e.UnifiedAbilities = a5e.GatherAbilities(ParentToken)]
 [h:pm.a5e.OverarchingContext = "Spell"]
 
-[h:BaseSpellData = json.get(SpellData,0)]
-
-[h:"<!-- TODO: Make a SpellTooltipBorder so the table can be inserted into other things -->"]
-
-[h:SpellName = json.get(BaseSpellData,"Name")]
-[h:SpellDisplayName = json.get(BaseSpellData,"DisplayName")]
-[h:SpellLevel = json.get(BaseSpellData,"Level")]
-[h:SpellSchool = json.get(BaseSpellData,"School")]
+[h:SpellName = json.get(SpellData,"Name")]
+[h:SpellDisplayName = json.get(SpellData,"DisplayName")]
+[h:SpellLevel = json.get(SpellData,"Level")]
+[h:SpellSchool = json.get(SpellData,"School")]
 [h:ForcedClass = json.get(NonSpellData,"ForcedClass")]
 [h:isRitualTest = json.contains(json.path.read(SpellData,"[*]['isRitual']"),1)]
 [h:IsCantrip = (SpellLevel == 0)]
@@ -136,8 +132,8 @@
 	"DisplayOrder","['Rules','Roll','Full']"
 ))]
 
-[h:SpellDescription = base64.decode(json.get(BaseSpellData,"Description"))]
-[h:SpellAHLDescription = base64.decode(json.get(BaseSpellData,"AHLDescription"))]
+[h:SpellDescription = base64.decode(json.get(SpellData,"Description"))]
+[h:SpellAHLDescription = base64.decode(json.get(SpellData,"AHLDescription"))]
 [h:CompleteSpellDescription = SpellDescription+if(SpellAHLDescription=="","","<br><br>"+if(IsCantrip,"","<b><i>At Higher Levels.</b></i> "))+SpellAHLDescription]
 
 [h:macro.return = json.set("","Table",abilityTable,"Source","Arcane","Description",CompleteSpellDescription,"DisplayName",SpellTitle)]

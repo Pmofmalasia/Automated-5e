@@ -22,7 +22,7 @@
     "DMOnly",DMOnly,
     "Class","zzSpell",
     "ColorSubtype",json.set("","Source",SpellSource,"Level",SpellSlot),
-    "Name",json.get(json.get(SpellData,0),"DisplayName"),
+    "Name",json.get(SpellData,"DisplayName"),
     "FalseName","Spellcasting",
     "OnlyRules",ShowFullRules
 )]
@@ -38,7 +38,7 @@
 [h:pm.a5e.BaseEffectData = json.set("",
     "Class","Spell",
     "ClassForDisplay","zzSpell",
-	"DisplayName",json.get(json.get(SpellData,0),"DisplayName"),
+	"DisplayName",json.get(SpellData,"DisplayName"),
     "ColorSubtype",json.set("","Source",SpellSource,"Level",SpellSlot),
     "FalseName","Spellcasting",
 	"Type","Spell",

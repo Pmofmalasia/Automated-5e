@@ -47,7 +47,7 @@ function createParentSubeffectRows(){
 
 		//Shift from adding prereqs to handling targeting here
 		nextRowIndex = document.getElementById("Range").rowIndex;
-		addTableRow("CreateSubeffectTable",nextRowIndex,"rowUsePriorTargets","<th><label for='UsePriorTargets'>Use Same Targets as Linked Effect:</label></th><td><input type='checkbox' id='UsePriorTargets' name='UsePriorTargets' onchange='createPriorTargetsRows("+'"CreateSubeffectTable"'+")'></td>");
+		addTableRow("CreateSubeffectTable",nextRowIndex,"rowUsePriorTargets","<th><label for='UsePriorTargets'>Use Same Targets as Linked Effect:</label></th><td><input type='checkbox' id='UsePriorTargets' name='UsePriorTargets' onchange='createPriorTargetsRows("+'"CreateSubeffectTable","Prior"'+")'></td>");
 		nextRowIndex++;
 
 		addTableRow("CreateSubeffectTable",nextRowIndex,"rowUsePriorOrigin","<th><label for='UsePriorOrigin'>New Subeffect Originates from Old Target:</label></th><td><input type='checkbox' id='UsePriorOrigin' name='UsePriorOrigin' onchange='createPriorOriginRows("+'"CreateSubeffectTable"'+")'></td>");
@@ -1671,6 +1671,24 @@ async function createCreateObjectTable(){
 	}
 	else if(CreateObjectSeleciton == "Type"){
 
+	}
+}
+
+function createPersistentEffectRows(tableID){
+	let persistentEffectChoice = document.getElementById("needsPersistentEffect").value;
+	let nextRowIndex = document.getElementById("rowNeedsPersistentEffect").rowIndex + 1;
+	clearUnusedTable(tableID,"rowNeedsPersistentEffect","submitRow");
+
+	if(persistentEffectChoice == "Same"){
+		addTableRow(tableID,nextRowIndex,"rowPersistentEffectTargeting","<th><label for='isPersistentEffectRandom'>Persistent Effect is Chosen Randomly:</label></th><td><input type='checkbox' id='isPersistentEffectRandom' name='isPersistentEffectRandom'></td>");
+		nextRowIndex++;
+	}
+	else if(persistentEffectChoice == "Different"){
+		addTableRow(tableID,nextRowIndex,"rowPersistentEffectsNumber","<th><label for='PersistentEffectsNumber'>Number of Persistent Effects:</label></th><td><input type='number' id='PersistentEffectsNumber' name='PersistentEffectsNumber' value=1 min=1 style='width:25px'></td>");
+		nextRowIndex++;
+
+		addTableRow(tableID,nextRowIndex,"rowIsPersistentEffectRandom","<th><label for='isPersistentEffectRandom'>Persistent Effect is Chosen Randomly:</label></th><td><input type='checkbox' id='isPersistentEffectRandom' name='isPersistentEffectRandom'></td>");
+		nextRowIndex++;
 	}
 }
 

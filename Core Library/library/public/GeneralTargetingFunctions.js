@@ -43,16 +43,16 @@ async function createTargetingRows(tableID,startRowID){
 	document.getElementById("rowTargetingEnd").setAttribute("hidden","");
 }
 
-function createPriorTargetsRows(tableID){
-	let nextRowIndex = document.getElementById("rowUsePriorTargets").rowIndex + 1;
-	clearUnusedTable(tableID,"rowUsePriorTargets","rowTargetingEnd");
+function createPriorTargetsRows(tableID,callingType){
+	let nextRowIndex = document.getElementById("rowUse"+callingType+"Targets").rowIndex + 1;
+	clearUnusedTable(tableID,"rowUse"+callingType+"Targets","rowTargetingEnd");
 
-	if(document.getElementById("UsePriorTargets").checked){
-		addTableRow(tableID,nextRowIndex,"rowPriorTargetNumber","<th><label for='PriorTargetNumber'>Number of Prior Targets Affected:</label></th><td><input type='number' id='PriorTargetNumber' name='PriorTargetNumber' value=1 style='width:25px'><input type='checkbox' id='PriorTargetAll' name='PriorTargetAll' value=1 onchange='toggleFieldEnabled("+'"PriorTargetNumber","PriorTargetAll"'+")'> Affects All</td>");
+	if(document.getElementById("Use"+callingType+"Targets").checked){
+		addTableRow(tableID,nextRowIndex,"row"+callingType+"TargetNumber","<th><label for='"+callingType+"TargetNumber'>Number of "+callingType+" Targets Affected:</label></th><td><input type='number' id='"+callingType+"TargetNumber' name='"+callingType+"TargetNumber' value=1 style='width:25px'><input type='checkbox' id='"+callingType+"TargetAll' name='"+callingType+"TargetAll' value=1 onchange='toggleFieldEnabled("+'"'+callingType+'TargetNumber","'+callingType+'TargetAll"'+")'> Affects All</td>");
 		nextRowIndex++;
 	}
 	else{
-		addTableRow("CreateSubeffectTable",nextRowIndex,"rowUsePriorOrigin","<th><label for='UsePriorOrigin'>New Subeffect Originates from Old Target:</label></th><td><input type='checkbox' id='UsePriorOrigin' name='UsePriorOrigin' onchange='createPriorOriginRows("+'"CreateSubeffectTable"'+")'></td>");
+		addTableRow("CreateSubeffectTable",nextRowIndex,"rowUse"+callingType+"Origin","<th><label for='Use"+callingType+"Origin'>New Subeffect Originates from Old Target:</label></th><td><input type='checkbox' id='Use"+callingType+"Origin' name='Use"+callingType+"Origin' onchange='create"+callingType+"OriginRows("+'"CreateSubeffectTable"'+")'></td>");
 		nextRowIndex++;
 
 		createTargetingRows("CreateSubeffectTable","rowTargetingEnd");

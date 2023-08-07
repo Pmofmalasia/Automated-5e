@@ -116,7 +116,7 @@
 [h:setLibProperty("sb.ConditionTags",json.sort(pm.ConditionTags,"a","DisplayName"),"Lib:pm.a5e.Core")]
 [h:setLibProperty("sb.CastingAbilities",pm.CastingAbilities,"Lib:pm.a5e.Core")]
 [h:setLibProperty("sb.SpellSchools",json.sort(pm.SpellSchools,"a","DisplayName"),"Lib:pm.a5e.Core")]
-[h:setLibProperty("sb.Spells",pm.Spells,"Lib:pm.a5e.Core")]
+[h:setLibProperty("sb.Spells",json.sort(pm.Spells,"a","DisplayName"),"Lib:pm.a5e.Core")]
 [h:setLibProperty("sb.Objects",json.sort(pm.Objects,"a","DisplayName"),"Lib:pm.a5e.Core")]
 [h:setLibProperty("sb.ObjectTypes",json.sort(pm.ObjectTypes,"a","DisplayName"),"Lib:pm.a5e.Core")]
 [h:setLibProperty("sb.ObjectTags",json.sort(pm.ObjectTags,"a","DisplayName"),"Lib:pm.a5e.Core")]

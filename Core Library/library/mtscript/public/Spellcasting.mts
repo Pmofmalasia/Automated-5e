@@ -1,7 +1,6 @@
 [h:SpellData = json.get(macro.args,"SpellData")]
 [h:NonSpellData = json.remove(macro.args,"SpellData")]
 
-[h:BaseSpellData = json.get(SpellData,0)]
 [h:IsTooltip = 0]
 [h:Flavor = json.get(NonSpellData,"Flavor")]
 [h:ParentToken = json.get(NonSpellData,"ParentToken")]
@@ -24,16 +23,16 @@
 [h:CritMessage = json.get(NonSpellData,"CritMessage")]
 [h:CritFailMessage = json.get(NonSpellData,"CritFailMessage")]
 
-[h:SpellName = json.get(BaseSpellData,"Name")]
-[h:SpellDisplayName = json.get(BaseSpellData,"DisplayName")]
-[h:SpellLevel = json.get(BaseSpellData,"Level")]
-[h:isRitual = json.get(BaseSpellData,"isRitual")]
-[h:School = json.get(BaseSpellData,"School")]
+[h:SpellName = json.get(SpellData,"Name")]
+[h:SpellDisplayName = json.get(SpellData,"DisplayName")]
+[h:SpellLevel = json.get(SpellData,"Level")]
+[h:isRitual = json.get(SpellData,"isRitual")]
+[h:School = json.get(SpellData,"School")]
 
-[h:mCompConsumed = json.get(BaseSpellData,"mCompConsumed")]
-[h:vComp = json.get(BaseSpellData,"vComp")]
-[h:isConcentration = json.contains(BaseSpellData,"isConcentration")]
-[h:ConcentrationLost = json.get(BaseSpellData,"ConcentrationLost")]
+[h:mCompConsumed = json.get(SpellData,"mCompConsumed")]
+[h:vComp = json.get(SpellData,"vComp")]
+[h:isConcentration = json.contains(SpellData,"isConcentration")]
+[h:ConcentrationLost = json.get(SpellData,"ConcentrationLost")]
 
 [h:IsCantrip = if(SpellLevel==0,1,0)]
 
@@ -41,21 +40,21 @@
 [h:a5e.UnifiedAbilities = a5e.GatherAbilities(ParentToken)]
 [h:pm.a5e.OverarchingContext = "Spell"]
 
+[h:allSpellEffects = json.get(SpellData,"Effects")]
 [h:sSpellChoice = 0]
 [h:MultiEffectChoiceTest = 0]
 [h:SpellEffectOptions = ""]
 
-[h,if(json.length(SpellData)==1),CODE:{
-	[h:FinalSpellData = BaseSpellData]
+[h,if(json.length(allSpellEffects)==1),CODE:{
+	[h:FinalSpellData = allSpellEffects]
 };{
-	[h:SpellData = json.remove(SpellData,0)]
-	[h:RandomEffectTest = json.get(BaseSpellData,"RandomEffect")]
+	[h:RandomEffectTest = json.get(SpellData,"RandomEffect")]
 	[h,if(RandomEffectTest==1),CODE:{
-		[h:SpellEffectOptionsNum = (json.length(SpellData)-1)]
+		[h:SpellEffectOptionsNum = (json.length(allSpellEffects)-1)]
 		[h:sSpellChoice = eval("1d"+SpellEffectOptionsNum)-1]
 	};{
 		[h:MultiEffectChoiceTest = 1]
-		[h,foreach(SpellEffect,SpellData): SpellEffectOptions = if(roll.count!=0,listAppend(SpellEffectOptions,json.get(SpellEffect,"EffectName")),SpellEffectOptions)]
+		[h,foreach(SpellEffect,allSpellEffects): SpellEffectOptions = if(roll.count!=0,listAppend(SpellEffectOptions,json.get(SpellEffect,"EffectName")),SpellEffectOptions)]
 	}]
 }]
 
@@ -221,7 +220,8 @@
 
 [h:AHLTier = eLevel - SpellLevel]
 
-[h:FinalSpellData = json.get(SpellData,sSpellChoice)]
+[h:FinalSpellData = json.merge(SpellData,json.get(allSpellEffects,sSpellChoice))]
+[h:FinalSpellData = json.remove(FinalSpellData,"Effects")]
 [h:"<!--- Dialogue --->"]
 
 [h:"<!-- Setting values after the effect has been chosen -->"]

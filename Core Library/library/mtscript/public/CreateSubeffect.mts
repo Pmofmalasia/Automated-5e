@@ -7,15 +7,40 @@
 [h:ExtraData = json.get(subeffectData,"ExtraData")]
 
 [h:SubeffectHTML = ""]
-[h,if(isPersistentEffect): SubeffectHTML = SubeffectHTML + "<input type='hidden' id='isPersistentEffect' name='isPersistentEffect' value=1><input type='hidden' id='MainEffectsNumber' name='MainEffectsNumber' value='"+json.get(subeffectData,"MainEffectsNumber")+"'><input type='hidden' id='MainNeedsNewSubeffect' name='MainNeedsNewSubeffect' value="+json.get(subeffectData,"MainNeedsNewSubeffect")+"><tr><th text-align='center' colspan='2'>Persistent Effect</th></tr>"]
+[h,if(isPersistentEffect): SubeffectHTML = SubeffectHTML + "<input type='hidden' id='isPersistentEffect' name='isPersistentEffect' value=1><input type='hidden' id='MainEffectsNumber' name='MainEffectsNumber' value='"+json.get(subeffectData,"MainEffectsNumber")+"'><input type='hidden' id='MainNeedsNewSubeffect' name='MainNeedsNewSubeffect' value="+json.get(subeffectData,"MainNeedsNewSubeffect")+"><tr><th text-align='center' colspan='2'>Persistent Effect</th></tr><tr id='rowPersistentEffectBreak'></tr>"]
 
-[h,if(EffectsNumber > 1),CODE:{
-	[h:SubeffectHTML = SubeffectHTML + "<tr id='rowEffectName'><th>This Effect's Name:</th><td><input type='text' id='EffectDisplayName' name='EffectDisplayName'></td></tr>"]
+[h,if(thisSubeffectNum == 1),CODE:{
+	[h:SubeffectHTML = SubeffectHTML + "<tr id='rowEffectHeader'><th text-align='center' colspan='2'>Overall Effect Information</th></tr>"]
+
+	[h,if(EffectsNumber > 1),CODE:{
+		[h:SubeffectHTML = SubeffectHTML + "<tr id='rowEffectName'><th><label for='EffectDisplayName'>This Effect's Name:</label></th><td><input type='text' id='EffectDisplayName' name='EffectDisplayName'></td></tr>"]
+	};{}]
+
+	[h:UseTimeOptions = json.append("","Action","Bonus Action","Reaction","1 Minute","10 Minutes","1 Hour","8 Hours","12 Hours","24 Hours","Custom")]
+	[h:listUseTime = ""]
+	[h,foreach(tempUseTime,UseTimeOptions): listUseTime = listUseTime + "<option value='"+tempUseTime+"'>"+tempUseTime+"</option>"]
+
+	[h:SubeffectHTML = SubeffectHTML + "<tr id='rowUseTime'><th><label for='UseTime'>"+if(EffectType == "Spell","Casting","Usage")+" Time:</label></th><td><select id='UseTime' name='UseTime' onchange='createCustomUseTimeRows("+'"CreateSubeffectTable","UseTime","rowDuration"'+")'>"+listUseTime+"</select></td></tr>"]
+
+	[h:durationOptions = json.append("","Instantaneous","1 Round","1 Minute","10 Minutes","1 Hour","8 Hours","24 Hours","10 Days","Until Dispelled","Custom")]
+	[h:listDuration = ""]
+	[h,foreach(tempDuration,durationOptions): listDuration = listDuration + "<option value='"+tempDuration+"'>"+tempDuration+"</option>"]
+	
+	[h:SubeffectHTML = SubeffectHTML + "<tr id='rowDuration'><th><label for='Duration'>Duration:</label></th><td><select id='Duration' name='Duration' onchange='createCustomDurationRows("+'"CreateSubeffectTable","Duration","'+if(EffectType=="Spell","rowAHLDuration","rowIsConcentration")+'"'+")'>"+listDuration+"</select></td></tr>"]
+
+	[h,if(EffectType == "Spell"),CODE:{
+		[h:tempSpellLevel = json.get(ExtraData,"SpellLevel")]
+		[h:SubeffectHTML = SubeffectHTML + "<tr id='rowAHLDuration'><th><label for='AHLDuration'>Duration Increases at Higher Levels:</label></th><td><input type='checkbox' id='AHLDuration' name='AHLDuration' onchange='createAHLDurationRows("+'"CreateSubeffectTable",'+tempSpellLevel+',"rowIsConcentration"'+")' value=1></td></tr>"]
+	}]
+
+	[h:SubeffectHTML = SubeffectHTML + "<tr id='rowIsConcentration'><th><label for='isConcentration'>Requires Concentration:</label></th><td><input type='checkbox' id='isConcentration' name='isConcentration' value=1></td></tr>"]
+
+	[h,if(EffectType == "Spell" && tempSpellLevel != 0): SubeffectHTML = SubeffectHTML + "<tr id='rowIsConcentrationLost'><th><label for='isConcentrationLost'>Concentration Not Required at Higher Levels:</label></th><td><input type='checkbox' id='isConcentrationLost' name='isConcentrationLost' onchange='createConcentrationLostRows("+'"CreateSubeffectTable",'+tempSpellLevel+',"rowEffectBreak"'+")' value=1></td></tr>"]
+
+	[h:SubeffectHTML = SubeffectHTML + "<tr id='rowEffectBreak'></tr>"]
 };{}]
 
-[h,if(thisSubeffectNum > 1),CODE:{};{
-	[h:SubeffectHTML = SubeffectHTML + "<tr><th text-align='center' colspan='2'>Subeffect #"+thisSubeffectNum+"</th></tr>"]
-}]
+[h:SubeffectHTML = SubeffectHTML + "<tr id='rowSubeffectHeader'><th text-align='center' colspan='2'>Subeffect "+if(thisSubeffectNum > 1,"#"+thisSubeffectNum,"Information")+"</th></tr>"]
 
 [h,if(thisSubeffectNum > 1),CODE:{
 	[h:SubeffectLinkOptions = "<option value=0>None</option>"]

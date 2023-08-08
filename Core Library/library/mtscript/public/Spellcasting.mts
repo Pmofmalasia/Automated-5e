@@ -32,7 +32,6 @@
 [h:mCompConsumed = json.get(SpellData,"mCompConsumed")]
 [h:vComp = json.get(SpellData,"vComp")]
 [h:isConcentration = json.contains(SpellData,"isConcentration")]
-[h:ConcentrationLost = json.get(SpellData,"ConcentrationLost")]
 
 [h:IsCantrip = if(SpellLevel==0,1,0)]
 

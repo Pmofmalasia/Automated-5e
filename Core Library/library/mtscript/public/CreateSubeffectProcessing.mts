@@ -20,6 +20,128 @@
 
 [h:subeffectData = pm.a5e.KeyStringsToNumbers(subeffectData)]
 
+[h,if(json.contains(subeffectData,"UseTime")),CODE:{
+	[h,if(json.contains(subeffectData,"EffectDisplayName")),CODE:{
+		[h:EffectDisplayName = json.get(subeffectData,"EffectDisplayName")]
+		[h:baseEffectData = json.set("",
+			"DisplayName",EffectDisplayName,
+			"Name",pm.RemoveSpecial(EffectDisplayName)
+		)]
+
+		[h:subeffectData = json.remove(subeffectData,"EffectDisplayName")]
+	};{
+		[h:baseEffectData = "{}"]
+	}]
+
+	[h,switch(json.get(subeffectData,"UseTime")),CODE:
+		case "Action":{
+			[h:castTimeInfo = json.set("","Value",1,"Units","action")]
+		};
+		case "Bonus Action":{
+			[h:castTimeInfo = json.set("","Value",1,"Units","bonus")]
+		};
+		case "Reaction":{
+			[h:castTimeInfo = json.set("","Value",1,"Units","reaction")]
+		};
+		case "1 Minute":{
+			[h:castTimeInfo = json.set("","Value",1,"Units","minute")]
+		};
+		case "10 Minutes":{
+			[h:castTimeInfo = json.set("","Value",10,"Units","minute")]
+		};
+		case "1 Hour":{
+			[h:castTimeInfo = json.set("","Value",1,"Units","hour")]
+		};
+		case "8 Hours":{
+			[h:castTimeInfo = json.set("","Value",8,"Units","hour")]
+		};
+		case "12 Hours":{
+			[h:castTimeInfo = json.set("","Value",12,"Units","hour")]
+		};
+		case "24 Hours":{
+			[h:castTimeInfo = json.set("","Value",24,"Units","hour")]
+		};
+		case "Custom":{
+			[h:castTimeInfo = json.set("","Value",json.get(subeffectData,"customUseTimeValue"),"Units",pm.StandardDuration(json.get(subeffectData,"customUseTimeUnits")))]
+			[h:subeffectData = json.remove(subeffectData,"customUseTimeValue")]
+			[h:subeffectData = json.remove(subeffectData,"customUseTimeUnits")]
+		}
+	]
+	[h:baseEffectData = json.set(baseEffectData,"UseTime",castTimeInfo)]
+	[h:subeffectData = json.remove(subeffectData,"UseTime")]
+
+	[h,if(json.contains(subeffectData,"UseTimeReactionDescription")): subeffectData = json.set(subeffectData,"ReactionDescription",base64.encode(pm.EvilChars(json.get(subeffectData,"ReactionDescription"))))]
+	[h:subeffectData = json.remove(subeffectData,"UseTimeReactionDescription")]
+
+	[h:durationInfo = "{}"]
+	[h,switch(json.get(subeffectData,"Duration")),CODE:
+		case "Instantaneous":{
+			
+		};
+		case "1 Round":{
+			[h:durationInfo = json.set("","Value",1,"Units","round")]
+		};
+		case "1 Minute":{
+			[h:durationInfo = json.set("","Value",1,"Units","minute")]
+		};
+		case "10 Minutes":{
+			[h:durationInfo = json.set("","Value",10,"Units","minute")]
+		};
+		case "1 Hour":{
+			[h:durationInfo = json.set("","Value",1,"Units","hour")]
+		};
+		case "8 Hours":{
+			[h:durationInfo = json.set("","Value",8,"Units","hour")]
+		};
+		case "24 Hours":{
+			[h:durationInfo = json.set("","Value",24,"Units","hour")]
+		};
+		case "10 Days":{
+			[h:durationInfo = json.set("","Value",10,"Units","day")]
+		};
+		case "Until Dispelled":{
+			
+		};
+		case "Custom":{
+			[h:durationInfo = json.set("","Value",json.get(subeffectData,"customDurationValue"),"Units",json.get(subeffectData,"customDurationUnits"))]
+			[h:subeffectData = json.remove(subeffectData,"customDurationValue")]
+			[h:subeffectData = json.remove(subeffectData,"customDurationUnits")]
+		}
+	]
+	[h:baseEffectData = json.set(baseEffectData,"Duration",durationInfo)]
+
+	[h,if(json.contains(subeffectData,"AHLDuration")),CODE:{
+		[h:tempSpellLevel = json.get(subeffectData,"ExtraDataSpellLevel")]
+		[h:AHLDurationCountAmount = 9-tempSpellLevel]
+		[h:baseEffectData = json.set(baseEffectData,"AHLDuration",1)]
+		[h:subeffectData = json.remove(subeffectData,"AHLDuration")]
+
+		[h,count(AHLDurationCountAmount),switch(json.get(subeffectData,"AHLDurationLevel"+roll.count)):
+			case "Instantaneous": baseEffectData = json.set(baseEffectData,"AHLDurationLevel"+roll.count,"{}");
+			case "1 Round": baseEffectData = json.set(baseEffectData,"AHLDurationLevel"+roll.count,json.set("","Value",1,"Units","Round"));
+			case "1 Minute": baseEffectData = json.set(baseEffectData,"AHLDurationLevel"+roll.count,json.set("","Value",1,"Units","Minute"));
+			case "10 Minutes": baseEffectData = json.set(baseEffectData,"AHLDurationLevel"+roll.count,json.set("","Value",10,"Units","Minute"));
+			case "1 Hour": baseEffectData = json.set(baseEffectData,"AHLDurationLevel"+roll.count,json.set("","Value",1,"Units","Hour"));
+			case "8 Hours": baseEffectData = json.set(baseEffectData,"AHLDurationLevel"+roll.count,json.set("","Value",8,"Units","Hour"));
+			case "24 Hours": baseEffectData = json.set(baseEffectData,"AHLDurationLevel"+roll.count,json.set("","Value",24,"Units","Hour"));
+			case "10 Days": baseEffectData = json.set(baseEffectData,"AHLDurationLevel"+roll.count,json.set("","Value",10,"Units","Day"));
+			case "Until Dispelled": baseEffectData = json.set(baseEffectData,"AHLDurationLevel"+roll.count,"{}");
+			default: baseEffectData = json.set(baseEffectData,"AHLDurationLevel"+roll.count,durationInfo)
+		]
+
+		[h,count(AHLDurationCountAmount): subeffectData = json.remove(subeffectData,"AHLDurationLevel"+roll.count)]
+	}]
+
+	[h:baseEffectData = json.set(baseEffectData,"isConcentration",json.contains(baseEffectData,"isConcentration"))]
+	[h:subeffectData = json.remove(subeffectData,"isConcentration")]
+
+	[h,if(json.contains(subeffectData,"isConcentrationLost")),CODE:{
+		[h:subeffectData = json.remove(subeffectData,"isConcentrationLost")]
+		[h:baseEffectData = json.set(baseEffectData,"ConcentrationLostLevel",json.get(subeffectData,"ConcentrationLostLevel"))]
+		[h:subeffectData = json.remove(subeffectData,"ConcentrationLostLevel")]
+	};{}]
+}]
+
 [h,if(json.get(subeffectData,"ParentSubeffect")!="" && json.get(subeffectData,"ParentSubeffect")!=0),CODE:{
 	[h:subeffectData = json.set(subeffectData,"ParentSubeffect",json.get(subeffectData,"ParentSubeffect")-1)]
 	[h,switch(json.get(subeffectData,"ParentPrereqs")),CODE:

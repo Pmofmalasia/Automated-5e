@@ -1,6 +1,13 @@
-[h:NoSpellsTest=if(json.equals(getProperty("a5e.stat.ActiveSpells"),'[]')==1,0,1)]
+[h:CurrentActiveSpells = getProperty("a5e.stat.ActiveSpells")]
+[h:NoSpellsTest = json.isEmpty(CurrentActiveSpells)]
+[h:assert(!NoSpellsTest,"<br>You do not have any active spells!",0)]
 
-[h:assert(NoSpellsTest,"<br>You do not have any active spells!",0)]
+[h:SpellOptions = "[]"]
+[h,foreach(spell,CurrentActiveSpells),CODE:{
+	[h,foreach(effect,json.get(spell,"Effects")),CODE:{
+		[h:SpellOptions = json.append(SpellOptions,json.get(effect,"DisplayName"))]
+	}]
+}]
 
 [h:listSpells=""]
 

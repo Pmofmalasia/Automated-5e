@@ -1,6 +1,5 @@
 [h:SpellCoreData = macro.args]
 [h:currentSpellData = getLibProperty("ct.NewSpell","pm.a5e.Core")]
-[h:thisPlayerCurrentSpellData = json.get(currentSpellData,getPlayerName())]
 [h:SpellCoreData = pm.a5e.KeyStringsToNumbers(SpellCoreData)]
 
 [h:SpellCoreData = json.set(SpellCoreData,"DisplayName",pm.EvilChars(json.get(SpellCoreData,"DisplayName")))]
@@ -39,7 +38,7 @@
 [h:tempAHLDescription = decode(tempAHLDescription)]
 [h:SpellCoreData = json.set(SpellCoreData,"AHLDescription",base64.encode(tempAHLDescription))]
 
-[h:newSpellData = json.set(currentSpellData,getPlayerName(),json.append(thisPlayerCurrentSpellData,SpellCoreData))]
+[h:newSpellData = json.set(currentSpellData,getPlayerName(),SpellCoreData)]
 [h:setLibProperty("ct.NewSpell",newSpellData,"Lib:pm.a5e.Core")]
 
 [h:closeDialog("Spell Creation")]

@@ -525,7 +525,7 @@ async function createConditionTable(){
 	else{
 		let alreadyAlwaysAddedTest = (table.rows.namedItem("rowConditionsAlwaysAdded") != null);
 		let alreadyOptionsTest = (table.rows.namedItem("rowConditionOptions") != null);
-		let alreadyEndInfoTest = (table.rows.namedItem("rowSameDuration") != null || table.rows.namedItem("rowAlternateConditionDuration") != null);
+		let alreadyEndInfoTest = (table.rows.namedItem("rowConditionSameDuration") != null || table.rows.namedItem("rowConditionDuration") != null);
 		let alreadySaveTest = (table.rows.namedItem("rowConditionSave") != null);
 
 		let endRowId = "";
@@ -555,10 +555,10 @@ async function createConditionTable(){
 				let tempRemovalId = 0;
 
 				if(checkEffectType()=="Spell"){
-					tempRemovalId = "rowUseSameDuration";
+					tempRemovalId = "rowConditionSameDuration";
 				}
 				else{
-					tempRemovalId = "rowAlternateConditionDuration";
+					tempRemovalId = "rowConditionDuration";
 				}
 
 				clearUnusedTable("CreateSubeffectTable","rowConditionOptions",tempRemovalId);
@@ -604,9 +604,9 @@ async function createConditionTable(){
 
 		if(!alreadyEndInfoTest){
 			if(checkEffectType()=="Spell"){
-				let rowSameDuration = table.insertRow(nextRowIndex);
-				rowSameDuration.id = "rowSameDuration";
-				rowSameDuration.innerHTML = "<th><label for='isConditionSameDuration'>Duration is Same as Spell's?</label></th><input type='checkbox' id='isConditionSameDuration' name='isConditionSameDuration' onchange='conditionAlternateDuration()' checked></td>";
+				let rowConditionSameDuration = table.insertRow(nextRowIndex);
+				rowConditionSameDuration.id = "rowConditionSameDuration";
+				rowConditionSameDuration.innerHTML = "<th><label for='isConditionSameDuration'>Duration is Same as Spell's?</label></th><input type='checkbox' id='isConditionSameDuration' name='isConditionSameDuration' onchange='conditionAlternateDuration()' checked></td>";
 				nextRowIndex++;                
 			}
 			else{
@@ -624,7 +624,7 @@ async function createConditionTable(){
 			let saveRowIndex = document.getElementById("rowSummons").rowIndex;
 			let rowConditionSave = table.insertRow(saveRowIndex);
 			rowConditionSave.id = "rowConditionSave";
-			rowConditionSave.innerHTML = "<th><label for='conditionSaveEffect'>Conditions Applied on Save:</label></th><select id='conditionSaveEffect' name='conditionSaveEffect' onchange='createConditionSaveTable()'><option value='0'>All Applied</option><option value='1'>Some Applied</option><option value='2' select>None Applied</option><option value='Different'>Different Condition Applied</option></select></td>";
+			rowConditionSave.innerHTML = "<th><label for='conditionSaveEffect'>Conditions Applied on Save:</label></th><select id='conditionSaveEffect' name='conditionSaveEffect' onchange='createConditionSaveTable()'><option value='0'>All Applied</option><option value='1'>Some Applied</option><option value='2' selected>None Applied</option><option value='Different'>Different Condition Applied</option></select></td>";
 		}
 	}
 }
@@ -690,15 +690,16 @@ async function createMultiUniqueConditionRow(conditionPrefix){
 }
 
 async function conditionAlternateDuration(){
-	let table = document.getElementById("CreateSubeffectTable");
-	let isSameDuration = 0;
-	let nextRowIndex = 0;
+	let isSameDuration;
+	let nextRowIndex;
 
 	if(checkEffectType()=="Spell"){
 		isSameDuration = document.getElementById("isConditionSameDuration").checked;
-		nextRowIndex = document.getElementById("rowSameDuration").rowIndex + 1;
+		nextRowIndex = document.getElementById("rowConditionSameDuration").rowIndex + 1;
 	}
 	else{
+		isSameDuration = false;
+
 		if(document.getElementById("rowConditionOptions")==null){
 			nextRowIndex = document.getElementById("rowConditionsAlwaysAdded").rowIndex+1;
 		}
@@ -708,13 +709,16 @@ async function conditionAlternateDuration(){
 	}
 
 	if(isSameDuration){
-		//TODO: This doesn't work because this function just completely doesn't get called and I don't know why.
-		table.deleteRow(document.getElementById("rowAlternateConditionDuration").rowIndex);
+		clearUnusedTable("CreateSubeffectTable","rowConditionSameDuration","rowIsConditionNonDurationEnd");
 	}
 	else{
-		let rowAlternateConditionDuration = table.insertRow(nextRowIndex);
-		rowAlternateConditionDuration.id = "rowAlternateConditionDuration";
-		rowAlternateConditionDuration.innerHTML = "<th><label for='conditionAlternateDuration'>Condition Duration:</label></th><input type='number' id='conditionAlternateDuration' name='conditionAlternateDuration' min='1' value='1' style='width:25px'><select id='conditionAlternateDurationUnits' name='conditionAlternateDurationUnits'><option value=''>No Duration</option><option value='Round'>Rounds</option><option value='Minute'>Minutes</option><option value='Hour' select>Hours</option><option value='Day'>Days</option><option value='Year'>Years</option></select></td>";
+		let durationOptionsArray = ["Instantaneous","1 Round","1 Minute","10 Minutes","1 Hour","8 Hours","24 Hours","10 Days","Until Dispelled","Custom"];
+		let durationOptions = "";
+		for(let option of durationOptionsArray){
+			durationOptions = durationOptions + "<option value='"+option+"'>"+option+"</option>";
+		}
+
+		addTableRow("CreateSubeffectTable",nextRowIndex,"rowConditionDuration","<th><label for='ConditionDuration'>Condition Duration:</label></th><select id='ConditionDuration' name='ConditionDuration' onchange='createCustomDurationRows("+'"CreateSubeffectTable","ConditionDuration","rowIsConditionNonDurationEnd"'+")'>"+durationOptions+"</select></td>");
 	}
 }
 

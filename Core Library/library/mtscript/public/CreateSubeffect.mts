@@ -17,6 +17,7 @@
 	};{}]
 
 	[h:UseTimeOptions = json.append("","Action","Bonus Action","Reaction","1 Minute","10 Minutes","1 Hour","8 Hours","12 Hours","24 Hours","Custom")]
+	[h,if(isPersistentEffect): UseTimeOptions = json.merge(json.append("","No Cost"),UseTimeOptions)]
 	[h:listUseTime = ""]
 	[h,foreach(tempUseTime,UseTimeOptions): listUseTime = listUseTime + "<option value='"+tempUseTime+"'>"+tempUseTime+"</option>"]
 
@@ -85,7 +86,7 @@
 
 [h:SubeffectHTML = SubeffectHTML + "<tr id='rowUncommonEffects'><th><label for='isUncommonEffects'>Show Additional Effects:</label></th><td><input type='checkbox' id='isUncommonEffects' name='isUncommonEffects' value=1 onchange='createUncommonEffectsRows()'></td></tr>"]
 
-[h,if(isPersistentEffect): SubeffectHTML = SubeffectHTML + "<tr id='rowUseInitialTargets'><th><label for='UseInitialTargets'>Use Same Targets as Linked Effect:</label></th><td><input type='checkbox' id='UseInitialTargets' name='UseInitialTargets' onchange='createInitialTargetsRows("+'"CreateSubeffectTable","Initial"'+")'></td></tr>"]
+[h,if(isPersistentEffect): SubeffectHTML = SubeffectHTML + "<tr id='rowUseInitialTargets'><th><label for='UseInitialTargets'>Use Same Targets as Main Effect:</label></th><td><input type='checkbox' id='UseInitialTargets' name='UseInitialTargets' onchange='createInitialTargetsRows("+'"CreateSubeffectTable","Initial"'+")'></td></tr>"]
 
 [h:"<!-- Note: Targeting rows are now created in JS instead of here -->"]
 

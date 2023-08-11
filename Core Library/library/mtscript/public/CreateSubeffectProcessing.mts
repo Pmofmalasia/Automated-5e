@@ -4,6 +4,12 @@
 [h:subeffectData = json.remove(subeffectData,"EffectsNumber")]
 [h:subeffectData = json.remove(subeffectData,"EffectType")]
 [h:isPersistentEffect = json.contains(subeffectData,"isPersistentEffect")]
+[h:subeffectData = json.remove(subeffectData,"isPersistentEffect")]
+
+[h:subeffectData = pm.a5e.KeyStringsToNumbers(subeffectData)]
+
+[h:thisSubeffectNum = number(json.get(subeffectData,"WhichSubeffect"))]
+[h:subeffectData = json.remove(subeffectData,"WhichSubeffect")]
 
 [h:CurrentFeatureData = getLibProperty("ct.New"+if(isPersistentEffect,"Persistent","")+EffectType,"pm.a5e.Core")]
 [h,if(CurrentFeatureData == ""): CurrentFeatureData = "{}"]
@@ -11,26 +17,29 @@
 [h,if(thisPlayerCurrentFeatureData == ""): thisPlayerCurrentFeatureData = "{}"]
 
 [h:allEffectData = json.get(thisPlayerCurrentFeatureData,"Effects")]
-[h,if(allEffectData!=""):
-	currentEffectData = json.get(allEffectData,json.length(allEffectData)-1);
-	currentEffectData = "{}"
-]
+[h,if(allEffectData!=""),CODE:{
+	[h,if(thisSubeffectNum > 1):
+		currentEffectData = json.get(allEffectData,json.length(allEffectData)-1);
+		currentEffectData = "{}"
+	]
+};{
+	[h:currentEffectData = "{}"]
+}]
+
 [h:FeatureName = json.get(thisPlayerCurrentFeatureData,"Name")]
 [h:FeatureDisplayName = json.get(thisPlayerCurrentFeatureData,"DisplayName")]
-
-[h:subeffectData = pm.a5e.KeyStringsToNumbers(subeffectData)]
 
 [h,if(json.contains(subeffectData,"UseTime")),CODE:{
 	[h,if(json.contains(subeffectData,"EffectDisplayName")),CODE:{
 		[h:EffectDisplayName = json.get(subeffectData,"EffectDisplayName")]
-		[h:baseEffectData = json.set("",
+		[h:currentEffectData = json.set(currentEffectData,
 			"DisplayName",EffectDisplayName,
 			"Name",pm.RemoveSpecial(EffectDisplayName)
 		)]
 
 		[h:subeffectData = json.remove(subeffectData,"EffectDisplayName")]
 	};{
-		[h:baseEffectData = "{}"]
+		[h:currentEffectData = "{}"]
 	}]
 
 	[h,switch(json.get(subeffectData,"UseTime")),CODE:
@@ -65,79 +74,50 @@
 			[h:castTimeInfo = json.set("","Value",json.get(subeffectData,"customUseTimeValue"),"Units",pm.StandardDuration(json.get(subeffectData,"customUseTimeUnits")))]
 			[h:subeffectData = json.remove(subeffectData,"customUseTimeValue")]
 			[h:subeffectData = json.remove(subeffectData,"customUseTimeUnits")]
+		};
+		default:{
+			[h:castTimeInfo = "{}"]
 		}
 	]
-	[h:baseEffectData = json.set(baseEffectData,"UseTime",castTimeInfo)]
+	[h:currentEffectData = json.set(currentEffectData,"UseTime",castTimeInfo)]
 	[h:subeffectData = json.remove(subeffectData,"UseTime")]
 
 	[h,if(json.contains(subeffectData,"UseTimeReactionDescription")): subeffectData = json.set(subeffectData,"ReactionDescription",base64.encode(pm.EvilChars(json.get(subeffectData,"ReactionDescription"))))]
 	[h:subeffectData = json.remove(subeffectData,"UseTimeReactionDescription")]
 
-	[h:durationInfo = "{}"]
-	[h,switch(json.get(subeffectData,"Duration")),CODE:
-		case "Instantaneous":{
-			
-		};
-		case "1 Round":{
-			[h:durationInfo = json.set("","Value",1,"Units","round")]
-		};
-		case "1 Minute":{
-			[h:durationInfo = json.set("","Value",1,"Units","minute")]
-		};
-		case "10 Minutes":{
-			[h:durationInfo = json.set("","Value",10,"Units","minute")]
-		};
-		case "1 Hour":{
-			[h:durationInfo = json.set("","Value",1,"Units","hour")]
-		};
-		case "8 Hours":{
-			[h:durationInfo = json.set("","Value",8,"Units","hour")]
-		};
-		case "24 Hours":{
-			[h:durationInfo = json.set("","Value",24,"Units","hour")]
-		};
-		case "10 Days":{
-			[h:durationInfo = json.set("","Value",10,"Units","day")]
-		};
-		case "Until Dispelled":{
-			
-		};
-		case "Custom":{
-			[h:durationInfo = json.set("","Value",json.get(subeffectData,"customDurationValue"),"Units",json.get(subeffectData,"customDurationUnits"))]
-			[h:subeffectData = json.remove(subeffectData,"customDurationValue")]
-			[h:subeffectData = json.remove(subeffectData,"customDurationUnits")]
-		}
-	]
-	[h:baseEffectData = json.set(baseEffectData,"Duration",durationInfo)]
+	[h,MACRO("InputDurationProcessing@Lib:pm.a5e.Core"): json.set("","InputData",subeffectData,"Prefix","Duration")]
+	[h:ReturnDurationData = macro.return]
+	[h:subeffectData = json.get(ReturnDurationData,"OutputData")]
+	[h:currentEffectData = json.set(currentEffectData,"Duration",json.get(ReturnDurationData,"DurationInfo"))]
 
 	[h,if(json.contains(subeffectData,"AHLDuration")),CODE:{
 		[h:tempSpellLevel = json.get(subeffectData,"ExtraDataSpellLevel")]
 		[h:AHLDurationCountAmount = 9-tempSpellLevel]
-		[h:baseEffectData = json.set(baseEffectData,"AHLDuration",1)]
+		[h:currentEffectData = json.set(currentEffectData,"AHLDuration",1)]
 		[h:subeffectData = json.remove(subeffectData,"AHLDuration")]
 
 		[h,count(AHLDurationCountAmount),switch(json.get(subeffectData,"AHLDurationLevel"+roll.count)):
-			case "Instantaneous": baseEffectData = json.set(baseEffectData,"AHLDurationLevel"+roll.count,"{}");
-			case "1 Round": baseEffectData = json.set(baseEffectData,"AHLDurationLevel"+roll.count,json.set("","Value",1,"Units","Round"));
-			case "1 Minute": baseEffectData = json.set(baseEffectData,"AHLDurationLevel"+roll.count,json.set("","Value",1,"Units","Minute"));
-			case "10 Minutes": baseEffectData = json.set(baseEffectData,"AHLDurationLevel"+roll.count,json.set("","Value",10,"Units","Minute"));
-			case "1 Hour": baseEffectData = json.set(baseEffectData,"AHLDurationLevel"+roll.count,json.set("","Value",1,"Units","Hour"));
-			case "8 Hours": baseEffectData = json.set(baseEffectData,"AHLDurationLevel"+roll.count,json.set("","Value",8,"Units","Hour"));
-			case "24 Hours": baseEffectData = json.set(baseEffectData,"AHLDurationLevel"+roll.count,json.set("","Value",24,"Units","Hour"));
-			case "10 Days": baseEffectData = json.set(baseEffectData,"AHLDurationLevel"+roll.count,json.set("","Value",10,"Units","Day"));
-			case "Until Dispelled": baseEffectData = json.set(baseEffectData,"AHLDurationLevel"+roll.count,"{}");
-			default: baseEffectData = json.set(baseEffectData,"AHLDurationLevel"+roll.count,durationInfo)
+			case "Instantaneous": currentEffectData = json.set(currentEffectData,"AHLDurationLevel"+roll.count,"{}");
+			case "1 Round": currentEffectData = json.set(currentEffectData,"AHLDurationLevel"+roll.count,json.set("","Value",1,"Units","Round"));
+			case "1 Minute": currentEffectData = json.set(currentEffectData,"AHLDurationLevel"+roll.count,json.set("","Value",1,"Units","Minute"));
+			case "10 Minutes": currentEffectData = json.set(currentEffectData,"AHLDurationLevel"+roll.count,json.set("","Value",10,"Units","Minute"));
+			case "1 Hour": currentEffectData = json.set(currentEffectData,"AHLDurationLevel"+roll.count,json.set("","Value",1,"Units","Hour"));
+			case "8 Hours": currentEffectData = json.set(currentEffectData,"AHLDurationLevel"+roll.count,json.set("","Value",8,"Units","Hour"));
+			case "24 Hours": currentEffectData = json.set(currentEffectData,"AHLDurationLevel"+roll.count,json.set("","Value",24,"Units","Hour"));
+			case "10 Days": currentEffectData = json.set(currentEffectData,"AHLDurationLevel"+roll.count,json.set("","Value",10,"Units","Day"));
+			case "Until Dispelled": currentEffectData = json.set(currentEffectData,"AHLDurationLevel"+roll.count,"{}");
+			default: currentEffectData = json.set(currentEffectData,"AHLDurationLevel"+roll.count,durationInfo)
 		]
 
 		[h,count(AHLDurationCountAmount): subeffectData = json.remove(subeffectData,"AHLDurationLevel"+roll.count)]
 	}]
 
-	[h:baseEffectData = json.set(baseEffectData,"isConcentration",json.contains(baseEffectData,"isConcentration"))]
+	[h:currentEffectData = json.set(currentEffectData,"isConcentration",json.contains(currentEffectData,"isConcentration"))]
 	[h:subeffectData = json.remove(subeffectData,"isConcentration")]
 
 	[h,if(json.contains(subeffectData,"isConcentrationLost")),CODE:{
 		[h:subeffectData = json.remove(subeffectData,"isConcentrationLost")]
-		[h:baseEffectData = json.set(baseEffectData,"ConcentrationLostLevel",json.get(subeffectData,"ConcentrationLostLevel"))]
+		[h:currentEffectData = json.set(currentEffectData,"ConcentrationLostLevel",json.get(subeffectData,"ConcentrationLostLevel"))]
 		[h:subeffectData = json.remove(subeffectData,"ConcentrationLostLevel")]
 	};{}]
 }]
@@ -435,10 +415,12 @@
 		[h:conditionEndInfo = json.set("","UseMainDuration",1)]
 		[h:subeffectData = json.remove(subeffectData,"isConditionSameDuration")]
 	};{
-		[h:"<!-- Note: Alternate duration works as the 'main' duration for things that apply conditions but don't have another 'main duration -->"]
-		[h:conditionEndInfo = json.set("","Duration",json.get(subeffectData,"conditionAlternateDuration"),"DurationUnits",lower(json.get(subeffectData,"conditionAlternateDurationUnits")))]
-		[h:subeffectData = json.remove(subeffectData,"conditionAlternateDuration")]
-		[h:subeffectData = json.remove(subeffectData,"conditionAlternateDurationUnits")]
+		[h:"<!-- Note: Alternate duration works as the 'main' duration for things that apply conditions but don't have another 'main' duration -->"]
+
+		[h,MACRO("InputDurationProcessing@Lib:pm.a5e.Core"): json.set("","InputData",subeffectData,"Prefix","ConditionDuration")]
+		[h:ReturnDurationData = macro.return]
+		[h:subeffectData = json.get(ReturnDurationData,"OutputData")]
+		[h:subeffectData = json.set(subeffectData,"Duration",json.get(ReturnDurationData,"DurationInfo"))]
 	}]
 
 	[h:subeffectData = json.remove(subeffectData,"isConditionNonDurationEnd")]
@@ -920,10 +902,8 @@
 
 [h:NeedsNewSubeffect = json.contains(subeffectData,"NeedsNewSubeffect")]
 [h:subeffectData = json.remove(subeffectData,"NeedsNewSubeffect")]
-[h:thisSubeffectNum = number(json.get(subeffectData,"WhichSubeffect"))]
 [h:ParentToken = json.get(subeffectData,"ParentToken")]
 [h:subeffectData = json.set(subeffectData,"WhichIntrinsicSubeffect",thisSubeffectNum - 1)]
-[h:subeffectData = json.remove(subeffectData,"WhichSubeffect")]
 [h:subeffectData = json.remove(subeffectData,"PriorSubeffects")]
 [h:subeffectData = json.remove(subeffectData,"ParentToken")]
 
@@ -944,14 +924,6 @@
 	[h:subeffectData = json.remove(subeffectData,"ExtraData"+tempKey)]
 }]
 [h:subeffectData = json.remove(subeffectData,"ExtraDataKeys")]
-
-[h,if(json.contains(subeffectData,"EffectDisplayName")),CODE:{
-	[h:EffectDisplayName = json.get(subeffectData,"EffectDisplayName")]
-	[h:currentEffectData = json.set(currentEffectData,
-		"Name",pm.RemoveSpecial(EffectDisplayName),
-		"DisplayName",EffectDisplayName
-	)]
-}]
 
 [h,if(needsPersistentEffect == "Same"): subeffectData = json.set(subeffectData,"PersistentEffects",1)]
 
@@ -1014,31 +986,24 @@
 	)]
 }]
 
-[h:broadcast("Main needs subeff"+ MainNeedsNewSubeffect)]
-
-[h:broadcast(lastEffectTest)]
-[h:broadcast(NeedsNewSubeffect)]
 [h,if(lastEffectTest && !NeedsNewSubeffect),CODE:{
 	[h:broadcast("last and no new subeff")]
 	[h,if(isPersistentEffect),CODE:{
-		[h:broadcast("persistent")]
 		[h:MainFeatureData = getLibProperty("ct.New"+EffectType,"pm.a5e.Core")]
-		[h,if(MainFeatureData == ""): MainFeatureData = "{}"]
 		[h:thisPlayerMainFeatureData = json.get(MainFeatureData,getPlayerName())]
 
 		[h:allMainEffectData = json.get(thisPlayerMainFeatureData,"Effects")]
-		[h:currentMainEffectData = json.get(allMainEffectData,json.length(allMainEffectData)-1)]
-
-		[h:currentMainSubeffectData = json.get(currentMainEffectData,json.length(currentMainEffectData)-1)]
-
-		[h:currentMainEffectData = json.set(currentMainSubeffectData,"PersistentEffects",allEffectData)]
-
+		[h:MainEffectsLastIndex = json.length(allMainEffectData)-1]
+		[h:allMainSubeffectsData = json.get(json.get(allMainEffectData,MainEffectsLastIndex),"Subeffects")]
+		[h:MainSubeffectsLastIndex = json.length(allMainSubeffectsData)-1]
+	
+		[h:MainFeatureData = json.path.put(thisPlayerMainFeatureData,"['Effects']["+MainEffectsLastIndex+"]['Subeffects']["+MainSubeffectsLastIndex+"]","PersistentEffects",allEffectData)]
+		[h:setLibProperty("ct.New"+EffectType,json.set(MainFeatureData,getPlayerName(),thisPlayerMainFeatureData),"Lib:pm.a5e.Core")]
+	
 		[h:lastEffectTest = (json.length(allMainEffectData) >= MainEffectsNumber)]
-		[h:NeedsNewSubeffect = json.get(subeffectData,"MainNeedsNewSubeffect")]
-
 		[h:baseFeatureData = json.set(baseFeatureData,
 			"EffectsNumber",MainEffectsNumber,
-			"WhichSubeffect",if(NeedsNewSubeffect,json.length(currentMainSubeffectData),1)
+			"WhichSubeffect",if(MainNeedsNewSubeffect,MainSubeffectsLastIndex+1,1),
 			"isPersistentEffect",0,
 			"MainEffectsNumber",0,
 			"MainNeedsNewSubeffect",0
@@ -1047,14 +1012,11 @@
 
 	[h:closeDialog("SubeffectCreation")]
 	[h,if(lastEffectTest && !MainNeedsNewSubeffect && !needsPersistentEffect),CODE:{
-		[h:broadcast("done")]
 		[h,MACRO("CreateFeatureCoreFinalInput@Lib:pm.a5e.Core"): json.set("","EffectType",EffectType,"ExtraData",extraData,"ParentToken",ParentToken)]
 	};{
-		[h:broadcast("back to main")]
 		[h,MACRO("CreateSubeffect@Lib:pm.a5e.Core"): baseFeatureData]
 	}]
 };{
-	[h:broadcast("new eff or subeff")]
 	[h:closeDialog("SubeffectCreation")]
 	[h,MACRO("CreateSubeffect@Lib:pm.a5e.Core"): baseFeatureData]
 }]

@@ -5,7 +5,7 @@
 [h:switchToken(ParentToken)]
 
 [h,foreach(ability,pm.AbilityList),CODE:{
-	[h:pm.CastTimeNote = if(or(json.get(ability,"CastTime")=="",lower(json.get(ability,"CastTime"))=="action"),""," <b>("+json.get(ability,"CastTime")+")</b>")]
+	[h:pm.CastTimeNote = if(or(json.get(ability,"UseTime")=="",lower(json.get(ability,"UseTime"))=="action"),""," <b>("+json.get(ability,"UseTime")+")</b>")]
 	[h:pm.NewMacroLabel = json.get(ability,"DisplayName")+if(json.get(ability,"Marker")=="",""," "+json.get(ability,"Marker"))+pm.CastTimeNote]
 
 	[h,if(roll.count > json.length(Effects) - 1),CODE:{

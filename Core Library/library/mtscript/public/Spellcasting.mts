@@ -230,8 +230,8 @@
 [h:mComponents = base64.decode(json.get(FinalSpellData,"mComponents"))]
 [h:mComponentsConsumed = base64.decode(json.get(FinalSpellData,"mComponentsConsumed"))]
 
-[h:CastTime = json.get(FinalSpellData,"CastTime")]
-[h:Duration = json.get(FinalSpellData,"Duration")]
+[h:CastTime = json.get(FinalSpellData,"UseTime")]
+[h:DurationData = json.get(FinalSpellData,"Duration")]
 [h:SpellSubeffects = json.get(FinalSpellData,"Subeffects")]
 
 [h:SpellDescription = base64.decode(json.get(FinalSpellData,"Description"))]
@@ -243,13 +243,13 @@
 [h:isConcentration = json.get(FinalSpellData,"isConcentration")]
 [h:ConcentrationLostLevel = json.get(FinalSpellData,"ConcentrationLostLevel")]
 
-[h,if(json.isEmpty(Duration)),CODE:{
+[h,if(json.isEmpty(DurationData)),CODE:{
 	[h:DurationValue = 0]
 	[h:DurationUnits = "Instantaneous"]
 	[h:DurationString = "Instantaneous"]
 };{
-	[h:DurationValue = json.get(Duration,"Value")]
-	[h:DurationUnits = json.get(Duration,"Units")]
+	[h:DurationValue = json.get(DurationData,"Value")]
+	[h:DurationUnits = json.get(DurationData,"Units")]
 	[h:DurationString = DurationValue+" "+DurationUnits+if(DurationValue==1,"","s")]
 }]
 
@@ -400,7 +400,15 @@
 ))]
 
 [h:pm.a5e.EffectData = "[]"]
-[h,foreach(tempSubeffect,SpellSubeffects): pm.a5e.ExecuteSubeffect(tempSubeffect,json.set("","InstancePrefixes",json.append("","Spell")))]
+[h:SpellDataWithSelections = json.set(SpellData,
+	"sClassSelect",sClassSelect,
+	"Class","Spell",
+	"Source",sSource,
+	"PrimeStat",PrimeStat,
+	"ClassForDisplay","zzSpell",
+	"ColorSubtype",json.set("","Source",sSource,"Level",eLevel)
+)]
+[h,foreach(tempSubeffect,SpellSubeffects): pm.a5e.ExecuteSubeffect(tempSubeffect,json.set("","InstancePrefixes",json.append("","Spell"),"BaseData",SpellDataWithSelections))]
 
 [h:pm.PassiveFunction("AfterSpell")]
 

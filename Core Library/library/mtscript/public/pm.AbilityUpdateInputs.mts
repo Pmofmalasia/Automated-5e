@@ -496,7 +496,7 @@
 			))]
 		[h:abort(input(if(ab.CastTime=="Custom"," ab.CastTime |  | Enter custom casting time ","")))]
 		[h:ab.Marker = if(ab.Marker=="-- Ignore/Blank for None --","",ab.Marker)]
-		[h:ab.NewButtons = json.append(ab.NewButtons,json.set("","CastTime",if(ab.CastTime=="None","",ab.CastTime),"Marker",ab.Marker,"Class",json.get(ab.Final,"Class"),"Subclass",json.get(ab.Final,"Subclass"),"Name",pm.RemoveSpecial(ab.ButtonName),"DisplayName",ab.ButtonName,"Library",ab.SourceLib))]
+		[h:ab.NewButtons = json.append(ab.NewButtons,json.set("","UseTime",if(ab.CastTime=="None","",ab.CastTime),"Marker",ab.Marker,"Class",json.get(ab.Final,"Class"),"Subclass",json.get(ab.Final,"Subclass"),"Name",pm.RemoveSpecial(ab.ButtonName),"DisplayName",ab.ButtonName,"Library",ab.SourceLib))]
 	}]
 	[h:ab.Final = json.set(ab.Final,"ButtonInfo",ab.NewButtons)]
 };{}]

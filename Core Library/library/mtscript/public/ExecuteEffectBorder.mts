@@ -9,7 +9,9 @@
 	"DMOnly",(getProperty("a5e.stat.Allegiance") == "Enemy"),
 	"Class",json.get(EffectData,"Class"),
 	"Name",json.get(EffectData,"DisplayName"),
-	"FalseName","",
+	"FalseName",json.get(EffectData,"FalseName"),
+	"ClassForDisplay",json.get(EffectData,"ClassForDisplay"),
+	"ColorSubtype",json.get(EffectData,"ColorSubtype"),
 	"OnlyRules",0
 )]
 
@@ -18,12 +20,11 @@
 [h:output.GM = json.get(json.get(FormattingData,"Output"),"GM")]
 
 [h:EffectToExecute = json.get(EffectData,"Effect")]
-[h:EffectToExecute = json.set(EffectToExecute,
-	"DMOnly",(getProperty("a5e.stat.Allegiance") == "Enemy"),
-	"ParentToken",ParentToken
+[h:FinalEffectData = json.set(EffectData,
+	"DMOnly",(getProperty("a5e.stat.Allegiance") == "Enemy")
 )]
 
-[h,macro("ExecuteEffect@Lib:pm.a5e.Core"): EffectToExecute]
+[h,macro("ExecuteEffect@Lib:pm.a5e.Core"): FinalEffectData]
 [h:abilityTable = json.get(macro.return,"Table")]
 [h:effectsToMerge = json.get(macro.return,"Effect")]
 
@@ -32,6 +33,9 @@
 	"DisplayName",json.get(EffectData,"DisplayName"),
 	"Type",json.get(EffectData,"Class"),
 	"ID",pm.a5e.GenerateEffectID(),
+	"FalseName",json.get(EffectData,"FalseName"),
+	"ClassForDisplay",json.get(EffectData,"ClassForDisplay"),
+	"ColorSubtype",json.get(EffectData,"ColorSubtype"),
 	"ParentToken",ParentToken
 )]
 
@@ -42,14 +46,14 @@
 [h,MACRO("BuildEffectsFrame@Lib:pm.a5e.Core"): ""]
 
 [h,if(json.get(EffectToExecute,"Description") == ""):
-	EffectDescription = base64.decode(json.get(EffectData,"Description"));
+	EffectDescription = base64.decode(json.get(FinalEffectData,"Description"));
 	EffectDescription = base64.decode(json.get(EffectToExecute,"Description"))
 ]
 
 [h:"<!-- TODO: Fix this, temporary -->"]
 [h,if(getProperty("a5e.stat.Allegiance") == "Enemy"): PlayerEffectDescription = ""; PlayerEffectDescription = EffectDescription]
 
-[h:output.Temp = pm.AbilityTableProcessing(abilityTable,FormattingData,1)]
+[h:output.Temp = pm.AbilityTableProcessing(abilityTable,FormattingData,0)]
 [h:output.PC = output.PC + json.get(output.Temp,"Player")+PlayerEffectDescription+"</div></div>"]
 [h:output.GM = output.GM + json.get(output.Temp,"GM")+EffectDescription+"</div></div>"]
 

@@ -925,7 +925,12 @@
 }]
 [h:subeffectData = json.remove(subeffectData,"ExtraDataKeys")]
 
-[h,if(needsPersistentEffect == "Same"): subeffectData = json.set(subeffectData,"PersistentEffects",1)]
+[h,if(needsPersistentEffect == "Same"),CODE:{
+	[h:subeffectData = json.set(subeffectData,"PersistentEffects",1)]
+	[h:needsPersistentEffect = 0]
+};{
+	[h,if(needsPersistentEffect == "Different"): needsPersistentEffect = 1]
+}]
 
 [h:thisEffectSubeffectData = json.get(currentEffectData,"Subeffects")]
 [h:thisEffectSubeffectData = json.append(thisEffectSubeffectData,subeffectData)]
@@ -987,7 +992,6 @@
 }]
 
 [h,if(lastEffectTest && !NeedsNewSubeffect),CODE:{
-	[h:broadcast("last and no new subeff")]
 	[h,if(isPersistentEffect),CODE:{
 		[h:MainFeatureData = getLibProperty("ct.New"+EffectType,"pm.a5e.Core")]
 		[h:thisPlayerMainFeatureData = json.get(MainFeatureData,getPlayerName())]

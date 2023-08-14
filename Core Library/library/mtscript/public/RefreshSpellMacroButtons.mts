@@ -8,12 +8,10 @@
 [h,if(OldSpells==""): OldSpells = "[]"]
 [h,if(MagicSource==""): MagicSource = "Arcane"]
 
-[h:"<!-- TODO: Make a function to convert casttime to a display -->"]
 [h,foreach(tempSpell,NewSpells),CODE:{
 	[h:SpellData = pm.a5e.GetSpecificSpell(tempSpell)]
 
 	[h,MACRO("CreateSpellMacroLabel@Lib:pm.a5e.Core"): tempSpell]
-	[h:broadcast("labeldone")]
 	[h:pm.NewMacroLabel = macro.return]
 	[h:pm.NewMacroCommand = '[h:"<!-- Dont mess with these variables unless you know what they do -->"]
 [h:ForcedClass=""]

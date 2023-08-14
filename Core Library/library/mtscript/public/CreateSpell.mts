@@ -1,9 +1,5 @@
-[h:CoreSpellData = macro.args]
-[h:sName = json.get(CoreSpellData,"SpellName")]
-[h:Duration = json.get(CoreSpellData,"Duration")]
-[h:UseTime = json.get(CoreSpellData,"UseTime")]
-[h:sSchool = json.get(CoreSpellData,"School")]
-[h:sLevel = json.get(CoreSpellData,"SpellLevel")]
+[h,if(getLibProperty("ct.NewSpell","Lib:pm.a5e.Core")==""): setLibProperty("ct.NewSpell","{}","Lib:pm.a5e.Core")]
+[h:setLibProperty("ct.NewSpell",json.remove(getLibProperty("ct.NewSpell","Lib:pm.a5e.Core"),getPlayerName()),"Lib:pm.a5e.Core")]
 
 [h:list1through9 = ""]
 [h,c(9): list1through9 = list1through9 + "<option value="+(roll.count+1)+">"+(roll.count+1)+"</option>"]
@@ -15,7 +11,7 @@
 [h:listSchools = ""]
 [h,foreach(tempSchool,tempListSchools): listSchools = listSchools + "<option value='"+tempSchool+"'>"+tempSchool+"</option>"]
 
-[h:spellCreationHTML = "<tr><th><label for='DisplayName'>Spell Name:</label></th><td><input type='text' id='DisplayName' name='DisplayName' value='"+sName+"' autofocus></td></tr>"]
+[h:spellCreationHTML = "<tr><th><label for='DisplayName'>Spell Name:</label></th><td><input type='text' id='DisplayName' name='DisplayName' autofocus></td></tr>"]
 
 [h:spellCreationHTML = spellCreationHTML + "<tr><th><label for='Level'>Spell Level:</label></th><td><select id='Level' name='Level'>"+listSpellLevel+"</select></td></tr>"]
 

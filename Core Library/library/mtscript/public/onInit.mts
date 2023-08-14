@@ -285,5 +285,6 @@
 
 [h:"<!-- Functions for Trusted Bypass -->"]
 [h:defineFunction("pm.SwitchToken","pm.SwitchToken@Lib:pm.a5e.Core",0,0)]
+[h:defineFunction("json.path.putcarefully","json.path.putcarefully@Lib:pm.a5e.Core",0,0)]
 
 [h:broadcast("Startup Initialization Complete.")]

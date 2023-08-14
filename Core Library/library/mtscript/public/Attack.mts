@@ -382,7 +382,7 @@
 		"InstancePrefixes",json.append("","Attack","WeaponAttack"),
 		"RerollData",wa.Data
 	)]
-	[h,foreach(tempSubeffect,thisAttackSubeffects): pm.a5e.ExecuteSubeffect(tempSubeffect,json.set("","BaseData",wa.Data,"MultiEffectModifier",WhichAttack))]
+	[h,foreach(tempSubeffect,thisAttackSubeffects): pm.a5e.ExecuteSubeffect(tempSubeffect,json.set("","BaseData",wa.Data,"MultiEffectModifier",WhichAttack,"InstancePrefixes",json.append("","Weapon")))]
 
 	[h:WhichAttack = WhichAttack + 1]
 }]

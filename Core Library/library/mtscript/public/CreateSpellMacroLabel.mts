@@ -2,8 +2,8 @@
 
 [h:SpellData = pm.a5e.GetSpecificSpell(Spell)]
 [h:FirstEffect = json.get(json.get(SpellData,"Effects"),0)]
-[h:CastTimeUnits = json.get(json.get(FirstEffect,"CastTime"),"Units")]
-[h:CastTimeValue = json.get(json.get(FirstEffect,"CastTime"),"Value")]
+[h:CastTimeUnits = json.get(json.get(FirstEffect,"UseTime"),"Units")]
+[h:CastTimeValue = json.get(json.get(FirstEffect,"UseTime"),"Value")]
 [h,switch(lower(CastTimeUnits)):
 	case "": CastTimeNote = "";
 	case "action": CastTimeNote = "";

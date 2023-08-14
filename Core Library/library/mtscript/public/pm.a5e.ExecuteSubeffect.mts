@@ -2,6 +2,7 @@
 [h:NonSubeffectData = arg(1)]
 [h:SubeffectFunctionPrefixes = json.get(NonSubeffectData,"InstancePrefixes")]
 [h:MultiEffectModifier = number(json.get(NonSubeffectData,"MultiEffectModifier"))]
+[h:BaseEffectData = json.get(NonSubeffectData,"BaseData")]
 
 [h:thisEffectData = "{}"]
 
@@ -235,4 +236,14 @@
 	[h:pm.a5e.ExecuteSubeffectMissilesLoop()]
 	[h:MissilesCompleted = MissilesCompleted + 1]
 	[h:MultiEffectModifier = MultiEffectModifier + 1]
+}]
+
+[h,if(json.get(SubeffectData,"PersistentEffects") != ""),CODE:{
+	[h,if(json.get(SubeffectData,"PersistentEffects") == 1),CODE:{
+		[h:PersistentEffectData = BaseEffectData]
+	};{
+		[h:PersistentEffectData = json.set(BaseEffectData,"Effects",json.get(SubeffectData,"PersistentEffects"))]
+	}]
+	[h:PersistentEffectData = json.set(PersistentEffectData,"AHLTier",AHLTier)]
+	[h:setProperty("a5e.stat.ActiveEffects",json.append(getProperty("a5e.stat.ActiveEffects"),PersistentEffectData))]
 }]

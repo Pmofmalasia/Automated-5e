@@ -7,7 +7,7 @@
 	[h:tempFeatures = pm.a5e.GatherNonAuraFeatures(tempToken)]
 	[h:tempAuraFeatures = json.path.read(tempFeatures,"[*][?(@.Aura != null)]","DEFAULT_PATH_LEAF_TO_NULL")]
 	[h:tempAuraFeatures = json.path.read(tempAuraFeatures,"[*][?(@.Aura.Range >= "+getDistance(tempToken)+")]","DEFAULT_PATH_LEAF_TO_NULL")]
-	[h:a5e.UnifiedAbilitiesEDITTHISLATER = json.merge(a5e.UnifiedAbilities,json.path.put(tempAuraFeatures,"[*]","AbilityType","Aura"))]
+	[h:a5e.UnifiedAbilitiesEDITTHISLATER = json.merge(a5e.UnifiedAbilities,json.path.putcarefully(tempAuraFeatures,"[*]","AbilityType","Aura"))]
 	[h:"<!-- NOTE: Current issue - this method does not allow for adjusting aura range based on magic items, other features, etc.)"]
 }]
 [h:macro.return = a5e.UnifiedAbilities]

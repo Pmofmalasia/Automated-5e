@@ -168,8 +168,8 @@
 	[h:pm.ValidSchools = ""]
 	[h,foreach(school,pm.GetSpellSchools("Name")): pm.ValidSchools = if(or(allSpellsTest,eval("sp."+json.get(school,"Name"))),json.append(pm.ValidSchools,school),pm.ValidSchools)]
 	
-	[h,if(!allSpellsTest): BaseCantripInstance = json.path.put(BaseCantripInstance,".Filter","School",pm.ValidSchools)]
-	[h,if(!allSpellsTest): BaseSpellInstance = json.path.put(BaseSpellInstance,".Filter","School",pm.ValidSchools)]
+	[h,if(!allSpellsTest): BaseCantripInstance = json.path.putcarefully(BaseCantripInstance,".Filter","School",pm.ValidSchools)]
+	[h,if(!allSpellsTest): BaseSpellInstance = json.path.putcarefully(BaseSpellInstance,".Filter","School",pm.ValidSchools)]
 	
 	[h:BaseCantripInstance = json.set(BaseCantripInstance,"List",sp.ClassList)]
 	[h:BaseSpellInstance = json.set(BaseSpellInstance,"List",sp.ClassList)]

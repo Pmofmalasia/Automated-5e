@@ -126,7 +126,7 @@
 		[h,if(validSizeTest): thisCreatureFinalValidObjects = json.append(thisCreatureFinalValidObjects,tempItem)]
 	}]
 
-	[h:allValidItems = json.merge(allValidItems,json.path.put(thisCreatureFinalValidObjects,"[*]","HeldBy",creature))]
+	[h:allValidItems = json.merge(allValidItems,json.path.putcarefully(thisCreatureFinalValidObjects,"[*]","HeldBy",creature))]
 }]
 
 [h:macro.return = allValidItems]

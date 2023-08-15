@@ -24,7 +24,7 @@
 	[h:AmountConsumed = 1]
 	[h:ItemID = json.get(UseItemData,"ItemID")]
 	[h:NewNumber = json.get(UseItemData,"Number") - AmountConsumed]
-	[h:NewInventory = json.path.set(getProperty("a5e.stat.Inventory"),"[*][?(@.ItemID == '"+ItemID+"')]['Number']",NewNumber)]
+	[h:NewInventory = json.path.setcarefully(getProperty("a5e.stat.Inventory"),"[*][?(@.ItemID == '"+ItemID+"')]['Number']",NewNumber)]
 	[h:setProperty("a5e.stat.Inventory",NewInventory)]
 
 	[h,if(json.get(UseItemData,"ContainerLeftBehind") != ""),CODE:{

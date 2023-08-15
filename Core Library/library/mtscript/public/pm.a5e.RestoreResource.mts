@@ -160,8 +160,8 @@
 ]
 
 [h,if(needsPutTest):
-	setProperty(sourceProperty,json.path.put(getProperty(sourceProperty),sourcePath,"Resource",ResourceRestoredFinal));
-	setProperty(sourceProperty,json.path.set(getProperty(sourceProperty),sourcePath+"['Resource']",ResourceRestoredFinal))
+	setProperty(sourceProperty,json.path.putcarefully(getProperty(sourceProperty),sourcePath,"Resource",ResourceRestoredFinal));
+	setProperty(sourceProperty,json.path.setcarefully(getProperty(sourceProperty),sourcePath+"['Resource']",ResourceRestoredFinal))
 ]
 
 [h:return(0,json.set("","Table",abilityTable))]

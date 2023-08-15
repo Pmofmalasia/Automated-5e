@@ -40,7 +40,7 @@
 };{
 	[h:OldEntryData = json.get(SameItemPriorEntry,0)]
 	[h:NewNumber = json.get(OldEntryData,"Number") + json.get(AddItemData,"NumberAdded")]
-	[h:NewInventory = json.path.set(PriorInventory,"[*][?(@.ObjectID == '"+TradedItemID+"')]['Number']",NewNumber)]
+	[h:NewInventory = json.path.setcarefully(PriorInventory,"[*][?(@.ObjectID == '"+TradedItemID+"')]['Number']",NewNumber)]
 	[h:setProperty("a5e.stat.Inventory",NewInventory)]
 }]
 

@@ -20,7 +20,7 @@
 [h:abort(input(lu.OptionalAbilitiesInput))]
 
 [h,foreach(ability,lu.OptionalAbilities),CODE:{
-	[h:lu.NewAbilities = if(eval("lu.OptionalChoice"+roll.count),lu.NewAbilities,json.path.delete(lu.NewAbilities,"[?(@.Name == '"+json.get(ability,"Name")+"' && @.Class == '"+json.get(ability,"Class")+"' && @.Subclass == '"+json.get(ability,"Subclass")+"')]"))]
+	[h:lu.NewAbilities = if(eval("lu.OptionalChoice"+roll.count),lu.NewAbilities,json.path.deletecarefully(lu.NewAbilities,"[?(@.Name == '"+json.get(ability,"Name")+"' && @.Class == '"+json.get(ability,"Class")+"' && @.Subclass == '"+json.get(ability,"Subclass")+"')]"))]
 }]
 
 [h:"<!-- Selection of abilities that replace other abilities -->"]
@@ -35,8 +35,8 @@
 
 [h,foreach(ability,lu.ReplaceAbilities),CODE:{
 	[h:lu.NewAbilities = if(eval("lu.ReplaceChoice"+roll.count),
-		json.path.delete(lu.NewAbilities,"[?(@.Name == '"+json.get(json.get(ability,"Replace"),"Name")+"' && @.Class == '"+json.get(json.get(ability,"Replace"),"Class")+"' && @.Subclass == '"+json.get(json.get(ability,"Replace"),"Subclass")+"')]"),
-		json.path.delete(lu.NewAbilities,"[?(@.Name == '"+json.get(ability,"Name")+"' && @.Class == '"+json.get(ability,"Class")+"' && @.Subclass == '"+json.get(ability,"Subclass")+"')]"))]
+		json.path.deletecarefully(lu.NewAbilities,"[?(@.Name == '"+json.get(json.get(ability,"Replace"),"Name")+"' && @.Class == '"+json.get(json.get(ability,"Replace"),"Class")+"' && @.Subclass == '"+json.get(json.get(ability,"Replace"),"Subclass")+"')]"),
+		json.path.deletecarefully(lu.NewAbilities,"[?(@.Name == '"+json.get(ability,"Name")+"' && @.Class == '"+json.get(ability,"Class")+"' && @.Subclass == '"+json.get(ability,"Subclass")+"')]"))]
 }]
 
 [h:"<!-- Checks for any 'Master' abilities which choose 'Subabilities' on level up, then runs the macro for choosing them. Currently disabled, may need to be moved to level up macro. -->"]
@@ -84,14 +84,14 @@
 	[h,if(lu.PrimeStatTest),CODE:{
 		[h:lu.PrimeStatOptions = json.fromStrProp(json.fields(lu.FinalAttributeChoices,"=1;")+"=1")]
 		[h,if(json.length(lu.PrimeStatOptions)>1): 
-			lu.NewAbilities = json.path.set(lu.NewAbilities,"[?(@.Name == '"+json.get(ability,"Name")+"' && @.Class == '"+json.get(ability,"Class")+"' && @.Subclass == '"+json.get(ability,"Subclass")+"')]['PrimeStatOptions']",lu.PrimeStatOptions);
-			lu.NewAbilities = json.path.put(lu.NewAbilities,"[?(@.Name == '"+json.get(ability,"Name")+"' && @.Class == '"+json.get(ability,"Class")+"' && @.Subclass == '"+json.get(ability,"Subclass")+"')]","PrimeStat",json.get(json.fields(lu.PrimeStatOptions),0))]
+			lu.NewAbilities = json.path.setcarefully(lu.NewAbilities,"[?(@.Name == '"+json.get(ability,"Name")+"' && @.Class == '"+json.get(ability,"Class")+"' && @.Subclass == '"+json.get(ability,"Subclass")+"')]['PrimeStatOptions']",lu.PrimeStatOptions);
+			lu.NewAbilities = json.path.putcarefully(lu.NewAbilities,"[?(@.Name == '"+json.get(ability,"Name")+"' && @.Class == '"+json.get(ability,"Class")+"' && @.Subclass == '"+json.get(ability,"Subclass")+"')]","PrimeStat",json.get(json.fields(lu.PrimeStatOptions),0))]
 	};{}]
 	
 	[h,if(json.get(ability,"Attributes")==""),CODE:{
-		[h:lu.NewAbilities = json.path.put(lu.NewAbilities,"[?(@.Name == '"+json.get(ability,"Name")+"' && @.Class == '"+json.get(ability,"Class")+"' && @.Subclass == '"+json.get(ability,"Subclass")+"')]","Attributes",lu.FinalAttributeChoices)]
+		[h:lu.NewAbilities = json.path.putcarefully(lu.NewAbilities,"[?(@.Name == '"+json.get(ability,"Name")+"' && @.Class == '"+json.get(ability,"Class")+"' && @.Subclass == '"+json.get(ability,"Subclass")+"')]","Attributes",lu.FinalAttributeChoices)]
 	};{
-		[h:lu.NewAbilities = json.path.set(lu.NewAbilities,"[?(@.Name == '"+json.get(ability,"Name")+"' && @.Class == '"+json.get(ability,"Class")+"' && @.Subclass == '"+json.get(ability,"Subclass")+"')]['Attributes']",lu.FinalAttributeChoices)]
+		[h:lu.NewAbilities = json.path.setcarefully(lu.NewAbilities,"[?(@.Name == '"+json.get(ability,"Name")+"' && @.Class == '"+json.get(ability,"Class")+"' && @.Subclass == '"+json.get(ability,"Subclass")+"')]['Attributes']",lu.FinalAttributeChoices)]
 	}]
 }]
 
@@ -109,10 +109,10 @@
 		lu.PrimeStatTest = if(json.get(json.get(ability,"PrimeStatOptions"),"ChoiceMethod")=="Class",1,0)
 	]
 	[h,if(lu.PrimeStatTest),CODE:{
-		[h:lu.NewAbilities = json.path.put(lu.NewAbilities,"[?(@.Name == '"+json.get(ability,"Name")+"' && @.Class == '"+json.get(ability,"Class")+"' && @.Subclass == '"+json.get(ability,"Subclass")+"')]","PrimeStat",json.get(getLibProperty("sb.CastingAbilities","Lib:pm.a5e.Core"),pm.RemoveSpecial(tempClassChoice)))]
+		[h:lu.NewAbilities = json.path.putcarefully(lu.NewAbilities,"[?(@.Name == '"+json.get(ability,"Name")+"' && @.Class == '"+json.get(ability,"Class")+"' && @.Subclass == '"+json.get(ability,"Subclass")+"')]","PrimeStat",json.get(getLibProperty("sb.CastingAbilities","Lib:pm.a5e.Core"),pm.RemoveSpecial(tempClassChoice)))]
 	};{}]
 	
-	[h:lu.NewAbilities = json.path.put(lu.NewAbilities,"[?(@.Name == '"+json.get(ability,"Name")+"' && @.Class == '"+json.get(ability,"Class")+"' && @.Subclass == '"+json.get(ability,"Subclass")+"')]","AssociatedClass",pm.RemoveSpecial(tempClassChoice))]
+	[h:lu.NewAbilities = json.path.putcarefully(lu.NewAbilities,"[?(@.Name == '"+json.get(ability,"Name")+"' && @.Class == '"+json.get(ability,"Class")+"' && @.Subclass == '"+json.get(ability,"Subclass")+"')]","AssociatedClass",pm.RemoveSpecial(tempClassChoice))]
 }]
 
 [h:"<!-- Checks if a skill is: (1) Going to add predefined skills (2) Has options to choose skills if the predefined ones are already proficient (3) The predefined skill does already have proficiency. Then if true moves the 'Backup' key to 'SkillOptions' to be checked next. -->"]
@@ -131,8 +131,8 @@
 	[h,if(BackupTest>0),CODE:{
 		[h:lu.BackupSkillChoice = json.set(json.get(json.get(ability,"Skills"),"Backup"),"ChoiceText","Choose "+BackupTest+" of the following","ChoiceNum",BackupTest)]
 		[h,if(json.get(ability,"SkillOptions")!=""): lu.NewAbilities = 
-	json.path.set(lu.NewAbilities,"[?(@.Name == '"+json.get(ability,"Name")+"' && @.Class == '"+json.get(ability,"Class")+"' && @.Subclass == '"+json.get(ability,"Subclass")+"')]['SkillOptions']",json.merge(json.get(ability,"SkillOptions"),lu.BackupSkillChoice)); 
-	lu.NewAbilities = json.path.put(lu.NewAbilities,"[?(@.Name == '"+json.get(ability,"Name")+"' && @.Class == '"+json.get(ability,"Class")+"' && @.Subclass == '"+json.get(ability,"Subclass")+"')]","SkillOptions",lu.BackupSkillChoice)]
+	json.path.setcarefully(lu.NewAbilities,"[?(@.Name == '"+json.get(ability,"Name")+"' && @.Class == '"+json.get(ability,"Class")+"' && @.Subclass == '"+json.get(ability,"Subclass")+"')]['SkillOptions']",json.merge(json.get(ability,"SkillOptions"),lu.BackupSkillChoice)); 
+	lu.NewAbilities = json.path.putcarefully(lu.NewAbilities,"[?(@.Name == '"+json.get(ability,"Name")+"' && @.Class == '"+json.get(ability,"Class")+"' && @.Subclass == '"+json.get(ability,"Subclass")+"')]","SkillOptions",lu.BackupSkillChoice)]
 	};{}]
 }]
 
@@ -157,10 +157,10 @@
 		[h:lu.NewSkillProficiencies = json.merge(json.get(ability,"Skills"),json.get(macro.return,"Skills"))]
 		[h:lu.AllNewSkillProficiencies = json.merge(lu.AllNewSkillProficiencies,lu.NewSkillProficiencies)]
 		[h:lu.NewAbilities = 
-	json.path.set(lu.NewAbilities,"[?(@.Name == '"+json.get(ability,"Name")+"' && @.Class == '"+json.get(ability,"Class")+"' && @.Subclass == '"+json.get(ability,"Subclass")+"')]['Skills']",lu.NewSkillProficiencies)]
+	json.path.setcarefully(lu.NewAbilities,"[?(@.Name == '"+json.get(ability,"Name")+"' && @.Class == '"+json.get(ability,"Class")+"' && @.Subclass == '"+json.get(ability,"Subclass")+"')]['Skills']",lu.NewSkillProficiencies)]
 	};{
 		[h:lu.AllNewSkillProficiencies = json.merge(lu.AllNewSkillProficiencies,json.get(macro.return,"Skills"))]
-		[h:lu.NewAbilities = json.path.put(lu.NewAbilities,"[?(@.Name == '"+json.get(ability,"Name")+"' && @.Class == '"+json.get(ability,"Class")+"' && @.Subclass == '"+json.get(ability,"Subclass")+"')]","Skills",json.get(macro.return,"Skills"))]
+		[h:lu.NewAbilities = json.path.putcarefully(lu.NewAbilities,"[?(@.Name == '"+json.get(ability,"Name")+"' && @.Class == '"+json.get(ability,"Class")+"' && @.Subclass == '"+json.get(ability,"Subclass")+"')]","Skills",json.get(macro.return,"Skills"))]
 	}]
 }]
 
@@ -180,10 +180,10 @@
 		[h:lu.NewSkillProficiencies = json.merge(json.get(ability,"Skills"),json.get(macro.return,"Skills"))]
 		[h:lu.AllNewSkillProficiencies = json.merge(lu.AllNewSkillProficiencies,lu.NewSkillProficiencies)]
 		[h:lu.NewAbilities = 
-	json.path.set(lu.NewAbilities,"[?(@.Name == '"+json.get(ability,"Name")+"' && @.Class == '"+json.get(ability,"Class")+"' && @.Subclass == '"+json.get(ability,"Subclass")+"')]['Skills']",lu.NewSkillProficiencies)]
+	json.path.setcarefully(lu.NewAbilities,"[?(@.Name == '"+json.get(ability,"Name")+"' && @.Class == '"+json.get(ability,"Class")+"' && @.Subclass == '"+json.get(ability,"Subclass")+"')]['Skills']",lu.NewSkillProficiencies)]
 	};{
 		[h:lu.AllNewSkillProficiencies = json.merge(lu.AllNewSkillProficiencies,json.get(macro.return,"Skills"))]
-		[h:lu.NewAbilities = json.path.put(lu.NewAbilities,"[?(@.Name == '"+json.get(ability,"Name")+"' && @.Class == '"+json.get(ability,"Class")+"' && @.Subclass == '"+json.get(ability,"Subclass")+"')]","Skills",json.get(macro.return,"Skills"))]
+		[h:lu.NewAbilities = json.path.putcarefully(lu.NewAbilities,"[?(@.Name == '"+json.get(ability,"Name")+"' && @.Class == '"+json.get(ability,"Class")+"' && @.Subclass == '"+json.get(ability,"Subclass")+"')]","Skills",json.get(macro.return,"Skills"))]
 	}]
 }]
 
@@ -203,8 +203,8 @@
 	[h,MACRO("SkillSelection@Lib:pm.a5e.Core"): json.set("","Skills",lu.ValidSaves,"ParentToken",ParentToken)]
 	
 	[h,if(json.get(ability,"Saves")!=""): lu.NewAbilities = 
-	json.path.set(lu.NewAbilities,"[?(@.Name == '"+json.get(ability,"Name")+"' && @.Class == '"+json.get(ability,"Class")+"' && @.Subclass == '"+json.get(ability,"Subclass")+"')]['Saves']",json.merge(json.get(ability,"Saves"),json.get(macro.return,"Saves")));
-	lu.NewAbilities = json.path.put(lu.NewAbilities,"[?(@.Name == '"+json.get(ability,"Name")+"' && @.Class == '"+json.get(ability,"Class")+"' && @.Subclass == '"+json.get(ability,"Subclass")+"')]","Saves",json.get(macro.return,"Saves"))]
+	json.path.setcarefully(lu.NewAbilities,"[?(@.Name == '"+json.get(ability,"Name")+"' && @.Class == '"+json.get(ability,"Class")+"' && @.Subclass == '"+json.get(ability,"Subclass")+"')]['Saves']",json.merge(json.get(ability,"Saves"),json.get(macro.return,"Saves")));
+	lu.NewAbilities = json.path.putcarefully(lu.NewAbilities,"[?(@.Name == '"+json.get(ability,"Name")+"' && @.Class == '"+json.get(ability,"Class")+"' && @.Subclass == '"+json.get(ability,"Subclass")+"')]","Saves",json.get(macro.return,"Saves"))]
 }]
 
 [h:"<!-- Choose Primary Stat -->"]
@@ -215,7 +215,7 @@
 		" junkVar | ---------- Primary Stat Selection ---------- |  | LABEL | SPAN=TRUE ",
 		" lu.StatChoice | "+json.get(json.get(ability,"PrimeStatOptions"),"Stats")+" | Stat Choice for "+json.get(ability,"DisplayName")+" | LIST | VALUE=STRING DELIMITER=JSON"
 	))]
-	[h:lu.NewAbilities = json.path.put(lu.NewAbilities,"[?(@.Name == '"+json.get(ability,"Name")+"' && @.Class == '"+json.get(ability,"Class")+"' && @.Subclass == '"+json.get(ability,"Subclass")+"')]","PrimeStat",pm.RemoveSpecial(lu.StatChoice))]
+	[h:lu.NewAbilities = json.path.putcarefully(lu.NewAbilities,"[?(@.Name == '"+json.get(ability,"Name")+"' && @.Class == '"+json.get(ability,"Class")+"' && @.Subclass == '"+json.get(ability,"Subclass")+"')]","PrimeStat",pm.RemoveSpecial(lu.StatChoice))]
 }]
 
 [h:"<!-- Assemble Languages Gained -->"]
@@ -229,8 +229,8 @@
 	[h:lu.NewLanguages = pm.LanguageSelection(json.get(ability,"LanguageOptions"),json.get(ability,"DisplayName"),lu.AllNewLanguages)]
 	[h:lu.AllNewLanguages = json.merge(lu.AllNewLanguages,lu.NewLanguages)]
 	[h,if(json.get(ability,"Languages")!=""): 
-		lu.NewAbilities = json.path.set(lu.NewAbilities,"[?(@.Name == '"+json.get(ability,"Name")+"' && @.Class == '"+json.get(ability,"Class")+"' && @.Subclass == '"+json.get(ability,"Subclass")+"')]['Languages']",json.merge(json.get(ability,"Languages"),lu.NewLanguages));
-		lu.NewAbilities = json.path.put(lu.NewAbilities,"[?(@.Name == '"+json.get(ability,"Name")+"' && @.Class == '"+json.get(ability,"Class")+"' && @.Subclass == '"+json.get(ability,"Subclass")+"')]","Languages",lu.NewLanguages)
+		lu.NewAbilities = json.path.setcarefully(lu.NewAbilities,"[?(@.Name == '"+json.get(ability,"Name")+"' && @.Class == '"+json.get(ability,"Class")+"' && @.Subclass == '"+json.get(ability,"Subclass")+"')]['Languages']",json.merge(json.get(ability,"Languages"),lu.NewLanguages));
+		lu.NewAbilities = json.path.putcarefully(lu.NewAbilities,"[?(@.Name == '"+json.get(ability,"Name")+"' && @.Class == '"+json.get(ability,"Class")+"' && @.Subclass == '"+json.get(ability,"Subclass")+"')]","Languages",lu.NewLanguages)
 	]
 }]
 
@@ -256,7 +256,7 @@
 		" lu.DamageChoice | "+lu.DamageOptionsList+" | Choose a damage type | RADIO | VALUE=STRING DELIMITER=JSON "
 	))]
 	
-	[h:lu.NewAbilities = json.path.put(lu.NewAbilities,"[?(@.Name == '"+json.get(ability,"Name")+"' && @.Class == '"+json.get(ability,"Class")+"' && @.Subclass == '"+json.get(ability,"Subclass")+"')]","DamageType",json.get(json.path.read(lu.DamageOptions,"[?(@.Name=='"+pm.RemoveSpecial(lu.DamageChoice)+"')]['Name']"),0))]
+	[h:lu.NewAbilities = json.path.putcarefully(lu.NewAbilities,"[?(@.Name == '"+json.get(ability,"Name")+"' && @.Class == '"+json.get(ability,"Class")+"' && @.Subclass == '"+json.get(ability,"Subclass")+"')]","DamageType",json.get(json.path.read(lu.DamageOptions,"[?(@.Name=='"+pm.RemoveSpecial(lu.DamageChoice)+"')]['Name']"),0))]
 }]
 
 [h:"<!-- Other Miscellaneous Choices -->"]
@@ -265,7 +265,7 @@
 	[h:abort(input(
 		" lu.MiscChoice | "+json.get(json.get(ability,"MiscChoice"),"Options")+" | "+json.get(ability,"DisplayName")+": "+json.get(json.get(ability,"MiscChoice"),"Title")+" | RADIO | VALUE=STRING"
 		))]
-	[h:lu.NewAbilities = json.path.put(lu.NewAbilities,"[?(@.Name == '"+json.get(ability,"Name")+"' && @.Class == '"+json.get(ability,"Class")+"' && @.Subclass == '"+json.get(ability,"Subclass")+"')]","StoredValue",lu.MiscChoice)]
+	[h:lu.NewAbilities = json.path.putcarefully(lu.NewAbilities,"[?(@.Name == '"+json.get(ability,"Name")+"' && @.Class == '"+json.get(ability,"Class")+"' && @.Subclass == '"+json.get(ability,"Subclass")+"')]","StoredValue",lu.MiscChoice)]
 }]
 
 [h:"<!-- Add buttons gained to list -->"]

@@ -10,16 +10,16 @@
 [h,foreach(effect,effectList),CODE:{
     [h,switch(json.get(effect,"OverallType")),CODE:
         case "Check":{
-            [h:effectList = json.path.put(effectList,"["+roll.count+"]","tempEffectType","Check")]
-            [h:effectList = json.path.put(effectList,"["+roll.count+"]","tempThisTarget",ParentToken)]
+            [h:effectList = json.path.putcarefully(effectList,"["+roll.count+"]","tempEffectType","Check")]
+            [h:effectList = json.path.putcarefully(effectList,"["+roll.count+"]","tempThisTarget",ParentToken)]
         };
         case "Save":{
-            [h:effectList = json.path.put(effectList,"["+roll.count+"]","tempEffectType","Save")]
-            [h:effectList = json.path.put(effectList,"["+roll.count+"]","tempThisTarget",ParentToken)]
+            [h:effectList = json.path.putcarefully(effectList,"["+roll.count+"]","tempEffectType","Save")]
+            [h:effectList = json.path.putcarefully(effectList,"["+roll.count+"]","tempThisTarget",ParentToken)]
         };
         case "Attack":{
-            [h:effectList = json.path.put(effectList,"["+roll.count+"]","tempEffectType","Attack")]
-            [h:effectList = json.path.put(effectList,"["+roll.count+"]","tempThisTarget",ParentToken)]
+            [h:effectList = json.path.putcarefully(effectList,"["+roll.count+"]","tempEffectType","Attack")]
+            [h:effectList = json.path.putcarefully(effectList,"["+roll.count+"]","tempThisTarget",ParentToken)]
         };
     ]
 }]

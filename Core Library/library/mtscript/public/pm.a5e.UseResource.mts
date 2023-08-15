@@ -683,7 +683,7 @@
 	case "FeatureSpell":{
 		[h,if(json.get(ResourceSelected,"TempResourceKey")==""),CODE:{
 			[h:ResourceAmount = max(json.get(ResourceSelected,"Resource") - 1,0)]
-			[h:setProperty("a5e.stat.AllFeatures",json.path.set(getProperty("a5e.stat.AllFeatures"),"[*][?(@.Name=='"+json.get(ResourceSelected,"Name")+"' && @.Class=='"+json.get(ResourceSelected,"Class")+"' && @.Subclass=='"+json.get(ResourceSelected,"Subclass")+"')]['Resource']",ResourceAmount))]
+			[h:setProperty("a5e.stat.AllFeatures",json.path.setcarefully(getProperty("a5e.stat.AllFeatures"),"[*][?(@.Name=='"+json.get(ResourceSelected,"Name")+"' && @.Class=='"+json.get(ResourceSelected,"Class")+"' && @.Subclass=='"+json.get(ResourceSelected,"Subclass")+"')]['Resource']",ResourceAmount))]
 
 			[h:abilityTable = json.append(abilityTable,json.set("",
 				"ShowIfCondensed",1,
@@ -703,7 +703,7 @@
 			)]
 		};{
 			[h:ResourceAmount = max(json.get(json.get(ResourceSelected,"Resource"),json.get(ResourceSelected,"TempResourceKey")) - 1,0)]
-			[h:setProperty("a5e.stat.AllFeatures",json.path.set(getProperty("a5e.stat.AllFeatures"),"[*][?(@.Name=='"+json.get(ResourceSelected,"Name")+"' && @.Class=='"+json.get(ResourceSelected,"Class")+"' && @.Subclass=='"+json.get(ResourceSelected,"Subclass")+"')]['Resource']['"+json.get(ResourceSelected,"TempResourceKey")+"']",ResourceAmount))]
+			[h:setProperty("a5e.stat.AllFeatures",json.path.setcarefully(getProperty("a5e.stat.AllFeatures"),"[*][?(@.Name=='"+json.get(ResourceSelected,"Name")+"' && @.Class=='"+json.get(ResourceSelected,"Class")+"' && @.Subclass=='"+json.get(ResourceSelected,"Subclass")+"')]['Resource']['"+json.get(ResourceSelected,"TempResourceKey")+"']",ResourceAmount))]
 
 			[h:abilityTable = json.append(abilityTable,json.set("",
 				"ShowIfCondensed",1,
@@ -733,8 +733,8 @@
 		[h,if(json.get(ResourceSelected,"TempResourceKey")==""),CODE:{
 			[h:ResourceAmount = json.get(ResourceSelected,"Resource") - ResourceUsed]
 			[h,if(json.get(ResourceSelected,"TempResourceSource") == "Item"):
-				UpdatedResourceInfo = json.path.set(getProperty(sourceProperty),"[*][?(@.ItemID=='"+json.get(ResourceSelected,"ItemID")+"')]['Resource']",ResourceAmount);	
-				UpdatedResourceInfo = json.path.set(getProperty(sourceProperty),"[*][?(@.Name=='"+json.get(ResourceSelected,"Name")+"' && @.Class=='"+json.get(ResourceSelected,"Class")+"' && @.Subclass=='"+json.get(ResourceSelected,"Subclass")+"')]['Resource']",ResourceAmount)
+				UpdatedResourceInfo = json.path.setcarefully(getProperty(sourceProperty),"[*][?(@.ItemID=='"+json.get(ResourceSelected,"ItemID")+"')]['Resource']",ResourceAmount);	
+				UpdatedResourceInfo = json.path.setcarefully(getProperty(sourceProperty),"[*][?(@.Name=='"+json.get(ResourceSelected,"Name")+"' && @.Class=='"+json.get(ResourceSelected,"Class")+"' && @.Subclass=='"+json.get(ResourceSelected,"Subclass")+"')]['Resource']",ResourceAmount)
 			]
 			[h:setProperty(sourceProperty,UpdatedResourceInfo)]
 
@@ -756,8 +756,8 @@
 		};{
 			[h:ResourceAmount = max(json.get(json.get(ResourceSelected,"Resource"),json.get(ResourceSelected,"TempResourceKey")) - ResourceUsed,0)]
 			[h,if(json.get(ResourceSelected,"TempResourceSource") == "Item"):
-				UpdatedResourceInfo = json.path.set(getProperty(sourceProperty),"[*][?(@.ItemID=='"+json.get(ResourceSelected,"ItemID")+"')]['Resource']['"+json.get(ResourceSelected,"TempResourceKey")+"']",ResourceAmount);	
-				UpdatedResourceInfo = json.path.set(getProperty(sourceProperty),"[*][?(@.Name=='"+json.get(ResourceSelected,"Name")+"' && @.Class=='"+json.get(ResourceSelected,"Class")+"' && @.Subclass=='"+json.get(ResourceSelected,"Subclass")+"')]['Resource']['"+json.get(ResourceSelected,"TempResourceKey")+"']",ResourceAmount)
+				UpdatedResourceInfo = json.path.setcarefully(getProperty(sourceProperty),"[*][?(@.ItemID=='"+json.get(ResourceSelected,"ItemID")+"')]['Resource']['"+json.get(ResourceSelected,"TempResourceKey")+"']",ResourceAmount);	
+				UpdatedResourceInfo = json.path.setcarefully(getProperty(sourceProperty),"[*][?(@.Name=='"+json.get(ResourceSelected,"Name")+"' && @.Class=='"+json.get(ResourceSelected,"Class")+"' && @.Subclass=='"+json.get(ResourceSelected,"Subclass")+"')]['Resource']['"+json.get(ResourceSelected,"TempResourceKey")+"']",ResourceAmount)
 			]
 			[h:setProperty(sourceProperty,UpdatedResourceInfo)]
 

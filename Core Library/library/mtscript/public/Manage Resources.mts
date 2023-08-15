@@ -16,5 +16,5 @@
 	))]
 
 [h,foreach(ability,AbilitiesWithResources),CODE:{
-	[h:setProperty("a5e.stat.AllFeatures",json.path.set(getProperty("a5e.stat.AllFeatures"),"[?(@.Name=='"+json.get(ability,"Name")+"')]['Resource']",eval("temp.Resource"+roll.count)))]
+	[h:setProperty("a5e.stat.AllFeatures",json.path.setcarefully(getProperty("a5e.stat.AllFeatures"),"[?(@.Name=='"+json.get(ability,"Name")+"')]['Resource']",eval("temp.Resource"+roll.count)))]
 }]

@@ -16,7 +16,7 @@
 [h,if(json.get(ObjectData,"Type") == "Weapon"),CODE:{
 	[h:"<!-- Removes the dummy subeffect used to show to the subeffect creation JS -->"]
 	[h:ObjectEffects = json.get(ObjectData,"Effects")]
-	[h:ObjectEffects = json.path.delete(ObjectEffects,"[*]['Subeffects'][?(@.isDummySubeffect==1)]")]
+	[h:ObjectEffects = json.path.deletecarefully(ObjectEffects,"[*]['Subeffects'][?(@.isDummySubeffect==1)]")]
 
 	[h:"<!-- TODO: Remove this shifting of Subeffects to ObjectEffects when fixed (see CreateObjectProcessing note) -->"]
 	[h:ObjectData = json.set(ObjectData,"WeaponEffects",ObjectEffects)]

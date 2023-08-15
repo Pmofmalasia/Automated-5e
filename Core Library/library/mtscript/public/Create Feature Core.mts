@@ -924,14 +924,14 @@
 	};{
 		[h:"<!-- Checks for whether each instance is present in chosen abilities, then deletes data used to track the choice itself so it is not in the end ability object. Commented because this seems like a dumb way to do it but I didn't think of anything better so here it is. -->"]
 		[h:ab.AfterFeatureOptions = json.path.read(AbilitiesAffected,"[*][?(@.AfterFeature==1)]")]
-		[h:ab.AfterFeatureOptions = json.path.delete(ab.AfterFeatureOptions,"[*]['AfterFeature']")]
-		[h:ab.AfterFeatureOptions = json.path.delete(ab.AfterFeatureOptions,"[*]['FeatureChoiceNum']")]
+		[h:ab.AfterFeatureOptions = json.path.deletecarefully(ab.AfterFeatureOptions,"[*]['AfterFeature']")]
+		[h:ab.AfterFeatureOptions = json.path.deletecarefully(ab.AfterFeatureOptions,"[*]['FeatureChoiceNum']")]
 		[h:ab.FeatureChoiceNumOptions = json.path.read(AbilitiesAffected,"[*][?(@.FeatureChoiceNum==1)]")]
-		[h:ab.FeatureChoiceNumOptions = json.path.delete(ab.FeatureChoiceNumOptions,"[*]['AfterFeature']")]
-		[h:ab.FeatureChoiceNumOptions = json.path.delete(ab.FeatureChoiceNumOptions,"[*]['FeatureChoiceNum']")]
+		[h:ab.FeatureChoiceNumOptions = json.path.deletecarefully(ab.FeatureChoiceNumOptions,"[*]['AfterFeature']")]
+		[h:ab.FeatureChoiceNumOptions = json.path.deletecarefully(ab.FeatureChoiceNumOptions,"[*]['FeatureChoiceNum']")]
 		
-		[h,if(!json.isEmpty(ab.AfterFeatureOptions)): ab.Final = json.set(ab.Final,"CallAfterAbility",json.path.delete(ab.AfterFeatureOptions,"[*]['Type']"))]
-		[h,if(!json.isEmpty(ab.FeatureChoiceNumOptions)): ab.Final = json.set(ab.Final,"CallFeatureChoiceNum",json.path.delete(ab.FeatureChoiceNumOptions,"[*]['Type']"))]
+		[h,if(!json.isEmpty(ab.AfterFeatureOptions)): ab.Final = json.set(ab.Final,"CallAfterAbility",json.path.deletecarefully(ab.AfterFeatureOptions,"[*]['Type']"))]
+		[h,if(!json.isEmpty(ab.FeatureChoiceNumOptions)): ab.Final = json.set(ab.Final,"CallFeatureChoiceNum",json.path.deletecarefully(ab.FeatureChoiceNumOptions,"[*]['Type']"))]
 	}]
 }]
 
@@ -956,9 +956,9 @@
 		[h:ConditionsAffected = json.append(ConditionsAffected,json.set(macro.return,"AfterCondition",ab.AfterCondition,"ConditionChoiceNum",ab.ConditionChoiceNum))]
 	};{
 		[h:ab.AfterConditionOptions = json.path.read(ConditionsAffected,"[*][?(@.AfterCondition==1)]")]
-		[h:ab.AfterConditionOptions = json.path.delete(ab.AfterConditionOptions,"[*]['AfterCondition']")]
+		[h:ab.AfterConditionOptions = json.path.deletecarefully(ab.AfterConditionOptions,"[*]['AfterCondition']")]
 		
-		[h,if(!json.isEmpty(ab.AfterConditionOptions)): ab.Final = json.set(ab.Final,"CallAfterCondition",json.path.delete(ab.AfterConditionOptions,"[*]['Type']"))]
+		[h,if(!json.isEmpty(ab.AfterConditionOptions)): ab.Final = json.set(ab.Final,"CallAfterCondition",json.path.deletecarefully(ab.AfterConditionOptions,"[*]['Type']"))]
 	}]
 }]
 

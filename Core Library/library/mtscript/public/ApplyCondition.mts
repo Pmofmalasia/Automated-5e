@@ -32,7 +32,7 @@
 ]
 
 [h:ConditionImmunities = pm.a5e.ConditionImmunityCalc(json.set("","ParentToken",ParentToken,"SetBy",ConditionSetBy,"SourceType","{}"))]
-[h:a5e.ConditionsTemp = json.path.delete(a5e.ConditionsTemp,"[*][?(@.Name in "+json.get(ConditionImmunities,"Conditions")+" || @.CountsAs in "+json.get(ConditionImmunities,"Conditions")+")]")]
+[h:a5e.ConditionsTemp = json.path.deletecarefully(a5e.ConditionsTemp,"[*][?(@.Name in "+json.get(ConditionImmunities,"Conditions")+" || @.CountsAs in "+json.get(ConditionImmunities,"Conditions")+")]")]
 
 [h:AllConditionsImmunType = "[]"]
 [h,foreach(tempCondition,a5e.ConditionsTemp),CODE:{
@@ -40,7 +40,7 @@
 	[h,if(ImmunTypeTest): AllConditionsImmunType = json.append(AllConditionsImmunType,json.get(tempCondition,"Name"))]
 }]
 
-[h:a5e.ConditionsTemp = json.path.delete(a5e.ConditionsTemp,"[*][?(@.Name in "+AllConditionsImmunType+")]")]
+[h:a5e.ConditionsTemp = json.path.deletecarefully(a5e.ConditionsTemp,"[*][?(@.Name in "+AllConditionsImmunType+")]")]
 
 [h:"<!-- The purpose of looping here is to catch any chain reactions - e.g. Condition A is associated with Condition B, which in turn is associated with Condition C. -->"]
 [h:a5e.Conditions = a5e.ConditionsTemp]
@@ -60,25 +60,25 @@
 	[h:AssociatedConditionsToAdd = json.path.read(AssociatedConditions,"[*][?(@.Name in "+AssociatedConditionNamesToAdd+")]")]
 
 	[h:newAssociatedConditions = "[]"]
-	[h,foreach(condition,AssociatedConditionsToAdd): newAssociatedConditions = json.merge(newAssociatedConditions,json.path.put(json.path.read(getLibProperty("sb.Conditions","Lib:pm.a5e.Core"),"[*][?(@.Name=='"+json.get(condition,"Name")+"' && @.Class=='"+json.get(condition,"Class")+"' && @.Subclass=='"+json.get(condition,"Subclass")+"')]"),"[*]","IsAssociated",1))]
+	[h,foreach(condition,AssociatedConditionsToAdd): newAssociatedConditions = json.merge(newAssociatedConditions,json.path.putcarefully(json.path.read(getLibProperty("sb.Conditions","Lib:pm.a5e.Core"),"[*][?(@.Name=='"+json.get(condition,"Name")+"' && @.Class=='"+json.get(condition,"Class")+"' && @.Subclass=='"+json.get(condition,"Subclass")+"')]"),"[*]","IsAssociated",1))]
 	
 	[h:pm.PassiveFunction("ChangeCondGain")]
 	
 	[h:a5e.ConditionsTemp = json.merge(a5e.Conditions,newAssociatedConditions)]
 }]
 
-[h:a5e.Conditions = json.path.put(a5e.Conditions,"[*]","Duration",DurationFinal)]
-[h:a5e.Conditions = json.path.put(a5e.Conditions,"[*]","SetBy",ConditionSetBy)]
-[h:a5e.Conditions = json.path.put(a5e.Conditions,"[*]","GroupID",a5e.GroupID)]
-[h:a5e.Conditions = json.path.put(a5e.Conditions,"[*]","IsActive",1)]
+[h:a5e.Conditions = json.path.putcarefully(a5e.Conditions,"[*]","Duration",DurationFinal)]
+[h:a5e.Conditions = json.path.putcarefully(a5e.Conditions,"[*]","SetBy",ConditionSetBy)]
+[h:a5e.Conditions = json.path.putcarefully(a5e.Conditions,"[*]","GroupID",a5e.GroupID)]
+[h:a5e.Conditions = json.path.putcarefully(a5e.Conditions,"[*]","IsActive",1)]
 
 [h:"<!-- The following line sets any previously set conditions of the same name as inactive. The reasoning is based on PHB 205: effects of the same spell cast multiple times don't combine, and the most potent effect applies while they overlap - OR, if equally potent, the most recent effect applies. In lieu of being able to calculate which is more 'potent' ahead of time (which, at times, can be abstract), the latter method is the one used at all times instead. Will continue to think of ways to enforce the more 'potent' effect when possible. For now, the current method should cover the majority of cases, and should add an option to change which is active in the Condition Management macro to cover edge cases. Note: There is a similar ruling on PHB 290 for base conditions, so this is not limited to spells. -->"]
 [h,switch(TargetType),CODE:
 	case "Token":{
-		[h,foreach(tempCondition,a5e.Conditions): setProperty("a5e.stat.ConditionList",json.path.set(getProperty("a5e.stat.ConditionList"),"[*][?(@.Name=='"+json.get(tempCondition,"Name")+"')]['IsActive']",0))]
+		[h,foreach(tempCondition,a5e.Conditions): setProperty("a5e.stat.ConditionList",json.path.setcarefully(getProperty("a5e.stat.ConditionList"),"[*][?(@.Name=='"+json.get(tempCondition,"Name")+"')]['IsActive']",0))]
 	};
 	case "Item":{
-		[h,foreach(tempCondition,a5e.Conditions): setProperty("a5e.stat.Inventory",json.path.set(getProperty("a5e.stat.Inventory"),"[*][?(@.ItemConditions.Name=='"+json.get(tempCondition,"Name")+"')]['IsActive']",0))]
+		[h,foreach(tempCondition,a5e.Conditions): setProperty("a5e.stat.Inventory",json.path.setcarefully(getProperty("a5e.stat.Inventory"),"[*][?(@.ItemConditions.Name=='"+json.get(tempCondition,"Name")+"')]['IsActive']",0))]
 	}
 ]
 
@@ -122,10 +122,10 @@
 	case "Item":{
 		[h:TargetItem = json.get(json.path.read(getProperty("a5e.stat.Inventory"),"[*][?(@.ItemID == '"+TargetID+"')]"),0)]
 		[h:TargetItemConditions = json.get(TargetItem,"ItemConditions")]
-		[h:a5e.Conditions = json.path.put(a5e.Conditions,"[*]","ItemID",TargetID)]
+		[h:a5e.Conditions = json.path.putcarefully(a5e.Conditions,"[*]","ItemID",TargetID)]
 		[h:TargetItemConditions = json.merge(TargetItemConditions,a5e.Conditions)]
 		[h:TargetItem = json.set(TargetItem,"ItemConditions",TargetItemConditions)]
-		[h:setProperty("a5e.stat.Inventory",json.path.set(getProperty("a5e.stat.Inventory"),"[*][?(@.ItemID == '"+TargetID+"')]",TargetItem))]
+		[h:setProperty("a5e.stat.Inventory",json.path.setcarefully(getProperty("a5e.stat.Inventory"),"[*][?(@.ItemID == '"+TargetID+"')]",TargetItem))]
 	}
 ]
 
@@ -138,7 +138,7 @@
 		[h:setProperty("a5e.stat.ConditionsSet",json.append(getProperty("a5e.stat.ConditionsSet"),json.set(a5e.GroupingInfo,"Targets",json.append("",TargetData))))]
 	};{
 		[h:NewTargets = json.append(json.get(json.path.read(getProperty("a5e.stat.ConditionsSet"),"[*][?(@.GroupID=="+a5e.GroupID+")]['Targets']"),0),TargetData)]
-		[h:setProperty("a5e.stat.ConditionsSet",json.path.set(getProperty("a5e.stat.ConditionsSet"),"[*][?(@.GroupID=="+a5e.GroupID+")]['Targets']",NewTargets))]
+		[h:setProperty("a5e.stat.ConditionsSet",json.path.setcarefully(getProperty("a5e.stat.ConditionsSet"),"[*][?(@.GroupID=="+a5e.GroupID+")]['Targets']",NewTargets))]
 	}]
 	[h:switchToken(ParentToken)]
 };{}]

@@ -3,16 +3,16 @@
 [h:ResotrationFilter = "@.Restore"+json.toList(RestorationInstances," == 1 || @.Restore")+" == 1"]
 
 [h:RestorationFeatures = json.path.read(getProperty("a5e.stat.AllFeatures"),"[*][?("+ResotrationFilter+")]")]
-[h,if(!json.isEmpty(RestorationFeatures)): RestorationFeatures = json.path.put(RestorationFeatures,"[*]","ResourceSource","Feature")]
+[h,if(!json.isEmpty(RestorationFeatures)): RestorationFeatures = json.path.putcarefully(RestorationFeatures,"[*]","ResourceSource","Feature")]
 
 [h:RestorationItems = json.path.read(getProperty("a5e.stat.Inventory"),"[*][?("+ResotrationFilter+")]")]
-[h,if(!json.isEmpty(RestorationItems)): RestorationItems = json.path.put(RestorationItems,"[*]","ResourceSource","Item")]
+[h,if(!json.isEmpty(RestorationItems)): RestorationItems = json.path.putcarefully(RestorationItems,"[*]","ResourceSource","Item")]
 
 [h:RestorationConditions = json.path.read(getProperty("a5e.stat.ConditionList"),"[*][?("+ResotrationFilter+")]")]
-[h,if(!json.isEmpty(RestorationConditions)): RestorationConditions = json.path.put(RestorationConditions,"[*]","ResourceSource","Condition")]
+[h,if(!json.isEmpty(RestorationConditions)): RestorationConditions = json.path.putcarefully(RestorationConditions,"[*]","ResourceSource","Condition")]
 
 [h:RestorationItemConditions = json.path.read(getProperty("a5e.stat.Inventory"),"[*]['ItemConditions'][?("+ResotrationFilter+")][*]")]
-[h,if(!json.isEmpty(RestorationItemConditions)): RestorationItemConditions = json.path.put(RestorationItemConditions,"[*]","ResourceSource","ItemCondition")]
+[h,if(!json.isEmpty(RestorationItemConditions)): RestorationItemConditions = json.path.putcarefully(RestorationItemConditions,"[*]","ResourceSource","ItemCondition")]
 
 [h:AllRestorationAbilities = json.merge(RestorationFeatures,RestorationItems,RestorationConditions,RestorationItemConditions)]
 

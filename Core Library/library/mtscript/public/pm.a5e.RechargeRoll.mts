@@ -24,6 +24,6 @@
 	"DisplayOrder","['Rules','Roll','Full']"
 ))]
 
-[h,if(RollSuccess): setProperty("a5e.stat.AllFeatures",json.path.set(getProperty("a5e.stat.AllFeatures"),"[*][?("+pm.a5e.PathFeatureFilter(RechargeFeature)+")]['Resource']",evalMacro(json.get(RechargeFeature,"MaxResource"))))]
+[h,if(RollSuccess): setProperty("a5e.stat.AllFeatures",json.path.setcarefully(getProperty("a5e.stat.AllFeatures"),"[*][?("+pm.a5e.PathFeatureFilter(RechargeFeature)+")]['Resource']",evalMacro(json.get(RechargeFeature,"MaxResource"))))]
 
 [h:macro.return = json.set("","Table",abilityTable)]

@@ -13,7 +13,7 @@
 
 [h,if(json.isEmpty(validEndpoints)):
 	finalJSON = JSONToRead;
-	finalJSON = json.path.put(JSONToRead,JSONPath,arg(2),arg(3))
+	finalJSON = json.path.delete(JSONToRead,JSONPath)
 ]
 
 [h:return(0,finalJSON)]

@@ -116,6 +116,6 @@
 
 	[h,if(pm.ResourceKey==""):pm.ResourceFinal=min(pm.ResourceAmount+pm.ResourceGained,pm.ResourceMax);json.set(json.get(json.path.read(getProperty("a5e.stat.AllFeatures"),"[?(@.Name=='"+pm.ResourceVarName+"' && @.IsActive>0 && @.Class=='"+pm.Class+"' && (@.Subclass=='"+pm.Subclass+"' || @.Subclass==''))]['Resource']"),0),pm.ResourceKey,min(pm.ResourceAmount+pm.ResourceGained,pm.ResourceMax))]
 	
-	[h:setProperty("a5e.stat.AllFeatures",json.path.set(getProperty("a5e.stat.AllFeatures"),"[?(@.Name=='"+pm.ResourceVarName+"' && @.IsActive>0 && @.Class=='"+pm.Class+"' && (@.Subclass=='"+pm.Subclass+"' || @.Subclass==''))]['Resource']",pm.ResourceFinal))]
+	[h:setProperty("a5e.stat.AllFeatures",json.path.setcarefully(getProperty("a5e.stat.AllFeatures"),"[?(@.Name=='"+pm.ResourceVarName+"' && @.IsActive>0 && @.Class=='"+pm.Class+"' && (@.Subclass=='"+pm.Subclass+"' || @.Subclass==''))]['Resource']",pm.ResourceFinal))]
 	[h:macro.return = json.set("","ShowIfCondensed",1,"Header",pm.ResourceName+" Remaining","FalseHeader","","FullContents","","RulesContents","<b><span style='font-size:1.25em;'>"+pm.ResourceFinal+"/"+pm.ResourceMax+"</span></b>","RollContents","","DisplayOrder","['Rules','Roll','Full']","Value",pm.ResourceFinal-pm.ResourceAmount,"Units",1)]
 }]

@@ -15,7 +15,7 @@
 
 [h:"<!-- Removes the dummy subeffect used to show to the subeffect creation JS -->"]
 [h:WeaponEffects = json.get(WeaponData,"Effects")]
-[h:WeaponEffects = json.path.delete(WeaponEffects,"[*]['Subeffects'][?(@.isDummySubeffect==1)]")]
+[h:WeaponEffects = json.path.deletecarefully(WeaponEffects,"[*]['Subeffects'][?(@.isDummySubeffect==1)]")]
 
 [h:"<!-- TODO: Remove this shifting of Subeffects to WeaponEffects when fixed (see CreateObjectProcessing note) -->"]
 [h:WeaponData = json.set(WeaponData,"WeaponEffects",WeaponEffects)]

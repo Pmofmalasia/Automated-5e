@@ -18,9 +18,9 @@
 	[h:assert(!json.isEmpty(pm.ConditionNames),"No associated conditions found!")]
 
 	[h:AssociatedConditionsInfo = json.get(AssociatedConditionsInfo,0)]
-	[h:AssociatedConditions = json.path.put(AssociatedConditions,"[*]","AlwaysAdded",json.get(AssociatedConditionsInfo,"AlwaysAdded"))]
+	[h:AssociatedConditions = json.path.putcarefully(AssociatedConditions,"[*]","AlwaysAdded",json.get(AssociatedConditionsInfo,"AlwaysAdded"))]
 
-	[h:pm.ConditionNames = json.path.delete(pm.ConditionNames,"[*][?(@.AssociatedConditions == 1)]")]
+	[h:pm.ConditionNames = json.path.deletecarefully(pm.ConditionNames,"[*][?(@.AssociatedConditions == 1)]")]
 	[h:pm.ConditionNames = json.merge(pm.ConditionNames,AssociatedConditions)]
 };{}]
 [h:pm.ConditionNum = json.length(pm.ConditionNames)]
@@ -75,8 +75,8 @@
 				"GroupID",pm.GroupID
 			)]
 			[h,if(json.isEmpty(pm.GroupIDTest)):
-				setProperty("a5e.stat.AllFeatures",json.path.put(getProperty("a5e.stat.AllFeatures"),"[*][?(@.Name == '"+currentFeatureName+"' && @.Class == '"+currentFeatureClass+"' && @.Subclass == '"+currentFeatureSubclass+"')]","GroupID",pm.GroupID));
-				setProperty("a5e.stat.AllFeatures",json.path.set(getProperty("a5e.stat.AllFeatures"),"[*][?(@.Name == '"+currentFeatureName+"' && @.Class == '"+currentFeatureClass+"' && @.Subclass == '"+currentFeatureSubclass+"')]['GroupID']",pm.GroupID))
+				setProperty("a5e.stat.AllFeatures",json.path.putcarefully(getProperty("a5e.stat.AllFeatures"),"[*][?(@.Name == '"+currentFeatureName+"' && @.Class == '"+currentFeatureClass+"' && @.Subclass == '"+currentFeatureSubclass+"')]","GroupID",pm.GroupID));
+				setProperty("a5e.stat.AllFeatures",json.path.setcarefully(getProperty("a5e.stat.AllFeatures"),"[*][?(@.Name == '"+currentFeatureName+"' && @.Class == '"+currentFeatureClass+"' && @.Subclass == '"+currentFeatureSubclass+"')]['GroupID']",pm.GroupID))
 			]
 			[h:json.set("","ConditionInfo",pm.ConditionInfo,"Toggle",1,"IsActive",1)]
 			[h:abilityTable = json.append(abilityTable,json.set("",
@@ -94,7 +94,7 @@
 			[h,MACRO("EndCondition@Lib:pm.a5e.Core"): json.set("","GroupID",pm.CurrentID,"Target",ParentToken)]
 			[h:abilityTable = json.get(macro.return,"Table")]
 
-			[h:setProperty("a5e.stat.AllFeatures",json.path.delete(getProperty("a5e.stat.AllFeatures"),"[*][?(@.Name == '"+currentFeatureName+"' && @.Class == '"+currentFeatureClass+"' && @.Subclass == '"+currentFeatureSubclass+"')]['GroupID']"))]
+			[h:setProperty("a5e.stat.AllFeatures",json.path.deletecarefully(getProperty("a5e.stat.AllFeatures"),"[*][?(@.Name == '"+currentFeatureName+"' && @.Class == '"+currentFeatureClass+"' && @.Subclass == '"+currentFeatureSubclass+"')]['GroupID']"))]
 			[h:FeatureDescription=""]
 			[h:pm.a5e.EffectData = json.append("",json.set("","Class",currentFeatureClass))]
 			[h:abilityClass = currentFeatureClass]

@@ -16,7 +16,7 @@
 };{
 	[h:BugIsFixed = 0]
 	[h,if(BugIsFixed),CODE:{
-		[h:NewObjectImage = "ObjectImages/"+NewObjectTokenType+"/"+json.get(objectData,NewObjectTokenType+"Type")+".PNG"]
+		[h:NewObjectImage = "ObjectImages/"+NewObjectTokenType+"/"+json.get(objectData,NewObjectTokenType+"Type")+".png"]
 		[h:AllAddonFiles = library.getContents("pm.a5e.core")]
 		[h,if(json.contains(AllAddonFiles,"public/"+NewObjectImage)): 
 			NewObjectImage = "lib://pm.a5e.core/"+NewObjectImage;

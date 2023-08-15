@@ -19,8 +19,8 @@
 ]
 [h:NewInventoryNumber = CurrentItemNumber - FinalDroppedNumber]
 [h,if(NewInventoryNumber == 0):
-	NewInventory = json.path.delete(getProperty("a5e.stat.Inventory"),"[*][?(@.ItemID == "+DroppedItem+")]");
-	NewInventory = json.path.set(getProperty("a5e.stat.Inventory"),"[*][?(@.ItemID == "+DroppedItem+")]['Number']",NewInventoryNumber)
+	NewInventory = json.path.deletecarefully(getProperty("a5e.stat.Inventory"),"[*][?(@.ItemID == "+DroppedItem+")]");
+	NewInventory = json.path.setcarefully(getProperty("a5e.stat.Inventory"),"[*][?(@.ItemID == "+DroppedItem+")]['Number']",NewInventoryNumber)
 ]
 [h:setProperty("a5e.stat.Inventory",NewInventory)]
 [h:ItemData = json.set(ItemData,"Number",FinalDroppedNumber)]
@@ -40,8 +40,9 @@
 		"NumberAdded",json.get(ItemData,"Number"),
 		"ParentToken",ParentToken
 	)]
-	[h:restoreItemLink = macroLinkText("AddItemProcessing@Lib:pm.a5e.Core",if(DMOnlyLink,"gm","all"),ItemData,ParentToken)]
-	[h:broadcast("<a href='"+restoreItemLink+"'>Return Item to "+getName(ParentToken)+"?</a>")]
+
+	[h:restoreItemLink = macroLinkText("AddItemProcessing@Lib:pm.a5e.Core","gm",RestorationData,ParentToken)]
+	[h:broadcast("<a href='"+restoreItemLink+"'>Return Item to "+getName(ParentToken)+"?</a>","gm")]
 }]
 
 [h:macro.return = json.set("","ItemID",DroppedItem,"ItemRemaining",NewInventoryNumber)]

@@ -23,7 +23,7 @@
 	[h:tempAbilitiesWithPrereqs = json.path.read(pm.AbilitiesList,"[*][?(@.Prereqs!=null)]","DEFAULT_PATH_LEAF_TO_NULL")]
 	[h,foreach(feature,tempAbilitiesWithPrereqs),CODE:{
 		[h:pm.a5e.CheckFeaturePrereqs(json.set(json.get(feature,"Prereqs"),"ParentToken",ParentToken))]
-		[h,if(!macro.return): pm.AbilitiesList = json.path.delete(pm.AbilitiesList,"[*][?(@.Name=='"+json.get(feature,"Name")+"' && @.Class=='"+json.get(feature,"Class")+"' && @.Subclass=='"+json.get(feature,"Subclass")+"')]")]
+		[h,if(!macro.return): pm.AbilitiesList = json.path.deletecarefully(pm.AbilitiesList,"[*][?(@.Name=='"+json.get(feature,"Name")+"' && @.Class=='"+json.get(feature,"Class")+"' && @.Subclass=='"+json.get(feature,"Subclass")+"')]")]
 	}]
 }]
 

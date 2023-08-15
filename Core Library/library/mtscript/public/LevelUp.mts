@@ -74,7 +74,7 @@
 [h:tempNewAbilitiesWithPrereqs = json.path.read(tempNewAbilities,"[*][?(@.Prereqs!=null)]","DEFAULT_PATH_LEAF_TO_NULL")]
 [h,foreach(feature,tempNewAbilitiesWithPrereqs),CODE:{
 	[h:pm.a5e.CheckFeaturePrereqs(json.set("",json.get(feature,"Prereqs"),"ParentToken",ParentToken))]
-	[h,if(!macro.return): tempNewAbilities = json.path.delete(tempNewAbilities,"[*][?(@.Name=='"+json.get(feature,"Name")+"' && @.Class=='"+json.get(feature,"Class")+"' && @.Subclass=='"+json.get(feature,"Subclass")+"')]")]
+	[h,if(!macro.return): tempNewAbilities = json.path.deletecarefully(tempNewAbilities,"[*][?(@.Name=='"+json.get(feature,"Name")+"' && @.Class=='"+json.get(feature,"Class")+"' && @.Subclass=='"+json.get(feature,"Subclass")+"')]")]
 }]
 
 [h:lu.NewAbilities = json.merge(lu.NewAbilities,tempNewAbilities)]
@@ -132,8 +132,8 @@
 		[h:lu.NewButtons = json.merge(lu.NewButtons,thisFeatureNewButtons)]
 
 		[h,if(lu.ValidKeyTest):
-			setProperty("a5e.stat.AllFeatures",json.path.set(getProperty("a5e.stat.AllFeatures"),"[*][?(@.Class  == '"+json.get(ability,"Class")+"' && (@.Subclass == '' || @.Subclass == '"+json.get(ability,"Subclass")+"') && @.Name == '"+json.get(ability,"Name")+"')]['"+updateKey+"']",json.get(json.get(ability,lu.NewLevel),updateKey)));
-			setProperty("a5e.stat.AllFeatures",json.path.put(getProperty("a5e.stat.AllFeatures"),"[*][?(@.Class  == '"+json.get(ability,"Class")+"' && (@.Subclass == '' || @.Subclass == '"+json.get(ability,"Subclass")+"') && @.Name == '"+json.get(ability,"Name")+"')]",updateKey,json.get(json.get(ability,lu.NewLevel),updateKey)))
+			setProperty("a5e.stat.AllFeatures",json.path.setcarefully(getProperty("a5e.stat.AllFeatures"),"[*][?(@.Class  == '"+json.get(ability,"Class")+"' && (@.Subclass == '' || @.Subclass == '"+json.get(ability,"Subclass")+"') && @.Name == '"+json.get(ability,"Name")+"')]['"+updateKey+"']",json.get(json.get(ability,lu.NewLevel),updateKey)));
+			setProperty("a5e.stat.AllFeatures",json.path.putcarefully(getProperty("a5e.stat.AllFeatures"),"[*][?(@.Class  == '"+json.get(ability,"Class")+"' && (@.Subclass == '' || @.Subclass == '"+json.get(ability,"Subclass")+"') && @.Name == '"+json.get(ability,"Name")+"')]",updateKey,json.get(json.get(ability,lu.NewLevel),updateKey)))
 		]
 	}]
 }]
@@ -152,7 +152,7 @@
 	[h:setProperty("a5e.stat.AllFeatures",json.append(getProperty("a5e.stat.AllFeatures"),json.set(ability,"IsDisplayed",1,"IsActive",1,"MagicItemLink","None")))]
 	[h:lu.DisplayNewAbilities = listAppend(lu.DisplayNewAbilities,json.get(ability,"DisplayName"),"<br>")]
 }]
-[h:setProperty("a5e.stat.AllFeatures",json.path.set(getProperty("a5e.stat.AllFeatures"),"[?(@.Class=='"+lu.Class+"' && @.MagicItemLink=='None')]['Level']",lu.NewLevel))]
+[h:setProperty("a5e.stat.AllFeatures",json.path.setcarefully(getProperty("a5e.stat.AllFeatures"),"[?(@.Class=='"+lu.Class+"' && @.MagicItemLink=='None')]['Level']",lu.NewLevel))]
 
 [h:"<!-- Adds newly gained resources to the abilities array, see above. If resource existed previously, added resource amount = New difference - old difference. If resource did not exist previously, just sets resource = maxresource. -->"]
 [h:noFeaturesTest = json.isEmpty(getProperty("a5e.stat.AllFeatures"))]
@@ -165,11 +165,11 @@
 		[h:lu.MultiResourceList = json.fields(lu.CurrentResource,"json")]
 		[h:TempNewResources = ""]
 		[h,foreach(resource,lu.MultiResourceList): TempNewResources = json.set(TempNewResources,resource,json.get(lu.CurrentResource,resource)+json.get(lu.CurrentMax,resource)-json.get(json.get(lu.OldResourcesMax,json.get(ability,"Name")+json.get(ability,"Class")+json.get(ability,"Subclass")),resource))]
-		[h:setProperty("a5e.stat.AllFeatures",json.path.set(getProperty("a5e.stat.AllFeatures"),"[?(@.Name=='"+json.get(ability,"Name")+"' && @.Class=='"+json.get(ability,"Class")+"' && @.Subclass=='"+json.get(ability,"Subclass")+"')]['Resource']",TempNewResources))]
+		[h:setProperty("a5e.stat.AllFeatures",json.path.setcarefully(getProperty("a5e.stat.AllFeatures"),"[?(@.Name=='"+json.get(ability,"Name")+"' && @.Class=='"+json.get(ability,"Class")+"' && @.Subclass=='"+json.get(ability,"Subclass")+"')]['Resource']",TempNewResources))]
 	};{
 		[h,if(lu.CurrentResource == ""):
-			setProperty("a5e.stat.AllFeatures",json.path.put(getProperty("a5e.stat.AllFeatures"),"[?(@.Name=='"+json.get(ability,"Name")+"' && @.Class=='"+json.get(ability,"Class")+"' && @.Subclass=='"+json.get(ability,"Subclass")+"')]","Resource",evalMacro(json.get(ability,"MaxResource")))); 
-			setProperty("a5e.stat.AllFeatures",json.path.set(getProperty("a5e.stat.AllFeatures"),"[?(@.Name=='"+json.get(ability,"Name")+"' && @.Class=='"+json.get(ability,"Class")+"' && @.Subclass=='"+json.get(ability,"Subclass")+"')]['Resource']",lu.CurrentResource+lu.CurrentMax-json.get(lu.OldResourcesMax,json.get(ability,"Name")+json.get(ability,"Class")+json.get(ability,"Subclass"))))]
+			setProperty("a5e.stat.AllFeatures",json.path.putcarefully(getProperty("a5e.stat.AllFeatures"),"[?(@.Name=='"+json.get(ability,"Name")+"' && @.Class=='"+json.get(ability,"Class")+"' && @.Subclass=='"+json.get(ability,"Subclass")+"')]","Resource",evalMacro(json.get(ability,"MaxResource")))); 
+			setProperty("a5e.stat.AllFeatures",json.path.setcarefully(getProperty("a5e.stat.AllFeatures"),"[?(@.Name=='"+json.get(ability,"Name")+"' && @.Class=='"+json.get(ability,"Class")+"' && @.Subclass=='"+json.get(ability,"Subclass")+"')]['Resource']",lu.CurrentResource+lu.CurrentMax-json.get(lu.OldResourcesMax,json.get(ability,"Name")+json.get(ability,"Class")+json.get(ability,"Subclass"))))]
 	}]
 }]
 

@@ -3,7 +3,7 @@
 [h:return(!IsTooltip)]
 
 [h,if(argCount()>0): whichEffect = arg(0); whichEffect = 0]
-[h,if(whichEffect >= json.length(pm.a5e.EffectData)): thisEffect = json.path.set(pm.a5e.BaseEffectData,"GeneralData.ID",pm.a5e.GenerateEffectID()); thisEffect = json.get(pm.a5e.EffectData,whichEffect)]
+[h,if(whichEffect >= json.length(pm.a5e.EffectData)): thisEffect = json.path.setcarefully(pm.a5e.BaseEffectData,"GeneralData.ID",pm.a5e.GenerateEffectID()); thisEffect = json.get(pm.a5e.EffectData,whichEffect)]
 
 [h:thisGrappleEffectData = json.get(json.get(GrappleInfo,"Effect"),0)]
 [h:thisEffect = json.set(thisEffect,"Check",json.get(thisGrappleEffectData,"Check"))]
@@ -26,7 +26,7 @@
 	[h,if(sameGroupTest>=0): thisEffectNewConditions = json.merge(json.get(json.get(json.get(thisEffect,"ConditionInfo"),sameGroupTest),"Conditions"),json.get(pm.ConditionsToSet,"Conditions"))]
 	
 	[h,if(sameGroupTest>=0): 
-		thisEffect = json.path.set(thisEffect,"['ConditionInfo']["+sameGroupTest+"]['Conditions']",thisEffectNewConditions);
+		thisEffect = json.path.setcarefully(thisEffect,"['ConditionInfo']["+sameGroupTest+"]['Conditions']",thisEffectNewConditions);
 		thisEffect = json.set(thisEffect,"ConditionInfo",json.append(json.get(thisEffect,"ConditionInfo"),pm.ConditionsToSet))
 	]
 }]

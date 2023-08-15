@@ -73,8 +73,8 @@
 		[h:"<!-- TODO: Will need to add further info for resolving LinkedEffects of LinkedEffects that do not meet reqs, likely in the form of making a UDF that covers for here and later in ResolveEffects. -->"]
 
 		[h,if(!json.isEmpty(remainingTargetsList)):
-			setLibProperty("gd.Effects",json.path.set(getLibProperty("gd.Effects","Lib:pm.a5e.Core"),"[*][?(@.ID=="+effID+")]",effFull),"Lib:pm.a5e.Core");
-			setLibProperty("gd.Effects",json.path.delete(getLibProperty("gd.Effects","Lib:pm.a5e.Core"),"[*][?(@.ID=="+effID+")]"),"Lib:pm.a5e.Core")
+			setLibProperty("gd.Effects",json.path.setcarefully(getLibProperty("gd.Effects","Lib:pm.a5e.Core"),"[*][?(@.ID=="+effID+")]",effFull),"Lib:pm.a5e.Core");
+			setLibProperty("gd.Effects",json.path.deletecarefully(getLibProperty("gd.Effects","Lib:pm.a5e.Core"),"[*][?(@.ID=="+effID+")]"),"Lib:pm.a5e.Core")
 		]
 
 		[h:return(0,json.set("","Table","[]","FeatureData",ClassFeatureData,"Targets",effTargets))]
@@ -497,9 +497,9 @@
 	)]
 	[h:effFull = json.remove(effFull,"SpecificTargets")]
 	
-	[h:setLibProperty("gd.Effects",json.path.set(getLibProperty("gd.Effects","Lib:pm.a5e.Core"),"[*][?(@.ID=="+effID+")]",effFull),"Lib:pm.a5e.Core")]
+	[h:setLibProperty("gd.Effects",json.path.setcarefully(getLibProperty("gd.Effects","Lib:pm.a5e.Core"),"[*][?(@.ID=="+effID+")]",effFull),"Lib:pm.a5e.Core")]
 };{
-	[h:setLibProperty("gd.Effects",json.path.delete(getLibProperty("gd.Effects","Lib:pm.a5e.Core"),"[*][?(@.ID=="+effID+")]"),"Lib:pm.a5e.Core")]
+	[h:setLibProperty("gd.Effects",json.path.deletecarefully(getLibProperty("gd.Effects","Lib:pm.a5e.Core"),"[*][?(@.ID=="+effID+")]"),"Lib:pm.a5e.Core")]
 }]
 
 [h,MACRO("BuildEffectsFrame@Lib:pm.a5e.Core"): ""]

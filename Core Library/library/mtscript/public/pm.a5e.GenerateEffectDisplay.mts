@@ -3,7 +3,7 @@
 
 [h:tempTargetList = json.get(EffectData,"Targets")]
 [h,if(json.type(tempTargetList)=="ARRAY"):
-	targetList = json.path.delete(tempTargetList,"[?(@=='')]");
+	targetList = json.path.deletecarefully(tempTargetList,"[?(@=='')]");
 	targetList = tempTargetList
 ]
 [h:UnlistedTargetTest = json.length(tempTargetList) != json.length(targetList)]

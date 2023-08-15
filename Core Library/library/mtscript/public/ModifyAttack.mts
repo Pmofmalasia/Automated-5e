@@ -283,7 +283,7 @@
 	[h:thisAttackCrit = json.get(json.get(AllAttacksToHit,roll.count),"CritTest")]
 	[h:thisAttackCritFail = json.get(json.get(AllAttacksToHit,roll.count),"CritFailTest")]
 
-	[h:thisAttackAllDamage = json.path.put(json.get(AllAttacksDmg,roll.count),"[*]","UseCrit",thisAttackCrit)]
+	[h:thisAttackAllDamage = json.path.putcarefully(json.get(AllAttacksDmg,roll.count),"[*]","UseCrit",thisAttackCrit)]
 	[h:thisAttackDamageInfo = json.get(thisAttackAllDamage,0)]
 	[h:thisAttackDmg = json.get(thisAttackDamageInfo,"Total")]
 	[h:thisAttackDmgStr = json.get(thisAttackDamageInfo,"String")]

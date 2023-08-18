@@ -1001,7 +1001,7 @@
 		[h:allMainSubeffectsData = json.get(json.get(allMainEffectData,MainEffectsLastIndex),"Subeffects")]
 		[h:MainSubeffectsLastIndex = json.length(allMainSubeffectsData)-1]
 	
-		[h:MainFeatureData = json.path.putcarefully(thisPlayerMainFeatureData,"['Effects']["+MainEffectsLastIndex+"]['Subeffects']["+MainSubeffectsLastIndex+"]","PersistentEffects",allEffectData)]
+		[h:MainFeatureData = json.path.put(thisPlayerMainFeatureData,"['Effects']["+MainEffectsLastIndex+"]['Subeffects']["+MainSubeffectsLastIndex+"]","PersistentEffects",allEffectData)]
 		[h:setLibProperty("ct.New"+EffectType,json.set(MainFeatureData,getPlayerName(),thisPlayerMainFeatureData),"Lib:pm.a5e.Core")]
 	
 		[h:lastEffectTest = (json.length(allMainEffectData) >= MainEffectsNumber)]

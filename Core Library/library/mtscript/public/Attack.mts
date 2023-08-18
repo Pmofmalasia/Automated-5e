@@ -100,7 +100,7 @@
 	[h:wa.DamageData = json.set(wa.DamageData,0,FirstInstance)]
 };{}]
 
-[h,if(!json.isEmpty(wa.DamageData)): wa.DamageData = json.path.putcarefully(wa.DamageData,"[0]","BonusCritDice",wa.BrutalCrit)]
+[h,if(!json.isEmpty(wa.DamageData)): wa.DamageData = json.path.put(wa.DamageData,"[0]","BonusCritDice",wa.BrutalCrit)]
 
 [h,if(json.contains(wa.Props,"Finesse")),CODE:{
 	[h:"<!-- TODO: Currently takes the maximum without choice, in the future may want to add an option for choice via options #1: Always ask, #2 Ask if two are equal, #3 do not compare at all and set choice in an 'Advanced Attack Options' menu -->"]
@@ -152,7 +152,7 @@
 
 [h:"<!-- TODO: Current method is to remove TWF completely to get around the no damage modifier effect (e.g. for the fighting style). Issues are #1: It is still technically TWF, so any effects that would trigger on TWF would not be able to; solution could be adding a variable that bypasses removing the mod. #2: TWF still adds damage modifier if negative; solution could be changing IsDamageModifier -->"]
 [h,if(TwoWeaponFighting),CODE:{
-	[h:wa.DamageData = json.path.setcarefully(wa.DamageData,"[*]","IsModBonus",0)]
+	[h:wa.DamageData = json.path.set(wa.DamageData,"[*]","IsModBonus",0)]
 };{}]
 
 [h:"<!-- TODO: Will need to ensure that the empty hand is allowed to make attacks in the future -->"]
@@ -240,7 +240,7 @@
 		[h,if(json.get(AmmunitionData,"AmmunitionDamage")!=""): thisAttackDamageData = json.merge(thisAttackDamageData,json.get(AmmunitionData,"AmmunitionDamage"))]
 		[h,if(json.get(AmmunitionData,"Subeffects")!=""): thisAttackSubeffects = json.merge(thisAttackSubeffects,json.get(AmmunitionData,"Subeffects"))]
 		[h:CurrentAmmoCount = CurrentAmmoCount - 1]
-		[h:setProperty("a5e.stat.Inventory",json.path.setcarefully(getProperty("a5e.stat.Inventory"),"[*][?(@.ItemID == "+json.get(AmmunitionData,"ItemID")+")]['Number']",CurrentAmmoCount))]
+		[h:setProperty("a5e.stat.Inventory",json.path.set(getProperty("a5e.stat.Inventory"),"[*][?(@.ItemID == "+json.get(AmmunitionData,"ItemID")+")]['Number']",CurrentAmmoCount))]
 	};{}]
 
 	[h:thisAttackTarget = json.get(wa.TargetList,SafeAttackCounter)]
@@ -308,7 +308,7 @@
 	
 	[h:thisAttackSubeffects = json.get(thisAttackData,"Subeffects")]
 
-	[h:thisAttackAllDamage = json.path.putcarefully(json.get(AllAttacksDmg,roll.count),"[*]","UseCrit",thisAttackCrit)]
+	[h:thisAttackAllDamage = json.path.put(json.get(AllAttacksDmg,roll.count),"[*]","UseCrit",thisAttackCrit)]
 
 	[h:wa.AdvRerollLink = macroLinkText("Modify Attack Border@Lib:pm.a5e.Core","self-gm",json.set(wa.Data,"Advantage",1,"ForcedAdvantage",1,"d20Rolls",thisAttackd20Rolls,"PreviousDamage",thisAttackAllDamage,"Target",thisAttackTarget,"AttackNum",-1,"EffectID",thisAttackEffectID),ParentToken)]
 	[h:wa.DisRerollLink = macroLinkText("Modify Attack Border@Lib:pm.a5e.Core","self-gm",json.set(wa.Data,"Disadvantage",1,"ForcedAdvantage",1,"d20Rolls",thisAttackd20Rolls,"PreviousDamage",thisAttackAllDamage,"Target",thisAttackTarget,"AttackNum",-1,"EffectID",thisAttackEffectID),ParentToken)]

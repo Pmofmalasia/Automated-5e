@@ -3,7 +3,8 @@
 [h:abilityPriorData = arg(0)]
 [h:ParentToken=json.get(abilityPriorData,"ParentToken")]
 
-[h:abilityInfo = json.path.read(getProperty("a5e.stat.ConditionList"),"[*][?(@.Name=='"+abilityName+"' && @.Class=='"+abilityClass+"' && @.Subclass=='"+abilitySubclass+"' && @.IsActive>0)]")]
+[h:abilityInfo = json.path.read(pm.a5e.TokenActiveConditions(ParentToken),"[*][?(@.Name=='"+abilityName+"' && @.Class=='"+abilityClass+"' && @.Subclass=='"+abilitySubclass+"' && @.IsActive>0)]")]
+
 
 [h,if(json.isEmpty(abilityInfo)):
 	assert(0,"Condition "+abilityDisplayName+" not found on "+getName(ParentToken)+"!");

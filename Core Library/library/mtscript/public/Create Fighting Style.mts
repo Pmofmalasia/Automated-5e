@@ -164,7 +164,7 @@
 	[h,switch(CanUseFSTest+""+LibHasPreviousData),CODE:
 		case "11":{
 			[h:newFSList = json.append(json.get(json.path.read(getLibProperty("sb.Abilities","Lib:"+ab.SourceLib),"[*][?(@.Name=='"+json.get(TempFSGroup,"Name")+"' && @.Class=='"+json.get(TempFSGroup,"Class")+"' && @.Subclass=='"+json.get(TempFSGroup,"Subclass")+"')]['FightingStyleList']"),0),ab.Name)]
-			[h:setLibProperty("sb.Abilities",json.path.setcarefully(getLibProperty("sb.Abilities","Lib:"+ab.SourceLib),"[*][?(@.Name=='"+json.get(TempFSGroup,"Name")+"' && @.Class=='"+json.get(TempFSGroup,"Class")+"' && @.Subclass=='"+json.get(TempFSGroup,"Subclass")+"')]['FightingStyleList']",newFSList),"Lib:"+ab.SourceLib)]
+			[h:setLibProperty("sb.Abilities",json.path.set(getLibProperty("sb.Abilities","Lib:"+ab.SourceLib),"[*][?(@.Name=='"+json.get(TempFSGroup,"Name")+"' && @.Class=='"+json.get(TempFSGroup,"Class")+"' && @.Subclass=='"+json.get(TempFSGroup,"Subclass")+"')]['FightingStyleList']",newFSList),"Lib:"+ab.SourceLib)]
 		};
 		case "10":{
 			[h:newFSList = json.append("",ab.Name)]

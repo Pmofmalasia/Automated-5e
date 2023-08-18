@@ -29,7 +29,7 @@
 			" pm.ConditionChoice | "+conditionOptionsDisplay+" | Choose a Condition | RADIO | DELIMITER=JSON "))]
 		[h:pm.ConditionsFinal = json.append(conditionsAlwaysAddedArray,json.remove(json.get(conditionOptionsArray,pm.ConditionChoice),"AlwaysAdded"))]
 	};{
-		[h:pm.ConditionsFinal = json.path.deletecarefully(conditionsAlwaysAddedArray,"[*]['AlwaysAdded']")]
+		[h:pm.ConditionsFinal = json.path.delete(conditionsAlwaysAddedArray,"[*]['AlwaysAdded']")]
 	}]
 }]
 

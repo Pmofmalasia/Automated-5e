@@ -140,7 +140,7 @@
 
 	[h,foreach(tempDamageType,allDamageData),CODE:{
 		[h:typeOptionTest = json.contains(json.get(allDamageData,roll.count),"DamageTypeOptions")]
-		[h,if(typeOptionTest): allDamageData = json.path.setcarefully(allDamageData,"["+roll.count+"]['DamageType']",pm.RemoveSpecial(eval("DamageTypeSelection"+roll.count)))]
+		[h,if(typeOptionTest): allDamageData = json.path.set(allDamageData,"["+roll.count+"]['DamageType']",pm.RemoveSpecial(eval("DamageTypeSelection"+roll.count)))]
 	}]
 }]
 
@@ -263,7 +263,7 @@
 		[h:pm.PassiveFunction("SpellSaveDC")]
 	};{}]
 	
-	[h,if(hasSaveDCTest): spell.ConditionEndInfo = json.path.putcarefully(spell.ConditionEndInfo,"['EndTriggers'][*][?(@.SaveType!=null)]","DC",spell.SaveDC)]
+	[h,if(hasSaveDCTest): spell.ConditionEndInfo = json.path.put(spell.ConditionEndInfo,"['EndTriggers'][*][?(@.SaveType!=null)]","DC",spell.SaveDC)]
 
 	[h:"<!-- TODO: Fix to allow selection of AdvancePoint manually; Temporary solution for now -->"]
 	[h,if(json.get(spell.ConditionEndInfo,"DurationUnits")=="round"):

@@ -37,7 +37,7 @@
 	)]
 
 [h,if(OldMacroSettings=="{}"),CODE:{
-	[h:setProperty("a5e.stat.AllFeatures",json.path.putcarefully(getProperty("a5e.stat.AllFeatures"),"[?(@.Name=='"+chosenMacro+"')]","Settings",SettingsInfo))]
+	[h:setProperty("a5e.stat.AllFeatures",json.path.put(getProperty("a5e.stat.AllFeatures"),"[?(@.Name=='"+chosenMacro+"')]","Settings",SettingsInfo))]
 };{
-	[h:setProperty("a5e.stat.AllFeatures",json.path.setcarefully(getProperty("a5e.stat.AllFeatures"),"[?(@.Name=='"+chosenMacro+"')]['Settings']",SettingsInfo))]
+	[h:setProperty("a5e.stat.AllFeatures",json.path.set(getProperty("a5e.stat.AllFeatures"),"[?(@.Name=='"+chosenMacro+"')]['Settings']",SettingsInfo))]
 }]

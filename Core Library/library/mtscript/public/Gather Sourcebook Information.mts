@@ -91,7 +91,7 @@
 
 [h,foreach(ability,pm.AbilitiesToMerge),CODE:{
 	[h:BaseAbility = json.get(json.path.read(pm.Abilities,"[*][?(@.Name=='"+json.get(ability,"Name")+"' && @.Class=='"+json.get(ability,"Class")+"' && @.Subclass=='"+json.get(ability,"Subclass")+"')]"),0)]
-	[h,if(json.get(ability,"FightingStyleList")!=""): pm.Abilities = json.path.setcarefully(pm.Abilities,"[*][?(@.Name=='"+json.get(ability,"Name")+"' && @.Class=='"+json.get(ability,"Class")+"' && @.Subclass=='"+json.get(ability,"Subclass")+"')]['FightingStyleList']",json.merge(json.get(BaseAbility,"FightingStyleList"),json.get(ability,"FightingStyleList")))]
+	[h,if(json.get(ability,"FightingStyleList")!=""): pm.Abilities = json.path.set(pm.Abilities,"[*][?(@.Name=='"+json.get(ability,"Name")+"' && @.Class=='"+json.get(ability,"Class")+"' && @.Subclass=='"+json.get(ability,"Subclass")+"')]['FightingStyleList']",json.merge(json.get(BaseAbility,"FightingStyleList"),json.get(ability,"FightingStyleList")))]
 }]
 
 [h:setLibProperty("sb.Attributes",pm.Attributes,"Lib:pm.a5e.Core")]

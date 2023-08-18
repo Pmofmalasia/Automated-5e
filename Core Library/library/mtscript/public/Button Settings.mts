@@ -61,7 +61,7 @@
 	[h,if(CurrentSettingsTest=="[]"),code:{
 		[h:ButtonSettings=json.append(ButtonSettings,SettingsInfo)]
 	};{
-		[h:ButtonSettings=json.path.deletecarefully(ButtonSettings,"[?(@.Name=='"+chosenMacro+"')]")]
+		[h:ButtonSettings=json.path.delete(ButtonSettings,"[?(@.Name=='"+chosenMacro+"')]")]
 		[h:ButtonSettings=json.append(ButtonSettings,SettingsInfo)]
 	}]
 };{}]

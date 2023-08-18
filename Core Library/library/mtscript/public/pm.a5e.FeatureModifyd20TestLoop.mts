@@ -56,8 +56,8 @@
         [h,if(effectID==""),CODE:{};{
             [h:"<!-- TODO: Add contested check data from the token setting the DC to the effect data -->"]
             [h,if(json.get(ReturnData,"Contested")==1): 
-                rerolledEffect = json.path.setcarefully(getLibProperty("gd.Effects","Lib:pm.a5e.Core"),"[*][?(@.ID=="+effectID+")]['ToResolve']['CheckDC']['DC']",json.remove(ReturnData,"EffectID"));
-                rerolledEffect = json.path.setcarefully(getLibProperty("gd.Effects","Lib:pm.a5e.Core"),"[*][?(@.ID=="+effectID+")]['ToResolve']['CheckDC']['ChecksMade']['"+EffectTarget+"']",json.remove(ReturnData,"EffectID"))
+                rerolledEffect = json.path.set(getLibProperty("gd.Effects","Lib:pm.a5e.Core"),"[*][?(@.ID=="+effectID+")]['ToResolve']['CheckDC']['DC']",json.remove(ReturnData,"EffectID"));
+                rerolledEffect = json.path.set(getLibProperty("gd.Effects","Lib:pm.a5e.Core"),"[*][?(@.ID=="+effectID+")]['ToResolve']['CheckDC']['ChecksMade']['"+EffectTarget+"']",json.remove(ReturnData,"EffectID"))
             ]
             [h:setLibProperty("gd.Effects",rerolledEffect,"Lib:pm.a5e.Core")]
         }]
@@ -67,7 +67,7 @@
         [h:ReturnData = macro.return]
         [h:abilityTable = json.merge(abilityTable,json.get(ReturnData,"Table"))]
         [h,if(effectID==""),CODE:{};{
-            [h:rerolledEffect = json.path.setcarefully(getLibProperty("gd.Effects","Lib:pm.a5e.Core"),"[*][?(@.ID=="+effectID+")]['ToResolve']['SaveDC']['SavesMade']['"+EffectTarget+"']",json.remove(ReturnData,"EffectID"))]
+            [h:rerolledEffect = json.path.set(getLibProperty("gd.Effects","Lib:pm.a5e.Core"),"[*][?(@.ID=="+effectID+")]['ToResolve']['SaveDC']['SavesMade']['"+EffectTarget+"']",json.remove(ReturnData,"EffectID"))]
             [h:setLibProperty("gd.Effects",rerolledEffect,"Lib:pm.a5e.Core")]
         }]
     };

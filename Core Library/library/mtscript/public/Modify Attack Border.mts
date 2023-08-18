@@ -18,7 +18,7 @@
 
 [macro("ModifyAttack@Lib:pm.a5e.Core"): AttackData]
 [h:abilityTable = json.get(macro.return,"Table")]
-[h:pm.a5e.EffectData = json.path.putcarefully(json.get(macro.return,"Effect"),"[*]","Class","zzWeaponAttack")]
+[h:pm.a5e.EffectData = json.path.put(json.get(macro.return,"Effect"),"[*]","Class","zzWeaponAttack")]
 
 [h:output.Temp = pm.AbilityTableProcessing(abilityTable,FormattingData,1)]
 [h:output.PC = output.PC + json.get(output.Temp,"Player")+"</div></div>"]

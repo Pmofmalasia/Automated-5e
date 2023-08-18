@@ -65,16 +65,16 @@
 [h,switch(EffectToModifySource),CODE:
     case "ID":{
         [h,switch(HasToResolveTest+""+HasDamageTest):
-            case "11": setLibProperty("gd.Effects",json.path.setcarefully(currentEffects,"[*][?(@.ID=="+EffectID+")]['ToResolve']['Damage']",ModifiedDamage),"Lib:pm.a5e.Core")
-            case "10": setLibProperty("gd.Effects",json.path.putcarefully(currentEffects,"[*][?(@.ID=="+EffectID+")]['ToResolve']","Damage",ModifiedDamage),"Lib:pm.a5e.Core");
-            default: setLibProperty("gd.Effects",json.path.putcarefully(currentEffects,"[*][?(@.ID=="+EffectID+")]","ToResolve",json.set("","Damage",ModifiedDamage)),"Lib:pm.a5e.Core")
+            case "11": setLibProperty("gd.Effects",json.path.set(currentEffects,"[*][?(@.ID=="+EffectID+")]['ToResolve']['Damage']",ModifiedDamage),"Lib:pm.a5e.Core")
+            case "10": setLibProperty("gd.Effects",json.path.put(currentEffects,"[*][?(@.ID=="+EffectID+")]['ToResolve']","Damage",ModifiedDamage),"Lib:pm.a5e.Core");
+            default: setLibProperty("gd.Effects",json.path.put(currentEffects,"[*][?(@.ID=="+EffectID+")]","ToResolve",json.set("","Damage",ModifiedDamage)),"Lib:pm.a5e.Core")
         ]
     };
     case "CurrentEffect":{
         [h,switch(HasToResolveTest+""+HasDamageTest):
-            case "11": pm.a5e.EffectData = json.path.setcarefully(pm.a5e.EffectData,"["+EffectID+"]['ToResolve']['Damage']",ModifiedDamage)
-            case "10": pm.a5e.EffectData = json.path.putcarefully(pm.a5e.EffectData,"["+EffectID+"]['ToResolve']","Damage",ModifiedDamage);
-            default: pm.a5e.EffectData = json.path.putcarefully(pm.a5e.EffectData,"["+EffectID+"]","ToResolve",json.set("","Damage",ModifiedDamage))
+            case "11": pm.a5e.EffectData = json.path.set(pm.a5e.EffectData,"["+EffectID+"]['ToResolve']['Damage']",ModifiedDamage)
+            case "10": pm.a5e.EffectData = json.path.put(pm.a5e.EffectData,"["+EffectID+"]['ToResolve']","Damage",ModifiedDamage);
+            default: pm.a5e.EffectData = json.path.put(pm.a5e.EffectData,"["+EffectID+"]","ToResolve",json.set("","Damage",ModifiedDamage))
         ]
     };
     case "Instances":{

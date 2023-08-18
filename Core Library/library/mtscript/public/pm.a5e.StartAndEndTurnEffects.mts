@@ -13,13 +13,13 @@
 [h:pm.PassiveFunction(StartorEnd+"Turn")]
 
 [h:validAbilities = json.path.read(getProperty("a5e.stat.AllFeatures"),"[*][?(@.Duration.AdvancePoint=='"+StartorEnd+"ofTurn')]")]
-[h,foreach(ability,validAbilities): setProperty("a5e.stat.AllFeatures",json.path.setcarefully(getProperty("a5e.stat.AllFeatures"),"[*][?(@.Name=='"+json.get(ability,"Name")+"' && @.Class=='"+json.get(ability,"Class")+"' && @.Subclass=='"+json.get(ability,"Subclass")+"')]['Duration']",pm.a5e.AdvanceTime(json.set("","Duration",json.get(ability,"Duration"),"Time",1,"TimeUnits","round","ParentToken",ParentToken))))]
+[h,foreach(ability,validAbilities): setProperty("a5e.stat.AllFeatures",json.path.set(getProperty("a5e.stat.AllFeatures"),"[*][?(@.Name=='"+json.get(ability,"Name")+"' && @.Class=='"+json.get(ability,"Class")+"' && @.Subclass=='"+json.get(ability,"Subclass")+"')]['Duration']",pm.a5e.AdvanceTime(json.set("","Duration",json.get(ability,"Duration"),"Time",1,"TimeUnits","round","ParentToken",ParentToken))))]
 
 [h:validConditions = json.path.read(getProperty("a5e.stat.ConditionGroups"),"[*][?(@.Duration.AdvancePoint=='"+StartorEnd+"ofTurn')]")]
 [h,foreach(condition,validConditions),CODE:{
 	[h:newDuration = pm.a5e.AdvanceTime(json.set("","Duration",json.get(condition,"Duration"),"Time",1,"TimeUnits","round","ParentToken",ParentToken))]
-	[h:setProperty("a5e.stat.ConditionGroups",json.path.setcarefully(getProperty("a5e.stat.ConditionGroups"),"[*][?(@.GroupID=="+json.get(condition,"GroupID")+")]['Duration']",newDuration))]
-	[h:setProperty("a5e.stat.ConditionList",json.path.setcarefully(getProperty("a5e.stat.ConditionList"),"[*][?(@.GroupID=="+json.get(condition,"GroupID")+")]['Duration']",newDuration))]
+	[h:setProperty("a5e.stat.ConditionGroups",json.path.set(getProperty("a5e.stat.ConditionGroups"),"[*][?(@.GroupID=="+json.get(condition,"GroupID")+")]['Duration']",newDuration))]
+	[h:setProperty("a5e.stat.ConditionList",json.path.set(getProperty("a5e.stat.ConditionList"),"[*][?(@.GroupID=="+json.get(condition,"GroupID")+")]['Duration']",newDuration))]
 }]
 
 [h:pm.ConditionsExpired = json.unique(json.path.read(getProperty("a5e.stat.ConditionList"),"[*][?(@.Duration.Expired==1)]['GroupID']"))]
@@ -59,11 +59,11 @@
 [h,foreach(condition,validConditionsSet),CODE:{
 	[h:newDuration = pm.a5e.AdvanceTime(json.set("","Duration",json.get(condition,"Duration"),"Time",1,"TimeUnits","round","ParentToken",ParentToken))]
 	[h:thisGroupID = json.get(condition,"GroupID")]
-	[h:setProperty("a5e.stat.ConditionsSet",json.path.setcarefully(getProperty("a5e.stat.ConditionsSet"),"[*][?(@.GroupID=="+thisGroupID+")]['Duration']",newDuration))]
+	[h:setProperty("a5e.stat.ConditionsSet",json.path.set(getProperty("a5e.stat.ConditionsSet"),"[*][?(@.GroupID=="+thisGroupID+")]['Duration']",newDuration))]
 	[h,foreach(target,json.get(condition,"Targets")),CODE:{
 		[h:switchToken(target)]
-		[h:setProperty("a5e.stat.ConditionGroups",json.path.setcarefully(getProperty("a5e.stat.ConditionGroups"),"[*][?(@.GroupID=="+thisGroupID+")]['Duration']",newDuration))]
-		[h:setProperty("a5e.stat.ConditionList",json.path.setcarefully(getProperty("a5e.stat.ConditionList"),"[*][?(@.GroupID=="+thisGroupID+")]['Duration']",newDuration))]
+		[h:setProperty("a5e.stat.ConditionGroups",json.path.set(getProperty("a5e.stat.ConditionGroups"),"[*][?(@.GroupID=="+thisGroupID+")]['Duration']",newDuration))]
+		[h:setProperty("a5e.stat.ConditionList",json.path.set(getProperty("a5e.stat.ConditionList"),"[*][?(@.GroupID=="+thisGroupID+")]['Duration']",newDuration))]
 		[h:targetsAffected = json.append(targetsAffected,target)]
 	}]
 	[h:switchToken(ParentToken)]

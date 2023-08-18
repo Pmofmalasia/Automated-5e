@@ -7,7 +7,7 @@
 
 [h,if(sameGroupTest>=0),CODE:{
     [h:oldEffectNewConditions = json.merge(json.get(json.get(json.get(oldEffect,"ConditionInfo"),sameGroupTest),"Conditions"),json.get(newEffect,"Conditions"))]
-    [h:oldEffect = json.path.setcarefully(oldEffect,"['ConditionInfo']["+sameGroupTest+"]['Conditions']",oldEffectNewConditions)]
+    [h:oldEffect = json.path.set(oldEffect,"['ConditionInfo']["+sameGroupTest+"]['Conditions']",oldEffectNewConditions)]
 };{
     [h:oldEffect = json.set(oldEffect,"ConditionInfo",json.append(json.get(oldEffect,"ConditionInfo"),newEffect))]
 }] 

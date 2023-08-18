@@ -31,7 +31,7 @@
 	}
 ]
 
-[h,if(!json.isEmpty(RemovedConditions)): RemovedConditions = json.path.putcarefully(RemovedConditions,"[*]","TargetType",TargetType)]
+[h,if(!json.isEmpty(RemovedConditions)): RemovedConditions = json.path.put(RemovedConditions,"[*]","TargetType",TargetType)]
 [h:RemovedConditionsFinal = RemovedConditions]
 
 [h:"<!-- The purpose of looping here is to catch any chain reactions - e.g. Ending Condition A causes the end of Condition B, which in turn ends Condition C. -->"]
@@ -56,7 +56,7 @@
 
 	[h,if(NewConditionFilters != ""),CODE:{
 		[h:NewRemovedConditions = json.path.read(getProperty("a5e.stat.ConditionList"),"[*][?("+NewConditionFilters+")]")]
-		[h:RemovedConditions = json.merge(RemovedConditions,json.path.putcarefully(NewRemovedConditions,"[*]","TargetType","Token"))]
+		[h:RemovedConditions = json.merge(RemovedConditions,json.path.put(NewRemovedConditions,"[*]","TargetType","Token"))]
 		[h:ConditionFilters = ConditionFilters + " || " + NewConditionFilters]
 	};{}]
 }]
@@ -67,9 +67,9 @@
 	[h:switchToken(setBy)]
 	[h:RemovedGroups = json.unique(json.path.read(RemovedConditionsFinal,"[*][?(@.SetBy=='"+setBy+"')]['GroupID']"))]
 	[h:RemovedGroupFilter = "@.GroupID=="+json.toList(RemovedGroups,+" || @.GroupID==")]
-	[h:setProperty("a5e.stat.ConditionsSet",json.path.deletecarefully(getProperty("a5e.stat.ConditionsSet"),"[*][?("+RemovedGroupFilter+")]['Targets'][?(@=='"+ParentToken+"')]"))]
-	[h,if(TargetType == "Item"): setProperty("a5e.stat.ConditionsSet",json.path.deletecarefully(getProperty("a5e.stat.ConditionsSet"),"[*][?("+RemovedGroupFilter+")]['Targets'][*][?(@.ItemID == '"+TargetID+"')]"))]
-	[h:junkVar = json.path.deletecarefully(getProperty("a5e.stat.ConditionsSet"),"[*][?(@.Targets == [])]")]
+	[h:setProperty("a5e.stat.ConditionsSet",json.path.delete(getProperty("a5e.stat.ConditionsSet"),"[*][?("+RemovedGroupFilter+")]['Targets'][?(@=='"+ParentToken+"')]"))]
+	[h,if(TargetType == "Item"): setProperty("a5e.stat.ConditionsSet",json.path.delete(getProperty("a5e.stat.ConditionsSet"),"[*][?("+RemovedGroupFilter+")]['Targets'][*][?(@.ItemID == '"+TargetID+"')]"))]
+	[h:junkVar = json.path.delete(getProperty("a5e.stat.ConditionsSet"),"[*][?(@.Targets == [])]")]
 	[h:tempCounter = json.length(getProperty("a5e.stat.ConditionsSet"))-1]
 	[h,count(json.length(a5e.stat.ConditionsSet)),CODE:{
 		[h:noTargetsTest = json.isEmpty(json.get(json.get(getProperty("a5e.stat.ConditionsSet"),tempCounter),"Targets"))]
@@ -79,9 +79,9 @@
 }]
 [h:switchToken(ParentToken)]
 
-[h:setProperty("a5e.stat.ConditionList",json.path.deletecarefully(getProperty("a5e.stat.ConditionList"),"[*][?("+ConditionFilters+")]"))]
-[h:setProperty("a5e.stat.Inventory",json.path.deletecarefully(getProperty("a5e.stat.Inventory"),"[*]['ItemConditions'][*][?("+ConditionFilters+")]"))]
-[h:setProperty("a5e.stat.ConditionGroups",json.path.deletecarefully(getProperty("a5e.stat.ConditionGroups"),"[*][?("+GroupFilters+")]"))]
+[h:setProperty("a5e.stat.ConditionList",json.path.delete(getProperty("a5e.stat.ConditionList"),"[*][?("+ConditionFilters+")]"))]
+[h:setProperty("a5e.stat.Inventory",json.path.delete(getProperty("a5e.stat.Inventory"),"[*]['ItemConditions'][*][?("+ConditionFilters+")]"))]
+[h:setProperty("a5e.stat.ConditionGroups",json.path.delete(getProperty("a5e.stat.ConditionGroups"),"[*][?("+GroupFilters+")]"))]
 
 [h,foreach(condition,RemovedConditionsFinal),CODE:{
 	[h:StateExistsTest = !json.isEmpty(json.path.read(getInfo("campaign"),"states.*.[?(@.name=='"+json.get(condition,"Name")+"')]"))]
@@ -98,7 +98,7 @@
 		[h,if(json.get(reactivationCondition,"Name")==json.get(condition,"Name")): tempReactivationTest = backupCounter]
 		[h:backupCounter = backupCounter + 1]
 	}]
-	[h,if(tempReactivationTest>=0): setProperty("a5e.stat.ConditionList",json.path.setcarefully(getProperty("a5e.stat.ConditionList"),"[*]["+tempReactivationTest+"]['IsActive']",1))]
+	[h,if(tempReactivationTest>=0): setProperty("a5e.stat.ConditionList",json.path.set(getProperty("a5e.stat.ConditionList"),"[*]["+tempReactivationTest+"]['IsActive']",1))]
 }]
 
 [h:pm.PassiveFunction("CondEnd")]

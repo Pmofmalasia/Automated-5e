@@ -30,7 +30,7 @@
     [h:thisTypeModifiedTest = (json.contains(typesHalvedFinal,json.get(damageInstance,"DamageType")) && isDamageHalved!=0)]
     [h:modificationImmunityTest = (json.get(damageInstance,"NoModification")==1)]
     [h:modifyThisInstance = and(!modificationImmunityTest,thisTypeModifiedTest)]
-    [h,if(modifyThisInstance): thisTokenDamageDealt = json.path.setcarefully(thisTokenDamageDealt,"["+roll.count+"]['Modifier']",json.path.read(thisTokenDamageDealt,"["+roll.count+"]['Modifier']")*if(isDamageHalved==1,(1/2),0))]
+    [h,if(modifyThisInstance): thisTokenDamageDealt = json.path.set(thisTokenDamageDealt,"["+roll.count+"]['Modifier']",json.path.read(thisTokenDamageDealt,"["+roll.count+"]['Modifier']")*if(isDamageHalved==1,(1/2),0))]
 }]
 
 [h:ConditionsResistedInfo = json.get(DCData,"ConditionsResisted")]
@@ -44,7 +44,7 @@
     default: conditionsResistedFinal = "[]"
 ]
 
-[h,foreach(condition,conditionsResistedFinal): thisTokenConditionInfo = json.path.deletecarefully(thisTokenConditionInfo,"[*]['Conditions'][*][?(@.Name=='"+json.get(condition,"Name")+"' && @.Class=='"+json.get(condition,"Class")+"' && @.Subclass=='"+json.get(condition,"Subclass")+"')]")]
+[h,foreach(condition,conditionsResistedFinal): thisTokenConditionInfo = json.path.delete(thisTokenConditionInfo,"[*]['Conditions'][*][?(@.Name=='"+json.get(condition,"Name")+"' && @.Class=='"+json.get(condition,"Class")+"' && @.Subclass=='"+json.get(condition,"Subclass")+"')]")]
 
 [h:tempDeleteCount = 0]
 [h,foreach(conditionSet,thisTokenConditionInfo),CODE:{
@@ -71,8 +71,8 @@
 [h,foreach(damageType,targetSpecificDamageTypes),CODE:{
     [h:allTargetsDamage = json.get(thisTokenDamageDealt,damageType)]
     [h,if(allTargetsDamage==""):
-        thisTokenDamageDealt = json.path.putcarefully(thisTokenDamageDealt,"['Damage']",damageType,json.get(targetSpecificDamage,damageType));
-        thisTokenDamageDealt = json.path.setcarefully(thisTokenDamageDealt,"['Damage']['"+damageType+"']",json.get(targetSpecificDamage,damageType)+allTargetsDamage)
+        thisTokenDamageDealt = json.path.put(thisTokenDamageDealt,"['Damage']",damageType,json.get(targetSpecificDamage,damageType));
+        thisTokenDamageDealt = json.path.set(thisTokenDamageDealt,"['Damage']['"+damageType+"']",json.get(targetSpecificDamage,damageType)+allTargetsDamage)
     ]			
 }]
 

@@ -31,7 +31,7 @@
 
 	[h,foreach(tempDamageType,allDamageData),CODE:{
 		[h:typeOptionTest = json.contains(json.get(allDamageData,roll.count),"DamageTypeOptions")]
-		[h,if(typeOptionTest): allDamageData = json.path.setcarefully(allDamageData,"["+roll.count+"]['DamageType']",pm.RemoveSpecial(eval("DamageTypeSelection"+roll.count)))]
+		[h,if(typeOptionTest): allDamageData = json.path.set(allDamageData,"["+roll.count+"]['DamageType']",pm.RemoveSpecial(eval("DamageTypeSelection"+roll.count)))]
 	}]
 }]
 
@@ -187,7 +187,7 @@
 	}]
 
 	[h:subeffect.Conditions = pm.a5e.ChooseCondition(json.get(tempConditionInfo,"Conditions"),subeffect.ConditionChoiceNumber)]
-	[h:subeffect.Conditions = json.path.setcarefully(subeffect.Conditions,"[*][?(@.HasTiers == 1)]['Level']",AHLTier + 1)]
+	[h:subeffect.Conditions = json.path.set(subeffect.Conditions,"[*][?(@.HasTiers == 1)]['Level']",AHLTier + 1)]
 
 	[h:subeffect.ConditionEndInfo = json.get(tempConditionInfo,"EndInfo")]
 	[h,if(json.get(subeffect.ConditionEndInfo,"UseMainDuration") == 1): subeffect.ConditionEndInfo = json.set(subeffect.ConditionEndInfo,"Duration",DurationValue,"DurationUnits",lower(DurationUnits))]
@@ -203,7 +203,7 @@
 		[h:pm.PassiveFunction("SpellSaveDC")]
 	};{}]
 	
-	[h,if(hasSaveDCTest): subeffect.ConditionEndInfo = json.path.putcarefully(subeffect.ConditionEndInfo,"['EndTriggers'][*][?(@.SaveType!=null)]","DC",subeffect.SaveDC)]
+	[h,if(hasSaveDCTest): subeffect.ConditionEndInfo = json.path.put(subeffect.ConditionEndInfo,"['EndTriggers'][*][?(@.SaveType!=null)]","DC",subeffect.SaveDC)]
 
 	[h:"<!-- TODO: Fix to allow selection of AdvancePoint manually; Temporary solution for now -->"]
 	[h,if(json.get(subeffect.ConditionEndInfo,"DurationUnits")=="round"):

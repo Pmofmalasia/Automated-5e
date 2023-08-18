@@ -10,8 +10,8 @@
     };{
         [h:noThisTypeTest = (json.get(json.get(oldEffect,"Damage"),damageType) == "")]
         [h,if(noThisTypeTest):
-            oldEffect = json.path.putcarefully(oldEffect,"['Damage']",damageType,json.append("",newDamageAmount));
-            oldEffect = json.path.setcarefully(oldEffect,"['Damage']['"+damageType+"']",json.append(json.get(json.get(oldEffect,"Damage"),damageType)),newDamageAmount)
+            oldEffect = json.path.put(oldEffect,"['Damage']",damageType,json.append("",newDamageAmount));
+            oldEffect = json.path.set(oldEffect,"['Damage']['"+damageType+"']",json.append(json.get(json.get(oldEffect,"Damage"),damageType)),newDamageAmount)
         ]
     }]
 }]

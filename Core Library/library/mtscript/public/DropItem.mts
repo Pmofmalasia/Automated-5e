@@ -19,8 +19,8 @@
 ]
 [h:NewInventoryNumber = CurrentItemNumber - FinalDroppedNumber]
 [h,if(NewInventoryNumber == 0):
-	NewInventory = json.path.deletecarefully(getProperty("a5e.stat.Inventory"),"[*][?(@.ItemID == "+DroppedItem+")]");
-	NewInventory = json.path.setcarefully(getProperty("a5e.stat.Inventory"),"[*][?(@.ItemID == "+DroppedItem+")]['Number']",NewInventoryNumber)
+	NewInventory = json.path.delete(getProperty("a5e.stat.Inventory"),"[*][?(@.ItemID == "+DroppedItem+")]");
+	NewInventory = json.path.set(getProperty("a5e.stat.Inventory"),"[*][?(@.ItemID == "+DroppedItem+")]['Number']",NewInventoryNumber)
 ]
 [h:setProperty("a5e.stat.Inventory",NewInventory)]
 [h:ItemData = json.set(ItemData,"Number",FinalDroppedNumber)]

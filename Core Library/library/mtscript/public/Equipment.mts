@@ -146,35 +146,35 @@
 	
 [h,if(and(MHChangeTest==1,NewMHMagic==1)),CODE:{
 	[h,count(json.length(MagicItemNames)),CODE:{
-		[h:MagicItemEquipment=if(json.get(MagicItemNames,roll.count)==json.get(json.get(getProperty("a5e.stat.Weapon"),json.get(getProperty("a5e.stat.Weapon"),0)),"Name"),json.path.setcarefully(MagicItemEquipment,"["+roll.count+"].isEquipped",1),MagicItemEquipment)]
+		[h:MagicItemEquipment=if(json.get(MagicItemNames,roll.count)==json.get(json.get(getProperty("a5e.stat.Weapon"),json.get(getProperty("a5e.stat.Weapon"),0)),"Name"),json.path.set(MagicItemEquipment,"["+roll.count+"].isEquipped",1),MagicItemEquipment)]
 		[h:miStatChangeArray=if(json.get(MagicItemNames,roll.count)==json.get(json.get(getProperty("a5e.stat.Weapon"),json.get(getProperty("a5e.stat.Weapon"),0)),"Name"),json.append(miStatChangeArray,roll.count),miStatChangeArray)]
 	}]
 };{}]
 	
 [h,if(and(OHChangeTest==1,OldOHMagic==1)),CODE:{
 	[h,count(json.length(MagicItemNames)),CODE:{
-		[h:MagicItemEquipment=if(json.get(MagicItemNames,roll.count)==OldOHName,json.path.setcarefully(MagicItemEquipment,"["+roll.count+"].isEquipped",1),MagicItemEquipment)]
+		[h:MagicItemEquipment=if(json.get(MagicItemNames,roll.count)==OldOHName,json.path.set(MagicItemEquipment,"["+roll.count+"].isEquipped",1),MagicItemEquipment)]
 		[h:miStatChangeArray=if(json.get(MagicItemNames,roll.count)==OldOHName,json.append(miStatChangeArray,roll.count),miStatChangeArray)]
 	}]
 };{}]
 	
 [h,if(and(OHChangeTest==1,NewOHMagic==1)),CODE:{
 	[h,count(json.length(MagicItemNames)),CODE:{
-		[h:MagicItemEquipment=if(json.get(MagicItemNames,roll.count)==json.get(json.get(getProperty("a5e.stat.Weapon"),json.get(getProperty("a5e.stat.Weapon"),1)),"Name"),json.path.setcarefully(MagicItemEquipment,"["+roll.count+"].isEquipped",1),MagicItemEquipment)]
+		[h:MagicItemEquipment=if(json.get(MagicItemNames,roll.count)==json.get(json.get(getProperty("a5e.stat.Weapon"),json.get(getProperty("a5e.stat.Weapon"),1)),"Name"),json.path.set(MagicItemEquipment,"["+roll.count+"].isEquipped",1),MagicItemEquipment)]
 		[h:miStatChangeArray=if(json.get(MagicItemNames,roll.count)==json.get(json.get(getProperty("a5e.stat.Weapon"),json.get(getProperty("a5e.stat.Weapon"),1)),"Name"),json.append(miStatChangeArray,roll.count),miStatChangeArray)]
 	}]
 };{}]
 	
 [h,if(and(ArmorChangeTest==1,OldArmorMagic==1)),CODE:{
 	[h,count(json.length(MagicItemNames)),CODE:{
-		[h:MagicItemEquipment=if(json.get(MagicItemNames,roll.count)==OldArmorName,json.path.setcarefully(MagicItemEquipment,"["+roll.count+"].isEquipped",1),MagicItemEquipment)]
+		[h:MagicItemEquipment=if(json.get(MagicItemNames,roll.count)==OldArmorName,json.path.set(MagicItemEquipment,"["+roll.count+"].isEquipped",1),MagicItemEquipment)]
 		[h:miStatChangeArray=if(json.get(MagicItemNames,roll.count)==OldArmorName,json.append(miStatChangeArray,roll.count),miStatChangeArray)]
 	}]
 };{}]
 	
 [h,if(and(ArmorChangeTest==1,NewArmorMagic==1)),CODE:{
 	[h,count(json.length(MagicItemNames)),CODE:{
-		[h:MagicItemEquipment=if(json.get(MagicItemNames,roll.count)==json.get(json.get(getProperty("a5e.stat.Armor"),json.get(getProperty("a5e.stat.Armor"),0)),"Name"),json.path.setcarefully(MagicItemEquipment,"["+roll.count+"].isEquipped",1),MagicItemEquipment)]
+		[h:MagicItemEquipment=if(json.get(MagicItemNames,roll.count)==json.get(json.get(getProperty("a5e.stat.Armor"),json.get(getProperty("a5e.stat.Armor"),0)),"Name"),json.path.set(MagicItemEquipment,"["+roll.count+"].isEquipped",1),MagicItemEquipment)]
 		[h:miStatChangeArray=if(json.get(MagicItemNames,roll.count)==json.get(json.get(getProperty("a5e.stat.Armor"),json.get(getProperty("a5e.stat.Armor"),0)),"Name"),json.append(miStatChangeArray,roll.count),miStatChangeArray)]
 	}]
 };{}]
@@ -183,18 +183,18 @@
 
 <!-- needs to not override items set previously and not add the same item to the array twice -->
 
-	[h:MagicItemAttuned=json.path.setcarefully(MagicItemAttuned,"["+json.get(AttuneItemPositions,AttuneSlot1)+"].slotAttunement",0)]
-	[h:MagicItemAttuned=json.path.setcarefully(MagicItemAttuned,"["+json.get(AttuneItemPositions,AttuneSlot2)+"].slotAttunement",0)]
-	[h:MagicItemAttuned=json.path.setcarefully(MagicItemAttuned,"["+json.get(AttuneItemPositions,AttuneSlot3)+"].slotAttunement",0)]
-	[h:MagicItemAttuned=json.path.setcarefully(MagicItemAttuned,"["+json.get(AttuneItemPositions,AttuneSlot4)+"].slotAttunement",0)]
-	[h:MagicItemAttuned=json.path.setcarefully(MagicItemAttuned,"["+json.get(AttuneItemPositions,AttuneSlot5)+"].slotAttunement",0)]
-	[h:MagicItemAttuned=json.path.setcarefully(MagicItemAttuned,"["+json.get(AttuneItemPositions,AttuneSlot6)+"].slotAttunement",0)]
-	[h:MagicItemAttuned=json.path.setcarefully(MagicItemAttuned,"["+json.get(AttuneItemPositions,Attune1)+"].slotAttunement",1)]
-    [h:MagicItemAttuned=json.path.setcarefully(MagicItemAttuned,"["+json.get(AttuneItemPositions,Attune2)+"].slotAttunement",2)]
-    [h:MagicItemAttuned=json.path.setcarefully(MagicItemAttuned,"["+json.get(AttuneItemPositions,Attune3)+"].slotAttunement",3)]
-    [h:MagicItemAttuned=json.path.setcarefully(MagicItemAttuned,"["+json.get(AttuneItemPositions,Attune4)+"].slotAttunement",4)]
-    [h:MagicItemAttuned=json.path.setcarefully(MagicItemAttuned,"["+json.get(AttuneItemPositions,Attune5)+"].slotAttunement",5)]
-    [h:MagicItemAttuned=json.path.setcarefully(MagicItemAttuned,"["+json.get(AttuneItemPositions,Attune6)+"].slotAttunement",6)]
+	[h:MagicItemAttuned=json.path.set(MagicItemAttuned,"["+json.get(AttuneItemPositions,AttuneSlot1)+"].slotAttunement",0)]
+	[h:MagicItemAttuned=json.path.set(MagicItemAttuned,"["+json.get(AttuneItemPositions,AttuneSlot2)+"].slotAttunement",0)]
+	[h:MagicItemAttuned=json.path.set(MagicItemAttuned,"["+json.get(AttuneItemPositions,AttuneSlot3)+"].slotAttunement",0)]
+	[h:MagicItemAttuned=json.path.set(MagicItemAttuned,"["+json.get(AttuneItemPositions,AttuneSlot4)+"].slotAttunement",0)]
+	[h:MagicItemAttuned=json.path.set(MagicItemAttuned,"["+json.get(AttuneItemPositions,AttuneSlot5)+"].slotAttunement",0)]
+	[h:MagicItemAttuned=json.path.set(MagicItemAttuned,"["+json.get(AttuneItemPositions,AttuneSlot6)+"].slotAttunement",0)]
+	[h:MagicItemAttuned=json.path.set(MagicItemAttuned,"["+json.get(AttuneItemPositions,Attune1)+"].slotAttunement",1)]
+    [h:MagicItemAttuned=json.path.set(MagicItemAttuned,"["+json.get(AttuneItemPositions,Attune2)+"].slotAttunement",2)]
+    [h:MagicItemAttuned=json.path.set(MagicItemAttuned,"["+json.get(AttuneItemPositions,Attune3)+"].slotAttunement",3)]
+    [h:MagicItemAttuned=json.path.set(MagicItemAttuned,"["+json.get(AttuneItemPositions,Attune4)+"].slotAttunement",4)]
+    [h:MagicItemAttuned=json.path.set(MagicItemAttuned,"["+json.get(AttuneItemPositions,Attune5)+"].slotAttunement",5)]
+    [h:MagicItemAttuned=json.path.set(MagicItemAttuned,"["+json.get(AttuneItemPositions,Attune6)+"].slotAttunement",6)]
 
 [h,if(AttuneSlot1==Attune1),code:{};{
 	[h:miStatChangeTest=miStatChangeTest+1]

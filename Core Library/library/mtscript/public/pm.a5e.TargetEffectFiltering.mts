@@ -49,7 +49,7 @@
         [h:tempEffectOptions = "[]"]
         [h:effectsOfThisType = "[]"]
         [h,foreach(effect,effectsWithTarget): effectsOfThisType = json.merge(effectsOfThisType,json.path.read(json.get(effectsWithTarget,roll.count),"[?(@.ToResolve.CheckDC.ChecksMade."+json.get(effect,"tempThisTarget")+".Value >= 0 || (@.ParentToken=='"+json.get(effect,"tempThisTarget")+"' && @.ToResolve.CheckDC.DC.Value >= 0))]"))]
-        [h,if(!json.isEmpty(effectsOfThisType)): tempEffectOptions = json.merge(tempEffectOptions,json.path.putcarefully(effectsOfThisType,"[*]","tempEffectType","Check"))]
+        [h,if(!json.isEmpty(effectsOfThisType)): tempEffectOptions = json.merge(tempEffectOptions,json.path.put(effectsOfThisType,"[*]","tempEffectType","Check"))]
         [h:effectOptions = json.merge(effectOptions,tempEffectOptions)]
     };{}]
     
@@ -57,7 +57,7 @@
         [h:tempEffectOptions = "[]"]
         [h:effectsOfThisType = "[]"]
         [h,foreach(effect,effectsWithTarget): effectsOfThisType = json.merge(effectsOfThisType,json.path.read(json.get(effectsWithTarget,roll.count),"[?(@.ToResolve.SaveDC.SavesMade."+json.get(effect,"tempThisTarget")+".Value >= 0)]"))]
-        [h,if(!json.isEmpty(effectsOfThisType)): tempEffectOptions = json.merge(tempEffectOptions,json.path.putcarefully(effectsOfThisType,"[*]","tempEffectType","Save"))]
+        [h,if(!json.isEmpty(effectsOfThisType)): tempEffectOptions = json.merge(tempEffectOptions,json.path.put(effectsOfThisType,"[*]","tempEffectType","Save"))]
         [h:effectOptions = json.merge(effectOptions,tempEffectOptions)]
     };{}]
     
@@ -65,7 +65,7 @@
         [h:tempEffectOptions = "[]"]
         [h:effectsOfThisType = "[]"]
         [h,foreach(effect,effectsWithTarget): effectsOfThisType = json.merge(effectsOfThisType,json.path.read(effectsWithTarget,"["+roll.count+"][?(@.ParentToken=='"+json.get(effect,"tempThisTarget")+"' && @.ToResolve.Attack!=null)]","DEFAULT_PATH_LEAF_TO_NULL"))]
-        [h,if(!json.isEmpty(effectsOfThisType)): tempEffectOptions = json.merge(tempEffectOptions,json.path.putcarefully(effectsOfThisType,"[*]","tempEffectType","Attack"))]
+        [h,if(!json.isEmpty(effectsOfThisType)): tempEffectOptions = json.merge(tempEffectOptions,json.path.put(effectsOfThisType,"[*]","tempEffectType","Attack"))]
         [h:effectOptions = json.merge(effectOptions,tempEffectOptions)]
     };{}]
     

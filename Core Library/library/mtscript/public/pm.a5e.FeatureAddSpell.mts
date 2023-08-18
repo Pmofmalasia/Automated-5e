@@ -17,7 +17,7 @@
 
 	[h,count(spellNum): pm.ChosenSpells = json.append(pm.ChosenSpells,eval("spell"+(roll.count+1)))]
 
-	[h:setProperty("a5e.stat.AllFeatures",json.path.setcarefully(getProperty("a5e.stat.AllFeatures"),"[?(@.Name=='"+currentFeatureName+"' && @.Class=='"+currentFeatureClass+"' && @.Subclass=='"+currentFeatureSubclass+"')]['SpellList']",pm.ChosenSpells))]
+	[h:setProperty("a5e.stat.AllFeatures",json.path.set(getProperty("a5e.stat.AllFeatures"),"[?(@.Name=='"+currentFeatureName+"' && @.Class=='"+currentFeatureClass+"' && @.Subclass=='"+currentFeatureSubclass+"')]['SpellList']",pm.ChosenSpells))]
 }]
 
 [h:pm.SpellList = json.toList(pm.ChosenSpells,if(getLibProperty("VerticalFormat","Lib:pm.a5e.Core"),"<br>",", "))]

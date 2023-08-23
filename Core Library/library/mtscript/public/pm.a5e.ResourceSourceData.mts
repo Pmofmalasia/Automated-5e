@@ -16,7 +16,7 @@
 	};
 	case "ItemCondition":{
 		[h:sourceProperty = "a5e.stat.Inventory"]
-		[h:sourcePath = "[*][?(@.ItemID == '"+json.get(resourceInfo,"ItemID")+"')]['ItemConditions'][*][?(@.Name == '"+json.get(resourceInfo,"Name")+"' && @.Class == '"+json.get(resourceInfo,"Class")+"' && @.ItemConditions.*.Subclass == '"+json.get(resourceInfo,"Subclass")+"')]"]
+		[h:sourcePath = "[*][?(@.ItemID == '"+json.get(resourceInfo,"ItemID")+"')]['ItemConditions'][?(@.Name == '"+json.get(resourceInfo,"Name")+"' && @.Class == '"+json.get(resourceInfo,"Class")+"' && @.Subclass == '"+json.get(resourceInfo,"Subclass")+"')]"]
 	}
 ]
 

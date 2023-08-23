@@ -21,10 +21,7 @@
 [h:DexterityCap = json.get(EquippedArmorData,"DexterityCap")]
 [h:bonusAC = json.get(EquippedArmorData,"MagicBonus")]
 
-[h:MaximumShieldNumber = 1]
-[h:shieldAC = 0]
-[h:ShieldsEquipped = json.path.read(CurrentInventory,"[*][?(@.Type == 'Shield' && @.ItemID in "+CurrentHeldItems+")]")]
-[h,foreach(tempShield,ShieldsEquipped): shieldAC = max(shieldAC,json.get(tempShield,"BaseAC"))]
+[h:shieldAC = pm.a5e.CalculateShieldAC(ParentToken)]
 [h:"<!-- TODO: Add support for multiple shields -->"]
 
 [h:setFinalAC = 0]

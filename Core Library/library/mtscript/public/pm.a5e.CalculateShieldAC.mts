@@ -1,0 +1,8 @@
+[h:ParentToken = arg(0)]
+[h:CurrentInventory = getProperty("a5e.stat.Inventory",ParentToken)]
+[h:CurrentHeldItems = getProperty("a5e.stat.HeldItems",ParentToken)]
+[h:MaximumShieldNumber = 1]
+[h:shieldAC = 0]
+[h:ShieldsEquipped = json.path.read(CurrentInventory,"[*][?(@.Type == 'Shield' && @.ItemID in "+CurrentHeldItems+")]")]
+[h,foreach(tempShield,ShieldsEquipped): shieldAC = max(shieldAC,json.get(tempShield,"BaseAC"))]
+[h:return(0,shieldAC)]

@@ -708,7 +708,7 @@
 	[h,if(ab.CheckBonus): ab.Final = json.set(ab.Final,"CallCheckBonus",ab.CheckBonus)]
 	[h,if(ab.CheckProf): ab.Final = json.set(ab.Final,"CallCheckProf",ab.CheckProf)]
 	[h,if(ab.CheckMsg): ab.Final = json.set(ab.Final,"CallAfterCheck",ab.CheckMsg)]
-	[h,if(ab.CheckSuccess): ab.Final = json.set(ab.Final,"CallCheckSuccess",ab.CheckSuccess)]
+	[h,if(ab.CheckSuccess): ab.Final = json.set(ab.Final,"CallCheckAutoResult",ab.CheckSuccess)]
 };{}]
 
 [h,if(ab.Save),CODE:{
@@ -725,7 +725,7 @@
 	[h,if(ab.SaveBonus): ab.Final = json.set(ab.Final,"CallSaveBonus",ab.SaveBonus)]
 	[h,if(ab.SaveProf): ab.Final = json.set(ab.Final,"CallSaveProf",ab.SaveProf)]
 	[h,if(ab.SaveMsg): ab.Final = json.set(ab.Final,"CallAfterSave",ab.SaveMsg)]
-	[h,if(ab.SaveSuccess): ab.Final = json.set(ab.Final,"CallSaveSuccess",ab.SaveSuccess)]
+	[h,if(ab.SaveSuccess): ab.Final = json.set(ab.Final,"CallSaveAutoResult",ab.SaveSuccess)]
 };{}]
 
 [h,if(ab.Init),CODE:{

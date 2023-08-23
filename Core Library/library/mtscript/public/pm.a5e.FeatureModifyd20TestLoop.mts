@@ -1,6 +1,8 @@
 [h:RollType = json.get(EffectData,"OverallType")]
 [h:RollData = EffectData]
 [h:EffectTarget = json.get(RollData,"Target")]
+[h:broadcast(RollData)]
+[h:broadcast(json.get(RollData,"ID"))]
 
 [h,if(json.type(EffectModificationData)=="ARRAY"),CODE:{
     [h:thisEffectModificationData = json.get(EffectModificationData,roll.count)]

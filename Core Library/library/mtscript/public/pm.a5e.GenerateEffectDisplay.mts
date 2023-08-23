@@ -12,13 +12,18 @@
 [h:TargetNameArray = "[]"]
 [h,foreach(tempTarget,targetList),CODE:{
 	[h,if(json.type(tempTarget)!="OBJECT"),CODE:{
-		[h:TargetNameArray = json.append(TargetNameArray,if(json.get(EffectData,"ParentToken") == tempTarget,"Self",getName(tempTarget)))]
+		[h:targetStillAvailable = json.contains(getTokens("json"),tempTarget)]
+		[h,if(targetStillAvailable):
+			TargetNameArray = json.append(TargetNameArray,if(json.get(EffectData,"ParentToken") == tempTarget,"Self",getName(tempTarget)));
+			TargetNameArray = json.append(TargetNameArray,"")
+		]
 	};{
 		[h:ItemHolder = json.get(tempTarget,"HeldBy")]
 		[h,if(ItemHolder != ""): TargetNameArray = json.append(TargetNameArray,getName(ItemHolder))]
 	}]
 }]
 [h:PriorTargetTest = json.length(TargetNameArray) != json.length(targetList)]
+[h:TargetNameArray = json.path.delete(TargetNameArray,"[?(@=='')]")]
 
 [h,if(UnlistedTargetTest): TargetNameArray = json.append(TargetNameArray,"Unspecified Target")]
 [h,if(PriorTargetTest): TargetNameArray = json.append(TargetNameArray,"Prior Target")]
@@ -26,10 +31,15 @@
 [h:targetName = pm.a5e.CreateDisplayList(TargetNameArray,"and")]
 [h,if(length(targetName) > 50): targetName = "Multiple Targets"]
 
-[h,if(json.get(EffectData,"ParentToken")==""):
-	parentName = "World";
-	parentName = getName(json.get(EffectData,"ParentToken"))
-]
+[h,if(json.get(EffectData,"ParentToken")==""),CODE:{
+	[h:parentName = "World"]
+};{
+	[h:parentStillAvailable = json.contains(getTokens("json"),json.get(EffectData,"ParentToken"))]
+	[h,if(parentStillAvailable):
+		parentName = getName(json.get(EffectData,"ParentToken"));
+		parentName = "Removed Token"
+	]
+}]
 
 [h:EffectsToResolve = json.get(EffectData,"ToResolve")]
 [h,if(json.get(EffectsToResolve,"CheckDC")!=""): em.SecondPassDisplay = if(!json.isEmpty(json.get(json.get(EffectsToResolve,"CheckDC"),"ChecksMade")),"Checks",""); em.SecondPassDisplay = ""]

@@ -732,10 +732,7 @@
 
 		[h,if(json.get(ResourceSelected,"TempResourceKey")==""),CODE:{
 			[h:ResourceAmount = json.get(ResourceSelected,"Resource") - ResourceUsed]
-			[h,if(json.get(ResourceSelected,"TempResourceSource") == "Item"):
-				UpdatedResourceInfo = json.path.set(getProperty(sourceProperty),"[*][?(@.ItemID=='"+json.get(ResourceSelected,"ItemID")+"')]['Resource']",ResourceAmount);	
-				UpdatedResourceInfo = json.path.set(getProperty(sourceProperty),"[*][?(@.Name=='"+json.get(ResourceSelected,"Name")+"' && @.Class=='"+json.get(ResourceSelected,"Class")+"' && @.Subclass=='"+json.get(ResourceSelected,"Subclass")+"')]['Resource']",ResourceAmount)
-			]
+			[h:UpdatedResourceInfo = json.path.set(getProperty(sourceProperty),sourcePath+"['Resource']",ResourceAmount)]
 			[h:setProperty(sourceProperty,UpdatedResourceInfo)]
 
 			[h:abilityTable = json.append(abilityTable,json.set("",
@@ -755,10 +752,7 @@
 			)]
 		};{
 			[h:ResourceAmount = max(json.get(json.get(ResourceSelected,"Resource"),json.get(ResourceSelected,"TempResourceKey")) - ResourceUsed,0)]
-			[h,if(json.get(ResourceSelected,"TempResourceSource") == "Item"):
-				UpdatedResourceInfo = json.path.set(getProperty(sourceProperty),"[*][?(@.ItemID=='"+json.get(ResourceSelected,"ItemID")+"')]['Resource']['"+json.get(ResourceSelected,"TempResourceKey")+"']",ResourceAmount);	
-				UpdatedResourceInfo = json.path.set(getProperty(sourceProperty),"[*][?(@.Name=='"+json.get(ResourceSelected,"Name")+"' && @.Class=='"+json.get(ResourceSelected,"Class")+"' && @.Subclass=='"+json.get(ResourceSelected,"Subclass")+"')]['Resource']['"+json.get(ResourceSelected,"TempResourceKey")+"']",ResourceAmount)
-			]
+			[h:UpdatedResourceInfo = json.path.set(getProperty(sourceProperty),sourcePath+"['Resource']['"+json.get(ResourceSelected,"TempResourceKey")+"']",ResourceAmount)]
 			[h:setProperty(sourceProperty,UpdatedResourceInfo)]
 
 			[h:abilityTable = json.append(abilityTable,json.set("",

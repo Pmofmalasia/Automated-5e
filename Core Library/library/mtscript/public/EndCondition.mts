@@ -63,6 +63,7 @@
 
 [h:"<!-- TODO: json.path: Can replace the loop to delete conditions with no remaining targets and replace it with junkVar if they ever patch json.path functions to compare arrays. -->"]
 [h:RemovedSetBy = json.unique(json.path.read(RemovedConditionsFinal,"[*][?(@.SetBy!='')]['SetBy']"))]
+[h:RemovedSetBy = json.intersection(getTokens(),RemovedSetBy)]
 [h,foreach(setBy,RemovedSetBy),CODE:{
 	[h:switchToken(setBy)]
 	[h:RemovedGroups = json.unique(json.path.read(RemovedConditionsFinal,"[*][?(@.SetBy=='"+setBy+"')]['GroupID']"))]

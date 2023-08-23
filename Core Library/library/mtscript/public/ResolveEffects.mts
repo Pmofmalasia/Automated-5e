@@ -7,12 +7,16 @@
 [h:effClassForDisplay = json.get(effFull,"ClassForDisplay")]
 [h:effColorSubtype = json.get(effFull,"ColorSubtype")]
 [h:ParentToken = json.get(effFull,"ParentToken")]
+[h:parentStillAvailable = json.contains(getTokens("json"),ParentToken)]
+[h,if(!parentStillAvailable): ParentToken = ""]
+
 [h:effTargets = json.get(effFull,"Targets")]
+[h:effTargets = json.intersection(getTokens("json"),effTargets)]
 [h:effTargetedConditions = json.get(effFull,"TargetedConditions")]
 [h:effConditionGroupID = pm.a5e.CreateConditionID(ParentToken,effTargets)]
 
 [h,if(json.get(effFull,"SpecificTargets")!=""): effTargets = json.get(effFull,"SpecificTargets")]
-[h:remainingTargetsList = json.get(effFull,"RemainingTargets")]
+[h:remainingTargetsList = json.intersection(getTokens("json"),json.get(effFull,"RemainingTargets"))]
 [h:"<!-- MAYDO: May need a test to make sure the SpecificTargets are actually targets of the effect? But not sure how they would get here in the first place -->"]
 
 [h:ParentEffect = json.get(effFull,"ParentSubeffect")]
@@ -285,7 +289,7 @@
 				SavePassed = (SaveResultValue=="AutoSuccess");
 				SavePassed = 0
 			]
-			[h:SoloTargetTest = json.length(json.get(effFull,"Targets")) == 1]
+			[h:SoloTargetTest = json.length(effTargets) == 1]
 			[h:ResolveAutoResultNow = and(autoResultTest,SoloTargetTest)]
 
 			[h,switch(ResolveAutoResultNow+""+SavePassed):
@@ -305,7 +309,7 @@
 				SavePassed = SaveResultValue >= SaveDCValue
 			]
 
-			[h:SavesNotMade = json.difference(json.get(effFull,"Targets"),json.fields(effSavesMadeData,"json"))]
+			[h:SavesNotMade = json.difference(effTargets,json.fields(effSavesMadeData,"json"))]
 			[h,if(AnyTargetNeedsFurtherResolution == 0): AnyTargetNeedsFurtherResolution = !json.isEmpty(SavesNotMade)]
 
 			[h,switch(AnyTargetNeedsFurtherResolution+""+SavePassed):

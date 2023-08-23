@@ -68,7 +68,7 @@
 	]
 };{}]
 
-[h:needsPutTest = !json.isEmpty(json.path.read(getProperty(sourceProperty),sourcePath+"['Resource']"))]
+[h:needsPutTest = json.isEmpty(json.path.read(getProperty(sourceProperty),sourcePath+"['Resource']"))]
 [h,switch(RestorationAmount),CODE:
 	case "":{
 		[h:MaxResource = evalMacro(json.get(FeatureToRestore,"MaxResource"))]

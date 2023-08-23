@@ -16,7 +16,7 @@ async function createRegularSaveRows(tableID){
 		addTableRow(tableID,nextRowIndex,"rowAdvantageChoice","<th><label for='AdvantageChoice'>Advantage Type:</label></th><td><select id='AdvantageChoice' name='AdvantageChoice'><option value=0>Forced Disadvantage</option><option value=1>Situational Disadvantage</option><option value=2 selected>Normal Roll</option><option value=3>Situational Advantage</option><option value=4>Forced Advantage</option></select></td>");
 		nextRowIndex++;
 
-		addTableRow(tableID,nextRowIndex,"rowOutputOptions","<th><label for='OutputOptions'>Who Sees the Result?</label></th><td><select id='OutputOptions' name='OutputOptions'><option value=0>Everyone</option><option value=1>You and GM</option><option value=2 selected>GM Only</option></select></td>");
+		addTableRow(tableID,nextRowIndex,"rowOutputOptions","<th><label for='OutputOptions'>Who Sees the Result?</label></th><td><select id='OutputOptions' name='OutputOptions'><option value=0>Everyone</option><option value=1>You and GM</option><option value=2>GM Only</option></select></td>");
 		nextRowIndex++;
 
 		addTableRow(tableID,nextRowIndex,"rowSaveDescription","<th><label for='SaveDescription'>Optional Description:</label></th><td><input type='text' id='SaveDescription' name='SaveDescription'></td>");

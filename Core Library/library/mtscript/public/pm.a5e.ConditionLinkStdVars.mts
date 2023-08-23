@@ -63,11 +63,24 @@
 		
 [h:cond.NeedsSetByInfo = json.append(pm.GetClasses("Name","json"),"Feat")]
 [h,if(json.contains(cond.NeedsSetByInfo,abilityClass)),CODE:{
-	[h:switchToken(cond.SetBy)]
-	[h:SetByAbilities = a5e.GatherAbilities(cond.SetBy)]
-	[h:abilityLevel = json.get(json.get(json.path.read(getProperty("a5e.stat.AllFeatures"),"[?(@.Name=='"+abilityName+"' && @.Class=='"+abilityClass+"' && @.Subclass=='"+abilitySubclass+"')]"),0),"Level")]
-	[h,if(json.get(abilityInfo,"HasTiers")==1): abilityTier = math.arraySum(json.path.read(getProperty("a5e.stat.ConditionList"),"[*][?(@.Name=='"+abilityName+"')]['Level']")); abilityTier = json.get(abilityInfo,"Level")]
-	[h:switchToken(ParentToken)]
+	[h:setByStillAvailable = json.contains(getTokens("json"),cond.SetBy)]
+	[h,if(setByStillAvailable),CODE:{
+		[h:switchToken(cond.SetBy)]
+		[h:cond.SetByAbilities = a5e.GatherAbilities(cond.SetBy)]
+		[h,if(json.get(abilityInfo,"Master") == ""):
+			cond.LevelPath = pm.a5e.PathFeatureFilter(abilityInfo);
+			cond.LevelPath = pm.a5e.PathFeatureFilter(json.get(abilityInfo,"Master"))
+		]
+		[h:abilityLevel = json.get(json.path.read(getProperty("a5e.stat.AllFeatures"),"[*][?("+cond.LevelPath+")]['Level']"),0)]
+		[h,if(json.get(abilityInfo,"HasTiers")==1):
+			abilityTier = math.arraySum(json.path.read(getProperty("a5e.stat.ConditionList"),"[*][?(@.Name=='"+abilityName+"')]['Level']"));
+			abilityTier = json.get(abilityInfo,"Level")
+		]
+		[h:switchToken(ParentToken)]		
+	};{
+		[h:abilityLevel = 1]
+		[h:abilityTier = json.get(abilityInfo,"Level")]
+	}]
 };{
 	[h:abilityLevel = json.get(abilityInfo,"Level")]
 	[h,if(json.get(abilityInfo,"HasTiers")==1):

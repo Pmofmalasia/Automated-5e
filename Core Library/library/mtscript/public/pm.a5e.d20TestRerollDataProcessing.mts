@@ -7,8 +7,6 @@
     [h,if(json.get(RerollInfo,"ForcedAdvantage")=="" || json.get(RerollInfo,"ForcedAdvantage")==0),CODE:{
         [h:NewAdvantage = if(json.get(RerollInfo,"Advantage")=="",0,json.get(RerollInfo,"Advantage"))]
         [h:NewDisadvantage = if(json.get(RerollInfo,"Disadvantage")=="",0,json.get(RerollInfo,"Disadvantage"))]
-        [h:NewAdvantage = if(json.get(RerollInfo,"Advantage")=="",0,json.get(RerollInfo,"Advantage"))]
-        [h:NewDisadvantage = if(json.get(RerollInfo,"Disadvantage")=="",0,json.get(RerollInfo,"Disadvantage"))]
         [h:OldRollData = json.set(OldRollData,
             "Advantage",json.get(OldRollData,"Advantage")+NewAdvantage,
             "Disadvantage",json.get(OldRollData,"Disadvantage")+NewDisadvantage

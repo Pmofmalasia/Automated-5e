@@ -339,7 +339,7 @@
 		"BonusSectionNum",1,
 		"BonusSectionType1","Rules",
 		"BonusSectionStyling1","",
-		"Value",thisAttackToHit
+		"TableLineName","AttackRoll"+roll.count
 	)]
 
 	[h:abilityTable = json.append(abilityTable,ToHitTableLine)]

@@ -11,7 +11,6 @@
 [h:pm.a5e.FeatureComponentStdVars(arg(0))]
 
 [h:return(!IsTooltip)]
-[h:broadcast(AllEffectData)]
 [h,foreach(EffectData,AllEffectData),CODE:{
     [h:pm.a5e.FeatureModifyd20TestLoop()]
 }]

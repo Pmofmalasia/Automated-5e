@@ -1,15 +1,22 @@
 [h:abilityName = pm.RemoveSpecial(abilityName)]
 [h:abilitySubclass = pm.RemoveSpecial(abilitySubclass)]
-[h:DisplayArray = json.path.read(getProperty("a5e.stat.AllFeatures"),"[?(@.Name=='"+abilityName+"')]['Settings']")]
-[h,if(DisplayArray == "[]"),CODE:{
+[h:abilityInfo = json.path.read(getProperty("a5e.stat.AllFeatures"),"[?("+pm.a5e.PathFeatureFilter(json.set("","Name",abilityName,"Class",abilityClass,"Subclass",abilitySubclass))+")]")]
+[h:abilityPriorData = arg(0)]
+[h:ParentToken=json.get(abilityPriorData,"ParentToken")]
+
+[h,if(json.isEmpty(abilityInfo)):
+	assert(0,"Feature "+abilityDisplayName+" not found on "+getName(ParentToken)+"!");
+	abilityInfo = json.get(abilityInfo,0)
+]
+
+[h:DisplayArray = json.get(abilityInfo,"Settings")]
+[h,if(DisplayArray == ""),CODE:{
 	[h:DisplayObject = "{}"]
 };{
 	[h:DisplayObject = json.get(DisplayArray,0)]
 }]
 
-[h:abilityPriorData = arg(0)]
-[h:ParentToken=json.get(arg(0),"ParentToken")]
-[h:IsTooltip=json.get(arg(0),"IsTooltip")]
+[h:IsTooltip=json.get(abilityPriorData,"IsTooltip")]
 [h:Flavor=json.get(DisplayObject,"Flavor")]
 [h:DMOnly=if(json.get(DisplayObject,"DMOnly")=="",if(getProperty("a5e.stat.Allegiance")=="Enemy",min(number(getLibProperty("HideEnemyMacros","Lib:pm.a5e.Core")),1),if(getProperty("a5e.stat.Allegiance")=="Ally",min(number(getLibProperty("HideAllyMacros","Lib:pm.a5e.Core")),1),0)),json.get(DisplayObject,"DMOnly"))]
 [h:BorderColorOverride=json.get(DisplayObject,"BorderColorOverride")]
@@ -27,7 +34,10 @@
 [h:ShowFullRules=if(IsTooltip,1,if(ShowFullRulesOverride=="",if(getLibProperty("ChatIndividual","Lib:pm.a5e.Core")==1,getProperty("a5e.stat.FullAbilityRules"),getLibProperty("FullAbilityRules","Lib:pm.a5e.Core")),ShowFullRulesOverride))]
 [h:abilityTable="[]"]
 
-[h:abilityInfo = json.set("",
+[h:a5e.UnifiedAbilities = a5e.GatherAbilities(ParentToken)]
+[h:pm.a5e.OverarchingContext = "Feature"]
+
+[h:abilityInfo = json.set(abilityInfo,
 	"Flavor",Flavor,
 	"ParentToken",ParentToken,
 	"Tooltip",IsTooltip,
@@ -39,15 +49,15 @@
 	"AccentTextOverride",AccentTextOverride,
 	"TitleFont",TitleFont,
 	"BodyFont",BodyFont,
-	"Class",abilityClass,
+	"OverarchingContext",pm.a5e.OverarchingContext,
+	"Context","Feature",
 	"Type","Feature",
-	"Subclass",abilitySubclass,
-	"Name",abilityName,
 	"DisplayName",abilityDisplayName,
-	"FalseName",abilityFalseName
+	"FalseName",abilityFalseName,
+	"UnifiedAbilities",a5e.UnifiedAbilities
 )]
-		
-[h:abilityLevel = pm.GetAbilityLevel(abilityInfo)]
+
+[h:abilityLevel = json.get(abilityInfo,"Level")]
 
 [h:pm.a5e.BaseEffectData = json.set("",
 	"Class",abilityClass,
@@ -66,13 +76,5 @@
 	"Portrait",ForcedSummonPortrait,
 	"Handout",ForcedSummonHandout
 )]
-
-[h:a5e.UnifiedAbilities = a5e.GatherAbilities(ParentToken)]
-[h:abilityInfo = json.set(abilityInfo,
-	"Level",abilityLevel,
-	"UnifiedAbilities",a5e.UnifiedAbilities,
-	"Library",ability.json.get(abilityInfo,"Library")
-)]
-[h:pm.a5e.OverarchingContext = "Feature"]
 
 [h:FeatureDescription = if(ShowFullRules,FeatureFullDescription,FeatureAbridgedDescription)]

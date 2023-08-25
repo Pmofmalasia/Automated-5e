@@ -2,7 +2,7 @@
 [macro("Add Basic Macros@Lib:pm.a5e.Core"):""][h:RaceArray = pm.GetRaces()]
 [h:RaceOptions = json.path.read(RaceArray,"[*].DisplayName")]
 
-[h:charCreationHTML = "<tr><th><label for='charName'>Character Name:</label></th><td><input type='text' id='charName' name='charName' value='Name' autofocus></td></tr>
+[h:charCreationHTML = "<tr><th><label for='charName'>Character Name:</label></th><td><input type='text' id='charName' name='charName' autofocus></td></tr>
 <tr><th text-align='center' colspan='2'><label>Ability Score Selection</label></th></tr>"]
 
 [h:AttributeList = pm.GetAttributes()]

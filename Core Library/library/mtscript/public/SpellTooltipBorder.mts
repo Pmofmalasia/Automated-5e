@@ -4,8 +4,8 @@
 [h:Flavor = json.get(AllSpellData,"Flavor")]
 [h:SpellName = json.get(AllSpellData,"Spell")]
 [h:SpellData = pm.a5e.GetSpecificSpell(SpellName)]
-[h:SpellLevel = json.get(json.get(SpellData,0),"Level")]
-[h:DMOnly = 0]
+[h:SpellLevel = json.get(SpellData,"Level")]
+[h:DMOnly = (getProperty("a5e.stat.Allegiance") == "Enemy")]
 
 [h:AllSpellData = json.set(AllSpellData,"SpellData",SpellData)]
 [h,macro("SpellTooltip@Lib:pm.a5e.Core"): AllSpellData]
@@ -16,8 +16,9 @@
 
 [h:ClassFeatureData = json.set("",
     "DMOnly",DMOnly,
-    "Class","zzSpell"+SpellSource,
-    "ColorSubtype",SpellLevel,
+    "Class","Spell",
+    "ClassForDisplay","zzSpell",
+    "ColorSubtype",json.set("","Source",SpellSource,"Level",SpellLevel),
     "Name",pm.RemoveSpecial(SpellName),
     "DisplayName",SpellDisplayName,
     "Effect",SpellDescription,

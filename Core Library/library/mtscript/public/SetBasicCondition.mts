@@ -21,18 +21,18 @@
 
 [h,MACRO("ApplyCondition@Lib:pm.a5e.Core"): applyConditionData]
 
-[h:ConditionsAppliedInfo = macro.args]
+[h:ConditionsAppliedInfo = macro.return]
 [h:abilityTable = "[]"]
 [h:FeatureDescription = json.get(ConditionsAppliedInfo,"ConditionDisplay")+" applied by the GM."]
 
 [h:ClassFeatureData = json.set("",
 	"Flavor","",
 	"ParentToken",currentToken(),
-	"DMOnly",0,
+	"DMOnly",(getProperty("a5e.stat.Allegiance") == "Enemy"),
 	"Class","zzChecksAndSaves",
 	"Name","Apply Conditions",
 	"FalseName","",
-	"OnlyRules",0
+	"OnlyRules",1
 )]
 
 [h:FormattingData = pm.MacroFormat(ClassFeatureData)]

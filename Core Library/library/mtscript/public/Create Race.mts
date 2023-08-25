@@ -35,7 +35,7 @@
 	"Class",pm.RemoveSpecial(ra.Name),
 	"Subclass","",
 	"Level",1,
-	"CallSpeedSet",1,
+	"CallSpeed",1,
 	"CallLanguages",1,
 	"Library",ra.SourcebookLib
 )]

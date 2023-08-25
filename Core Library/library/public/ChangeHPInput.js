@@ -17,7 +17,7 @@ async function addDamageTypeRow(){
 
     let rowDamageType = table.insertRow(nextRowIndex);
     rowDamageType.id = "rowDamage"+nextInnateNumber;
-    rowDamageType.innerHTML = "<th><label for='DamageValue"+nextDamageTypeNumber+"'>Damage:</label></th><td><input type='number' id='DamageValue"+nextDamageTypeNumber+"' name='DamageValue"+nextDamageTypeNumber+"' value='0' min=0 style='width:30px'><select id='DamageType"+nextDamageTypeNumber+"' name='DamageType"+nextDamageTypeNumber+"'>"+DamageTypeOptions+"</select></td>";
+    rowDamageType.innerHTML = "<th><label for='DamageValue"+nextDamageTypeNumber+"'>Damage:</label></th><td><input type='number' id='DamageValue"+nextDamageTypeNumber+"' name='DamageValue"+nextDamageTypeNumber+"' min=0 style='width:30px'><select id='DamageType"+nextDamageTypeNumber+"' name='DamageType"+nextDamageTypeNumber+"'>"+DamageTypeOptions+"</select></td>";
     nextRowIndex++;
 
     document.getElementById("DamageTypeNumber").value = nextDamageTypeNumber;

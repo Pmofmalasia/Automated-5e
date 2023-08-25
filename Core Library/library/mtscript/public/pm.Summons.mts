@@ -1,6 +1,6 @@
 [h:pm.SummonName = json.get(arg(0),"SummonName")]
 [h:pm.SummonOptionNames = json.get(arg(0),"SummonOptions")]
-[h:pm.SummonCRMax = if(json.get(arg(0),"SummonCRMax") == "",9999,json.get(arg(0),"CR"))]
+[h:pm.SummonCRMax = json.get(arg(0),"CR")]
 [h:isSummonNumberCRBased = json.get(arg(0),"SummonNumberCRBased")]
 [h:pm.SummonNumber = json.get(arg(0),"SummonNumber")]
 [h:pm.SummonMultiplier = if(json.get(arg(0),"SummonNumberMultiplier") == "",1,json.get(arg(0),"SummonNumberMultiplier"))]
@@ -63,21 +63,24 @@
 ))]
 
 [h:pm.SummonUpdates = json.set("",
-	"x",getTokenX(0,ParentToken)+1,
-	"y",getTokenY(0,ParentToken),
-	"delta",0,
+	"x",1,
+	"y",0,
+	"relativeto","current",
 	"name",if(pm.ForcedSummonName == "",json.get(pm.SummonNames,pm.ChosenSummon),pm.ForcedSummonName),
 	"tokenImage",if(pm.ForcedSummonImage == "",json.get(pm.SummonImages,pm.ChosenSummon),pm.ForcedSummonImage),
 	"tokenPortrait",if(pm.ForcedSummonPortrait == "",json.get(pm.SummonPortraits,pm.ChosenSummon),pm.ForcedSummonPortrait),
 	"tokenHandout",if(pm.ForcedSummonHandout == "",json.get(pm.SummonHandouts,pm.ChosenSummon),pm.ForcedSummonHandout)
 )]
 
+[h,if(json.get(pm.SummonUpdates,"tokenPortrait") == ""): pm.SummonUpdates = json.remove(pm.SummonUpdates,"tokenPortrait")]
+[h,if(json.get(pm.SummonUpdates,"tokenHandout") == ""): pm.SummonUpdates = json.remove(pm.SummonUpdates,"tokenHandout")]
+
 [h:tempCRcheck = getProperty("CR",json.get(pm.SummonIDs,pm.ChosenSummon),"z.0 Wild Shapes")]
 [h,if(isSummonNumberCRBased==1),CODE:{
 	[h:pm.SummonNumber = if(or(tempCRcheck == (1/4),tempCRcheck == 0),8,if(tempCRcheck == (1/2),4,if(tempCRcheck == 1,2,1)))]
 }]
 
-[h:pm.SummonNumberFinal = (pm.SummonMultiplier*pm.SummonNumber)+pm.SummonBonus]
+[h:pm.SummonNumberFinal = number((pm.SummonMultiplier*pm.SummonNumber)+pm.SummonBonus)]
 
 [h:"<!-- Note: Summoned tokens require an image, portrait, and handout or else you will get an error. This goes for all tokens on the summons map. -->"]
-[h:copyToken(json.get(pm.SummonIDs,pm.ChosenSummon), pm.SummonNumberFinal, "z.0 Wild Shapes",pm.SummonUpdates)]
+[h:copyToken(json.get(pm.SummonIDs,pm.ChosenSummon),pm.SummonNumberFinal,"z.0 Wild Shapes",pm.SummonUpdates)]

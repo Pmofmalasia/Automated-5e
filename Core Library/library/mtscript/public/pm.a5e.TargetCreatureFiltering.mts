@@ -1,6 +1,8 @@
 [h:ParentToken = json.get(arg(0),"ParentToken")]
 [h:switchToken(ParentToken)]
+[h:ProvidedList = json.get(arg(0),"List")]
 [h:pm.TargetOrigin = json.get(arg(0),"Origin")]
+[h,if(pm.TargetOrigin == ""): pm.TargetOrigin = ParentToken]
 [h:rangeData = json.get(arg(0),"Range")]
 
 [h,if(json.type(rangeData)=="OBJECT"),CODE:{
@@ -49,20 +51,32 @@
 [h:pm.TargetIntMin = if(json.get(arg(1),"IntMin")=="",0,json.get(arg(1),"IntMin"))]
 [h:pm.TargetIntMax = if(json.get(arg(1),"IntMax")=="",999999,json.get(arg(1),"IntMax"))]
 
-[h,switch(pm.RangeNumFinal):
-	case "": pm.TargetsInRange = "[]";
-	case "Unlimited": pm.TargetsInRange = getTokens("json",json.set("","propertyType","A5ECreature"));
-	default: pm.TargetsInRange = getTokens("json",json.set("","propertyType","A5ECreature","range",json.set("","token",pm.TargetOrigin,"upto",pm.RangeNumFinal,"distancePerCell",1)))
-]
+[h,if(ProvidedList == ""),CODE:{
+	[h,switch(pm.RangeNumFinal):
+		case "": pm.TargetsInRange = "[]";
+		case "Unlimited": pm.TargetsInRange = getTokens("json",json.set("","propertyType","A5ECreature"));
+		default: pm.TargetsInRange = getTokens("json",json.set("","propertyType","A5ECreature","range",json.set("","token",pm.TargetOrigin,"upto",pm.RangeNumFinal,"distancePerCell",1)))
+	]
+};{
+	[h,if(pm.RangeNumFinal != "" && pm.RangeNumFinal != "Unlimited"),CODE:{
+		[h:pm.TargetsInRange = "[]"]
+		[h,foreach(tempTarget,ProvidedList): pm.TargetsInRange = if(getDistance(tempTarget,1,pm.TargetOrigin) <= pm.RangeNumFinal,json.append(pm.TargetsInRange,tempTarget),pm.TargetsInRange)]
+	};{
+		[h:pm.TargetsInRange = ProvidedList]
+	}]
+}]
 
 [h,if(json.get(pm.TargetAllegiance,"Self")==1 || json.get(pm.TargetAllegiance,"Any")==1),CODE:{
-	[h:pm.TargetSelf = 1]
-	[h:pm.TargetsInRange = json.append(pm.TargetsInRange,ParentToken)]
-	[h:pm.TargetAllegiance = json.remove(pm.TargetAllegiance,"Self")]
+	[h,if(ProvidedList == ""),CODE:{
+		[h:pm.TargetSelf = 1]
+		[h:pm.TargetsInRange = json.append(pm.TargetsInRange,ParentToken)]
+		[h:pm.TargetAllegiance = json.remove(pm.TargetAllegiance,"Self")]
 
-	[h:pm.SelfOnlyTest = 1]
-	[h,foreach(allegianceType,json.fields(pm.TargetAllegiance)): pm.SelfOnlyTest = if(json.get(pm.TargetAllegiance,allegianceType)==1,0,pm.SelfOnlyTest)]
-	[h:return(!pm.SelfOnlyTest,json.append("",ParentToken))]
+		[h:pm.SelfOnlyTest = 1]
+		[h,foreach(allegianceType,json.fields(pm.TargetAllegiance)): pm.SelfOnlyTest = if(json.get(pm.TargetAllegiance,allegianceType)==1,0,pm.SelfOnlyTest)]
+		[h:return(!pm.SelfOnlyTest,json.set("","ValidTargets",json.append("",ParentToken),"SelfOnly",1))]		
+	}]
+
 };{
 	[h:pm.TargetSelf = 0]
 }]
@@ -90,7 +104,7 @@
 	[h,if(pm.TargetSizeMin != ""):
 		pm.SizeTest = if(pm.a5e.CompareSizes(pm.TargetSizeMin,getSize(target)) > 0, 0, pm.SizeTest)
 	]
-	
+
 	[h,if(json.type(pm.TargetTypeInclusive) == "UNKNOWN"):
 		pm.TypeTest = if(or(pm.TargetTypeInclusive==getProperty("a5e.stat.CreatureType",target),pm.TargetTypeInclusive=="Any",pm.TargetTypeInclusive==""),1,0);
 		pm.TypeTest = if(json.contains(pm.TargetTypeInclusive,getProperty("a5e.stat.CreatureType",target)),1,0)
@@ -113,7 +127,9 @@
 	 
 	[h:pm.IntTest = if(and(json.get(getProperty("a5e.stat.Attributes",target),"Intelligence")>pm.TargetIntMin,json.get(getProperty("a5e.stat.Attributes",target),"Intelligence")<pm.TargetIntMax),1,0)]
    
-	[h:pm.ValidTargets = if(and(pm.AllegianceTest,pm.TypeTest,pm.SubtypeTest,pm.IntTest,pm.SizeTest),json.append(pm.ValidTargets,target),pm.ValidTargets)]
+	[h:AmountTargetIsVisible = canSeeToken(target,pm.TargetOrigin)]
+	[h:CanSeeTest = !json.isEmpty(AmountTargetIsVisible)]
+	[h,if(CanSeeTest): pm.ValidTargets = if(and(pm.AllegianceTest,pm.TypeTest,pm.SubtypeTest,pm.IntTest,pm.SizeTest),json.append(pm.ValidTargets,target),pm.ValidTargets)]
 }]
 
-[h:macro.return = pm.ValidTargets]
+[h:macro.return = json.set("","ValidTargets",pm.ValidTargets,"SelfOnly",0)]

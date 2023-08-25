@@ -28,26 +28,40 @@
     };
     case "Targets":{
         [h:targetData = json.get(json.get(allEffectData,whichEffect),"Targets")]
-        [h:"<!-- May want to add ability to return total number of targets here? -->"]
         [h:macro.return = targetData]
     };
     case "TargetOptions":{
         [h:targetOptionData = json.get(json.get(allEffectData,whichEffect),"TargetOptions")]
-        [h:"<!-- May want to add ability to return total number of targetOptions here? -->"]
         [h:macro.return = targetOptionData]
     };
     case "Range":{
         [h:rangeData = json.get(json.get(allEffectData,whichEffect),"Range")]
-        [h,if(json.type(componentToGetData)=="OBJECT"): rangeData = json.get(rangeData,json.get(componentToGetData,"SecondaryKey"))]
+        [h,if(json.type(componentToGetData)=="OBJECT"),CODE:{
+			[h,if(json.type(rangeData)=="OBJECT"):
+				rangeData = json.get(rangeData,json.get(componentToGetData,"SecondaryKey"));
+				rangeData = json.set("","Units","Variable")
+			]
+		};{}]
         [h:macro.return = rangeData]
     };
     case "Duration":{
         [h:durationData = json.get(json.get(allEffectData,whichEffect),"Duration")]
-        [h,if(json.type(componentToGetData)=="OBJECT"): durationData = json.get(durationData,json.get(componentToGetData,"SecondaryKey"))]
+        [h,if(json.type(componentToGetData)=="OBJECT"),CODE:{
+			[h,if(json.type(durationData)=="OBJECT"):
+				durationData = json.get(durationData,json.get(componentToGetData,"SecondaryKey"));
+				durationData = json.set("","Units","Variable")
+			]
+		};{}]
         [h:macro.return = durationData]
     };
     case "Resource":{
         [h:resourceData = json.get(json.get(allEffectData,whichEffect),"Resource")]
+		[h,if(json.type(resourceData)!="OBJECT"),CODE:{
+			[h,if(json.get(componentToGetData,"SecondaryKey") == "HitDieSize"):
+				return(0,6);
+				return(0,0)
+			]
+		};{}]
         [h,switch(json.get(componentToGetData,"SecondaryKey")),CODE:
             case "":{
                 [h:macro.return = resourceData]
@@ -80,21 +94,55 @@
     };
     case "Roll":{
         [h:rollData = json.get(json.get(allEffectData,whichEffect),"Roll")]
-        [h,if(json.type(componentToGetData)=="OBJECT"): rollData = json.get(rollData,json.get(componentToGetData,"SecondaryKey"))]
+        [h,if(json.type(componentToGetData)=="OBJECT"),CODE:{
+			[h,if(json.type(rollData)=="OBJECT"):
+				rollData = json.get(rollData,json.get(componentToGetData,"SecondaryKey"));
+				rollData = 0
+			]
+		};{}]
         [h:macro.return = rollData]
     };
     case "Damage":{
-        [h,if(json.type(componentToGetData)=="OBJECT"),CODE:{
-            [h:"<-- May need extra code blocks to have option to get multiple damage types totaled up (needs looping) AND have option to return all damage types dealt. Might be able to just do it by having blank one be set to blank array and be 'ignored' -->"]
-        };{
-            [h:damageData = json.get(json.get(allEffectData,whichEffect),"Damage")]
-            [h:totalDamage = 0]
-            [h,foreach(damageType,json.fields(damageData,"json")): totalDamage = totalDamage + if(damageType!="Healing" && damageType!="TempHP",json.get(damageData,damageType),0)]
-            [h:macro.return = totalDamage]
-        }]
+		[h:damageData = json.get(json.get(allEffectData,whichEffect),"Damage")]
+        [h:typesToGet = json.get(componentToGetData,"Types")]
+		[h:isCrit = json.get(componentToGetData,"isCrit")]
+
+		[h,if(typesToGet != ""):
+			validDamageInstances = json.path.read(damageData,"[*][?(@.DamageType in "+typesToGet+")]");
+			validDamageInstances = json.path.read(damageData,"[*][?(@.DamageType nin "+json.append("","Healing","TempHP")+")]")
+		]
+
+		[h,if(isCrit != ""),CODE:{
+			[h,if(json.isEmpty(validDamageInstances)):
+				returnedDamageFinal = 0;
+				returnedDamageFinal = math.arraySum(json.path.read(validDamageInstances,"[*]['"+if(isCrit,"Crit","")+"Total']"))
+			]
+		};{
+			[h,if(json.isEmpty(validDamageInstances)): return(0,json.set("","Total",0,"CritTotal",0))]
+			[h:returnedDamage = math.arraySum(json.path.read(validDamageInstances,"[*]['Total']"))]
+			[h:returnedCritDamage = math.arraySum(json.path.read(validDamageInstances,"[*]['CritTotal']"))]
+			[h:returnedDamageFinal = json.set("","Total",returnedDamage,"CritTotal",returnedCritDamage)]
+		}]
+
+		[h:return(0,returnedDamageFinal)]	
     };
     case "Condition":{
         
+    };
+    case "TargetedConditions":{
+		[h,if(json.type(componentToGetData)=="UNKNOWN"): return(0,json.get(json.get(allEffectData,whichEffect),"TargetedConditions"))]
+		
+		[h,switch(json.get(componentToGetData,"SecondaryKey")),CODE:
+			case "Separate":{
+				[h:macro.return = json.get(json.get(allEffectData,whichEffect),"TargetedConditions")]
+			};
+			case "Combined":{
+				[h:AllConditionGroups = "[]"]
+				[h:tempConditionTargets = json.get(json.get(allEffectData,whichEffect),"TargetedConditions")]
+				[h,foreach(target,json.fields(tempConditionTargets)): AllConditionGroups = json.merge(AllConditionGroups,json.get(tempConditionTargets,target))]
+				[h:macro.return = AllConditionGroups]
+			}
+		]
     };
     case "TargetedEffects":{
         [h:macro.return = json.get(json.get(allEffectData,whichEffect),"TargetedEffects")]

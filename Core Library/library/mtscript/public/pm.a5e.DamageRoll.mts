@@ -26,30 +26,71 @@
 [h:damage.Type = json.get(damage.ThisInstance,"DamageType")]
 [h:damage.AllDice = "[]"]
 [h:damage.AllCritDice = "[]"]
-[h:damage.DieNumber = json.get(damage.ThisInstance,"DamageDieNumber")]
+[h:damage.DieNumber = number(json.get(damage.ThisInstance,"DamageDieNumber"))]
 [h:damage.DieSize = json.get(damage.ThisInstance,"DamageDieSize")]
 
 [h,if(json.contains(damage.ThisInstance,"AHLDieNum")): damage.DieNumber = damage.DieNumber + (damage.Scaling * json.get(damage.ThisInstance,"AHLDieNum"))]
 
 [h:damage.CritDieNumber = damage.DieNumber]
+[h,if(json.get(damage.ThisInstance,"BonusCritDice")!=""): damage.CritDieNumber = damage.CritDieNumber + json.get(damage.ThisInstance,"BonusCritDice")]
 
 [h,count(damage.DieNumber): damage.AllDice = json.append(damage.AllDice,damage.DieSize)]
-[h:damage.Rules = damage.DieNumber+"d"+damage.DieSize]
+[h,if(damage.DieNumber==0):
+	damage.Rules = "";
+	damage.Rules = damage.DieNumber+"d"+damage.DieSize
+]
 
 [h,count(damage.CritDieNumber): damage.AllCritDice = json.append(damage.AllCritDice,damage.DieSize)]
-[h:damage.CritRules = damage.CritDieNumber+"d"+damage.DieSize]
+[h,if(damage.CritDieNumber==0): 
+	damage.CritRules = "";
+	damage.CritRules = damage.CritDieNumber+"d"+damage.DieSize
+]
 
-[h:damage.FlatBonus = json.get(damage.ThisInstance,"DamageFlatBonus")]
-[h:damage.IsModBonus = json.get(damage.ThisInstance,"IsModBonus")]
+[h:damage.FlatBonus = number(json.get(damage.ThisInstance,"DamageFlatBonus"))]
+[h:damage.IsModBonus = number(json.get(damage.ThisInstance,"IsModBonus"))]
 
 [h,if(json.contains(damage.ThisInstance,"AHLFlatBonus")): damage.FlatBonus = damage.FlatBonus + (damage.Scaling * json.get(damage.ThisInstance,"AHLFlatBonus"))]
 
-[h:damage.FlatBonusRules = if(damage.IsModBonus,substring(PrimeStat,0,3),"")]
-[h,if(damage.FlatBonus==0): listAppend(damage.FlatBonusRules,damage.FlatBonus," + ")]
+[h:damage.PrimeStat = json.get(damage.NonDamageData,"PrimeStat")]
+[h,if(damage.IsModBonus):
+    damage.FlatBonusRules = substring(damage.PrimeStat,0,3);
+    damage.FlatBonusRules = ""
+]
+[h,if(damage.FlatBonus!=0): listAppend(damage.FlatBonusRules,damage.FlatBonus," + ")]
 
-[h:"<!-- TODO: needs primestatmod sent somehow -->"]
-[h,if(damage.IsModBonus): damage.PrimeStatBonus = PrimeStatMod; damage.PrimeStatBonus = 0]
+[h,if(damage.IsModBonus),CODE:{
+    [h:damage.PrimeStatMod = json.get(getProperty("a5e.stat.AtrMods"),damage.PrimeStat)]
+    [h:damage.PrimeStatBonus = damage.PrimeStatMod]
+};{
+    [h:damage.PrimeStatMod = 0]
+    [h:damage.PrimeStatBonus = 0]
+}]
 [h:damage.FlatBonusTotal = damage.PrimeStatBonus + damage.FlatBonus]
+
+[h:damage.PriorPercentBonus = 0]
+[h:damage.PriorCritPercentBonus = 0]
+[h,if(json.contains(damage.ThisInstance,"PriorDamagePercent")),CODE:{
+	[h:getPriorDamageData = json.set("","Main","Damage")]
+
+	[h:damage.PriorDamageData = pm.a5e.GetEffectComponent(pm.a5e.EffectData,getPriorDamageData,ParentSubeffectNum)]
+	[h:damage.PriorDamage = json.get(damage.PriorDamageData,"Total")]
+	[h:damage.ParentCritDamage = json.get(damage.PriorDamageData,"CritTotal")]
+
+	[h:damage.PriorPercent = number(json.get(damage.ThisInstance,"PriorDamagePercent"))]
+
+	[h:damage.PriorPercentBonus = floor(damage.PriorPercent * damage.PriorDamage)]
+	[h:damage.PriorCritPercentBonus = floor(damage.PriorPercent * damage.ParentCritDamage)]
+
+	[h,switch(damage.PriorPercent):
+		case 1: damage.PriorPercentRules = "Prior Damage";
+		case 0: damage.PriorPercentRules = "";
+		case "0.5": damage.PriorPercentRules = "Half of Prior Damage";
+		case "0.25": damage.PriorPercentRules = "Quarter of Prior Damage";
+		default: damage.PriorPercentRules = (damage.PriorPercent * 100)+"% of Prior Damage"
+	]
+};{
+	[h:damage.PriorPercentRules = ""]
+}]
 
 [h:damage.AddedRolledRules = ""]
 [h:damage.AddedFlatBonusRules = ""]
@@ -59,31 +100,56 @@
 [h:"<!-- TODO: Needs transmission of targets through NonDamageData or whatever it's called -->"]
 [h,foreach(tempPrefix,damage.FunctionPrefixes),CODE:{
     [h:pm.PassiveFunction(tempPrefix+"Damage")]
-    [h:pm.PassiveFunction(tempPrefix+"DamageTargeted",json.set("","ParentToken",json.get(damage.NonDamageData,"Target")))]
+    [h,if(json.get(damage.NonDamageData,"Target")!=""): pm.PassiveFunction(tempPrefix+"DamageTargeted",json.set("","ParentToken",json.get(damage.NonDamageData,"Target")))]
 }]
 
-[h:damage.RulesFinal = damage.Rules+if(damage.AddedRolledRules=="",""," + "+damage.AddedRolledRules)+if(damage.FlatBonusRules=="",""," + "+damage.FlatBonusRules)+if(damage.AddedFlatBonusRules=="",""," + "+damage.AddedFlatBonusRules)]
-[h:damage.CritRulesFinal = damage.Rules+" + "+damage.CritRules+if(damage.AddedRolledRules=="",""," + "+damage.AddedRolledRules+" + "+damage.AddedRolledRules)+if(damage.FlatBonusRules=="",""," + "+damage.FlatBonusRules)+if(damage.AddedFlatBonusRules=="",""," + "+damage.AddedFlatBonusRules)]
+[h:damage.RulesFinal = damage.Rules + damage.AddedRolledRules + if(damage.FlatBonusRules=="",""," + "+damage.FlatBonusRules) + damage.AddedFlatBonusRules + if(damage.PriorPercentRules=="",""," + "+damage.PriorPercentRules)]
+[h:damage.CritRulesFinal = damage.Rules+" + "+damage.CritRules + damage.AddedRolledRules + damage.AddedRolledRules+if(damage.FlatBonusRules=="",""," + "+damage.FlatBonusRules) + damage.AddedFlatBonusRules + if(damage.PriorPercentRules=="",""," + "+damage.PriorPercentRules)]
 
 [h:damage.FinalDice = json.merge(damage.AllDice,damage.AddedRolledDice)]
 [h:damage.Array = "[]"]
-[h,foreach(die,damage.FinalDice): damage.Array = json.append(damage.Array,eval("1d"+die))]
+[h,foreach(die,damage.FinalDice),CODE:{
+	[h,if(die > 0):
+		damage.Array = json.append(damage.Array,eval("1d"+die));
+		damage.Array = json.append(damage.Array,-eval("1d"+abs(die)))
+	]
+}]
 [h,if(json.isEmpty(damage.AddedFlatBonus)):
     damage.TotalAddedFlatBonus = damage.FlatBonusTotal;
     damage.TotalAddedFlatBonus = math.arraySum(damage.AddedFlatBonus) + damage.FlatBonusTotal
 ]
 
-[h:damage.Total = math.arraySum(damage.Array) + damage.TotalAddedFlatBonus]
-[h:damage.RollDisplay = json.toList(damage.Array," + ")+pm.PlusMinus(damage.PrimeStatBonus,damage.IsModBonus)+pm.PlusMinus(damage.FlatBonus,0)+if(json.isEmpty(damage.AddedFlatBonus),""," + "+json.toList(damage.AddedFlatBonus," + "))]
-[h:damage.Max = math.arraySum(damage.FinalDice) + damage.TotalAddedFlatBonus]
+[h,if(json.isEmpty(damage.Array)):
+    damage.Total = damage.TotalAddedFlatBonus;
+    damage.Total = math.arraySum(damage.Array) + damage.TotalAddedFlatBonus
+]
+[h:damage.FlatDisplay = pm.PlusMinus(damage.PrimeStatBonus,damage.IsModBonus)+pm.PlusMinus(damage.FlatBonus,0)+if(json.isEmpty(damage.AddedFlatBonus),""," + "+json.toList(damage.AddedFlatBonus," + "))+pm.PlusMinus(damage.PriorPercentBonus,0)]
+[h:damage.RollDisplay = json.toList(damage.Array," + ")+damage.FlatDisplay]
+[h,if(json.isEmpty(damage.FinalDice)):
+    damage.Max = damage.TotalAddedFlatBonus;
+    damage.Max = math.arraySum(damage.FinalDice) + damage.TotalAddedFlatBonus
+]
+
+[h:damage.Total = damage.Total + damage.PriorPercentBonus]
 
 [h:"<!-- TODO: Temporarily separate out addedRolledDice and regular rolled dice array so the order can be natty dice, natty crit dice, added dice, added crit dice in the array -->"]
 [h:damage.FinalCritDice = json.merge(damage.AllCritDice,damage.AddedRolledDice)]
-[h:damage.CritArray = damage.Array]
-[h,foreach(die,damage.FinalCritDice): damage.CritArray = json.append(damage.CritArray,eval("1d"+die))]
-[h:damage.CritTotal = math.arraySum(damage.CritArray) + damage.TotalAddedFlatBonus]
-[h:damage.CritRollDisplay = json.toList(damage.CritArray," + ")+pm.PlusMinus(damage.PrimeStatBonus,damage.IsModBonus)+pm.PlusMinus(damage.FlatBonus,0)+if(json.isEmpty(damage.AddedFlatBonus),""," + "+json.toList(damage.AddedFlatBonus," + "))]
-[h:damage.CritMax = math.arraySum(damage.FinalCritDice) + damage.TotalAddedFlatBonus]
+[h:damage.CritArray = "[]"]
+[h,foreach(die,damage.FinalCritDice),CODE:{
+	[h,if(die > 0):
+		damage.CritArray = json.append(damage.CritArray,eval("1d"+die));
+		damage.CritArray = json.append(damage.CritArray,-eval("1d"+abs(die)))
+	]
+}]
+[h,if(json.isEmpty(damage.CritArray)):
+    damage.CritTotal = damage.Total;
+    damage.CritTotal = math.arraySum(damage.CritArray) + damage.Total
+]
+[h:damage.CritRollDisplay = json.toList(damage.Array," + ")+" + "+json.toList(damage.CritArray," + ")+damage.FlatDisplay]
+[h,if(json.isEmpty(damage.FinalCritDice)):
+    damage.CritMax = damage.Max;
+    damage.CritMax = math.arraySum(damage.FinalCritDice) + damage.Max
+]
 
 [h:damage.NonDamageData = json.remove(damage.NonDamageData,"Target")]
 [h:return(0,json.set(damage.NonDamageData,
@@ -93,6 +159,7 @@
     "MaxTotal",damage.Max,
     "Dice",damage.FinalDice,
     "Bonus",damage.TotalAddedFlatBonus,
+    "BonusString",damage.FlatDisplay,
     "Formula",damage.RulesFinal,
     "CritFormula",damage.CritRulesFinal,
     "CritDice",damage.FinalCritDice,

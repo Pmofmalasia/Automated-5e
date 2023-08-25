@@ -2,12 +2,13 @@
 [h:Flavor = json.get(SaveData,"Flavor")]
 [h:ParentToken = json.get(SaveData,"ParentToken")]
 [h:outputTargets = json.get(SaveData,"PCOutput")]
+[h,if(outputTargets == ""): outputTargets = "not-gm"]
 
 [h:"<!-- Note: If changes are made to outputTargets, a new method may need to be used to determine if it is GM only or not. Also may need a different method anyway for passive skills. -->"]
 [h:ClassFeatureData = json.set("",
 	"Flavor",Flavor,
 	"ParentToken",ParentToken,
-	"DMOnly",if(json.get(SaveData,"OutputTargets")=="none",1,0),
+	"DMOnly",(getProperty("a5e.stat.Allegiance") == "Enemy"),
 	"BorderColorOverride",json.get(SaveData,"BorderColorOverride"),
 	"TitleFontColorOverride",json.get(SaveData,"TitleFontColorOverride"),
 	"AccentBackgroundOverride",json.get(SaveData,"AccentBackgroundOverride"),

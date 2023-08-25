@@ -78,6 +78,6 @@
 [h:setProperty("a5e.stat.Allegiance",json.get(newCharData,"allegianceChoice"))]
 [h:setProperty("a5e.stat.whichTeam",if(getProperty("a5e.stat.Allegiance")=="Enemy",2,if(getProperty("a5e.stat.Allegiance")=="Neutral",0,1)))]
 
-[macro("BackgroundSelection@Lib:pm.a5e.Core"): ParentToken]
+[h,macro("BackgroundSelection@Lib:pm.a5e.Core"): ParentToken]
 [h:lu.NewAbilities = json.append(lu.NewAbilities,macro.return)]
-[macro("LevelUp@Lib:pm.a5e.Core"): json.set("","ParentToken",ParentToken,"Abilities",lu.NewAbilities)]
+[h,macro("LevelUp@Lib:pm.a5e.Core"): json.set("","ParentToken",ParentToken,"Abilities",lu.NewAbilities)]

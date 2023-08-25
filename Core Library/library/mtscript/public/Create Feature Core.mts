@@ -2,7 +2,6 @@
 [h:ab.ClassList = pm.GetClasses("DisplayName",",")]
 [h:ab.AtrList = pm.GetAttributes("DisplayName")]
 [h:ab.LevelList = "None,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20"]
-
 [h:ab.Final = json.get(macro.args,"Feature")]
 [h:ab.Type = json.get(ab.Final,"Type")]
 [h:ab.Prereqs = json.get(macro.args,"PrereqsTest")]
@@ -18,7 +17,8 @@
 
 [h:abort(input(
 	" junkVar | --------------------- Miscellaneous Choices on Gaining Feature --------------------- |  | LABEL | SPAN=TRUE ",
-	" ab.IsSpellList | None,Preset Spells,Chosen When Gained,Mix of Both | <html><span title='Note: This ONLY applies for abilities that grant the spell for use with spell slots or as a cantrip (e.g. would NOT apply for tiefling innate spells, but would for cleric domain spells)'>Feature adds known spells</span></html> | LIST ",
+	" ab.IsSpellList | None,Preset Spells,Chosen When Gained,Mix of Both | <html><span title='Note: This ONLY applies for abilities that grant the spell for use with spell slots or as a cantrip (e.g. would NOT apply for tiefling innate spells, but would for cleric domain spells)'>Feature adds known/always prepared spells</span></html> | LIST ",
+	" ab.IsSpellOptions | None,Preset Spells,Chosen When Gained,Mix of Both | <html><span title='Note: This ONLY applies for abilities that grant the spell for use with spell slots or as a cantrip (e.g. would NOT apply for tiefling innate spells, but would for cleric domain spells)'>Feature adds spells to choose from</span></html> | LIST ",
 	" ab.IsFightingStyles | 0 | Feature grants access to fighting styles | CHECK ",
 	" junkVar | ------------------------------------------------------------------------------------------------------- |  | LABEL | SPAN=TRUE ",
 	" ab.PrimeAttribute | None,"+ab.AtrList+",Variable | <html><span title='Variable option is mostly for feats that have you choose a stat. NOTE: This selection will not also grant the +1 or whatever bonus to that stat, that must be done separately later.'>Primary stat for feature</span></html> | LIST | VALUE=STRING ",
@@ -59,8 +59,9 @@
 
 	[h:"<!-- Note: pm.RemoveSpecial call is correctly left out here so DisplayName can be used for choosing the attribute. pm.RemoveSpecial happens after the choice. -->"]
 	[h,if(ab.AttrDescMethod == "Choice"),CODE:{
-		[h:ab.PrimeOptions = json.set("","ChoiceMethod","Choice")]
-		[h,foreach(TempAtr,ab.AtrList): ab.PrimeOptions = json.set(ab.PrimeOptions,TempAtr,eval("ab."+pm.RemoveSpecial(TempAtr)+"Option"))]
+		[h:ab.PrimeOptionArray = "[]"]
+		[h,foreach(TempAtr,ab.AtrList): ab.PrimeOptionArray = if(eval("ab."+pm.RemoveSpecial(TempAtr)+"Option"),json.append(ab.PrimeOptionArray,TempAtr),PrimeOptionArray)]
+		[h:ab.PrimeOptions = json.set("","ChoiceMethod","Choice","Stats",PrimeOptionArray)]
 		[h:ab.Final = json.set(ab.Final,"PrimeStatOptions",ab.PrimeOptions)]
 	};{}]
 	
@@ -124,6 +125,9 @@
 [h:DoneAddingSpellsTest = 0]
 [h:ab.SpellOptionsUpdates = "{}"]
 [h:ab.SpellOptions = ""]
+
+[h:"<!-- TODO: This (and any if statements involving ab.IsSpellOptions) is a temp fix for the old interface. Will need to add a separate check for ab.IsSpellOptions in final interface. Will also need to pick WHICH filter to add to (e.g. not to both cantrips and leveled spells) -->"]
+[h:ab.IsSpellList = ab.IsSpellOptions]
 [h,while(DoneAddingSpellsTest < 2 && ab.IsSpellList>=2),CODE:{
 	[h:NewFilterLevel = ab.Level]
 	[h:ReuseFilter = 0]
@@ -167,7 +171,10 @@
 }]
 
 [h,if(ab.IsSpellList>=2),CODE:{
-	[h:ab.Final = json.set(ab.Final,"SpellOptions",ab.SpellOptions)]
+	[h,if(ab.IsSpellOptions > 0): 
+		ab.Final = json.set(ab.Final,"AddedSpellOptions",ab.SpellOptions);
+		ab.Final = json.set(ab.Final,"SpellOptions",ab.SpellOptions)
+	]
 	[h,foreach(tempLevel,json.fields(ab.SpellOptionsUpdates)): ab.Updates = json.set(ab.Updates,tempLevel,json.set(json.get(ab.Updates,tempLevel),"SpellOptions",json.get(ab.SpellOptionsUpdates,tempLevel)))]
 };{
 	[h:ab.SpellOptions=""]
@@ -175,6 +182,16 @@
 
 [h,if(ab.IsSpellList>=1),CODE:{
 	[h:ab.Final = json.set(ab.Final,"CallSpellClass",1)]
+};{}]
+
+[h,if(ab.IsSpellOptions >= 1),CODE:{
+	[h:abort(input(
+		" pickSpellOptionsFeature |  | Feature Added to Name ",
+		" pickSpellOptionsClass |  | Feature Added to Class ",
+		" pickSpellOptionsSubclass |  | Feature Added to Subclass "
+	))]
+
+	[h:ab.Final = json.set(ab.Final,"AddedSpellOptionsFeature",json.set("","Name",pm.RemoveSpecial(pickSpellOptionsFeature),"Class",pm.RemoveSpecial(pickSpellOptionsClass),"Subclass",pm.RemoveSpecial(pickSpellOptionsSubclass)))]
 };{}]
 
 [h:"<!-- Need to check the library of the fighting styles so fighting styles from different libraries from the base ability are added to a duplicate ability on the same library -->"]
@@ -185,7 +202,7 @@
 	[h,foreach(TempFS,FightingStyleOptions): fs.Input = listAppend(fs.Input," pm.Choose"+json.get(TempFS,"Name")+" |  | "+json.get(TempFS,"DisplayName")+" | CHECK ","##")]
 	
 	[h:abort(input(fs.Input," junkVar | Note: Any fighting styles not added previously can be added to this list on fighting style creaton. |  | LABEL | SPAN=TRUE "))]
-	
+
 	[h:fs.ChoicesFinal = "[]"]
 	[h:fs.OtherLibOptions = "{}"]
 	[h,foreach(TempFS,FightingStyleOptions),CODE:{
@@ -194,7 +211,7 @@
 			fs.OtherLibOptions = if(eval("pm.Choose"+json.get(TempFS,"Name")),json.set(fs.OtherLibOptions,json.get(TempFS,"Library"),json.append(json.get(fs.OtherLibOptions,json.get(TempFS,"Library")),json.get(TempFS,"Name"))),fs.OtherLibOptions)
 		]
 	}]
-	
+
 	[h:ab.Final = json.set(ab.Final,"FightingStyleList",fs.ChoicesFinal)]
 };{}]
 
@@ -208,10 +225,10 @@
 		[h:ab.DamageOptions = json.set("","DamageTypes",json.append("","All_Types"))]
 	};{
 		[h:ab.TypesChosen = ""]
-		[h,foreach(dmgType,pm.GetDamageTypes()): ab.TypesChosen = if(eval("temp."+json.get(dmgType,"Name")),json.append(ab.TypesChosen,dmgType),ab.TypesChosen)]
+		[h,foreach(dmgType,pm.GetDamageTypes("Name","json")): ab.TypesChosen = if(eval("temp."+dmgType),json.append(ab.TypesChosen,dmgType),ab.TypesChosen)]
 		[h:ab.DamageOptions = json.set("","DamageTypes",ab.TypesChosen,"Inclusive",!ab.DamageTypeInclusive)]
 	}]
-	
+
 	[h:ab.Final = json.set(ab.Final,"DamageOptions",ab.DamageOptions)]
 };{}]
 
@@ -243,7 +260,7 @@
 		" ab.WeaponProfPrereq | None,One,Multiple | Has required weapon proficiencies | LIST ",
 		" ab.ArmorProfPrereq | None,One,Multiple | Has required armor proficiencies | LIST ",
 		" ab.SpellPrereq |  | Requires the ability to cast spells | CHECK "
-		))]
+	))]
 	
 	[h,if(ab.LevelPrereq>0): ab.PrereqsFinal = json.set(ab.PrereqsFinal,"Level",ab.LevelPrereq)]
 	
@@ -266,7 +283,7 @@
 	[h,while(ab.SubclassPrereq>0 && ab.SubclassLoop == 1),CODE:{
 		[h:abort(input(
 			" ab.ClassTemp | "+pm.GetClasses("DisplayName")+" | Class of prerequisite subclass | LIST "
-			))]
+		))]
 		[h:ab.ClassTemp = pm.RemoveSpecial(ab.ClassTemp)]
 		[h:ab.SubclassPrereqDis = ""]
 		[h,foreach(Subclass,pm.GetSubclasses(ab.ClassTemp)): ab.SubclassPrereqDis = listAppend(ab.SubclassPrereqDis," ab.Choice"+Subclass+" |  | "+Subclass+" | CHECK ","##")]
@@ -321,8 +338,7 @@
 		
 		[h:ab.PrereqsFinal = json.set(ab.PrereqsFinal,"Features",ab.FeaturePrereqs,"FeatureNum",ab.PrereqFeatureNumRequired)]
 	}]
-		
-	
+
 	[h,if(ab.RacePrereq>0 || ab.SubracePrereq>0),CODE:{
 		[h:ab.RaceList = pm.GetRaces("DisplayName","json")]
 		[h:ab.RacePrereqDis = ""]
@@ -354,20 +370,32 @@
 
 	[h,if(ab.AttrPrereq),CODE:{
 		[h:ab.AtrPreInput = ""]
-		[h,foreach(TempAtr,ab.AtrList): ab.AtrPreInput = listAppend(ab.AtrPreInput," ab."+json.get(TempAtr,"Name")+"Prereq | "+ab.LevelList+" | "+json.get(TempAtr,"DisplayName")+" Prerequisite | LIST ","##")]
+		[h,foreach(TempAtr,ab.AtrList): ab.AtrPreInput = listAppend(ab.AtrPreInput," ab."+pm.RemoveSpecial(TempAtr)+"Prereq | "+ab.LevelList+" | "+TempAtr+" Prerequisite | LIST ","##")]
 		[h:abort(input(
-	" junkVar | ---------------------- Attribute Prerequisite Info ---------------------- |  | LABEL | SPAN=TRUE ",
-	" ab.AttrAllOrOne | All,One | Requires all of the below to be met or just one | RADIO | SELECT=1 ",
-	ab.AtrPreInput
+			" junkVar | ---------------------- Attribute Prerequisite Info ---------------------- |  | LABEL | SPAN=TRUE ",
+			" ab.AttrAllOrOne | All,One | Requires all of the below to be met or just one | RADIO | SELECT=1 ",
+			ab.AtrPreInput
 		))]
 
 		[h:ab.AtrPreChoices = ""]
 		[h:ab.AttrPrereqCount = 0]
-		[h,foreach(TempAtr,ab.AtrList): ab.AtrPreChoices = json.set(ab.AtrPreChoices,json.get(TempAtr,"Name"),eval("ab."+json.get(TempAtr,"Name")+"Prereq"))]
-		[h,foreach(TempAtr,ab.AtrList): ab.AttrPrereqCount = if(ab.AttrAllOrOne,1,if(eval("ab."+json.get(TempAtr,"Name")+"Prereq")>0,ab.AttrPrereqCount+1,ab.AttrPrereqCount))]
+		[h,foreach(TempAtr,ab.AtrList): ab.AtrPreChoices = json.set(ab.AtrPreChoices,pm.RemoveSpecial(TempAtr),eval("ab."+pm.RemoveSpecial(TempAtr)+"Prereq"))]
+		[h,foreach(TempAtr,ab.AtrList): ab.AttrPrereqCount = if(ab.AttrAllOrOne,1,if(eval("ab."+pm.RemoveSpecial(TempAtr)+"Prereq")>0,ab.AttrPrereqCount+1,ab.AttrPrereqCount))]
 		[h:ab.AtrPreChoices = json.set(ab.AtrPreChoices,"AllOrOne",ab.AttrPrereqCount)]
 		[h:ab.PrereqsFinal = json.set(ab.PrereqsFinal,"Attributes",ab.AtrPreChoices)]
 	};{}]
+
+	[h,if(ab.SpellPrereq),CODE:{
+		[h:abort(input(
+			" junkVar | ---------------------- Spellcasting Prerequisite Info ---------------------- |  | LABEL | SPAN=TRUE ",
+			" ab.AnySpellcasting |  | Requires the ability to cast any spell |  CHECK ",
+			" ab.SpecificSpell |  | Requires the ability to cast a specific spell |  CHECK "
+		))]
+
+		[h,if(ab.AnySpellcasting): ab.PrereqsFinal = json.set(ab.PrereqsFinal,"Spellcasting","Any")]
+		[h,if(ab.SpecificSpell): ab.PrereqsFinal = json.set(ab.PrereqsFinal,"SpecificSpell","Any")]
+	};{}]
+
 	[h:ab.Final = json.set(ab.Final,"Prereqs",ab.PrereqsFinal)]
 };{}]
 
@@ -385,7 +413,6 @@
 	[h,if(ab.RestoreRechargeRoll),CODE:{
 		[h:"<!-- TODO: When converted to dialog, add functionality for more die sizes --> "]
 		[h:abort(input(
-			" RechargeCharges | 0,1,2,3,4,5,6 | Uses Before Recharge | LIST | SELECT=1 ",
 			" RechargeNumber | 0,1,2,3,4,5,6 | Minimum Number for Recharge | LIST | SELECT=5 "
 		))]
 
@@ -434,6 +461,7 @@
 	" ab.DamageMod | 0 | Affects damage modifiers (e.g. Resistances) | CHECK ",
 	" ab.CondImmun | 0 | Affects condition immunities | CHECK ",
 	" ab.Speed | 0 | Affects movement speed | CHECK ",
+	" ab.CarryCapacity | 0 | Affects carrying capacity | CHECK ",
 	" ab.Languages | 0 | Affects languages known | CHECK ",
 	" ab.Senses | 0 | Affects senses | CHECK ",
 	" junkVar | --------------------------------------------------------------------------------------------------------------------- | 0 | LABEL | SPAN=TRUE ",
@@ -448,12 +476,19 @@
 	" ab.Spells | 0 | Affects spells | CHECK ",
 	" ab.OtherAbilities | 0 | Affects other features | CHECK ",
 	" ab.OtherConditions | 0 | Affects conditions you have set on others | CHECK ",
+	" ab.Targeting | 0 | Affects ability to target creatures | CHECK ",
 	" ab.WhenTargeted | 0 | Effect triggers when you are targeted | CHECK ",
+	" ab.UseTime | 0 | Affects time required to use abilities | CHECK ",
+	" ab.InteractTime | 0 | Affects time required to interact with objects | CHECK ",
+	" ab.ChangePrereqs | 0 | Affects requirements for other features to be activated | CHECK ",
+	" junkVar | --------------------------------------------------------------------------------------------------------------------- | 0 | LABEL | SPAN=TRUE ",
+	" ab.EffectResolve | 0 | Effect triggers after resolving another effect | CHECK ",
+	" ab.EffectResolveTargeted | 0 | Effect triggers after effect resolved on you | CHECK ",
 	" junkVar | --------------------------------------------------------------------------------------------------------------------- | 0 | LABEL | SPAN=TRUE ",
 	" ab.Damaged | 0 | Effect triggers when damaged | CHECK ",
 	" ab.CondGain | 0 | Effect triggers when gaining a condition | CHECK ",
 	" ab.CondEnd | 0 | Effect triggers when ending a condition | CHECK ",
-	" ab.Rest | 0 | Effect triggers after rests | CHECK ",
+	" ab.Rest | 0 | Effect triggers during or after rests | CHECK ",
 	" ab.HitDie | 0 | Effect triggers after spending Hit Dice | CHECK ",
 	" ab.StartTurn | 0 | Effect triggers on start of turn | CHECK ",
 	" ab.EndTurn | 0 | Effect triggers on end of turn | CHECK ",
@@ -644,6 +679,8 @@
 	)]
 };{}]
 
+[h,if(ab.CarryCapacity): ab.Final = json.set(ab.Final,"CallCarryCapacity",1)]
+
 [h,if(ab.Languages),CODE:{
 	[h:ab.Final = json.set(ab.Final,
 		"CallLanguages",1
@@ -671,7 +708,7 @@
 	[h,if(ab.CheckBonus): ab.Final = json.set(ab.Final,"CallCheckBonus",ab.CheckBonus)]
 	[h,if(ab.CheckProf): ab.Final = json.set(ab.Final,"CallCheckProf",ab.CheckProf)]
 	[h,if(ab.CheckMsg): ab.Final = json.set(ab.Final,"CallAfterCheck",ab.CheckMsg)]
-	[h,if(ab.CheckSuccess): ab.Final = json.set(ab.Final,"CallCheckSuccess",ab.CheckSuccess)]
+	[h,if(ab.CheckSuccess): ab.Final = json.set(ab.Final,"CallCheckAutoResult",ab.CheckSuccess)]
 };{}]
 
 [h,if(ab.Save),CODE:{
@@ -688,7 +725,7 @@
 	[h,if(ab.SaveBonus): ab.Final = json.set(ab.Final,"CallSaveBonus",ab.SaveBonus)]
 	[h,if(ab.SaveProf): ab.Final = json.set(ab.Final,"CallSaveProf",ab.SaveProf)]
 	[h,if(ab.SaveMsg): ab.Final = json.set(ab.Final,"CallAfterSave",ab.SaveMsg)]
-	[h,if(ab.SaveSuccess): ab.Final = json.set(ab.Final,"CallSaveSuccess",ab.SaveSuccess)]
+	[h,if(ab.SaveSuccess): ab.Final = json.set(ab.Final,"CallSaveAutoResult",ab.SaveSuccess)]
 };{}]
 
 [h,if(ab.Init),CODE:{
@@ -747,6 +784,7 @@
 		" ab.AttackAdv | 0 | Grants (Dis)Advantage on Attacks | CHECK ",
 		" ab.AttackBonus | 0 | Grants Bonus to Attack Rolls | CHECK ",
 		" ab.AttackStat | 0 | Modifies Attack Primary Stat | CHECK ",
+		" ab.AttackRoll | 0 | <html><span title='Effects that change the value of the die, such as a minimum roll value or forcing a particular result. (e.g. Reliable Talent, Portent)'>Modifies Attack Roll</span></html> | CHECK ",
 		" ab.AttackCrit | 0 | Affects Critical Hits | CHECK ",
 		" junkVar | ------------------------------------------------------------ | 0 | LABEL | SPAN=TRUE ",
 		" ab.AttackNumber | 0 | <html><span title='Specifically for effects like Extra Attack - Does not apply to effects that let you make an attack as a bonus action, etc.'>Increases number of attacks granted at once</span></html> | CHECK ",
@@ -754,7 +792,7 @@
 		" ab.AttackRange | 0 | Affects range or reach of the attack | CHECK ",
 		" junkVar | ------------------------------------------------------------ | 0 | LABEL | SPAN=TRUE ",
 		" ab.AttackDamage | 0 | <html><span title='Use for effects that grant a damage type based on the main damage type. For effects that grant damage independent of the main damage type, use effect after attack or after each attack (whichever is appropriate)'>Grants Flat Bonus to Damage</span></html> | CHECK ",
-		" ab.AttackRoll | 0 | <html><span title='Effects that change the value of the die, adding dice to the roll, using max damage, etc. (e.g. Great Weapon Fighting rerolling 1s and 2s, Barbarian - Brutal Critical, Tempest Cleric - Destructive Wrath)'>Modifies dice rolled for damage</span></html> | CHECK ",
+		" ab.AttackDamageRoll | 0 | <html><span title='Effects that change the value of the die, adding dice to the roll, using max damage, etc. (e.g. Great Weapon Fighting rerolling 1s and 2s, Barbarian - Brutal Critical, Tempest Cleric - Destructive Wrath)'>Modifies dice rolled for damage</span></html> | CHECK ",
 		" junkVar | ------------------------------------------------------------ | 0 | LABEL | SPAN=TRUE ",
 		" ab.AfterAttack | 0 | <html><span title='Catch-all for effects that operate independently of the attack itself. Can deal damage, force saving throws, force a condition upon an enemy, just display a message, and more. (e.g. Cleric - Divine Strike, Assassin - Death Strike, Eldritch Knight - Eldritch Strike, and Tempest Cleric - Thunderbolt Strike, respectively)'>Effect occurs after attacks</span></html> | CHECK ",
 		" ab.AfterEachAttack | 0 | <html><span title='Same as above, but triggers on every attack instead of once per turn.'>Effect occurs after every attack</span></html> | CHECK "
@@ -770,6 +808,7 @@
 	[h,if(ab.AttackRange): ab.Final = json.set(ab.Final,"CallAttackRange",ab.AttackRange)]
 	[h,if(ab.AttackDamage): ab.Final = json.set(ab.Final,"CallAttackDamage",ab.AttackDamage)]
 	[h,if(ab.AttackRoll): ab.Final = json.set(ab.Final,"CallAttackRoll",ab.AttackRoll)]
+	[h,if(ab.AttackDamageRoll): ab.Final = json.set(ab.Final,"CallAttackDamageRoll",ab.AttackDamageRoll)]
 	[h,if(ab.AfterAttack): ab.Final = json.set(ab.Final,"CallAfterAttack",ab.AfterAttack)]
 	[h,if(ab.AfterEachAttack): ab.Final = json.set(ab.Final,"CallAfterEachAttack",ab.AfterEachAttack)]
 };{}]
@@ -781,6 +820,7 @@
 		" ab.WeaponAttackAdv | 0 | Grants (Dis)Advantage on Weapon Attacks | CHECK ",
 		" ab.WeaponAttackBonus | 0 | Grants Bonus to Weapon Attack Rolls | CHECK ",
 		" ab.WeaponAttackStat | 0 | Modifies Weapon Attack Primary Stat | CHECK ",
+		" ab.WeaponAttackRoll | 0 | <html><span title='Effects that change the value of the die, such as a minimum roll value or forcing a particular result. (e.g. Reliable Talent, Portent)'>Modifies Attack Roll</span></html> | CHECK ",
 		" ab.WeaponAttackCrit | 0 | Affects Critical Hits | CHECK ",
 		" junkVar | ------------------------------------------------------------ | 0 | LABEL | SPAN=TRUE ",
 		" ab.WeaponAttackNumber | 0 | <html><span title='Specifically for effects like Extra Attack - Does not apply to effects that let you make an attack as a bonus action, etc.'>Increases number of attacks granted by the Attack action</span></html> | CHECK ",
@@ -789,7 +829,7 @@
 		" ab.WeaponAttackRange | 0 | Affects range or reach of the attack | CHECK ",
 		" junkVar | ------------------------------------------------------------ | 0 | LABEL | SPAN=TRUE ",
 		" ab.WeaponAttackDamage | 0 | <html><span title='Use for effects that grant a damage type based on the weapon used. For effects that grant damage independent of the weapons damage type, use effect after attack or after each attack (whichever is appropriate)'>Grants Flat Bonus to Weapon Damage</span></html> | CHECK ",
-		" ab.WeaponAttackRoll | 0 | <html><span title='Effects that change the value of the die, adding dice to the roll, using max damage, etc. (e.g. Great Weapon Fighting rerolling 1s and 2s, Barbarian - Brutal Critical, Tempest Cleric - Destructive Wrath)'>Modifies dice rolled for weapon damage</span></html> | CHECK ",
+		" ab.WeaponAttackDamageRoll | 0 | <html><span title='Effects that change the value of the die, adding dice to the roll, using max damage, etc. (e.g. Great Weapon Fighting rerolling 1s and 2s, Barbarian - Brutal Critical, Tempest Cleric - Destructive Wrath)'>Modifies dice rolled for weapon damage</span></html> | CHECK ",
 		" junkVar | ------------------------------------------------------------ | 0 | LABEL | SPAN=TRUE ",
 		" ab.AfterWeaponAttack | 0 | <html><span title='Catch-all for effects that operate independently of the weapon damage itself. Can deal damage, force saving throws, force a condition upon an enemy, just display a message, and more. (e.g. Cleric - Divine Strike, Assassin - Death Strike, Eldritch Knight - Eldritch Strike, and Tempest Cleric - Thunderbolt Strike, respectively)'>Effect occurs after attacks</span></html> | CHECK ",
 		" ab.AfterEachWeaponAttack | 0 | <html><span title='Same as above, but triggers on every attack instead of once per turn.'>Effect occurs after every attack</span></html> | CHECK "
@@ -805,6 +845,7 @@
 	[h,if(ab.WeaponAttackRange): ab.Final = json.set(ab.Final,"CallWeaponAttackRange",ab.WeaponAttackRange)]
 	[h,if(ab.WeaponAttackDamage): ab.Final = json.set(ab.Final,"CallWeaponAttackDamage",ab.WeaponAttackDamage)]
 	[h,if(ab.WeaponAttackRoll): ab.Final = json.set(ab.Final,"CallWeaponAttackRoll",ab.WeaponAttackRoll)]
+	[h,if(ab.WeaponAttackDamageRoll): ab.Final = json.set(ab.Final,"CallWeaponAttackDamageRoll",ab.WeaponAttackDamageRoll)]
 	[h,if(ab.AfterWeaponAttack): ab.Final = json.set(ab.Final,"CallAfterWeaponAttack",ab.AfterWeaponAttack)]
 	[h,if(ab.AfterEachWeaponAttack): ab.Final = json.set(ab.Final,"CallAfterEachWeaponAttack",ab.AfterEachWeaponAttack)]
 };{}]
@@ -822,9 +863,10 @@
 		" ab.SpellAdv | 0 | Grants (Dis)Advantage on Spell Attacks | CHECK ",
 		" ab.SpellBonus | 0 | Grants Bonus to Spell Attack Rolls | CHECK ",
 		" ab.SpellCrit | 0 | Affects Spell Critical Hits | CHECK ",
+		" ab.SpellRoll | 0 | <html><span title='Effects that change the value of the die, such as a minimum roll value or forcing a particular result. (e.g. Reliable Talent, Portent)'>Modifies Attack Roll</span></html> | CHECK ",
 		" junkVar | ------------------------------------------------------------ | 0 | LABEL | SPAN=TRUE ",
 		" ab.SpellDamage | 0 | <html><span title='Use for effects that grant a damage bonus based on the damage of the spell. (e.g. Cleric - Disciple of Life, Potent Spellcasting) For effects that grant damage independent of the spell&#39;s damage type, use effect after attack or after each attack (whichever is appropriate)'>Grants Flat Bonus to Spell Damage or Healing</span></html> | CHECK ",
-		" ab.SpellRoll | 0 | <html><span title='Effects that change the value of the die, adding dice to the roll, using max damage, etc. (e.g. Elemental Adept feat setting 1s to 2s, Life Cleric - Supreme Healing)'>Modifies dice rolled for weapon damage</span></html> | CHECK ",
+		" ab.SpellDamageRoll | 0 | <html><span title='Effects that change the value of the die, adding dice to the roll, using max damage, etc. (e.g. Elemental Adept feat setting 1s to 2s, Life Cleric - Supreme Healing)'>Modifies dice rolled for weapon damage</span></html> | CHECK ",
 		" junkVar | ------------------------------------------------------------ | 0 | LABEL | SPAN=TRUE ",
 		" ab.AfterSpell | 0 | <html><span title='Catch-all for effects that operate independently of the spell itself. Can deal damage, force saving throws, force a condition upon an enemy, just display a message, and more. Can still have conditions for types of spells they are triggered by. (e.g. Cleric - Divine Strike, Enchantment Wizard - Alter Memories, Cant find a PHB example, and Eldritch Knight - War Magic, respectively)'>Effect occurs after spell is cast</span></html> | CHECK "
 	))]
@@ -837,6 +879,7 @@
 	[h,if(ab.SpellCrit): ab.Final = json.set(ab.Final,"CallSpellCrit",ab.SpellCrit)]
 	[h,if(ab.SpellDamage): ab.Final = json.set(ab.Final,"CallSpellDamage",ab.SpellDamage)]
 	[h,if(ab.SpellRoll): ab.Final = json.set(ab.Final,"CallSpellRoll",ab.SpellRoll)]
+	[h,if(ab.SpellDamageRoll): ab.Final = json.set(ab.Final,"CallSpellDamageRoll",ab.SpellDamageRoll)]
 	[h,if(ab.AfterSpell): ab.Final = json.set(ab.Final,"CallAfterSpell",ab.AfterSpell)]
 };{[h:ab.SpellClass=0]}]
 
@@ -919,6 +962,18 @@
 	}]
 }]
 
+[h,if(ab.Targeting),CODE:{
+	[h:abort(input(
+		" junkVar | Choose triggers affecting targeting | 0 | LABEL | SPAN=TRUE ",
+		" junkVar | ------------------------------------------------------------ | 0 | LABEL | SPAN=TRUE ",
+		" ab.TargetFilter | | You targeting others | CHECK ",
+		" ab.TargetFilterTargeted | | Others targeting you | CHECK "
+	))]
+
+	[h,if(ab.TargetFilter): ab.Final = json.set(ab.Final,"CallTargetFilter",1)]
+	[h,if(ab.TargetFilterTargeted): ab.Final = json.set(ab.Final,"CallTargetFilterTargeted",1)]
+};{}]
+
 [h,if(ab.WhenTargeted),CODE:{
 	[h:abort(input(
 		" junkVar | Choose triggers for a feature when targeted | 0 | LABEL | SPAN=TRUE ",
@@ -933,6 +988,89 @@
 	[h,if(ab.AttackBonusTargeted>0): ab.Final = json.set(ab.Final,if(ab.AttackBonusTargeted==1,"CallWeaponAttackBonusTargeted",if(ab.AttackBonusTargeted==2,"CallSpellBonusTargeted","CallAttackBonusTargeted")),1)]
 	[h,if(ab.AttackAutoHitTargeted>0): ab.Final = json.set(ab.Final,if(ab.AttackAutoHitTargeted==1,"CallWeaponAttackAutoHitTargeted",if(ab.AttackAutoHitTargeted==2,"CallSpellAutoHitTargeted","CallAttackAutoHitTargeted")),1)]
 	[h,if(ab.AttackCritTargeted>0): ab.Final = json.set(ab.Final,if(ab.AttackCritTargeted==1,"CallWeaponAttackCritTargeted",if(ab.AttackCritTargeted==2,"CallSpellCritTargeted","CallAttackCritTargeted")),1)]
+};{}]
+
+[h,if(ab.UseTime): ab.Final = json.set(ab.Final,"UseTime",1)]
+
+[h,if(ab.InteractTime),CODE:{
+	[h:abort(input(
+		" ab.InteractTime |  | Affects time to don/doff/drop items | CHECK ",
+		" ab.DrawWeapon |  | Affects time to draw and attack with an item | CHECK "
+	))]
+
+	[h,if(ab.InteractTime): ab.Final = json.set(ab.Final,"InteractTime",1)]
+	[h,if(ab.DrawWeapon): ab.Final = json.set(ab.Final,"DrawWeapon",1)]
+};{}]
+
+[h,if(ab.ChangePrereqs): ab.Final = json.set(ab.Final,"ChangePrereqs",1)]
+
+[h:"<!-- TODO: When adapting these to final input, attack/save/check ones should be rolled into other attack/save/check stuff -->"]
+[h,if(ab.EffectResolve),CODE:{
+	[h:abort(input(
+		" junkVar | Choose triggers for a feature after effect resolves | 0 | LABEL | SPAN=TRUE ",
+		" junkVar | ------------------------------------------------------------ | 0 | LABEL | SPAN=TRUE ",
+		" ab.EffectResolveAttack | No,On Hit,On Miss,Both | Triggers after attacking | LIST ",
+		" ab.EffectResolveSave | No,On Pass,On Fail,Both | Triggers after forcing saving throw | LIST ",
+		" ab.EffectResolveCheck | No,On Pass,On Fail,Both | Triggers after forcing check | LIST ",
+		" ab.EffectResolveAny | 0 | Triggers after resolving any effect | CHECK "
+	))]
+
+	[h,switch(ab.EffectResolveAttack):
+		case 0: "";
+		case 1: ab.Final = json.set(ab.Final,"AttackOnHit",1);
+		case 2: ab.Final = json.set(ab.Final,"AttackOnMiss",1);
+		case 3: ab.Final = json.set(ab.Final,"AttackOnHit",1,"AttackOnMiss",1);
+	]
+
+	[h,switch(ab.EffectResolveSave):
+		case 0: "";
+		case 1: ab.Final = json.set(ab.Final,"SaveSuccess",1);
+		case 2: ab.Final = json.set(ab.Final,"SaveFailure",1);
+		case 3: ab.Final = json.set(ab.Final,"SaveSuccess",1,"SaveFailure",1);
+	]
+
+	[h,switch(ab.EffectResolveCheck):
+		case 0: "";
+		case 1: ab.Final = json.set(ab.Final,"CheckSuccess",1);
+		case 2: ab.Final = json.set(ab.Final,"CheckFailure",1);
+		case 3: ab.Final = json.set(ab.Final,"CheckSuccess",1,"CheckFailure",1);
+	]
+
+	[h,if(ab.EffectResolveAny): ab.Final = json.set(ab.Final,"CallAfterEffect",ab.EffectResolveAny)]
+};{}]
+
+[h,if(ab.EffectResolveTargeted),CODE:{
+	[h:abort(input(
+		" junkVar | Choose triggers for a feature after effect targeting you resolves | 0 | LABEL | SPAN=TRUE ",
+		" junkVar | ------------------------------------------------------------ | 0 | LABEL | SPAN=TRUE ",
+		" ab.EffectResolveAttackTargeted | No,On Hit,On Miss,Both | Triggers after attacked | LIST ",
+		" ab.EffectResolveSaveTargeted | No,On Pass,On Fail,Both | Triggers after making saving throw | LIST ",
+		" ab.EffectResolveCheckTargeted | No,On Pass,On Fail,Both | Triggers after making check | LIST ",
+		" ab.EffectResolveAnyTargeted | 0 | Triggers after any effect resolves on you | CHECK "
+	))]
+
+	[h,switch(ab.EffectResolveAttackTargeted):
+		case 0: "";
+		case 1: ab.Final = json.set(ab.Final,"AttackOnHitTargeted",1);
+		case 2: ab.Final = json.set(ab.Final,"AttackOnMissTargeted",1);
+		case 3: ab.Final = json.set(ab.Final,"AttackOnHitTargeted",1,"AttackOnMissTargeted",1);
+	]
+
+	[h,switch(ab.EffectResolveSaveTargeted):
+		case 0: "";
+		case 1: ab.Final = json.set(ab.Final,"SaveSuccessTargeted",1);
+		case 2: ab.Final = json.set(ab.Final,"SaveFailureTargeted",1);
+		case 3: ab.Final = json.set(ab.Final,"SaveSuccessTargeted",1,"SaveFailureTargeted",1);
+	]
+
+	[h,switch(ab.EffectResolveCheckTargeted):
+		case 0: "";
+		case 1: ab.Final = json.set(ab.Final,"CheckSuccessTargeted",1);
+		case 2: ab.Final = json.set(ab.Final,"CheckFailureTargeted",1);
+		case 3: ab.Final = json.set(ab.Final,"CheckSuccessTargeted",1,"CheckFailureTargeted",1);
+	]
+
+	[h,if(ab.EffectResolveAnyTargeted): ab.Final = json.set(ab.Final,"CallAfterEffectTargeted",ab.EffectResolveAnyTargeted)]
 };{}]
 
 [h,if(ab.Damaged),CODE:{
@@ -951,11 +1089,15 @@
 		" junkVar | Choose triggers for a feature after resting | 0 | LABEL | SPAN=TRUE ",
 		" junkVar | ------------------------------------------------------------ | 0 | LABEL | SPAN=TRUE ",
 		" ab.AfterShort | 0 | Triggers after short rests | CHECK ",
-		" ab.AfterLong | 0 | Triggers after long rests | CHECK "
+		" ab.AfterLong | 0 | Triggers after long rests | CHECK ",
+		" ab.DurationShort | 0 | Affects duration of short rests | CHECK ",
+		" ab.DurationLong | 0 | Affects duration of long rests | CHECK "
 	))]
 	
 	[h,if(ab.AfterShort): ab.Final = json.set(ab.Final,"CallShortRest",ab.AfterShort)]
 	[h,if(ab.AfterLong): ab.Final = json.set(ab.Final,"CallLongRest",ab.AfterLong)]
+	[h,if(ab.DurationShort): ab.Final = json.set(ab.Final,"CallShortRestDuration",1)]
+	[h,if(ab.DurationLong): ab.Final = json.set(ab.Final,"CallLongRestDuration",1)]
 };{}]
 
 [h,if(ab.HitDie),CODE:{
@@ -985,9 +1127,15 @@
 };{}]
 
 [h,if(ab.CondGain),CODE:{
-	[h:ab.Final = json.set(ab.Final,
-		"CallCondGain",1
-	)]
+	[h:abort(input(
+		" junkVar | Choose triggers for a feature after gaining a condition | 0 | LABEL | SPAN=TRUE ",
+		" junkVar | ------------------------------------------------------------ | 0 | LABEL | SPAN=TRUE ",
+		" ab.CondGain | 0 | Triggers after gaining a condition | CHECK ",
+		" ab.CondGainThis | 0 | Triggers after gaining this condition | CHECK "
+	))]
+
+	[h,if(ab.CondGain) :ab.Final = json.set(ab.Final,"CallCondGain",1)]
+	[h,if(ab.CondGainThis): ab.Final = json.set(ab.Final,"CallCondGainThis",1)]
 };{}]
 
 [h,if(ab.CondEnd),CODE:{
@@ -1008,7 +1156,7 @@
 			))]
 		[h:abort(input(if(ab.CastTime=="Custom"," ab.CastTime |  | Enter custom casting time ","")))]
 		[h:ab.Marker = if(ab.Marker=="-- Ignore/Blank for None --","",ab.Marker)]
-		[h:ab.NewButtons = json.append(ab.NewButtons,json.set("","CastTime",if(ab.CastTime=="None","",ab.CastTime),"Marker",ab.Marker,"Class",json.get(ab.Final,"Class"),"Subclass",json.get(ab.Final,"Subclass"),"Name",pm.RemoveSpecial(ab.ButtonName),"DisplayName",ab.ButtonName,"Library",json.get(ab.Final,"Library")))]
+		[h:ab.NewButtons = json.append(ab.NewButtons,json.set("","UseTime",if(ab.CastTime=="None","",ab.CastTime),"Marker",ab.Marker,"Class",json.get(ab.Final,"Class"),"Subclass",json.get(ab.Final,"Subclass"),"Name",pm.RemoveSpecial(ab.ButtonName),"DisplayName",ab.ButtonName,"Library",json.get(ab.Final,"Library")))]
 	}]
 	[h:ab.Final = json.set(ab.Final,"ButtonInfo",ab.NewButtons)]
 };{}]

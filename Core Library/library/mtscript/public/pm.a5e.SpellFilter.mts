@@ -17,13 +17,13 @@
 
 [h,switch(LevelBasedMaxLevel),CODE:
     case "":{};
-    case "All":{[h:LevelBasedMaxLevel = a5e.CastingLevel()]};
+    case "All":{[h:LevelBasedMaxLevel = pm.a5e.MaxSpellLevel("All",0)]};
     case "FilterClassesMax":{
         [h:LevelBasedMaxLevel = 0]
         [h,if(json.type(ClassFilter)=="UNKNOWN"): tempClassFilter = json.append("",ClassFilter)]
-        [h,foreach(tempClass,tempClassFilter): LevelBasedMaxLevel = max(LevelBasedMaxLevel,a5e.CastingLevel(tempClass))]
+        [h,foreach(tempClass,tempClassFilter): LevelBasedMaxLevel = max(LevelBasedMaxLevel,pm.a5e.MaxSpellLevel(tempClass,1))]
     };
-    default:{[h:LevelBasedMaxLevel = a5e.CastingLevel(LevelBasedMaxLevel)]}
+    default:{[h:LevelBasedMaxLevel = pm.a5e.MaxSpellLevel(LevelBasedMaxLevel,1)]}
 ]
 
 [h,switch(json.type(ClassFilter)),CODE:
@@ -38,7 +38,6 @@
 
 [h,switch(json.type(SchoolFilter)),CODE:
     case "ARRAY":{
-
         [h:SpellFilterString = listAppend(SpellFilterString,"@.School in "+SchoolFilter," && ")]
     };
     case "UNKNOWN":{
@@ -63,13 +62,13 @@
     [h:SpellFilterString = listAppend(SpellFilterString,"@.Level >= "+MinSpellLevel," && ")]
 }]
 
-[h:"<!-- TODO: Enable ability to make something like casting time less than 10 minutes, or specific time values (only value 1 currently) -->"]
+[h:"<!-- TODO: Enable ability to make something like casting time less than 10 minutes, or specific time values (only value 1 currently) - possible solution, filter string being two statements. One, make an array of units smaller than the one given; if units of spell are in the array it's less (reverse for greater). Two, if units are the same then compare the value greater than or less than. -->"]
 [h,switch(json.type(CastTimeFilter)),CODE:
     case "ARRAY":{
-        [h:SpellFilterString = listAppend(SpellFilterString,"@.*.CastTime.Units in "+CastTimeFilter," && ")]
+        [h:SpellFilterString = listAppend(SpellFilterString,"@.Effects.*.CastTime.Units in "+CastTimeFilter," && ")]
     };
     case "UNKNOWN":{
-        [h,if(CastTimeFilter != ""): SpellFilterString = listAppend(SpellFilterString,"@.*.CastTime.Units == '"+CastTimeFilter+"'"," && ")]
+        [h,if(CastTimeFilter != ""): SpellFilterString = listAppend(SpellFilterString,"@.Effects.*.CastTime.Units == '"+CastTimeFilter+"'"," && ")]
     };
     default:{}
 ]

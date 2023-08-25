@@ -1,7 +1,7 @@
 [h:cond.abilityName = pm.RemoveSpecial(cond.abilityName)]
 [h:cond.abilitySubclass = pm.RemoveSpecial(cond.abilitySubclass)]
 [h:cond.Context = arg(0)]
-[h:cond.Info = json.get(json.path.read(getProperty("a5e.stat.ConditionList"),"[?(@.Name=='"+cond.abilityName+"' && @.Class=='"+cond.abilityClass+"' && @.Subclass=='"+cond.abilitySubclass+"' && @.IsActive>0)]"),0)]
+[h:cond.Info = pass.abilityInfo]
 [h:cond.Library = json.get(cond.Info,"Library")]
 
 [h:cond.DisplayObject = json.get(cond.Info,"Settings")]
@@ -25,6 +25,7 @@
 [h:cond.ShowFullRules=if(IsTooltip,1,if(cond.ShowFullRulesOverride=="",if(number(getLibProperty("ChatIndividual","Lib:pm.a5e.Core")),getProperty("a5e.stat.FullAbilityRules"),getLibProperty("FullAbilityRules","Lib:pm.a5e.Core")),cond.ShowFullRulesOverride))]
 
 [h:cond.SetBy = json.get(cond.Info,"SetBy")]
+[h:cond.OnItem = json.get(cond.Info,"ItemID")]
 [h:cond.abilityInfo = json.set(cond.Info,
 	"DisplayName",cond.abilityDisplayName,
 	"Tooltip",IsTooltip,
@@ -38,12 +39,24 @@
 
 [h:cond.NeedsSetByInfo = json.append(pm.GetClasses("Name","json"),"Feat")]
 [h,if(json.contains(cond.NeedsSetByInfo,cond.abilityClass)),CODE:{
-	[h:switchToken(cond.SetBy)]
-	[h:cond.SetByAbilities = a5e.GatherAbilities(cond.SetBy)]
-	[h:cond.abilityLevel = json.get(json.get(json.path.read(getProperty("a5e.stat.AllFeatures"),"[?(@.Name=='"+cond.abilityName+"' && @.Class=='"+cond.abilityClass+"' && @.Subclass=='"+cond.abilitySubclass+"')]"),0),"Level")]
-	[h,if(json.get(cond.Info,"HasTiers")==1): cond.abilityTier = math.arraySum(json.path.read(getProperty("a5e.stat.ConditionList"),"[*][?(@.Name=='"+cond.abilityName+"')]['Level']")); cond.abilityTier = json.get(cond.Info,"Level")]
-	[h:cond.abilityTier = json.get(cond.Info,"Level")]
-	[h:switchToken(ParentToken)]
+	[h:setByStillAvailable = json.contains(getTokens("json"),cond.SetBy)]
+	[h,if(setByStillAvailable),CODE:{
+		[h:switchToken(cond.SetBy)]
+		[h:cond.SetByAbilities = a5e.GatherAbilities(cond.SetBy)]
+		[h,if(json.get(cond.abilityInfo,"Master") == ""):
+			cond.LevelPath = pm.a5e.PathFeatureFilter(cond.abilityInfo);
+			cond.LevelPath = pm.a5e.PathFeatureFilter(json.get(cond.abilityInfo,"Master"))
+		]
+		[h:cond.abilityLevel = json.get(json.path.read(getProperty("a5e.stat.AllFeatures"),"[*][?("+cond.LevelPath+")]['Level']"),0)]
+		[h,if(json.get(cond.Info,"HasTiers")==1):
+			cond.abilityTier = math.arraySum(json.path.read(getProperty("a5e.stat.ConditionList"),"[*][?(@.Name=='"+cond.abilityName+"')]['Level']"));
+			cond.abilityTier = json.get(cond.Info,"Level")
+		]
+		[h:switchToken(ParentToken)]		
+	};{
+		[h:cond.abilityLevel = 1]
+		[h:cond.abilityTier = json.get(cond.Info,"Level")]
+	}]
 };{
 	[h:cond.abilityLevel = json.get(cond.Info,"Level")]
 	[h,if(json.get(cond.Info,"HasTiers")==1): cond.abilityTier = math.arraySum(json.path.read(getProperty("a5e.stat.ConditionList"),"[*][?(@.Name=='"+cond.abilityName+"')]['Level']")); cond.abilityTier = cond.abilityLevel]

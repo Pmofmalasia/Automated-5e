@@ -15,7 +15,7 @@
 [h,foreach(tempType,pm.GetDamageTypes()): DamageTypeOptions = DamageTypeOptions + "<option value='"+json.get(tempType,"Name")+"'>"+json.get(tempType,"DisplayName")+"</option>"]
 [h:DamageTypeOptions = DamageTypeOptions + "<option value='Healing'>Healing</option><option value='TempHP'>Temp HP</option>"]
 
-[h:ChangeHPHTML = ChangeHPHTML + "<input type='hidden' id='DamageTypeNumber' name='DamageTypeNumber' value=0><tr id='rowDamage0'><th><label for='DamageValue0'>Damage:</label></th><td><input type='number' id='DamageValue0' name='DamageValue0' value='0' min=0 style='width:30px' autofocus><select id='DamageType0' name='DamageType0'>"+DamageTypeOptions+"</select></td></tr>"]
+[h:ChangeHPHTML = ChangeHPHTML + "<input type='hidden' id='DamageTypeNumber' name='DamageTypeNumber' value=0><tr id='rowDamage0'><th><label for='DamageValue0'>Damage:</label></th><td><input type='number' id='DamageValue0' name='DamageValue0' min=0 style='width:30px' autofocus><select id='DamageType0' name='DamageType0'>"+DamageTypeOptions+"</select></td></tr>"]
 
 [h:ChangeHPHTML = ChangeHPHTML + "<tr id='rowDamageButtons'><th text-align='center' colspan='2'><input type='button' id='addDamageType' name='addDamageType' value='Add' onclick='addDamageTypeRow()'>  <input type='button' id='removeDamageType' name='removeDamageType' value='Remove' onclick='removeDamageTypeRow()'></th></tr>"]
 
@@ -23,7 +23,7 @@
 
 [h:ChangeHPHTML = ChangeHPHTML + "<tr id='rowAddSourceInfo'><th><label for='AddSourceInfo'>Apply Detailed Damage Info?</label></th><td><input type='checkbox' id='AddSourceInfo' name='AddSourceInfo' onchange='addSourceInfo()'></td></tr>"]
 
-[h:ChangeHPHTML = ChangeHPHTML + "<tr id='rowOutputTargets'><th><label for='OutputTargets'>Who Sees the Result?</label></th><td><select id='OutputTargets' name='OutputTargets'><option value='Everyone'>Everyone</option>"+if(isGM(),"","<option value='YouAndDM'>You and DM</option>")+"<option value='DMOnly'>DM Only</option></select></td></tr>"]
+[h:ChangeHPHTML = ChangeHPHTML + "<tr id='rowOutputTargets'><th><label for='OutputTargets'>Who Sees the Result?</label></th><td><select id='OutputTargets' name='OutputTargets'><option value='Everyone'"+if(getProperty("a5e.stat.Allegiance") != "Enemy"," selected","")+">Everyone</option>"+if(isGM(),"","<option value='YouAndDM'>You and DM</option>")+"<option value='DMOnly'"+if(getProperty("a5e.stat.Allegiance") == "Enemy"," selected","")+">DM Only</option></select></td></tr>"]
 
 [h:ChangeHPHTML = ChangeHPHTML + "<tr><th text-align='center' colspan='2'><input type='submit' id='submitButton' value='Submit'></th></tr>"]
 

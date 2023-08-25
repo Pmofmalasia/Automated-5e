@@ -1,58 +1,99 @@
 [h:subeffectData = macro.args]
 [h:ParentToken = json.get(subeffectData,"ParentToken")]
 [h:EffectType = json.get(subeffectData,"EffectType")]
-[h:totalSubeffects = json.get(subeffectData,"TotalSubeffects")]
 [h:thisSubeffectNum = json.get(subeffectData,"WhichSubeffect")]
+[h:EffectsNumber = json.get(subeffectData,"EffectsNumber")]
+[h:isPersistentEffect = number(json.get(subeffectData,"isPersistentEffect"))]
 [h:ExtraData = json.get(subeffectData,"ExtraData")]
 
-[h,if(totalSubeffects==1):
-    SubeffectHTML = "";
-    SubeffectHTML = "<tr><th text-align='center' colspan='2'>Subeffect #"+thisSubeffectNum+"</th></tr>"
-]
+[h:SubeffectHTML = ""]
+[h,if(isPersistentEffect): SubeffectHTML = SubeffectHTML + "<input type='hidden' id='isPersistentEffect' name='isPersistentEffect' value=1><input type='hidden' id='MainEffectsNumber' name='MainEffectsNumber' value='"+json.get(subeffectData,"MainEffectsNumber")+"'><input type='hidden' id='MainNeedsNewSubeffect' name='MainNeedsNewSubeffect' value="+json.get(subeffectData,"MainNeedsNewSubeffect")+"><tr><th text-align='center' colspan='2'>Persistent Effect</th></tr><tr id='rowPersistentEffectBreak'></tr>"]
 
-[h,if(json.type(ExtraData) == "OBJECT"),CODE:{
-    [h,foreach(tempKey,json.fields(ExtraData)): SubeffectHTML = SubeffectHTML + "<input type='hidden' id='"+tempKey+"' name='"+tempKey+"' value='"+json.get(ExtraData,tempKey)+"'>"]
+[h,if(thisSubeffectNum == 1),CODE:{
+	[h:SubeffectHTML = SubeffectHTML + "<tr id='rowEffectHeader'><th text-align='center' colspan='2'>Overall Effect Information</th></tr>"]
+
+	[h,if(EffectsNumber > 1),CODE:{
+		[h:SubeffectHTML = SubeffectHTML + "<tr id='rowEffectName'><th><label for='EffectDisplayName'>This Effect's Name:</label></th><td><input type='text' id='EffectDisplayName' name='EffectDisplayName'></td></tr>"]
+	};{}]
+
+	[h:UseTimeOptions = json.append("","Action","Bonus Action","Reaction","1 Minute","10 Minutes","1 Hour","8 Hours","12 Hours","24 Hours","Custom")]
+	[h,if(isPersistentEffect): UseTimeOptions = json.merge(json.append("","No Cost"),UseTimeOptions)]
+	[h:listUseTime = ""]
+	[h,foreach(tempUseTime,UseTimeOptions): listUseTime = listUseTime + "<option value='"+tempUseTime+"'>"+tempUseTime+"</option>"]
+
+	[h:SubeffectHTML = SubeffectHTML + "<tr id='rowUseTime'><th><label for='UseTime'>"+if(EffectType == "Spell","Casting","Usage")+" Time:</label></th><td><select id='UseTime' name='UseTime' onchange='createCustomUseTimeRows("+'"CreateSubeffectTable","UseTime","rowDuration"'+")'>"+listUseTime+"</select></td></tr>"]
+
+	[h:durationOptions = json.append("","Instantaneous","1 Round","1 Minute","10 Minutes","1 Hour","8 Hours","24 Hours","10 Days","Until Dispelled","Custom")]
+	[h:listDuration = ""]
+	[h,foreach(tempDuration,durationOptions): listDuration = listDuration + "<option value='"+tempDuration+"'>"+tempDuration+"</option>"]
+	
+	[h:SubeffectHTML = SubeffectHTML + "<tr id='rowDuration'><th><label for='Duration'>Duration:</label></th><td><select id='Duration' name='Duration' onchange='createCustomDurationRows("+'"CreateSubeffectTable","Duration","'+if(EffectType=="Spell","rowAHLDuration","rowIsConcentration")+'"'+")'>"+listDuration+"</select></td></tr>"]
+
+	[h,if(EffectType == "Spell"),CODE:{
+		[h:tempSpellLevel = json.get(ExtraData,"SpellLevel")]
+		[h:SubeffectHTML = SubeffectHTML + "<tr id='rowAHLDuration'><th><label for='AHLDuration'>Duration Increases at Higher Levels:</label></th><td><input type='checkbox' id='AHLDuration' name='AHLDuration' onchange='createAHLDurationRows("+'"CreateSubeffectTable",'+tempSpellLevel+',"rowIsConcentration"'+")' value=1></td></tr>"]
+	}]
+
+	[h:SubeffectHTML = SubeffectHTML + "<tr id='rowIsConcentration'><th><label for='isConcentration'>Requires Concentration:</label></th><td><input type='checkbox' id='isConcentration' name='isConcentration' value=1></td></tr>"]
+
+	[h,if(EffectType == "Spell" && tempSpellLevel != 0): SubeffectHTML = SubeffectHTML + "<tr id='rowIsConcentrationLost'><th><label for='isConcentrationLost'>Concentration Not Required at Higher Levels:</label></th><td><input type='checkbox' id='isConcentrationLost' name='isConcentrationLost' onchange='createConcentrationLostRows("+'"CreateSubeffectTable",'+tempSpellLevel+',"rowEffectBreak"'+")' value=1></td></tr>"]
+
+	[h:SubeffectHTML = SubeffectHTML + "<tr id='rowEffectBreak'></tr>"]
 };{}]
 
-[h:"<!-- May want to send the subeffect number as an argument in some onchange functions -->"]
+[h:SubeffectHTML = SubeffectHTML + "<tr id='rowSubeffectHeader'><th text-align='center' colspan='2'>Subeffect "+if(thisSubeffectNum > 1,"#"+thisSubeffectNum,"Information")+"</th></tr>"]
 
-[h:SubeffectHTML = SubeffectHTML + "<input type='hidden' id='ParentToken' name='ParentToken' value='"+ParentToken+"'><input type='hidden' id='EffectType' name='EffectType' value='"+EffectType+"'><input type='hidden' id='TotalSubeffects' name='TotalSubeffects' value="+totalSubeffects+"><input type='hidden' id='WhichSubeffect' name='WhichSubeffect' value="+thisSubeffectNum+">
+[h,if(thisSubeffectNum > 1),CODE:{
+	[h:SubeffectLinkOptions = "<option value=0>None</option>"]
+	[h,count(thisSubeffectNum - 1): SubeffectLinkOptions = SubeffectLinkOptions + "<option value="+(roll.count+1)+">"+(roll.count+1)+"</option>"]
+	
+	[h:CurrentFeatureData = getLibProperty("ct.New"+EffectType,"Lib:pm.a5e.Core")]
+	[h:thisPlayerCurrentFeatureData = json.get(CurrentFeatureData,getPlayerName())]
+	[h,switch(EffectType),CODE:
+		case "Spell": {
+			[h:tempPriorSubeffectData = json.get(thisPlayerCurrentFeatureData,json.length(thisPlayerCurrentFeatureData)-1)]
+			[h:PriorSubeffectData = json.get(tempPriorSubeffectData,"Subeffects")]
+		};
+		default: {
+			[h:AllPriorEffectData = json.get(thisPlayerCurrentFeatureData,"Effects")]
+			[h:CurrentEffectData = json.get(AllPriorEffectData,json.length(AllPriorEffectData)-1)]
+			[h:PriorSubeffectData = json.get(CurrentEffectData,"Subeffects")]
+		}
+	]
 
-<tr id='Mitigation'><th><label for='howMitigate'>Make Attack or Force Save?</label></th><td><select id='howMitigate' name='howMitigate' onchange='createMitigationTable()'><option value='Attack'>Make Attack</option><option value='Save'>Force Save</option><option value='Neither' selected>Neither</option></select></td></tr>
+	[h:PriorSubeffectData = base64.encode(PriorSubeffectData)]
+
+	[h:SubeffectHTML = SubeffectHTML + "<input type='hidden' name='PriorSubeffects' id='PriorSubeffects' value='"+PriorSubeffectData+"'><tr id='rowParentSubeffect'><th><label for='ParentSubeffect'>Linked to Subeffect #:</label></th><td><select id='ParentSubeffect' name='ParentSubeffect' onchange='createParentSubeffectRows()'>"+SubeffectLinkOptions+"</select></td></tr>"]
+};{}]
+
+[h,if(json.type(ExtraData) == "OBJECT"),CODE:{
+	[h:ExtraDataKeys = json.fields(ExtraData)]
+    [h,foreach(tempKey,ExtraDataKeys): SubeffectHTML = SubeffectHTML + "<input type='hidden' id='ExtraData"+tempKey+"' name='ExtraData"+tempKey+"' value='"+json.get(ExtraData,tempKey)+"'>"]
+	[h:SubeffectHTML = SubeffectHTML + "<input type='hidden' id='ExtraDataKeys' name='ExtraDataKeys' value='"+json.toList(ExtraDataKeys)+"'>"]
+};{}]
+
+[h:SubeffectHTML = SubeffectHTML + "<input type='hidden' id='ParentToken' name='ParentToken' value='"+ParentToken+"'><input type='hidden' id='EffectType' name='EffectType' value='"+EffectType+"'><input type='hidden' id='WhichSubeffect' name='WhichSubeffect' value="+thisSubeffectNum+"><input type='hidden' id='EffectsNumber' name='EffectsNumber' value="+EffectsNumber+">"]
+
+[h:SubeffectHTML = SubeffectHTML + "<tr id='Mitigation'><th><label for='howMitigate'>Make Attack or Force Save?</label></th><td><select id='howMitigate' name='howMitigate' onchange='createMitigationTable()'><option value='Attack'>Make Attack</option><option value='Save'>Force Save</option><option value='Neither' selected>Neither</option></select></td></tr>
 
 <tr id='Damage'><th><label for='isDamage'>Heals or Deals Damage?</label></th><td><input type='checkbox' id='isDamage' name='isDamage' value=1 onchange='createDamageTable()'><input type='hidden' id='differentTypes' name='differentTypes' value=0></td></tr>
 
 <tr id='rowCondition'><th><label for='isCondition'>Sets Conditions on Target:</label></th><td><select id='isCondition' name='isCondition' value=1 onchange='createConditionTable()'><option value='None'>None</option><option value='All'>All Selected</option><option value='Choose'>Choose Among Selected</option><option value='Mixture'>Mixture of Both</option></select></td></tr>
 
-<tr id='rowSummons'><th><label for='isSummons'>Summons a Creature?</label></th><td><select id='isSummons' name='isSummons' onchange='createSummonTable()'><option value='No'>No</option><option value='UniqueEffect'>Non-Creature Unique Effect</option><option value='Single'>Single Specific Creature</option><option value='Options'>Creature from List</option><option value='Criteria'>Creature Based on Criteria</option></select></td></tr>
+<tr id='rowSummons'><th><label for='isSummons'>Summons a Creature?</label></th><td><select id='isSummons' name='isSummons' onchange='createSummonTable()'><option value='No'>No</option><option value='UniqueEffect'>Non-Creature Unique Effect</option><option value='Single'>Single Specific Creature</option><option value='Options'>Creature from List</option><option value='Criteria'>Creature Based on Criteria</option></select></td></tr>"]
 
-<tr id='rowIsMoveTarget'><th><label for='isMoveTarget'>Moves the Target?</label></th><td><input type='checkbox' id='isMoveTarget' name='isMoveTarget' value=1 onchange='createMoveTargetTable()'></td></tr>
+[h:SubeffectHTML = SubeffectHTML + "<tr id='rowIsUseResource'><th><label for='isUseResource'>Uses a Resource?</label></th><td><input type='checkbox' id='isUseResource' name='isUseResource' onchange='createUseResourceRows()'></td></tr>"]
 
-<tr id='rowIsCreateObject'><th><label for='isCreateObject'>Creates an Object?</label></th><td><input type='checkbox' id='isCreateObject' name='isCreateObject' value=1 onchange='createCreateObjectTable()'></td></tr>
+[h:SubeffectHTML = SubeffectHTML + "<tr id='rowUncommonEffects'><th><label for='isUncommonEffects'>Show Additional Effects:</label></th><td><input type='checkbox' id='isUncommonEffects' name='isUncommonEffects' value=1 onchange='createUncommonEffectsRows()'></td></tr>"]
 
-<tr id='rowLightType'><th><label for='lightType'>Creates a Light or Darkness?</label></th><td><select id='lightType' name='lightType' onchange='createLightTable()'><option value='None'>No Light</option><option value='Dim'>Dim Light</option><option value='Bright'>Bright Light</option><option value='BrightDim'>Bright + Dim Light</option><option value='Darkness'>Darkness</option><option value='Obscure'>Heavily Obscure</option></select></td></tr>
+[h,if(isPersistentEffect): SubeffectHTML = SubeffectHTML + "<tr id='rowUseInitialTargets'><th><label for='UseInitialTargets'>Use Same Targets as Main Effect:</label></th><td><input type='checkbox' id='UseInitialTargets' name='UseInitialTargets' onchange='createInitialTargetsRows("+'"CreateSubeffectTable","Initial"'+")'></td></tr>"]
 
-<tr id='rowIsWeaponAttack'><th><label for='isWeaponAttack'>Makes a Weapon Attack?</label></th><td><input type='checkbox' id='isWeaponAttack' name='isWeaponAttack' value=1 onchange='createWeaponAttackTable()'></td></tr>
+[h:"<!-- Note: Targeting rows are now created in JS instead of here -->"]
 
-<tr id='Range'><th><label for='RangeType'>Range Type:</label></th><td><select id='RangeType' name='RangeType' onchange='createRangeTable()'><option value='Self'>Self</option><option value='SelfRanged'>Self with Range</option><option value='Touch'>Touch</option><option value='Ranged'>Ranged</option>"+if(thisSubeffectNum>1,"<option value='PriorTarget'>Based on Prior Subeffect</option>","")+"</td></tr>
+[h:SubeffectHTML = SubeffectHTML + "<tr id='rowNeedsNewSubeffect'><th><span title='Check if an effect has different parts that have different conditions for resolving. For example, Ice Knife makes an attack against a single target (effect 1), then forces a save against all creatures around them (effect 2); Ray of Sickness makes a spell attack to deal damage (effect 1), then forces that target to make a save against poison if it hits (effect 2); and Vampiric Touch makes an attack to deal damage (effect 1), then heals the caster for half the amount of damage dealt (effect 2).'><label for='NeedsNewSubeffect'>Needs Additional Component of Same Effect:</label></span></th><td><input type='checkbox' id='NeedsNewSubeffect' name='NeedsNewSubeffect'></td></tr>
 
-<tr id='AoE'><th><label for='aoeShape'>Area of Effect Shape:</label></th><td><select id='aoeShape' name='aoeShape' onchange='createAoETable(1)'><option value='None'>None</option><option value='Cone'>Cone</option><option value='Cube'>Cube</option><option value='Cylinder'>Cylinder</option><option value='Half Sphere'>Half Sphere</option><option value='Line'>Line</option><option value='Panels'>Panels</option><option value='Sphere'>Sphere</option><option value='Wall'>Wall</option><option value='Choose'>Multiple Options</option></td></tr>
+<tr id='rowNeedsPersistentEffect'><th><span title='Check if an effect needs to make additional rolls/force others to make them if not linked to an effect at a later time, e.g. many AoE effects that persist'><label for='needsPersistentEffect'>Has a Persistent Effect:</label></span></th><td><select id='needsPersistentEffect' name='needsPersistentEffect' onchange='createPersistentEffectRows("+'"CreateSubeffectTable"'+")'><option value=''>None</option><option value='Same'>Same Effect</option><option value='Different'>Different Effect</option></select></td></tr>
 
-<tr id='rowTargetNumber'><th><label for='TargetNumber'>Maximum Number of Targets:</label></th><td><input type='number' id='TargetNumber' name='TargetNumber' value=1 min=1 style='width:25px'><input type='checkbox' id='isTargetNumberUnlimited' name='isTargetNumberUnlimited' value=1 onchange='createTargetNumberToggle()'>Unlimited</td></tr>"]
+<tr id='submitRow'><th text-align='center' colspan='2'><input type='submit' id='submitButton' value='Submit'></th></tr>"]
 
-[h,switch(EffectType):
-    case "Spell": SubeffectHTML = SubeffectHTML + "<tr id='rowTargetNumberAHL'><th><label for='TargetNumberAHL'>Increased Target Number AHL:</label></th><td><input type='number' id='TargetNumberAHL' name='TargetNumberAHL' value=0 min=0 style='width:25px'><select id='TargetNumberAHLScaling' name='TargetNumberAHLScaling'><option value='0'>No Increase</option><option value='1'>Every Level</option><option value='2'>Every Other Level</option><option value='3'>Every Three Levels</option></select></td></tr>";
-    default: ""
-]
-
-[h:SubeffectHTML = SubeffectHTML + "<tr id='rowMultitargetDistance'><th><label for='MultitargetDistance'>Maximum Distance Between Targets:</label></th><td><input type='number' id='MultitargetDistance' name='MultitargetDistance' value=5 min=0 style='width:25px' disabled><input type='checkbox' id='isMultitargetDistanceUnlimited' name='isMultitargetDistanceUnlimited' value=1 checked onchange='createMultitargetDistanceToggle()'>Same as Overall Range</td></tr>
-
-<tr id='Missiles'><th><label for='isMissiles'>Is it a Missile Effect?</label></th><td><input type='checkbox' id='isMissiles' name='isMissiles' value=1></td></tr>
-
-<tr id='rowTargetCover'><th><label for='MaxCover'>Most Cover Target Can Be Behind:</th><td><select name='MaxCover' id='MaxCover'><option value='None'>None</option><option value='Half'>Half</option><option value='ThreeQuarters' selected>Three-Quarters</option><option value='Full'>Full</option></select></td></tr>
-
-<tr id='rowIsSight'><th><label for='isSight'>Requires Sight on Target:</label></th><td><input type='checkbox' id='isSight' name='isSight' value=1></td></tr>
-
-<tr id='Target'><th><label for='TargetType'>Target Type:</label></th><td><select id='TargetType' name='TargetType' onchange='createTargetTable(1)'><option value='AnyCreature'>Any Creature</option><option value='AlliedCreature'>Allied Creature</option><option value='SelfOnly'>Self Only</option><option value='EnemyCreature'>Enemy Creature</option><option value='HumanoidCreature'>Humanoid Creature</option><option value='Creature'>Creature (Custom Limits)</option><option value='Object'>Object</option><option value='CreatureObject'>Creature or Object</option><option value='Point'>Point</option><option value='Effect'>Effect</option><option value='FreeHand'>Free Hand</option></td></tr><tr id='submitRow'><th text-align='center' colspan='2'><input type='submit' id='submitButton' value='Submit'></th></tr>"]
-
-[h:html.dialog5("SubeffectCreation","lib://pm.a5e.core/CreateSubeffect.html?cachelib=false","value="+base64.encode(SubeffectHTML)+"; closebutton=0")]
+[h:html.dialog5("SubeffectCreation","lib://pm.a5e.core/CreateSubeffect.html?cachelib=false","value="+base64.encode(SubeffectHTML)+"; closebutton=0; width=675; height=1050")]

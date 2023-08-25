@@ -25,7 +25,7 @@
 [h,foreach(button,pm.ButtonsToDelete),CODE:{
 	[h:pm.ButtonRemovalTest = eval("choice."+json.get(button,"Name")+json.get(button,"Class"))]
 	[h,if(pm.ButtonRemovalTest),CODE:{
-		[h:pm.CastTimeNote = if(or(json.get(button,"CastTime")=="",lower(json.get(button,"CastTime"))=="action"),""," <b>("+json.get(button,"CastTime")+")</b>")]
+		[h:pm.CastTimeNote = if(or(json.get(button,"UseTime")=="",lower(json.get(button,"UseTime"))=="action"),""," <b>("+json.get(button,"UseTime")+")</b>")]
 		[h:pm.RemovedMacroLabel = json.get(button,"DisplayName")+if(json.get(button,"Marker")=="",""," "+json.get(button,"Marker")+pm.CastTimeNote)]
 		[h,if(getMacroIndexes(pm.RemovedMacroLabel)!=""): removeMacro(number(getMacroIndexes(pm.RemovedMacroLabel)))]
 	};{}]

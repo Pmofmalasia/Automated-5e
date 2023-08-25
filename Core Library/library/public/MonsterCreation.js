@@ -3,6 +3,35 @@ async function creatureTypeSelectionChanges(){
     let nextRowIndex = document.getElementById("rowCreatureType").rowIndex + 1;
 }
 
+async function createArmorChoiceRows(){
+	clearUnusedTable("MonsterCreationTable","rowIsNaturalArmor","rowMaxHP");
+	let isNaturalArmor = document.getElementById("isNaturalArmor").checked;
+	let nextRowIndex = document.getElementById("rowIsNaturalArmor").rowIndex + 1;
+
+	if(isNaturalArmor){
+		addTableRow("MonsterCreationTable",nextRowIndex,"rowAC","<th><label for='AC'>AC:</label></th><td><input type='number' id='AC' name='AC' min='1' style='width:25px'></td>");
+		nextRowIndex++;
+	}
+	else{
+		let ObjectRequest = await fetch("macro:pm.a5e.GetCoreData@lib:pm.a5e.Core", {method: "POST", body: "['sb.Objects']"});
+		let allObjects = await ObjectRequest.json();
+
+		let validObjects = [];
+		for(let tempObject of allObjects){
+			if(tempObject.Type == "Armor" && tempObject.ObjectTags.includes("StandardArmor")){
+				validObjects.push(tempObject);
+			}
+		}
+		let ArmorOptions = createHTMLSelectOptions(validObjects,"ObjectID");
+
+		addTableRow("MonsterCreationTable",nextRowIndex,"rowArmorChoice","<th><label for='ArmorChoice'>Armor Worn:</label></th><td><select id='ArmorChoice' name='ArmorChoice'>"+ArmorOptions+"</select></td>");
+		nextRowIndex++;
+
+		addTableRow("MonsterCreationTable",nextRowIndex,"rowIsShield","<th><label for='isShield'>Has Shield:</label></th><td><input type='checkbox' id='isShield' name='isShield'></td>");
+		nextRowIndex++;
+	}
+}
+
 async function createDamageTypeRows(damagePrefix){
     let table = document.getElementById("MonsterCreationTable");
     let nextRowIndex = document.getElementById("rowIs"+damagePrefix).rowIndex + 1;

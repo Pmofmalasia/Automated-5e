@@ -10,7 +10,7 @@
 [h:Hand = json.get(wa.Data,"Hand")]
 [h:OtherHand = if(Hand==0,1,0)]
 [h:AttackNum = json.get(wa.Data,"AttackNum")]
-[h:ThrowingWeapon = json.get(wa.Data,"Throw Weapon")]
+[h:ThrowingWeapon = json.get(wa.Data,"ThrowWeapon")]
 [h:DMOnly = json.get(wa.Data,"DMOnly")]
 [h:DMOnly = 0]
 [h:ShowFullRules = 1]
@@ -43,8 +43,8 @@
 [h:wa.CritMultiplier = 1 + json.get(wa.WeaponUsed,"CritMultiplier")]
 [h:wa.SpecialAbility = json.get(wa.WeaponUsed,"SpecialAbility")]
 [h:wa.Props = json.get(wa.WeaponUsed,"Props")]
-[h:wa.Magical = json.get(wa.WeaponUsed,"MagicItem")]
-[h:attack.ProfTest = if(or(json.get(getProperty("a5e.stat.WeaponProficiencies"),wa.WeaponType)==1,json.get(MagicItemStats,wa.WeaponType+"Prof")==1),1,0)]
+[h:wa.Magical = json.get(wa.WeaponUsed,"isMagical")]
+[h:attack.ProfTest = if(json.get(getProperty("a5e.stat.WeaponProficiencies"),wa.WeaponType)==1,1,0)]
 [h:attack.ToHitBonus = wa.MagicBonus]
 [h:wa.ProfTest = 1]
 [h:wa.TargetOrigin = ParentToken]
@@ -52,7 +52,7 @@
 [h:pm.PassiveFunction("AttackProps")]
 [h:pm.PassiveFunction("WeaponAttackProps")]
 
-[h:VersatileTest = if(json.get(wa.Props,"Versatile")>0,if(json.get(getProperty("a5e.stat.Weapon"),OtherHand)==2,if(json.get(getProperty("a5e.stat.Shield"),0)==1,1,0),0),0)]
+[h:VersatileTest = 0]
 [h,if(VersatileTest==1),code:{
 	[wa.DmgDie=substring(wa.DmgDie,0,indexOf(wa.DmgDie,"d")+1)+(number(substring(wa.DmgDie,indexOf(wa.DmgDie,"d")+1))+2)]
 };{}]
@@ -67,11 +67,13 @@
 [h:PrimeStat = if(json.get(wa.Props,"IntMod")>0,"Intelligence",PrimeStat)]
 [h:PrimeStat = if(json.get(wa.Props,"WisMod")>0,"Wisdom",PrimeStat)]
 [h:PrimeStat = if(json.get(wa.Props,"ChaMod")>0,"Charisma",PrimeStat)]
+[h,if(json.get(wa.Props,"PrimeStat")!=""): PrimeStat = json.get(wa.Props,"PrimeStat")]
 
 [h:pm.PassiveFunction("AttackStat")]
 [h:pm.PassiveFunction("WeaponAttackStat")]
 
 [h:attack.PrimeStatBonus = json.get(getProperty("a5e.stat.AtrMods"),PrimeStat)]
+[h:PrimeStatMod = json.get(getProperty("a5e.stat.AtrMods"),PrimeStat)]
 
 [h:wa.DmgDieSize = number(substring(wa.DmgDie,indexOf(wa.DmgDie,"d")+1))]
 [h:wa.DmgDie2Size = number(substring(wa.DmgDie2,indexOf(wa.DmgDie2,"d")+1))]
@@ -92,15 +94,19 @@
 	[h:pm.PassiveFunction("WeaponAttackNum")]
 }]
 
+[h:"<!-- Note: Not using SelfOnlyTest here for targeting to avoid CODE block limits, but shouldn't need it since attacks don't generally only target self anyway. -->"]
 [h,if(wa.PresetTarget == ""),CODE:{
-	[h:wa.TargetOptions = pm.a5e.TargetCreatureFiltering(json.set("","ParentToken",ParentToken,"Number",1,"Allegiance",json.set("","NotSelf",1),"Origin",wa.TargetOrigin,"Range",json.set("","Value",if(wa.MeleeRanged=="Ranged",wa.Range,wa.Reach),"Units","Feet")),"{}")]
+	[h:wa.TargetOptionData = pm.a5e.TargetCreatureFiltering(json.set("","ParentToken",ParentToken,"Number",1,"Allegiance",json.set("","NotSelf",1),"Origin",wa.TargetOrigin,"Range",json.set("","Value",if(wa.MeleeRanged=="Ranged",wa.Range,wa.Reach),"Units","Feet")),"{}")]
+	
+	[h:wa.TargetOptions = json.get(wa.TargetOptionData,"ValidTargets")]
+
 	[h:wa.AllTargets = pm.a5e.TargetCreatureTargeting(wa.TargetOptions,1,AttackCount)]
 	[h,if(AttackCount==1),CODE:{
 		[h:wa.TargetList = wa.AllTargets]
 	};{
 		[h:wa.TargetList = "[]"]
 		[h,count(AttackCount): wa.TargetList = json.merge(wa.TargetList,json.get(wa.AllTargets,roll.count))]
-	}]
+	}]	
 };{
 	[h:wa.TargetList = "[]"]
 	[h,count(AttackCount): wa.TargetList = json.append(wa.TargetList,wa.PresetTarget)]

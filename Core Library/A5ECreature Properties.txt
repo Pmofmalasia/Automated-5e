@@ -1,0 +1,118 @@
+__CHARACTER__:__________
+a5e.stat.BaseAttributes:{"Strength":10,"Dexterity":10,"Constitution":10,"Intelligence":10,"Wisdom":10,"Charisma":10}
+a5e.stat.Attributes:[r:json.get(a5e.AttributeCalc(),"Attributes")]
+a5e.stat.AtrMods:[r:json.get(a5e.AttributeCalc(),"Modifiers")]
+a5e.stat.Level (Character Level):[r:a5e.TotalLevel()]
+a5e.stat.ClassLevels (Class Levels):{}
+a5e.stat.Proficiency:[r:ceiling(getProperty("a5e.stat.Level")/4)+1]
+a5e.stat.Experience:0
+#a5e.stat.Alignment (Alignment):{}
+a5e.stat.CreatureType:Humanoid
+a5e.stat.Race:Grue
+a5e.stat.Subrace
+a5e.stat.RaceData:{}
+a5e.stat.Size
+a5e.stat.Deity:Ao
+a5e.stat.Background
+a5e.stat.Languages:[r:a5e.Languages()]
+a5e.stat.Note
+__HEALTH__:__________
+a5e.stat.HP:0
+a5e.stat.BaseMaxHP:0
+a5e.stat.MaxHP:[r:a5e.MaxHP()]
+a5e.stat.RolledMaxHP:0
+a5e.stat.TempHP:0
+a5e.stat.HPDrain:0
+a5e.stat.Exhaustion:0
+a5e.stat.DeathSaves:{"Successes":0,"Failures":0}
+a5e.stat.HitDice:{"1d12":0,"1d10":0,"1d8":0,"1d6":0}
+a5e.stat.MaxHitDice:{"1d12":0,"1d10":0,"1d8":0,"1d6":0}
+a5e.stat.BaseSpeed:0
+a5e.stat.BaseBurrowSpeed:0
+a5e.stat.BaseClimbSpeed:0
+a5e.stat.BaseFlySpeed:0
+a5e.stat.BaseSwimSpeed:0
+a5e.stat.AllSpeeds:[r:a5e.Speed()]
+a5e.stat.SpeedSpecial
+a5e.stat.Vision
+a5e.stat.DamageModifiers:[r:pm.a5e.DamageModifiers()]
+a5e.stat.ConditionImmunity
+__EQUIPMENT__:__________
+a5e.stat.AC:[r:a5e.AC()]
+a5e.stat.Inventory:[]
+a5e.stat.EquippedArmor
+a5e.stat.NaturalWeapons:[{"DisplayName":"Unarmed Strike","FalseName":"","Type":"Weapon","WeaponType":"UnarmedStrike","WeaponClass":"Natural","WeaponMeleeRanged":"Melee","Reach":5,"PrimeStat":"Strength","MagicBonus":0,"WeaponCritDiceMethod":"Add","WeaponCritDice":0,"Size":"Diminutive","Rarity":"Mundane","Cost":0,"CostUnits":"Gold","Weight":0,"isWearable":1,"Coating":"","Integrity":"Resilient","StateOfMatter":"Solid","Library":"SRD","Name":"UnarmedStrike","WeaponTags":[],"WeaponProperties":[],"WeaponDamage":[{"DamageType":"Bludgeoning","DamageDieNumber":0,"DamageDieSize":1,"DamageFlatBonus":1,"IsModBonus":1}],"CritThresh":20,"isMagical":0,"isNotDoffable":1,"Materials":["Flesh"],"MainMaterial":"Flesh","isFlammable":0,"isMagnetic":0,"isStackable":0,"isConsumable":0,"ObjectTags":[],"ObjectID":"VW5hcm1lZFN0cmlrZQ==851596","ItemID":0}]
+a5e.stat.NaturalArmor:{"DisplayName":"Natural Armor","FalseName":"","Type":"Armor","ArmorTier":"Unarmored","ArmorType":"NaturalArmor","MagicBonus":0,"Size":"Medium","Rarity":"Mundane","Cost":0,"CostUnits":"Gold","Weight":0,"isWearable":0,"Coating":"","Integrity":"Resilient","StateOfMatter":"Solid","Library":"SRD","Name":"NaturalArmor","BaseAC":10,"isDexterityBonus":1,"isDexterityCap":0,"isStrengthRequirement":0,"isStealthDisadvantage":0,"isMagical":0,"Materials":["Flesh"],"isFlammable":0,"isMagnetic":0,"isStackable":0,"isConsumable":0,"ObjectTags":["Raw","Organic"]}
+a5e.stat.HeldItems:["",""]
+a5e.stat.AttunedItems:[]
+__SKILLS__:__________
+a5e.stat.BaseSaves:{}
+a5e.stat.Saves:[r:a5e.SaveProficiency()]
+a5e.stat.BaseSkills:{}
+a5e.stat.Skills:[r:a5e.SkillProficiency()]
+a5e.stat.WeaponProficiencies:{"Unarmed":1,"Club":0,"Dagger":0,"Greatclub":0,"Handaxe":0,"Javelin":0,"LightHammer":0,"Mace":0,"Quarterstaff":0,"Sickle":0,"Spear":0,"LightCrossbow":0,"Dart":0,"Shortbow":0,"Sling":0,"Battleaxe":0,"Flail":0,"Glaive":0,"Greataxe":0,"Greatsword":0,"Halberd":0,"Lance":0,"Longsword":0,"Maul":0,"Morningstar":0,"Pike":0,"Rapier":0,"Scimitar":0,"Shortsword":0,"Trident":0,"WarPick":0,"Warhammer":0,"Whip":0,"Blowgun":0,"HandCrossbow":0,"HeavyCrossbow":0,"Longbow":0,"Net":0}
+a5e.stat.ArmorProficiencies:{"Light":0,"Medium":0,"Heavy":0,"Shield":0}
+a5e.stat.Tools:[r:a5e.ToolProficiency()]
+__SPELLS__:__________
+a5e.stat.SpellSlots:{"1":0,"2":0,"3":0,"4":0,"5":0,"6":0,"7":0,"8":0,"9":0}
+a5e.stat.MaxSpellSlots:{"1":0,"2":0,"3":0,"4":0,"5":0,"6":0,"7":0,"8":0,"9":0}
+a5e.stat.Concentration
+a5e.stat.ActiveSpells:[]
+__DISPLAY__:__________
+*dInspiration (Inspiration):[r,if(stat.a5e.DisplayStatTest()): if(getProperty('a5e.stat.Inspiration')!=0,getProperty('a5e.stat.Inspiration'),"")]
+dLevel (Race and Class):[r,if(stat.a5e.DisplayStatTest()): getProperty('a5e.stat.Race')+" | Will insert class levels later | "+getProperty('a5e.stat.Experience')+" XP"]
+*dHPshown (HP):[r,if(stat.a5e.DisplayStatTest()): getProperty('a5e.stat.HP')+" / "+getProperty('a5e.stat.MaxHP')+if(getProperty('a5e.stat.TempHP')>0," | Temp HP: "+getProperty('a5e.stat.TempHP'),"")]
+*dHitDice (Hit Dice):[r,if(stat.a5e.DisplayStatTest()): a5e.HitDieDisplay()]
+*dAC (AC):[r,if(stat.a5e.DisplayStatTest()): getProperty("a5e.stat.AC")]
+TempAllDmgModifiers:[r:a5e.DamageMod()]
+*dVulnerability (Vulnerability):[r,if(stat.a5e.DisplayStatTest()): a5e.DamageModDisplay(json.get(TempAllDmgModifiers,"Vulnerability"))]
+*dResistance (Resistance):[r,if(stat.a5e.DisplayStatTest()): a5e.DamageModDisplay(json.get(TempAllDmgModifiers,"Resistance"))]
+*dImmunity (Immunity):[r,if(stat.a5e.DisplayStatTest()): a5e.DamageModDisplay(json.get(TempAllDmgModifiers,"Immunity"))]
+*dAbsorption (Absorption):[r,if(stat.a5e.DisplayStatTest()): a5e.DamageModDisplay(json.get(TempAllDmgModifiers,"Absorption"))]
+*dSpeed (Speed):[r,if(stat.a5e.DisplayStatTest()): json.get(getProperty('a5e.stat.AllSpeeds'),"Walking")+if(json.get(getProperty('a5e.stat.AllSpeeds'),"Burrow")==0,"",", "+json.get(getProperty('a5e.stat.AllSpeeds'),"Burrow")+" Burrowing")+if(json.get(getProperty('a5e.stat.AllSpeeds'),"Climb")==0,"",", "+json.get(getProperty('a5e.stat.AllSpeeds'),"Climb")+" Climbing")+if(json.get(getProperty('a5e.stat.AllSpeeds'),"Fly")==0,"",", "+json.get(getProperty('a5e.stat.AllSpeeds'),"Fly")+" Flying")+if(json.get(getProperty('a5e.stat.AllSpeeds'),"Swim")==0,"",", "+json.get(getProperty('a5e.stat.AllSpeeds'),"Swim")+" Swimming")]
+*dVision (Vision):[r,if(stat.a5e.DisplayStatTest()): getProperty('a5e.stat.Vision')]
+*dLanguages (Languages):[r,if(stat.a5e.DisplayStatTest()): a5e.LanguageDisplay()]
+*#dPassivePerception (Passive Perception):{10+json.get(getProperty('a5e.stat.AtrMods'),"Wisdom")+(getProperty("a5e.stat.Proficiency")*json.get(getProperty("a5e.stat.Skills"),"Perception"))}
+*#dPassiveInvestigation (Passive Investigation):{10+json.get(getProperty('a5e.stat.AtrMods'),"Intelligence")+(getProperty("a5e.stat.Proficiency")*json.get(getProperty("a5e.stat.Skills"),"Investigation"))}
+*dConcentration (Concentration):[r,if(stat.a5e.DisplayStatTest()): getProperty("a5e.stat.Concentration")]
+*dSpellSlots (Spell Slots):[r,if(stat.a5e.DisplayStatTest()): if(pm.a5e.MaxSpellLevel("All",1)>0,pm.SpellSlots(),"")]
+__CLASS ABILITIES__:__________
+a5e.stat.AllFeatures:[]
+a5e.stat.ConditionList:[]
+a5e.stat.ConditionGroups:[]
+a5e.stat.ConditionsSet:[]
+a5e.stat.Subclasses:{}
+__DRUID__:__________
+*CurShape (Current Shape)
+ShapesKnown
+ShapesData
+WSRetainedStats:{"WildShape":0,"Strength":0,"Dexterity":0,"Constitution":0,"HP":0,"Size":0,"TokenImage":0}
+__WIZARD__:__________
+ArcaneWard:{"HP":0,"Active":0,"Use":0}
+ThirdEye:{"Use":0,"Choice":""}
+*dThirdEye (The Third Eye):{if(json.get(ThirdEye,"Choice")=="","",json.get(ThirdEye,"Choice"))}
+___NPC_DATA___:____________
+a5e.stat.CR:0
+a5e.stat.XP:0
+a5e.stat.Summoner
+__MISC__:__________
+a5e.stat.whichTeam:0
+a5e.stat.Allegiance
+a5e.stat.Inspiration:0
+Misc1
+Misc2
+Misc3
+Misc4
+Misc5
+*Madness
+*Weight
+*Distance:[r:character.Distances()]
+__SETTINGS__:__________
+a5e.stat.TargetingStyle:Input
+a5e.stat.FullAbilityRules:0
+a5e.stat.FullSpellRules:0
+a5e.stat.DisplaySize:400
+a5e.stat.ChatColors:{"DarkBackground":"","DarkText":"","DarkAccentBackground":"","DarkAccentText":"","DarkDamageText":"","DarkHealingText":"","DarkCritText":"","DarkCritFailText":"","DarkLinkColor":"","LightBackground":"","LightText":"","LightAccentBackground":"","LightAccentText":"","LightDamageText":"","LightHealingText":"","LightCritText":"","LightCritFailText":"","LightLinkColor":""}
+a5e.stat.ChatFonts:{"Title":"","Body":""}
+a5e.stat.ClassBorderColors:{"Artificer":"","Barbarian":"","Bard":"","Cleric":"","Druid":"","Fighter":"","Monk":"","Paladin":"","Ranger":"","Rogue":"","Sorcerer":"","Warlock":"","Wizard":"","Innate":"","Feat":""}
+a5e.stat.ClassTitleColors:{"Artificer":"","Barbarian":"","Bard":"","Cleric":"","Druid":"","Fighter":"","Monk":"","Paladin":"","Ranger":"","Rogue":"","Sorcerer":"","Warlock":"","Wizard":"","Innate":"","Feat":""}

@@ -7,7 +7,7 @@
 [h:ClassFeatureData = json.set("",
 	"Flavor",json.get(WeaponData,"Flavor"),
 	"ParentToken",ParentToken,
-	"DMOnly",0,
+	"DMOnly",(getProperty("a5e.stat.Allegiance") == "Enemy"),
 	"Class","zzWeaponAttack",
 	"Name",json.get(WeaponData,"Name")+" Attack",
 	"FalseName","Weapon Attack",
@@ -20,9 +20,9 @@
 
 [h:AttackData = json.set(AttackData,
 	"WeaponData",WeaponData,
-	"Throw Weapon",0,
+	"ThrowWeapon",0,
 	"AttackNum",1,
-	"DMOnly",0,
+	"DMOnly",(getProperty("a5e.stat.Allegiance") == "Enemy"),
 	"ParentToken",ParentToken
 )]
 
@@ -41,7 +41,7 @@
 [h,MACRO("Build Effect@Lib:pm.a5e.Core"): json.set("","CurrentEffects",pm.a5e.EffectData,"ToMerge",effectsToMerge,"BaseEffect",pm.a5e.BaseEffectData)]
 [h:pm.a5e.EffectData = macro.return]
 [h,if(!json.isEmpty(pm.a5e.EffectData)): setLibProperty("gd.Effects",json.merge(getLibProperty("gd.Effects","Lib:pm.a5e.Core"),pm.a5e.EffectData),"Lib:pm.a5e.Core")]
-[h,MACRO("OpenEffectsFrame@Lib:pm.a5e.Core"): ""]
+[h,MACRO("BuildEffectsFrame@Lib:pm.a5e.Core"): ""]
 
 [h:output.Temp = pm.AbilityTableProcessing(abilityTable,FormattingData,1)]
 [h:output.PC = output.PC + json.get(output.Temp,"Player")+"</div></div>"]

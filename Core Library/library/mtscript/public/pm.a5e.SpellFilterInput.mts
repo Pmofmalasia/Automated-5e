@@ -42,7 +42,7 @@
 		case 0: {};
 		case 1: {
 			[h:abort(input(" capClass | "+pm.GetClasses("DisplayName",",")+",Chosen Class | Max Level Capped by Highest Spell Slot Level in | LIST | VALUE=STRING "))]
-			[h,if(capClass=="Chosen Class")
+			[h,if(capClass=="Chosen Class"):
 				capClass = "Chosen_Class";
 				capClass = pm.RemoveSpecial(capClass)
 			]
@@ -58,11 +58,15 @@
 };{}]
 
 [h,if(choice.Level==2),CODE:{
+	[h:abort(input(
+		" junkVar | ---------------- Choose Valid Levels ---------------- | | LABEL | SPAN=TRUE ",
+		" choice.CapType | No Cap,Specific Class,Maximum of all combined,Based on classes in the class filter | <html><span title='Specific Class, e.g. Bard Magic Secrets use highest level Bard spell you can cast (This is most likely what you want, the others are niche and weird); Maximum of all combined takes multiclassing into account; Based on classes in filter - e.g. Bard and Cleric are in the filter, player can cast level 2 Bard spells and level 1 Cleric so the max shown is level 2'>How is the highest level spell slot you can cast determined? | LIST "
+	))]
     [h,switch(choice.CapType),CODE:
         case 0: {};
         case 1: {
             [h:abort(input(" capClass | "+pm.GetClasses("DisplayName",",")+",Chosen Class | Max Level Capped by Highest Spell Slot Level in | LIST | VALUE=STRING "))]
-            [h,if(capClass=="Chosen Class")
+            [h,if(capClass=="Chosen Class"):
                 capClass = "Chosen_Class";
                 capClass = pm.RemoveSpecial(capClass)
             ]

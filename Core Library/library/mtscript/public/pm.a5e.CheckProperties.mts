@@ -1,7 +1,13 @@
 [h:d20Data = arg(0)]
 
-[h:CurrentSkillDisplay = json.get(d20Data,"Skill")]
-[h:CurrentSkill = pm.RemoveSpecial(CurrentSkillDisplay)]
+[h:CurrentSkill = json.get(d20Data,"Skill")]
+[h,switch(d20Type):
+	case "Ability Score": CurrentSkillDisplay = pm.GetDisplayName(CurrentSkill,"sb.Attributes");
+	case "Skill": CurrentSkillDisplay = pm.GetDisplayName(CurrentSkill,"sb.Skills");
+	case "Tool": CurrentSkillDisplay = pm.GetDisplayName(CurrentSkill,"sb.Tools");
+	case "Initiative": CurrentSkillDisplay = "Initiative";
+	default: CurrentSkillDisplay = CurrentSkill
+]
 
 [h,if(json.get(d20Data,"Alternate")==""),CODE:{
 	[h,SWITCH(d20Type):

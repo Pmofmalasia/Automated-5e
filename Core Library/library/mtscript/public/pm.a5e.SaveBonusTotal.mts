@@ -1,20 +1,30 @@
 [h:d20Data = arg(0)]
 
-[h:CurrentSaveDisplay = json.get(d20Data,"Save")]
-[h:CurrentSave = pm.RemoveSpecial(CurrentSaveDisplay)]
-
 [h:d20Type = json.get(d20Data,"Type")]
-
-[h,SWITCH(d20Type):
-	case "Save": ProfType = json.get(getProperty("a5e.stat.Saves"),CurrentSave);
-	case "Concentration": ProfType = json.get(getProperty("a5e.stat.Saves"),"Constitution");
-	case "Death": ProfType = 0;
-	default: ProfType = 0
+[h:CurrentSave = json.get(d20Data,"Save")]
+[h,SWITCH(d20Type),CODE:
+	case "Save": {
+		[h:CurrentSaveDisplay = pm.GetDisplayName(CurrentSave,"sb.Attributes")]
+		[h:ProfType = json.get(getProperty("a5e.stat.Saves"),CurrentSave)]
+	};
+	case "Concentration": {
+		[h:CurrentSaveDisplay = "Concentration"]
+		[h:ProfType = json.get(getProperty("a5e.stat.Saves"),"Constitution")]
+	};
+	case "Death": {
+		[h:CurrentSaveDisplay = "Death"]
+		[h:ProfType = 0]
+	};
+	default: {
+		[h:CurrentSaveDisplay = CurrentSave]
+		[h:ProfType = 0]
+	}
 ]
+[h:roundingMethod = "floor"]
 
 [h:pm.PassiveFunction("SaveProf")]
 
-[h:ProfBonus = ProfType*getProperty("a5e.stat.Proficiency")]
+[h:ProfBonus = eval(roundingMethod+"("+(ProfType*getProperty("a5e.stat.Proficiency"))+")")]
 [h,SWITCH(ProfType+""):
 	case "0.5": ProfTypeStr = "Half Prof";
 	case "1": ProfTypeStr = "Prof";

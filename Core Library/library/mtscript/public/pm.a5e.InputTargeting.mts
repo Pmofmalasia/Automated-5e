@@ -1,6 +1,7 @@
 [h:pm.ValidTargets = json.get(arg(0),"ValidTargets")]
-[h:pm.SingleTarget = json.get(arg(0),"SingleTarget")]
+[h:pm.TargetNumber = json.get(arg(0),"TargetNumber")]
 [h:pm.TargetingInstances = json.get(arg(0),"TargetingInstances")]
+[h:pm.SingleTarget = if(pm.TargetNumber==1,1,0)]
 
 [h,if(pm.SingleTarget),CODE:{
     [h:pm.TargetOptions = "[]"]
@@ -8,7 +9,7 @@
         [h:pm.TargetOptions = json.append(pm.TargetOptions,getName(target)+" "+getTokenImage("",target))]
     }]
     [h:pm.TargetOptions = json.append(pm.TargetOptions,"Target Not on List")]
-    
+
     [h:sameTarget = 1]
     [h:tInput = if(pm.TargetingInstances==1,""," sameTarget | 1 | Use First Target for All Attacks | CHECK ")]
     [h,count(pm.TargetingInstances): tInput = listAppend(tInput," pm.TargetChoice"+roll.count+" | "+pm.TargetOptions+" | Choose a Target"+if(pm.TargetingInstances==1,""," for Attack # "+(roll.count+1))+" | LIST | ICON=TRUE ICONSIZE=50 DELIMITER=JSON "," ## ")]

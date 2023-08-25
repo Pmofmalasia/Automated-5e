@@ -56,7 +56,7 @@
 	[h:fs.New = json.difference(fs.ChosenAbilities,thisGroupFSCurrent)]
 	[h:fs.Removed = json.difference(thisGroupFSCurrent,fs.ChosenAbilities)]
 	[h,MACRO("NewAbilityProcessing@Lib:pm.a5e.Core"): json.set("","Abilities",fs.New,"ParentToken",ParentToken)]
-	[h,MACRO("NewFeatureAddition@Lib:pm.a5e.Core"): json.path.put(macro.return,"['Abilities'][*]","AssociatedClass",json.get(TempGroup,"Class"))]
+	[h,MACRO("NewFeatureAddition@Lib:pm.a5e.Core"): json.set(json.path.put(macro.return,"['Abilities'][*]","AssociatedClass",json.get(TempGroup,"Class")),"ParentToken",ParentToken)]
 	[h,MACRO("FeatureRemoval@Lib:pm.a5e.Core"): json.set("","Features",fs.Removed,"ParentToken",ParentToken)]
 	
 	[h:fs.ChosenStr = json.toList(json.path.read(getProperty("a5e.stat.AllFeatures"),"[?(@.Class=='FightingStyle' && @.AssociatedClass=='"+json.get(TempGroup,"Class")+"' && @.IsActive > 0)]['DisplayName']"),if(getLibProperty("VerticalDisplay","Lib:pm.a5e.Core")==1,"<br>",", "))]
@@ -76,11 +76,11 @@
 [h:ClassFeatureData = json.set("",
 	"Flavor","",
 	"ParentToken",ParentToken,
-	"DMOnly",0,
+	"DMOnly",(getProperty("a5e.stat.Allegiance") == "Enemy"),
 	"Class","FightingStyle",
 	"Name","Manage Fighting Styles",
 	"FalseName","",
-	"OnlyRules",0
+	"OnlyRules",1
 	)]
 
 [h:FormattingData = pm.MacroFormat(ClassFeatureData)]

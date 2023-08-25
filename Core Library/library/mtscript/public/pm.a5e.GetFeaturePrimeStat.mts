@@ -4,7 +4,7 @@
 [h,if(PrimeStatMethodTest == "OBJECT"),CODE:{
 	[h:PrimeStatOptions = json.get(json.get(FeatureInfo,"PrimeStat"),"Stats")]
 	[h:FeaturePrimeStat = json.get(PrimeStatOptions,0)]
-	[h:FeaturePrimeStatValue = json.get(getProperty("a5e.stat.AtrMods"),tempPrimeStat)]
+	[h:FeaturePrimeStatValue = json.get(getProperty("a5e.stat.AtrMods"),FeaturePrimeStat)]
 	[h,foreach(tempPrimeStat,json.remove(PrimeStatOptions,0)),CODE:{
 		[h:tempPrimeStatValue = json.get(getProperty("a5e.stat.Attributes"),tempPrimeStat)]
 		[h,if(tempPrimeStatValue > FeaturePrimeStatValue): FeaturePrimeStat = tempPrimeStat]

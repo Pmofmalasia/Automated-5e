@@ -20,9 +20,9 @@
     "Flavor",Flavor,
     "ParentToken",ParentToken,
     "DMOnly",DMOnly,
-    "Class","zzSpell"+SpellSource,
-    "ColorSubtype",SpellSlot,
-    "Name",json.get(json.get(SpellData,0),"DisplayName"),
+    "Class","zzSpell",
+    "ColorSubtype",json.set("","Source",SpellSource,"Level",SpellSlot),
+    "Name",json.get(SpellData,"DisplayName"),
     "FalseName","Spellcasting",
     "OnlyRules",ShowFullRules
 )]
@@ -37,9 +37,9 @@
 
 [h:pm.a5e.BaseEffectData = json.set("",
     "Class","Spell",
-    "ClassForDisplay","zzSpell"+SpellSource,
-	"DisplayName",json.get(json.get(SpellData,0),"DisplayName"),
-    "ColorSubtype",SpellSlot,
+    "ClassForDisplay","zzSpell",
+	"DisplayName",json.get(SpellData,"DisplayName"),
+    "ColorSubtype",json.set("","Source",SpellSource,"Level",SpellSlot),
     "FalseName","Spellcasting",
 	"Type","Spell",
 	"ID",pm.a5e.GenerateEffectID(),
@@ -56,4 +56,4 @@
 [h:pm.a5e.EffectData = macro.return]
 [h,if(!json.isEmpty(pm.a5e.EffectData)): setLibProperty("gd.Effects",json.merge(getLibProperty("gd.Effects","Lib:pm.a5e.Core"),pm.a5e.EffectData),"Lib:pm.a5e.Core")]
 
-[h,MACRO("OpenEffectsFrame@Lib:pm.a5e.Core"): ""]
+[h,MACRO("BuildEffectsFrame@Lib:pm.a5e.Core"): ""]

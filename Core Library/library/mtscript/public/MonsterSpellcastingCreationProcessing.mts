@@ -26,8 +26,7 @@
     [h,count(json.get(MonsterData,"InnateSpellNumber")+1),CODE:{
         [h:thisSpellName = json.get(MonsterData,"InnateSpell"+SafeCounter)]
         [h:SpellData = pm.a5e.GetSpecificSpell(thisSpellName)]
-        [h:MainSpellData = json.get(SpellData,0)]
-        [h:thisSpellDisplayName = json.get(MainSpellData,"DisplayName")]
+        [h:thisSpellDisplayName = json.get(SpellData,"DisplayName")]
 
         [h:ResourceData = ResourceData + ",'"+thisSpellName+"',"+json.get(MonsterData,"InnateSpell"+SafeCounter+"Resource")]
         [h:ResourceDisplayData = json.set(ResourceDisplayData,thisSpellName,thisSpellDisplayName)]
@@ -36,7 +35,7 @@
 
         [h,MACRO("CreateSpellMacroLabel@Lib:pm.a5e.Core"): thisSpellName]
         [h:SpellMacroLabel = macro.return]
-        [h:DefaultDisplayData = pm.SpellColors(json.set("","Level",string(json.get(MainSpellData,"Level")),"Source","Arcane"))]
+        [h:DefaultDisplayData = pm.SpellColors(json.set("","Level",string(json.get(SpellData,"Level")),"Source","Arcane"))]
         [h:BorderColor = json.get(DefaultDisplayData,"Border")]
         [h:TextColor = json.get(DefaultDisplayData,"Title")]
         [h:CastAtLevel = json.get(MonsterData,"InnateSpell"+SafeCounter+"Level")]
@@ -52,7 +51,7 @@
             "fontSize","1.00em",
             "includeLabel",0,
             "group","Current Spells",
-            "sortBy",json.get(MainSpellData,"Level"),
+            "sortBy",json.get(SpellData,"Level"),
             "label",SpellMacroLabel,
             "maxWidth","",
             "minWidth",89,

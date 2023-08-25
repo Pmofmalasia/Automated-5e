@@ -29,11 +29,11 @@
 )]
 
 [h:gr.TargetOptions = pm.a5e.TargetCreatureFiltering(gr.TargetingData,gr.TargetingFilters)]
-[h:gr.Target = pm.a5e.TargetCreatureTargeting(gr.TargetOptions,1)]
+[h:gr.Target = pm.a5e.TargetCreatureTargeting(json.get(gr.TargetOptions,"ValidTargets"),1)]
 
 [h:gr.thisEffect = json.set(gr.thisEffect,"Targets",gr.Target)]
 
-[h:"<!-- Needs EndInfo: 
+[h:"<!-- TODO: Needs EndInfo: 
 	- Ends when letting go with that hand/equipping something (equipment rework)
 	- Ends with successful contested check by target (needs support for ending conditions with check/save)
 	- Ends if targets are moved out of range of the grapple (needs movement support in general)

@@ -62,7 +62,7 @@
 		))
 	]
 	[h:FinalHPData = json.set(FinalHPData,"ParentToken",target)]
-	[h,MACRO("Change HP@Lib:pm.a5e.Core"): FinalHPData]
+	[h,MACRO("ChangeHP@Lib:pm.a5e.Core"): FinalHPData]
 	[h:abilityTable = json.merge(abilityTable,json.get(macro.return,"Table"))]
 }]
 
@@ -70,7 +70,7 @@
 [h:ClassFeatureData = json.set("",
 	"Flavor","",
 	"ParentToken",ParentToken,
-	"DMOnly",0,
+	"DMOnly",(getProperty("a5e.stat.Allegiance") == "Enemy"),
 	"Class","zzChangeHP",
 	"ColorSubtype",if(IsDamage,"Damage","Healing"),
 	"Name","Change HP",

@@ -74,7 +74,7 @@
 		[h:ab.MasterFeature = json.set("","Name",pm.RemoveSpecial(ab.MasterName),"DisplayName",ab.MasterName,"Class",ab.MasterClass,"Subclass",if(ab.MasterSubclass=="None","",pm.RemoveSpecial(ab.MasterSubclass)))]
 	}]
 	
-	[h:ab.Final = json.set(ab.Final,"Master",ab.MasterFeature)]	
+	[h:ab.Final = json.set(ab.Final,"Master",ab.MasterFeature)]
 };{
 	[h:ab.Final = json.set(ab.Final,"Master","")]
 }]

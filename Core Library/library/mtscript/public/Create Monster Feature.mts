@@ -64,16 +64,31 @@
 
 [h:ab.Final = json.get(macro.return,"Ability")]
 
-[h:setProperty("a5e.stat.AllFeatures",json.append(getProperty("a5e.stat.AllFeatures"),json.set(ab.Final,"IsActive",1)))]
-
-[r:ab.DisplayName+" monster feature from the sourcebook "+ab.Source+" created."]
-
 [h,if(isFeatureGroup),CODE:{
     [h:"<!-- Will probably want to convert this to dialog so the interface for this won't be terrible -->"]
 };{}]
 
-[h,if(!ab.IsUnique),CODE:{
-    [h:setLibProperty("sb.MonsterFeatures",json.sort(json.append(getLibProperty("sb.MonsterFeatures","Lib:"+ab.SourceLib),ab.Final),"a","Class","Subclass","Level","DisplayName"),"Lib:"+ab.SourceLib)]
 
-    [h,MACRO("Gather Sourcebook Information@Lib:pm.a5e.Core"):""]
-};{}]
+
+[h:HasActiveEffects = json.contains(ab.Final,"ButtonInfo")]
+[h,if(HasActiveEffects),CODE:{
+	[h:setLibProperty("ct.NewFeature",json.set(getLibProperty("ct.NewFeature","Lib:pm.a5e.Core"),getPlayerName(),ab.Final),"Lib:pm.a5e.Core")]
+
+	[h,MACRO("CreateSubeffect@Lib:pm.a5e.Core"): json.set("",
+		"WhichSubeffect",1,
+		"WhichEffect",1,
+		"EffectsNumber",json.length(json.get(ab.Final,"ButtonInfo")),
+		"EffectType","Feature",
+		"ParentToken",currentToken(),
+		"ExtraData",json.set("","FeatureType","MonsterFeature","UniqueMonsterFeature",ab.IsUnique)
+	)]
+};{
+	[h:setProperty("a5e.stat.AllFeatures",json.append(getProperty("a5e.stat.AllFeatures"),json.set(ab.Final,"IsActive",1)))]
+	[r:ab.DisplayName+" monster feature from the sourcebook "+ab.Source+" created."]
+
+	[h,if(!ab.IsUnique),CODE:{
+		[h:setLibProperty("sb.MonsterFeatures",json.sort(json.append(getLibProperty("sb.MonsterFeatures","Lib:"+ab.SourceLib),ab.Final),"a","Class","Subclass","Level","DisplayName"),"Lib:"+ab.SourceLib)]
+
+		[h,MACRO("Gather Sourcebook Information@Lib:pm.a5e.Core"):""]
+	};{}]	
+}]

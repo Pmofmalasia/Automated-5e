@@ -54,19 +54,13 @@
 
 [h:isSpellSave = if(json.get(otherSaveOptions,"SpellSave")=="",0,json.get(otherSaveOptions,"SpellSave"))]
 
-[h:miSaveDCSet=json.path.read(MagicItemClassBonuses,"[*][?(@.IsActive>0 && @.Ability=='"+currentFeatureName+"' && @.Class=='"+currentFeatureClass+"' && @.Subclass=='"+currentFeatureSubclass+"' && @.SaveDCSet!=-1)]['SaveDCSet']")]
-[h,if(json.isEmpty(miSaveDCSet)): miSaveDCSetFinal = -1 ; miSaveDCSetFinal = math.arrayMax(miSaveDCSet)]
+[h:"<!-- TODO: Re-add magic item changing DC here -->"]
 
-[h:miSaveDCBonus=json.path.read(MagicItemClassBonuses,"[*][?(@.IsActive>0 && @.Ability=='"+currentFeatureName+"' && @.Class=='"+currentFeatureClass+"' && @.Subclass=='"+currentFeatureSubclass+"' && @.SaveDCBonus!=0)]['SaveDCBonus']")]
-[h,if(json.isEmpty(miSaveDCBonus)): miSaveDCBonusFinal = 0; miSaveDCBonusFinal = math.arraySum(miSaveDCBonus)]
-
-[h:pm.DCFinal=if(miSaveDCSetFinal==-1,(pm.DC+miSaveDCBonusFinal),max(miSaveDCSetFinal,(pm.DC+miSaveDCBonusFinal)))]
+[h:pm.DCFinal = pm.DC]
 
 [h,if(isSpellSave),CODE:{
 	
 };{}]
-
-[h:pm.DCFinal=if(miSaveDCSetFinal==-1,(pm.DC+miSaveDCBonusFinal),max(miSaveDCSetFinal,(pm.DC+miSaveDCBonusFinal)))]
 
 [h:saveDataFinal = json.set("",
 	"DC",pm.DCFinal,
@@ -78,7 +72,9 @@
 	"ConditionsResisted",json.set("",
 		"Inclusive",conditionsResistedInclusive,
 		"Exclusive",conditionsResistedExclusive)
-	)]
+)]
+
+[h,if(json.get(pm.SaveModifiers,"ConditionModification")!=""): saveDataFinal = json.set(saveDataFinal,"ConditionModification",json.get(pm.SaveModifiers,"ConditionModification"))]
 
 [h:abilityTable = json.append(abilityTable,json.set("",
 	"ShowIfCondensed",1,

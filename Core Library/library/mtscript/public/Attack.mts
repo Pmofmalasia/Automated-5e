@@ -5,14 +5,28 @@
 [h:a5e.UnifiedAbilities = a5e.GatherAbilities(ParentToken)]
 [h:pm.a5e.OverarchingContext = "Attack"]
 [h:pm.a5e.EffectData = "[]"]
+[h:pm.a5e.LinkedEffectData = "[]"]
+
+[h:ActiveHand = json.get(wa.Data,"Hand")]
+[h:OtherHands = "[]"]
+[h:CurrentHeldItems = getProperty("a5e.stat.HeldItems")]
+[h:TotalHands = json.length(CurrentHeldItems)]
+[h,if(ActiveHand >= 0),CODE:{
+	[h,count(TotalHands): OtherHands = if(roll.count == ActiveHand,OtherHands,json.append(OtherHands,roll.count))]
+	[h:OtherHandsIDs = json.remove(CurrentHeldItems,ActiveHand)]
+};{
+	[h:"<!-- Note: ActiveHand -1 indicates natural weapon not using a hand -->"]
+	[h,count(TotalHands): OtherHands = json.append(OtherHands,roll.count)]
+	[h:OtherHandsIDs = CurrentHeldItems]
+}]
 
 [h:Flavor = json.get(wa.Data,"Flavor")]
-[h:Hand = json.get(wa.Data,"Hand")]
-[h:OtherHand = if(Hand==0,1,0)]
 [h:AttackNum = json.get(wa.Data,"AttackNum")]
-[h:ThrowingWeapon = json.get(wa.Data,"Throw Weapon")]
+[h:ThrowingWeapon = json.get(wa.Data,"ThrowWeapon")]
+[h:TwoWeaponFighting = json.get(wa.Data,"TwoWeaponFighting")]
+[h,if(TwoWeaponFighting == ""): TwoWeaponFighting = 0]
 [h:DMOnly = json.get(wa.Data,"DMOnly")]
-[h:DMOnly = 0]
+[h,if(DMOnly == ""): DMOnly = (getProperty("a5e.stat.Allegiance") == "Enemy")]
 [h:ShowFullRules = 1]
 [h:wa.WeaponUsed = json.get(wa.Data,"WeaponData")]
 [h:wa.EffectIDs = json.get(wa.Data,"ID")]
@@ -27,46 +41,150 @@
 [h:CritMessage = json.get(wa.Data,"CritMessage")]
 [h:CritFailMessage = json.get(wa.Data,"CritFailMessage")]
 
-[h:wa.Name = json.get(wa.WeaponUsed,"Name")]
+[h:"<!-- TODO: Switch out name with false name if needed -->"]
+[h:wa.Name = json.get(wa.WeaponUsed,"DisplayName")]
 [h:wa.MagicBonus = json.get(wa.WeaponUsed,"MagicBonus")]
-[h:wa.WeaponType = json.get(wa.WeaponUsed,"Type")]
-[h:wa.DmgDie = json.get(wa.WeaponUsed,"DamageDie")]
-[h:wa.DmgType = json.get(wa.WeaponUsed,"DamageType")]
-[h:wa.DmgDie2 = json.get(wa.WeaponUsed,"SecDamageDie")]
-[h:wa.DmgType2 = json.get(wa.WeaponUsed,"SecDamageType")]
-[h:wa.MeleeRanged = json.get(wa.WeaponUsed,"MeleeRanged")]
-[h:wa.Class = json.get(wa.WeaponUsed,"Class")]
+[h:wa.WeaponType = json.get(wa.WeaponUsed,"WeaponType")]
+[h:wa.Class = json.get(wa.WeaponUsed,"WeaponClass")]
+[h:wa.DamageData = json.get(wa.WeaponUsed,"WeaponDamage")]
 [h:wa.Reach = json.get(wa.WeaponUsed,"Reach")]
 [h:wa.Range = json.get(wa.WeaponUsed,"Range")]
-[h:attack.CritRange = json.get(wa.WeaponUsed,"CritRange")]
-[h:wa.CritMultiplier = 1 + json.get(wa.WeaponUsed,"CritMultiplier")]
-[h:wa.SpecialAbility = json.get(wa.WeaponUsed,"SpecialAbility")]
-[h:wa.Props = json.get(wa.WeaponUsed,"Props")]
-[h:wa.Magical = json.get(wa.WeaponUsed,"MagicItem")]
-[h:attack.ProfTest = if(or(json.get(getProperty("a5e.stat.WeaponProficiencies"),wa.WeaponType)==1,json.get(MagicItemStats,wa.WeaponType+"Prof")==1),1,0)]
-[h:attack.ToHitBonus = wa.MagicBonus]
-[h:wa.ProfTest = 1]
+[h:wa.LongRange = json.get(wa.WeaponUsed,"LongRange")]
+[h:wa.WeaponMeleeRanged = json.get(wa.WeaponUsed,"WeaponMeleeRanged")]
+[h:wa.MeleeRanged = wa.WeaponMeleeRanged]
+[h:"<!-- Note: wa.WeaponMeleeRanged is whether the weapon itself is a melee/ranged weapon, while wa.MeleeRanged is whether the attack is a melee/ranged attack. Distinction mostly for throwing weapons. -->"]
+
+[h,if(json.get(wa.WeaponUsed,"CritThresh")!=""):
+	attack.CritThresh = json.get(wa.WeaponUsed,"CritThresh");
+	attack.CritThresh = 20
+]
+[h,if(json.get(wa.WeaponUsed,"CritThreshReduction")!=""):
+	attack.CritThreshReduction = json.get(wa.WeaponUsed,"CritThreshReduction");
+	attack.CritThreshReduction = 0
+]
+
+[h:"<!-- Note: number('') results in 0, so this will function without the key present -->"]
+[h:wa.CritMultiplier = 1 + number(json.get(wa.WeaponUsed,"CritMultiplier"))]
+
+[h:wa.IsActiveTest = or(
+	json.get(wa.WeaponUsed,"isActivatable") == 0,
+	json.get(wa.WeaponUsed,"isActivatable") == "",
+	and(
+		json.get(wa.WeaponUsed,"isActivatable") == 1,
+		json.get(wa.WeaponUsed,"IsActive") == 1)
+)]
+[h,if(wa.IsActiveTest):
+	wa.WeaponEffects = json.get(wa.WeaponUsed,"WeaponEffects");
+	wa.WeaponEffects = "[]"
+]
+[h,if(wa.WeaponEffects == ""): wa.WeaponEffects = "[]"]
+
+[h:wa.Props = json.get(wa.WeaponUsed,"WeaponProperties")]
+[h:wa.Magical = json.get(wa.WeaponUsed,"isMagical")]
+[h:attack.ProfTest = if(json.get(getProperty("a5e.stat.WeaponProficiencies"),wa.WeaponType)==1,1,0)]
+[h:attack.ProfTest = 1]
 [h:wa.TargetOrigin = ParentToken]
+
+[h:wa.BrutalCrit = 0]
+[h:"<!-- TODO: Add other primary stats as a property? Or otherwise? Probably just have a 'Primary Stat' option that isn't a property which defaults to Strength or Dex if ranged. -->"]
+[h:PrimeStat = if(wa.MeleeRanged=="Ranged","Dexterity","Strength")]
+[h,if(json.get(wa.WeaponUsed,"PrimeStat")!=""): PrimeStat = json.get(wa.WeaponUsed,"PrimeStat")]
 
 [h:pm.PassiveFunction("AttackProps")]
 [h:pm.PassiveFunction("WeaponAttackProps")]
 
-[h:VersatileTest = if(json.get(wa.Props,"Versatile")>0,if(json.get(getProperty("a5e.stat.Weapon"),OtherHand)==2,if(json.get(getProperty("a5e.stat.Shield"),0)==1,1,0),0),0)]
-[h,if(VersatileTest==1),code:{
-	[wa.DmgDie=substring(wa.DmgDie,0,indexOf(wa.DmgDie,"d")+1)+(number(substring(wa.DmgDie,indexOf(wa.DmgDie,"d")+1))+2)]
+[h:attack.ToHitBonus = wa.MagicBonus]
+[h,if(!json.isEmpty(wa.DamageData)),CODE:{
+	[h:FirstInstance = json.get(wa.DamageData,0)]
+	[h:FirstInstance = json.set(FirstInstance,"DamageFlatBonus",json.get(FirstInstance,"DamageFlatBonus") + wa.MagicBonus)]
+	[h:wa.DamageData = json.set(wa.DamageData,0,FirstInstance)]
 };{}]
 
-[h,if(ThrowingWeapon && json.get(wa.Props,"Thrown")==0),CODE:{
-	[h:wa.DmgDie = "1d4"]
-	[h:wa.Class = "Improvised"]
+[h,if(!json.isEmpty(wa.DamageData)): wa.DamageData = json.path.put(wa.DamageData,"[0]","BonusCritDice",wa.BrutalCrit)]
+
+[h,if(json.contains(wa.Props,"Finesse")),CODE:{
+	[h:"<!-- TODO: Currently takes the maximum without choice, in the future may want to add an option for choice via options #1: Always ask, #2 Ask if two are equal, #3 do not compare at all and set choice in an 'Advanced Attack Options' menu -->"]
+	[h:MaxPrimeStat = json.get(getProperty("a5e.stat.AtrMods"),PrimeStat)]
+	[h:PrimeStatOptions = json.append("",PrimeStat,"Dexterity")]
+	[h,foreach(tempStat,PrimeStatOptions),CODE:{
+		[h:changePrimeStatTest = json.get(getProperty("a5e.stat.AtrMods"),tempStat) > MaxPrimeStat]
+		[h,if(changePrimeStatTest): PrimeStat = tempStat]
+		[h,if(changePrimeStatTest): MaxPrimeStat = json.get(getProperty("a5e.stat.AtrMods"),tempStat)]
+	}]
 };{}]
 
-[h:PrimeStat = if(and(json.get(wa.Props,"Finesse")>0,json.get(getProperty("a5e.stat.AtrMods"),"Dexterity")>json.get(getProperty("a5e.stat.AtrMods"),"Strength")),"Dexterity","Strength")]
-[h:PrimeStat = if(wa.MeleeRanged=="Ranged","Dexterity",PrimeStat)]
-[h:PrimeStat = if(json.get(wa.Props,"IntMod")>0,"Intelligence",PrimeStat)]
-[h:PrimeStat = if(json.get(wa.Props,"WisMod")>0,"Wisdom",PrimeStat)]
-[h:PrimeStat = if(json.get(wa.Props,"ChaMod")>0,"Charisma",PrimeStat)]
-[h,if(json.get(wa.Props,"PrimeStat")!=""): PrimeStat = json.get(wa.Props,"PrimeStat")]
+[h,if(json.contains(wa.Props,"Heavy")),CODE:{
+	[h:TooHeavyTest = pm.a5e.CompareSizes(getSize(ParentToken),"Small") <= 0]
+	[h,if(TooHeavyTest): wa.Data = json.set(wa.Data,"Disadvantage",number(json.get(wa.Data,"Disadvantage"))+1)]
+};{}]
+
+[h:"<!-- TODO: May want to change this to an 'AttackNumMax' property in the future, should work nicer with weapons that can be loaded with X number of ammunition -->"]
+[h,if(json.contains(wa.Props,"Loading")): AttackNum = -1]
+
+[h,if(ThrowingWeapon && !json.contains(wa.Props,"Thrown")),CODE:{
+	[h:"<!-- UDF? -->"]
+	[h:AllInstanceDamageTypes = json.path.read(wa.DamageData,"[*]['Damage']['DamageType']")]
+	[h:TempAllInstanceDamageTypeOptions = json.path.read(wa.DamageData,"[*]['Damage']['DamageTypeOptions']")]
+	[h:AllInstanceDamageTypeOptions = "[]"]
+	[h,foreach(instance,TempAllInstanceDamageTypeOptions): AllInstanceDamageTypeOptions = json.merge(AllInstanceDamageTypeOptions,instance)]
+	[h:ImprovisedDamageTypes = json.unique(json.merge(AllInstanceDamageTypes,AllInstanceDamageTypeOptions))]
+
+	[h:NewDamageInstance = json.set("",
+		"DamageDieNumber",1,
+		"DamageDieSize",4,
+		"DamageFlatBonus",0,
+		"IsModBonus",1
+	)]
+
+	[h,if(json.length(ImprovisedDamageTypes) > 1),CODE:{
+		[h:NewDamageInstance = json.set(NewDamageInstance,"DamageTypeOptions",ImprovisedDamageTypes)]
+	};{
+		[h,if(json.length(ImprovisedDamageTypes) > 0): NewDamageInstance = json.set(NewDamageInstance,"DamageType",json.get(ImprovisedDamageTypes,0))]
+	}]
+	[h,if(!json.isEmpty(wa.DamageData)): wa.DamageData = json.append("",NewDamageInstance)]
+
+	[h:wa.Range = 20]
+	[h:wa.LongRange = 60]
+	[h:wa.MeleeRanged = "Ranged"]
+};{
+	[h,if(ThrowingWeapon): wa.MeleeRanged = "Ranged"]
+}]
+
+[h:"<!-- TODO: Current method is to remove TWF completely to get around the no damage modifier effect (e.g. for the fighting style). Issues are #1: It is still technically TWF, so any effects that would trigger on TWF would not be able to; solution could be adding a variable that bypasses removing the mod. #2: TWF still adds damage modifier if negative; solution could be changing IsDamageModifier -->"]
+[h,if(TwoWeaponFighting),CODE:{
+	[h:wa.DamageData = json.path.set(wa.DamageData,"[*]","IsModBonus",0)]
+};{}]
+
+[h:"<!-- TODO: Will need to ensure that the empty hand is allowed to make attacks in the future -->"]
+[h:NonEmptyHandIDs = json.difference(OtherHandsIDs,json.append("",""))]
+[h:AllHandsEmpty = json.isEmpty(NonEmptyHandIDs)]
+[h:EmptyHandTest = !json.isEmpty(json.difference(OtherHandsIDs,NonEmptyHandIDs))]
+
+[h,if(EmptyHandTest==0 && json.contains(wa.Props,"TwoHanded")),CODE:{
+	[h:"<!-- TODO: Decide how to implement not being able to/cancelling attack -->"]
+};{}]
+
+[h,if(EmptyHandTest==1 && json.contains(wa.Props,"Versatile")),CODE:{
+	[h:wa.DamageData = json.get(wa.WeaponUsed,"VersatileDamage")]
+};{}]
+
+[h:UsesAmmunitionTest = json.contains(wa.Props,"Ammunition")]
+[h,if(UsesAmmunitionTest),CODE:{
+	[h:wa.AmmunitionID = json.get(wa.WeaponUsed,"AmmunitionID")]
+	[h,if(wa.AmmunitionID == ""),CODE:{
+		[h:AmmunitionData = "{}"]
+	};{
+		[h:tempAmmunitionData = json.path.read(getProperty("a5e.stat.Inventory"),"[*][?(@.ItemID == "+wa.AmmunitionID+")]")]
+		[h,if(json.isEmpty(tempAmmunitionData)):
+			AmmunitionData = "{}";
+			AmmunitionData = json.get(tempAmmunitionData,0)
+		]
+	}]
+
+	[h:CurrentAmmoCount = number(json.get(AmmunitionData,"Number"))]
+};{
+	[h:CurrentAmmoCount = 0]
+}]
 
 [h:pm.PassiveFunction("AttackStat")]
 [h:pm.PassiveFunction("WeaponAttackStat")]
@@ -74,21 +192,7 @@
 [h:attack.PrimeStatBonus = json.get(getProperty("a5e.stat.AtrMods"),PrimeStat)]
 [h:PrimeStatMod = json.get(getProperty("a5e.stat.AtrMods"),PrimeStat)]
 
-[h:wa.DmgDieSize = number(substring(wa.DmgDie,indexOf(wa.DmgDie,"d")+1))]
-[h:wa.DmgDie2Size = number(substring(wa.DmgDie2,indexOf(wa.DmgDie2,"d")+1))]
-
-[h:wa.BrutalCrit = 0]
-[h:CritDmgDie = (wa.CritMultiplier*number(substring(wa.DmgDie,0,indexOf(wa.DmgDie,"d")))) + wa.BrutalCrit]
-[h:wa.DmgDie2Placehold = if(wa.DmgDie2=="0" || wa.DmgDie2=="","0d1",wa.DmgDie2)]
-[h:CritSecDmgDie = (wa.CritMultiplier*number(substring(wa.DmgDie2Placehold,0,indexOf(wa.DmgDie2Placehold,"d"))))]
-
-[h:wa.DmgDieNum = number(substring(wa.DmgDie,0,indexOf(wa.DmgDie,"d")))]
-[h,if(wa.DmgDie2==""):
-	wa.DmgDie2Num = 0;
-	wa.DmgDie2Num = number(substring(wa.DmgDie2,0,1))
-]
-
-[h,if(AttackNum<0),CODE:{
+[h,if(AttackNum < 0),CODE:{
 	[h:AttackCount = abs(AttackNum)]
 };{
 	[h:AttackCount = AttackNum]
@@ -96,8 +200,8 @@
 	[h:pm.PassiveFunction("WeaponAttackNum")]
 }]
 
-[h:wa.TargetOptions = pm.a5e.TargetCreatureFiltering(json.set("","ParentToken",ParentToken,"Number",1,"Origin",wa.TargetOrigin,"Range",json.set("","Value",if(wa.MeleeRanged=="Ranged",wa.Range,wa.Reach),"Units","Feet")),json.set("","Allegiance",json.set("","NotSelf",1)))]
-[h:wa.AllTargets = pm.a5e.TargetCreatureTargeting(wa.TargetOptions,1,AttackCount)]
+[h:wa.TargetOptions = pm.a5e.TargetCreatureFiltering(json.set("","ParentToken",ParentToken,"Number",1,"Origin",wa.TargetOrigin,"Range",json.set("","Value",if(wa.MeleeRanged=="Ranged",wa.LongRange,wa.Reach),"Units","Feet")),json.set("","Allegiance",json.set("","NotSelf",1)))]
+[h:wa.AllTargets = pm.a5e.TargetCreatureTargeting(json.get(wa.TargetOptions,"ValidTargets"),1,AttackCount)]
 [h,if(AttackCount==1),CODE:{
 	[h:wa.TargetList = wa.AllTargets]
 };{
@@ -105,27 +209,9 @@
 	[h,count(AttackCount): wa.TargetList = json.merge(wa.TargetList,json.get(wa.AllTargets,roll.count))]
 }]
 
-[h,if(json.get(wa.Props,"DmgMod")==""):
-	preReworkUseDamageMod = 0;
-	preReworkUseDamageMod = json.get(wa.Props,"DmgMod")
-]
-[h:preReworkDamageData = json.append("",json.set("",
-	"DamageType",wa.DmgType,
-	"DamageDieNumber",wa.DmgDieNum,
-	"DamageDieSize",wa.DmgDieSize,
-	"DamageFlatBonus",wa.MagicBonus,
-	"IsModBonus",preReworkUseDamageMod
-))]
-[h,if(wa.DmgDie2 != "0"): preReworkDamageData = json.append(preReworkDamageData,json.set("",
-	"DamageType",wa.DmgType2,
-	"DamageDieNumber",wa.DmgDie2Num,
-	"DamageDieSize",wa.DmgDie2Size,
-	"DamageFlatBonus",0,
-	"IsModBonus",0
-))]
-
 [h:AllAttacksToHit = "[]"]
 [h:AllAttacksDmg = "[]"]
+[h:AllAttacksSubeffects = "[]"]
 
 [h:DamageColor = pm.DamageColor()]
 [h:HealingColor = pm.HealingColor()]
@@ -133,66 +219,102 @@
 [h:CritFailColor = pm.CritFailColor()]
 [h:LinkColor = pm.LinkColor()]
 
-[h,count(AttackCount),code:{
-	[h,if(json.length(wa.EffectIDs)-1 < roll.count): wa.EffectIDs = json.append(wa.EffectIDs,pm.a5e.GenerateEffectID())]
-	[h:thisAttackTarget = json.get(wa.TargetList,roll.count)]
+[h:SafeAttackCounter = 0]
+[h,count(AttackCount),CODE:{
+	[h:thisAttackData = wa.Data]
+	[h:thisAttackDamageData = wa.DamageData]
+	[h,if(json.length(wa.EffectIDs)-1 < SafeAttackCounter): wa.EffectIDs = json.append(wa.EffectIDs,pm.a5e.GenerateEffectID())]
+	
+	[h,if(json.length(wa.WeaponEffects) > 1),CODE:{
+		[h:"<!-- TODO: Implement an input for which effect to use, or randomization -->"]
+	};{
+		[h,if(json.length(wa.WeaponEffects) == 1):
+			thisAttackSubeffects = json.get(json.get(wa.WeaponEffects,0),"Subeffects");
+			thisAttackSubeffects = "[]"
+		]
+	}]
 
-	[h:AllAttacksToHit = json.append(AllAttacksToHit,pm.a5e.AttackRoll(wa.Data,json.append("","Attack","WeaponAttack"),thisAttackTarget))]
+	[h:"<!-- TODO: Add setting to alert if you're out of ammunition, possibly also a warning if nearing empty if below a certain number that can be set? And setting to ignore this -->"]
+	[h:"<!-- TODO: Need to update Ammo subeffects to new data format -->"]
+	[h,if(UsesAmmunitionTest && CurrentAmmoCount > 0),CODE:{
+		[h,if(json.get(AmmunitionData,"AmmunitionDamage")!=""): thisAttackDamageData = json.merge(thisAttackDamageData,json.get(AmmunitionData,"AmmunitionDamage"))]
+		[h,if(json.get(AmmunitionData,"Subeffects")!=""): thisAttackSubeffects = json.merge(thisAttackSubeffects,json.get(AmmunitionData,"Subeffects"))]
+		[h:CurrentAmmoCount = CurrentAmmoCount - 1]
+		[h:setProperty("a5e.stat.Inventory",json.path.set(getProperty("a5e.stat.Inventory"),"[*][?(@.ItemID == "+json.get(AmmunitionData,"ItemID")+")]['Number']",CurrentAmmoCount))]
+	};{}]
 
-	[h:preReworkNonDamageData = json.set("",
+	[h:thisAttackTarget = json.get(wa.TargetList,SafeAttackCounter)]
+	[h,if(wa.MeleeRanged == "Ranged"),CODE:{
+		[h:LongRangeTest = getDistance(thisAttackTarget) > wa.Range]
+		[h:tempPriorDisadvantage = json.get(thisAttackData,"Disadvantage")]
+		[h,if(tempPriorDisadvantage == ""): tempPriorDisadvantage = 0]
+		[h,if(LongRangeTest): thisAttackData = json.set(thisAttackData,"Disadvantage",tempPriorDisadvantage + 1)]
+		[h,if(getDistance(thisAttackTarget) <= 5): thisAttackData = json.set(thisAttackData,"Disadvantage",tempPriorDisadvantage + 1)]
+
+		[h:"<!-- TODO: These should be set as variables so that effects (e.g. cbow expert) can specifically remove the disadvantage from this instance. -->"]
+	};{}]
+
+	[h:thisAttackToHitData = pm.a5e.AttackRoll(thisAttackData,json.append("","Attack","WeaponAttack"),thisAttackTarget)]
+	[h:thisAttackToHitData = json.set(thisAttackToHitData,"Subeffects",thisAttackSubeffects)]
+	[h:AllAttacksToHit = json.append(AllAttacksToHit,thisAttackToHitData)]
+
+	[h:wa.NonDamageData = json.set("",
 		"IsSpell",0,
 		"IsWeapon",1,
 		"IsAttack",1,
 		"Modifier",1,
 		"ScalingBase",0,
-		"Target",thisAttackTarget
+		"Target",thisAttackTarget,
+		"PrimeStat",PrimeStat
 	)]
 	[h:thisAttackDamage = "[]"]
-	[h,foreach(tempDamageInstance,preReworkDamageData): thisAttackDamage = json.append(thisAttackDamage,pm.a5e.DamageRoll(tempDamageInstance,preReworkNonDamageData,json.append("","Attack","WeaponAttack")))]
+	[h,foreach(tempDamageInstance,thisAttackDamageData): thisAttackDamage = json.append(thisAttackDamage,pm.a5e.DamageRoll(tempDamageInstance,wa.NonDamageData,json.append("","Attack","WeaponAttack")))]
+	
+	[h:ModifyDamageRollData = "[]"]
 
-	[h:pm.PassiveFunction("AttackRoll")]
-	[h:pm.PassiveFunction("WeaponAttackRoll")]
-	[h:pm.PassiveFunction("AttackRollTargeted",json.set("","ParentToken",thisAttackTarget))]
-	[h:pm.PassiveFunction("WeaponAttackRollTargeted",json.set("","ParentToken",thisAttackTarget))]
+	[h:pm.PassiveFunction("AttackDamageRoll")]
+	[h:pm.PassiveFunction("WeaponAttackDamageRoll")]
+	[h:pm.PassiveFunction("AttackDamageRollTargeted",json.set("","ParentToken",thisAttackTarget))]
+	[h:pm.PassiveFunction("WeaponAttackDamageRollTargeted",json.set("","ParentToken",thisAttackTarget))]
+	
+	[h,if(!json.isEmpty(ModifyDamageRollData)),CODE:{
+		[h,MACRO("ModifyDamageRoll@Lib:pm.a5e.Core"): json.append("",thisAttackDamage,ModifyDamageRollData)]
+
+		[h:thisAttackDamage = macro.return]
+	};{}]	
 
 	[h:AllAttacksDmg = json.append(AllAttacksDmg,thisAttackDamage)]
+	[h:AllAttacksSubeffects = json.append(AllAttacksSubeffects,thisAttackSubeffects)]
+	[h:SafeAttackCounter = SafeAttackCounter + 1]
 }]
 
 [h:WhichAttack=0]
 
-[h:"<!-- TODO: Perhaps set up separate loops for attack and damage rolls with different tables, which are assembled separately depending on the condensed vs. expanded approach -->"]
+[h:"<!-- MAYDO: Perhaps set up separate loops for attack and damage rolls with different tables, which are assembled separately depending on the condensed vs. expanded approach -->"]
 [h:abilityTable = ""]
 [h,count(AttackCount),CODE:{
 	[h:thisAttackTarget = json.get(wa.TargetList,roll.count)]
 	[h:thisAttackData = json.get(AllAttacksToHit,roll.count)]
+	[h:thisAttackEffectID = json.get(wa.EffectIDs,roll.count)]
 	[h:thisAttackd20Rolls = json.get(thisAttackData,"d20Rolls")]
 	[h:thisAttackFinalRoll = json.get(thisAttackData,"FinalRoll")]
-	[h:thisAttackAdvDis = json.get(thisAttackData,"Advantage")]
+	[h:thisAttackAdvDis = json.get(thisAttackData,"AdvantageBalance")]
+	[h:thisAttackAdvantageMessages = json.get(thisAttackData,"AdvantageMessages")]
 	[h:thisAttackToHit = json.get(thisAttackData,"ToHit")]
 	[h:thisAttackToHitStr = json.get(thisAttackData,"ToHitStr")]
 	[h:thisAttackToHitRules = json.get(thisAttackData,"RulesStr")]
 	[h:thisAttackCrit = json.get(thisAttackData,"CritTest")]
 	[h:thisAttackCritFail = json.get(thisAttackData,"CritFailTest")]
+	
+	[h:thisAttackSubeffects = json.get(thisAttackData,"Subeffects")]
 
 	[h:thisAttackAllDamage = json.path.put(json.get(AllAttacksDmg,roll.count),"[*]","UseCrit",thisAttackCrit)]
 
-	[h:wa.AdvRerollLink = macroLinkText("Modify Attack Border@Lib:pm.a5e.Core","self-gm",json.set(wa.Data,"Advantage",1,"ForcedAdvantage",1,"d20Rolls",thisAttackd20Rolls,"PreviousDamage",thisAttackAllDamage,"Target",json.get(wa.TargetList,roll.count),"AttackNum",-1,"EffectID",json.get(wa.EffectIDs,roll.count)),ParentToken)]
-	[h:wa.DisRerollLink = macroLinkText("Modify Attack Border@Lib:pm.a5e.Core","self-gm",json.set(wa.Data,"Disadvantage",1,"ForcedAdvantage",1,"d20Rolls",thisAttackd20Rolls,"PreviousDamage",thisAttackAllDamage,"Target",thisAttackTarget,"AttackNum",-1,"EffectID",json.get(wa.EffectIDs,roll.count)),ParentToken)]
-	
-	[h:ToHitTableLine = json.set("",
-		"ShowIfCondensed",1,
-		"Header","Attack Roll",
-		"FalseHeader","",
-		"FullContents","<span style='"+if(thisAttackCrit,"font-size:2em; color:"+CritColor,if(thisAttackCritFail,"font-size:2em; color:"+CritFailColor,"font-size:1.5em"))+"'>"+thisAttackToHit+"</span>",
-		"RulesContents",thisAttackToHitRules+" = ",
-		"RollContents",thisAttackToHitStr+" = ",
-		"DisplayOrder","['Rules','Roll','Full']",
-		"BonusSectionNum",1,
-		"BonusSectionType1","Rules",
-		"BonusSectionStyling1","",
-		"Value",thisAttackToHit
-	)]
-	
+	[h:wa.AdvRerollLink = macroLinkText("Modify Attack Border@Lib:pm.a5e.Core","self-gm",json.set(wa.Data,"Advantage",1,"ForcedAdvantage",1,"d20Rolls",thisAttackd20Rolls,"PreviousDamage",thisAttackAllDamage,"Target",thisAttackTarget,"AttackNum",-1,"EffectID",thisAttackEffectID),ParentToken)]
+	[h:wa.DisRerollLink = macroLinkText("Modify Attack Border@Lib:pm.a5e.Core","self-gm",json.set(wa.Data,"Disadvantage",1,"ForcedAdvantage",1,"d20Rolls",thisAttackd20Rolls,"PreviousDamage",thisAttackAllDamage,"Target",thisAttackTarget,"AttackNum",-1,"EffectID",thisAttackEffectID),ParentToken)]
+
+	[h:ToHitTableLine = "{}"]
+
 	[h,if(thisAttackAdvDis == 0),CODE:{
 		[h:ToHitTableLine = json.set(ToHitTableLine,
 			"BonusBody1","Reroll: <a href = '"+wa.AdvRerollLink+"'><span style = 'color:"+LinkColor+"'>Adv.</span></a> / <a href = '"+wa.DisRerollLink+"'><span style = 'color:"+LinkColor+"'>Dis.</span></a>"
@@ -206,6 +328,20 @@
 		)]
 	}]
 	
+	[h:ToHitTableLine = json.set(ToHitTableLine,
+		"ShowIfCondensed",1,
+		"Header","Attack Roll",
+		"FalseHeader","",
+		"FullContents","<span style='"+if(thisAttackCrit,"font-size:2em; color:"+CritColor,if(thisAttackCritFail,"font-size:2em; color:"+CritFailColor,"font-size:1.5em"))+"'>"+thisAttackToHit+"</span>",
+		"RulesContents","<span "+if(!json.isEmpty(thisAttackAdvantageMessages),"title='"+pm.a5e.CreateDisplayList(thisAttackAdvantageMessages,"and")+"'","")+">"+thisAttackToHitRules+"</span> = ",
+		"RollContents",thisAttackToHitStr+" = ",
+		"DisplayOrder","['Rules','Roll','Full']",
+		"BonusSectionNum",1,
+		"BonusSectionType1","Rules",
+		"BonusSectionStyling1","",
+		"TableLineName","AttackRoll"+roll.count
+	)]
+
 	[h:abilityTable = json.append(abilityTable,ToHitTableLine)]
 
 	[h,foreach(tempDamageInstance,thisAttackAllDamage),CODE:{
@@ -235,8 +371,18 @@
 	[h:pm.a5e.EffectData = json.append(pm.a5e.EffectData,json.set("",
 		"Attack",thisAttackData,
 		"Damage",thisAttackAllDamage,
-		"Targets",json.append("",thisAttackTarget)
+		"Targets",json.append("",thisAttackTarget),
+		"ID",thisAttackEffectID,
+		"WhichIntrinsicSubeffect",WhichAttack
 	))]
+	[h:"<!-- TODO: Major issue - WhichIntrinsicSubeffect always being 0 will cause errors with multiple attacks. This whole method is flawed in the case of multiple attacks: If wIS is incremented each time, then subeffects cannot target it correctly. If not incremented, then subeffects will target ALL attacks, not just one of them. This will apply for missiles also. Currently incrementing; better solution may be to give a separate EffectID and SubeffectID. -->"]
+
+	[h:AHLTier = 0]
+	[h:DataForSubeffect = json.set("",
+		"InstancePrefixes",json.append("","Attack","WeaponAttack"),
+		"RerollData",wa.Data
+	)]
+	[h,foreach(tempSubeffect,thisAttackSubeffects): pm.a5e.ExecuteSubeffect(tempSubeffect,json.set("","BaseData",wa.Data,"MultiEffectModifier",WhichAttack,"InstancePrefixes",json.append("","Weapon")))]
 
 	[h:AHLTier = 0]
 	[h:DataForSubeffect = json.set("",
@@ -248,6 +394,17 @@
 	[h:WhichAttack = WhichAttack + 1]
 }]
 
+[h,if(ThrowingWeapon && !json.contains(wa.Props,"Returning")),CODE:{
+	[h:"<!-- TODO: Need a test to see if the weapon is still in the attacker's hands (for thrown weapons with multiattack). Also likely move this back into the loop. -->"]
+	[h,MACRO("DropItem@Lib:pm.a5e.Core"): json.set("",
+		"ItemID",json.get(wa.WeaponUsed,"ItemID"),
+		"Number",1,
+		"Location",json.set("","Token",thisAttackTarget),
+		"ParentToken",ParentToken,
+		"LeaveToken",1
+	)]
+};{}]
+
 [h:pm.PassiveFunction("AfterAttack")]
 [h:pm.PassiveFunction("AfterWeaponAttack")]
 [h:pm.PassiveFunction("AfterAttackTargeted",json.set("","ParentToken",thisAttackTarget))]
@@ -255,7 +412,7 @@
 
 [h:RemovedConditionGroups = json.path.read(a5e.stat.ConditionGroups,"[*][?(@.EndTriggers.AfterAttack != null && @.EndTriggers.AfterAttack != 0)]['GroupID']","DEFAULT_PATH_LEAF_TO_NULL")]
 [h,if(!json.isEmpty(RemovedConditionGroups)),CODE:{
-	[h,macro("EndCondition@Lib:pm.a5e.Core"): json.set("","GroupID",RemovedConditionGroups,"ParentToken",ParentToken)]
+	[h,macro("EndCondition@Lib:pm.a5e.Core"): json.set("","GroupID",RemovedConditionGroups,"Target",ParentToken)]
 	[h:pm.RemovedConditions = json.get(macro.return,"Removed")]
 	[h:abilityTable = json.merge(abilityTable,json.get(macro.return,"Table"))]
 };{}]

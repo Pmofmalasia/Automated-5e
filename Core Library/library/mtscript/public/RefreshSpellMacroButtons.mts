@@ -8,10 +8,8 @@
 [h,if(OldSpells==""): OldSpells = "[]"]
 [h,if(MagicSource==""): MagicSource = "Arcane"]
 
-[h:"<!-- TODO: Make a function to convert casttime to a display -->"]
 [h,foreach(tempSpell,NewSpells),CODE:{
 	[h:SpellData = pm.a5e.GetSpecificSpell(tempSpell)]
-	[h:MainSpellData = json.get(SpellData,0)]
 
 	[h,MACRO("CreateSpellMacroLabel@Lib:pm.a5e.Core"): tempSpell]
 	[h:pm.NewMacroLabel = macro.return]
@@ -85,7 +83,7 @@
 	[h:pm.NewMacroTooltip = '[h:Flavor=""][h:BorderColorOverride=""][h:TitleFontColorOverride=""][h:tooltipDisplaySizeOverride=""][h:TitleFont=""][h:BodyFont=""][h:ForcedClass=""][h:DMOnly=0][h:placeholdToAdd=""][h:TooltipData = json.set("","Flavor",Flavor,"Spell","'+tempSpell+'","ParentToken",currentToken(),"BorderColorOverride",BorderColorOverride,"TitleFontColorOverride",TitleFontColorOverride,"tooltipDisplaySizeOverride",tooltipDisplaySizeOverride,"TitleFont",TitleFont,"BodyFont",BodyFont,"ForcedClass",ForcedClass,"DMOnly",DMOnly,"IsTooltip",1,"placeholdToAdd",placeholdToAdd)][h,MACRO("SpellTooltipBorder@Lib:pm.a5e.Core"): TooltipData]']
 
 	[h:"<!-- TODO: Source is temporarily set to Arcane permanently until Divine is implemented -->"]
-	[h:DefaultDisplayData = pm.SpellColors(json.set("","Level",string(json.get(MainSpellData,"Level")),"Source",MagicSource))]
+	[h:DefaultDisplayData = pm.SpellColors(json.set("","Level",string(json.get(SpellData,"Level")),"Source",MagicSource))]
 	[h:BorderColor = json.get(DefaultDisplayData,"Border")]
 	[h:TextColor = json.get(DefaultDisplayData,"Title")]
 
@@ -98,7 +96,7 @@
 		"fontSize","1.00em",
 		"includeLabel",0,
 		"group","Current Spells",
-		"sortBy",json.get(MainSpellData,"Level"),
+		"sortBy",json.get(SpellData,"Level"),
 		"label",pm.NewMacroLabel,
 		"maxWidth","",
 		"minWidth",89,

@@ -12,8 +12,11 @@
             whichEffect = json.get(whichEffect,roll.count)
         ]
     };{}]
-    
+
+    [h:newID =  json.get(effect,"ID")]
+    [h,if(newID == ""): newID = pm.a5e.GenerateEffectID()]
     [h:parentTokenData = json.get(effect,"ParentToken")]
+	[h:ParentSubeffect = json.get(effect,"ParentSubeffect")]
     [h:checkDCData = json.get(effect,"CheckDC")]
     [h:saveDCData = json.get(effect,"SaveDC")]
     [h:attackData = json.get(effect,"Attack")]
@@ -26,20 +29,35 @@
     [h:usageData = json.get(effect,"UseTime")]
     [h:resourceData = json.get(effect,"Resource")]
     [h:conditionData = json.get(effect,"ConditionInfo")]
-    [h:conditionsRemovedData = json.get(effect,"ConditionsRemovedInfo")]
+    [h:conditionModificationData = json.get(effect,"ConditionModificationInfo")]
+    [h:targetedConditionsData = json.get(effect,"TargetedConditions")]
     [h:effectTargetData = json.get(effect,"TargetedEffects")]
     [h:effectTargetOptionData = json.get(effect,"TargetedEffectOptions")]
+    [h:effectMovementData = json.get(effect,"Movement")]
 
     [h,if(parentTokenData!=""),CODE:{
-        [h,if(whichEffect >= json.length(currentEffectData)): thisEffect = json.path.set(baseEffectData,".ID",pm.a5e.GenerateEffectID()); thisEffect = json.get(currentEffectData,whichEffect)]
+        [h,if(whichEffect >= json.length(currentEffectData)): thisEffect = json.path.set(baseEffectData,".ID",newID); thisEffect = json.get(currentEffectData,whichEffect)]
 
         [h:thisEffect = json.set(thisEffect,"ParentToken",parentTokenData)]
 
         [h,if(whichEffect >= json.length(currentEffectData)): currentEffectData = json.append(currentEffectData,thisEffect); currentEffectData = json.set(currentEffectData,whichEffect,thisEffect)]
     };{}]
+
+	[h,if(ParentSubeffect!=""),CODE:{
+        [h,if(whichEffect >= json.length(currentEffectData)): thisEffect = json.path.set(baseEffectData,".ID",newID); thisEffect = json.get(currentEffectData,whichEffect)]
+
+        [h:thisEffect = json.set(thisEffect,
+			"ParentSubeffect",ParentSubeffect,
+			"ParentSubeffectRequirements",json.get(effect,"ParentSubeffectRequirements")
+		)]
+
+		[h,if(json.contains(effect,"ParentCrit")): thisEffect = json.set(thisEffect,"ParentCrit",json.get(effect,"ParentCrit"))]
+
+        [h,if(whichEffect >= json.length(currentEffectData)): currentEffectData = json.append(currentEffectData,thisEffect); currentEffectData = json.set(currentEffectData,whichEffect,thisEffect)]
+	};{}]
     
     [h,if(checkDCData!=""),CODE:{
-        [h,if(whichEffect >= json.length(currentEffectData)): thisEffect = json.path.set(baseEffectData,".ID",pm.a5e.GenerateEffectID()); thisEffect = json.get(currentEffectData,whichEffect)]
+        [h,if(whichEffect >= json.length(currentEffectData)): thisEffect = json.path.set(baseEffectData,".ID",newID); thisEffect = json.get(currentEffectData,whichEffect)]
 
         [h:thisEffect = json.set(thisEffect,"ToResolve",json.set(json.get(thisEffect,"ToResolve"),"CheckDC",checkDCData))]
 
@@ -48,7 +66,7 @@
     
     [h,if(saveDCData!=""),CODE:{
         [h,if(whichEffect==""): whichEffect = 0]
-        [h,if(whichEffect >= json.length(currentEffectData)): thisEffect = json.path.set(baseEffectData,".ID",pm.a5e.GenerateEffectID()); thisEffect = json.get(currentEffectData,whichEffect)]
+        [h,if(whichEffect >= json.length(currentEffectData)): thisEffect = json.path.set(baseEffectData,".ID",newID); thisEffect = json.get(currentEffectData,whichEffect)]
         
         [h:thisEffect = json.set(thisEffect,"ToResolve",json.set(json.get(thisEffect,"ToResolve"),"SaveDC",saveDCData))]
 
@@ -56,7 +74,7 @@
     };{}]
     
     [h,if(attackData!=""),CODE:{
-        [h,if(whichEffect >= json.length(currentEffectData)): thisEffect = json.path.set(baseEffectData,".ID",pm.a5e.GenerateEffectID()); thisEffect = json.get(currentEffectData,whichEffect)]
+        [h,if(whichEffect >= json.length(currentEffectData)): thisEffect = json.path.set(baseEffectData,".ID",newID); thisEffect = json.get(currentEffectData,whichEffect)]
 
         [h:thisEffect = json.set(thisEffect,"ToResolve",json.set(json.get(thisEffect,"ToResolve"),"Attack",attackData))]
         
@@ -64,18 +82,19 @@
     };{}]
     
     [h,if(targetData!=""),CODE:{
-        [h,if(whichEffect >= json.length(currentEffectData)): thisEffect = json.path.set(baseEffectData,".ID",pm.a5e.GenerateEffectID()); thisEffect = json.get(currentEffectData,whichEffect)]
+        [h,if(whichEffect >= json.length(currentEffectData)): thisEffect = json.path.set(baseEffectData,".ID",newID); thisEffect = json.get(currentEffectData,whichEffect)]
 
         [h,if(json.get(thisEffect,"Targets")==""):
             thisEffect = json.set(thisEffect,"Targets",targetData);
             thisEffect = json.set(thisEffect,"Targets",json.merge(json.get(thisEffect,"Targets"),targetData))
         ]
+		[h:thisEffect = json.set(thisEffect,"RemainingTargets",json.get(thisEffect,"Targets"))]
     
         [h,if(whichEffect >= json.length(currentEffectData)): currentEffectData = json.append(currentEffectData,thisEffect); currentEffectData = json.set(currentEffectData,whichEffect,thisEffect)]
     };{}]
     
     [h,if(targetOptionData!=""),CODE:{
-        [h,if(whichEffect >= json.length(currentEffectData)): thisEffect = json.path.set(baseEffectData,".ID",pm.a5e.GenerateEffectID()); thisEffect = json.get(currentEffectData,whichEffect)]
+        [h,if(whichEffect >= json.length(currentEffectData)): thisEffect = json.path.set(baseEffectData,".ID",newID); thisEffect = json.get(currentEffectData,whichEffect)]
 
         [h,if(json.get(thisEffect,"TargetOptions")==""):
             thisEffect = json.set(thisEffect,"TargetOptions",targetOptionData);
@@ -86,7 +105,7 @@
     };{}]
     
     [h,if(damageData!=""),CODE:{
-        [h,if(whichEffect >= json.length(currentEffectData)): thisEffect = json.path.set(baseEffectData,".ID",pm.a5e.GenerateEffectID()); thisEffect = json.get(currentEffectData,whichEffect)]
+        [h,if(whichEffect >= json.length(currentEffectData)): thisEffect = json.path.set(baseEffectData,".ID",newID); thisEffect = json.get(currentEffectData,whichEffect)]
         
         [h:tempToResolve = if(json.get(thisEffect,"ToResolve")=="","{}",json.get(thisEffect,"ToResolve"))]
 
@@ -100,7 +119,7 @@
     };{}]
     
     [h,if(rollData!=""),CODE:{
-        [h,if(whichEffect >= json.length(currentEffectData)): thisEffect = json.path.set(baseEffectData,".ID",pm.a5e.GenerateEffectID()); thisEffect = json.get(currentEffectData,whichEffect)]
+        [h,if(whichEffect >= json.length(currentEffectData)): thisEffect = json.path.set(baseEffectData,".ID",newID); thisEffect = json.get(currentEffectData,whichEffect)]
 
         [h:thisEffect = json.set(thisEffect,"Roll",rollData)]
 
@@ -108,7 +127,7 @@
     };{}]
     
     [h,if(rangeData!=""),CODE:{
-        [h,if(whichEffect >= json.length(currentEffectData)): thisEffect = json.path.set(baseEffectData,".ID",pm.a5e.GenerateEffectID()); thisEffect = json.get(currentEffectData,whichEffect)]
+        [h,if(whichEffect >= json.length(currentEffectData)): thisEffect = json.path.set(baseEffectData,".ID",newID); thisEffect = json.get(currentEffectData,whichEffect)]
         
         [h:thisEffect = json.set(thisEffect,"Range",rangeData)]
     
@@ -116,7 +135,7 @@
     };{}]
     
     [h,if(durationData!=""),CODE:{
-        [h,if(whichEffect >= json.length(currentEffectData)): thisEffect = json.path.set(baseEffectData,".ID",pm.a5e.GenerateEffectID()); thisEffect = json.get(currentEffectData,whichEffect)]
+        [h,if(whichEffect >= json.length(currentEffectData)): thisEffect = json.path.set(baseEffectData,".ID",newID); thisEffect = json.get(currentEffectData,whichEffect)]
         
         [h:thisEffect = json.set(thisEffect,"Duration",durationData)]
     
@@ -124,7 +143,7 @@
     };{}]
     
     [h,if(usageData!=""),CODE:{
-        [h,if(whichEffect >= json.length(currentEffectData)): thisEffect = json.path.set(baseEffectData,".ID",pm.a5e.GenerateEffectID()); thisEffect = json.get(currentEffectData,whichEffect)]
+        [h,if(whichEffect >= json.length(currentEffectData)): thisEffect = json.path.set(baseEffectData,".ID",newID); thisEffect = json.get(currentEffectData,whichEffect)]
         
         [h:thisEffect = json.set(thisEffect,"UseTime",usageData)]
     
@@ -132,7 +151,7 @@
     };{}]
     
     [h,if(resourceData!=""),CODE:{
-        [h,if(whichEffect >= json.length(currentEffectData)): thisEffect = json.path.set(baseEffectData,".ID",pm.a5e.GenerateEffectID()); thisEffect = json.get(currentEffectData,whichEffect)]
+        [h,if(whichEffect >= json.length(currentEffectData)): thisEffect = json.path.set(baseEffectData,".ID",newID); thisEffect = json.get(currentEffectData,whichEffect)]
         
         [h:thisEffect = json.set(thisEffect,"Resource",resourceData)]
     
@@ -140,7 +159,7 @@
     };{}]
     
     [h,if(conditionData!=""),CODE:{
-		[h,if(whichEffect >= json.length(currentEffectData)): thisEffect = json.path.set(baseEffectData,".ID",pm.a5e.GenerateEffectID()); thisEffect = json.get(currentEffectData,whichEffect)]
+		[h,if(whichEffect >= json.length(currentEffectData)): thisEffect = json.path.set(baseEffectData,".ID",newID); thisEffect = json.get(currentEffectData,whichEffect)]
 		
         [h:tempToResolve = json.get(thisEffect,"ToResolve")]
 		[h,if(tempToResolve==""):
@@ -158,27 +177,38 @@
 		[h,if(whichEffect >= json.length(currentEffectData)): currentEffectData = json.append(currentEffectData,thisEffect); currentEffectData = json.set(currentEffectData,whichEffect,thisEffect)]
     };{}]
     
-    [h,if(conditionsRemovedData!=""),CODE:{
-		[h,if(whichEffect >= json.length(currentEffectData)): thisEffect = json.path.set(baseEffectData,".ID",pm.a5e.GenerateEffectID()); thisEffect = json.get(currentEffectData,whichEffect)]
-		
-        [h:tempToResolve = json.get(thisEffect,"ToResolve")]
-		[h,if(tempToResolve==""):
-            noPriorConditionsRemovedTest = 1;
-            noPriorConditionsRemovedTest = json.isEmpty(json.get(tempToResolve,"ConditionsRemovedInfo"))
-        ]
+    [h,if(conditionModificationData!=""),CODE:{
+		[h,if(whichEffect >= json.length(currentEffectData)): thisEffect = json.path.set(baseEffectData,".ID",newID); thisEffect = json.get(currentEffectData,whichEffect)]
 
-		[h,if(noPriorConditionsRemovedTest):
-            tempToResolve = json.set(tempToResolve,"ConditionsRemovedInfo",conditionsRemovedData);
-            tempToResolve = pm.a5e.BuildEffectMergeConditionsRemoved(tempToResolve,conditionsRemovedData)
-        ]
+		[h:"<!-- TODO: Consider merging instead of overriding multiple datasets. Check old effect resolution vs. new one. If the same, combine effects. If Prolong vs. Shorten, subtract effects and correct method appropriately. -->"]
+		
+        [h:tempToResolve = json.set(json.get(thisEffect,"ToResolve"),"ConditionModificationInfo",conditionModificationData)]
 
         [h:thisEffect = json.set(thisEffect,"ToResolve",tempToResolve)]
 
 		[h,if(whichEffect >= json.length(currentEffectData)): currentEffectData = json.append(currentEffectData,thisEffect); currentEffectData = json.set(currentEffectData,whichEffect,thisEffect)]
     };{}]
+    
+    [h,if(targetedConditionsData!=""),CODE:{
+		[h,if(whichEffect >= json.length(currentEffectData)): thisEffect = json.path.set(baseEffectData,".ID",newID); thisEffect = json.get(currentEffectData,whichEffect)]
+
+		[h:"<!-- The following first combines conditions on the same target, then adds conditions not already on currentTargetedConditions to it. -->"]
+
+		[h:currentTargetedConditions = json.get(thisEffect,"TargetedConditions")]
+		[h,if(currentTargetedConditions==""): currentTargetedConditions = "{}"]
+		[h:oldTargets = json.fields(currentTargetedConditions)]
+		[h:targetOverlap = json.intersection(oldTargets,json.fields(targetedConditionsData))]
+		[h,foreach(target,targetOverlap): currentTargetedConditions = json.set(currentTargetedConditions,target,json.merge(json.get(currentTargetedConditions,target),json.get(targetedConditionsData,target)))]
+
+		[h:currentTargetedConditions = json.merge(targetedConditionsData,currentTargetedConditions)]
+
+        [h:thisEffect = json.set(thisEffect,"TargetedConditions",currentTargetedConditions)]
+
+		[h,if(whichEffect >= json.length(currentEffectData)): currentEffectData = json.append(currentEffectData,thisEffect); currentEffectData = json.set(currentEffectData,whichEffect,thisEffect)]
+    };{}]
 
     [h,if(effectTargetData!=""),CODE:{
-        [h,if(whichEffect >= json.length(currentEffectData)): thisEffect = json.path.set(baseEffectData,".ID",pm.a5e.GenerateEffectID()); thisEffect = json.get(currentEffectData,whichEffect)]
+        [h,if(whichEffect >= json.length(currentEffectData)): thisEffect = json.path.set(baseEffectData,".ID",newID); thisEffect = json.get(currentEffectData,whichEffect)]
 
         [h,if(json.get(thisEffect,"TargetedEffects")==""):
             thisEffect = json.set(thisEffect,"TargetedEffects",effectTargetData);
@@ -189,13 +219,21 @@
     };{}]
     
     [h,if(effectTargetOptionData!=""),CODE:{
-        [h,if(whichEffect >= json.length(currentEffectData)): thisEffect = json.path.set(baseEffectData,".ID",pm.a5e.GenerateEffectID()); thisEffect = json.get(currentEffectData,whichEffect)]
+        [h,if(whichEffect >= json.length(currentEffectData)): thisEffect = json.path.set(baseEffectData,".ID",newID); thisEffect = json.get(currentEffectData,whichEffect)]
 
         [h,if(json.get(thisEffect,"TargetedEffectOptions")==""):
             thisEffect = json.set(thisEffect,"TargetedEffectOptions",effectTargetOptionData);
             thisEffect = json.set(thisEffect,"TargetedEffectOptions",json.merge(json.get(thisEffect,"TargetedEffectOptions"),effectTargetOptionData))
         ]
     
+        [h,if(whichEffect >= json.length(currentEffectData)): currentEffectData = json.append(currentEffectData,thisEffect); currentEffectData = json.set(currentEffectData,whichEffect,thisEffect)]
+    };{}]
+    
+    [h,if(effectMovementData!=""),CODE:{
+        [h,if(whichEffect >= json.length(currentEffectData)): thisEffect = json.path.set(baseEffectData,".ID",newID); thisEffect = json.get(currentEffectData,whichEffect)]
+
+        [h:thisEffect = json.set(thisEffect,"Movement",effectMovementData)]
+
         [h,if(whichEffect >= json.length(currentEffectData)): currentEffectData = json.append(currentEffectData,thisEffect); currentEffectData = json.set(currentEffectData,whichEffect,thisEffect)]
     };{}]
     

@@ -18,14 +18,18 @@
 		"<a href='"+currentFeatureTooltipLink+"' style='color:"+pm.LinkColor()+"'>Feature Info</a>"
 	))]
 };{
+	[h:tempLinkColor = pm.LinkColor()]
 	[h,if(ShowFullRules):
 		abilityTable = json.append(abilityTable,pm.a5e.CreateBasicTableLine(
 			currentFeatureDisplayName,
 			currentFeatureEffect,
-			json.set("","Type","Rules","Body","<a href='"+currentFeatureLink+"' style='color:"+pm.LinkColor()+"'>Use Feature</a> / <a href='"+currentFeatureTooltipLink+"' style='color:"+pm.LinkColor()+"'>Feature Info</a>")));
+			json.set("","Type","Rules","Body","<a href='"+currentFeatureLink+"' style='color:"+tempLinkColor+"'>Use Feature</a> / <a href='"+currentFeatureTooltipLink+"' style='color:"+tempLinkColor+"'>Feature Info</a>")));
 		abilityTable = json.append(abilityTable,pm.a5e.CreateBasicTableLine(
 			currentFeatureDisplayName,
-			"<a href='"+currentFeatureLink+"' style='color:"+pm.LinkColor()+"'>Use Feature</a> / <a href='"+currentFeatureTooltipLink+"' style='color:"+pm.LinkColor()+"'>Feature Info</a>"
-			))
+			"<a href='"+currentFeatureLink+"' style='color:"+tempLinkColor+"'>Use Feature</a> / <a href='"+currentFeatureTooltipLink+"' style='color:"+tempLinkColor+"'>Feature Info</a>"
+		))
 	]
+
+	[h:AttackResolutionPassiveInstances = json.append("","AttackOnHit","AttackOnHitTargeted","AttackOnMiss","AttackOnMissTargeted")]
+	[h,if(json.contains(AttackResolutionPassiveInstances,currentFeatureContext)): AdditionalAttackResolution = 1]
 }]

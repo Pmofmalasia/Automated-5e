@@ -1,6 +1,42 @@
 [h:SpellSubeffectData = arg(0)]
 [h:thisEffectData = json.set("","ID",pm.a5e.GenerateEffectID())]
 
+[h:"<!-- Note: Temporary while AOE is being fully implemented (in MT, not by me) -->"]
+[h,if(json.contains(SpellSubeffectData,"AoE")),CODE:{
+	[h:subeffect.AoEData = json.get(SpellSubeffectData,"AoE")]
+	[h,switch(json.get(subeffect.AoEData,"Shape")),CODE:
+		case "Cone":{
+			[h:temp.RangeBonus = json.get(subeffect.AoEData,"SizeValue")]
+		};
+		case "Cube":{
+			[h:temp.RangeBonus = json.get(subeffect.AoEData,"SizeValue")]
+		};
+		case "Cylinder":{
+			[h:temp.RangeBonus = max(json.get(subeffect.AoEData,"RadiusValue"),json.get(subeffect.AoEData,"HeightValue"))]
+		};
+		case "Half Sphere":{
+			[h:temp.RangeBonus = json.get(subeffect.AoEData,"SizeValue")]
+		};
+		case "Line":{
+			[h:temp.RangeBonus = max(json.get(subeffect.AoEData,"LengthValue"),json.get(subeffect.AoEData,"WidthValue"))]
+		};
+		case "Panels":{
+
+		};
+		case "Sphere":{
+			[h:temp.RangeBonus = json.get(subeffect.AoEData,"SizeValue")]
+		};
+		case "Wall":{
+			[h:temp.RangeBonus = max(json.get(subeffect.AoEData,"LengthValue"),json.get(subeffect.AoEData,"WidthValue"),json.get(subeffect.AoEData,"HeightValue"))]
+		};
+		default:{
+
+		}
+	]
+};{
+	[h:temp.RangeBonus = 0]
+}]
+
 [h:spell.RangeData = json.get(SpellSubeffectData,"Range")]
 [h:spell.RangeType = json.get(SpellSubeffectData,"RangeType")]
 [h,if(spell.RangeType == "SelfRanged" || spell.RangeType == "Ranged"),CODE:{
@@ -8,7 +44,7 @@
 		spell.AHLRange = json.get(spell.RangeData,"AHLValue") * (spell.AHL / json.get(spell.RangeData,"AHLScaling"));
 		spell.AHLRange = 0
 	]
-	[h:spell.RangeData = json.set(spell.RangeData,"Value",json.get(spell.RangeData,"Value") + spell.AHLRange)]
+	[h:spell.RangeData = json.set(spell.RangeData,"Value",json.get(spell.RangeData,"Value") + spell.AHLRange + temp.RangeBonus)]
 
 	[h,if(spell.RangeType == "SelfRanged"):
 		spell.RangeDisplay = "Self ("+json.get(spell.RangeData,"Value")+" "+json.get(spell.RangeData,"Units")+")";
@@ -16,10 +52,10 @@
 	]
 };{
 	[h,if(spell.RangeType == "Touch"),CODE:{
-		[h:spell.RangeData = json.set(spell.RangeData,"Value",5,"Units","Feet")]
+		[h:spell.RangeData = json.set(spell.RangeData,"Value",5+temp.RangeBonus,"Units","Feet")]
 		[h:spell.RangeDisplay = "Touch"]
 	};{
-		[h:spell.RangeData = json.set(spell.RangeData,"Value",0,"Units","Feet")]
+		[h:spell.RangeData = json.set(spell.RangeData,"Value",temp.RangeBonus,"Units","Feet")]
 		[h:spell.RangeDisplay = "Self"]
 	}]
 }]
@@ -72,8 +108,16 @@
 [h:spell.TargetTypes = json.fields(spell.TargetingData,"json")]
 [h,if(json.contains(spell.TargetTypes,"Creature")),CODE:{
 	[h:spell.TargetCreatureLimits = json.get(spell.TargetingData,"Creature")]
-	[h:spell.TargetOptions = pm.a5e.TargetCreatureFiltering(json.set("","ParentToken",ParentToken,"Origin",spell.TargetOrigin,"Range",spell.RangeData),spell.TargetCreatureLimits)]
-	[h:spell.AllTargets = pm.a5e.TargetCreatureTargeting(spell.TargetOptions,spell.TargetNumber,MissileCount)]
+	[h:spell.TargetOptionData = pm.a5e.TargetCreatureFiltering(json.set("","ParentToken",ParentToken,"Origin",spell.TargetOrigin,"Range",spell.RangeData),spell.TargetCreatureLimits)]
+	
+	[h:spell.TargetOptions = json.get(spell.TargetOptionData,"ValidTargets")]
+	[h:SelfOnlyTest = json.get(spell.TargetOptionData,"SelfOnly")]
+	[h,if(SelfOnlyTest),CODE:{
+		[h:spell.AllTargets = spell.TargetOptions]
+	};{
+		[h:spell.AllTargets = pm.a5e.TargetCreatureTargeting(spell.TargetOptions,spell.TargetNumber,MissileCount)]
+	}]
+	
 	[h:thisEffectData = json.set(thisEffectData,"Targets",spell.AllTargets)]
 }]
 
@@ -164,7 +208,8 @@
 	"IsWeapon",0,
 	"IsAttack",spell.IsAttack,
 	"Modifier",1,
-	"ScalingBase",spell.AHL
+	"ScalingBase",spell.AHL,
+	"PrimeStat",PrimeStat
 )]
 [h:SpellDamagePassiveFunctions = json.append("","Spell")]
 [h,if(spell.IsAttack): SpellDamagePassiveFunctions = json.append(SpellDamagePassiveFunctions,"Attack","SpellAttack")]
@@ -239,6 +284,23 @@
 		"DisplayOrder","['Rules','Roll','Full']"
 	))]
 }]
+
+[h,if(json.contains(SpellSubeffectData,"TargetConditionLimits")),CODE:{
+	[h:TargetConditionLimitsData = json.get(SpellSubeffectData,"TargetConditionLimits")]
+
+	[h:subeffect.TargetConditionOptions = pm.a5e.TargetConditionFiltering(spell.AllTargets,TargetConditionLimitsData)]
+	
+	[h,if(json.get(TargetConditionLimitsData,"Number")=="" && json.get(TargetConditionLimitsData,"MustTargetAll")==1):
+		subeffect.ConditionTargets = subeffect.TargetConditionOptions;
+		subeffect.ConditionTargets = pm.a5e.TargetConditionTargeting(subeffect.TargetConditionOptions,json.get(TargetConditionLimitsData,"Number"))
+	]
+
+	[h:thisEffectData = json.set(thisEffectData,"TargetedConditions",subeffect.ConditionTargets)]
+};{}]
+
+[h,if(json.contains(SpellSubeffectData,"ConditionModificationInfo")),CODE:{
+	[h:thisEffectData = json.set(thisEffectData,"ConditionModificationInfo",json.get(SpellSubeffectData,"ConditionModificationInfo"))]
+};{}]
 
 [h,if(json.contains(SpellSubeffectData,"Summon")),CODE:{
 	[h:spell.SummonData = json.get(SpellSubeffectData,"Summon")]

@@ -2,24 +2,14 @@
 [h:sLevel = json.get(sp.Data,"ForcedLevel")]
 [h:sSource = json.get(sp.Data,"Source")]
 
-[h:DefaultDisplayData = pm.SpellColors(json.set("","Level",sLevel,"Source","Arcane"))]
-[h:BorderColor = json.get(DefaultDisplayData,"Border")]
-[h:TextColor = json.get(DefaultDisplayData,"Title")]
-
 [h:ClassFeatureData = json.set("",
-	"Flavor",json.get(sp.Data,"Flavor"),
-	"ParentToken",json.get(sp.Data,"ParentToken"),
-	"DMOnly",json.get(sp.Data,"DMOnly"),
-	"BorderColorOverride",if(json.get(sp.Data,"BorderColorOverride")=="",BorderColor,json.get(sp.Data,"BorderColorOverride")),
-	"TitleFontColorOverride",if(json.get(sp.Data,"TitleFontColorOverride")=="",TextColor,json.get(sp.Data,"TitleFontColorOverride")),
-	"AccentBackgroundOverride",json.get(sp.Data,"AccentBackgroundOverride"),
-	"AccentTextOverride",json.get(sp.Data,"AccentTextOverride"),
-	"TitleFont",json.get(sp.Data,"TitleFont"),
-	"BodyFont",json.get(sp.Data,"BodyFont"),
-	"Class","zzSpell",
-	"Name",json.get(sp.Data,"SpellDisplayName")+" - Full Description",
-	"FalseName","",
-	"OnlyRules",0
+    "ParentToken",currentToken(),
+    "DMOnly",0,
+    "Class","zzSpell",
+    "ColorSubtype",json.set("","Source",sSource,"Level",sLevel),
+    "Name",json.get(sp.Data,"SpellDisplayName")+": Full Description",
+    "FalseName","",
+    "OnlyRules",1
 )]
 
 [h:FormattingData = pm.MacroFormat(ClassFeatureData)]

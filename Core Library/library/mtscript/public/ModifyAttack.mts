@@ -277,13 +277,12 @@
 	[h:thisAttackd20Rolls = json.get(json.get(AllAttacksToHit,roll.count),"d20Rolls")]
 	[h:thisAttackFinalRoll = json.get(json.get(AllAttacksToHit,roll.count),"FinalRoll")]
 	[h:thisAttackAdvDis = json.get(json.get(AllAttacksToHit,roll.count),"Advantage")]
-	[h:thisAttackToHit = json.get(json.get(AllAttacksToHit,roll.count),"ToHit")]
-	[h:thisAttackToHitStr = json.get(json.get(AllAttacksToHit,roll.count),"ToHitStr")]
-	[h:thisAttackToHitRules = json.get(json.get(AllAttacksToHit,roll.count),"RulesStr")]
+	[h:thisAttackToHit = json.get(json.get(AllAttacksToHit,roll.count),"TotalBonus")]
+	[h:thisAttackToHitStr = json.get(json.get(AllAttacksToHit,roll.count),"RollString")]
+	[h:thisAttackToHitRules = json.get(json.get(AllAttacksToHit,roll.count),"Formula")]
 	[h:thisAttackCrit = json.get(json.get(AllAttacksToHit,roll.count),"CritTest")]
 	[h:thisAttackCritFail = json.get(json.get(AllAttacksToHit,roll.count),"CritFailTest")]
 
-	[h:thisAttackAllDamage = json.path.put(json.get(AllAttacksDmg,roll.count),"[*]","UseCrit",thisAttackCrit)]
 	[h:thisAttackDamageInfo = json.get(thisAttackAllDamage,0)]
 	[h:thisAttackDmg = json.get(thisAttackDamageInfo,"Total")]
 	[h:thisAttackDmgStr = json.get(thisAttackDamageInfo,"String")]
@@ -368,7 +367,7 @@
 		"Attack",json.set("",
 			"d20Rolls",thisAttackd20Rolls,
 			"FinalRoll",thisAttackFinalRoll,
-			"ToHit",thisAttackToHit,
+			"TotalBonus",thisAttackToHit,
 			"CritTest",thisAttackCrit,
 			"CritFailTest",thisAttackCritFail),
 		"Damage",thisAttackAllDamage,

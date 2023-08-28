@@ -1,4 +1,4 @@
-[h:d20Data = macro.args]
+[h:d20Data = json.set(macro.args,"TestType","Check")]
 [h:IsTooltip = 0]
 [h:ParentToken = json.get(d20Data,"ParentToken")]
 [h:switchToken(ParentToken)]
@@ -50,14 +50,14 @@
 			[h:d20DisRerollLink = macroLinkText("Initiative Border@Lib:pm.a5e.Core","self-gm",json.set(d20Data,"RerollData",json.set("","Advantage",0,"Disadvantage",1,"ForcedAdvantage",1)),ParentToken)]
 		};
 		default:{
-			[h:d20AdvRerollLink = macroLinkText("Modify Check Border@Lib:pm.a5e.Core","self-gm",json.set(d20Data,"RerollData",json.set("","Advantage",1,"Disadvantage",0,"ForcedAdvantage",1)),ParentToken)]
-			[h:d20DisRerollLink = macroLinkText("Modify Check Border@Lib:pm.a5e.Core","self-gm",json.set(d20Data,"RerollData",json.set("","Advantage",0,"Disadvantage",1,"ForcedAdvantage",1)),ParentToken)]
+			[h:d20AdvRerollLink = macroLinkText("Modifyd20TestBorder@Lib:pm.a5e.Core","self-gm",json.set(d20Data,"RerollData",json.set("","Advantage",1,"Disadvantage",0,"ForcedAdvantage",1)),ParentToken)]
+			[h:d20DisRerollLink = macroLinkText("Modifyd20TestBorder@Lib:pm.a5e.Core","self-gm",json.set(d20Data,"RerollData",json.set("","Advantage",0,"Disadvantage",1,"ForcedAdvantage",1)),ParentToken)]
 		}
 	]
 	
 	[h:extraRollsDisplay = ""]
 	[h,foreach(tempRoll,d20AllRolls),CODE:{
-		[h:d20ChooseDieLink = macroLinkText("Modify Check Border@Lib:pm.a5e.Core","self-gm",json.set(d20Data,"ForcedRoll",tempRoll),ParentToken)]
+		[h:d20ChooseDieLink = macroLinkText("Modifyd20TestBorder@Lib:pm.a5e.Core","self-gm",json.set(d20Data,"ForcedRoll",tempRoll),ParentToken)]
 		[h,if(d20TotalRolled == 1):
 			extraRollsDisplay = "Reroll: <a href = '"+d20AdvRerollLink+"'><span style = 'color:"+LinkColor+"'>Adv.</span></a> / <a href = '"+d20DisRerollLink+"'><span style = 'color:"+LinkColor+"'>Dis.</span></a>";
 			extraRollsDisplay = listAppend(extraRollsDisplay,"Roll <a href = '"+d20ChooseDieLink+"'><span style = 'color:"+LinkColor+"'; title = 'Use this roll'>#"+(roll.count+1)+"</span></a>: "+tempRoll," / ")
@@ -84,7 +84,7 @@
 
 	[h:extraRollsDisplay = ""]
 	[h,foreach(tempRoll,d20AllRolls),CODE:{
-		[h:d20ChooseDieLink = macroLinkText("Modify Check Border@Lib:pm.a5e.Core","self-gm",json.set(d20Data,"ForcedRoll",tempRoll),ParentToken)]
+		[h:d20ChooseDieLink = macroLinkText("Modifyd20TestBorder@Lib:pm.a5e.Core","self-gm",json.set(d20Data,"ForcedRoll",tempRoll),ParentToken)]
 		[h:extraRollsDisplay = listAppend(extraRollsDisplay,"Roll <a href = '"+d20ChooseDieLink+"'><span style = 'color:"+LinkColor+"'; title = 'Use this roll'>#"+(roll.count+1)+"</span></a>: "+tempRoll," / ")]
 	}]
 	[h:extraRollsDisplay = "("+extraRollsDisplay+")"]

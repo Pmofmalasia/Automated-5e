@@ -17,7 +17,6 @@
 		"Bonus",ChangeHPAmount,
 		"BonusString",ChangeHPAmount,
 		"Formula",ChangeHPAmount,
-		"UseCrit",0,
 		"NoModification",1)
 	"SourceType","{}",
 	"IsCrit",0,

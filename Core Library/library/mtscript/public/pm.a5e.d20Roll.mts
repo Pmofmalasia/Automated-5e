@@ -1,8 +1,12 @@
 [h:d20Data = arg(0)]
-[h,if(argCount()>1):
-    d20PassivePrefixes = if(json.type(arg(1))=="UNKNOWN",json.append("",arg(1)),arg(1));
-    d20PassivePrefixes = "[]"
-]
+[h,if(argCount()>1),CODE:{
+	[h,if(arg(1) != ""):
+    	d20PassivePrefixes = if(json.type(arg(1))=="UNKNOWN",json.append("",arg(1)),arg(1));
+		d20PassivePrefixes = "[]"
+	]
+};{
+	[h:d20PassivePrefixes = "[]"]
+}]
 [h,if(argCount()>2): 
     d20Target = arg(2);
     d20Target = ""

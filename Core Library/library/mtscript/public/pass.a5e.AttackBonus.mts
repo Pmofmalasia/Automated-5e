@@ -15,6 +15,7 @@
 		[h:thisRoll = eval("1d"+passBonusDieSize)]
 		[h:passBonusString = passBonusString + if(PlusOrMinus == "Minus"," - "," + ") + thisRoll]
 		[h:attack.ToHit = attack.ToHit + thisRoll]
+		[h:attack.TotalBonus = attack.TotalBonus + thisRoll]
 	}]
 
 	[h:attack.ToHitStr = attack.ToHitStr + passBonusString]
@@ -27,6 +28,7 @@
 	[h,if(PlusOrMinus == "Minus"): passBonusNum = passBonusNum * -1]
 
 	[h:attack.ToHit = attack.ToHit + passBonusNum]
+	[h:attack.TotalBonus = attack.TotalBonus + passBonusNum]
 	[h:attack.ToHitStr = attack.ToHitStr + pm.PlusMinus(passBonusNum,0)]
 	[h:attack.ToHitRulesStr = attack.ToHitRulesStr + if(PlusOrMinus == "Plus"," + "," - ") + json.get(PassiveFeatureData,"DisplayName")]
 }]

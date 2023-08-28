@@ -296,22 +296,22 @@
 	[h:thisAttackTarget = json.get(wa.TargetList,roll.count)]
 	[h:thisAttackData = json.get(AllAttacksToHit,roll.count)]
 	[h:thisAttackEffectID = json.get(wa.EffectIDs,roll.count)]
+	[h:thisAttackAllDamage = json.get(AllAttacksDmg,roll.count)]
 	[h:thisAttackd20Rolls = json.get(thisAttackData,"d20Rolls")]
 	[h:thisAttackFinalRoll = json.get(thisAttackData,"FinalRoll")]
 	[h:thisAttackAdvDis = json.get(thisAttackData,"AdvantageBalance")]
-	[h:thisAttackAdvantageMessages = json.get(thisAttackData,"AdvantageMessages")]
-	[h:thisAttackToHit = json.get(thisAttackData,"ToHit")]
-	[h:thisAttackToHitStr = json.get(thisAttackData,"ToHitStr")]
-	[h:thisAttackToHitRules = json.get(thisAttackData,"RulesStr")]
+	[h:thisAttackAdvantageMessages = json.get(thisAttackData,"AdvantageMessageArray")]
+	[h:thisAttackToHit = json.get(thisAttackData,"Value")]
+	[h:thisAttackToHitStr = json.get(thisAttackData,"RollString")]
+	[h:thisAttackToHitRules = json.get(thisAttackData,"Formula")]
 	[h:thisAttackCrit = json.get(thisAttackData,"CritTest")]
 	[h:thisAttackCritFail = json.get(thisAttackData,"CritFailTest")]
 	
 	[h:thisAttackSubeffects = json.get(thisAttackData,"Subeffects")]
 
-	[h:thisAttackAllDamage = json.path.put(json.get(AllAttacksDmg,roll.count),"[*]","UseCrit",thisAttackCrit)]
-
-	[h:wa.AdvRerollLink = macroLinkText("Modify Attack Border@Lib:pm.a5e.Core","self-gm",json.set(wa.Data,"Advantage",1,"ForcedAdvantage",1,"d20Rolls",thisAttackd20Rolls,"PreviousDamage",thisAttackAllDamage,"Target",thisAttackTarget,"AttackNum",-1,"EffectID",thisAttackEffectID),ParentToken)]
-	[h:wa.DisRerollLink = macroLinkText("Modify Attack Border@Lib:pm.a5e.Core","self-gm",json.set(wa.Data,"Disadvantage",1,"ForcedAdvantage",1,"d20Rolls",thisAttackd20Rolls,"PreviousDamage",thisAttackAllDamage,"Target",thisAttackTarget,"AttackNum",-1,"EffectID",thisAttackEffectID),ParentToken)]
+	[h:rerollLinkBase = json.merge(wa.Data,json.set(thisAttackData,"TestType","Attack"))]
+	[h:wa.AdvRerollLink = macroLinkText("Modifyd20TestBorder@Lib:pm.a5e.Core","self-gm",json.set(rerollLinkBase,"PreviousDamage",thisAttackAllDamage,"Target",thisAttackTarget,"AttackNum",-1,"ID",thisAttackEffectID,"RerollData",json.set("","Advantage",1,"Disadvantage",0,"ForcedAdvantage",1)),ParentToken)]
+	[h:wa.DisRerollLink = macroLinkText("Modifyd20TestBorder@Lib:pm.a5e.Core","self-gm",json.set(rerollLinkBase,"PreviousDamage",thisAttackAllDamage,"Target",thisAttackTarget,"AttackNum",-1,"ID",thisAttackEffectID,"RerollData",json.set("","Advantage",0,"Disadvantage",1,"ForcedAdvantage",1)),ParentToken)]
 
 	[h:ToHitTableLine = "{}"]
 
@@ -333,8 +333,8 @@
 		"Header","Attack Roll",
 		"FalseHeader","",
 		"FullContents","<span style='"+if(thisAttackCrit,"font-size:2em; color:"+CritColor,if(thisAttackCritFail,"font-size:2em; color:"+CritFailColor,"font-size:1.5em"))+"'>"+thisAttackToHit+"</span>",
-		"RulesContents","<span "+if(!json.isEmpty(thisAttackAdvantageMessages),"title='"+pm.a5e.CreateDisplayList(thisAttackAdvantageMessages,"and")+"'","")+">"+thisAttackToHitRules+"</span> = ",
-		"RollContents",thisAttackToHitStr+" = ",
+		"RulesContents","<span "+if(!json.isEmpty(thisAttackAdvantageMessages),"title='"+pm.a5e.CreateDisplayList(thisAttackAdvantageMessages,"and")+"'","")+">"+json.get(thisAttackData,"FormulaPrefix")+thisAttackToHitRules+"</span> = ",
+		"RollContents",thisAttackFinalRoll+thisAttackToHitStr+" = ",
 		"DisplayOrder","['Rules','Roll','Full']",
 		"BonusSectionNum",1,
 		"BonusSectionType1","Rules",

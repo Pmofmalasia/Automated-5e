@@ -420,7 +420,7 @@
 		[h,MACRO("InputDurationProcessing@Lib:pm.a5e.Core"): json.set("","InputData",subeffectData,"Prefix","ConditionDuration")]
 		[h:ReturnDurationData = macro.return]
 		[h:subeffectData = json.get(ReturnDurationData,"OutputData")]
-		[h:subeffectData = json.set(subeffectData,"Duration",json.get(ReturnDurationData,"DurationInfo"))]
+		[h:conditionEndInfo = json.set("","Duration",json.get(ReturnDurationData,"DurationInfo"))]
 	}]
 
 	[h:subeffectData = json.remove(subeffectData,"isConditionNonDurationEnd")]

@@ -268,7 +268,6 @@
 [h:defineFunction("pm.a5e.SpellFilterDisplay","pm.a5e.SpellFilterDisplay@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.a5e.MaxSpellLevel","pm.a5e.MaxSpellLevel@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.SpellStdVars","pm.SpellStdVars@Lib:pm.a5e.Core",0,0)]
-[h:defineFunction("pm.a5e.SpellcastingSubeffect","pm.a5e.SpellcastingSubeffect@Lib:pm.a5e.Core",0,0)]
 [h:defineFunction("pm.a5e.DamageRoll","pm.a5e.DamageRoll@Lib:pm.a5e.Core",0,0)]
 [h:defineFunction("pm.a5e.AttackRoll","pm.a5e.AttackRoll@Lib:pm.a5e.Core",0,0)]
 [h:defineFunction("pm.a5e.ExecuteSubeffect","pm.a5e.ExecuteSubeffect@Lib:pm.a5e.Core",0,0)]

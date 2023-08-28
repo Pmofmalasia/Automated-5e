@@ -7,15 +7,15 @@
 [h,switch(d20AdvantageBalance),CODE:
     case -1:{
         [h:d20EffectiveRoll = math.arrayMin(d20AllRolls)]
-        [h:attack.ToHitRulesStr = "1d20 <span style='color:"+DamageColor+"'>with Dis</span>"]
+        [h:attack.FormulaPrefix = "1d20 <span style='color:"+DamageColor+"'>with Dis</span>"]
     };
     case 0:{
         [h:d20EffectiveRoll = json.get(d20AllRolls,0)]
-        [h:attack.ToHitRulesStr = "1d20"]
+        [h:attack.FormulaPrefix = "1d20"]
     };
     case 1:{
         [h:d20EffectiveRoll = math.arrayMax(d20AllRolls)]
-        [h:attack.ToHitRulesStr = "1d20 <span style='color:"+HealingColor+"'>with Adv</span>"]
+        [h:attack.FormulaPrefix = "1d20 <span style='color:"+HealingColor+"'>with Adv</span>"]
     }
 ]
 
@@ -36,9 +36,10 @@
 [h:CritFailTest = if(or(attack.AutoCritFail,d20EffectiveRoll==1),1,0)]
 
 [h:"<!-- TODO: Re-add misc. flat bonuses to the ToHit to the rules string, get PrimeStatBonus, ProfTest, and ToHitBonus into macro -->"]
-[h:attack.ToHit = d20EffectiveRoll+PrimeStatMod+if(attack.ProfTest,getProperty("a5e.stat.Proficiency"),0)+attack.ToHitBonus]
-[h:attack.ToHitStr = d20EffectiveRoll+" + "+PrimeStatMod+if(attack.ProfTest," + "+getProperty("a5e.stat.Proficiency"),"")+pm.PlusMinus(attack.ToHitBonus,0)]
-[h:attack.ToHitRulesStr = attack.ToHitRulesStr+" + "+substring(PrimeStat,0,3)+if(attack.ProfTest," + Prof","")+pm.PlusMinus(attack.ToHitBonus,0)]
+[h:attack.TotalBonus = PrimeStatMod+if(attack.ProfTest,getProperty("a5e.stat.Proficiency"),0)+attack.ToHitBonus]
+[h:attack.ToHit = d20EffectiveRoll+attack.TotalBonus]
+[h:attack.ToHitStr = pm.PlusMinus(PrimeStatMod,1)+if(attack.ProfTest," + "+getProperty("a5e.stat.Proficiency"),"")+pm.PlusMinus(attack.ToHitBonus,0)]
+[h:attack.ToHitRulesStr = " + "+substring(PrimeStat,0,3)+if(attack.ProfTest," + Prof","")+pm.PlusMinus(attack.ToHitBonus,0)]
 
 [h,foreach(tempPrefix,attack.FunctionPrefixes),CODE:{
     [h:pm.PassiveFunction(tempPrefix+"Bonus")]
@@ -50,11 +51,17 @@
     "FinalRoll",d20EffectiveRoll,
     "Advantage",d20Advantage,
     "Disadvantage",d20Disadvantage,
-	"AdvantageMessages",d20AdvantageMessageArray,
+	"AdvantageMessageArray",d20AdvantageMessageArray,
     "AdvantageBalance",d20AdvantageBalance,
-    "ToHit",attack.ToHit,
-    "ToHitStr",attack.ToHitStr,
-    "RulesStr",attack.ToHitRulesStr,
+	"PrimeStat",PrimeStat,
+	"TotalBonus",attack.TotalBonus,
+    "Value",attack.ToHit,
+    "RollString",attack.ToHitStr,
+    "Formula",attack.ToHitRulesStr,
+    "FormulaPrefix",attack.FormulaPrefix,
+	"CritRange",attack.FinalCritRange,
+	"AutoCrit",attack.AutoCrit,
+	"AutoCritFail",attack.AutoCritFail,
     "CritTest",CritTest,
     "CritFailTest",CritFailTest
 ))]

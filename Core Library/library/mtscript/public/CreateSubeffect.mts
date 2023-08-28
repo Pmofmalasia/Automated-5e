@@ -32,6 +32,8 @@
 	[h,if(EffectType == "Spell"),CODE:{
 		[h:tempSpellLevel = json.get(ExtraData,"SpellLevel")]
 		[h:SubeffectHTML = SubeffectHTML + "<tr id='rowAHLDuration'><th><label for='AHLDuration'>Duration Increases at Higher Levels:</label></th><td><input type='checkbox' id='AHLDuration' name='AHLDuration' onchange='createAHLDurationRows("+'"CreateSubeffectTable",'+tempSpellLevel+',"rowIsConcentration"'+")' value=1></td></tr>"]
+	};{
+		[h:tempSpellLevel = 0]
 	}]
 
 	[h:SubeffectHTML = SubeffectHTML + "<tr id='rowIsConcentration'><th><label for='isConcentration'>Requires Concentration:</label></th><td><input type='checkbox' id='isConcentration' name='isConcentration' value=1></td></tr>"]

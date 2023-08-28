@@ -81,9 +81,9 @@
 		"ShowIfCondensed",1,
 		"Header","Attack Roll",
 		"FalseHeader","",
-		"FullContents","<span style='"+if(attack.CritTest,"font-size:2em; color:"+CritColor,if(attack.CritFailTest,"font-size:2em; color:"+CritFailColor,"font-size:1.5em"))+"'>"+json.get(subeffect.AttackData,"ToHit")+"</span>",
-		"RulesContents",json.get(subeffect.AttackData,"RulesStr")+" = ",
-		"RollContents",json.get(subeffect.AttackData,"ToHitStr")+" = ",
+		"FullContents","<span style='"+if(attack.CritTest,"font-size:2em; color:"+CritColor,if(attack.CritFailTest,"font-size:2em; color:"+CritFailColor,"font-size:1.5em"))+"'>"+json.get(subeffect.AttackData,"Value")+"</span>",
+		"RulesContents",json.get(subeffect.AttackData,"FormulaPrefix")+json.get(subeffect.AttackData,"Formula")+" = ",
+		"RollContents",json.get(subeffect.AttackData,"FinalRoll")+json.get(subeffect.AttackData,"RollString")+" = ",
 		"DisplayOrder","['Rules','Roll','Full']"
 	)]
 

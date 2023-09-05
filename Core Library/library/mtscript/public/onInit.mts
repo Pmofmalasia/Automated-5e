@@ -34,6 +34,7 @@
 [h:defineFunction("ct.a5e.CreatureTargetingLimitProcessing","ct.a5e.CreatureTargetingLimitProcessing@Lib:pm.a5e.Core")]
 [h:defineFunction("ct.a5e.ObjectTargetingLimitProcessing","ct.a5e.ObjectTargetingLimitProcessing@Lib:pm.a5e.Core")]
 [h:defineFunction("ct.a5e.WeaponDataProcessing","ct.a5e.WeaponDataProcessing@Lib:pm.a5e.Core")]
+[h:defineFunction("ct.a5e.AttributeOptionProcessing","ct.a5e.AttributeOptionProcessing@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.a5e.KeyStringsToNumbers","pm.a5e.KeyStringsToNumbers@Lib:pm.a5e.Core")]
 
 [h:"<!-- Functions for the character sheet -->"]

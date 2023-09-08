@@ -1,8 +1,8 @@
 {
   "name": "Automated 5e Core",
-  "version": "0.3",
+  "version": "0.5",
   "website": "",
-  "gitUrl": "",
+  "gitUrl": "https://github.com/Pmofmalasia/Automated-5e",
   "authors": ["PMofMalasia"],
   "license": "",
   "namespace": "pm.a5e.Core",

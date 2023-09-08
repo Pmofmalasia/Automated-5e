@@ -26,7 +26,7 @@
 
 [h:RaceInputHTML = RaceInputHTML + "<tr id='rowSwimSpeed'><th><label for='BaseSwimSpeed'>Base Swimming Speed:</label></th><td><input type='number' id='BaseSwimSpeed' name='BaseSwimSpeed' min=0 value=0 style='width:25px'></td></tr>"]
 
-[h:RaceInputHTML = RaceInputHTML + "<tr id='rowIsSenses'><th><label for='isSenses'>Gives Special Senses:</label></th><td><input type='checkbox' id='isSenses' name='isSenses'></td></tr>"]
+[h:RaceInputHTML = RaceInputHTML + "<tr id='rowIsVision'><th><label for='isVision'>Gives Special Vision:</label></th><td><input type='checkbox' id='isVision' name='isVision' onchange='createVisionRows("+'"CreateRaceTable","rowLanguageOptions"'+")'></td></tr>"]
 
 [h:RaceInputHTML = RaceInputHTML + "<tr id='rowLanguageOptions'><th><label for='LanguageOptions'>Chosen Languages:</label></th><td><input type='number' id='LanguageOptions' name='LanguageOptions' value=1 min=0 style='width:25px'></td></tr>"]
 

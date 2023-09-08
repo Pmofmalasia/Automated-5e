@@ -1,7 +1,56 @@
 [h:RaceData = macro.args]
 [h:RaceData = pm.a5e.KeyStringsToNumbers(RaceData)]
+[h:RaceDisplayName = json.get(RaceData,"DisplayName")]
+[h:RaceName = pm.RemoveSpecial(RaceDisplayName)]
 
-[h:RaceData = json.set(RaceData,"Name",pm.RemoveSpecial(json.get(RaceData,"DisplayName")))]
+[h:LibMacroLabel = RaceName+"Traits ### "+RaceName+" ### Passive"]
+[h:LibMacroCommand = '[h:pass.abilityName = "'+RaceName+'Traits"]
+[h:pass.abilityDisplayName = "'+RaceDisplayName+' Traits"]
+[h:pass.abilityClass = "'+RaceName+'"]
+[h:pass.abilitySubclass = ""]
+[h:pass.abilityFalseName = "Racial Feature"]
+[h:pass.FeatureFullDescription = ""]
+[h:pass.FeatureAbridgedDescription = ""]
+[h:pm.a5e.FeaturePassiveStdVars(arg(0))]
+
+']
+
+[h:SpeedTypeArray = json.append("","","Burrow","Climb","Fly","Swim")]
+[h:SpeedBonusString = ""]
+[h:allSpeedsArray = ""]
+[h,foreach(speedType,SpeedTypeArray),CODE:{
+	[h:thisSpeedBonus = json.get(RaceData,"Base"+speedType+"Speed")]
+	[h,if(thisSpeedBonus != 0): SpeedBonusString = SpeedBonusString + ','+if(speedType == "",'"Speed"','"'+speedType+'"')+',json.set("","Base",'+thisSpeedBonus+')']
+	[h:allSpeedsArray = json.append(allSpeedsArray,thisSpeedBonus)]
+}]
+
+[h:allSameSpeed = json.length(json.unique(allSpeedsArray)) == 1]
+[h,if(allSameSpeed): SpeedBonusString = ',"All",json.set("","Base",'+json.get(allSpeedsArray,0)+')']
+
+[h:LibMacroCommand = LibMacroCommand + '[h,if(pass.Context=="Speed"),CODE:{
+	[h:pass.a5e.SpeedBonus(pass.abilityInfo,json.set(""'+SpeedBonusString+'))]
+}]']
+
+[h:LibMacroCommand = LibMacroCommand + '
+
+[h,if(pass.Context=="Lifespan"),CODE:{
+	[h:pass.a5e.LifespanBonus(pass.abilityInfo,json.set("","Base",'+json.get(RaceData,"Lifespan")+'))]
+}]']
+
+[h:RaceData = json.set(RaceData,"Name",RaceName)]
+
+[h:BaseRaceData = json.set("",
+	"Name",RaceName,
+	"DisplayName",RaceDisplayName,
+	"CreatureType",json.get(RaceData,"CreatureType")
+)]
+
+[h:RaceData = json.remove(RaceData,"CreatureType")]
+[h:RaceData = json.remove(RaceData,"BaseSpeed")]
+[h:RaceData = json.remove(RaceData,"BaseBurrowSpeed")]
+[h:RaceData = json.remove(RaceData,"BaseClimbSpeed")]
+[h:RaceData = json.remove(RaceData,"BaseFlySpeed")]
+[h:RaceData = json.remove(RaceData,"BaseSwimSpeed")]
 
 [h,if(json.get(RaceData,"RaceCountsAs") == ""): RaceData = json.remove(RaceData,"RaceCountsAs")]
 
@@ -43,7 +92,7 @@
 	[h:RaceData = json.remove(RaceData,"PresetAttributesAll")]
 
 	[h,foreach(attribute,AttributeArray),CODE:{
-		[h,if(json.get(RaceData,"PresetAttributes"+attribute) != 0): PresetAttributeBonuses = json.set(PresetAttributeBonuses,attribute,json.get(PresetAttributeBonuses,"PresetAttributes"+attribute))]
+		[h,if(json.get(RaceData,"PresetAttributes"+attribute) != 0): PresetAttributeBonuses = json.set(PresetAttributeBonuses,attribute,json.get(RaceData,"PresetAttributes"+attribute))]
 		[h:RaceData = json.remove(RaceData,"PresetAttributes"+attribute)]
 	}]
 
@@ -51,7 +100,6 @@
 };{}]
 
 [h,if(json.get(RaceData,"LanguageOptions") == 0): RaceData = json.remove(RaceData,"LanguageOptions")]
-
 [h:LanguageKnownNumber = json.get(RaceData,"LanguageKnownNumber")]
 [h:RaceData = json.remove(RaceData,"LanguageKnownNumber")]
 [h:LanguagesKnown = ""]
@@ -62,38 +110,41 @@
 }]
 [h,if(LanguagesKnown != ""): RaceData = json.set(RaceData,"Languages",LanguagesKnown)]
 
-[h:BaseRaceData = json.set("",
-	"Name",json.get(RaceData,"Name"),
-	"DisplayName",json.get(RaceData,"DisplayName"),
-	"CreatureType",json.get(RaceData,"CreatureType"),
-	"BaseSpeed",json.get(RaceData,"BaseSpeed"),
-	"BaseBurrowSpeed",json.get(RaceData,"BaseBurrowSpeed"),
-	"BaseClimbSpeed",json.get(RaceData,"BaseClimbSpeed"),
-	"BaseFlySpeed",json.get(RaceData,"BaseFlySpeed"),
-	"BaseSwimSpeed",json.get(RaceData,"BaseSwimSpeed")
-)]
-
-[h:RaceData = json.remove(RaceData,"BaseSpeed")]
-[h:RaceData = json.remove(RaceData,"BaseBurrowSpeed")]
-[h:RaceData = json.remove(RaceData,"BaseClimbSpeed")]
-[h:RaceData = json.remove(RaceData,"BaseFlySpeed")]
-[h:RaceData = json.remove(RaceData,"BaseSwimSpeed")]
-
 [h:RaceTraitsFeature = json.set(RaceData,
-	"Name",json.get(RaceData,"Name")+"Traits",
-	"DisplayName",json.get(RaceData,"DisplayName")+"Traits",
-	"Class",json.get(RaceData,"Name"),
+	"Name",RaceName+"Traits",
+	"DisplayName",RaceDisplayName+"Traits",
+	"Class",RaceName,
 	"Subclass","",
 	"Level",1,
-	"CallLanguages",1
+	"CallLanguages",1,
+	"CallSpeed",1
 )]
+
+[h,if(json.contains(RaceData,"isVision")),CODE:{
+	[h:RaceTraitsFeature = json.remove(RaceTraitsFeature,"isVision")]
+	[h:RaceTraitsFeature = json.set(RaceTraitsFeature,"CallSenses",1)]
+
+	[h:"<!-- Insert macro creation of vision stuff here -->"]
+};{}]
 
 [h:BaseRaceData = json.set(BaseRaceData,"Traits",RaceTraitsFeature)]
 [h:closeDialog("Race Creation")]
 
+[h:LibMacroProperties = json.set("",
+	"autoExecute",1,
+	"color","#2F1266",
+	"command",LibMacroCommand,
+	"fontColor","white",
+	"group","Racial Passive Features",
+	"sortBy",1,
+	"label",LibMacroLabel,
+	"minWidth",90
+)]
 [h:Library = json.get(RaceTraitsFeature,"Library")]
+[h:LibraryID = findToken("Lib:"+Library,"z.0 Library")]
+[h:createMacro(LibMacroProperties,LibraryID,"z.0 Library")]
 [h:setLibProperty("sb.Races",json.append(getLibProperty("sb.Races","Lib:"+Library),BaseRaceData),"Lib:"+Library)]
 
 [h:SourcebookName = json.get(json.path.read(getLibProperty("ms.Sources","Lib:pm.a5e.Core"),"[?(@.Library=='"+Library+"')]['DisplayName']"),0)]
-[r:json.get(RaceData,"DisplayName")+" race from the sourcebook "+SourcebookName+" created."]
+[r:RaceDisplayName+" race from the sourcebook "+SourcebookName+" created."]
 [h,MACRO("Gather Sourcebook Information@Lib:pm.a5e.Core"):""]

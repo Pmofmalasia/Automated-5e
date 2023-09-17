@@ -100,7 +100,7 @@ async function createPresetAttributeRows(tableID){
 	let AllAttributes = await request.json();
 
 	for(let tempAttribute of AllAttributes){
-		addTableRow(tableID,nextRowIndex,"rowPresetAttributes"+tempAttribute.DisplayName,"<th>Bonus to "+tempAttribute.DisplayName+":</th><td><input type='number' id='PresetAttributes"+tempAttribute.Name+"' name='PresetAttributes"+tempAttribute.Name+"' value=0 style='width:25px'></td>");
+		addTableRow(tableID,nextRowIndex,"rowPresetAttributes"+tempAttribute.DisplayName,"<th><label for='PresetAttributes"+tempAttribute.Name+"Bonus to "+tempAttribute.DisplayName+":</th><td><input type='number' id='PresetAttributes"+tempAttribute.Name+"' name='PresetAttributes"+tempAttribute.Name+"' value=0 style='width:25px'></td>");
 		nextRowIndex++;
 	}
 
@@ -109,13 +109,34 @@ async function createPresetAttributeRows(tableID){
 	document.getElementById("rowEndPresetAttributes").setAttribute("hidden","");
 }
 
+function createVisionRows(tableID,endRowID){
+	if(document.getElementById("isVision").checked){
+		let nextRowIndex = document.getElementById("rowIsVision").rowIndex + 1;
+
+		addTableRow(tableID,nextRowIndex,"rowIsNormalVision","<th><label for='isNormalVision'>Has Normal Vision:</label></th><td><input type='checkbox' id='isNormalVision' name='isNormalVision' checked></td>");
+		nextRowIndex++;
+
+		addTableRow(tableID,nextRowIndex,"rowDarkvisionDistance","<th><label for='DarkvisionDistance'>Darkvision Distance:</label></th><td><input type='number' id='DarkvisionDistance' name='DarkvisionDistance' min=0 value=60 style='width:25px'></td>");
+		nextRowIndex++;
+
+		addTableRow(tableID,nextRowIndex,"rowBlindsightDistance","<th><label for='BlindsightDistance'>Blindsight Distance:</label></th><td><input type='number' id='BlindsightDistance' name='BlindsightDistance' min=0 value=0 style='width:25px'></td>");
+		nextRowIndex++;
+
+		addTableRow(tableID,nextRowIndex,"rowTruesightDistance","<th><label for='TruesightDistance'>Truesight Distance:</label></th><td><input type='number' id='TruesightDistance' name='TruesightDistance' min=0 value=0 style='width:25px'></td>");
+		nextRowIndex++;
+	}
+	else{
+		clearUnusedTable(tableID,"rowIsVision",endRowID);
+	}
+}
+
 async function addLanguageKnownRow(tableID){
 	let currentLanguageNumber = Number(document.getElementById("LanguageKnownNumber").value) + 1;
 	document.getElementById("LanguageKnownNumber").value = currentLanguageNumber;
 
 	let request = await fetch("macro:pm.a5e.GetCoreData@lib:pm.a5e.Core",{method: "POST", body: "['sb.Languages']"});
 	let AllLanguages = await request.json();
-	let LanguageOptions = createHTMLSelectOptions(AllLanguages,"LanguageKnown"+currentLanguageNumber);
+	let LanguageOptions = createHTMLSelectOptions(AllLanguages);
 
 	let nextRowIndex = document.getElementById("rowLanguageKnownButtons").rowIndex;
 	addTableRow(tableID,nextRowIndex,"rowLanguageKnown"+currentLanguageNumber,"<th><label for='LanguageKnown"+currentLanguageNumber+"'>Known Language #"+(currentLanguageNumber+1)+":</label></th><td><select id='LanguageKnown"+currentLanguageNumber+"' name='LanguageKnown"+currentLanguageNumber+"' value=1 min=0>"+LanguageOptions+"</select></td>");
@@ -135,6 +156,7 @@ async function loadUserData() {
     document.getElementById('CreateRaceTable').innerHTML = userdata;
 
 	document.getElementById("LanguageKnown0").value = "Common";
+	document.getElementById("CreatureType").value = "Humanoid";
 }
 
 setTimeout(loadUserData, 1);

@@ -171,6 +171,9 @@ async function createMitigationTable(){
 
 		addTableRow("CreateSubeffectTable",nextMitigationRowIndex,"rowIsConditionalAdvantage","<th>Conditional (Dis)advantage:</th><input type='checkbox' id='isConditionalAttackAdvantage' name='isConditionalAttackAdvantage' onchange='createConditionalAttackAdvantageRows()'></td>");
 		nextMitigationRowIndex++;
+	
+		addTableRow("CreateSubeffectTable",nextRowIndex,"rowIgnoreCoverBenefits","<th><label for='IgnoreCoverBenefit'>Ignore Cover Benefits?</label></th><td><input type='checkbox' id='IgnoreCoverBenefit' name='IgnoreCoverBenefit'></td>");
+		nextRowIndex++;
 	}
 	else if(document.getElementById("howMitigate").value == "Save"){
 		clearUnusedTable("CreateSubeffectTable","Mitigation","Damage");
@@ -206,6 +209,9 @@ async function createMitigationTable(){
 
 		addTableRow("CreateSubeffectTable",nextMitigationRowIndex,"rowIsChooseFailure","<th>Can Choose to Fail:</th><input type='checkbox' id='isChooseFailure' name='isChooseFailure'></td>");
 		nextMitigationRowIndex++;
+	
+		addTableRow("CreateSubeffectTable",nextRowIndex,"rowIgnoreCoverBenefits","<th><label for='IgnoreCoverBenefit'>Ignore Cover Benefits?</label></th><td><input type='checkbox' id='IgnoreCoverBenefit' name='IgnoreCoverBenefit'></td>");
+		nextRowIndex++;
 
 		if(document.getElementById("isDamage").checked){
 			for(let i=1; i <= document.getElementById("differentTypes").value; i++){
@@ -1131,9 +1137,6 @@ async function createUncommonEffectsRows(){
 		nextRowIndex++;
 
 		addTableRow("CreateSubeffectTable",nextRowIndex,"rowIsWeaponAttack","<th><label for='isWeaponAttack'>Makes a Weapon Attack?</label></th><td><input type='checkbox' id='isWeaponAttack' name='isWeaponAttack' value=1 onchange='createWeaponAttackTable()'></td>");
-		nextRowIndex++;
-
-		addTableRow("CreateSubeffectTable",nextRowIndex,"rowIgnoreCoverBenefits","<th><label for='IgnoreCoverBenefit'>Ignore Cover Benefits?</label></th><td><input type='checkbox' id='IgnoreCoverBenefit' name='IgnoreCoverBenefit'></td>");
 		nextRowIndex++;
 	}
 	else{

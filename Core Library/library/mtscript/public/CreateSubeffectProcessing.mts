@@ -242,6 +242,11 @@
 
 	[h,if(json.contains(subeffectData,"isChooseFailure")): subeffectData = json.set(subeffectData,"isChooseFailure",1)]
 
+	[h,if(json.contains(subeffectData,"IgnoreCoverBenefit")),CODE:{
+		[h:SaveData = json.set(SaveData,"IgnoreCover",1)]
+		[h:subeffectData = json.remove(subeffectData,"IgnoreCoverBenefit")]
+	};{}]
+
 	[h:subeffectData = json.remove(subeffectData,"SaveType")]
 	[h:subeffectData = json.remove(subeffectData,"SaveDCMethod")]
 	[h:subeffectData = json.remove(subeffectData,"SaveDCStat")]
@@ -261,6 +266,11 @@
 		case "SetValue": AttackData = json.set(AttackData,"ToHitBonus",json.get(subeffectData,"ToHitBonus"));
 		default: ""
 	]
+
+	[h,if(json.contains(subeffectData,"IgnoreCoverBenefit")),CODE:{
+		[h:AttackData = json.set(AttackData,"IgnoreCover",1)]
+		[h:subeffectData = json.remove(subeffectData,"IgnoreCoverBenefit")]
+	};{}]
 
 	[h:subeffectData = json.remove(subeffectData,"ToHitMethod")]
 	[h:subeffectData = json.remove(subeffectData,"ToHitStat")]
@@ -835,8 +845,6 @@
 	default: {}
 ]
 [h:subeffectData = json.remove(subeffectData,"isCreateObject")]
-
-[h:subeffectData = json.set(subeffectData,"IgnoreCoverBenefit",json.contains(subeffectData,"IgnoreCoverBenefit"))]
 
 [h:subeffectData = json.set(subeffectData,"UsePriorOrigin",json.contains(subeffectData,"UsePriorOrigin"))]
 

@@ -93,14 +93,7 @@
 	"DisplayOrder","['Rules','Roll','Full']"
 ))]
 
-[h:pm.a5e.BaseEffectData = json.set("",
-	"Class","zzChecksAndSaves",
-	"DisplayName",StartorEnd+" of Turn Effect",
-	"Type","Save",
-	"ID",pm.a5e.GenerateEffectID(),
-	"ParentToken",ParentToken
-)]
-[h,MACRO("Build Effect@Lib:pm.a5e.Core"): json.set("","CurrentEffects","[]","ToMerge",effectsToMerge,"BaseEffect",pm.a5e.BaseEffectData)]
+[h,MACRO("Build Effect@Lib:pm.a5e.Core"): json.set("","CurrentEffects",pm.a5e.EffectData,"ToMerge",effectsToMerge,"BaseEffect",pm.a5e.BaseEffectData)]
 [h:pm.a5e.EffectData = macro.return]
 [h,if(!json.isEmpty(pm.a5e.EffectData)): setLibProperty("gd.Effects",json.merge(getLibProperty("gd.Effects","Lib:pm.a5e.Core"),pm.a5e.EffectData),"Lib:pm.a5e.Core")]
 [h,MACRO("BuildEffectsFrame@Lib:pm.a5e.Core"): ""]

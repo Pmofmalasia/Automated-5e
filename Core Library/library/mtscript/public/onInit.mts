@@ -35,6 +35,8 @@
 [h:defineFunction("ct.a5e.ObjectTargetingLimitProcessing","ct.a5e.ObjectTargetingLimitProcessing@Lib:pm.a5e.Core")]
 [h:defineFunction("ct.a5e.WeaponDataProcessing","ct.a5e.WeaponDataProcessing@Lib:pm.a5e.Core")]
 [h:defineFunction("ct.a5e.AttributeOptionProcessing","ct.a5e.AttributeOptionProcessing@Lib:pm.a5e.Core")]
+[h:defineFunction("ct.a5e.LanguageOptionProcessing","ct.a5e.LanguageOptionProcessing@Lib:pm.a5e.Core")]
+[h:defineFunction("ct.a5e.VisionProcessing","ct.a5e.VisionProcessing@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.a5e.KeyStringsToNumbers","pm.a5e.KeyStringsToNumbers@Lib:pm.a5e.Core")]
 
 [h:"<!-- Functions for the character sheet -->"]
@@ -60,6 +62,7 @@
 [h:defineFunction("stat.a5e.DisplayStatTest","stat.a5e.DisplayStatTest@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.a5e.Limbs","pm.a5e.Limbs@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.a5e.TokenActiveConditions","pm.a5e.TokenActiveConditions@Lib:pm.a5e.Core")]
+[h:defineFunction("pm.a5e.Vision","pm.a5e.Vision@Lib:pm.a5e.Core")]
 
 [h:"<!-- Functions for Equipment -->"]
 [h:defineFunction("pm.a5e.CalculateShieldAC","pm.a5e.CalculateShieldAC@Lib:pm.a5e.Core")]
@@ -144,6 +147,8 @@
 [h:defineFunction("pass.a5e.SpeedBonus","pass.a5e.SpeedBonus@Lib:pm.a5e.Core",0,0)]
 [h:defineFunction("pass.a5e.ACBonus","pass.a5e.ACBonus@Lib:pm.a5e.Core",0,0)]
 [h:defineFunction("pass.a5e.MaxHPBonus","pass.a5e.MaxHPBonus@Lib:pm.a5e.Core",0,0)]
+[h:defineFunction("pass.a5e.VisionBonus","pass.a5e.VisionBonus@Lib:pm.a5e.Core",0,0)]
+[h:defineFunction("pass.a5e.LifespanBonus","pass.a5e.LifespanBonus@Lib:pm.a5e.Core",0,0)]
 [h:defineFunction("pass.a5e.AdjustProficiency","pass.a5e.AdjustProficiency@Lib:pm.a5e.Core",0,0)]
 [h:defineFunction("pass.a5e.d20AutoResult","pass.a5e.d20AutoResult@Lib:pm.a5e.Core",0,0)]
 [h:defineFunction("pass.a5e.AdjustCriticalThreshhold","pass.a5e.AdjustCriticalThreshhold@Lib:pm.a5e.Core",0,0)]

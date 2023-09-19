@@ -1,7 +1,7 @@
 [h:abilityName = pm.RemoveSpecial(abilityName)]
 [h:abilitySubclass = pm.RemoveSpecial(abilitySubclass)]
 [h:abilityPriorData = arg(0)]
-[h:abilityInfo = json.path.read(getProperty("a5e.stat.Inventory"),"[*][?(@.ItemID == '"+json.get(abilityPriorData,"ItemID")+"')]")]
+[h:abilityInfo = json.path.read(getProperty("a5e.stat.Inventory"),"\$[*][?(@.ItemID == '"+json.get(abilityPriorData,"ItemID")+"')]")]
 [h:ParentToken=json.get(abilityPriorData,"ParentToken")]
 [h:switchToken(ParentToken)]
 

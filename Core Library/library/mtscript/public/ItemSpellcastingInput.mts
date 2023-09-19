@@ -2,7 +2,7 @@
 [h:ItemID = json.get(ItemSpellcastingData,"ItemID")]
 [h:ParentToken = json.get(ItemSpellcastingData,"ParentToken")]
 
-[h:ItemData = json.path.read(getProperty("a5e.stat.Inventory"),"[*][?(@.ItemID == '"+ItemID+"')]")]
+[h:ItemData = json.path.read(getProperty("a5e.stat.Inventory"),"\$[*][?(@.ItemID == '"+ItemID+"')]")]
 [h:assert(!json.isEmpty(ItemData),"Item not found in inventory!")]
 [h:ItemData = json.get(ItemData,0)]
 

@@ -2,6 +2,7 @@
 [h:ParentToken = json.get(EquipItemData,"ParentToken")]
 [h:CurrentInventory = getProperty("a5e.stat.Inventory")]
 [h:CurrentHeldItems = getProperty("a5e.stat.HeldItems")]
+[h:CurrentNaturalWeapons = getProperty("a5e.stat.NaturalWeapons")]
 
 [h:a5e.UnifiedAbilities = a5e.GatherAbilities(ParentToken)]
 
@@ -14,6 +15,7 @@
 	"ParentToken",ParentToken,
 	"Inventory",CurrentInventory,
 	"HeldItems",CurrentHeldItems,
+	"NaturalWeapons",CurrentNaturalWeapons,
 	"Limbs",UsableLimbs,
 	"EquippedArmor",getProperty("a5e.stat.EquippedArmor"),
 	"AttunementSlots",AttunementSlots

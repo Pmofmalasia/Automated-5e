@@ -3,7 +3,7 @@
 [h:SpellLevel = json.get(SpellData,"Level")]
 [h:ParentToken = json.get(SpellData,"Name")]
 [h:ItemID = json.get(SpellData,"ItemID")]
-[h:ItemData = json.path.read(getProperty("a5e.stat.Inventory"),"[*][?(@.ItemID == '"+ItemID+"')]")]
+[h:ItemData = json.path.read(getProperty("a5e.stat.Inventory"),"\$[*][?(@.ItemID == '"+ItemID+"')]")]
 [h:assert(!json.isEmpty(ItemData),"Item not found in inventory!")]
 [h:ItemData = json.get(ItemData,0)]
 [h:abilityName = "Item Spellcasting"]

@@ -3,6 +3,8 @@
 [h:switchToken(ParentToken)]
 [h:closeDialog("Character Creation")]
 
+[h:setProperty("a5e.stat.CreatureName","Adventurer")]
+
 [h:RaceArray = pm.GetRaces()]
 [h:RaceSelection = json.get(RaceArray,json.get(newCharData,"raceChoice"))]
 

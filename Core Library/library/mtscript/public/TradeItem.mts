@@ -4,7 +4,7 @@
 [h:ItemGivenTo = json.get(TradedItemsData,"GiveTo")]
 [h:ItemTakenFrom = json.get(TradedItemsData,"TakeFrom")]
 
-[h:TradedItem = json.get(json.path.read(getProperty("a5e.stat.Inventory",ItemTakenFrom),"[*][?(@.ItemID == "+TradedItemID+")]"),0)]
+[h:TradedItem = json.get(json.path.read(getProperty("a5e.stat.Inventory",ItemTakenFrom),"\$[*][?(@.ItemID == '"+TradedItemID+"')]"),0)]
 [h:switchToken(ItemGivenTo)]
 [h:PriorInventory = getProperty("a5e.stat.Inventory")]
 
@@ -18,7 +18,7 @@
 [h:newEntryTest = 1]
 [h:StackingTest = json.get(TradedItem,"isStackable")]
 [h,if(StackingTest),CODE:{
-	[h:SameItemPriorEntry = json.path.read(PriorInventory,"[*][?(@.ObjectID == '"+TradedItemID+"')]")]
+	[h:SameItemPriorEntry = json.path.read(PriorInventory,"\$[*][?(@.ObjectID == '"+TradedItemID+"')]")]
 	[h:newEntryTest = json.isEmpty(SameItemPriorEntry)]
 };{}]
 
@@ -40,7 +40,7 @@
 };{
 	[h:OldEntryData = json.get(SameItemPriorEntry,0)]
 	[h:NewNumber = json.get(OldEntryData,"Number") + json.get(AddItemData,"NumberAdded")]
-	[h:NewInventory = json.path.set(PriorInventory,"[*][?(@.ObjectID == '"+TradedItemID+"')]['Number']",NewNumber)]
+	[h:NewInventory = json.path.set(PriorInventory,"\$[*][?(@.ObjectID == '"+TradedItemID+"')]['Number']",NewNumber)]
 	[h:setProperty("a5e.stat.Inventory",NewInventory)]
 }]
 

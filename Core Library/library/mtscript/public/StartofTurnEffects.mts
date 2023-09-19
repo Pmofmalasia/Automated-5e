@@ -2,9 +2,18 @@
 [h:switchToken(ParentToken)]
 [h:IsTooltip = 0]
 [h:a5e.UnifiedAbilities = a5e.GatherAbilities(ParentToken)]
+[h:pm.a5e.EffectData = "[]"]
 [h:effectsToMerge = "[]"]
 [h:abilityTable = "[]"]
 [h:pm.a5e.OverarchingContext = "StartTurn"]
+
+[h:pm.a5e.BaseEffectData = json.set("",
+	"Class","zzChecksAndSaves",
+	"DisplayName","Start of Turn Effect",
+	"Type","Save",
+	"ID",pm.a5e.GenerateEffectID(),
+	"ParentToken",ParentToken
+)]
 
 [h:"<!-- TODO: Roll this in with EventResourceRestoration in the future when inputs are updated since it has restoration by chance as well -->"]
 [h,foreach(feature,json.path.read(a5e.UnifiedAbilities,"[*][?(@.RechargeRoll!=null)]","DEFAULT_PATH_LEAF_TO_NULL")),CODE:{

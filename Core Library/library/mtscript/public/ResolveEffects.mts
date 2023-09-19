@@ -187,8 +187,9 @@
 
 	[h,if(thisTokenAttackData!=""),CODE:{
 		[h:attackToHit = json.get(thisTokenAttackData,"Value")]
-		[h:attackCrit = or(json.get(thisTokenAttackData,"AutoCrit"),attackToHit >= json.get(thisTokenAttackData,"CritRange"))]
-		[h:attackCritFail = or(json.get(thisTokenAttackData,"AutoCritFail"),attackToHit == 1)]
+		[h:attackBaseRoll = json.get(thisTokenAttackData,"FinalRoll")]
+		[h:attackCrit = or(json.get(thisTokenAttackData,"AutoCrit"),attackBaseRoll >= json.get(thisTokenAttackData,"CritRange"))]
+		[h:attackCritFail = or(json.get(thisTokenAttackData,"AutoCritFail"),attackBaseRoll == 1)]
 		[h:hitTarget = and(!attackCritFail,or(attackCrit,attackToHit >= attackACToHit))]
 		[h,if(json.get(thisTokenAttackData,"AdditionalAttackResolution")==""):
 			needsAdditionalAttackResolution = 1;

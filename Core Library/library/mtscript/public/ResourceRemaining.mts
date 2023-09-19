@@ -32,13 +32,13 @@
 		]
 
 		[h,if(ResourceType == "Item"),CODE:{
-			[h:ResourceData = json.path.read(getProperty(ResourceOrigin),"[*][?(@.ItemID=="+json.get(CheckResourceData,"ItemID")+")]['Resource']")]
+			[h:ResourceData = json.path.read(getProperty(ResourceOrigin),"\$[*][?(@.ItemID=='"+json.get(CheckResourceData,"ItemID")+"')]['Resource']")]
 			[h,if(json.isEmpty(ResourceData)):
 				RemainingResource = 0;
 				RemainingResource = json.get(ResourceData,0)
 			]
 		};{
-			[h:ResourceData = json.path.read(getProperty(ResourceOrigin),"[*][?(@.Name=='"+json.get(CheckResourceData,"Name")+"' && @.Class=='"+json.get(CheckResourceData,"Class")+"' && @.Subclass=='"+json.get(CheckResourceData,"Subclass")+"')]['Resource']")]
+			[h:ResourceData = json.path.read(getProperty(ResourceOrigin),"\$[*][?(@.Name=='"+json.get(CheckResourceData,"Name")+"' && @.Class=='"+json.get(CheckResourceData,"Class")+"' && @.Subclass=='"+json.get(CheckResourceData,"Subclass")+"')]['Resource']")]
 			[h,if(json.isEmpty(ResourceData)):
 				RemainingResource = 0;
 				RemainingResource = json.get(ResourceData,0)

@@ -1,8 +1,9 @@
-function initialEquipmentRows(tableID,Inventory,HeldItems,Limbs,EquippedArmor,AttunementSlots){
+function initialEquipmentRows(tableID,Inventory,HeldItems,Limbs,EquippedArmor,AttunementSlots,NaturalWeapons){
 	createEquippedArmorRow(tableID,Inventory,EquippedArmor);
 	createHeldItemsRows(tableID,Inventory,HeldItems,Limbs);
 	createAttunedItemsRows(tableID,Inventory,AttunementSlots);
 	createWornItemsRows(tableID,Inventory);
+	createNaturaWeaponsRows(tableID,NaturalWeapons);
 }
 
 function createEquippedArmorRow(tableID,Inventory,EquippedArmor){
@@ -153,7 +154,21 @@ function createWornItemsRows(tableID,Inventory){
 
 	//If equal, that means no worn item rows have been made. Header not needed.
 	if(document.getElementById("rowSubmit").rowIndex == nextRowIndex){
-		document.getElementById(tableID).deleteRow(rowWornItemsHeaderIndex);
+		document.getElementById(tableID).deleteRow(nextRowIndex - 1);
+	}
+}
+
+function createNaturaWeaponsRows(tableID,NaturalWeapons){
+	let nextRowIndex = document.getElementById("rowNaturalWeaponsHeader").rowIndex;
+	document.getElementById(tableID).deleteRow(nextRowIndex);
+
+	if(NaturalWeapons.length > 1){
+		let naturalWeaponOptions = "";
+		for(let weapon of NaturalWeapons){
+			naturalWeaponOptions = naturalWeaponOptions + "<option value='"+weapon.ItemID+"'>"+weapon.DisplayName+"</option>"
+		}
+
+		addTableRow(tableID,nextRowIndex,"rowNaturalWeaponsHeader","<th><label for='DefaultNaturalWeapon'>Default Natural Weapon:</label></th><td><select id='DefaultNaturalWeapon' name='DefaultNaturalWeapon'>"+naturalWeaponOptions+"</select></td>")
 	}
 }
 
@@ -172,13 +187,16 @@ async function loadUserData(){
 	addTableRow(tableID,nextRowIndex,"rowMagicItemHeader","<th text-align='center' colspan='2'>Magic Item Attunement</th><input type='hidden' name='AttunementNumber' id='AttunementNumber' value='"+userdata.AttunementSlots+"'>");
 	nextRowIndex++;
 
+	addTableRow(tableID,nextRowIndex,"rowNaturalWeaponsHeader","<th>Default Natural Weapon:</th><td>Unarmed Strike</td>");
+	nextRowIndex++;
+
 	addTableRow(tableID,nextRowIndex,"rowWornItemsHeader","<th text-align='center' colspan='2'>Other Worn Items</th>");
 	nextRowIndex++;
 
 	addTableRow(tableID,nextRowIndex,"rowSubmit","<th text-align='center' colspan='2'><input type='submit' id='submitButton' value='Change Equipment'></th>");
 	nextRowIndex++;
 
-	initialEquipmentRows("EquipItemTable",userdata.Inventory,userdata.HeldItems,userdata.Limbs,userdata.EquippedArmor,userdata.AttunementSlots);
+	initialEquipmentRows("EquipItemTable",userdata.Inventory,userdata.HeldItems,userdata.Limbs,userdata.EquippedArmor,userdata.AttunementSlots,userdata.NaturalWeapons);
 }
 
 setTimeout(loadUserData, 1);

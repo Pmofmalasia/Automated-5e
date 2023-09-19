@@ -22,7 +22,7 @@
 			
 		};
 		case "AnyValidEquipped": {
-			[h:WeaponListDisplay = pm.a5e.CreateDisplayList(json.path.read(getProperty("a5e.stat.Inventory"),"[*][?(@.ItemID in "+getProperty("a5e.stat.HeldItems")+")]['DisplayName']"),"or")]
+			[h:WeaponListDisplay = pm.a5e.CreateDisplayList(json.path.read(getProperty("a5e.stat.Inventory"),"\$[*][?(@.ItemID in "+getProperty("a5e.stat.HeldItems")+")]['DisplayName']"),"or")]
 			[h:weaponAttackTableLine = json.set("",
 				"ShowIfCondensed",1,
 				"Header","Weapon Options",
@@ -48,7 +48,7 @@
 			
 		};
 		case "AnyValidEquipped": {
-			[h:WeaponOptions = json.path.read(getProperty("a5e.stat.Inventory"),"[*][?(@.ItemID in "+getProperty("a5e.stat.HeldItems")+")]")]
+			[h:WeaponOptions = json.path.read(getProperty("a5e.stat.Inventory"),"\$[*][?(@.ItemID in "+getProperty("a5e.stat.HeldItems")+")]")]
 			[h:WeaponOptionsDisplay = "[]"]
 			[h,foreach(tempWeapon,WeaponOptions): WeaponOptionsDisplay = json.append(WeaponOptionsDisplay,json.get(tempWeapon,"DisplayName"))]
 			[h:abort(input(

@@ -1,11 +1,11 @@
 [h:inputData = arg(0)]
 [h:whichChoice = arg(1)]
 
-[h:pointAllocationData = json.set("","Points",json.get(RaceData,"AttributeChoicePoints"+whichChoice))]
+[h:pointAllocationData = json.set("","Points",json.get(inputData,"AttributeChoicePoints"+whichChoice))]
 [h:inputData = json.remove(inputData,"AttributeChoicePoints"+whichChoice)]
 
 [h:AttributeChoiceMethod = json.get(inputData,"AttributeChoiceMethod"+whichChoice)]
-[h:inputData = json.remove(RaceData,"AttributeChoiceMethod"+whichChoice)]
+[h:inputData = json.remove(inputData,"AttributeChoiceMethod"+whichChoice)]
 [h,if(AttributeChoiceMethod == "Any"),CODE:{
 	[h:pointAllocationData = json.set(pointAllocationData,"AllAttributes",1)]
 	[h:FinalData = json.set("","MainData",inputData,"Choices",pointAllocationData)]

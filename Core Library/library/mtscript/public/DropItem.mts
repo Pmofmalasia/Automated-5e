@@ -6,7 +6,7 @@
 [h:DropLocation = json.get(DropItemData,"Location")]
 [h:isLeaveToken = json.get(DropItemData,"LeaveToken")]
 
-[h:ItemData = json.path.read(getProperty("a5e.stat.Inventory"),"[*][?(@.ItemID == "+DroppedItem+")]")]
+[h:ItemData = json.path.read(getProperty("a5e.stat.Inventory"),"\$[*][?(@.ItemID == '"+DroppedItem+"')]")]
 [h,if(json.isEmpty(ItemData)):
 	return(0);
 	ItemData = json.get(ItemData,0)
@@ -19,8 +19,8 @@
 ]
 [h:NewInventoryNumber = CurrentItemNumber - FinalDroppedNumber]
 [h,if(NewInventoryNumber == 0):
-	NewInventory = json.path.delete(getProperty("a5e.stat.Inventory"),"[*][?(@.ItemID == "+DroppedItem+")]");
-	NewInventory = json.path.set(getProperty("a5e.stat.Inventory"),"[*][?(@.ItemID == "+DroppedItem+")]['Number']",NewInventoryNumber)
+	NewInventory = json.path.delete(getProperty("a5e.stat.Inventory"),"\$[*][?(@.ItemID == '"+DroppedItem+"')]");
+	NewInventory = json.path.set(getProperty("a5e.stat.Inventory"),"\$[*][?(@.ItemID == '"+DroppedItem+"')]['Number']",NewInventoryNumber)
 ]
 [h:setProperty("a5e.stat.Inventory",NewInventory)]
 [h:ItemData = json.set(ItemData,"Number",FinalDroppedNumber)]

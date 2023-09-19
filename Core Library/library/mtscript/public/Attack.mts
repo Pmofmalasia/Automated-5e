@@ -100,7 +100,7 @@
 	[h:wa.DamageData = json.set(wa.DamageData,0,FirstInstance)]
 };{}]
 
-[h,if(!json.isEmpty(wa.DamageData)): wa.DamageData = json.path.put(wa.DamageData,"[0]","BonusCritDice",wa.BrutalCrit)]
+[h,if(!json.isEmpty(wa.DamageData)): wa.DamageData = json.path.put(wa.DamageData,"\$[0]","BonusCritDice",wa.BrutalCrit)]
 
 [h,if(json.contains(wa.Props,"Finesse")),CODE:{
 	[h:"<!-- TODO: Currently takes the maximum without choice, in the future may want to add an option for choice via options #1: Always ask, #2 Ask if two are equal, #3 do not compare at all and set choice in an 'Advanced Attack Options' menu -->"]
@@ -123,8 +123,8 @@
 
 [h,if(ThrowingWeapon && !json.contains(wa.Props,"Thrown")),CODE:{
 	[h:"<!-- UDF? -->"]
-	[h:AllInstanceDamageTypes = json.path.read(wa.DamageData,"[*]['Damage']['DamageType']")]
-	[h:TempAllInstanceDamageTypeOptions = json.path.read(wa.DamageData,"[*]['Damage']['DamageTypeOptions']")]
+	[h:AllInstanceDamageTypes = json.path.read(wa.DamageData,"\$[*]['Damage']['DamageType']")]
+	[h:TempAllInstanceDamageTypeOptions = json.path.read(wa.DamageData,"\$[*]['Damage']['DamageTypeOptions']")]
 	[h:AllInstanceDamageTypeOptions = "[]"]
 	[h,foreach(instance,TempAllInstanceDamageTypeOptions): AllInstanceDamageTypeOptions = json.merge(AllInstanceDamageTypeOptions,instance)]
 	[h:ImprovisedDamageTypes = json.unique(json.merge(AllInstanceDamageTypes,AllInstanceDamageTypeOptions))]
@@ -152,7 +152,7 @@
 
 [h:"<!-- TODO: Current method is to remove TWF completely to get around the no damage modifier effect (e.g. for the fighting style). Issues are #1: It is still technically TWF, so any effects that would trigger on TWF would not be able to; solution could be adding a variable that bypasses removing the mod. #2: TWF still adds damage modifier if negative; solution could be changing IsDamageModifier -->"]
 [h,if(TwoWeaponFighting),CODE:{
-	[h:wa.DamageData = json.path.set(wa.DamageData,"[*]","IsModBonus",0)]
+	[h:wa.DamageData = json.path.set(wa.DamageData,"\$[*]","IsModBonus",0)]
 };{}]
 
 [h:"<!-- TODO: Will need to ensure that the empty hand is allowed to make attacks in the future -->"]
@@ -174,7 +174,7 @@
 	[h,if(wa.AmmunitionID == ""),CODE:{
 		[h:AmmunitionData = "{}"]
 	};{
-		[h:tempAmmunitionData = json.path.read(getProperty("a5e.stat.Inventory"),"[*][?(@.ItemID == "+wa.AmmunitionID+")]")]
+		[h:tempAmmunitionData = json.path.read(getProperty("a5e.stat.Inventory"),"\$[*][?(@.ItemID == '"+wa.AmmunitionID+"')]")]
 		[h,if(json.isEmpty(tempAmmunitionData)):
 			AmmunitionData = "{}";
 			AmmunitionData = json.get(tempAmmunitionData,0)
@@ -240,7 +240,7 @@
 		[h,if(json.get(AmmunitionData,"AmmunitionDamage")!=""): thisAttackDamageData = json.merge(thisAttackDamageData,json.get(AmmunitionData,"AmmunitionDamage"))]
 		[h,if(json.get(AmmunitionData,"Subeffects")!=""): thisAttackSubeffects = json.merge(thisAttackSubeffects,json.get(AmmunitionData,"Subeffects"))]
 		[h:CurrentAmmoCount = CurrentAmmoCount - 1]
-		[h:setProperty("a5e.stat.Inventory",json.path.set(getProperty("a5e.stat.Inventory"),"[*][?(@.ItemID == "+json.get(AmmunitionData,"ItemID")+")]['Number']",CurrentAmmoCount))]
+		[h:setProperty("a5e.stat.Inventory",json.path.set(getProperty("a5e.stat.Inventory"),"\$[*][?(@.ItemID == '"+json.get(AmmunitionData,"ItemID")+"')]['Number']",CurrentAmmoCount))]
 	};{}]
 
 	[h:thisAttackTarget = json.get(wa.TargetList,SafeAttackCounter)]
@@ -410,7 +410,7 @@
 [h:pm.PassiveFunction("AfterAttackTargeted",json.set("","ParentToken",thisAttackTarget))]
 [h:pm.PassiveFunction("AfterWeaponAttackTargeted",json.set("","ParentToken",thisAttackTarget))]
 
-[h:RemovedConditionGroups = json.path.read(a5e.stat.ConditionGroups,"[*][?(@.EndTriggers.AfterAttack != null && @.EndTriggers.AfterAttack != 0)]['GroupID']","DEFAULT_PATH_LEAF_TO_NULL")]
+[h:RemovedConditionGroups = json.path.read(a5e.stat.ConditionGroups,"\$[*][?(@.EndTriggers.AfterAttack != null && @.EndTriggers.AfterAttack != 0)]['GroupID']","DEFAULT_PATH_LEAF_TO_NULL")]
 [h,if(!json.isEmpty(RemovedConditionGroups)),CODE:{
 	[h,macro("EndCondition@Lib:pm.a5e.Core"): json.set("","GroupID",RemovedConditionGroups,"Target",ParentToken)]
 	[h:pm.RemovedConditions = json.get(macro.return,"Removed")]

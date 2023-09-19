@@ -37,6 +37,7 @@
 [h:pm.AmmunitionTypes = ""]
 [h:pm.ClothingTypes = ""]
 [h:pm.ArmorProperties = ""]
+[h:pm.VisionTypes = ""]
 [h:pm.SpellLists = "{}"]
 
 [h:"<!-- Since languages may be setting specific, may want to add a function for DMs to exclude languages from certain sourcebooks. Can use this macro as the gate for blocking those books. -->"]
@@ -78,6 +79,7 @@
 	[h,if(getLibProperty("sb.AmmunitionTypes","Lib:"+book)!=""): pm.AmmunitionTypes = json.merge(pm.AmmunitionTypes,getLibProperty("sb.AmmunitionTypes","Lib:"+book))]
 	[h,if(getLibProperty("sb.ClothingTypes","Lib:"+book)!=""): pm.ClothingTypes = json.merge(pm.ClothingTypes,getLibProperty("sb.ClothingTypes","Lib:"+book))]
 	[h,if(getLibProperty("sb.ArmorProperties","Lib:"+book)!=""): pm.ArmorProperties = json.merge(pm.ArmorProperties,getLibProperty("sb.ArmorProperties","Lib:"+book))]
+	[h,if(getLibProperty("sb.VisionTypes","Lib:"+book)!=""): pm.VisionTypes = json.merge(pm.VisionTypes,getLibProperty("sb.VisionTypes","Lib:"+book))]
 	
 	[h,if(getLibProperty("sb.ArmorTags","Lib:"+book)!=""): pm.ArmorTags = json.merge(pm.ArmorTags,getLibProperty("sb.ArmorTags","Lib:"+book))]
 	[h:thisBookSpellLists = getLibProperty("sb.SpellLists","Lib:"+book)]
@@ -131,6 +133,7 @@
 [h:setLibProperty("sb.AmmunitionTypes",json.sort(pm.AmmunitionTypes,"a","DisplayName"),"Lib:pm.a5e.Core")]
 [h:setLibProperty("sb.ClothingTypes",json.sort(pm.ClothingTypes,"a","DisplayName"),"Lib:pm.a5e.Core")]
 [h:setLibProperty("sb.ArmorProperties",json.sort(pm.ArmorProperties,"a","DisplayName"),"Lib:pm.a5e.Core")]
+[h:setLibProperty("sb.VisionTypes",pm.VisionTypes,"Lib:pm.a5e.Core")]
 [h:setLibProperty("sb.SpellLists",pm.SpellLists,"Lib:pm.a5e.Core")]
 
 [h:"<!-- TODO: See if there's a way to sort spells by name/level, since they're a level deep in an array -->"]

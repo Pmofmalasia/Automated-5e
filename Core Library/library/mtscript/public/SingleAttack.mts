@@ -9,7 +9,7 @@
 		[h:WeaponData = json.get(AttackData,"WeaponData")]
 	};{
 		[h:NaturalWeaponID = json.get(AttackData,"NaturalWeaponID")]
-		[h:tempNaturalWeaponData = json.path.read(getProperty("a5e.stat.NaturalWeapons"),"[*][?(@.ItemID == '"+NaturalWeaponID+"')]")]
+		[h:tempNaturalWeaponData = json.path.read(getProperty("a5e.stat.NaturalWeapons"),"\$[*][?(@.ItemID == '"+NaturalWeaponID+"')]")]
 		[h,if(json.isEmpty(tempNaturalWeaponData)):
 			WeaponData = json.get(getProperty("a5e.stat.NaturalWeapons"),0);
 			WeaponData = json.get(tempNaturalWeaponData,0)
@@ -25,7 +25,7 @@
 	[h,if(WeaponID == ""),CODE:{
 		[h:WeaponData = json.get(getProperty("a5e.stat.NaturalWeapons"),0)]
 	};{
-		[h:tempWeaponData = json.path.read(getProperty("a5e.stat.Inventory"),"[*][?(@.ItemID == '"+WeaponID+"')]")]
+		[h:tempWeaponData = json.path.read(getProperty("a5e.stat.Inventory"),"\$[*][?(@.ItemID == '"+WeaponID+"')]")]
 		[h,if(json.isEmpty(tempWeaponData)):
 			WeaponData = json.get(getProperty("a5e.stat.NaturalWeapons"),0);
 			WeaponData = json.get(tempWeaponData,0)

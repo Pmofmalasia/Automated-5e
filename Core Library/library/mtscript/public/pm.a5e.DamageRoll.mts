@@ -1,6 +1,9 @@
 [h:damage.ThisInstance = arg(0)]
 [h:damage.NonDamageData = arg(1)]
-[h:damage.FunctionPrefixes = arg(2)]
+[h,if(argCount() > 2):
+	damage.FunctionPrefixes = arg(2);
+	damage.FunctionPrefixes = "[]"
+]
 [h,if(json.isEmpty(damage.FunctionPrefixes)):
     damage.FunctionPrefixes = json.append("","");
     damage.FunctionPrefixes = json.merge(json.append("",""),damage.FunctionPrefixes)
@@ -97,7 +100,6 @@
 [h:damage.AddedRolledDice = "[]"]
 [h:damage.AddedFlatBonus = "[]"]
 
-[h:"<!-- TODO: Needs transmission of targets through NonDamageData or whatever it's called -->"]
 [h,foreach(tempPrefix,damage.FunctionPrefixes),CODE:{
     [h:pm.PassiveFunction(tempPrefix+"Damage")]
     [h,if(json.get(damage.NonDamageData,"Target")!=""): pm.PassiveFunction(tempPrefix+"DamageTargeted",json.set("","ParentToken",json.get(damage.NonDamageData,"Target")))]

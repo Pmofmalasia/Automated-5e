@@ -29,7 +29,7 @@
     [h:SingleInstanceData = json.append(SingleInstanceData,thisDamageSet)]
 }]
 
-[h:IsDamage = !json.isEmpty(json.path.read(SingleInstanceData,"[*][?(@.DamageType in "+json.append(pm.GetDamageTypes("Name"),"None")+")]"))]
+[h:IsDamage = !json.isEmpty(json.path.read(SingleInstanceData,"\$[*][?(@.DamageType in "+json.append(pm.GetDamageTypes("Name"),"None")+")]"))]
 
 [h,switch(json.get(ChangeHPData,"OutputTargets")),CODE:
 	case "Everyone":{[h:outputTargets = "not-gm"][h:linkPermissions = "gm-self"]};
@@ -70,7 +70,7 @@
 [h:ClassFeatureData = json.set("",
 	"Flavor","",
 	"ParentToken",ParentToken,
-	"DMOnly",(getProperty("a5e.stat.Allegiance") == "Enemy"),
+	"DMOnly",(getProperty("a5e.stat.Allegiance",ParentToken) == "Enemy"),
 	"Class","zzChangeHP",
 	"ColorSubtype",if(IsDamage,"Damage","Healing"),
 	"Name","Change HP",

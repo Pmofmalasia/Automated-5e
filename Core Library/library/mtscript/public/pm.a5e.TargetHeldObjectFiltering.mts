@@ -48,16 +48,16 @@
 		[h:thisCreatureWornItems = json.append(thisCreatureWornItems,getProperty("a5e.stat.EquippedArmor",creature))]
 		[h,if(getProperty("a5e.stat.WhichTeam") == getProperty("a5e.stat.WhichTeam",creature)): 
 			thisCreatureValidObjects = getProperty("a5e.stat.Inventory",creature);
-			thisCreatureValidObjects = json.path.read(getProperty("a5e.stat.Inventory",creature),"[*][?(@.ItemID in "+thisCreatureWornItems+")]")
+			thisCreatureValidObjects = json.path.read(getProperty("a5e.stat.Inventory",creature),"\$[*][?(@.ItemID in "+thisCreatureWornItems+")]")
 		]
 	}]
 
-	[h,if(objectFlammableFilter != ""): thisCreatureValidObjects = json.path.read(thisCreatureValidObjects,"[*][?(@.isFlammable == "+objectFlammableFilter+")]")]
-	[h,if(objectMagicalFilter != ""): thisCreatureValidObjects = json.path.read(thisCreatureValidObjects,"[*][?(@.isMagical == "+objectMagicalFilter+")]")]
-	[h,if(objectMagneticFilter != ""): thisCreatureValidObjects = json.path.read(thisCreatureValidObjects,"[*][?(@.isMagnetic == "+objectMagneticFilter+")]")]
+	[h,if(objectFlammableFilter != ""): thisCreatureValidObjects = json.path.read(thisCreatureValidObjects,"\$[*][?(@.isFlammable == "+objectFlammableFilter+")]")]
+	[h,if(objectMagicalFilter != ""): thisCreatureValidObjects = json.path.read(thisCreatureValidObjects,"\$[*][?(@.isMagical == "+objectMagicalFilter+")]")]
+	[h,if(objectMagneticFilter != ""): thisCreatureValidObjects = json.path.read(thisCreatureValidObjects,"\$[*][?(@.isMagnetic == "+objectMagneticFilter+")]")]
 
-	[h,if(objectMaxWeight != ""): thisCreatureValidObjects = json.path.read(thisCreatureValidObjects,"[*][?(@.Weight <= "+objectMaxWeight+")]")]
-	[h,if(objectMinWeight != ""): thisCreatureValidObjects = json.path.read(thisCreatureValidObjects,"[*][?(@.Weight >= "+objectMinWeight+")]")]
+	[h,if(objectMaxWeight != ""): thisCreatureValidObjects = json.path.read(thisCreatureValidObjects,"\$[*][?(@.Weight <= "+objectMaxWeight+")]")]
+	[h,if(objectMinWeight != ""): thisCreatureValidObjects = json.path.read(thisCreatureValidObjects,"\$[*][?(@.Weight >= "+objectMinWeight+")]")]
 
 	[h,if(objectTagsExclusive != ""),CODE:{
 		[h:thisCreatureValidObjects = js.eval("
@@ -80,7 +80,7 @@
 		return ValidObjects;
 		",thisCreatureValidObjects,objectTagsExclusive)]
 
-		[h,if(0):thisCreatureValidObjects = json.path.read(thisCreatureValidObjects,"[*][?(@.MaterialTags noneof "+objectTagsExclusive+" && @.MainMaterial nin "+objectTagsExclusive+")]")]
+		[h,if(0):thisCreatureValidObjects = json.path.read(thisCreatureValidObjects,"\$[*][?(@.MaterialTags noneof "+objectTagsExclusive+" && @.MainMaterial nin "+objectTagsExclusive+")]")]
 	};{}]
 
 	[h,if(objectTagsInclusive != ""),CODE:{
@@ -111,7 +111,7 @@
 			return ValidObjects;
 		",thisCreatureValidObjects,objectTagsInclusive,"All")]
 
-		[h,if(0):thisCreatureValidObjects = json.path.read(thisCreatureValidObjects,"[*][?(@.MaterialTags anyof "+objectTagsInclusive+" && @.MainMaterial in "+objectTagsInclusive+")]")]
+		[h,if(0):thisCreatureValidObjects = json.path.read(thisCreatureValidObjects,"\$[*][?(@.MaterialTags anyof "+objectTagsInclusive+" && @.MainMaterial in "+objectTagsInclusive+")]")]
 	};{}]
 
 	[h:needsSizeComparison = (objectMaxSize != "" && objectMinSize != "")]
@@ -126,7 +126,7 @@
 		[h,if(validSizeTest): thisCreatureFinalValidObjects = json.append(thisCreatureFinalValidObjects,tempItem)]
 	}]
 
-	[h:allValidItems = json.merge(allValidItems,json.path.put(thisCreatureFinalValidObjects,"[*]","HeldBy",creature))]
+	[h:allValidItems = json.merge(allValidItems,json.path.put(thisCreatureFinalValidObjects,"\$[*]","HeldBy",creature))]
 }]
 
 [h:macro.return = allValidItems]

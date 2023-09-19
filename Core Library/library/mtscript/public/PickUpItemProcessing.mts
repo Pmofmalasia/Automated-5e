@@ -12,7 +12,7 @@
 	"GiveTo",ParentToken,
 	"TakeFrom",TakeFrom
 )]
-[h:ItemName = json.get(json.path.read(getProperty("a5e.stat.Inventory",TakeFrom),"[*][?(@.ItemID=="+ItemChoiceID+")]['DisplayName']"),0)]
+[h:ItemName = json.get(json.path.read(getProperty("a5e.stat.Inventory",TakeFrom),"\$[*][?(@.ItemID=='"+ItemChoiceID+"')]['DisplayName']"),0)]
 
 [h,MACRO("TradeItem@Lib:pm.a5e.Core"): TradeItemData]
 [h:closeDialog("PickUpItem")]

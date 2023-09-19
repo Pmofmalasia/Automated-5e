@@ -10,7 +10,7 @@
 [h:EquippedArmorID = getProperty("a5e.stat.EquippedArmor")]
 [h,if(EquippedArmorID == ""):
 	tempEquippedArmorData = "[]";
-	tempEquippedArmorData = json.path.read(CurrentInventory,"[*][?(@.ItemID == "+EquippedArmorID+")]")
+	tempEquippedArmorData = json.path.read(CurrentInventory,"[*][?(@.ItemID == '"+EquippedArmorID+"')]")
 ]
 [h,if(json.isEmpty(tempEquippedArmorData)):
 	EquippedArmorData = "{}";

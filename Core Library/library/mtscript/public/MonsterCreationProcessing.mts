@@ -3,7 +3,9 @@
 [h:ParentToken = json.get(MonsterData,"ParentToken")]
 [h:switchToken(ParentToken)]
 
-[h:setName(json.get(MonsterData,"DisplayName"))]
+[h:MonsterDisplayName = json.get(MonsterData,"DisplayName")]
+[h:setName(MonsterDisplayName)]
+[h:setProperty("a5e.stat.CreatureName",pm.RemoveSpecial(MonsterDisplayName))]
 [h:setProperty("a5e.stat.CreatureType",json.get(MonsterData,"CreatureType"))]
 [h:setProperty("a5e.stat.Race",json.get(MonsterData,"CreatureSubtype"))]
 [h:setProperty("a5e.stat.Size",json.get(MonsterData,"Size"))]
@@ -64,12 +66,14 @@
 	)]
 	[h:setProperty("a5e.stat.NaturalArmor",NewNaturalArmor)]
 };{
-	[h:AddArmorData = json.set("",
-		"ItemChoice",json.get(MonsterData,"ArmorChoice"),
-		"ParentToken",ParentToken,
-		"NumberAdded",1
-	)]
-	[h,MACRO("AddItemProcessing@Lib:pm.a5e.Core"): AddArmorData]
+	[h,if(json.get(MonsterData,"ArmorChoice") != ""),CODE:{
+		[h:AddArmorData = json.set("",
+			"ItemChoice",json.get(MonsterData,"ArmorChoice"),
+			"ParentToken",ParentToken,
+			"NumberAdded",1
+		)]
+		[h,MACRO("AddItemProcessing@Lib:pm.a5e.Core"): AddArmorData]
+	};{}]
 
 	[h,if(json.contains(MonsterData,"isShield")),CODE:{
 		[h:"<!-- U2hpZWxk477685 is the ObjectID for the base shield -->"]
@@ -181,6 +185,14 @@
     };{}]
 };{}]
 
+[h:MonsterData = ct.a5e.LanguageOptionProcessing(MonsterData)]
+[h,if(json.contains(MonsterData,"LanguageOptions")): MonsterTraitsFeature = json.set(MonsterTraitsFeature,"LanguageOptions",json.get(MonsterData,"LanguageOptions"))]
+[h,if(json.contains(MonsterData,"Languages")): MonsterTraitsFeature = json.set(MonsterTraitsFeature,"Languages",json.get(MonsterData,"Languages"))]
+
+[h:VisionData = ct.a5e.VisionProcessing(MonsterData)]
+[h:MonsterData = json.get(VisionData,"Data")]
+[h:MonsterTraitsFeature = json.set(MonsterTraitsFeature,"CallVision",json.get(VisionData,"Command"))]
+
 [h,if(MonsterTraitsFeature != ""),CODE:{
     [h:MonsterTraitsFeature = json.set(MonsterTraitsFeature,
         "Name","MonsterTraits",
@@ -190,8 +202,7 @@
         "Level",1,
         "Library","SRD",
         "IsDisplayed",1,
-        "IsActive",1,
-        "MagicItemLink","None"
+        "IsActive",1
     )]
 
     [h:setProperty("a5e.stat.AllFeatures",json.append("",MonsterTraitsFeature))]
@@ -201,5 +212,12 @@
 [h,if(!isNumber(MonsterCR)): MonsterCR = eval(MonsterCR)]
 [h:setProperty("a5e.stat.CR",MonsterCR)]
 [h:setProperty("a5e.stat.XP",json.get(MonsterData,"XP"))]
+
+[h:setProperty("a5e.stat.Allegiance",json.get(MonsterData,"Allegiance"))]
+[h,switch(json.get(MonsterData,"Allegiance")):
+	case "Enemy": setProperty("a5e.stat.WhichTeam",2);
+	case "Ally": setProperty("a5e.stat.WhichTeam",1);
+	default: setProperty("a5e.stat.WhichTeam",0);
+]
 [h:closeDialog("Monster Creation")]
 [h,MACRO("BaseSkillSelection@Lib:pm.a5e.Core"): json.set("","ParentToken",ParentToken)]

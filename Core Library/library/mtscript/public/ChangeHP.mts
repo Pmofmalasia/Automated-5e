@@ -28,9 +28,10 @@
 [h:hp.DamageDealtString = ""]
 [h,foreach(damagetype,hp.TypesDealt),CODE:{
 	[h,if(damagetype == "None"),CODE:{
-		[h:thisDamageTypeInfo = json.path.read(hp.DamageDealt,"[*][?(@.DamageType=='"+damagetype+"')]['"+if(hp.IsCrit,"Crit","")+"Total']")]
+		[h:thisDamageTypeInfo = json.path.read(hp.DamageDealt,"\$[*][?(@.DamageType=='"+damagetype+"')]['"+if(hp.IsCrit,"Crit","")+"Total']")]
 
-		[h:hp.FinalDamageDealt = json.set(hp.FinalDamageDealt,"Untyped",math.arraySum(thisDamageTypeInfo))]
+		[h:tempDamageDealt = math.arraySum(thisDamageTypeInfo)]
+		[h:hp.FinalDamageDealt = json.set(hp.FinalDamageDealt,"Untyped",tempDamageDealt)]
 		
 		[h:hp.DamageDealtString = if(tempDamageDealt==0,hp.DamageDealtString,listAppend(hp.DamageDealtString,tempDamageDealt," + "))]
 	};{
@@ -42,7 +43,7 @@
 		
 		[h:hp.ModType = if(hp.AbsorbTest,"Absorption",if(hp.ImmunTest,"Immunity",if(hp.ResTest,if(hp.VulnTest,"","Resistance"),if(hp.VulnTest,"Vulnerability",""))))]
 		
-		[h:thisDamageTypeInfo = json.path.read(hp.DamageDealt,"[*][?(@.DamageType=='"+damagetype+"')]")]
+		[h:thisDamageTypeInfo = json.path.read(hp.DamageDealt,"\$[*][?(@.DamageType=='"+damagetype+"')]")]
 
 		[h:tempDamageDealt = 0]
 		[h,foreach(damageInstance,thisDamageTypeInfo): tempDamageDealt = tempDamageDealt + if(json.get(damageInstance,"NoModification")==0,json.get(damageInstance,if(hp.IsCrit,"Crit","")+"Total")*json.get(damageInstance,"Modifier"),0)]
@@ -57,7 +58,7 @@
 			default: tempDamageDealt = tempDamageDealt
 		]
 		
-		[h:noModsDamageDealt = math.arraySum(json.append(json.path.read(hp.DamageDealt,"[?(@.NoModification==1 && @.DamageType=='"+damagetype+"')]['"+if(hp.IsCrit,"Crit","")+"Total']"),0))]
+		[h:noModsDamageDealt = math.arraySum(json.append(json.path.read(hp.DamageDealt,"\$[?(@.NoModification==1 && @.DamageType=='"+damagetype+"')]['"+if(hp.IsCrit,"Crit","")+"Total']"),0))]
 	
 		[h,if(tempDamageType == "Healing"):
 			hp.FinalDamageDealt = json.set(hp.FinalDamageDealt,"Healing",json.get(hp.FinalDamageDealt,"Healing")+tempDamageDealt);
@@ -153,7 +154,7 @@
 };{
 	[h:hp.DeadTest = 0]
 	[h,if(hp.Resuscitated),CODE:{
-		[h:DeadOrDyingGroups = json.path.read(getProperty("a5e.stat.ConditionList"),"[*][?(@.Name == 'Dead' || @.Name=='Dying')]['GroupID']")]
+		[h:DeadOrDyingGroups = json.path.read(getProperty("a5e.stat.ConditionList"),"\$[*][?(@.Name == 'Dead' || @.Name=='Dying')]['GroupID']")]
 
 		[h,MACRO("EndCondition@Lib:pm.a5e.Core"): json.set("","GroupID",DeadOrDyingGroups,"Target",ParentToken)]
 		[h:NoHPConditionTable = json.get(macro.return,"Table")]
@@ -170,7 +171,7 @@
 
 [h:abilityTable = "[]"]
 [h,if(hp.TempHPGain!=0),CODE:{
-	[h:TempHPLinks = json.path.read(getProperty("a5e.stat.ConditionGroups"),"[*][?(@.EndTriggers.TempHPLost==1)]")]
+	[h:TempHPLinks = json.path.read(getProperty("a5e.stat.ConditionGroups"),"\$[*][?(@.EndTriggers.TempHPLost==1)]")]
 	[h,if(json.isEmpty(TempHPLinks)),CODE:{
 		[h,if(hp.TempHPGain > getProperty("a5e.stat.TempHP")):
 			abilityTable = json.append(abilityTable,json.set("",

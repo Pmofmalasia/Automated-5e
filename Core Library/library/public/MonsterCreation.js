@@ -24,7 +24,7 @@ async function createArmorChoiceRows(){
 		}
 		let ArmorOptions = createHTMLSelectOptions(validObjects,"ObjectID");
 
-		addTableRow("MonsterCreationTable",nextRowIndex,"rowArmorChoice","<th><label for='ArmorChoice'>Armor Worn:</label></th><td><select id='ArmorChoice' name='ArmorChoice'>"+ArmorOptions+"</select></td>");
+		addTableRow("MonsterCreationTable",nextRowIndex,"rowArmorChoice","<th><label for='ArmorChoice'>Armor Worn:</label></th><td><select id='ArmorChoice' name='ArmorChoice'><option value=''>None</option>"+ArmorOptions+"</select></td>");
 		nextRowIndex++;
 
 		addTableRow("MonsterCreationTable",nextRowIndex,"rowIsShield","<th><label for='isShield'>Has Shield:</label></th><td><input type='checkbox' id='isShield' name='isShield'></td>");

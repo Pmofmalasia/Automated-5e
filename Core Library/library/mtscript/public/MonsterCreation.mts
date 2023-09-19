@@ -10,9 +10,9 @@
 
 [h:firstCreatureType = json.get(creatureTypeArray,0)]
 [h:PCRaces = pm.GetRaces()]
-[h:matchingRaces = json.path.read(PCRaces,"[*][?(@.CreatureType=='"+firstCreatureType+"')]['DisplayName']")]
+[h:matchingRaces = json.path.read(PCRaces,"\$[*][?(@.CreatureType=='"+firstCreatureType+"')]['DisplayName']")]
 [h:CreatureSubtypes = pm.a5e.GetCreatureSubtypes()]
-[h:matchingSubtypes = json.path.read(CreatureSubtypes,"[*][?(@.CreatureType=='"+firstCreatureType+"')]['DisplayName']")]
+[h:matchingSubtypes = json.path.read(CreatureSubtypes,"\$[*][?(@.CreatureType=='"+firstCreatureType+"')]['DisplayName']")]
 [h:allSubtypes = json.unique(json.merge(matchingRaces,matchingSubtypes))]
 [h:creatureSubtypeOptions = ""]
 [h,foreach(tempSubtype,allSubtypes): creatureSubtypeOptions = creatureSubtypeOptions + "<option value='"+pm.RemoveSpecial(tempSubtype)+"'>"+tempSubtype+"</option>"]
@@ -61,21 +61,23 @@
 
 [h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowIsConditionImmun'><th><label for='IsConditionImmun'>Has Condition Immunities:</label></th><td><input type='checkbox' id='IsConditionImmun' name='IsConditionImmun' onchange='createConditionRows()'></td></tr>"]
 
-[h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowHasSight'><th><label for='HasSight'>Has Basic Sight:</label></th><td><input type='checkbox' id='HasSight' name='HasSight' checked></td></tr>"]
+[h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowIsVision'><th><label for='isVision'>Gives Special Vision:</label></th><td><input type='checkbox' id='isVision' name='isVision' onchange='createVisionRows("+'"MonsterCreationTable","rowLanguageOptions"'+")'></td></tr>"]
 
-[h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowDarkvision'><th><label for='Darkvision'>Darkvision Distance:</label></th><td><input type='number' id='Darkvision' name='Darkvision' min='0' style='width:25px' value='0'> feet</td></tr>"]
+[h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowLanguageOptions'><th><label for='LanguageOptions'>Chosen Languages:</label></th><td><input type='number' id='LanguageOptions' name='LanguageOptions' value=1 min=0 style='width:25px'></td></tr>"]
 
-[h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowBlindsight'><th><label for='Blindsight'>Blindsight Distance:</label></th><td><input type='number' id='Blindsight' name='Blindsight' min='0' style='width:25px' value='0'> feet</td></tr>"]
+[h:AllLanguages = pm.a5e.GetCoreData("sb.Languages")]
+[h:LanguageOptions = ut.a5e.GenerateSelectionHTML(AllLanguages)]
+[h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowLanguageKnown0'><th><label for='LanguageKnown0'>Known Language #1:</label></th><td><select id='LanguageKnown0' name='LanguageKnown0' value=1 min=0>"+LanguageOptions+"</select></td></tr>"]
 
-[h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowTremorsense'><th><label for='Tremorsense'>Tremorsense Distance:</label></th><td><input type='number' id='Tremorsense' name='Tremorsense' min='0' style='width:25px' value='0'> feet</td></tr>"]
-
-[h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowTruesight'><th><label for='Truesight'>Truesight Distance:</label></th><td><input type='number' id='Truesight' name='Truesight' min='0' style='width:25px' value='0'> feet</td></tr>"]
+[h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowLanguageKnownButtons'><th text-align='center' colspan='2'><input type='button' id='addLanguageKnown' value='New Language Known' onclick='addLanguageKnownRow("+'"MonsterCreationTable"'+")'>  <input type='button' id='removeLanguageKnown' value='Remove Language Known' onclick='removeLanguageKnownRow("+'"MonsterCreationTable"'+")'><input type='hidden' id='LanguageKnownNumber' name='LanguageKnownNumber' value=0></th></tr>"]
 
 [h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowProficiency'><th><label for='Proficiency'>Proficiency Bonus:</label></th><td><input type='number' id='Proficiency' name='Proficiency' min='1' style='width:25px' value='2'></td></tr>"]
 
-[h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowCR'><th><label for='CR'>CR:</label></th><td><input type='text' id='CR' name='CR' style='width:25px'></td></tr>"]
+[h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowCR'><th><label for='CR'>CR:</label></th><td><input type='text' id='CR' name='CR' style='width:35px'></td></tr>"]
 
-[h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowXP'><th><label for='XP'>XP:</label></th><td><input type='number' id='XP' name='XP' min='0' style='width:25px'></td></tr>"]
+[h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowXP'><th><label for='XP'>XP:</label></th><td><input type='number' id='XP' name='XP' min='0' style='width:35px'></td></tr>"]
+
+[h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowAllegiance'><th><label for='Allegiance'>Allegiance to Party:</label></th><td><select id='Allegiance' name='Allegiance'><option value='Enemy'>Enemy</option><option value='Ally'>Ally</option><option value='Neutral'>Neutral</option></td></tr>"]
 
 [h:monsterCreationHTML = monsterCreationHTML + "<tr><th text-align='center' colspan='2'><input type='submit' id='submitButton' value='Submit'></th></tr>"]
 

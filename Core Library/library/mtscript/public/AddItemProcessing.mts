@@ -12,7 +12,7 @@
 	[h,if(ItemChoiceID=="@@ImpromptuItem"),CODE:{
 		[h:ChosenItem = "<!-- To implement later -->"]
 	};{
-		[h:ChosenItem = json.get(json.path.read(getLibProperty("sb.Objects","Lib:pm.a5e.Core"),"[*][?(@.ObjectID == '"+ItemChoiceID+"')]"),0)]
+		[h:ChosenItem = json.get(json.path.read(getLibProperty("sb.Objects","Lib:pm.a5e.Core"),"\$[*][?(@.ObjectID == '"+ItemChoiceID+"')]"),0)]
 		[h,if(json.get(AddItemData,"DisplayName")!=""): ChosenItem = json.set(ChosenItem,"DisplayName",json.get(AddItemData,"DisplayName"))]
 		[h,if(json.get(AddItemData,"FalseName")!=""): ChosenItem = json.set(ChosenItem,"FalseName",json.get(AddItemData,"FalseName"))]
 	}]	
@@ -48,7 +48,7 @@
 [h:newEntryTest = 1]
 [h:StackingTest = json.get(ChosenItem,"isStackable")]
 [h,if(StackingTest),CODE:{
-	[h:SameItemPriorEntry = json.path.read(PriorInventory,"[*][?(@.ObjectID == '"+ItemChoiceID+"')]")]
+	[h:SameItemPriorEntry = json.path.read(PriorInventory,"\$[*][?(@.ObjectID == '"+ItemChoiceID+"')]")]
 	[h:newEntryTest = json.isEmpty(SameItemPriorEntry)]
 };{}]
 
@@ -62,20 +62,20 @@
 	}]
 
 	[h,count(NumberOfEntries),CODE:{
-		[h:NewItemID = eval("1d10000") + json.get(getInfo("client"),"timeInMs")]
+		[h:NewItemID = eval("1d10000") + "a5e" + json.get(getInfo("client"),"timeInMs")]
 		[h:TempChosenItem = json.set(ChosenItem,
 			"ItemID",NewItemID,
 			"Number",NumberAdded
 		)]
 
 		[h:"<!-- If the item has a subeffect that uses its own resource, put the NewItemID into the subeffect -->"]
-		[h:NeedsEffectFeatureResourceTest = and(!json.isEmpty(json.path.read(TempChosenItem,"[?(@.Effects.*.Subeffects.*.UseResource.Feature != null)]","DEFAULT_PATH_LEAF_TO_NULL")),json.get(TempChosenItem,"Effects")!="")]
-		[h:NeedsWeaponEffectFeatureResourceTest = and(!json.isEmpty(json.path.read(TempChosenItem,"[?(@.WeaponEffects.*.Subeffects.*.UseResource.Feature != null)]","DEFAULT_PATH_LEAF_TO_NULL")),json.get(TempChosenItem,"WeaponEffects")!="")]
-		[h:NeedsSpellFeatureResourceTest = and(!json.isEmpty(json.path.read(TempChosenItem,"[?(@.ItemSpellcasting.*.UseResource.Feature != null)]","DEFAULT_PATH_LEAF_TO_NULL")),json.get(TempChosenItem,"ItemSpellcasting")!="")]
+		[h:NeedsEffectFeatureResourceTest = and(!json.isEmpty(json.path.read(TempChosenItem,"\$[?(@.Effects.*.Subeffects.*.UseResource.Feature != null)]","DEFAULT_PATH_LEAF_TO_NULL")),json.get(TempChosenItem,"Effects")!="")]
+		[h:NeedsWeaponEffectFeatureResourceTest = and(!json.isEmpty(json.path.read(TempChosenItem,"\$[?(@.WeaponEffects.*.Subeffects.*.UseResource.Feature != null)]","DEFAULT_PATH_LEAF_TO_NULL")),json.get(TempChosenItem,"WeaponEffects")!="")]
+		[h:NeedsSpellFeatureResourceTest = and(!json.isEmpty(json.path.read(TempChosenItem,"\$[?(@.ItemSpellcasting.*.UseResource.Feature != null)]","DEFAULT_PATH_LEAF_TO_NULL")),json.get(TempChosenItem,"ItemSpellcasting")!="")]
 	
-		[h,if(NeedsEffectFeatureResourceTest): TempChosenItem = json.path.put(TempChosenItem,"['Effects'][*]['Subeffects'][*]['UseResource']['Feature']['Resource'][?(@.Name == '"+json.get(TempChosenItem,"Name")+"' && @.Class == 'Item')]","ItemID",NewItemID)]
-		[h,if(NeedsWeaponEffectFeatureResourceTest): TempChosenItem = json.path.put(TempChosenItem,"['WeaponEffects'][*]['Subeffects'][*]['UseResource']['Feature']['Resource'][?(@.Name == '"+json.get(TempChosenItem,"Name")+"' && @.Class == 'Item')]","ItemID",NewItemID)]
-		[h,if(NeedsSpellFeatureResourceTest): TempChosenItem = json.path.put(TempChosenItem,"['ItemSpellcasting'][*]['UseResource']['Feature']['Resource'][?(@.Name == '"+json.get(TempChosenItem,"Name")+"' && @.Class == 'Item')]","ItemID",NewItemID)]
+		[h,if(NeedsEffectFeatureResourceTest): TempChosenItem = json.path.put(TempChosenItem,"\$['Effects'][*]['Subeffects'][*]['UseResource']['Feature']['Resource'][?(@.Name == '"+json.get(TempChosenItem,"Name")+"' && @.Class == 'Item')]","ItemID",NewItemID)]
+		[h,if(NeedsWeaponEffectFeatureResourceTest): TempChosenItem = json.path.put(TempChosenItem,"\$['WeaponEffects'][*]['Subeffects'][*]['UseResource']['Feature']['Resource'][?(@.Name == '"+json.get(TempChosenItem,"Name")+"' && @.Class == 'Item')]","ItemID",NewItemID)]
+		[h,if(NeedsSpellFeatureResourceTest): TempChosenItem = json.path.put(TempChosenItem,"\$['ItemSpellcasting'][*]['UseResource']['Feature']['Resource'][?(@.Name == '"+json.get(TempChosenItem,"Name")+"' && @.Class == 'Item')]","ItemID",NewItemID)]
 
 		[h:PriorInventory = json.append(PriorInventory,TempChosenItem)]
 	}]
@@ -86,16 +86,16 @@
 	[h:OldEntryID = json.get(OldEntryData,"ItemID")]
 
 	[h:"<!-- This is here just in case - Items with charges (resources) should not be stackable anyway -->"]
-	[h:NeedsEffectFeatureResourceTest = and(!json.isEmpty(json.path.read(ChosenItem,"[?(@.Effects.*.Subeffects.*.UseResource.Feature != null)]","DEFAULT_PATH_LEAF_TO_NULL")),json.get(ChosenItem,"Effects")!="")]
-	[h:NeedsWeaponEffectFeatureResourceTest = and(!json.isEmpty(json.path.read(ChosenItem,"[?(@.WeaponEffects.*.Subeffects.*.UseResource.Feature != null)]","DEFAULT_PATH_LEAF_TO_NULL")),json.get(ChosenItem,"WeaponEffects")!="")]
-	[h:NeedsSpellFeatureResourceTest = and(!json.isEmpty(json.path.read(ChosenItem,"[?(@.ItemSpellcasting.*.UseResource.Feature != null)]","DEFAULT_PATH_LEAF_TO_NULL")),json.get(ChosenItem,"ItemSpellcasting")!="")]
+	[h:NeedsEffectFeatureResourceTest = and(!json.isEmpty(json.path.read(ChosenItem,"\$[?(@.Effects.*.Subeffects.*.UseResource.Feature != null)]","DEFAULT_PATH_LEAF_TO_NULL")),json.get(ChosenItem,"Effects")!="")]
+	[h:NeedsWeaponEffectFeatureResourceTest = and(!json.isEmpty(json.path.read(ChosenItem,"\$[?(@.WeaponEffects.*.Subeffects.*.UseResource.Feature != null)]","DEFAULT_PATH_LEAF_TO_NULL")),json.get(ChosenItem,"WeaponEffects")!="")]
+	[h:NeedsSpellFeatureResourceTest = and(!json.isEmpty(json.path.read(ChosenItem,"\$[?(@.ItemSpellcasting.*.UseResource.Feature != null)]","DEFAULT_PATH_LEAF_TO_NULL")),json.get(ChosenItem,"ItemSpellcasting")!="")]
 
-	[h,if(NeedsEffectFeatureResourceTest): ChosenItem = json.path.put(ChosenItem,"['Effects'][*]['Subeffects'][*]['UseResource']['Feature']['Resource'][?(@.Name == '"+json.get(ChosenItem,"Name")+"' && @.Class == 'Item')]","ItemID",OldEntryID)]
-	[h,if(NeedsWeaponEffectFeatureResourceTest): ChosenItem = json.path.put(ChosenItem,"['WeaponEffects'][*]['Subeffects'][*]['UseResource']['Feature']['Resource'][?(@.Name == '"+json.get(ChosenItem,"Name")+"' && @.Class == 'Item')]","ItemID",OldEntryID)]
-	[h,if(NeedsSpellFeatureResourceTest): ChosenItem = json.path.put(ChosenItem,"['ItemSpellcasting'][*]['UseResource']['Feature']['Resource'][?(@.Name == '"+json.get(ChosenItem,"Name")+"' && @.Class == 'Item')]","ItemID",NewItemID)]
+	[h,if(NeedsEffectFeatureResourceTest): ChosenItem = json.path.put(ChosenItem,"\$['Effects'][*]['Subeffects'][*]['UseResource']['Feature']['Resource'][?(@.Name == '"+json.get(ChosenItem,"Name")+"' && @.Class == 'Item')]","ItemID",OldEntryID)]
+	[h,if(NeedsWeaponEffectFeatureResourceTest): ChosenItem = json.path.put(ChosenItem,"\$['WeaponEffects'][*]['Subeffects'][*]['UseResource']['Feature']['Resource'][?(@.Name == '"+json.get(ChosenItem,"Name")+"' && @.Class == 'Item')]","ItemID",OldEntryID)]
+	[h,if(NeedsSpellFeatureResourceTest): ChosenItem = json.path.put(ChosenItem,"\$['ItemSpellcasting'][*]['UseResource']['Feature']['Resource'][?(@.Name == '"+json.get(ChosenItem,"Name")+"' && @.Class == 'Item')]","ItemID",NewItemID)]
 
 	[h:NewNumber = json.get(OldEntryData,"Number") + json.get(AddItemData,"NumberAdded")]
-	[h:NewInventory = json.path.set(PriorInventory,"[*][?(@.ObjectID == '"+ItemChoiceID+"')]['Number']",NewNumber)]
+	[h:NewInventory = json.path.set(PriorInventory,"\$[*][?(@.ObjectID == '"+ItemChoiceID+"')]['Number']",NewNumber)]
 	[h:setProperty("a5e.stat.Inventory",NewInventory)]
 }]
 

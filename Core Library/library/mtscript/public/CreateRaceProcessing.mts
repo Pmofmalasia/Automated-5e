@@ -36,6 +36,7 @@
 [h,if(pass.Context=="Lifespan"),CODE:{
 	[h:pass.a5e.LifespanBonus(pass.abilityInfo,json.set("","Base",'+json.get(RaceData,"Lifespan")+'))]
 }]']
+[h:RaceData = json.remove(RaceData,"Lifespan")]
 
 [h:RaceData = json.set(RaceData,"Name",RaceName)]
 
@@ -99,33 +100,52 @@
 	[h:RaceData = json.set(RaceData,"Attributes",PresetAttributeBonuses)]
 };{}]
 
-[h,if(json.get(RaceData,"LanguageOptions") == 0): RaceData = json.remove(RaceData,"LanguageOptions")]
-[h:LanguageKnownNumber = json.get(RaceData,"LanguageKnownNumber")]
-[h:RaceData = json.remove(RaceData,"LanguageKnownNumber")]
-[h:LanguagesKnown = ""]
-[h,count(LanguageKnownNumber + 1),CODE:{
-	[h:thisLanguage = json.get(RaceData,"LanguageKnown"+roll.count)]
-	[h:LanguagesKnown = json.set(LanguagesKnown,thisLanguage,1)]
-	[h:RaceData = json.remove(RaceData,"LanguageKnown"+roll.count)]
+[h:RaceData = ct.a5e.LanguageOptionProcessing(RaceData)]
+
+[h:VisionData = ct.a5e.VisionProcessing(RaceData)]
+[h:RaceData = json.get(VisionData,"Data")]
+[h:LibMacroCommand = LibMacroCommand + json.get(VisionData,"FullCommand")]
+
+[h,if(json.contains(RaceData,"isVision")),CODE:{
+	[h:RaceData = json.remove(RaceData,"isVision")]
+
+	[h:LibMacroCommand = LibMacroCommand + '
+
+[h,if(pass.Context=="Vision"),CODE:{
+	[h:pass.a5e.VisionBonus(pass.abilityInfo,json.set(""']
+
+	[h:VisionUDFObject = ""]
+	[h:allVisionTypes = pm.a5e.GetCoreData("sb.VisionTypes","Name","json")]
+	[h,foreach(visionType,allVisionTypes),CODE:{
+		[h:IsUnlimitedTest = json.contains(RaceData,"isVision"+visionType+"Unlimited")]
+		[h:HasVisionTest = or(json.get(RaceData,"Vision"+visionType+"Distance") != 0,IsUnlimitedTest)]
+		[h,if(HasVisionTest): LibMacroCommand = LibMacroCommand + ',"'+visionType+'",json.set("",' + if(IsUnlimitedTest,'"Unlimited",1','"Distance",'+json.get(RaceData,"Vision"+visionType+"Distance")) + ')']
+
+		[h:RaceData = json.remove(RaceData,"isVision"+visionType+"Unlimited")]
+		[h:RaceData = json.remove(RaceData,"Vision"+visionType+"Distance")]
+	}]
+
+	[h:LibMacroCommand = LibMacroCommand + '))]
+}]']
+};{
+	[h:LibMacroCommand = LibMacroCommand + '
+
+[h,if(pass.Context=="Vision"),CODE:{
+	[h:pass.a5e.VisionBonus(pass.abilityInfo,json.set("","NormalSight",json.set("","Unlimited",1)))]
+}]']
 }]
-[h,if(LanguagesKnown != ""): RaceData = json.set(RaceData,"Languages",LanguagesKnown)]
 
 [h:RaceTraitsFeature = json.set(RaceData,
 	"Name",RaceName+"Traits",
-	"DisplayName",RaceDisplayName+"Traits",
+	"DisplayName",RaceDisplayName+" Traits",
 	"Class",RaceName,
 	"Subclass","",
 	"Level",1,
 	"CallLanguages",1,
-	"CallSpeed",1
+	"CallSpeed",1,
+	"CallVision",1,
+	"CallLifespan",1
 )]
-
-[h,if(json.contains(RaceData,"isVision")),CODE:{
-	[h:RaceTraitsFeature = json.remove(RaceTraitsFeature,"isVision")]
-	[h:RaceTraitsFeature = json.set(RaceTraitsFeature,"CallSenses",1)]
-
-	[h:"<!-- Insert macro creation of vision stuff here -->"]
-};{}]
 
 [h:BaseRaceData = json.set(BaseRaceData,"Traits",RaceTraitsFeature)]
 [h:closeDialog("Race Creation")]

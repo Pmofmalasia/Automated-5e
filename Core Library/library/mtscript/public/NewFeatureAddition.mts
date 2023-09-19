@@ -5,7 +5,7 @@
 
 [h:pm.DisplayNewAbilities = ""]
 [h,foreach(ability,pm.NewAbilities),CODE:{
-	[h:setProperty("a5e.stat.AllFeatures",json.append(getProperty("a5e.stat.AllFeatures"),json.set(ability,"IsDisplayed",1,"IsActive",1,"MagicItemLink","None")))]
+	[h:setProperty("a5e.stat.AllFeatures",json.append(getProperty("a5e.stat.AllFeatures"),json.set(ability,"IsDisplayed",1,"IsActive",1)))]
 	[h:pm.DisplayNewAbilities = listAppend(pm.DisplayNewAbilities,json.get(ability,"DisplayName"),"<br>")]
 }]
 

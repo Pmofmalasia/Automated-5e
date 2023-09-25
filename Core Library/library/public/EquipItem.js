@@ -137,6 +137,7 @@ function createAttunedItemsRows(tableID,Inventory,AttunementSlots){
 
 function createWornItemsRows(tableID,Inventory){
 	let nextRowIndex = document.getElementById("rowWornItemsHeader").rowIndex + 1;
+	let originalNextRowIndex = nextRowIndex;
 
 	let HoldableTypes = ["Weapon","Shield","CastingFocus","Tool","Armor","Ammunition","Rod","Staff"];
 	for(let tempItem of Inventory){
@@ -153,7 +154,7 @@ function createWornItemsRows(tableID,Inventory){
 	}
 
 	//If equal, that means no worn item rows have been made. Header not needed.
-	if(document.getElementById("rowSubmit").rowIndex == nextRowIndex){
+	if(document.getElementById("rowSubmit").rowIndex == originalNextRowIndex){
 		document.getElementById(tableID).deleteRow(nextRowIndex - 1);
 	}
 }

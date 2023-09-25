@@ -1,4 +1,4 @@
-[h:d20Data = json.set(macro.args,"TestType","Check")]
+[h:d20Data = json.set(macro.args,"TestType","Save")]
 [h:IsTooltip = 0]
 [h:ParentToken = json.get(d20Data,"ParentToken")]
 [h:switchToken(ParentToken)]

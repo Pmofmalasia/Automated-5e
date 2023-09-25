@@ -125,7 +125,7 @@
 	[h,if(hp.AlreadyDying): DeathFailures = min(3,json.get(getProperty("a5e.stat.DeathSaves"),"Failures")+if(hp.IsCrit,2,1)); DeathFailures = 0]
 	[h:setProperty("a5e.stat.DeathSaves",json.set(getProperty("a5e.stat.DeathSaves"),"Failures",DeathFailures))]
 	[h:hp.DeadTest = or(abs(getProperty("a5e.stat.HP"))>=getProperty("a5e.stat.MaxHP"),DeathFailures==3)]
-	
+
 	[h,if(!hp.AlreadyDying && !hp.DeadTest),CODE:{
 		[h:DyingConditionInfo = json.set("",
 			"Conditions",json.append("",pm.a5e.GetSpecificCondition("Dying","Condition")),
@@ -136,6 +136,18 @@
 		)]
 		[h,MACRO("ApplyCondition@Lib:pm.a5e.Core"): DyingConditionInfo]
 		[h:NoHPConditionTable = json.get(macro.return,"Table")]
+	};{}]
+
+	[h,if(!hp.AlreadyDying && !hp.DeadTest),CODE:{
+		[h:"<!-- Note: This allows Unconscious to be separate from Dying, so that effects that stabilize creatures but leave them unconscious can still function (e.g. Spare the Dying, Healer's Kit, etc.). -->"]
+		[h:DyingConditionInfo = json.set("",
+			"Conditions",json.append("",pm.a5e.GetSpecificCondition("Unconscious","Condition")),
+			"EndInfo","{}",
+			"GroupID",pm.a5e.CreateConditionID(ParentToken),
+			"Target",ParentToken,
+			"SetBy",""
+		)]
+		[h,MACRO("ApplyCondition@Lib:pm.a5e.Core"): DyingConditionInfo]
 	};{}]
 
 	[h,if(hp.DeadTest),CODE:{

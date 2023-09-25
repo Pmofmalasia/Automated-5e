@@ -20,7 +20,7 @@ function createParentSubeffectRows(){
 			PrereqSelectOptions = PrereqSelectOptions + "<option value='AttackHit'>Attack Hits</option><option value='AttackMiss'>Attack Misses</option>";
 		}
 
-		if(ParentSubeffectComponents.includes("Save")){
+		if(ParentSubeffectComponents.includes("SaveData")){
 			PrereqSelectOptions = PrereqSelectOptions + "<option value='FailedSave'>Failed Save</option><option value='PassedSave'>Passed Save</option>";
 		}
 
@@ -82,19 +82,19 @@ async function createParentPrereqRows(){
 		addTableRow("CreateSubeffectTable",nextRowIndex,"rowParentPrereqExtra","<th><label for='PrereqAttackMissMargin'>Must Miss by At Least:</label></th><td><input type='number' id='PrereqAttackMissMargin' name='PrereqAttackMissMargin' min=0 value=0></td>");
 		nextRowIndex++;
 	}
-	else if(PrereqChoice == "SaveSucceed"){
+	else if(PrereqChoice == "PassedSave"){
 		addTableRow("CreateSubeffectTable",nextRowIndex,"rowParentPrereqExtra","<th><label for='PrereqSaveSucceedMargin'>Must Succeed by At Least:</label></th><td><input type='number' id='PrereqSaveSucceedMargin' name='PrereqSaveSucceedMargin' min=0 value=0></td>");
 		nextRowIndex++;
 	}
-	else if(PrereqChoice == "SaveFail"){
+	else if(PrereqChoice == "FailedSave"){
 		addTableRow("CreateSubeffectTable",nextRowIndex,"rowParentPrereqExtra","<th><label for='PrereqSaveFailMargin'>Must Fail by At Least:</label></th><td><input type='number' id='PrereqSaveFailMargin' name='PrereqSaveFailMargin' min=0 value=0></td>");
 		nextRowIndex++;
 	}
-	else if(PrereqChoice == "CheckSucceed"){
+	else if(PrereqChoice == "PassedCheck"){
 		addTableRow("CreateSubeffectTable",nextRowIndex,"rowParentPrereqExtra","<th><label for='PrereqCheckSucceedMargin'>Must Succeed by At Least:</label></th><td><input type='number' id='PrereqCheckSucceedMargin' name='PrereqCheckSucceedMargin' min=0 value=0></td>");
 		nextRowIndex++;
 	}
-	else if(PrereqChoice == "CheckFail"){
+	else if(PrereqChoice == "FailedCheck"){
 		addTableRow("CreateSubeffectTable",nextRowIndex,"rowParentPrereqExtra","<th><label for='PrereqCheckFailMargin'>Must Fail by At Least:</label></th><td><input type='number' id='PrereqCheckFailMargin' name='PrereqCheckFailMargin' min=0 value=0></td>");
 		nextRowIndex++;
 	}
@@ -172,8 +172,8 @@ async function createMitigationTable(){
 		addTableRow("CreateSubeffectTable",nextMitigationRowIndex,"rowIsConditionalAdvantage","<th>Conditional (Dis)advantage:</th><input type='checkbox' id='isConditionalAttackAdvantage' name='isConditionalAttackAdvantage' onchange='createConditionalAttackAdvantageRows()'></td>");
 		nextMitigationRowIndex++;
 	
-		addTableRow("CreateSubeffectTable",nextRowIndex,"rowIgnoreCoverBenefits","<th><label for='IgnoreCoverBenefit'>Ignore Cover Benefits?</label></th><td><input type='checkbox' id='IgnoreCoverBenefit' name='IgnoreCoverBenefit'></td>");
-		nextRowIndex++;
+		addTableRow("CreateSubeffectTable",nextMitigationRowIndex,"rowIgnoreCoverBenefits","<th><label for='IgnoreCoverBenefit'>Ignore Cover Benefits?</label></th><td><input type='checkbox' id='IgnoreCoverBenefit' name='IgnoreCoverBenefit'></td>");
+		nextMitigationRowIndex++;
 	}
 	else if(document.getElementById("howMitigate").value == "Save"){
 		clearUnusedTable("CreateSubeffectTable","Mitigation","Damage");
@@ -210,8 +210,8 @@ async function createMitigationTable(){
 		addTableRow("CreateSubeffectTable",nextMitigationRowIndex,"rowIsChooseFailure","<th>Can Choose to Fail:</th><input type='checkbox' id='isChooseFailure' name='isChooseFailure'></td>");
 		nextMitigationRowIndex++;
 	
-		addTableRow("CreateSubeffectTable",nextRowIndex,"rowIgnoreCoverBenefits","<th><label for='IgnoreCoverBenefit'>Ignore Cover Benefits?</label></th><td><input type='checkbox' id='IgnoreCoverBenefit' name='IgnoreCoverBenefit'></td>");
-		nextRowIndex++;
+		addTableRow("CreateSubeffectTable",nextMitigationRowIndex,"rowIgnoreCoverBenefits","<th><label for='IgnoreCoverBenefit'>Ignore Cover Benefits?</label></th><td><input type='checkbox' id='IgnoreCoverBenefit' name='IgnoreCoverBenefit'></td>");
+		nextMitigationRowIndex++;
 
 		if(document.getElementById("isDamage").checked){
 			for(let i=1; i <= document.getElementById("differentTypes").value; i++){

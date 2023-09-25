@@ -128,7 +128,7 @@
 
 [h:"<!-- TODO: This (and any if statements involving ab.IsSpellOptions) is a temp fix for the old interface. Will need to add a separate check for ab.IsSpellOptions in final interface. Will also need to pick WHICH filter to add to (e.g. not to both cantrips and leveled spells) -->"]
 [h:ab.IsSpellList = ab.IsSpellOptions]
-[h,while(DoneAddingSpellsTest < 2 && ab.IsSpellList>=2),CODE:{
+[h,while(DoneAddingSpellsTest < 2 && ab.IsSpellList>=1),CODE:{
 	[h:NewFilterLevel = ab.Level]
 	[h:ReuseFilter = 0]
 	[h:abort(input(
@@ -689,9 +689,16 @@
 };{}]
 
 [h,if(ab.Senses),CODE:{
-	[h:ab.Final = json.set(ab.Final,
-		"CallSenses",1
-	)]
+	[h:abort(input(
+		" junkVar | Choose Senses Affected | 0 | LABEL | SPAN=TRUE ",
+		" junkVar | ------------------------------------------------------------ | 0 | LABEL | SPAN=TRUE ",
+		" ab.Vision | 0 | Grants Vision Bonus/Type | CHECK ",
+		" ab.OtherSense | 0 | Affects other Senses | CHECK "
+	))]
+
+	[h,if(ab.Vision): ab.Final = json.set(ab.Final,"CallVision",1)]
+		
+	[h,if(ab.OtherSense): ab.Final = json.set(ab.Final,"CallSenses",1)]
 };{}]
 
 [h,if(ab.Check),CODE:{

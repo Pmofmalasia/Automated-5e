@@ -54,16 +54,13 @@
 };{
 	[h:MonsterWeaponData = json.remove(MonsterWeaponData,"ParentToken")]
 	[h:MonsterWeaponData = json.remove(MonsterWeaponData,"SpecialEffects")]
+	[h:ItemID = eval("1d10000") + "a5e" + json.get(getInfo("client"),"timeInMs")]
+	[h:MonsterWeaponData = json.set(MonsterWeaponData,"ItemID",ItemID)]
 
 	[h,if(json.get(MonsterWeaponData,"WeaponType") == "NaturalWeapon" || json.get(MonsterWeaponData,"WeaponType") == "Unarmed"),CODE:{
-		[h:NaturalWeaponID = eval("1d10000") + json.get(getInfo("client"),"timeInMs")]
-		[h:MonsterWeaponData = json.set(MonsterWeaponData,
-			"ItemID",NaturalWeaponID
-		)]
-
 		[h:setProperty("a5e.stat.NaturalWeapons",json.append(getProperty("a5e.stat.NaturalWeapons"),MonsterWeaponData))]
 
-		[h:NewWeaponCommand = '[h,MACRO("SingleAttack@Lib:pm.a5e.Core"): json.set("","ParentToken",currentToken(),"NaturalWeaponID",'+NaturalWeaponID+')]']
+		[h:NewWeaponCommand = '[h,MACRO("SingleAttack@Lib:pm.a5e.Core"): json.set("","ParentToken",currentToken(),"NaturalWeaponID","'+ItemID+'")]']
 
 		[h:NewWeaponMacroProps = json.set("",
 			"applyToSelected",0,
@@ -79,7 +76,7 @@
 			"maxWidth","",
 			"minWidth",89,
 			"playerEditable",0,
-			"tooltip",'[MACRO("SingleAttack@Lib:pm.a5e.Core"): json.set("","ParentToken",currentToken(),"NaturalWeaponID",'+NaturalWeaponID+',"IsTooltip",1)]',
+			"tooltip",'[MACRO("SingleAttack@Lib:pm.a5e.Core"): json.set("","ParentToken",currentToken(),"NaturalWeaponID","'+ItemID+'","IsTooltip",1)]',
 			"delim","json"
 		)]
 

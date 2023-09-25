@@ -28,7 +28,7 @@
 [h:output.PC = json.get(json.get(FormattingData,"Output"),"Player")]
 [h:output.GM = json.get(json.get(FormattingData,"Output"),"GM")]
 
-[h,MACRO("Modifyd20Test@Lib:pm.a5e.Core"): TestData]
+[h,MACRO("ModifyD20Test@Lib:pm.a5e.Core"): TestData]
 [h:TestData = macro.return]
 [h:abilityTable = json.get(TestData,"Table")]
 

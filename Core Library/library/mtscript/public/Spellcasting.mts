@@ -53,7 +53,7 @@
 		[h:sSpellChoice = eval("1d"+SpellEffectOptionsNum)-1]
 	};{
 		[h:MultiEffectChoiceTest = 1]
-		[h,foreach(SpellEffect,allSpellEffects): SpellEffectOptions = if(roll.count!=0,listAppend(SpellEffectOptions,json.get(SpellEffect,"EffectName")),SpellEffectOptions)]
+		[h,foreach(SpellEffect,allSpellEffects): SpellEffectOptions = listAppend(SpellEffectOptions,json.get(SpellEffect,"DisplayName"))]
 	}]
 }]
 

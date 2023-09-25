@@ -19,6 +19,7 @@
 	[h,count(TotalHands): OtherHands = json.append(OtherHands,roll.count)]
 	[h:OtherHandsIDs = CurrentHeldItems]
 }]
+[h:OtherWeapons = json.path.read(getProperty("a5e.stat.Inventory",ParentToken),"\$[*][?(@.ItemID in "+OtherHandsIDs+")]")]
 
 [h:Flavor = json.get(wa.Data,"Flavor")]
 [h:AttackNum = json.get(wa.Data,"AttackNum")]
@@ -152,7 +153,7 @@
 
 [h:"<!-- TODO: Current method is to remove TWF completely to get around the no damage modifier effect (e.g. for the fighting style). Issues are #1: It is still technically TWF, so any effects that would trigger on TWF would not be able to; solution could be adding a variable that bypasses removing the mod. #2: TWF still adds damage modifier if negative; solution could be changing IsDamageModifier -->"]
 [h,if(TwoWeaponFighting),CODE:{
-	[h:wa.DamageData = json.path.set(wa.DamageData,"\$[*]","IsModBonus",0)]
+	[h:wa.DamageData = json.path.set(wa.DamageData,"\$[*]['IsModBonus']",0)]
 };{}]
 
 [h:"<!-- TODO: Will need to ensure that the empty hand is allowed to make attacks in the future -->"]
@@ -351,7 +352,7 @@
 		[h:thisAttackCritDmg = json.get(tempDamageInstance,"CritTotal")]
 		[h:thisAttackCritDmgStr = json.get(tempDamageInstance,"CritString")]
 		[h:thisAttackCritDmgRules = json.get(tempDamageInstance,"CritFormula")]
-				
+
 		[h:abilityTable = json.append(abilityTable,json.set("",
 			"ShowIfCondensed",1,
 			"Header",json.get(tempDamageInstance,"DamageType")+" Damage",
@@ -403,6 +404,27 @@
 		"ParentToken",ParentToken,
 		"LeaveToken",1
 	)]
+};{}]
+
+[h,if(!TwoWeaponFighting && json.contains(wa.Props,"Light")),CODE:{
+	[h:TwoHandedLinks = ""]
+	[h,foreach(weapon,OtherWeapons),CODE:{
+		[h:thisWeaponHand = -1]
+		[h,foreach(hand,CurrentHeldItems): thisWeaponHand = if(json.get(weapon,"ItemID") == hand,roll.count,thisWeaponHand)]
+		[h:thisWeaponIsLight = json.contains(json.get(weapon,"WeaponProperties"),"Light")]
+		[h,if(thisWeaponIsLight): thisWeaponLink = macroLinkText("SingleAttack@Lib:pm.a5e.Core","self-gm",json.set("","Hand",thisWeaponHand,"ParentToken",ParentToken,"AttackNum",-1,"IsTooltip",0,"TwoWeaponFighting",1),ParentToken)]
+		[h:TwoHandedLinks = listAppend(TwoHandedLinks,"<a href = '"+thisWeaponLink+"'><span style = 'color:"+LinkColor+"'>"+json.get(weapon,"DisplayName")+"</span></a>", " / ")]
+	}]
+				
+	[h,if(TwoHandedLinks != ""): abilityTable = json.append(abilityTable,json.set("",
+		"ShowIfCondensed",1,
+		"Header","Two Weapon Fighting",
+		"FalseHeader","",
+		"FullContents","",
+		"RulesContents",TwoHandedLinks,
+		"RollContents","",
+		"DisplayOrder","['Rules','Roll','Full']"
+	))]
 };{}]
 
 [h:pm.PassiveFunction("AfterAttack")]

@@ -24,6 +24,7 @@
 
 [h:setLibProperty("ct.NewWeapon",json.remove(getLibProperty("ct.NewWeapon","Lib:pm.a5e.Core"),getPlayerName()),"Lib:pm.a5e.Core")]
 [h:ParentToken = json.get(macro.args,"ParentToken")]
+
 [h,if(ParentToken == ""),CODE:{
 	[h,if(newTemplateTest),CODE:{
 		[h:setLibProperty("sb.WeaponTypes",json.append(getLibProperty("sb.WeaponTypes","Lib:"+json.get(WeaponData,"Library")),WeaponData),"Lib:"+json.get(WeaponData,"Library"))]
@@ -33,12 +34,12 @@
 };{
 	[h:switchToken(ParentToken)]
 
-	[h:ItemID = eval("1d10000") + json.get(getInfo("client"),"timeInMs")]
+	[h:ItemID = eval("1d10000") + "a5e" + json.get(getInfo("client"),"timeInMs")]
 	[h:WeaponData = json.set(WeaponData,"ItemID",ItemID)]
 	[h,if(json.get(WeaponData,"WeaponType") == "NaturalWeapon" || json.get(WeaponData,"WeaponType") == "Unarmed"),CODE:{
 		[h:setProperty("a5e.stat.NaturalWeapons",json.append(getProperty("a5e.stat.NaturalWeapons"),WeaponData))]
 
-		[h:NewWeaponCommand = '[h,MACRO("SingleAttack@Lib:pm.a5e.Core"): json.set("","ParentToken",currentToken(),"NaturalWeaponID",'+ItemID+',"IsTooltip",0)]']
+		[h:NewWeaponCommand = '[h,MACRO("SingleAttack@Lib:pm.a5e.Core"): json.set("","ParentToken",currentToken(),"NaturalWeaponID","'+ItemID+'","IsTooltip",0)]']
 
 		[h:NewWeaponMacroProps = json.set("",
 			"applyToSelected",0,
@@ -54,7 +55,7 @@
 			"maxWidth","",
 			"minWidth",89,
 			"playerEditable",0,
-			"tooltip",'[MACRO("SingleAttack@Lib:pm.a5e.Core"): json.set("","ParentToken",currentToken(),"NaturalWeaponID",'+ItemID+',"IsTooltip",1)]',
+			"tooltip",'[MACRO("SingleAttack@Lib:pm.a5e.Core"): json.set("","ParentToken",currentToken(),"NaturalWeaponID","'+ItemID+'","IsTooltip",1)]',
 			"delim","json"
 		)]
 

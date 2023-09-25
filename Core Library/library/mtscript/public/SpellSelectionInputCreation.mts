@@ -21,18 +21,28 @@
 
     [h:tempSelectionList = json.get(selectionInstance,"List")]
     [h,if(tempSelectionList==""),CODE:{
-        [h:SelectionList = getLibProperty("sb.Spells","Lib:pm.a5e.Core")]
+		[h,if(json.contains(selectionInstance,"SpecificList")):
+			SelectionList = json.path.read(getLibProperty("sb.Spells","Lib:pm.a5e.Core"),"[*][?(@.Name in "+json.get(selectionInstance,"SpecificList")+")]");
+			SelectionList = getLibProperty("sb.Spells","Lib:pm.a5e.Core")
+		]
     };{
         [h:"<!-- If List is a feature object, find the list in that feature. If no feature, use all spells. If List is a string, assume it to be a casting class and get the stored list from that class. -->"]
         [h,if(json.type(tempSelectionList)=="UNKNOWN"): 
             SelectionListFeature = "[]";
             SelectionListFeature = json.path.read(getLibProperty("sb.Abilities","Lib:pm.a5e.Core"),"[*][?(@.Name=='"+json.get(tempSelectionList,"Name")+"' && @.Class=='"+json.get(tempSelectionList,"Class")+"' && @.Subclass=='"+json.get(tempSelectionList,"Subclass")+"')]['SpellList']")
         ]
-        [h,if(json.isEmpty(SelectionListFeature)):
-            SelectionList = getLibProperty("sb.Spells","Lib:pm.a5e.Core");
-            SelectionList = json.path.read(getLibProperty("sb.Spells","Lib:pm.a5e.Core"),"[*][?(@.Name in "+json.get(SelectionListFeature,0)+")]")
+		[h,if(json.contains(selectionInstance,"SpecificList")):
+			specificSpellList = json.get(selectionInstance,"SpecificList");
+			specificSpellList = "[]"
+		]
+
+        [h,switch(json.isEmpty(SelectionListFeature)+""+json.isEmpty(specificSpellList)):
+            case "11": SelectionList = "[]";
+			case "10": SelectionList = json.path.read(getLibProperty("sb.Spells","Lib:pm.a5e.Core"),"[*][?(@.Name in "+specificSpellList+")]");
+            default: SelectionList = json.path.read(getLibProperty("sb.Spells","Lib:pm.a5e.Core"),"[*][?(@.Name in "+json.merge(specificSpellList,json.get(SelectionListFeature,0))+")]")
         ]
-        [h,if(json.type(tempSelectionList)=="UNKNOWN"): SelectionList = if(json.get(getLibProperty("sb.SpellLists","Lib:pm.a5e.Core"),tempSelectionList)!="",json.path.read(getLibProperty("sb.Spells","Lib:pm.a5e.Core"),"[*][?(@.Name in "+json.get(getLibProperty("sb.SpellLists","Lib:pm.a5e.Core"),tempSelectionList)+")]"),SelectionList)]
+
+        [h,if(json.type(tempSelectionList)=="UNKNOWN"): SelectionList = if(json.get(getLibProperty("sb.SpellLists","Lib:pm.a5e.Core"),tempSelectionList)!="",json.merge(SelectionList,json.path.read(getLibProperty("sb.Spells","Lib:pm.a5e.Core"),"\$[*][?(@.Name in "+json.get(getLibProperty("sb.SpellLists","Lib:pm.a5e.Core"),tempSelectionList)+")]")),SelectionList)]
     }]
 
     [h:SpellFilter = json.get(selectionInstance,"Filter")]

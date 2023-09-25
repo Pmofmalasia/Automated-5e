@@ -32,4 +32,6 @@
 [h:ConditionReturnData = macro.return]
 [h:abilityTable = json.get(ConditionReturnData,"Table")]
 
+[h:pm.PassiveFunction("AfterDash")]
+
 [h:macro.return = ConditionReturnData]

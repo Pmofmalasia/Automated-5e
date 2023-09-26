@@ -1,4 +1,4 @@
-[h:WeaponData = json.get(getLibProperty("ct.NewWeapon","Lib:pm.a5e.Core"),getPlayerName())]
+[h:WeaponData = json.get(data.getData("addon:","pm.a5e.core","ct.NewWeapon"),getPlayerName())]
 [h:WeaponName = json.get(WeaponData,"Name")]
 [h:weaponSourcebook = json.get(WeaponData,"Sourcebook")]
 
@@ -15,14 +15,14 @@
 
 [h:"<!-- Removes the dummy subeffect used to show to the subeffect creation JS -->"]
 [h:WeaponEffects = json.get(WeaponData,"Effects")]
-[h:WeaponEffects = json.path.delete(WeaponEffects,"[*]['Subeffects'][?(@.isDummySubeffect==1)]")]
+[h:WeaponEffects = json.path.delete(WeaponEffects,"\$[*]['Subeffects'][?(@.isDummySubeffect==1)]")]
 
 [h:"<!-- TODO: Remove this shifting of Subeffects to WeaponEffects when fixed (see CreateObjectProcessing note) -->"]
 [h:WeaponData = json.set(WeaponData,"WeaponEffects",WeaponEffects)]
 [h:WeaponData = json.remove(WeaponData,"Effects")]
 [h:WeaponData = json.remove(WeaponData,"isEffectRandom")]
 
-[h:setLibProperty("ct.NewWeapon",json.remove(getLibProperty("ct.NewWeapon","Lib:pm.a5e.Core"),getPlayerName()),"Lib:pm.a5e.Core")]
+[h:setLibProperty("ct.NewWeapon",json.remove(data.getData("addon:","pm.a5e.core","ct.NewWeapon"),getPlayerName()),"Lib:pm.a5e.Core")]
 [h:ParentToken = json.get(macro.args,"ParentToken")]
 
 [h,if(ParentToken == ""),CODE:{

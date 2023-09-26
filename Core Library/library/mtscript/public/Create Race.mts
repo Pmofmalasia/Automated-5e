@@ -27,7 +27,7 @@
 
 [h:ra.Final = json.set("","Name",pm.RemoveSpecial(ra.Name),"DisplayName",ra.Name,"CreatureType",ra.CreatureType)]
 
-[h:ra.SourcebookLib = json.get(json.path.read(getLibProperty("ms.Sources","Lib:pm.a5e.Core"),"[?(@.Name=='"+pm.RemoveSpecial(ra.Source)+"')]['Library']"),0)]
+[h:ra.SourcebookLib = json.get(json.path.read(data.getData("addon:","pm.a5e.core","ms.Sources"),"\$[?(@.Name=='"+pm.RemoveSpecial(ra.Source)+"')]['Library']"),0)]
 
 [h:ra.Base =  json.set("",
 	"Name",pm.RemoveSpecial(ra.Name)+"Traits",

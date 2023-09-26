@@ -11,7 +11,7 @@
 [h:thisSubeffectNum = number(json.get(subeffectData,"WhichSubeffect"))]
 [h:subeffectData = json.remove(subeffectData,"WhichSubeffect")]
 
-[h:CurrentFeatureData = getLibProperty("ct.New"+if(isPersistentEffect,"Persistent","")+EffectType,"pm.a5e.Core")]
+[h:CurrentFeatureData = data.getData("addon:","pm.a5e.core","ct.New"+if(isPersistentEffect,"Persistent","")+EffectType)]
 [h,if(CurrentFeatureData == ""): CurrentFeatureData = "{}"]
 [h:thisPlayerCurrentFeatureData = json.get(CurrentFeatureData,getPlayerName())]
 [h,if(thisPlayerCurrentFeatureData == ""): thisPlayerCurrentFeatureData = "{}"]
@@ -990,7 +990,7 @@
 		"Subclass",json.get(thisPlayerCurrentFeatureData,"Subclass")
 	)]
 
-	[h:setLibProperty("ct.NewPersistent"+EffectType,json.set(getLibProperty("ct.NewPersistent"+EffectType,"Lib:pm.a5e.Core"),getPlayerName(),initialFeatureData),"Lib:pm.a5e.Core")]
+	[h:setLibProperty("ct.NewPersistent"+EffectType,json.set(data.getData("addon:","pm.a5e.core","ct.NewPersistent"+EffectType),getPlayerName(),initialFeatureData),"Lib:pm.a5e.Core")]
 };{
 	[h,if(isPersistentEffect): baseFeatureData = json.set(baseFeatureData,
 		"isPersistentEffect",1,
@@ -1001,7 +1001,7 @@
 
 [h,if(lastEffectTest && !NeedsNewSubeffect),CODE:{
 	[h,if(isPersistentEffect),CODE:{
-		[h:MainFeatureData = getLibProperty("ct.New"+EffectType,"pm.a5e.Core")]
+		[h:MainFeatureData = data.getData("addon:","pm.a5e.core","ct.New"+EffectType)]
 		[h:thisPlayerMainFeatureData = json.get(MainFeatureData,getPlayerName())]
 
 		[h:allMainEffectData = json.get(thisPlayerMainFeatureData,"Effects")]
@@ -1009,7 +1009,7 @@
 		[h:allMainSubeffectsData = json.get(json.get(allMainEffectData,MainEffectsLastIndex),"Subeffects")]
 		[h:MainSubeffectsLastIndex = json.length(allMainSubeffectsData)-1]
 	
-		[h:MainFeatureData = json.path.put(thisPlayerMainFeatureData,"['Effects']["+MainEffectsLastIndex+"]['Subeffects']["+MainSubeffectsLastIndex+"]","PersistentEffects",allEffectData)]
+		[h:MainFeatureData = json.path.put(thisPlayerMainFeatureData,"\$['Effects']["+MainEffectsLastIndex+"]['Subeffects']["+MainSubeffectsLastIndex+"]","PersistentEffects",allEffectData)]
 		[h:setLibProperty("ct.New"+EffectType,json.set(MainFeatureData,getPlayerName(),thisPlayerMainFeatureData),"Lib:pm.a5e.Core")]
 	
 		[h:lastEffectTest = (json.length(allMainEffectData) >= MainEffectsNumber)]

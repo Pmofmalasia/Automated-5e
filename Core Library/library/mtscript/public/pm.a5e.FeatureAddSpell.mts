@@ -20,7 +20,7 @@
 	[h:setProperty("a5e.stat.AllFeatures",json.path.set(getProperty("a5e.stat.AllFeatures"),"[?(@.Name=='"+currentFeatureName+"' && @.Class=='"+currentFeatureClass+"' && @.Subclass=='"+currentFeatureSubclass+"')]['SpellList']",pm.ChosenSpells))]
 }]
 
-[h:pm.SpellList = json.toList(pm.ChosenSpells,if(getLibProperty("VerticalFormat","Lib:pm.a5e.Core"),"<br>",", "))]
+[h:pm.SpellList = json.toList(pm.ChosenSpells,if(VerticalFormat","Lib:pm.a5e.Core"),"<br>",", "))]
 
 [h:abilityTable = json.append(abilityTable,json.set("",
 	"ShowIfCondensed",1,

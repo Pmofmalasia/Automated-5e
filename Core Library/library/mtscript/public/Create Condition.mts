@@ -33,7 +33,7 @@
 	[h:ConditionTagsChosen = json.append(ConditionTagsChosen,macro.return)]
 };{}]
 
-[h:cn.SourceLib = json.get(json.path.read(getLibProperty("ms.Sources","Lib:pm.a5e.Core"),"[*][?(@.Name=='"+pm.RemoveSpecial(cn.Source)+"')]['Library']"),0)]
+[h:cn.SourceLib = json.get(json.path.read(data.getData("addon:","pm.a5e.core","ms.Sources"),"[*][?(@.Name=='"+pm.RemoveSpecial(cn.Source)+"')]['Library']"),0)]
 [h:cn.DisplayName = cn.Name]
 [h:cn.Name = pm.RemoveSpecial(cn.Name)]
 [h:cn.Final = json.set("",
@@ -102,7 +102,7 @@
 
 		[h,if(cn.MasterCreated==2): cn.MasterClass = cn.Class]
 		[h,if(cn.MasterCreated==2): cn.MasterSubclass = cn.Subclass; cn.MasterSubclass = pm.RemoveSpecial(cn.MasterSubclass)]
-		[h:cn.MasterOptions = json.toList(json.path.read(getLibProperty("sb.Abilities","Lib:pm.a5e.Core"),"[*][?(@.Class=='"+cn.MasterClass+"' && (@.Subclass==''|| @.Subclass=='"+cn.MasterSubclass+"'))]['DisplayName']"))]
+		[h:cn.MasterOptions = json.toList(json.path.read(data.getData("addon:","pm.a5e.core","sb.Abilities"),"[*][?(@.Class=='"+cn.MasterClass+"' && (@.Subclass==''|| @.Subclass=='"+cn.MasterSubclass+"'))]['DisplayName']"))]
 
 		[h:abort(input(
 			" cn.MasterName | "+cn.MasterOptions+" | Name of Master Feature | LIST | VALUE=STRING "))]

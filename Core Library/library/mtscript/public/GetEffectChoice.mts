@@ -1,4 +1,4 @@
-[h:incompleteEffects = getLibProperty("gd.Effects","Lib:pm.a5e.Core")]
+[h:incompleteEffects = data.getData("addon:","pm.a5e.core","gd.Effects")]
 [h:em.TableLines = ""]
 [h,foreach(effect,incompleteEffects),CODE:{
 	[h:targetList = json.get(effect,"Targets")]

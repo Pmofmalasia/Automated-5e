@@ -21,14 +21,14 @@
 
 	[h:fs.Input = if(fs.GroupNum==1," junkVar | ------------------ Select "+pm.ChoiceNum+" Fighting Style"+if(pm.ChoiceNum>1,"s","")+" ------------------ |  | LABEL | SPAN=TRUE ",listAppend(fs.Input," junkVar | ------------------ Select "+pm.ChoiceNum+" "+pm.GetDisplayName(json.get(TempGroup,"Class"),"sb.Classes")+" Fighting Style"+if(pm.ChoiceNum>1,"s","")+" ------------------ |  | LABEL | SPAN=TRUE ","##"))]
 	
-	[h:thisGroupFSOptions = json.sort(json.path.read(getLibProperty("sb.Abilities","Lib:pm.a5e.Core"),"[*][?(@.Class == 'FightingStyle' && @.Name in "+json.get(TempGroup,"FightingStyleList")+")]"),"a","Name")]
+	[h:thisGroupFSOptions = json.sort(json.path.read(data.getData("addon:","pm.a5e.core","sb.Abilities"),"[*][?(@.Class == 'FightingStyle' && @.Name in "+json.get(TempGroup,"FightingStyleList")+")]"),"a","Name")]
 	[h:fs.AllOptions = json.set(fs.AllOptions,TempGroupName,thisGroupFSOptions)]
 	
 	[h:fs.ThisGroupCurrent = "[]"]
 	[h:"<!-- Change AssociatedClass to StoredValue? No, since can't have 2 subclasses anyway. -->"]
 	[h,foreach(TempFS,thisGroupFSOptions),CODE:{
 		[h:tempIsActiveTest = !json.isEmpty(json.path.read(getProperty("a5e.stat.AllFeatures"),"[?(@.Name=='"+json.get(TempFS,"Name")+"' && @.Class=='FightingStyle' && @.AssociatedClass=='"+json.get(TempGroup,"Class")+"' && @.IsActive > 0)]"))]
-		[h,if(tempIsActiveTest): fs.ThisGroupCurrent = json.merge(fs.ThisGroupCurrent,json.path.read(getLibProperty("sb.Abilities","Lib:pm.a5e.Core"),"[?(@.Name=='"+json.get(TempFS,"Name")+"' && @.Class=='FightingStyle' && @.Subclass=='"+json.get(TempFS,"Subclass")+"')]"))]
+		[h,if(tempIsActiveTest): fs.ThisGroupCurrent = json.merge(fs.ThisGroupCurrent,json.path.read(data.getData("addon:","pm.a5e.core","sb.Abilities"),"[?(@.Name=='"+json.get(TempFS,"Name")+"' && @.Class=='FightingStyle' && @.Subclass=='"+json.get(TempFS,"Subclass")+"')]"))]
 		[h:set("pm.Choose"+json.get(TempFS,"Name")+json.get(TempGroup,"Class"),tempIsActiveTest)]
 		[h:fs.Input = listAppend(fs.Input," pm.Choose"+json.get(TempFS,"Name")+json.get(TempGroup,"Class")+" | "+eval("pm.Choose"+json.get(TempFS,"Name")+json.get(TempGroup,"Class"))+" | "+json.get(TempFS,"DisplayName")+" | CHECK ","##")]
 	}]
@@ -59,7 +59,7 @@
 	[h,MACRO("NewFeatureAddition@Lib:pm.a5e.Core"): json.set(json.path.put(macro.return,"['Abilities'][*]","AssociatedClass",json.get(TempGroup,"Class")),"ParentToken",ParentToken)]
 	[h,MACRO("FeatureRemoval@Lib:pm.a5e.Core"): json.set("","Features",fs.Removed,"ParentToken",ParentToken)]
 	
-	[h:fs.ChosenStr = json.toList(json.path.read(getProperty("a5e.stat.AllFeatures"),"[?(@.Class=='FightingStyle' && @.AssociatedClass=='"+json.get(TempGroup,"Class")+"' && @.IsActive > 0)]['DisplayName']"),if(getLibProperty("VerticalDisplay","Lib:pm.a5e.Core")==1,"<br>",", "))]
+	[h:fs.ChosenStr = json.toList(json.path.read(getProperty("a5e.stat.AllFeatures"),"[?(@.Class=='FightingStyle' && @.AssociatedClass=='"+json.get(TempGroup,"Class")+"' && @.IsActive > 0)]['DisplayName']"),if(data.getData("addon:","pm.a5e.core","VerticalDisplay")==1,"<br>",", "))]
 	
 	[h:TempDisplayName = pm.GetDisplayName(json.get(TempGroup,"Class"),"sb.Classes")]
 	

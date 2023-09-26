@@ -436,7 +436,7 @@
 	
 		[h:objectData = json.set(objectData,"NewTemplate",newTemplateTest)]
 
-		[h:setLibProperty("ct.NewObject",json.set(getLibProperty("ct.NewObject","Lib:pm.a5e.Core"),getPlayerName(),objectData),"Lib:pm.a5e.Core")]
+		[h:setLibProperty("ct.NewObject",json.set(data.getData("addon:","pm.a5e.core","ct.NewObject"),getPlayerName(),objectData),"Lib:pm.a5e.Core")]
 
 		[h:"<!-- TODO: Remove objectType==Weapon when the better system for implementing WeaponEffects is implemented -->"]
 		[h,MACRO("CreateSubeffect@Lib:pm.a5e.Core"): json.set("",

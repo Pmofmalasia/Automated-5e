@@ -5,7 +5,7 @@
 ))]
 [h:effectsTableCellFormat = "<td style='text-align:center; padding-left:4px'>"]
 
-[h:incompleteEffects = getLibProperty("gd.Effects","Lib:pm.a5e.Core")]
+[h:incompleteEffects = data.getData("addon:","pm.a5e.core","gd.Effects")]
 [h:em.TableLines = "<tr><th style = '"+FrameAccentFormat+"'>Origin</th><th style = '"+FrameAccentFormat+"'>Target(s)</th><th style = '"+FrameAccentFormat+"'>Status</th><th style = '"+FrameAccentFormat+"' colspan=3>How to Resolve</th></tr>"]
 [h:"<!-- TODO: Change removal of blank string so that targets can be selected by the DM on resolution. Blank string occurs when 'Target Not Displayed' is selected during targeting. -->"]
 

@@ -46,7 +46,7 @@
 }]
 [h:lu.OldConMod = json.get(getProperty("a5e.stat.AtrMods"),"Constitution")]
 
-[h:lu.SubclassTest = if(json.get(json.path.read(lu.ClassArray,"[?(@.Name=='"+lu.Class+"')]['SubclassLevel']"),0)==lu.NewLevel,1,0)]
+[h:lu.SubclassTest = if(json.get(json.path.read(lu.ClassArray,"\$[?(@.Name=='"+lu.Class+"')]['SubclassLevel']"),0)==lu.NewLevel,1,0)]
 [h,if(lu.SubclassTest),CODE:{
 	[h:abort(input(
 		" lu.SubclassChoice | "+pm.GetSubclasses(lu.Class,"DisplayName")+" | Choose a subclass | RADIO | VALUE=STRING "
@@ -65,21 +65,21 @@
 
 [h:"<!-- Adds abilities based on class, race, and background that are gained on level up, separately since race and background go off of total level -->"]
 
-[h:tempNewAbilities = json.path.read(getLibProperty("sb.Abilities","Lib:pm.a5e.Core"),"[*][?("+lu.RaceIDPath+" && @.Level=="+(getProperty("a5e.stat.Level")+1)+" && @.GainOnLevel==1)]")]
+[h:tempNewAbilities = json.path.read(data.getData("addon:","pm.a5e.core","sb.Abilities"),"\$[*][?("+lu.RaceIDPath+" && @.Level=="+(getProperty("a5e.stat.Level")+1)+" && @.GainOnLevel==1)]")]
 
-[h:tempNewAbilities = json.merge(tempNewAbilities,json.path.read(getLibProperty("sb.Abilities","Lib:pm.a5e.Core"),"[*][?(@.Class=='Background' && @.Subclass=='"+pm.RemoveSpecial(getProperty("a5e.stat.Background"))+"' && @.Level=="+(getProperty("a5e.stat.Level")+1)+" && @.GainOnLevel==1)]"))]
+[h:tempNewAbilities = json.merge(tempNewAbilities,json.path.read(data.getData("addon:","pm.a5e.core","sb.Abilities"),"\$[*][?(@.Class=='Background' && @.Subclass=='"+pm.RemoveSpecial(getProperty("a5e.stat.Background"))+"' && @.Level=="+(getProperty("a5e.stat.Level")+1)+" && @.GainOnLevel==1)]"))]
 
-[h:tempNewAbilities = json.merge(tempNewAbilities,json.path.read(getLibProperty("sb.Abilities","Lib:pm.a5e.Core"),"[*][?("+lu.NewClassIDPath+" && @.Level=="+lu.NewLevel+" && @.GainOnLevel==1)]"))]
+[h:tempNewAbilities = json.merge(tempNewAbilities,json.path.read(data.getData("addon:","pm.a5e.core","sb.Abilities"),"\$[*][?("+lu.NewClassIDPath+" && @.Level=="+lu.NewLevel+" && @.GainOnLevel==1)]"))]
 
-[h:tempNewAbilitiesWithPrereqs = json.path.read(tempNewAbilities,"[*][?(@.Prereqs!=null)]","DEFAULT_PATH_LEAF_TO_NULL")]
+[h:tempNewAbilitiesWithPrereqs = json.path.read(tempNewAbilities,"\$[*][?(@.Prereqs!=null)]","DEFAULT_PATH_LEAF_TO_NULL")]
 [h,foreach(feature,tempNewAbilitiesWithPrereqs),CODE:{
 	[h:pm.a5e.CheckFeaturePrereqs(json.set("",json.get(feature,"Prereqs"),"ParentToken",ParentToken))]
-	[h,if(!macro.return): tempNewAbilities = json.path.delete(tempNewAbilities,"[*][?(@.Name=='"+json.get(feature,"Name")+"' && @.Class=='"+json.get(feature,"Class")+"' && @.Subclass=='"+json.get(feature,"Subclass")+"')]")]
+	[h,if(!macro.return): tempNewAbilities = json.path.delete(tempNewAbilities,"\$[*][?(@.Name=='"+json.get(feature,"Name")+"' && @.Class=='"+json.get(feature,"Class")+"' && @.Subclass=='"+json.get(feature,"Subclass")+"')]")]
 }]
 
 [h:lu.NewAbilities = json.merge(lu.NewAbilities,tempNewAbilities)]
 
-[h:lu.FightingStyleTest = !json.isEmpty(json.path.read(lu.NewAbilities,"[*][?(@.FightingStyleList!=null)]","DEFAULT_PATH_LEAF_TO_NULL"))]
+[h:lu.FightingStyleTest = !json.isEmpty(json.path.read(lu.NewAbilities,"\$[*][?(@.FightingStyleList!=null)]","DEFAULT_PATH_LEAF_TO_NULL"))]
 [h,if(lu.FightingStyleTest),CODE:{
 	[h:needsMacroTest = !json.contains(getMacros("json"),"Manage Fighting Styles")]
 	[h,if(needsMacroTest): createMacro(json.set("","label","Manage Fighting Styles","command",'[MACRO("ManageFightingStyles@Lib:pm.a5e.Core"): json.set("","LevelUp",0,"Class","'+lu.Class+'","ParentToken",currentToken())]',"group"," New Macros","color",pm.BorderColor("FightingStyle"),"fontColor",pm.TitleColor("FightingStyle"),"applyToSelected",1,"playerEditable",0,"minWidth",89))]
@@ -93,17 +93,17 @@
 
 [h:"<!-- Looks up the current amount of max resources for each ability. After all abilities are added and updated, this will be checked again. If there is increase in the in the amount of max resource, the current amount of resource is increased for that amount. This is done instead of just giving the players a long rest in case anyone wants to run a game where leveling can occur without regaining all resources.-->"]
 [h:noFeaturesTest = json.isEmpty(getProperty("a5e.stat.AllFeatures"))]
-[h,if(noFeaturesTest): lu.OldResources = ""; lu.OldResources = json.path.read(getProperty("a5e.stat.AllFeatures"),"[*][?(@.MaxResource != null)]","DEFAULT_PATH_LEAF_TO_NULL")]
+[h,if(noFeaturesTest): lu.OldResources = ""; lu.OldResources = json.path.read(getProperty("a5e.stat.AllFeatures"),"\$[*][?(@.MaxResource != null)]","DEFAULT_PATH_LEAF_TO_NULL")]
 [h:lu.OldResourcesMax = ""]
 [h,foreach(ability,lu.OldResources),CODE:{
 	[h:lu.OldResourcesMax = json.set(lu.OldResourcesMax,json.get(ability,"Name")+json.get(ability,"Class")+json.get(ability,"Subclass"),evalMacro(json.get(ability,"MaxResource")))]
 }]
 
 [h:"<!-- Checks to see if there is already a spellcasting ability associated with this class, so that spells will be added later even if it is not the 'correct' level for it by the calculation ceiling(Level*(1/2)*(1/CastingType)). Also needed for cantrips. -->"]
-[h,if(noFeaturesTest): lu.HadSpellcastingTest = 0; lu.HadSpellcastingTest = !json.isEmpty(json.path.read(getProperty("a5e.stat.AllFeatures"),"[*][?((@.Name == 'Spellcasting' || @.Name == 'PactMagic') && @.Class=='"+lu.Class+"' && (@.Subclass=='"+json.get(getProperty("a5e.stat.Subclasses"),lu.Class)+"' || @.Subclass == ''))]","DEFAULT_PATH_LEAF_TO_NULL"))]
+[h,if(noFeaturesTest): lu.HadSpellcastingTest = 0; lu.HadSpellcastingTest = !json.isEmpty(json.path.read(getProperty("a5e.stat.AllFeatures"),"\$[*][?((@.Name == 'Spellcasting' || @.Name == 'PactMagic') && @.Class=='"+lu.Class+"' && (@.Subclass=='"+json.get(getProperty("a5e.stat.Subclasses"),lu.Class)+"' || @.Subclass == ''))]","DEFAULT_PATH_LEAF_TO_NULL"))]
 
 [h:"<!-- Searches AbilityUpdates for any updates to the leveled class/race, plus subclass/race combo. The object keys of any updates found replace the current corresponding object keys for that ability. -->"]
-[h:lu.AbilityUpdates = json.path.read(getLibProperty("sb.AbilityUpdates","Lib:pm.a5e.Core"),"[*][?(("+lu.NewClassIDPath+" && @."+lu.NewLevel+" != null) || ("+lu.RaceIDPath+" && @."+(getProperty("a5e.stat.Level")+1)+" != null))]","DEFAULT_PATH_LEAF_TO_NULL")]
+[h:lu.AbilityUpdates = json.path.read(data.getData("addon:","pm.a5e.core","sb.AbilityUpdates"),"\$[*][?(("+lu.NewClassIDPath+" && @."+lu.NewLevel+" != null) || ("+lu.RaceIDPath+" && @."+(getProperty("a5e.stat.Level")+1)+" != null))]","DEFAULT_PATH_LEAF_TO_NULL")]
 [h,foreach(ability,lu.AbilityUpdates),CODE:{
 	[h:lu.TempUpdates = json.fields(json.get(ability,lu.NewLevel),"json")]
 
@@ -111,16 +111,16 @@
 		[h:lu.UpdateSpells = json.get(json.get(ability,lu.NewLevel),"SpellsAlwaysActive")]
 		[h,if(noFeaturesTest):
 			lu.OldSpells = "[]";
-			lu.OldSpells = json.path.read(getProperty("a5e.stat.AllFeatures"),"[*][?(@.Class  == '"+json.get(ability,"Class")+"' && (@.Subclass == '' || @.Subclass == '"+json.get(ability,"Subclass")+"') && @.Name == '"+json.get(ability,"Name")+"')]['SpellsAlwaysActive']")
+			lu.OldSpells = json.path.read(getProperty("a5e.stat.AllFeatures"),"\$[*][?(@.Class  == '"+json.get(ability,"Class")+"' && (@.Subclass == '' || @.Subclass == '"+json.get(ability,"Subclass")+"') && @.Name == '"+json.get(ability,"Name")+"')]['SpellsAlwaysActive']")
 		]
 		[h,if(!json.isEmpty(lu.OldSpells)): lu.OldSpells = json.get(lu.OldSpells,0)]
 		[h:lu.NewSpells = json.merge(lu.NewSpells,json.difference(lu.UpdateSpells,lu.OldSpells))]
 	}]
 	[h,foreach(updateKey,lu.TempUpdates),CODE:{
-		[h:lu.ValidKeyTest = !json.isEmpty(json.path.read(getProperty("a5e.stat.AllFeatures"),"[*][?(@.Class  == '"+json.get(ability,"Class")+"' && (@.Subclass == '' || @.Subclass == '"+json.get(ability,"Subclass")+"') && @.Name == '"+json.get(ability,"Name")+"')]['"+updateKey+"']"))]
+		[h:lu.ValidKeyTest = !json.isEmpty(json.path.read(getProperty("a5e.stat.AllFeatures"),"\$[*][?(@.Class  == '"+json.get(ability,"Class")+"' && (@.Subclass == '' || @.Subclass == '"+json.get(ability,"Subclass")+"') && @.Name == '"+json.get(ability,"Name")+"')]['"+updateKey+"']"))]
 
 		[h,if(updateKey == "ButtonInfo"):
-			thisFeaturePriorButtons = json.path.read(getProperty("a5e.stat.AllFeatures"),"[*][?(@.Class  == '"+json.get(ability,"Class")+"' && @.Subclass == '"+json.get(ability,"Subclass")+"' && @.Name == '"+json.get(ability,"Name")+"')]['"+updateKey+"']");
+			thisFeaturePriorButtons = json.path.read(getProperty("a5e.stat.AllFeatures"),"\$[*][?(@.Class  == '"+json.get(ability,"Class")+"' && @.Subclass == '"+json.get(ability,"Subclass")+"' && @.Name == '"+json.get(ability,"Name")+"')]['"+updateKey+"']");
 			thisFeaturePriorButtons = "[]"
 		]
 
@@ -132,8 +132,8 @@
 		[h:lu.NewButtons = json.merge(lu.NewButtons,thisFeatureNewButtons)]
 
 		[h,if(lu.ValidKeyTest):
-			setProperty("a5e.stat.AllFeatures",json.path.set(getProperty("a5e.stat.AllFeatures"),"[*][?(@.Class  == '"+json.get(ability,"Class")+"' && (@.Subclass == '' || @.Subclass == '"+json.get(ability,"Subclass")+"') && @.Name == '"+json.get(ability,"Name")+"')]['"+updateKey+"']",json.get(json.get(ability,lu.NewLevel),updateKey)));
-			setProperty("a5e.stat.AllFeatures",json.path.put(getProperty("a5e.stat.AllFeatures"),"[*][?(@.Class  == '"+json.get(ability,"Class")+"' && (@.Subclass == '' || @.Subclass == '"+json.get(ability,"Subclass")+"') && @.Name == '"+json.get(ability,"Name")+"')]",updateKey,json.get(json.get(ability,lu.NewLevel),updateKey)))
+			setProperty("a5e.stat.AllFeatures",json.path.set(getProperty("a5e.stat.AllFeatures"),"\$[*][?(@.Class  == '"+json.get(ability,"Class")+"' && (@.Subclass == '' || @.Subclass == '"+json.get(ability,"Subclass")+"') && @.Name == '"+json.get(ability,"Name")+"')]['"+updateKey+"']",json.get(json.get(ability,lu.NewLevel),updateKey)));
+			setProperty("a5e.stat.AllFeatures",json.path.put(getProperty("a5e.stat.AllFeatures"),"\$[*][?(@.Class  == '"+json.get(ability,"Class")+"' && (@.Subclass == '' || @.Subclass == '"+json.get(ability,"Subclass")+"') && @.Name == '"+json.get(ability,"Name")+"')]",updateKey,json.get(json.get(ability,lu.NewLevel),updateKey)))
 		]
 	}]
 }]
@@ -152,11 +152,11 @@
 	[h:setProperty("a5e.stat.AllFeatures",json.append(getProperty("a5e.stat.AllFeatures"),json.set(ability,"IsDisplayed",1,"IsActive",1)))]
 	[h:lu.DisplayNewAbilities = listAppend(lu.DisplayNewAbilities,json.get(ability,"DisplayName"),"<br>")]
 }]
-[h:setProperty("a5e.stat.AllFeatures",json.path.set(getProperty("a5e.stat.AllFeatures"),"[?(@.Class=='"+lu.Class+"' && @.MagicItemLink=='None')]['Level']",lu.NewLevel))]
+[h:setProperty("a5e.stat.AllFeatures",json.path.set(getProperty("a5e.stat.AllFeatures"),"\$[?(@.Class=='"+lu.Class+"' && @.MagicItemLink=='None')]['Level']",lu.NewLevel))]
 
 [h:"<!-- Adds newly gained resources to the abilities array, see above. If resource existed previously, added resource amount = New difference - old difference. If resource did not exist previously, just sets resource = maxresource. -->"]
 [h:noFeaturesTest = json.isEmpty(getProperty("a5e.stat.AllFeatures"))]
-[h,if(noFeaturesTest): lu.NewResources = ""; lu.NewResources = json.path.read(getProperty("a5e.stat.AllFeatures"),"[*][?(@.MaxResource != null)]","DEFAULT_PATH_LEAF_TO_NULL")]
+[h,if(noFeaturesTest): lu.NewResources = ""; lu.NewResources = json.path.read(getProperty("a5e.stat.AllFeatures"),"\$[*][?(@.MaxResource != null)]","DEFAULT_PATH_LEAF_TO_NULL")]
 [h:lu.NewResourcesMax = ""]
 [h,foreach(ability,lu.NewResources),CODE:{
 	[h:lu.CurrentResource = json.get(ability,"Resource")]
@@ -165,11 +165,11 @@
 		[h:lu.MultiResourceList = json.fields(lu.CurrentResource,"json")]
 		[h:TempNewResources = ""]
 		[h,foreach(resource,lu.MultiResourceList): TempNewResources = json.set(TempNewResources,resource,json.get(lu.CurrentResource,resource)+json.get(lu.CurrentMax,resource)-json.get(json.get(lu.OldResourcesMax,json.get(ability,"Name")+json.get(ability,"Class")+json.get(ability,"Subclass")),resource))]
-		[h:setProperty("a5e.stat.AllFeatures",json.path.set(getProperty("a5e.stat.AllFeatures"),"[?(@.Name=='"+json.get(ability,"Name")+"' && @.Class=='"+json.get(ability,"Class")+"' && @.Subclass=='"+json.get(ability,"Subclass")+"')]['Resource']",TempNewResources))]
+		[h:setProperty("a5e.stat.AllFeatures",json.path.set(getProperty("a5e.stat.AllFeatures"),"\$[?(@.Name=='"+json.get(ability,"Name")+"' && @.Class=='"+json.get(ability,"Class")+"' && @.Subclass=='"+json.get(ability,"Subclass")+"')]['Resource']",TempNewResources))]
 	};{
 		[h,if(lu.CurrentResource == ""):
-			setProperty("a5e.stat.AllFeatures",json.path.put(getProperty("a5e.stat.AllFeatures"),"[?(@.Name=='"+json.get(ability,"Name")+"' && @.Class=='"+json.get(ability,"Class")+"' && @.Subclass=='"+json.get(ability,"Subclass")+"')]","Resource",evalMacro(json.get(ability,"MaxResource")))); 
-			setProperty("a5e.stat.AllFeatures",json.path.set(getProperty("a5e.stat.AllFeatures"),"[?(@.Name=='"+json.get(ability,"Name")+"' && @.Class=='"+json.get(ability,"Class")+"' && @.Subclass=='"+json.get(ability,"Subclass")+"')]['Resource']",lu.CurrentResource+lu.CurrentMax-json.get(lu.OldResourcesMax,json.get(ability,"Name")+json.get(ability,"Class")+json.get(ability,"Subclass"))))]
+			setProperty("a5e.stat.AllFeatures",json.path.put(getProperty("a5e.stat.AllFeatures"),"\$[?(@.Name=='"+json.get(ability,"Name")+"' && @.Class=='"+json.get(ability,"Class")+"' && @.Subclass=='"+json.get(ability,"Subclass")+"')]","Resource",evalMacro(json.get(ability,"MaxResource")))); 
+			setProperty("a5e.stat.AllFeatures",json.path.set(getProperty("a5e.stat.AllFeatures"),"\$[?(@.Name=='"+json.get(ability,"Name")+"' && @.Class=='"+json.get(ability,"Class")+"' && @.Subclass=='"+json.get(ability,"Subclass")+"')]['Resource']",lu.CurrentResource+lu.CurrentMax-json.get(lu.OldResourcesMax,json.get(ability,"Name")+json.get(ability,"Class")+json.get(ability,"Subclass"))))]
 	}]
 }]
 
@@ -222,7 +222,7 @@
 ]
 
 [h:"<!-- Checks to see if the token should have a Spell Preparation macro, then adds it if not present. May want to add a notification that new spells can be prepped. -->"]
-[h:CanPrepSpells = !json.isEmpty(json.path.read(getProperty("a5e.stat.AllFeatures"),"[*][?(@.SpellOptions != null)]","DEFAULT_PATH_LEAF_TO_NULL"))]
+[h:CanPrepSpells = !json.isEmpty(json.path.read(getProperty("a5e.stat.AllFeatures"),"\$[*][?(@.SpellOptions != null)]","DEFAULT_PATH_LEAF_TO_NULL"))]
 [h,if(CanPrepSpells),CODE:{
 	[h:SpellPrepMacroProps = json.set("",
 	"applyToSelected",0,

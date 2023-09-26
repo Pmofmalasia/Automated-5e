@@ -20,7 +20,7 @@
 [h:abilityContext=json.get(abilityPriorData,"Context")]
 [h:pm.a5e.OverarchingContext=json.get(abilityPriorData,"OverarchingContext")]
 [h:Flavor=json.get(DisplayObject,"Flavor")]
-[h:DMOnly=if(json.get(DisplayObject,"DMOnly")=="",if(getProperty("a5e.stat.Allegiance")=="Enemy",min(number(getLibProperty("HideEnemyMacros","Lib:pm.a5e.Core")),1),if(getProperty("a5e.stat.Allegiance")=="Ally",min(number(getLibProperty("HideAllyMacros","Lib:pm.a5e.Core")),1),0)),json.get(DisplayObject,"DMOnly"))]
+[h:DMOnly=if(json.get(DisplayObject,"DMOnly")=="",if(getProperty("a5e.stat.Allegiance")=="Enemy",min(number(data.getData("addon:","pm.a5e.core","HideEnemyMacros")),1),if(getProperty("a5e.stat.Allegiance")=="Ally",min(number(data.getData("addon:","pm.a5e.core","HideAllyMacros")),1),0)),json.get(DisplayObject,"DMOnly"))]
 [h:BorderColorOverride=json.get(DisplayObject,"BorderColorOverride")]
 [h:TitleFontColorOverride=json.get(DisplayObject,"TitleFontColorOverride")]
 [h:AccentBackgroundOverride=json.get(DisplayObject,"AccentBackgroundOverride")]
@@ -33,7 +33,7 @@
 [h:ForcedSummonImage=json.get(DisplayObject,"ForcedSummonImage")]
 [h:ForcedSummonPortrait=json.get(DisplayObject,"ForcedSummonPortrait")]
 [h:ForcedSummonHandout=json.get(DisplayObject,"ForcedSummonHandout")]
-[h:ShowFullRules=if(IsTooltip,1,if(ShowFullRulesOverride=="",if(getLibProperty("ChatIndividual","Lib:pm.a5e.Core")==1,getProperty("a5e.stat.FullAbilityRules"),getLibProperty("FullAbilityRules","Lib:pm.a5e.Core")),ShowFullRulesOverride))]
+[h:ShowFullRules=if(IsTooltip,1,if(ShowFullRulesOverride=="",if(data.getData("addon:","pm.a5e.core","ChatIndividual")==1,getProperty("a5e.stat.FullAbilityRules"),data.getData("addon:","pm.a5e.core","FullAbilityRules")),ShowFullRulesOverride))]
 [h:abilityTable="[]"]
 
 [h:a5e.UnifiedAbilities = a5e.GatherAbilities(ParentToken)]

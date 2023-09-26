@@ -1,9 +1,9 @@
 [h:pm.Race = arg(0)]
 [h,if(argCount()>1): pm.KeyChoice = arg(1); pm.KeyChoice = ""]
 [h,if(pm.KeyChoice==""),CODE:{
-	[h:pm.Subraces = json.path.read(getLibProperty("sb.Subraces","Lib:pm.a5e.Core"),"[?(@.Race=='"+pm.Race+"')]")]
+	[h:pm.Subraces = json.path.read(data.getData("addon:","pm.a5e.core","sb.Subraces"),"[?(@.Race=='"+pm.Race+"')]")]
 };{
-	[h:pm.Subraces = json.path.read(getLibProperty("sb.Subraces","Lib:pm.a5e.Core"),"[?(@.Race=='"+pm.Race+"')]['"+
+	[h:pm.Subraces = json.path.read(data.getData("addon:","pm.a5e.core","sb.Subraces"),"[?(@.Race=='"+pm.Race+"')]['"+
 pm.KeyChoice+"']")]
 }]
 

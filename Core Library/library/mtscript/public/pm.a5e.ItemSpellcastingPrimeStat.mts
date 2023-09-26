@@ -9,7 +9,7 @@
 		[h:PrimeStat = "None"]
 		[h:PrimeStatValue = 0]
 		[h,foreach(tempClass,validClasses),CODE:{
-			[h:stat = json.get(getLibProperty("sb.CastingAbilities","Lib:pm.a5e.Core"),tempClass)]
+			[h:stat = json.get(data.getData("addon:","pm.a5e.core","sb.CastingAbilities"),tempClass)]
 			[h:thisPrimeStatValue = json.get(getProperty("a5e.stat.Attributes"),stat)]
 			[h,if(thisPrimeStatValue > PrimeStatValue): PrimeStat = stat]
 		}]
@@ -21,7 +21,7 @@
 		[h:PrimeStat = "None"]
 		[h:PrimeStatValue = 0]
 		[h,foreach(tempClass,validClasses),CODE:{
-			[h:stat = json.get(getLibProperty("sb.CastingAbilities","Lib:pm.a5e.Core"),tempClass)]
+			[h:stat = json.get(data.getData("addon:","pm.a5e.core","sb.CastingAbilities"),tempClass)]
 			[h:thisPrimeStatValue = json.get(getProperty("a5e.stat.Attributes"),stat)]
 			[h,if(thisPrimeStatValue > PrimeStatValue): PrimeStat = stat]
 		}]

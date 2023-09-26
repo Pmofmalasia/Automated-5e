@@ -165,6 +165,6 @@
 [h:createMacro(LibMacroProperties,LibraryID,"z.0 Library")]
 [h:setLibProperty("sb.Races",json.append(getLibProperty("sb.Races","Lib:"+Library),BaseRaceData),"Lib:"+Library)]
 
-[h:SourcebookName = json.get(json.path.read(getLibProperty("ms.Sources","Lib:pm.a5e.Core"),"[?(@.Library=='"+Library+"')]['DisplayName']"),0)]
+[h:SourcebookName = json.get(json.path.read(data.getData("addon:","pm.a5e.core","ms.Sources"),"\$[?(@.Library=='"+Library+"')]['DisplayName']"),0)]
 [r:RaceDisplayName+" race from the sourcebook "+SourcebookName+" created."]
 [h,MACRO("Gather Sourcebook Information@Lib:pm.a5e.Core"):""]

@@ -6,7 +6,7 @@
 [h,if(pass.DisplayObject == ""): pass.DisplayObject = "{}"]
 
 [h:pass.Flavor=json.get(pass.DisplayObject,"Flavor")]
-[h:pass.DMOnly=if(json.get(pass.DisplayObject,"DMOnly")=="",if(getProperty("a5e.stat.Allegiance")=="Enemy",min(number(getLibProperty("HideEnemyMacros","Lib:pm.a5e.Core")),1),if(getProperty("a5e.stat.Allegiance")=="Ally",min(number(getLibProperty("HideAllyMacros","Lib:pm.a5e.Core")),1),0)),json.get(pass.DisplayObject,"DMOnly"))]
+[h:pass.DMOnly=if(json.get(pass.DisplayObject,"DMOnly")=="",if(getProperty("a5e.stat.Allegiance")=="Enemy",min(number(data.getData("addon:","pm.a5e.core","HideEnemyMacros")),1),if(getProperty("a5e.stat.Allegiance")=="Ally",min(number(data.getData("addon:","pm.a5e.core","HideAllyMacros")),1),0)),json.get(pass.DisplayObject,"DMOnly"))]
 [h:pass.BorderColorOverride=json.get(pass.DisplayObject,"BorderColorOverride")]
 [h:pass.TitleFontColorOverride=json.get(pass.DisplayObject,"TitleFontColorOverride")]
 [h:pass.AccentBackgroundOverride=json.get(pass.DisplayObject,"AccentBackgroundOverride")]
@@ -19,7 +19,7 @@
 [h:pass.ForcedSummonImage=json.get(pass.DisplayObject,"ForcedSummonImage")]
 [h:pass.ForcedSummonPortrait=json.get(pass.DisplayObject,"ForcedSummonPortrait")]
 [h:pass.ForcedSummonHandout=json.get(pass.DisplayObject,"ForcedSummonHandout")]
-[h:pass.ShowFullRules=if(IsTooltip,1,if(pass.ShowFullRulesOverride=="",if(number(getLibProperty("ChatIndividual","Lib:pm.a5e.Core")),getProperty("a5e.stat.FullAbilityRules"),getLibProperty("FullAbilityRules","Lib:pm.a5e.Core")),pass.ShowFullRulesOverride))]
+[h:pass.ShowFullRules=if(IsTooltip,1,if(pass.ShowFullRulesOverride=="",if(number(data.getData("addon:","pm.a5e.core","ChatIndividual")),getProperty("a5e.stat.FullAbilityRules"),data.getData("addon:","pm.a5e.core","FullAbilityRules")),pass.ShowFullRulesOverride))]
 
 [h:pass.abilityInfo = json.set(pass.FeatureInfo,
 	"DisplayName",pass.abilityDisplayName,

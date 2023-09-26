@@ -1,16 +1,16 @@
 [h:FeatureInfo = macro.args]
 [h:EffectType = json.get(FeatureInfo,"EffectType")]
 
-[h:CurrentFeatureData = getLibProperty("ct.New"+EffectType,"pm.a5e.Core")]
+[h:CurrentFeatureData = data.getData("addon:","pm.a5e.core","ct.New"+EffectType)]
 [h:thisPlayerCurrentFeatureData = json.get(CurrentFeatureData,getPlayerName())]
  
-[h:tempAllConditions = json.path.read(thisPlayerCurrentFeatureData,"['Effects'][*]['Subeffects'][*][?(@.Conditions!=null)]['Conditions']","DEFAULT_PATH_LEAF_TO_NULL")]
+[h:tempAllConditions = json.path.read(thisPlayerCurrentFeatureData,"\$['Effects'][*]['Subeffects'][*][?(@.Conditions!=null)]['Conditions']","DEFAULT_PATH_LEAF_TO_NULL")]
 [h:allConditions = "[]"]
 [h,foreach(tempConditions,tempAllConditions): allConditions = json.merge(allConditions,tempConditions)]
 [h:"<!-- End section -->"]
 
 [h,if(!json.isEmpty(allConditions)):
-	UniqueConditions = json.path.read(allConditions,"[?(@.Name=='"+FeatureName+"' && @.Class=='Spell')]");
+	UniqueConditions = json.path.read(allConditions,"\$[?(@.Name=='"+FeatureName+"' && @.Class=='Spell')]");
 	UniqueConditions = "[]"
 ]
 

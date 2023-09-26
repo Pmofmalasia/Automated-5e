@@ -1,5 +1,5 @@
 [h:SpellCoreData = macro.args]
-[h:currentSpellData = getLibProperty("ct.NewSpell","pm.a5e.Core")]
+[h:currentSpellData = data.getData("addon:","pm.a5e.core","ct.NewSpell")]
 [h:SpellCoreData = pm.a5e.KeyStringsToNumbers(SpellCoreData)]
 
 [h:SpellCoreData = json.set(SpellCoreData,"DisplayName",pm.EvilChars(json.get(SpellCoreData,"DisplayName")))]
@@ -18,7 +18,7 @@
 };{}]
 
 [h:classesWithSpell = "[]"]
-[h:UniqueSpellListFeatures = json.path.read(getLibProperty("sb.Abilities","Lib:pm.a5e.Core"),"[*][?(@.UniqueSpellList==1)]")]
+[h:UniqueSpellListFeatures = json.path.read(data.getData("addon:","pm.a5e.core","sb.Abilities"),"[*][?(@.UniqueSpellList==1)]")]
 
 [h,foreach(tempFeature,UniqueSpellListFeatures),CODE:{
 	[h:onListTest = json.contains(SpellCoreData,"is"+json.get(tempFeature,"Name")+json.get(tempFeature,"Class")+json.get(tempFeature,"Subclass"))]

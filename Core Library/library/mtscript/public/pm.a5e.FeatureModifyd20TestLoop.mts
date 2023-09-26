@@ -14,8 +14,8 @@
         [h,if(json.get(RollData,"ID")!=""),CODE:{
             [h:effectID = json.get(RollData,"ID")]
             [h:RollData = json.get(json.merge(
-                json.path.read(getLibProperty("gd.Effects","Lib:pm.a5e.Core"),"[*][?(@.ID=="+effectID+" && @.ParentToken=='"+EffectTarget+"')]['ToResolve']['CheckDC']['DC']"),
-                json.path.read(getLibProperty("gd.Effects","Lib:pm.a5e.Core"),"[*][?(@.ID=="+effectID+")]['ToResolve']['CheckDC']['ChecksMade']['"+EffectTarget+"']"))
+                json.path.read(data.getData("addon:","pm.a5e.core","gd.Effects"),"[*][?(@.ID=="+effectID+" && @.ParentToken=='"+EffectTarget+"')]['ToResolve']['CheckDC']['DC']"),
+                json.path.read(data.getData("addon:","pm.a5e.core","gd.Effects"),"[*][?(@.ID=="+effectID+")]['ToResolve']['CheckDC']['ChecksMade']['"+EffectTarget+"']"))
             ,0)]
         };{
             [h:effectID = ""]
@@ -24,7 +24,7 @@
     case "Save":{
         [h,if(json.get(RollData,"ID")!=""),CODE:{
             [h:effectID = json.get(RollData,"ID")]
-            [h:RollData = json.get(json.path.read(getLibProperty("gd.Effects","Lib:pm.a5e.Core"),"[*][?(@.ID=="+effectID+")]['ToResolve']['SaveDC']['SavesMade']['"+EffectTarget+"']"),0)]
+            [h:RollData = json.get(json.path.read(data.getData("addon:","pm.a5e.core","gd.Effects"),"[*][?(@.ID=="+effectID+")]['ToResolve']['SaveDC']['SavesMade']['"+EffectTarget+"']"),0)]
         };{
             [h:effectID = ""]
         }]
@@ -32,7 +32,7 @@
     case "Attack":{
         [h,if(json.get(RollData,"ID")!=""),CODE:{
             [h:effectID = json.get(RollData,"ID")]
-            [h:RollData = json.get(json.path.read(getLibProperty("gd.Effects","Lib:pm.a5e.Core"),"[*][?(@.ID=="+effectID+" && @.ParentToken=='"+EffectTarget+"')]['ToResolve']['Attack']"),0)]
+            [h:RollData = json.get(json.path.read(data.getData("addon:","pm.a5e.core","gd.Effects"),"[*][?(@.ID=="+effectID+" && @.ParentToken=='"+EffectTarget+"')]['ToResolve']['Attack']"),0)]
         };{
             [h:effectID = ""]
         }]
@@ -56,8 +56,8 @@
         [h,if(effectID==""),CODE:{};{
             [h:"<!-- TODO: Add contested check data from the token setting the DC to the effect data -->"]
             [h,if(json.get(ReturnData,"Contested")==1): 
-                rerolledEffect = json.path.set(getLibProperty("gd.Effects","Lib:pm.a5e.Core"),"[*][?(@.ID=="+effectID+")]['ToResolve']['CheckDC']['DC']",json.remove(ReturnData,"EffectID"));
-                rerolledEffect = json.path.set(getLibProperty("gd.Effects","Lib:pm.a5e.Core"),"[*][?(@.ID=="+effectID+")]['ToResolve']['CheckDC']['ChecksMade']['"+EffectTarget+"']",json.remove(ReturnData,"EffectID"))
+                rerolledEffect = json.path.set(data.getData("addon:","pm.a5e.core","gd.Effects"),"[*][?(@.ID=="+effectID+")]['ToResolve']['CheckDC']['DC']",json.remove(ReturnData,"EffectID"));
+                rerolledEffect = json.path.set(data.getData("addon:","pm.a5e.core","gd.Effects"),"[*][?(@.ID=="+effectID+")]['ToResolve']['CheckDC']['ChecksMade']['"+EffectTarget+"']",json.remove(ReturnData,"EffectID"))
             ]
             [h:setLibProperty("gd.Effects",rerolledEffect,"Lib:pm.a5e.Core")]
         }]
@@ -67,7 +67,7 @@
         [h:ReturnData = macro.return]
         [h:abilityTable = json.merge(abilityTable,json.get(ReturnData,"Table"))]
         [h,if(effectID==""),CODE:{};{
-            [h:rerolledEffect = json.path.set(getLibProperty("gd.Effects","Lib:pm.a5e.Core"),"[*][?(@.ID=="+effectID+")]['ToResolve']['SaveDC']['SavesMade']['"+EffectTarget+"']",json.remove(ReturnData,"EffectID"))]
+            [h:rerolledEffect = json.path.set(data.getData("addon:","pm.a5e.core","gd.Effects"),"[*][?(@.ID=="+effectID+")]['ToResolve']['SaveDC']['SavesMade']['"+EffectTarget+"']",json.remove(ReturnData,"EffectID"))]
             [h:setLibProperty("gd.Effects",rerolledEffect,"Lib:pm.a5e.Core")]
         }]
     };

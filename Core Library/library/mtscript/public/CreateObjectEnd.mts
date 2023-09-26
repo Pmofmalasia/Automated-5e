@@ -1,4 +1,4 @@
-[h:ObjectData = json.get(getLibProperty("ct.NewObject","Lib:pm.a5e.Core"),getPlayerName())]
+[h:ObjectData = json.get(data.getData("addon:","pm.a5e.core","ct.NewObject"),getPlayerName())]
 [h:ObjectName = json.get(ObjectData,"Name")]
 [h:ObjectType = json.get(ObjectData,"Type")]
 
@@ -11,12 +11,12 @@
 [h:newTemplateTest = json.get(ObjectData,"NewTemplate")]
 [h:ObjectData = json.remove(ObjectData,"NewTemplate")]
 
-[h:setLibProperty("ct.NewObject",json.remove(getLibProperty("ct.NewObject","Lib:pm.a5e.Core"),getPlayerName()),"Lib:pm.a5e.Core")]
+[h:setLibProperty("ct.NewObject",json.remove(data.getData("addon:","pm.a5e.core","ct.NewObject"),getPlayerName()),"Lib:pm.a5e.Core")]
 
 [h,if(json.get(ObjectData,"Type") == "Weapon"),CODE:{
 	[h:"<!-- Removes the dummy subeffect used to show to the subeffect creation JS -->"]
 	[h:ObjectEffects = json.get(ObjectData,"Effects")]
-	[h:ObjectEffects = json.path.delete(ObjectEffects,"[*]['Subeffects'][?(@.isDummySubeffect==1)]")]
+	[h:ObjectEffects = json.path.delete(ObjectEffects,"\$[*]['Subeffects'][?(@.isDummySubeffect==1)]")]
 
 	[h:"<!-- TODO: Remove this shifting of Subeffects to ObjectEffects when fixed (see CreateObjectProcessing note) -->"]
 	[h:ObjectData = json.set(ObjectData,"WeaponEffects",ObjectEffects)]
@@ -35,7 +35,7 @@
 };{
 	[h:switchToken(ParentToken)]
 
-	[h:ItemID = eval("1d10000") + json.get(getInfo("client"),"timeInMs")]
+	[h:ItemID = eval("1d10000") + "a5e" + json.get(getInfo("client"),"timeInMs")]
 	[h:ObjectData = json.set(ObjectData,"ItemID",ItemID)]
 	[h:setProperty("a5e.stat.Inventory",json.append(getProperty("a5e.stat.Inventory"),ObjectData))]
 }]

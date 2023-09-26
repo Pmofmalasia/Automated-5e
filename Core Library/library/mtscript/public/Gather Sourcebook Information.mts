@@ -56,8 +56,8 @@
 	[h,if(getLibProperty("sb.Tools","Lib:"+book)!=""): pm.Tools = json.merge(pm.Tools,getLibProperty("sb.Tools","Lib:"+book))]
 	[h,if(getLibProperty("sb.ToolTypes","Lib:"+book)!=""): pm.ToolTypes = json.merge(pm.ToolTypes,getLibProperty("sb.ToolTypes","Lib:"+book))]
 	[h,if(getLibProperty("sb.Conditions","Lib:"+book)!=""): pm.Conditions = json.merge(pm.Conditions,getLibProperty("sb.Conditions","Lib:"+book))]
-	[h,if(getLibProperty("sb.Abilities","Lib:"+book)!=""): pm.Abilities = json.merge(pm.Abilities,json.path.read(getLibProperty("sb.Abilities","Lib:"+book),"[*][?(@.CreatedForMerging!=1)]"))]
-	[h,if(getLibProperty("sb.Abilities","Lib:"+book)!=""): pm.AbilitiesToMerge = json.merge(pm.AbilitiesToMerge,json.path.read(getLibProperty("sb.Abilities","Lib:"+book),"[*][?(@.CreatedForMerging==1)]"))]
+	[h,if(getLibProperty("sb.Abilities","Lib:"+book)!=""): pm.Abilities = json.merge(pm.Abilities,json.path.read(getLibProperty("sb.Abilities","Lib:"+book),"\$[*][?(@.CreatedForMerging!=1)]"))]
+	[h,if(getLibProperty("sb.Abilities","Lib:"+book)!=""): pm.AbilitiesToMerge = json.merge(pm.AbilitiesToMerge,json.path.read(getLibProperty("sb.Abilities","Lib:"+book),"\$[*][?(@.CreatedForMerging==1)]"))]
 	[h,if(getLibProperty("sb.AbilityUpdates","Lib:"+book)!=""): pm.AbilityUpdates = json.merge(pm.AbilityUpdates,getLibProperty("sb.AbilityUpdates","Lib:"+book))]
 	[h,if(getLibProperty("sb.MonsterFeatures","Lib:"+book)!=""): pm.MonsterFeatures = json.merge(pm.MonsterFeatures,getLibProperty("sb.MonsterFeatures","Lib:"+book))]
 	[h,if(getLibProperty("sb.DamageTypes","Lib:"+book)!=""): pm.DamageTypes = json.merge(pm.DamageTypes,getLibProperty("sb.DamageTypes","Lib:"+book))]
@@ -92,8 +92,8 @@
 }]
 
 [h,foreach(ability,pm.AbilitiesToMerge),CODE:{
-	[h:BaseAbility = json.get(json.path.read(pm.Abilities,"[*][?(@.Name=='"+json.get(ability,"Name")+"' && @.Class=='"+json.get(ability,"Class")+"' && @.Subclass=='"+json.get(ability,"Subclass")+"')]"),0)]
-	[h,if(json.get(ability,"FightingStyleList")!=""): pm.Abilities = json.path.set(pm.Abilities,"[*][?(@.Name=='"+json.get(ability,"Name")+"' && @.Class=='"+json.get(ability,"Class")+"' && @.Subclass=='"+json.get(ability,"Subclass")+"')]['FightingStyleList']",json.merge(json.get(BaseAbility,"FightingStyleList"),json.get(ability,"FightingStyleList")))]
+	[h:BaseAbility = json.get(json.path.read(pm.Abilities,"\$[*][?(@.Name=='"+json.get(ability,"Name")+"' && @.Class=='"+json.get(ability,"Class")+"' && @.Subclass=='"+json.get(ability,"Subclass")+"')]"),0)]
+	[h,if(json.get(ability,"FightingStyleList")!=""): pm.Abilities = json.path.set(pm.Abilities,"\$[*][?(@.Name=='"+json.get(ability,"Name")+"' && @.Class=='"+json.get(ability,"Class")+"' && @.Subclass=='"+json.get(ability,"Subclass")+"')]['FightingStyleList']",json.merge(json.get(BaseAbility,"FightingStyleList"),json.get(ability,"FightingStyleList")))]
 }]
 
 [h:setLibProperty("sb.Attributes",pm.Attributes,"Lib:pm.a5e.Core")]
@@ -135,7 +135,5 @@
 [h:setLibProperty("sb.ArmorProperties",json.sort(pm.ArmorProperties,"a","DisplayName"),"Lib:pm.a5e.Core")]
 [h:setLibProperty("sb.VisionTypes",pm.VisionTypes,"Lib:pm.a5e.Core")]
 [h:setLibProperty("sb.SpellLists",pm.SpellLists,"Lib:pm.a5e.Core")]
-
-[h:"<!-- TODO: See if there's a way to sort spells by name/level, since they're a level deep in an array -->"]
 
 [h:broadcast("Sourcebook Data has been moved to the core library.")]

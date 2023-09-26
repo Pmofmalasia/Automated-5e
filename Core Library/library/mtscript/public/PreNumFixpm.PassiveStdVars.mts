@@ -10,7 +10,7 @@
 
 [h:IsTooltip=0]
 [h:Flavor=json.get(DisplayObject,"Flavor")]
-[h:DMOnly=if(json.get(DisplayObject,"DMOnly")=="",if(PC.Ally.Enemy==2,min(getLibProperty("HideEnemyMacros","Lib:pm.a5e.Core"),1),if(PC.Ally.Enemy==1,min(getLibProperty("HideAllyMacros","Lib:pm.a5e.Core"),1),0)),json.get(DisplayObject,"DMOnly"))]
+[h:DMOnly=if(json.get(DisplayObject,"DMOnly")=="",if(PC.Ally.Enemy==2,min(data.getData("addon:","pm.a5e.core","HideEnemyMacros"),1),if(PC.Ally.Enemy==1,min(data.getData("addon:","pm.a5e.core","HideAllyMacros"),1),0)),json.get(DisplayObject,"DMOnly"))]
 [h:BorderColorOverride=json.get(DisplayObject,"BorderColorOverride")]
 [h:TitleFontColorOverride=json.get(DisplayObject,"TitleFontColorOverride")]
 [h:AccentBackgroundOverride=json.get(DisplayObject,"AccentBackgroundOverride")]
@@ -23,7 +23,7 @@
 [h:ForcedSummonImage=json.get(DisplayObject,"ForcedSummonImage")]
 [h:ForcedSummonPortrait=json.get(DisplayObject,"ForcedSummonPortrait")]
 [h:ForcedSummonHandout=json.get(DisplayObject,"ForcedSummonHandout")]
-[h:ShowFullRules=if(IsTooltip,1,if(ShowFullRulesOverride=="",if(getLibProperty("ChatIndividual","Lib:pm.a5e.Core"),getProperty("a5e.stat.FullAbilityRules"),getLibProperty("FullAbilityRules","Lib:pm.a5e.Core")),ShowFullRulesOverride))]
+[h:ShowFullRules=if(IsTooltip,1,if(ShowFullRulesOverride=="",if(data.getData("addon:","pm.a5e.core","ChatIndividual"),getProperty("a5e.stat.FullAbilityRules"),data.getData("addon:","pm.a5e.core","FullAbilityRules")),ShowFullRulesOverride))]
 [h:abilityInfo=json.set("","Name",abilityName,"Class",abilityClass,"Subclass",abilitySubclass,"DisplayName",abilityDisplayName,"Tooltip",0)]
 [h:SummonCustomization = json.set("",
 	"Name",ForcedSummonName,

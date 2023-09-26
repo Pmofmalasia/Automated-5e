@@ -4,7 +4,7 @@
 [h:lg.Known = json.merge(getProperty("a5e.stat.Languages"),lg.New)]
 [h:lg.Input = "junkVar | "+arg(1)+": Choose "+arg(0)+" Language"+if(arg(0)>1,"s","")+" |  | LABEL | SPAN=TRUE "]
 [h:lg.ValidLanguages = ""]
-[h,foreach(language,lg.LanguageArray): lg.ValidLanguages = if(json.get(getLibProperty("LanguageOptions","Lib:pm.a5e.Core"),json.get(language,"Rarity")),json.append(lg.ValidLanguages,language),lg.ValidLanguages)]
+[h,foreach(language,lg.LanguageArray): lg.ValidLanguages = if(json.get(data.getData("addon:","pm.a5e.core","LanguageOptions"),json.get(language,"Rarity")),json.append(lg.ValidLanguages,language),lg.ValidLanguages)]
 [h,foreach(language,lg.ValidLanguages),CODE:{
 	[h:IsKnownTest = json.get(lg.Known,json.get(language,"Name"))]
 	[h,if(IsKnownTest==1),CODE:{

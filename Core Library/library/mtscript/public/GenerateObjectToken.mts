@@ -69,7 +69,7 @@
 [h:setProperty("a5e.stat.Tags",json.merge(MaterialTags,ObjectMaterials,ObjectTags))]
 
 [h:objectMainMaterial = json.get(objectData,"MainMaterial")]
-[h:mainMaterialData = json.path.read(getLibProperty("sb.ObjectMaterials","Lib:pm.a5e.Core"),"[*][?(@.Name == '"+objectMainMaterial+"')]")]
+[h:mainMaterialData = json.path.read(data.getData("addon:","pm.a5e.core","sb.ObjectMaterials"),"\$[*][?(@.Name == '"+objectMainMaterial+"')]")]
 [h,if(json.isEmpty(mainMaterialData)):
 	setProperty("a5e.stat.AC","10");
 	setProperty("a5e.stat.AC",json.get(json.get(mainMaterialData,0),"AC"))
@@ -164,9 +164,9 @@
 	[h:tempAbilityProps = json.set("",
 		"applyToSelected",1,
 		"autoExecute",1,
-		"color",json.get(getLibProperty("ClassBorderColors","Lib:pm.a5e.Core"),"Item"),
+		"color",json.get(data.getData("addon:","pm.a5e.core","ClassBorderColors"),"Item"),
 		"command",'[h,MACRO("ExecuteEffectBorder@Lib:pm.a5e.Core"): '+json.set(objectData,"Effect",json.get(objectData,"Effects"),"ParentToken",NewObjectTokenID)+']',
-		"fontColor",json.get(getLibProperty("ClassTitleColors","Lib:pm.a5e.Core"),"Item"),
+		"fontColor",json.get(data.getData("addon:","pm.a5e.core","ClassTitleColors"),"Item"),
 		"group","Item Effects",
 		"label",if(json.get(tempAbility,"DisplayName") == "",json.get(objectData,"DisplayName"),json.get(tempAbility,"DisplayName")),
 		"minWidth",89,
@@ -179,9 +179,9 @@
 		[h:tempAbilityProps = json.set("",
 			"applyToSelected",1,
 			"autoExecute",1,
-			"color",json.get(getLibProperty("ClassBorderColors","Lib:pm.a5e.Core"),"Item"),
+			"color",json.get(data.getData("addon:","pm.a5e.core","ClassBorderColors"),"Item"),
 			"command",'[h,MACRO("ExecuteEffectBorder@Lib:pm.a5e.Core"): '+json.set(objectData,"Effect",json.append("",tempAbility),"ParentToken",NewObjectTokenID)+']',
-			"fontColor",json.get(getLibProperty("ClassTitleColors","Lib:pm.a5e.Core"),"Item"),
+			"fontColor",json.get(data.getData("addon:","pm.a5e.core","ClassTitleColors"),"Item"),
 			"group","Item Effects",
 			"label",if(json.get(tempAbility,"DisplayName") == "",json.get(objectData,"DisplayName"),json.get(tempAbility,"DisplayName")),
 			"minWidth",89,

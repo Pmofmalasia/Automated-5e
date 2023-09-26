@@ -42,7 +42,7 @@
 	)]
 	[h:MonsterWeaponData = json.set(MonsterWeaponData,"Effects",json.append("",json.set("","Subeffects",json.append("",DummyWeaponSubeffect))))]
 
-    [h:AllWeaponData = json.set(getLibProperty("ct.NewWeapon","pm.a5e.Core"),getPlayerName(),MonsterWeaponData)]
+    [h:AllWeaponData = json.set(data.getData("addon:","pm.a5e.core","ct.NewWeapon"),getPlayerName(),MonsterWeaponData)]
     [h:setLibProperty("ct.NewWeapon",AllWeaponData,"Lib:pm.a5e.Core")]
     [h,MACRO("CreateSubeffect@Lib:pm.a5e.Core"): json.set("",
         "EffectType","Weapon",

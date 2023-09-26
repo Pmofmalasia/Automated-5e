@@ -9,7 +9,7 @@
 
 [h,if(cond.Context!="AfterAbility"): IsTooltip=0]
 [h:cond.Flavor=json.get(cond.DisplayObject,"Flavor")]
-[h:cond.DMOnly=if(json.get(cond.DisplayObject,"DMOnly")=="",if(getProperty("a5e.stat.Allegiance")=="Enemy",min(number(getLibProperty("HideEnemyMacros","Lib:pm.a5e.Core")),1),if(getProperty("a5e.stat.Allegiance")=="Ally",min(number(getLibProperty("HideAllyMacros","Lib:pm.a5e.Core")),1),0)),json.get(cond.DisplayObject,"DMOnly"))]
+[h:cond.DMOnly=if(json.get(cond.DisplayObject,"DMOnly")=="",if(getProperty("a5e.stat.Allegiance")=="Enemy",min(number(data.getData("addon:","pm.a5e.core","HideEnemyMacros")),1),if(getProperty("a5e.stat.Allegiance")=="Ally",min(number(data.getData("addon:","pm.a5e.core","HideAllyMacros")),1),0)),json.get(cond.DisplayObject,"DMOnly"))]
 [h:cond.BorderColorOverride=json.get(cond.DisplayObject,"BorderColorOverride")]
 [h:cond.TitleFontColorOverride=json.get(cond.DisplayObject,"TitleFontColorOverride")]
 [h:cond.AccentBackgroundOverride=json.get(cond.DisplayObject,"AccentBackgroundOverride")]
@@ -22,7 +22,7 @@
 [h:cond.ForcedSummonImage=json.get(cond.DisplayObject,"ForcedSummonImage")]
 [h:cond.ForcedSummonPortrait=json.get(cond.DisplayObject,"ForcedSummonPortrait")]
 [h:cond.ForcedSummonHandout=json.get(cond.DisplayObject,"ForcedSummonHandout")]
-[h:cond.ShowFullRules=if(IsTooltip,1,if(cond.ShowFullRulesOverride=="",if(number(getLibProperty("ChatIndividual","Lib:pm.a5e.Core")),getProperty("a5e.stat.FullAbilityRules"),getLibProperty("FullAbilityRules","Lib:pm.a5e.Core")),cond.ShowFullRulesOverride))]
+[h:cond.ShowFullRules=if(IsTooltip,1,if(cond.ShowFullRulesOverride=="",if(number(data.getData("addon:","pm.a5e.core","ChatIndividual")),getProperty("a5e.stat.FullAbilityRules"),data.getData("addon:","pm.a5e.core","FullAbilityRules")),cond.ShowFullRulesOverride))]
 
 [h:cond.SetBy = json.get(cond.Info,"SetBy")]
 [h:cond.OnItem = json.get(cond.Info,"ItemID")]

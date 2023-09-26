@@ -12,7 +12,7 @@
 	" ab.LegendaryAction |  | Is Feature a Legendary Action | CHECK "
 ))]
 
-[h:ab.SourceLib = json.get(json.path.read(getLibProperty("ms.Sources","Lib:pm.a5e.Core"),"[?(@.Name=='"+pm.RemoveSpecial(ab.Source)+"')]['Library']"),0)]
+[h:ab.SourceLib = json.get(json.path.read(data.getData("addon:","pm.a5e.core","ms.Sources"),"\$[?(@.Name=='"+pm.RemoveSpecial(ab.Source)+"')]['Library']"),0)]
 [h:ab.Master=""]
 [h:ab.DisplayName = ab.Name]
 [h:ab.Name = pm.RemoveSpecial(ab.Name)]
@@ -34,7 +34,7 @@
 ]
 
 [h,if(ab.LegendaryAction),CODE:{
-    [h:NeedsLegendaryAction =json.isEmpty(json.path.read(getProperty("a5e.stat.AllFeatures"),"[*][?(@.Name=='LegendaryActions' && @.Class=='Monster')]"))]
+    [h:NeedsLegendaryAction =json.isEmpty(json.path.read(getProperty("a5e.stat.AllFeatures"),"\$[*][?(@.Name=='LegendaryActions' && @.Class=='Monster')]"))]
     [h,if(NeedsLegendaryAction),CODE:{
         [h:abort(input(
             " LegendaryActionNumber | 0,1,2,3,4,5,6 | Legendary Actions | LIST | SELECT=3 "
@@ -72,7 +72,7 @@
 
 [h:HasActiveEffects = json.contains(ab.Final,"ButtonInfo")]
 [h,if(HasActiveEffects),CODE:{
-	[h:setLibProperty("ct.NewFeature",json.set(getLibProperty("ct.NewFeature","Lib:pm.a5e.Core"),getPlayerName(),ab.Final),"Lib:pm.a5e.Core")]
+	[h:setLibProperty("ct.NewFeature",json.set(data.getData("addon:","pm.a5e.core","ct.NewFeature"),getPlayerName(),ab.Final),"Lib:pm.a5e.Core")]
 
 	[h,MACRO("CreateSubeffect@Lib:pm.a5e.Core"): json.set("",
 		"WhichSubeffect",1,

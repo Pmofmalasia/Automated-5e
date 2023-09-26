@@ -1,9 +1,9 @@
 [h:pm.Class = arg(0)]
 [h,if(argCount()>1): pm.KeyChoice = arg(1); pm.KeyChoice = ""]
 [h,if(pm.KeyChoice==""),CODE:{
-	[h:pm.Subclasses = json.path.read(getLibProperty("sb.Subclasses","Lib:pm.a5e.Core"),"[?(@.Class=='"+pm.Class+"')]")]
+	[h:pm.Subclasses = json.path.read(data.getData("addon:","pm.a5e.core","sb.Subclasses"),"[?(@.Class=='"+pm.Class+"')]")]
 };{
-	[h:pm.Subclasses = json.path.read(getLibProperty("sb.Subclasses","Lib:pm.a5e.Core"),"[?(@.Class=='"+pm.Class+"')]['"+
+	[h:pm.Subclasses = json.path.read(data.getData("addon:","pm.a5e.core","sb.Subclasses"),"[?(@.Class=='"+pm.Class+"')]['"+
 pm.KeyChoice+"']")]
 }]
 

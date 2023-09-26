@@ -1,11 +1,11 @@
 [h:pm.AbilityTable = arg(0)]
 
-[h:AccentFormat="text-align:center; background-color:"+AccentColor+"; color:"+AccentText+";"+if(number(getLibProperty("VerticalDisplay","Lib:pm.a5e.Core")),""," width:20%;")]
+[h:AccentFormat="text-align:center; background-color:"+AccentColor+"; color:"+AccentText+";"+if(number(data.getData("addon:","pm.a5e.core","VerticalDisplay")),""," width:20%;")]
 
 [h:VerticalFormat=if(
-getLibProperty("VerticalDisplay","Lib:pm.a5e.Core")==1,"</th></tr><tr style='text-align:center;'><td style='","</th><td style='padding-left:4px; valign:middle;")]
+data.getData("addon:","pm.a5e.core","VerticalDisplay")==1,"</th></tr><tr style='text-align:center;'><td style='","</th><td style='padding-left:4px; valign:middle;")]
 [h:VerticalFormatFinalBonus=if(
-getLibProperty("VerticalDisplay","Lib:pm.a5e.Core")==1,"</td></tr><tr style='text-align:center;'><td style='","</td><td style='padding-left:4px; valign:middle; text-align:right")]
+data.getData("addon:","pm.a5e.core","VerticalDisplay")==1,"</td></tr><tr style='text-align:center;'><td style='","</td><td style='padding-left:4px; valign:middle; text-align:right")]
 
 [h:pm.MaxColNumTemp = json.path.read(pm.AbilityTable,"[*][?(@.BonusSectionNum!=null)]['BonusSectionNum']","DEFAULT_PATH_LEAF_TO_NULL")]
 [h,if(json.isEmpty(pm.MaxColNumTemp)): pm.MaxColNum = 2; pm.MaxColNum = math.arrayMax(pm.MaxColNumTemp)+2]
@@ -17,7 +17,7 @@ getLibProperty("VerticalDisplay","Lib:pm.a5e.Core")==1,"</td></tr><tr style='tex
 	[h:showPCsLineTest = if(or(outputTest.NoFullMacro,and(outputTest.NoRules,json.get(tableline,"FullContents")=="",json.get(tableline,"RollContents")==""),and(outputTest.NoRolls,json.get(tableline,"FullContents")=="")),0,1)]
 	[h:showLineTest = if(or(json.get(tableline,"ShowIfCondensed")==1,ShowFullRules==1),1,0)]
 	
-	[h:output.Temp="<tr valign:middle><th style = '"+AccentFormat+"'"+if(pm.BigHeaderTest && getLibProperty("VerticalDisplay","Lib:pm.a5e.Core")==0,"; colspan='"+pm.MaxColNum+"'","")+">"]
+	[h:output.Temp="<tr valign:middle><th style = '"+AccentFormat+"'"+if(pm.BigHeaderTest && data.getData("addon:","pm.a5e.core","VerticalDisplay")==0,"; colspan='"+pm.MaxColNum+"'","")+">"]
 	[h:output.PC = if(and(showPCsLineTest,showLineTest),output.PC+output.Temp,output.PC)]
 	[h:output.GM = if(showLineTest,output.GM + output.Temp,output.GM)]
 
@@ -27,7 +27,7 @@ getLibProperty("VerticalDisplay","Lib:pm.a5e.Core")==1,"</td></tr><tr style='tex
 
 	[h,if(!pm.BigHeaderTest),CODE:{
 		[h:output.Temp = VerticalFormat+"'"+if(
-	getLibProperty("VerticalDisplay","Lib:pm.a5e.Core")==1,""," colspan='"+(pm.MaxColNum-1-pm.BonusSections)+"'")+">"]
+	data.getData("addon:","pm.a5e.core","VerticalDisplay")==1,""," colspan='"+(pm.MaxColNum-1-pm.BonusSections)+"'")+">"]
 		[h:output.PC = if(and(showPCsLineTest,showLineTest),output.PC+output.Temp,output.PC)]
 		[h:output.GM = if(showLineTest,output.GM + output.Temp,output.GM)]
 	};{}]

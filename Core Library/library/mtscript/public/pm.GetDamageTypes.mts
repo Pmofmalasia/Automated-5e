@@ -1,8 +1,8 @@
 [h,if(argCount()>0): pm.KeyChoice = arg(0); pm.KeyChoice = ""]
 [h,if(pm.KeyChoice==""),CODE:{
-	[h:pm.DamageTypes = getLibProperty("sb.DamageTypes","Lib:pm.a5e.Core")]
+	[h:pm.DamageTypes = data.getData("addon:","pm.a5e.core","sb.DamageTypes")]
 };{
-	[h:pm.DamageTypes = json.path.read(getLibProperty("sb.DamageTypes","Lib:pm.a5e.Core"),"."+pm.KeyChoice)]
+	[h:pm.DamageTypes = json.path.read(data.getData("addon:","pm.a5e.core","sb.DamageTypes"),"."+pm.KeyChoice)]
 }]
 
 [h,if(argCount()>1): pm.Delim = arg(1) ; pm.Delim = if(pm.KeyChoice=="","json",",")]

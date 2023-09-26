@@ -21,7 +21,7 @@
 
 [h:ab.UpdateLevelOptions = string(ab.Level)]
 [h,count(20-ab.Level): ab.UpdateLevelOptions = listAppend(ab.UpdateLevelOptions,ab.Level+roll.count+1)]
-[h:ab.SourceLib = json.get(json.path.read(getLibProperty("ms.Sources","Lib:pm.a5e.Core"),"[?(@.Name=='"+pm.RemoveSpecial(ab.Source)+"')]['Library']"),0)]
+[h:ab.SourceLib = json.get(json.path.read(data.getData("addon:","pm.a5e.core","ms.Sources"),"\$[?(@.Name=='"+pm.RemoveSpecial(ab.Source)+"')]['Library']"),0)]
 [h:ab.Master=""]
 [h:ab.DisplayName = ab.Name]
 [h:ab.Name = pm.RemoveSpecial(ab.Name)]
@@ -49,7 +49,7 @@
 		[h:abort(input(ab.MasterInput))]
 
 		[h,if(ab.MasterCreated==2): ab.MasterClass = ab.Class]
-		[h:ab.MasterOptions = json.toList(json.path.read(getLibProperty("sb.Abilities","Lib:pm.a5e.Core"),"[?(@.Class=='Background' && @.Subclass=="+ab.MasterClass+"')]['DisplayName']"))]
+		[h:ab.MasterOptions = json.toList(json.path.read(data.getData("addon:","pm.a5e.core","sb.Abilities"),"\$[?(@.Class=='Background' && @.Subclass=="+ab.MasterClass+"')]['DisplayName']"))]
 
 		[h:abort(input(
 			" ab.MasterName | "+ab.MasterOptions+" | Name of Master Feature | LIST | VALUE=STRING "))]
@@ -76,7 +76,7 @@
 		[h:abort(input(ab.ReplaceInput))]
 
 		[h,if(ab.ReplaceCreated==2): ab.ReplaceClass = ab.Class]
-		[h:ab.ReplaceOptions = json.toList(json.path.read(getLibProperty("sb.Abilities","Lib:pm.a5e.Core"),"[?(@.Class=='Background' && @.Subclass=='"+ab.ReplaceClass+"')]['DisplayName']"))]
+		[h:ab.ReplaceOptions = json.toList(json.path.read(data.getData("addon:","pm.a5e.core","sb.Abilities"),"\$[?(@.Class=='Background' && @.Subclass=='"+ab.ReplaceClass+"')]['DisplayName']"))]
 
 		[h:abort(input(
 			" ab.ReplaceName | "+ab.ReplaceOptions+" | Name of Replaced Feature | LIST | VALUE=STRING "

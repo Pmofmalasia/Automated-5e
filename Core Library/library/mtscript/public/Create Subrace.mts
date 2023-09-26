@@ -23,7 +23,7 @@
 	))]
 
 [h:sr.Final = json.set("","Name",pm.RemoveSpecial(sr.Name),"DisplayName",sr.Name,"FeatChoice",sr.FeatChoice,"Race",pm.RemoveSpecial(sr.Race))]
-[h:sr.SourcebookLib = json.get(json.path.read(getLibProperty("ms.Sources","Lib:pm.a5e.Core"),"[?(@.Name=='"+pm.RemoveSpecial(sr.Source)+"')]['Library']"),0)]
+[h:sr.SourcebookLib = json.get(json.path.read(data.getData("addon:","pm.a5e.core","ms.Sources"),"\$[?(@.Name=='"+pm.RemoveSpecial(sr.Source)+"')]['Library']"),0)]
 
 [h:sr.Base =  json.set("",
 	"Name",pm.RemoveSpecial(sr.Name)+"Traits",

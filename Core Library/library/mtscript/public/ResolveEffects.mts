@@ -77,8 +77,8 @@
 		[h:"<!-- TODO: Will need to add further info for resolving LinkedEffects of LinkedEffects that do not meet reqs, likely in the form of making a UDF that covers for here and later in ResolveEffects. -->"]
 
 		[h,if(!json.isEmpty(remainingTargetsList)):
-			setLibProperty("gd.Effects",json.path.set(getLibProperty("gd.Effects","Lib:pm.a5e.Core"),"[*][?(@.ID=="+effID+")]",effFull),"Lib:pm.a5e.Core");
-			setLibProperty("gd.Effects",json.path.delete(getLibProperty("gd.Effects","Lib:pm.a5e.Core"),"[*][?(@.ID=="+effID+")]"),"Lib:pm.a5e.Core")
+			setLibProperty("gd.Effects",json.path.set(data.getData("addon:","pm.a5e.core","gd.Effects"),"[*][?(@.ID=="+effID+")]",effFull),"Lib:pm.a5e.Core");
+			setLibProperty("gd.Effects",json.path.delete(data.getData("addon:","pm.a5e.core","gd.Effects"),"\$[*][?(@.ID=="+effID+")]"),"Lib:pm.a5e.Core")
 		]
 
 		[h:return(0,json.set("","Table","[]","FeatureData",ClassFeatureData,"Targets",effTargets))]
@@ -88,7 +88,7 @@
 	[h,if(json.type(effTargets)=="OBJECT"): assert(0,"Something unexpected happened: Effect Targets is an object without having a Parent Subeffect")]
 }]
 
-[h:LinkedEffects = json.path.read(data.getData("addon:","pm.a5e.core","gd.Effects"),"[*][?(@.ParentSubeffect == "+effID+")]")]
+[h:LinkedEffects = json.path.read(data.getData("addon:","pm.a5e.core","gd.Effects"),"\$[*][?(@.ParentSubeffect == '"+effID+"')]")]
 
 [h:effTargetSpecific = json.get(effToResolve,"TargetSpecificEffects")]
 [h:effConditionInfo = json.get(effToResolve,"ConditionInfo")]
@@ -502,9 +502,9 @@
 	)]
 	[h:effFull = json.remove(effFull,"SpecificTargets")]
 	
-	[h:setLibProperty("gd.Effects",json.path.set(getLibProperty("gd.Effects","Lib:pm.a5e.Core"),"[*][?(@.ID=="+effID+")]",effFull),"Lib:pm.a5e.Core")]
+	[h:setLibProperty("gd.Effects",json.path.set(data.getData("addon:","pm.a5e.core","gd.Effects"),"[*][?(@.ID=="+effID+")]",effFull),"Lib:pm.a5e.Core")]
 };{
-	[h:setLibProperty("gd.Effects",json.path.delete(getLibProperty("gd.Effects","Lib:pm.a5e.Core"),"[*][?(@.ID=="+effID+")]"),"Lib:pm.a5e.Core")]
+	[h:setLibProperty("gd.Effects",json.path.delete(data.getData("addon:","pm.a5e.core","gd.Effects"),"[*][?(@.ID=="+effID+")]"),"Lib:pm.a5e.Core")]
 }]
 
 [h,MACRO("BuildEffectsFrame@Lib:pm.a5e.Core"): ""]

@@ -8,7 +8,7 @@
 	"DisplayName",cloth.Name
 )]
 
-[h:cloth.SourcebookLib = json.get(json.path.read(getLibProperty("ms.Sources","Lib:pm.a5e.Core"),"[?(@.Name=='"+pm.RemoveSpecial(cloth.Source)+"')]['Library']"),0)]
+[h:cloth.SourcebookLib = json.get(json.path.read(data.getData("addon:","pm.a5e.core","ms.Sources"),"\$[?(@.Name=='"+pm.RemoveSpecial(cloth.Source)+"')]['Library']"),0)]
 [h:setLibProperty("sb.ClothingTypes",json.append(getLibProperty("sb.ClothingTypes","Lib:"+cloth.SourcebookLib),cloth.TypeData),"Lib:"+cloth.SourcebookLib)]
 
 [r:cloth.Name+" type from the sourcebook "+cloth.Source+" created."]

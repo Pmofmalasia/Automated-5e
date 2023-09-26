@@ -3,7 +3,7 @@
 [h:chosenEffect = json.get(macro.args,"Effect")]
 [h:EffectDisplay = json.get(macro.args,"DisplayName")]
 
-[h:incompleteEffects = getLibProperty("gd.Effects","Lib:pm.a5e.Core")]
+[h:incompleteEffects = data.getData("addon:","pm.a5e.core","gd.Effects")]
 [h,switch(resolveAllTest),CODE:
 	case 0:{
 		[h,switch(resolveHow),CODE:

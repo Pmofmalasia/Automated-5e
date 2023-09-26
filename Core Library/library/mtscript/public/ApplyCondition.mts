@@ -60,7 +60,7 @@
 	[h:AssociatedConditionsToAdd = json.path.read(AssociatedConditions,"\$[*][?(@.Name in "+AssociatedConditionNamesToAdd+")]")]
 
 	[h:newAssociatedConditions = "[]"]
-	[h,foreach(condition,AssociatedConditionsToAdd): newAssociatedConditions = json.merge(newAssociatedConditions,json.path.put(json.path.read(getLibProperty("sb.Conditions","Lib:pm.a5e.Core"),"\$[*][?(@.Name=='"+json.get(condition,"Name")+"' && @.Class=='"+json.get(condition,"Class")+"' && @.Subclass=='"+json.get(condition,"Subclass")+"')]"),"\$[*]","IsAssociated",1))]
+	[h,foreach(condition,AssociatedConditionsToAdd): newAssociatedConditions = json.merge(newAssociatedConditions,json.path.put(json.path.read(data.getData("addon:","pm.a5e.core","sb.Conditions"),"\$[*][?(@.Name=='"+json.get(condition,"Name")+"' && @.Class=='"+json.get(condition,"Class")+"' && @.Subclass=='"+json.get(condition,"Subclass")+"')]"),"\$[*]","IsAssociated",1))]
 	
 	[h:pm.PassiveFunction("ChangeCondGain")]
 	

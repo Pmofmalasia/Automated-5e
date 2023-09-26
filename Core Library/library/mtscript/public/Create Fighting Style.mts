@@ -17,7 +17,7 @@
 
 [h:ab.UpdateLevelOptions = string(ab.Level)]
 [h,count(20-ab.Level): ab.UpdateLevelOptions = listAppend(ab.UpdateLevelOptions,ab.Level+roll.count+1)]
-[h:ab.SourceLib = json.get(json.path.read(getLibProperty("ms.Sources","Lib:pm.a5e.Core"),"[?(@.Name=='"+pm.RemoveSpecial(ab.Source)+"')]['Library']"),0)]
+[h:ab.SourceLib = json.get(json.path.read(data.getData("addon:","pm.a5e.core","ms.Sources"),"\$[?(@.Name=='"+pm.RemoveSpecial(ab.Source)+"')]['Library']"),0)]
 [h:ab.Master=""]
 [h:ab.DisplayName = ab.Name]
 [h:ab.Name = pm.RemoveSpecial(ab.Name)]
@@ -59,7 +59,7 @@
 		[h:abort(input(ab.MasterInput))]
 		
 		[h:ab.MasterSubclass = pm.RemoveSpecial(ab.MasterSubclass)]
-		[h:ab.MasterOptions = json.toList(json.path.read(getLibProperty("sb.Abilities","Lib:pm.a5e.Core"),"[?(@.Class=='"+ab.MasterClass+"' && (@.Subclass==''|| @.Subclass=='"+ab.MasterSubclass+"'))]['DisplayName']"))]
+		[h:ab.MasterOptions = json.toList(json.path.read(data.getData("addon:","pm.a5e.core","sb.Abilities"),"\$[?(@.Class=='"+ab.MasterClass+"' && (@.Subclass==''|| @.Subclass=='"+ab.MasterSubclass+"'))]['DisplayName']"))]
 
 		[h:abort(input(
 			" ab.MasterName | "+ab.MasterOptions+" | Name of Master Feature | LIST | VALUE=STRING "))]
@@ -111,7 +111,7 @@
 		[h:abort(input(ab.ReplaceInput))]
 		
 		[h:ab.ReplaceSubclass = pm.RemoveSpecial(ab.ReplaceSubclass)]
-		[h:ab.ReplaceOptions = json.toList(json.path.read(getLibProperty("sb.Abilities","Lib:pm.a5e.Core"),"[?(@.Class=='"+ab.ReplaceClass+"' && (@.Subclass==''|| @.Subclass=='"+ab.ReplaceSubclass+"'))]['DisplayName']"))]
+		[h:ab.ReplaceOptions = json.toList(json.path.read(data.getData("addon:","pm.a5e.core","sb.Abilities"),"\$[?(@.Class=='"+ab.ReplaceClass+"' && (@.Subclass==''|| @.Subclass=='"+ab.ReplaceSubclass+"'))]['DisplayName']"))]
 
 		[h:abort(input(
 			" ab.ReplaceName | "+ab.ReplaceOptions+" | Name of Replaced Feature | LIST | VALUE=STRING "))]
@@ -143,7 +143,7 @@
 	[h:ab.Final = json.set(ab.Final,"Replace",ab.ReplaceFeature)]
 };{}]
 
-[h:FSGroups = json.path.read(getLibProperty("sb.Abilities","Lib:pm.a5e.Core"),"[*][?(@.FightingStyleList!=null && @.CreatedForMerging!=1)]","DEFAULT_PATH_LEAF_TO_NULL")]
+[h:FSGroups = json.path.read(data.getData("addon:","pm.a5e.core","sb.Abilities"),"\$[*][?(@.FightingStyleList!=null && @.CreatedForMerging!=1)]","DEFAULT_PATH_LEAF_TO_NULL")]
 [h:FSInput = "junkVar | -------------------- Features Associated With This Fighting Style -------------------- |  | LABEL | SPAN=TRUE "]
 [h,foreach(TempFSGroup,FSGroups),CODE:{
 	[h:TempSubclassDisplay = pm.GetDisplayName(json.get(TempFSGroup,"Subclass"),"sb.Subclasses")]
@@ -159,16 +159,16 @@
 
 [h,foreach(TempFSGroup,FSGroups),CODE:{
 	[h:CanUseFSTest = eval("choice."+json.get(TempFSGroup,"Name")+json.get(TempFSGroup,"Class")+json.get(TempFSGroup,"Subclass"))]
-	[h:LibHasPreviousData = !json.isEmpty(json.path.read(getLibProperty("sb.Abilities","Lib:"+ab.SourceLib),"[*][?(@.Name=='"+json.get(TempFSGroup,"Name")+"' && @.Class=='"+json.get(TempFSGroup,"Class")+"' && @.Subclass=='"+json.get(TempFSGroup,"Subclass")+"')]['FightingStyleList']"))]
+	[h:LibHasPreviousData = !json.isEmpty(json.path.read(getLibProperty("sb.Abilities","Lib:"+ab.SourceLib),"\$[*][?(@.Name=='"+json.get(TempFSGroup,"Name")+"' && @.Class=='"+json.get(TempFSGroup,"Class")+"' && @.Subclass=='"+json.get(TempFSGroup,"Subclass")+"')]['FightingStyleList']"))]
 	
 	[h,switch(CanUseFSTest+""+LibHasPreviousData),CODE:
 		case "11":{
-			[h:newFSList = json.append(json.get(json.path.read(getLibProperty("sb.Abilities","Lib:"+ab.SourceLib),"[*][?(@.Name=='"+json.get(TempFSGroup,"Name")+"' && @.Class=='"+json.get(TempFSGroup,"Class")+"' && @.Subclass=='"+json.get(TempFSGroup,"Subclass")+"')]['FightingStyleList']"),0),ab.Name)]
+			[h:newFSList = json.append(json.get(json.path.read(getLibProperty("sb.Abilities","Lib:"+ab.SourceLib),"\$[*][?(@.Name=='"+json.get(TempFSGroup,"Name")+"' && @.Class=='"+json.get(TempFSGroup,"Class")+"' && @.Subclass=='"+json.get(TempFSGroup,"Subclass")+"')]['FightingStyleList']"),0),ab.Name)]
 			[h:setLibProperty("sb.Abilities",json.path.set(getLibProperty("sb.Abilities","Lib:"+ab.SourceLib),"[*][?(@.Name=='"+json.get(TempFSGroup,"Name")+"' && @.Class=='"+json.get(TempFSGroup,"Class")+"' && @.Subclass=='"+json.get(TempFSGroup,"Subclass")+"')]['FightingStyleList']",newFSList),"Lib:"+ab.SourceLib)]
 		};
 		case "10":{
 			[h:newFSList = json.append("",ab.Name)]
-			[h:newFSGroupObj = json.set(json.get(json.path.read(getLibProperty("sb.Abilities","Lib:"+json.get(TempFSGroup,"Library")),"[*][?(@.Name=='"+json.get(TempFSGroup,"Name")+"' && @.Class=='"+json.get(TempFSGroup,"Class")+"' && @.Subclass=='"+json.get(TempFSGroup,"Subclass")+"')]"),0),"FightingStyleList",newFSList,"Library",ab.SourceLib,"CreatedForMerging",1)]
+			[h:newFSGroupObj = json.set(json.get(json.path.read(getLibProperty("sb.Abilities","Lib:"+json.get(TempFSGroup,"Library")),"\$[*][?(@.Name=='"+json.get(TempFSGroup,"Name")+"' && @.Class=='"+json.get(TempFSGroup,"Class")+"' && @.Subclass=='"+json.get(TempFSGroup,"Subclass")+"')]"),0),"FightingStyleList",newFSList,"Library",ab.SourceLib,"CreatedForMerging",1)]
 			[h:setLibProperty("sb.Abilities",json.append(getLibProperty("sb.Abilities","Lib:"+ab.SourceLib),newFSGroupObj),"Lib:"+ab.SourceLib)]
 		};
 		default:{}

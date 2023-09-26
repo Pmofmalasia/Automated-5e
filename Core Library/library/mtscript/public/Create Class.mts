@@ -22,7 +22,7 @@
 }]
 [h:cl.FinalPrereqs = json.set(cl.FinalPrereqs,"AllOrOne",cl.AllorOneFinal))]
 
-[h:cl.SourcebookLib = json.get(json.path.read(getLibProperty("ms.Sources","Lib:pm.a5e.Core"),"[?(@.Name=='"+pm.RemoveSpecial(cl.Source)+"')]['Library']"),0)]
+[h:cl.SourcebookLib = json.get(json.path.read(data.getData("addon:","pm.a5e.core","ms.Sources"),"[?(@.Name=='"+pm.RemoveSpecial(cl.Source)+"')]['Library']"),0)]
 
 [h:cl.Final = json.set("","Name",pm.RemoveSpecial(cl.Name),"DisplayName",cl.Name,"SubclassLevel",cl.SubclassLevel,"HitDie",cl.HitDie,"Prereqs",cl.FinalPrereqs)]
 

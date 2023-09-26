@@ -8,7 +8,7 @@
 	"DisplayName",obj.Name
 )]
 
-[h:obj.SourcebookLib = json.get(json.path.read(getLibProperty("ms.Sources","Lib:pm.a5e.Core"),"[?(@.Name=='"+pm.RemoveSpecial(obj.Source)+"')]['Library']"),0)]
+[h:obj.SourcebookLib = json.get(json.path.read(data.getData("addon:","pm.a5e.core","ms.Sources"),"\$[?(@.Name=='"+pm.RemoveSpecial(obj.Source)+"')]['Library']"),0)]
 [h:setLibProperty("sb.ObjectTypes",json.append(getLibProperty("sb.ObjectTypes","Lib:"+obj.SourcebookLib),obj.TypeData),"Lib:"+obj.SourcebookLib)]
 
 [r:obj.Name+" type from the sourcebook "+obj.Source+" created."]

@@ -3,7 +3,7 @@
 [h:abilityPriorData = arg(0)]
 [h:ParentToken=json.get(abilityPriorData,"ParentToken")]
 
-[h:abilityInfo = json.path.read(pm.a5e.TokenActiveConditions(ParentToken),"[*][?(@.Name=='"+abilityName+"' && @.Class=='"+abilityClass+"' && @.Subclass=='"+abilitySubclass+"' && @.IsActive>0)]")]
+[h:abilityInfo = json.path.read(pm.a5e.TokenActiveConditions(ParentToken),"\$[*][?(@.Name=='"+abilityName+"' && @.Class=='"+abilityClass+"' && @.Subclass=='"+abilitySubclass+"' && @.IsActive>0)]")]
 
 
 [h,if(json.isEmpty(abilityInfo)):
@@ -23,7 +23,7 @@
 [h:pm.a5e.OverarchingContext = json.get(arg(0),"OverarchingContext")]
 
 [h:Flavor=json.get(DisplayObject,"Flavor")]
-[h:DMOnly=if(json.get(DisplayObject,"DMOnly")=="",if(getProperty("a5e.stat.Allegiance")=="Enemy",min(number(getLibProperty("HideEnemyMacros","Lib:pm.a5e.Core")),1),if(getProperty("a5e.stat.Allegiance")=="Ally",min(number(getLibProperty("HideAllyMacros","Lib:pm.a5e.Core")),1),0)),json.get(DisplayObject,"DMOnly"))]
+[h:DMOnly=if(json.get(DisplayObject,"DMOnly")=="",if(getProperty("a5e.stat.Allegiance")=="Enemy",min(number(data.getData("addon:","pm.a5e.core","HideEnemyMacros")),1),if(getProperty("a5e.stat.Allegiance")=="Ally",min(number(data.getData("addon:","pm.a5e.core","HideAllyMacros")),1),0)),json.get(DisplayObject,"DMOnly"))]
 [h:BorderColorOverride=json.get(DisplayObject,"BorderColorOverride")]
 [h:TitleFontColorOverride=json.get(DisplayObject,"TitleFontColorOverride")]
 [h:AccentBackgroundOverride=json.get(DisplayObject,"AccentBackgroundOverride")]
@@ -36,7 +36,7 @@
 [h:ForcedSummonImage=json.get(DisplayObject,"ForcedSummonImage")]
 [h:ForcedSummonPortrait=json.get(DisplayObject,"ForcedSummonPortrait")]
 [h:ForcedSummonHandout=json.get(DisplayObject,"ForcedSummonHandout")]
-[h:ShowFullRules=if(IsTooltip,1,if(ShowFullRulesOverride=="",if(getLibProperty("ChatIndividual","Lib:pm.a5e.Core")==1,getProperty("a5e.stat.FullAbilityRules"),getLibProperty("FullAbilityRules","Lib:pm.a5e.Core")),ShowFullRulesOverride))]
+[h:ShowFullRules=if(IsTooltip,1,if(ShowFullRulesOverride=="",if(data.getData("addon:","pm.a5e.core","ChatIndividual")==1,getProperty("a5e.stat.FullAbilityRules"),data.getData("addon:","pm.a5e.core","FullAbilityRules")),ShowFullRulesOverride))]
 [h:abilityTable="[]"]
 
 [h:a5e.UnifiedAbilities = a5e.GatherAbilities(ParentToken)]
@@ -71,9 +71,9 @@
 			cond.LevelPath = pm.a5e.PathFeatureFilter(abilityInfo);
 			cond.LevelPath = pm.a5e.PathFeatureFilter(json.get(abilityInfo,"Master"))
 		]
-		[h:abilityLevel = json.get(json.path.read(getProperty("a5e.stat.AllFeatures"),"[*][?("+cond.LevelPath+")]['Level']"),0)]
+		[h:abilityLevel = json.get(json.path.read(getProperty("a5e.stat.AllFeatures"),"\$[*][?("+cond.LevelPath+")]['Level']"),0)]
 		[h,if(json.get(abilityInfo,"HasTiers")==1):
-			abilityTier = math.arraySum(json.path.read(getProperty("a5e.stat.ConditionList"),"[*][?(@.Name=='"+abilityName+"')]['Level']"));
+			abilityTier = math.arraySum(json.path.read(getProperty("a5e.stat.ConditionList"),"\$[*][?(@.Name=='"+abilityName+"')]['Level']"));
 			abilityTier = json.get(abilityInfo,"Level")
 		]
 		[h:switchToken(ParentToken)]		
@@ -84,7 +84,7 @@
 };{
 	[h:abilityLevel = json.get(abilityInfo,"Level")]
 	[h,if(json.get(abilityInfo,"HasTiers")==1):
-		abilityTier = math.arraySum(json.path.read(getProperty("a5e.stat.ConditionList"),"[*][?(@.Name=='"+abilityName+"')]['Level']"));
+		abilityTier = math.arraySum(json.path.read(getProperty("a5e.stat.ConditionList"),"\$[*][?(@.Name=='"+abilityName+"')]['Level']"));
 		abilityTier = abilityLevel
 	]
 	[h:SetByAbilities = "[]"]

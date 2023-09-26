@@ -31,7 +31,7 @@
 
 [h:effectID = json.get(SaveData,"ID")]
 [h,if(effectID==""),CODE:{};{
-	[h:rerolledEffect = json.path.set(getLibProperty("gd.Effects","Lib:pm.a5e.Core"),"[*][?(@.ID=="+effectID+")]['ToResolve']['SaveDC']['SavesMade']['"+ParentToken+"']",json.remove(SaveData,"EffectID"))]
+	[h:rerolledEffect = json.path.set(data.getData("addon:","pm.a5e.core","gd.Effects"),"[*][?(@.ID=="+effectID+")]['ToResolve']['SaveDC']['SavesMade']['"+ParentToken+"']",json.remove(SaveData,"EffectID"))]
 	[h:setLibProperty("gd.Effects",rerolledEffect,"Lib:pm.a5e.Core")]
 }]
 

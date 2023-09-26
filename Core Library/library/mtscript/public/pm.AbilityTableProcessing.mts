@@ -9,7 +9,7 @@
 [h:ShowFullRules = arg(2)]
 [h,if(argCount()>3): switchToken(arg(3))]
 
-[h:TableFormat='padding:3px; '+if(getLibProperty("VerticalDisplay","Lib:pm.a5e.Core")==1,"width:100%",if(getLibProperty("useWidth","Lib:pm.a5e.Core")==2,"",if(getLibProperty("useWidth","Lib:pm.a5e.Core")==1,"max-","")+'width:'+string(getLibProperty("DisplaySize","Lib:pm.a5e.Core"))+'px;'))]
+[h:TableFormat='padding:3px; '+if(data.getData("addon:","pm.a5e.core","VerticalDisplay")==1,"width:100%",if(data.getData("addon:","pm.a5e.core","useWidth")==2,"",if(data.getData("addon:","pm.a5e.core","useWidth")==1,"max-","")+'width:'+string(data.getData("addon:","pm.a5e.core","DisplaySize"))+'px;'))]
 
 [h:output.Temp=if(or(ShowFullRules,json.path.read(pm.AbilityTable,"[?(@.ShowIfCondensed>0)]")!="[]"),"<table style='"+TableFormat+"'>","")]
 [h:ContainsRollTest = if(json.path.read(pm.AbilityTable,"[?(@.ShowIfCondensed>0)]['RollContents']")!="[]",outputTest.NoFullMacro,outputTest.NoRules)]

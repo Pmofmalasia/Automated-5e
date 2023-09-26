@@ -1,8 +1,8 @@
 [h,if(argCount()>0): pm.KeyChoice = arg(0); pm.KeyChoice = ""]
 [h,if(pm.KeyChoice==""),CODE:{
-	[h: pm.Classes = getLibProperty("sb.Classes","Lib:pm.a5e.Core")]
+	[h: pm.Classes = data.getData("addon:","pm.a5e.core","sb.Classes")]
 };{
-	[h: pm.Classes = json.path.read(getLibProperty("sb.Classes","Lib:pm.a5e.Core"),"[*]."+pm.KeyChoice)]
+	[h: pm.Classes = json.path.read(data.getData("addon:","pm.a5e.core","sb.Classes"),"[*]."+pm.KeyChoice)]
 }]
 
 [h,if(argCount()>1): pm.Delim = arg(1) ; pm.Delim = if(pm.KeyChoice=="","json",",")]

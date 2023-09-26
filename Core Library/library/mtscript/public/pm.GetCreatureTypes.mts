@@ -1,8 +1,8 @@
 [h,if(argCount()>0): pm.KeyChoice = arg(0); pm.KeyChoice = ""]
 [h,if(pm.KeyChoice==""),CODE:{
-	[h:pm.CreatureTypes = getLibProperty("sb.CreatureTypes","Lib:pm.a5e.Core")]
+	[h:pm.CreatureTypes = data.getData("addon:","pm.a5e.core","sb.CreatureTypes")]
 };{
-	[h:pm.CreatureTypes = json.path.read(getLibProperty("sb.CreatureTypes","Lib:pm.a5e.Core"),"."+pm.KeyChoice)]
+	[h:pm.CreatureTypes = json.path.read(data.getData("addon:","pm.a5e.core","sb.CreatureTypes"),"."+pm.KeyChoice)]
 }]
 
 [h,if(argCount()>1): pm.Delim = arg(1) ; pm.Delim = if(pm.KeyChoice=="","json",",")]

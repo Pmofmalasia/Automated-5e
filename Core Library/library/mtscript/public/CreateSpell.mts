@@ -1,5 +1,5 @@
-[h,if(getLibProperty("ct.NewSpell","Lib:pm.a5e.Core")==""): setLibProperty("ct.NewSpell","{}","Lib:pm.a5e.Core")]
-[h:setLibProperty("ct.NewSpell",json.remove(getLibProperty("ct.NewSpell","Lib:pm.a5e.Core"),getPlayerName()),"Lib:pm.a5e.Core")]
+[h,if(data.getData("addon:","pm.a5e.core","ct.NewSpell")==""): setLibProperty("ct.NewSpell","{}","Lib:pm.a5e.Core")]
+[h:setLibProperty("ct.NewSpell",json.remove(data.getData("addon:","pm.a5e.core","ct.NewSpell"),getPlayerName()),"Lib:pm.a5e.Core")]
 
 [h:list1through9 = ""]
 [h,c(9): list1through9 = list1through9 + "<option value="+(roll.count+1)+">"+(roll.count+1)+"</option>"]
@@ -29,7 +29,7 @@
 
 [h:spellCreationHTML = spellCreationHTML + "<tr id='rowCastingClasses'><th text-align='center' colspan='2'>Appears on Base Spell List For:</th></tr>"]
 
-[h:UniqueSpellListFeatures = json.path.read(getLibProperty("sb.Abilities","Lib:pm.a5e.Core"),"[*][?(@.UniqueSpellList==1)]")]
+[h:UniqueSpellListFeatures = json.path.read(data.getData("addon:","pm.a5e.core","sb.Abilities"),"[*][?(@.UniqueSpellList==1)]")]
 [h,foreach(tempFeature,UniqueSpellListFeatures),CODE:{
 	[h:tempClassDisplayName = pm.GetDisplayName(json.get(tempFeature,"Class"),"sb.Classes")]
 	[h:tempSubclassDisplayName = pm.GetDisplayName(json.get(tempFeature,"Subclass"),"sb.Subclasses")]

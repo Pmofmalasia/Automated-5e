@@ -49,7 +49,7 @@
 	[h:SubeffectLinkOptions = "<option value=0>None</option>"]
 	[h,count(thisSubeffectNum - 1): SubeffectLinkOptions = SubeffectLinkOptions + "<option value="+(roll.count+1)+">"+(roll.count+1)+"</option>"]
 	
-	[h:CurrentFeatureData = getLibProperty("ct.New"+EffectType,"Lib:pm.a5e.Core")]
+	[h:CurrentFeatureData = data.getData("addon:","pm.a5e.core","ct.New"+EffectType)]
 	[h:thisPlayerCurrentFeatureData = json.get(CurrentFeatureData,getPlayerName())]
 	[h,switch(EffectType),CODE:
 		case "Spell": {

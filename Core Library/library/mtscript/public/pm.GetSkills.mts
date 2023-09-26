@@ -1,4 +1,4 @@
-[h,if(argCount()>0): pm.Skills = json.path.read(getLibProperty("sb.Skills","Lib:pm.a5e.Core"),"."+arg(0)) ; pm.Skills = getLibProperty("sb.Skills","Lib:pm.a5e.Core")]
+[h,if(argCount()>0): pm.Skills = json.path.read(data.getData("addon:","pm.a5e.core","sb.Skills"),"."+arg(0)) ; pm.Skills = data.getData("addon:","pm.a5e.core","sb.Skills")]
 
 [h,if(argCount() > 1): pm.Delim = arg(1) ; pm.Delim = if(argCount(),",","json")]
 [h,if(pm.Delim == "json"),CODE:{

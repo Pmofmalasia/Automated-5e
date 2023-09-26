@@ -57,7 +57,7 @@
 
 [h:abort(input(
 	ab.InputTitle,
-	"ab.FeatureName | "+json.toList(json.path.read(getLibProperty("sb.Abilities","Lib:pm.a5e.Core"),"[*][?(@.Class=='"+ab.FeatureClass+"' && @.Subclass=='"+ab.FeatureSubclass+"')]['DisplayName']"))+" | Choose a Feature | RADIO | VALUE=STRING "
+	"ab.FeatureName | "+json.toList(json.path.read(data.getData("addon:","pm.a5e.core","sb.Abilities"),"[*][?(@.Class=='"+ab.FeatureClass+"' && @.Subclass=='"+ab.FeatureSubclass+"')]['DisplayName']"))+" | Choose a Feature | RADIO | VALUE=STRING "
 ))]
 
 [h:macro.return = json.set("","Name",pm.RemoveSpecial(ab.FeatureName),"DisplayName",ab.FeatureName,"Type",ab.FeatureType,"Class",ab.FeatureClass,"Subclass",ab.FeatureSubclass)]

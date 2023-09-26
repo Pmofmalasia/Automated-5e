@@ -3,7 +3,7 @@
 	" nr.Source | "+pm.GetBookInfo("DisplayName")+" | Which sourcebook is the NPC race from | LIST | VALUE=STRING "
 	))]
 
-[h:nr.SourcebookLib = json.get(json.path.read(getLibProperty("ms.Sources","Lib:pm.a5e.Core"),"[?(@.Name=='"+pm.RemoveSpecial(nr.Source)+"')]['Library']"),0)]
+[h:nr.SourcebookLib = json.get(json.path.read(data.getData("addon:","pm.a5e.core","ms.Sources"),"\$[?(@.Name=='"+pm.RemoveSpecial(nr.Source)+"')]['Library']"),0)]
 
 [h:nr.Data = json.set("",
 			"Name",pm.RemoveSpecial(nr.Name),

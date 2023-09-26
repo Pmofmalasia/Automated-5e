@@ -1,5 +1,5 @@
-[h,if(getLibProperty("ct.NewFeature","Lib:pm.a5e.Core")==""): setLibProperty("ct.NewFeature","{}","Lib:pm.a5e.Core")]
-[h:setLibProperty("ct.NewFeature",json.remove(getLibProperty("ct.NewFeature","Lib:pm.a5e.Core"),getPlayerName()),"Lib:pm.a5e.Core")]
+[h,if(data.getData("addon:","pm.a5e.core","ct.NewFeature")==""): setLibProperty("ct.NewFeature","{}","Lib:pm.a5e.Core")]
+[h:setLibProperty("ct.NewFeature",json.remove(data.getData("addon:","pm.a5e.core","ct.NewFeature"),getPlayerName()),"Lib:pm.a5e.Core")]
 
 [h:list1through20 = ""]
 [h,c(20): list1through20 = list1through20 + "<option value="+(roll.count+1)+">"+(roll.count+1)+"</option>"]

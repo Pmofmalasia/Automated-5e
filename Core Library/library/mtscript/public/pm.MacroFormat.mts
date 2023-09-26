@@ -31,21 +31,21 @@
 [h,if(TitleColorOverride != ""): chat.Title = TitleColorOverride]
 
 [h,if(currentToken()!=""),CODE:{
-	[h:outputTest.NoRules = if(DMOnly,if(or(and(number(getLibProperty("HideEnemyMacros","Lib:pm.a5e.Core"))<1,getProperty("a5e.stat.Allegiance")=="Enemy"),and(number(getLibProperty("HideAllyMacros","Lib:pm.a5e.Core"))<1,getProperty("a5e.stat.Allegiance")=="Ally")),0,1),0)]
-	[h:outputTest.NoRolls = if(DMOnly,if(or(and(number(getLibProperty("HideEnemyMacros","Lib:pm.a5e.Core"))<2,getProperty("a5e.stat.Allegiance")=="Enemy"),and(number(getLibProperty("HideAllyMacros","Lib:pm.a5e.Core"))<2,getProperty("a5e.stat.Allegiance")=="Ally")),0,1),0)]
-	[h:outputTest.NoFullMacro = if(DMOnly,if(or(and(number(getLibProperty("HideEnemyMacros","Lib:pm.a5e.Core"))<3,getProperty("a5e.stat.Allegiance")=="Enemy"),and(number(getLibProperty("HideAllyMacros","Lib:pm.a5e.Core"))<3,getProperty("a5e.stat.Allegiance")=="Ally")),if(and(OnlyRules,outputTest.NoRules),1,0),1),0)]
+	[h:outputTest.NoRules = if(DMOnly,if(or(and(number(data.getData("addon:","pm.a5e.core","HideEnemyMacros"))<1,getProperty("a5e.stat.Allegiance")=="Enemy"),and(number(data.getData("addon:","pm.a5e.core","HideAllyMacros"))<1,getProperty("a5e.stat.Allegiance")=="Ally")),0,1),0)]
+	[h:outputTest.NoRolls = if(DMOnly,if(or(and(number(data.getData("addon:","pm.a5e.core","HideEnemyMacros"))<2,getProperty("a5e.stat.Allegiance")=="Enemy"),and(number(data.getData("addon:","pm.a5e.core","HideAllyMacros"))<2,getProperty("a5e.stat.Allegiance")=="Ally")),0,1),0)]
+	[h:outputTest.NoFullMacro = if(DMOnly,if(or(and(number(data.getData("addon:","pm.a5e.core","HideEnemyMacros"))<3,getProperty("a5e.stat.Allegiance")=="Enemy"),and(number(data.getData("addon:","pm.a5e.core","HideAllyMacros"))<3,getProperty("a5e.stat.Allegiance")=="Ally")),if(and(OnlyRules,outputTest.NoRules),1,0),1),0)]
 };{
 	[h:outputTest.NoRules = DMOnly]
 	[h:outputTest.NoRolls = DMOnly]
 	[h:outputTest.NoFullMacro = DMOnly]
 }]
 
-[h:width.Setting=if(getLibProperty("useWidth","Lib:pm.a5e.Core")==2,"",if(getLibProperty("useWidth","Lib:pm.a5e.Core")==1,"max-width:"+string(getLibProperty("DisplaySize","Lib:pm.a5e.Core"))+"px;",'width:'+string(getLibProperty("DisplaySize","Lib:pm.a5e.Core"))+'px;'))]
+[h:width.Setting=if(data.getData("addon:","pm.a5e.core","useWidth")==2,"",if(data.getData("addon:","pm.a5e.core","useWidth")==1,"max-width:"+string(data.getData("addon:","pm.a5e.core","DisplaySize"))+"px;",'width:'+string(data.getData("addon:","pm.a5e.core","DisplaySize"))+'px;'))]
 
 [h:output.PC = ""]
 [h:output.GM = ""]
 
-[h:output.Temp='<div style="background-color: '+chat.Border+'; color: '+chat.Title+'; padding-top:2px; padding-bottom:2px; padding-left:8px; padding-right:8px; font-family:'+if(TitleFont=="",json.get(getLibProperty("ChatFonts","Lib:pm.a5e.Core"),"Title"),TitleFont)+'; '+width.Setting+'">']
+[h:output.Temp='<div style="background-color: '+chat.Border+'; color: '+chat.Title+'; padding-top:2px; padding-bottom:2px; padding-left:8px; padding-right:8px; font-family:'+if(TitleFont=="",json.get(data.getData("addon:","pm.a5e.core","ChatFonts"),"Title"),TitleFont)+'; '+width.Setting+'">']
 [h:output.PC = if(outputTest.NoFullMacro,output.PC,output.PC+output.Temp)]
 [h:output.GM = output.GM + output.Temp]
 
@@ -53,20 +53,20 @@
 [h:output.PC = if(outputTest.NoFullMacro,output.PC,if(outputTest.NoRules,output.PC+"<b>"+FalseName+"</b>",output.PC+output.Temp))]
 [h:output.GM = output.GM + output.Temp]
 
-[h:output.Temp="<div style='background-color:"+if(getLibProperty("DarkMode","Lib:pm.a5e.Core")==1,json.get(getLibProperty("ChatColors","Lib:pm.a5e.Core"),'DarkBackground'),json.get(getLibProperty("ChatColors","Lib:pm.a5e.Core"),'LightBackground'))+'; color: '+if(getLibProperty("DarkMode","Lib:pm.a5e.Core")==1,json.get(getLibProperty("ChatColors","Lib:pm.a5e.Core"),'DarkText'),json.get(getLibProperty("ChatColors","Lib:pm.a5e.Core"),'LightText'))+'; padding:2px; width:100%; font-family:'+if(BodyFont=="",json.get(getLibProperty("ChatFonts","Lib:pm.a5e.Core"),"Body"),BodyFont)+"'>"]
+[h:output.Temp="<div style='background-color:"+if(data.getData("addon:","pm.a5e.core","DarkMode")==1,json.get(data.getData("addon:","pm.a5e.core","ChatColors"),'DarkBackground'),json.get(data.getData("addon:","pm.a5e.core","ChatColors"),'LightBackground'))+'; color: '+if(data.getData("addon:","pm.a5e.core","DarkMode")==1,json.get(data.getData("addon:","pm.a5e.core","ChatColors"),'DarkText'),json.get(data.getData("addon:","pm.a5e.core","ChatColors"),'LightText'))+'; padding:2px; width:100%; font-family:'+if(BodyFont=="",json.get(data.getData("addon:","pm.a5e.core","ChatFonts"),"Body"),BodyFont)+"'>"]
 
 [h:output.PC = if(outputTest.NoFullMacro,output.PC,output.PC+output.Temp)]
 [h:output.GM = output.GM + output.Temp]
 
-[h:output.Temp=if(Flavor=="","",'<div style="text-align:center; background-color:'+if(AccentBackgroundOverride=="",if(getLibProperty("DarkMode","Lib:pm.a5e.Core")==1,json.get(getLibProperty("ChatColors","Lib:pm.a5e.Core"),"DarkAccentBackground"),json.get(getLibProperty("ChatColors","Lib:pm.a5e.Core"),"LightAccentBackground")),AccentBackgroundOverride)+"; color:"+if(AccentTextOverride=="",if(getLibProperty("DarkMode","Lib:pm.a5e.Core")==1,json.get(getLibProperty("ChatColors","Lib:pm.a5e.Core"),"DarkAccentText"),json.get(getLibProperty("ChatColors","Lib:pm.a5e.Core"),"LightAccentText")),AccentTextOverride)+';">'+"<i>"+Flavor+"</i></div>")]
+[h:output.Temp=if(Flavor=="","",'<div style="text-align:center; background-color:'+if(AccentBackgroundOverride=="",if(data.getData("addon:","pm.a5e.core","DarkMode")==1,json.get(data.getData("addon:","pm.a5e.core","ChatColors"),"DarkAccentBackground"),json.get(data.getData("addon:","pm.a5e.core","ChatColors"),"LightAccentBackground")),AccentBackgroundOverride)+"; color:"+if(AccentTextOverride=="",if(data.getData("addon:","pm.a5e.core","DarkMode")==1,json.get(data.getData("addon:","pm.a5e.core","ChatColors"),"DarkAccentText"),json.get(data.getData("addon:","pm.a5e.core","ChatColors"),"LightAccentText")),AccentTextOverride)+';">'+"<i>"+Flavor+"</i></div>")]
 [h:output.PC = if(outputTest.NoFullMacro,output.PC,output.PC+output.Temp)]
 [h:output.GM = output.GM + output.Temp]
 
-[h:BackgroundColor = if(getLibProperty("DarkMode","Lib:pm.a5e.Core")==1,json.get(getLibProperty("ChatColors","Lib:pm.a5e.Core"),'DarkBackground'),json.get(getLibProperty("ChatColors","Lib:pm.a5e.Core"),'LightBackground'))]
-[h:BackgroundText = if(getLibProperty("DarkMode","Lib:pm.a5e.Core")==1,json.get(getLibProperty("ChatColors","Lib:pm.a5e.Core"),'DarkText'),json.get(getLibProperty("ChatColors","Lib:pm.a5e.Core"),'LightText'))]
-[h:BackgroundFormat="background-color:"+BackgroundColor+'; color: '+BackgroundText+'; padding:2px; font-family:'+if(BodyFont=="",json.get(getLibProperty("ChatFonts","Lib:pm.a5e.Core"),"Body"),BodyFont)]
+[h:BackgroundColor = if(data.getData("addon:","pm.a5e.core","DarkMode")==1,json.get(data.getData("addon:","pm.a5e.core","ChatColors"),'DarkBackground'),json.get(data.getData("addon:","pm.a5e.core","ChatColors"),'LightBackground'))]
+[h:BackgroundText = if(data.getData("addon:","pm.a5e.core","DarkMode")==1,json.get(data.getData("addon:","pm.a5e.core","ChatColors"),'DarkText'),json.get(data.getData("addon:","pm.a5e.core","ChatColors"),'LightText'))]
+[h:BackgroundFormat="background-color:"+BackgroundColor+'; color: '+BackgroundText+'; padding:2px; font-family:'+if(BodyFont=="",json.get(data.getData("addon:","pm.a5e.core","ChatFonts"),"Body"),BodyFont)]
 
-[h:AccentText = if(AccentTextOverride=="",if(getLibProperty("DarkMode","Lib:pm.a5e.Core")==1,json.get(getLibProperty("ChatColors","Lib:pm.a5e.Core"),"DarkAccentText"),json.get(getLibProperty("ChatColors","Lib:pm.a5e.Core"),"LightAccentText")),AccentTextOverride)]
-[h:AccentColor = if(AccentBackgroundOverride=="",if(getLibProperty("DarkMode","Lib:pm.a5e.Core")==1,json.get(getLibProperty("ChatColors","Lib:pm.a5e.Core"),"DarkAccentBackground"),json.get(getLibProperty("ChatColors","Lib:pm.a5e.Core"),"LightAccentBackground")),AccentBackgroundOverride)]
+[h:AccentText = if(AccentTextOverride=="",if(data.getData("addon:","pm.a5e.core","DarkMode")==1,json.get(data.getData("addon:","pm.a5e.core","ChatColors"),"DarkAccentText"),json.get(data.getData("addon:","pm.a5e.core","ChatColors"),"LightAccentText")),AccentTextOverride)]
+[h:AccentColor = if(AccentBackgroundOverride=="",if(data.getData("addon:","pm.a5e.core","DarkMode")==1,json.get(data.getData("addon:","pm.a5e.core","ChatColors"),"DarkAccentBackground"),json.get(data.getData("addon:","pm.a5e.core","ChatColors"),"LightAccentBackground")),AccentBackgroundOverride)]
 
 [h:macro.return = json.set("","AccentColor",AccentColor,"AccentText",AccentText,"BackgroundColor",BackgroundColor,"BackgroundText",BackgroundText,"NoFullMacro",outputTest.NoFullMacro,"NoRolls",outputTest.NoRolls,"NoRules",outputTest.NoRules,"Output",json.set("","Player",output.PC,"GM",output.GM))]

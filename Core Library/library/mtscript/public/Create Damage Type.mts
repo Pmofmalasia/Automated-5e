@@ -17,7 +17,7 @@
 	[h:DamageTypeTagsChosen = json.append(DamageTypeTagsChosen,macro.return)]
 };{}]
 
-[h:sp.SourcebookLib = json.get(json.path.read(getLibProperty("ms.Sources","Lib:pm.a5e.Core"),"[?(@.Name=='"+pm.RemoveSpecial(sp.Source)+"')]['Library']"),0)]
+[h:sp.SourcebookLib = json.get(json.path.read(data.getData("addon:","pm.a5e.core","ms.Sources"),"[?(@.Name=='"+pm.RemoveSpecial(sp.Source)+"')]['Library']"),0)]
 
 [h:damageData = json.set("",
 	"Name",pm.RemoveSpecial(sp.Name),

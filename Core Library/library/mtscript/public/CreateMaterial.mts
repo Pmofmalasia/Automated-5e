@@ -25,7 +25,7 @@
 	"Tags",MaterialTagsChosen
 )]
 
-[h:mat.SourcebookLib = json.get(json.path.read(getLibProperty("ms.Sources","Lib:pm.a5e.Core"),"[?(@.Name=='"+pm.RemoveSpecial(mat.Source)+"')]['Library']"),0)]
+[h:mat.SourcebookLib = json.get(json.path.read(data.getData("addon:","pm.a5e.core","ms.Sources"),"\$[?(@.Name=='"+pm.RemoveSpecial(mat.Source)+"')]['Library']"),0)]
 [h:setLibProperty("sb.ObjectMaterials",json.append(getLibProperty("sb.ObjectMaterials","Lib:"+mat.SourcebookLib),mat.MaterialData),"Lib:"+mat.SourcebookLib)]
 
 [r:mat.Name+" material from the sourcebook "+mat.Source+" created."]

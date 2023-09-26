@@ -50,7 +50,7 @@
 		}
 	]
 
-	[h:rerolledEffect = json.path.set(getLibProperty("gd.Effects","Lib:pm.a5e.Core"),rerollEffectPath,json.remove(TestData,"ID"))]
+	[h:rerolledEffect = json.path.set(data.getData("addon:","pm.a5e.core","gd.Effects"),rerollEffectPath,json.remove(TestData,"ID"))]
 	[h:setLibProperty("gd.Effects",rerolledEffect,"Lib:pm.a5e.Core")]
 }]
 

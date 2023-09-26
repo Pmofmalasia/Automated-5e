@@ -1,9 +1,9 @@
 [h:pm.AbilityTable=arg(0)]
 
-[h:AccentFormat="text-align:center; background-color:"+AccentColor+"; color:"+AccentText+";"+if(getLibProperty("VerticalDisplay","Lib:pm.a5e.Core"),""," width:20%;")]
+[h:AccentFormat="text-align:center; background-color:"+AccentColor+"; color:"+AccentText+";"+if(data.getData("addon:","pm.a5e.core","VerticalDisplay"),""," width:20%;")]
 
 [h:VerticalFormat=if(
-getLibProperty("VerticalDisplay","Lib:pm.a5e.Core")==1,"</th></tr><tr style='text-align:center;'><td style='","</th><td style='padding-left:4px; valign:middle;")]
+data.getData("addon:","pm.a5e.core","VerticalDisplay")==1,"</th></tr><tr style='text-align:center;'><td style='","</th><td style='padding-left:4px; valign:middle;")]
 
 [h:pm.MaxColNumTemp = json.path.read(pm.AbilityTable,"[*][?(@.BonusSectionNum!=null)]['BonusSectionNum']","DEFAULT_PATH_LEAF_TO_NULL")]
 [h,if(json.isEmpty(pm.MaxColNumTemp)): pm.MaxColNum = 2; pm.MaxColNum = math.arrayMax(pm.MaxColNumTemp)+2]
@@ -23,7 +23,7 @@ getLibProperty("VerticalDisplay","Lib:pm.a5e.Core")==1,"</th></tr><tr style='tex
 	[h:output.GM = if(showLineTest,output.GM + output.Temp,output.GM)]
 
 	[h:output.Temp = VerticalFormat+"'"+if(
-getLibProperty("VerticalDisplay","Lib:pm.a5e.Core")==1,""," colspan='"+(pm.MaxColNum-1-pm.BonusSections)+"'")+">"]
+data.getData("addon:","pm.a5e.core","VerticalDisplay")==1,""," colspan='"+(pm.MaxColNum-1-pm.BonusSections)+"'")+">"]
 	[h:output.PC = if(and(showPCsLineTest,showLineTest),output.PC+output.Temp,output.PC)]
 	[h:output.GM = if(showLineTest,output.GM + output.Temp,output.GM)]
 

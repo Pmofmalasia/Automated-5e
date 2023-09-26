@@ -11,7 +11,7 @@
 [h:effectInitiativeFilters = json.get(allValidationInfo,"InitiativeFilters")]
 [h:effectConcFilters = json.get(allValidationInfo,"ConcFilters")]
 
-[h:allEffects = getLibProperty("gd.Effects","Lib:pm.a5e.Core")]
+[h:allEffects = data.getData("addon:","pm.a5e.core","gd.Effects")]
 
 [h:effectFilter = ""]
 [h:"<!-- effectIDOptions exists instead of just using that ID in the first place for situations like Battle Master maneuvers activated through a link following an attack that might apply to any of the attacks made. If effectIDOptions is only one ID, it should just return that ID without requiring an input. -->"]

@@ -8,7 +8,7 @@
 	"DisplayName",arm.Name
 )]
 
-[h:arm.SourcebookLib = json.get(json.path.read(getLibProperty("ms.Sources","Lib:pm.a5e.Core"),"[?(@.Name=='"+pm.RemoveSpecial(arm.Source)+"')]['Library']"),0)]
+[h:arm.SourcebookLib = json.get(json.path.read(data.getData("addon:","pm.a5e.core","ms.Sources"),"\$[?(@.Name=='"+pm.RemoveSpecial(arm.Source)+"')]['Library']"),0)]
 [h:setLibProperty("sb.ArmorProperties",json.append(getLibProperty("sb.ArmorProperties","Lib:"+arm.SourcebookLib),arm.TypeData),"Lib:"+arm.SourcebookLib)]
 
 [r:arm.Name+" armor property from the sourcebook "+arm.Source+" created."]

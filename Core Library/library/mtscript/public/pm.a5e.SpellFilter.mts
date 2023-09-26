@@ -1,6 +1,6 @@
 [h:SpellFilterData = arg(0)]
 [h:InitialSpellList = json.get(SpellFilterData,"List")]
-[h,if(InitialSpellList == ""): InitialSpellList = getLibProperty("sb.Spells","Lib:pm.a5e.Core")]
+[h,if(InitialSpellList == ""): InitialSpellList = data.getData("addon:","pm.a5e.core","sb.Spells")]
 [h:SpellFilter = json.get(SpellFilterData,"Filter")]
 
 [h:ClassFilter = json.get(SpellFilter,"Class")]

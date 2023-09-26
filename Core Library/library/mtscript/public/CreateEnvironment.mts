@@ -8,7 +8,7 @@
 	"DisplayName",Name
 )]
 
-[h:SourcebookLib = json.get(json.path.read(getLibProperty("ms.Sources","Lib:pm.a5e.Core"),"\$[?(@.Name=='"+pm.RemoveSpecial(Source)+"')]['Library']"),0)]
+[h:SourcebookLib = json.get(json.path.read(data.getData("addon:","pm.a5e.core","ms.Sources"),"\$[?(@.Name=='"+pm.RemoveSpecial(Source)+"')]['Library']"),0)]
 [h:setLibProperty("sb.Environments",json.append(getLibProperty("sb.Environments","Lib:"+SourcebookLib),EnvironmentData),"Lib:"+SourcebookLib)]
 
 [r:Name+" environment from the sourcebook "+Source+" created."]

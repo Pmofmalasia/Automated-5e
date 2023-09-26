@@ -7,7 +7,7 @@
 [h,switch(EffectToModifySource),CODE:
     case "ID":{
         [h:EffectID = json.get(EffectToModifyData,"ID")]
-        [h:currentEffects = getLibProperty("gd.Effects","Lib:pm.a5e.Core")]
+        [h:currentEffects = data.getData("addon:","pm.a5e.core","gd.Effects")]
         [h:EffectToModify = json.get(json.path.read(currentEffects,"[*][?(@.ID=="+EffectID+")]"),0)]
         [h:HasToResolveTest = json.get(EffectToModify,"ToResolve") != ""]
         [h,if(HasToResolveTest):

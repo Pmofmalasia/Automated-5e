@@ -1,4 +1,4 @@
-[h:SharedMonsterFeatureArray = json.sort(getLibProperty("sb.MonsterFeatures","Lib:pm.a5e.Core"),"a","DisplayName")]
+[h:SharedMonsterFeatureArray = json.sort(data.getData("addon:","pm.a5e.core","sb.MonsterFeatures"),"a","DisplayName")]
 
 [h:SharedMonsterFeatureList = json.path.read(SharedMonsterFeatureArray,"[*]['DisplayName']")]
 

@@ -5,7 +5,7 @@
 	" sk.Source | "+pm.GetBookInfo("DisplayName")+" | Which sourcebook is the skill from | LIST | VALUE=STRING "
 	))]
 
-[h:sk.SourcebookLib = json.get(json.path.read(getLibProperty("ms.Sources","Lib:pm.a5e.Core"),"[?(@.Name=='"+pm.RemoveSpecial(sk.Source)+"')]['Library']"),0)]
+[h:sk.SourcebookLib = json.get(json.path.read(data.getData("addon:","pm.a5e.core","ms.Sources"),"\$[?(@.Name=='"+pm.RemoveSpecial(sk.Source)+"')]['Library']"),0)]
 
 [h,if(sk.SkillType == "Skill"),CODE:{
 	[h:setLibProperty("sb.Skills",

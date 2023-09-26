@@ -3,7 +3,7 @@
 	" typeSource | "+pm.GetBookInfo("DisplayName")+" | Which sourcebook is the tool type from | LIST | VALUE=STRING "
 ))]
 	
-[h:tool.SourcebookLib = json.get(json.path.read(getLibProperty("ms.Sources","Lib:pm.a5e.Core"),"[?(@.Name=='"+pm.RemoveSpecial(typeSource)+"')]['Library']"),0)]
+[h:tool.SourcebookLib = json.get(json.path.read(data.getData("addon:","pm.a5e.core","ms.Sources"),"\$[?(@.Name=='"+pm.RemoveSpecial(typeSource)+"')]['Library']"),0)]
 
 [h:toolData = json.set("",
 	"Name",pm.RemoveSpecial(typeName),

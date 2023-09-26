@@ -12,7 +12,7 @@
 	[h,if(ItemChoiceID=="@@ImpromptuItem"),CODE:{
 		[h:ChosenItem = "<!-- To implement later -->"]
 	};{
-		[h:ChosenItem = json.get(json.path.read(getLibProperty("sb.Objects","Lib:pm.a5e.Core"),"\$[*][?(@.ObjectID == '"+ItemChoiceID+"')]"),0)]
+		[h:ChosenItem = json.get(json.path.read(data.getData("addon:","pm.a5e.core","sb.Objects"),"\$[*][?(@.ObjectID == '"+ItemChoiceID+"')]"),0)]
 		[h,if(json.get(AddItemData,"DisplayName")!=""): ChosenItem = json.set(ChosenItem,"DisplayName",json.get(AddItemData,"DisplayName"))]
 		[h,if(json.get(AddItemData,"FalseName")!=""): ChosenItem = json.set(ChosenItem,"FalseName",json.get(AddItemData,"FalseName"))]
 	}]	

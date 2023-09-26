@@ -162,7 +162,7 @@
 [h,if(ForcedClass=="" || ForcedLevel=="" || MultiEffectChoiceTest==1),CODE:{
 	[h,if(IsCantrip && json.length(ClassOptionsArray) < 3 && MultiEffectChoiceTest == 0 && disPassiveChoices == ""),CODE:{
 		[h:sLevelSelect = "Cantrip"]
-		[h:sRulesShow = getLibProperty("FullSpellRules","Lib:pm.a5e.Core")]
+		[h:sRulesShow = data.getData("addon:","pm.a5e.core","FullSpellRules")]
 	};{
 		[h:abort(input(
 			"junk|<-- Link to Compendium|<html>"+CompendiumLink+"</html>|LABEL",
@@ -171,7 +171,7 @@
 			"junkVar|"+SpellDisplayName+" ("+SpellLevel+") "+School+"|Spell|LABEL",
 			disSpellClassSelect,
 			disSpellLevelSelect,
-			"sRulesShow| "+(getLibProperty("FullSpellRules","Lib:pm.a5e.Core"))+" |Show Full Spell Rules|CHECK|",
+			"sRulesShow| "+(data.getData("addon:","pm.a5e.core","FullSpellRules"))+" |Show Full Spell Rules|CHECK|",
 			disCompConsumed,
 			disSpellEffectChoices,
 			disPassiveBars,
@@ -182,7 +182,7 @@
 	[h:sClassSelect = if(ForcedClass!="",ForcedClass,"")]
 	[h:sLevelSelect = ForcedLevel]
 	[h,if(IsCantrip): sLevelSelect = "Cantrip"]
-	[h:sRulesShow = getLibProperty("FullSpellRules","Lib:pm.a5e.Core")]
+	[h:sRulesShow = data.getData("addon:","pm.a5e.core","FullSpellRules")]
 	[h:abort(input(
 		disPassiveBars,
 		disPassiveChoices
@@ -292,18 +292,18 @@
 
 [h:"<!-- PrimeStat selection has multiple failsafes for selection. Currently, sClassSelectData should always be an object with either CastAsClass or PrimeStat present. The other paths serve as backups with possible future use. -->"]
 [h,if(json.type(sClassSelectData)=="UNKNOWN"),CODE:{
-	[h:PrimeStat = json.get(getLibProperty("sb.CastingAbilities","Lib:pm.a5e.Core"),sClassSelect)]
+	[h:PrimeStat = json.get(data.getData("addon:","pm.a5e.core","sb.CastingAbilities"),sClassSelect)]
 	[h:PrimeStat = if(PrimeStat=="","None",PrimeStat)]
 	[h,if(PrimeStat == "None"): PrimeStatMod = 0; PrimeStatMod = json.get(getProperty("a5e.stat.AtrMods"),PrimeStat)]
 	[h:pm.PassiveFunction("SpellStat")]
 };{
 	[h,if(json.get(sClassSelectData,"CastAsClass")==""),CODE:{
 		[h,if(json.get(sClassSelectData,"PrimeStat")==""):
-			PrimeStat = json.get(getLibProperty("sb.CastingAbilities","Lib:pm.a5e.Core"),json.get(sClassSelectData,"Class"));
+			PrimeStat = json.get(data.getData("addon:","pm.a5e.core","sb.CastingAbilities"),json.get(sClassSelectData,"Class"));
 			PrimeStat = json.get(sClassSelectData,"PrimeStat")
 		]
 	};{
-		[h:PrimeStat = json.get(getLibProperty("sb.CastingAbilities","Lib:pm.a5e.Core"),json.get(sClassSelectData,"CastAsClass"))]
+		[h:PrimeStat = json.get(data.getData("addon:","pm.a5e.core","sb.CastingAbilities"),json.get(sClassSelectData,"CastAsClass"))]
 	}]
 
 	[h,if(json.get(sClassSelectData,"Class") == "Item" && json.get(sClassSelectData,"CastAsClass") == ""),CODE:{

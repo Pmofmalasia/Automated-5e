@@ -8,6 +8,8 @@
 [h,if(OldMacroSettings == "[]"): OldMacroSettings="{}";  OldMacroSettings=json.get(OldMacroSettings,0)] 
 
 [h:choice.DM = 0]
+[h:CurrentFontOptions = data.getData("addon:","pm.a5e.core","FontOptions")]
+[h:CurrentAuraOptions = data.getData("addon:","pm.a5e.core","AuraOptions")]
 [h:abort(input(
 	"junkVar | -------------- Settings by Button: 0 or Blank to Use Defaults -------------- | | LABEL | SPAN=TRUE ",
 	if(isGM(),"choice.DM | "+if(json.get(OldMacroSettings,"DMOnly")=="",if(getProperty("a5e.stat.Allegiance")=="Enemy",1,0),json.get(OldMacroSettings,"DMOnly"))+" | Separate DM and player outputs | CHECK ","")+"",
@@ -17,9 +19,9 @@
 	"choice.TitleColor | "+json.get(OldMacroSettings,"TitleFontColorOverride")+" | Title Text Color",
 	"choice.AccentColor | "+json.get(OldMacroSettings,"AccentBackgroundOverride")+" | Accent Color",
 	"choice.AccentTextColor | "+json.get(OldMacroSettings,"AccentTextColorOverride")+" | Accent Text Color",
-	"choice.TitleFont | "+getLibProperty("FontOptions","Lib:pm.a5e.Core")+" | Title Font | LIST | SELECT="+if(listFind(getLibProperty("FontOptions","Lib:pm.a5e.Core"),json.get(OldMacroSettings,"TitleFont"))==-1,0,listFind(getLibProperty("FontOptions","Lib:pm.a5e.Core"),json.get(OldMacroSettings,"TitleFont")))+" VALUE=STRING",
-	"choice.BodyFont | "+getLibProperty("FontOptions","Lib:pm.a5e.Core")+" | Body Font | LIST | SELECT="+if(listFind(getLibProperty("FontOptions","Lib:pm.a5e.Core"),json.get(OldMacroSettings,"BodyFont"))==-1,0,listFind(getLibProperty("FontOptions","Lib:pm.a5e.Core"),json.get(OldMacroSettings,"BodyFont")))+" VALUE=STRING",
-	"choice.AuraColor | "+getLibProperty("AuraOptions","Lib:pm.a5e.Core")+" | Aura Color | LIST | SELECT="+if(listFind(getLibProperty("AuraOptions","Lib:pm.a5e.Core"),json.get(OldMacroSettings,"AuraColor"))==-1,0,listFind(getLibProperty("AuraOptions","Lib:pm.a5e.Core"),json.get(OldMacroSettings,"AuraColor")))+" VALUE=STRING"
+	"choice.TitleFont | "+CurrentFontOptions+" | Title Font | LIST | SELECT="+if(listFind(CurrentFontOptions,json.get(OldMacroSettings,"TitleFont"))==-1,0,listFind(CurrentFontOptions,json.get(OldMacroSettings,"TitleFont")))+" VALUE=STRING",
+	"choice.BodyFont | "+CurrentFontOptions+" | Body Font | LIST | SELECT="+if(listFind(CurrentFontOptions,json.get(OldMacroSettings,"BodyFont"))==-1,0,listFind(CurrentFontOptions,json.get(OldMacroSettings,"BodyFont")))+" VALUE=STRING",
+	"choice.AuraColor | "+CurrentAuraOptions+" | Aura Color | LIST | SELECT="+if(listFind(CurrentAuraOptions,json.get(OldMacroSettings,"AuraColor"))==-1,0,listFind(CurrentAuraOptions,json.get(OldMacroSettings,"AuraColor")))+" VALUE=STRING"
 	))]
 
 [h:SettingsInfo = json.set("",

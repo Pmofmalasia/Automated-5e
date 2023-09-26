@@ -198,7 +198,7 @@
 [h:"<!-- See 'Create Fighting Style' macro for reasoning. -->"]
 [h,if(ab.IsFightingStyles),CODE:{
 	[h:fs.Input = " junkVar | ----------------------------- Choose Fighting Style Options ----------------------------- |  | LABEL | SPAN=TRUE "]
-	[h:FightingStyleOptions = json.path.read(getLibProperty("sb.Abilities","Lib:pm.a5e.Core"),"[*][?(@.Class == 'FightingStyle')]")]
+	[h:FightingStyleOptions = json.path.read(data.getData("addon:","pm.a5e.core","sb.Abilities"),"\$[*][?(@.Class == 'FightingStyle')]")]
 	[h,foreach(TempFS,FightingStyleOptions): fs.Input = listAppend(fs.Input," pm.Choose"+json.get(TempFS,"Name")+" |  | "+json.get(TempFS,"DisplayName")+" | CHECK ","##")]
 	
 	[h:abort(input(fs.Input," junkVar | Note: Any fighting styles not added previously can be added to this list on fighting style creaton. |  | LABEL | SPAN=TRUE "))]
@@ -323,7 +323,7 @@
 		]
 		[h:ab.PrereqFeatureSubclass = if(ab.PrereqFeatureSubclass=="None","",pm.RemoveSpecial(ab.PrereqFeatureSubclass))]
 		
-		[h:ab.PrereqFeatureOptions = json.toList(json.path.read(getLibProperty("sb.Abilities","Lib:pm.a5e.Core"),"[?(@.Class=='"+ab.PrereqFeatureClass+"' && (@.Subclass==''|| @.Subclass=='"+ab.PrereqFeatureSubclass+"'))]['DisplayName']"))]
+		[h:ab.PrereqFeatureOptions = json.toList(json.path.read(data.getData("addon:","pm.a5e.core","sb.Abilities"),"\$[?(@.Class=='"+ab.PrereqFeatureClass+"' && (@.Subclass==''|| @.Subclass=='"+ab.PrereqFeatureSubclass+"'))]['DisplayName']"))]
 		[h:abort(input(
 			" ab.PrereqFeatureName | "+ab.PrereqFeatureOptions+" | Name of Prerequiste Feature | LIST | VALUE=STRING ",
 			" ab.AbilityPrereq | No,Yes,Yes - Use Same Filter | Add Additional Prerequisite Feature | RADIO "
@@ -911,7 +911,7 @@
 [h:MoreAbilitiesTest = 2]
 [h:AbilitiesAffected = ""]
 [h,while(ab.OtherAbilities && MoreAbilitiesTest!=0),CODE:{
-	[h,if(AbilitiesAffected!=""): otherAbInput = " junkVar | "+json.toList(json.path.read(AbilitiesAffected,"[*]['DisplayName']"))+" | Features Chosen | LABEL ## MoreAbilitiesTest | No,Yes,Yes - Same Filter | Add more features | RADIO "; otherAbInput = ""]
+	[h,if(AbilitiesAffected!=""): otherAbInput = " junkVar | "+json.toList(json.path.read(AbilitiesAffected,"\$[*]['DisplayName']"))+" | Features Chosen | LABEL ## MoreAbilitiesTest | No,Yes,Yes - Same Filter | Add more features | RADIO "; otherAbInput = ""]
 	
 	[h:abort(input(otherAbInput))]
 	
@@ -930,22 +930,22 @@
 		[h:AbilitiesAffected = json.append(AbilitiesAffected,json.set(macro.return,"AfterFeature",ab.AfterFeature,"FeatureChoiceNum",ab.FeatureChoiceNum))]
 	};{
 		[h:"<!-- Checks for whether each instance is present in chosen abilities, then deletes data used to track the choice itself so it is not in the end ability object. Commented because this seems like a dumb way to do it but I didn't think of anything better so here it is. -->"]
-		[h:ab.AfterFeatureOptions = json.path.read(AbilitiesAffected,"[*][?(@.AfterFeature==1)]")]
-		[h:ab.AfterFeatureOptions = json.path.delete(ab.AfterFeatureOptions,"[*]['AfterFeature']")]
-		[h:ab.AfterFeatureOptions = json.path.delete(ab.AfterFeatureOptions,"[*]['FeatureChoiceNum']")]
-		[h:ab.FeatureChoiceNumOptions = json.path.read(AbilitiesAffected,"[*][?(@.FeatureChoiceNum==1)]")]
-		[h:ab.FeatureChoiceNumOptions = json.path.delete(ab.FeatureChoiceNumOptions,"[*]['AfterFeature']")]
-		[h:ab.FeatureChoiceNumOptions = json.path.delete(ab.FeatureChoiceNumOptions,"[*]['FeatureChoiceNum']")]
+		[h:ab.AfterFeatureOptions = json.path.read(AbilitiesAffected,"\$[*][?(@.AfterFeature==1)]")]
+		[h:ab.AfterFeatureOptions = json.path.delete(ab.AfterFeatureOptions,"\$[*]['AfterFeature']")]
+		[h:ab.AfterFeatureOptions = json.path.delete(ab.AfterFeatureOptions,"\$[*]['FeatureChoiceNum']")]
+		[h:ab.FeatureChoiceNumOptions = json.path.read(AbilitiesAffected,"\$[*][?(@.FeatureChoiceNum==1)]")]
+		[h:ab.FeatureChoiceNumOptions = json.path.delete(ab.FeatureChoiceNumOptions,"\$[*]['AfterFeature']")]
+		[h:ab.FeatureChoiceNumOptions = json.path.delete(ab.FeatureChoiceNumOptions,"\$[*]['FeatureChoiceNum']")]
 		
-		[h,if(!json.isEmpty(ab.AfterFeatureOptions)): ab.Final = json.set(ab.Final,"CallAfterAbility",json.path.delete(ab.AfterFeatureOptions,"[*]['Type']"))]
-		[h,if(!json.isEmpty(ab.FeatureChoiceNumOptions)): ab.Final = json.set(ab.Final,"CallFeatureChoiceNum",json.path.delete(ab.FeatureChoiceNumOptions,"[*]['Type']"))]
+		[h,if(!json.isEmpty(ab.AfterFeatureOptions)): ab.Final = json.set(ab.Final,"CallAfterAbility",json.path.delete(ab.AfterFeatureOptions,"\$[*]['Type']"))]
+		[h,if(!json.isEmpty(ab.FeatureChoiceNumOptions)): ab.Final = json.set(ab.Final,"CallFeatureChoiceNum",json.path.delete(ab.FeatureChoiceNumOptions,"\$[*]['Type']"))]
 	}]
 }]
 
 [h:MoreConditionsTest = 2]
 [h:ConditionsAffected = ""]
 [h,while(ab.OtherConditions && MoreConditionsTest!=0),CODE:{
-	[h,if(ConditionsAffected!=""): otherAbInput = " junkVar | "+json.toList(json.path.read(ConditionsAffected,"[*]['DisplayName']"))+" | Conditions Chosen | LABEL ## MoreConditionsTest | No,Yes,Yes - Same Filter | Add more Conditions | RADIO "; otherAbInput = ""]
+	[h,if(ConditionsAffected!=""): otherAbInput = " junkVar | "+json.toList(json.path.read(ConditionsAffected,"\$[*]['DisplayName']"))+" | Conditions Chosen | LABEL ## MoreConditionsTest | No,Yes,Yes - Same Filter | Add more Conditions | RADIO "; otherAbInput = ""]
 	
 	[h:abort(input(otherAbInput))]
 	
@@ -962,10 +962,10 @@
 		
 		[h:ConditionsAffected = json.append(ConditionsAffected,json.set(macro.return,"AfterCondition",ab.AfterCondition,"ConditionChoiceNum",ab.ConditionChoiceNum))]
 	};{
-		[h:ab.AfterConditionOptions = json.path.read(ConditionsAffected,"[*][?(@.AfterCondition==1)]")]
-		[h:ab.AfterConditionOptions = json.path.delete(ab.AfterConditionOptions,"[*]['AfterCondition']")]
+		[h:ab.AfterConditionOptions = json.path.read(ConditionsAffected,"\$[*][?(@.AfterCondition==1)]")]
+		[h:ab.AfterConditionOptions = json.path.delete(ab.AfterConditionOptions,"\$[*]['AfterCondition']")]
 		
-		[h,if(!json.isEmpty(ab.AfterConditionOptions)): ab.Final = json.set(ab.Final,"CallAfterCondition",json.path.delete(ab.AfterConditionOptions,"[*]['Type']"))]
+		[h,if(!json.isEmpty(ab.AfterConditionOptions)): ab.Final = json.set(ab.Final,"CallAfterCondition",json.path.delete(ab.AfterConditionOptions,"\$[*]['Type']"))]
 	}]
 }]
 

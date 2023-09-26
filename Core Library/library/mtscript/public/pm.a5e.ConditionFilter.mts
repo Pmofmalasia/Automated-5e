@@ -70,7 +70,7 @@
 
 [h:abort(input(
 	ab.InputTitle,
-	"ab.ConditionName | "+json.toList(json.path.read(getLibProperty("sb.Conditions","Lib:pm.a5e.Core"),"[*][?(@.Class=='"+ab.ConditionClass+"' && @.Subclass=='"+ab.ConditionSubclass+"')]['DisplayName']"))+" | Choose a Condition | RADIO | VALUE=STRING "
+	"ab.ConditionName | "+json.toList(json.path.read(data.getData("addon:","pm.a5e.core","sb.Conditions"),"[*][?(@.Class=='"+ab.ConditionClass+"' && @.Subclass=='"+ab.ConditionSubclass+"')]['DisplayName']"))+" | Choose a Condition | RADIO | VALUE=STRING "
 ))]
 
 [h:macro.return = json.set("","Name",pm.RemoveSpecial(ab.ConditionName),"DisplayName",ab.ConditionName,"Type",ab.ConditionType,"Class",ab.ConditionClass,"Subclass",ab.ConditionSubclass,"AddAnother",goAgane)]

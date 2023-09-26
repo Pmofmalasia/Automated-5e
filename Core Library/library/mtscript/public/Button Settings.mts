@@ -24,9 +24,11 @@
 	"macroType | Class Feature,Spell,Attack,Other | What type of ability is this macro | LIST "
 ))]
 
-[h:OldMacroSettings = json.path.read(ButtonSettings,"[?(@.Name=='"+chosenMacro+"')]")]
+[h:OldMacroSettings = json.path.read(ButtonSettings,"\$[?(@.Name=='"+chosenMacro+"')]")]
 [h,if(OldMacroSettings == "[]"): OldMacroSettings="{}";OldMacroSettings=json.get(OldMacroSettings,0)] 
 
+[h:CurrentFontOptions = data.getData("addon:","pm.a5e.core","FontOptions")]
+[h:CurrentAuraOptions = data.getData("addon:","pm.a5e.core","AuraOptions")]
 [h,if(macroType==0),CODE:{
 	[h:choice.DM = 0]
 	[h:abort(input(
@@ -38,9 +40,9 @@
 		"choice.TitleColor | "+json.get(OldMacroSettings,"TitleFontColorOverride")+" | Title Text Color",
 		"choice.AccentColor | "+json.get(OldMacroSettings,"AccentBackgroundOverride")+" | Accent Color",
 		"choice.AccentTextColor | "+json.get(OldMacroSettings,"AccentTextColorOverride")+" | Accent Text Color",
-		"choice.TitleFont | "+getLibProperty("FontOptions","Lib:pm.a5e.Core")+" | Title Font | LIST | SELECT="+if(listFind(getLibProperty("FontOptions","Lib:pm.a5e.Core"),json.get(OldMacroSettings,"TitleFont"))==-1,0,listFind(getLibProperty("FontOptions","Lib:pm.a5e.Core"),json.get(OldMacroSettings,"TitleFont")))+" VALUE=STRING",
-		"choice.BodyFont | "+getLibProperty("FontOptions","Lib:pm.a5e.Core")+" | Body Font | LIST | SELECT="+if(listFind(getLibProperty("FontOptions","Lib:pm.a5e.Core"),json.get(OldMacroSettings,"BodyFont"))==-1,0,listFind(getLibProperty("FontOptions","Lib:pm.a5e.Core"),json.get(OldMacroSettings,"BodyFont")))+" VALUE=STRING",
-		"choice.AuraColor | "+getLibProperty("AuraOptions","Lib:pm.a5e.Core")+" | Aura Color | LIST | SELECT="+if(listFind(getLibProperty("AuraOptions","Lib:pm.a5e.Core"),json.get(OldMacroSettings,"AuraColor"))==-1,0,listFind(getLibProperty("AuraOptions","Lib:pm.a5e.Core"),json.get(OldMacroSettings,"AuraColor")))+" VALUE=STRING"
+		"choice.TitleFont | "+CurrentFontOptions+" | Title Font | LIST | SELECT="+if(listFind(CurrentFontOptions,json.get(OldMacroSettings,"TitleFont"))==-1,0,listFind(CurrentFontOptions,json.get(OldMacroSettings,"TitleFont")))+" VALUE=STRING",
+		"choice.BodyFont | "+CurrentFontOptions+" | Body Font | LIST | SELECT="+if(listFind(CurrentFontOptions,json.get(OldMacroSettings,"BodyFont"))==-1,0,listFind(CurrentFontOptions,json.get(OldMacroSettings,"BodyFont")))+" VALUE=STRING",
+		"choice.AuraColor | "+CurrentAuraOptions+" | Aura Color | LIST | SELECT="+if(listFind(CurrentAuraOptions,json.get(OldMacroSettings,"AuraColor"))==-1,0,listFind(CurrentAuraOptions,json.get(OldMacroSettings,"AuraColor")))+" VALUE=STRING"
 	))]
 	
 	[h:SettingsInfo = json.set("",
@@ -57,11 +59,11 @@
 	"AuraColor",choice.AuraColor
 	)]
 	
-	[h:CurrentSettingsTest = json.path.read(ButtonSettings,"[?(@.Name=='"+chosenMacro+"')]")]
+	[h:CurrentSettingsTest = json.path.read(ButtonSettings,"\$[?(@.Name=='"+chosenMacro+"')]")]
 	[h,if(CurrentSettingsTest=="[]"),code:{
 		[h:ButtonSettings=json.append(ButtonSettings,SettingsInfo)]
 	};{
-		[h:ButtonSettings=json.path.delete(ButtonSettings,"[?(@.Name=='"+chosenMacro+"')]")]
+		[h:ButtonSettings=json.path.delete(ButtonSettings,"\$[?(@.Name=='"+chosenMacro+"')]")]
 		[h:ButtonSettings=json.append(ButtonSettings,SettingsInfo)]
 	}]
 };{}]

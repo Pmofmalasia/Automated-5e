@@ -1,4 +1,4 @@
-[h:incompleteEffects = json.path.read(getLibProperty("gd.Effects","Lib:pm.a5e.Core"),"[*][?(@.ToResolve != '' && @.ToResolve != null)]","DEFAULT_PATH_LEAF_TO_NULL")]
+[h:incompleteEffects = json.path.read(data.getData("addon:","pm.a5e.core","gd.Effects"),"[*][?(@.ToResolve != '' && @.ToResolve != null)]","DEFAULT_PATH_LEAF_TO_NULL")]
 [h:em.Options = ""]
 [h,foreach(effect,incompleteEffects),CODE:{
 	[h:targetList = json.get(effect,"Targets")]

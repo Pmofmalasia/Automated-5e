@@ -217,7 +217,7 @@
 [h,switch(json.get(MonsterData,"Allegiance")):
 	case "Enemy": setProperty("a5e.stat.WhichTeam",2);
 	case "Ally": setProperty("a5e.stat.WhichTeam",1);
-	default: setProperty("a5e.stat.WhichTeam",0);
+	default: setProperty("a5e.stat.WhichTeam",0)
 ]
 [h:closeDialog("Monster Creation")]
 [h,MACRO("BaseSkillSelection@Lib:pm.a5e.Core"): json.set("","ParentToken",ParentToken)]

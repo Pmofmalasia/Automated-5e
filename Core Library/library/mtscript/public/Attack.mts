@@ -432,7 +432,7 @@
 [h:pm.PassiveFunction("AfterAttackTargeted",json.set("","ParentToken",thisAttackTarget))]
 [h:pm.PassiveFunction("AfterWeaponAttackTargeted",json.set("","ParentToken",thisAttackTarget))]
 
-[h:RemovedConditionGroups = json.path.read(a5e.stat.ConditionGroups,"\$[*][?(@.EndTriggers.AfterAttack != null && @.EndTriggers.AfterAttack != 0)]['GroupID']","DEFAULT_PATH_LEAF_TO_NULL")]
+[h:RemovedConditionGroups = json.path.read(getProperty("a5e.stat.ConditionGroups"),"\$[*][?(@.EndTriggers.AfterAttack != null && @.EndTriggers.AfterAttack != 0)]['GroupID']","DEFAULT_PATH_LEAF_TO_NULL")]
 [h,if(!json.isEmpty(RemovedConditionGroups)),CODE:{
 	[h,macro("EndCondition@Lib:pm.a5e.Core"): json.set("","GroupID",RemovedConditionGroups,"Target",ParentToken)]
 	[h:pm.RemovedConditions = json.get(macro.return,"Removed")]

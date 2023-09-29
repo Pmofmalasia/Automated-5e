@@ -1,6 +1,6 @@
 [h:SharedMonsterFeatureArray = json.sort(data.getData("addon:","pm.a5e.core","sb.MonsterFeatures"),"a","DisplayName")]
 
-[h:SharedMonsterFeatureList = json.path.read(SharedMonsterFeatureArray,"[*]['DisplayName']")]
+[h:SharedMonsterFeatureList = json.path.read(SharedMonsterFeatureArray,"\$[*]['DisplayName']")]
 
 [h:abort(input(
     " FeatureChoice | "+SharedMonsterFeatureList+" | Choose a Feature | LIST | DELIMITER=JSON "

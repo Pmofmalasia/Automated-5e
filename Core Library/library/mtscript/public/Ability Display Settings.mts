@@ -1,10 +1,10 @@
-[h:MacroOptions = listSort(json.toList(json.path.read(getProperty("a5e.stat.AllFeatures"),"[?(@.Name!='')]['Name']")),"A+")]
+[h:MacroOptions = listSort(json.toList(json.path.read(getProperty("a5e.stat.AllFeatures"),"\$[?(@.Name!='')]['Name']")),"A+")]
 
 [h:abort(input(
 	"chosenMacro | "+MacroOptions+" | Which ability would you like to edit | LIST | VALUE=STRING "
 ))]
 
-[h:OldMacroSettings = json.path.read(getProperty("a5e.stat.AllFeatures"),"[?(@.Name=='"+chosenMacro+"')]['Settings']")]
+[h:OldMacroSettings = json.path.read(getProperty("a5e.stat.AllFeatures"),"\$[?(@.Name=='"+chosenMacro+"')]['Settings']")]
 [h,if(OldMacroSettings == "[]"): OldMacroSettings="{}";  OldMacroSettings=json.get(OldMacroSettings,0)] 
 
 [h:choice.DM = 0]
@@ -39,7 +39,7 @@
 	)]
 
 [h,if(OldMacroSettings=="{}"),CODE:{
-	[h:setProperty("a5e.stat.AllFeatures",json.path.put(getProperty("a5e.stat.AllFeatures"),"[?(@.Name=='"+chosenMacro+"')]","Settings",SettingsInfo))]
+	[h:setProperty("a5e.stat.AllFeatures",json.path.put(getProperty("a5e.stat.AllFeatures"),"\$[?(@.Name=='"+chosenMacro+"')]","Settings",SettingsInfo))]
 };{
-	[h:setProperty("a5e.stat.AllFeatures",json.path.set(getProperty("a5e.stat.AllFeatures"),"[?(@.Name=='"+chosenMacro+"')]['Settings']",SettingsInfo))]
+	[h:setProperty("a5e.stat.AllFeatures",json.path.set(getProperty("a5e.stat.AllFeatures"),"\$[?(@.Name=='"+chosenMacro+"')]['Settings']",SettingsInfo))]
 }]

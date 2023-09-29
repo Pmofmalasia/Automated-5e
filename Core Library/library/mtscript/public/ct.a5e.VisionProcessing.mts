@@ -9,10 +9,13 @@
 	[h:inputData = json.remove(inputData,"isVision")]
 
 	[h:effectiveCommand = effectiveCommand + "[h:pass.a5e.VisionBonus(pass.abilityInfo,json.set(''"]
+	[h:broadcast("HI")]
 
 	[h:VisionUDFObject = ""]
 	[h:allVisionTypes = pm.a5e.GetCoreData("sb.VisionTypes","Name","json")]
+	[h:broadcast("HI")]
 	[h,foreach(visionType,allVisionTypes),CODE:{
+		[h:broadcast(visionType)]
 		[h:IsUnlimitedTest = json.contains(inputData,"isVision"+visionType+"Unlimited")]
 		[h:HasVisionTest = or(json.get(inputData,"Vision"+visionType+"Distance") != 0,IsUnlimitedTest)]
 		[h,if(HasVisionTest): effectiveCommand = effectiveCommand + ",'"+visionType+"',json.set(''," + if(IsUnlimitedTest,"'Unlimited',1","'Base',"+json.get(inputData,"Vision"+visionType+"Distance")) + ")"]

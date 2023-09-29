@@ -1,3 +1,3 @@
 [h,if(argCount()>2): pm.Conditions = arg(2); pm.Conditions = ""]
 [h,if(argCount()>3): ParentToken = arg(3); ParentToken = currentToken()]
-[h:macro.return = json.get(json.path.read(getProperty("a5e.stat.AllFeatures",ParentToken),"[?(@.Name=='"+json.get(arg(0),"Name")+"' && @.Class=='"+json.get(arg(0),"Class")+"' && @.Subclass=='"+json.get(arg(0),"Subclass")+"' "+if(pm.Conditions=="","&& @.IsActive>0","")+")]['"+arg(1)+"']"),0)]
+[h:macro.return = json.get(json.path.read(getProperty("a5e.stat.AllFeatures",ParentToken),"\$[?(@.Name=='"+json.get(arg(0),"Name")+"' && @.Class=='"+json.get(arg(0),"Class")+"' && @.Subclass=='"+json.get(arg(0),"Subclass")+"' "+if(pm.Conditions=="","&& @.IsActive>0","")+")]['"+arg(1)+"']"),0)]

@@ -2,7 +2,7 @@
 [h,if(pm.KeyChoice==""),CODE:{
 	[h:pm.ToolTypes = data.getData("addon:","pm.a5e.core","sb.ToolTypes")]
 };{
-	[h:pm.ToolTypes = json.path.read(data.getData("addon:","pm.a5e.core","sb.ToolTypes"),"\$."+pm.KeyChoice)]
+	[h:pm.ToolTypes = json.path.read(data.getData("addon:","pm.a5e.core","sb.ToolTypes"),"\$[*]."+pm.KeyChoice)]
 }]
 
 [h,if(argCount()>1): pm.Delim = arg(1) ; pm.Delim = if(pm.KeyChoice=="","json",",")]

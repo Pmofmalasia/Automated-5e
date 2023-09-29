@@ -1,10 +1,10 @@
-[h:baseConditionsTemp = json.path.read(pm.a5e.GetConditions(),"[*][?(@.Class=='Condition')]")]
+[h:baseConditionsTemp = json.path.read(pm.a5e.GetConditions(),"\$[*][?(@.Class=='Condition')]")]
 
 [h,if(argCount()>0): pm.KeyChoice = arg(0); pm.KeyChoice = ""]
 [h,if(pm.KeyChoice==""),CODE:{
 	[h:baseConditions = baseConditionsTemp]
 };{
-	[h:baseConditions = json.path.read(baseConditionsTemp,"[*]."+pm.KeyChoice)]
+	[h:baseConditions = json.path.read(baseConditionsTemp,"\$[*]."+pm.KeyChoice)]
 }]
 
 [h,if(argCount()>1): pm.Delim = arg(1); pm.Delim = if(pm.KeyChoice=="","json",",")]

@@ -4,6 +4,8 @@
 	[h:passiveSpecificFeature = json.get(arg(1),"SpecificFeature")]
 	
 	[h:switchTest = json.get(arg(1),"ParentToken")]
+	[h:noValidTokenTest = and(json.contains(arg(1),"ParentToken"),switchTest=="")]
+	[h:return(!noValidTokenTest)]
 	[h,if(switchTest!=""),CODE:{
 		[h:oldParentToken = ParentToken]
 		[h:oldFeatures = a5e.UnifiedAbilities]
@@ -22,7 +24,6 @@
 }]
 
 [h:pm.ValidAbilities = json.path.read(a5e.UnifiedAbilities,"[*][?(@.IsActive>0 && @.Call"+a5e.CallingInstance+if(passiveSpecificFeature=="","!=0","=='"+passiveSpecificFeature+"'")+" && @.Call"+a5e.CallingInstance+"!=null)]","DEFAULT_PATH_LEAF_TO_NULL")]
-
 [h:"<!-- TODO: BUGFIX: When nesting one passivefunction into another, a5e.CallingInstance changes in the second passivefunction. This means that AbilityCallingInstanceValue will be incorrect in the loop after the second passivefunction finishes. -->"]
 [h,foreach(ability,pm.ValidAbilities),CODE:{
 	[h,switch(json.get(ability,"AbilityType")):

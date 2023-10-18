@@ -50,15 +50,17 @@
 	}]
 
 	[h:"<!-- Advance time from perishable items and remove any at 0 -->"]
-	[h:PerishableInventory = json.path.read(getProperty("a5e.stat.Inventory"),"\$[*][?(@.Duration != null && @.Duration.round != null)]","DEFAULT_PATH_LEAF_TO_NULL")]
+	[h:PerishableInventory = json.path.read(getProperty("a5e.stat.Inventory"),"\$[*][?(@.Duration != null && @.Duration.round != null && @.IsActive > 0)]","DEFAULT_PATH_LEAF_TO_NULL")]
 	[h:RemovedItems = "[]"]
 	[h,foreach(item,PerishableInventory),CODE:{
 		[h:newDuration = pm.a5e.AdvanceTime(json.set(TimeAdvancedData,"Duration",json.get(item,"Duration")))]
 		[h:ExpiredTest = json.get(newDuration,"Expired") == 1]
-		[h,if(ExpiredTest):
+		[h:isPerishable = number(json.get(item,"isPerishable"))]
+		[h,if(ExpiredTest && isPerishable):
 			setProperty("a5e.stat.Inventory",json.path.delete(getProperty("a5e.stat.Inventory"),"\$[*][?(@.ItemID=='"+json.get(item,"ItemID")+"')]"));
 			setProperty("a5e.stat.Inventory",json.path.set(getProperty("a5e.stat.Inventory"),"\$[*][?(@.ItemID=='"+json.get(item,"ItemID")+"')]['Duration']",newDuration))
 		]
+		[h,if(ExpiredTest && !isPerishable): setProperty("a5e.stat.Inventory",json.path.set(getProperty("a5e.stat.Inventory"),"\$[*][?(@.ItemID=='"+json.get(item,"ItemID")+"')]['IsActive']",0))]
 		[h,if(ExpiredTest): RemovedItems = json.append(RemovedItems,item)]
 	}]
 
@@ -74,11 +76,33 @@
 	))]
 
 	[h:"<!-- TODO: Advance from features (cooldowns) and restore resource, or whatever other method is used to track -->"]
-	[h:validAbilities = json.path.read(getProperty("a5e.stat.AllFeatures"),"\$[*][?(@.Duration != null && @.Duration.round != null)]","DEFAULT_PATH_LEAF_TO_NULL")]
+	[h:validAbilities = json.path.read(getProperty("a5e.stat.AllFeatures"),"\$[*][?(@.Cooldown != null && @.Cooldown.round != null)]","DEFAULT_PATH_LEAF_TO_NULL")]
+	[h:EndedCooldowns = "[]"]
 	[h,foreach(ability,validAbilities),CODE:{
-		[h:newDuration = pm.a5e.AdvanceTime(json.set("","Duration",json.get(ability,"Duration"),"Time",1,"TimeUnits","round","ParentToken",tempToken))]
-		[h:setProperty("a5e.stat.AllFeatures",json.path.set(getProperty("a5e.stat.AllFeatures"),"\$[*][?("+pm.a5e.PathFeatureFilter(ability)+")]['Duration']",newDuration))]
+		[h:newDuration = pm.a5e.AdvanceTime(json.set(TimeAdvancedData,"Duration",json.get(ability,"Duration")))]
+		[h:ExpiredTest = json.get(newDuration,"Expired") == 1]
+
+		[h,if(ExpiredTest):
+			setProperty("a5e.stat.AllFeatures",json.path.delete(getProperty("a5e.stat.AllFeatures"),"\$[*][?("+pm.a5e.PathFeatureFilter(ability)+")]['Cooldown']"));
+			setProperty("a5e.stat.AllFeatures",json.path.set(getProperty("a5e.stat.AllFeatures"),"\$[*][?("+pm.a5e.PathFeatureFilter(ability)+")]['Cooldown']",newDuration))
+		]
+
+		[h,if(ExpiredTest): setProperty("a5e.stat.AllFeatures",json.path.set(getProperty("a5e.stat.AllFeatures"),"\$[*][?("+pm.a5e.PathFeatureFilter(ability)+")]['IsActive']",1))]
+
+		[h,if(ExpiredTest): EndedCooldowns = json.append(EndedCooldowns,ability)]
 	}]
+
+	[h:"<!-- May not want to show this at all since most things are 1 turn, currently not shown if condensed. -->"]
+	[h:EndedCooldownDisplayList = pm.a5e.CreateDisplayList(json.unique(json.path.read(EndedCooldowns,"\$[*]['DisplayName']")),"and")]
+	[h,if(!json.isEmpty(EndedCooldowns)): thisTokenNewTableLines = json.append(thisTokenNewTableLines,json.set("",
+		"ShowIfCondensed",0,
+		"Header","Ended Cooldowns",
+		"FalseHeader","",
+		"FullContents","",
+		"RulesContents",EndedCooldownDisplayList,
+		"RollContents","",
+		"DisplayOrder","['Rules','Roll','Full']"
+	))]
 	
 	[h:"<!-- Add token header if multiple targets and table lines added -->"]
 	[h,if(json.length(AdvanceTimeTokens)>1 && !json.isEmpty(thisTokenNewTableLines)):

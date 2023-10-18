@@ -164,7 +164,8 @@
 		thisTokenTargetSpecificEffects = json.get(effTargetSpecific,targetToken);
 		thisTokenTargetSpecificEffects = ""
 	]
-	[h:a5e.UnifiedAbilities = a5e.GatherAbilities(targetToken)]
+	[h:"<!-- Note: Below is a dummy placeholder since a5e.UnifiedAbilities will be set in PassiveFunction anyway -->"]
+	[h:a5e.UnifiedAbilities = "[]"]
 
 	[h:thisTokenModifiableComponents = json.set("",
 		"Conditions",thisTokenConditionInfo,
@@ -293,12 +294,15 @@
 			[h:SoloTargetTest = json.length(effTargets) == 1]
 			[h:ResolveAutoResultNow = and(autoResultTest,SoloTargetTest)]
 
-			[h,switch(ResolveAutoResultNow+""+SavePassed):
-				case "11": thisTokenModifiableComponents = pm.a5e.ResolveDCSuccess(json.set("","DCData",thisTokenSaveDCData,"ModifiableComponents",thisTokenModifiableComponents));
-				case "10": thisTokenModifiableComponents = pm.a5e.ResolveDCFailure(json.set("","DCData",thisTokenSaveDCData,"ModifiableComponents",thisTokenModifiableComponents));
-				case "00": needsFurtherResolution = 1
+			[h,if(ResolveAutoResultNow):
+				thisTokenModifiableComponents = pm.a5e.ResolveDC(json.set("","DCData",thisTokenSaveDCData,"ModifiableComponents",thisTokenModifiableComponents,"DCType","Save","EffectData",effFull),json.set("","ParentToken",ParentToken,"TargetToken",targetToken),SavePassed);
+				needsFurtherResolution = 1
 			]
-			[h,if(!ResolveAutoResultNow): AnyTargetNeedsFurtherResolution = 1]
+
+			[h,if(ResolveAutoResultNow):
+				abilityTable = json.merge(abilityTable,json.get(thisTokenModifiableComponents,"Table"));
+				AnyTargetNeedsFurtherResolution = 1
+			]
 		};
 		case "10":{
 			[h:SaveResult = json.get(effSavesMadeData,targetDataKey)]
@@ -313,10 +317,9 @@
 			[h:SavesNotMade = json.difference(effTargets,json.fields(effSavesMadeData,"json"))]
 			[h,if(AnyTargetNeedsFurtherResolution == 0): AnyTargetNeedsFurtherResolution = !json.isEmpty(SavesNotMade)]
 
-			[h,switch(AnyTargetNeedsFurtherResolution+""+SavePassed):
-				case "01": thisTokenModifiableComponents = pm.a5e.ResolveDCSuccess(json.set("","DCData",thisTokenSaveDCData,"ModifiableComponents",thisTokenModifiableComponents));
-				case "00": thisTokenModifiableComponents = pm.a5e.ResolveDCFailure(json.set("","DCData",thisTokenSaveDCData,"ModifiableComponents",thisTokenModifiableComponents));
-				default: needsFurtherResolution = 1 
+			[h,if(AnyTargetNeedsFurtherResolution):
+				needsFurtherResolution = 1;
+				thisTokenModifiableComponents = pm.a5e.ResolveDC(json.set("","DCData",thisTokenSaveDCData,"ModifiableComponents",thisTokenModifiableComponents,"DCType","Save","EffectData",effFull),json.set("","ParentToken",ParentToken,"TargetToken",targetToken),SavePassed)
 			]
 
 			[h,if(SavePassed):
@@ -333,6 +336,8 @@
 				"RollContents","",
 				"DisplayOrder","['Rules','Roll','Full']"
 			))]
+
+			[h,if(json.contains(thisTokenModifiableComponents,"Table")): abilityTable = json.merge(abilityTable,json.get(thisTokenModifiableComponents,"Table"))]
 		};
 		default:{}
 	]
@@ -370,10 +375,17 @@
 				CheckPassed = (CheckResultValue=="AutoSuccess");
 				CheckPassed = 0
 			]
-			[h,switch(autoResultTest+""+CheckPassed):
-				case "11": thisTokenModifiableComponents = pm.a5e.ResolveDCSuccess(json.set("","DCData",thisTokenCheckDCData,"ModifiableComponents",thisTokenModifiableComponents));
-				case "10": thisTokenModifiableComponents = pm.a5e.ResolveDCFailure(json.set("","DCData",thisTokenCheckDCData,"ModifiableComponents",thisTokenModifiableComponents));
-				case "00": needsFurtherResolution = 1
+			[h:SoloTargetTest = json.length(effTargets) == 1]
+			[h:ResolveAutoResultNow = and(autoResultTest,SoloTargetTest)]
+
+			[h,if(ResolveAutoResultNow):
+				thisTokenModifiableComponents = pm.a5e.ResolveDC(json.set("","DCData",thisTokenCheckDCData,"ModifiableComponents",thisTokenModifiableComponents,"DCType","Check","EffectData",effFull),json.set("","ParentToken",ParentToken,"TargetToken",targetToken),CheckPassed);
+				needsFurtherResolution = 1
+			]
+
+			[h,if(ResolveAutoResultNow):
+				abilityTable = json.merge(abilityTable,json.get(thisTokenModifiableComponents,"Table"));
+				AnyTargetNeedsFurtherResolution = 1
 			]
 		};
 		case "10":{
@@ -387,10 +399,13 @@
 
 			[h:CheckResultValue = json.get(CheckResult,"Value")]
 			[h:CheckPassed = (CheckResultValue >= CheckDCValue)]
-			
-			[h,if(CheckPassed):
-				thisTokenModifiableComponents = pm.a5e.ResolveDCSuccess(json.set("","DCData",thisTokenCheckDCData,"ModifiableComponents",thisTokenModifiableComponents));
-				thisTokenModifiableComponents = pm.a5e.ResolveDCFailure(json.set("","DCData",thisTokenCheckDCData,"ModifiableComponents",thisTokenModifiableComponents))
+
+			[h:ChecksNotMade = json.difference(effTargets,json.fields(effChecksMadeData,"json"))]
+			[h,if(AnyTargetNeedsFurtherResolution == 0): AnyTargetNeedsFurtherResolution = !json.isEmpty(ChecksNotMade)]
+
+			[h,if(AnyTargetNeedsFurtherResolution):
+				needsFurtherResolution = 1;
+				thisTokenModifiableComponents = pm.a5e.ResolveDC(json.set("","DCData",thisTokenCheckDCData,"ModifiableComponents",thisTokenModifiableComponents,"DCType","Check","EffectData",effFull),json.set("","ParentToken",ParentToken,"TargetToken",targetToken),CheckPassed)
 			]
 
 			[h,if(CheckPassed):
@@ -407,6 +422,8 @@
 				"RollContents","",
 				"DisplayOrder","['Rules','Roll','Full']"
 			))]
+
+			[h,if(json.contains(thisTokenModifiableComponents,"Table")): abilityTable = json.merge(abilityTable,json.get(thisTokenModifiableComponents,"Table"))]
 		};
 		default:{}
 	]

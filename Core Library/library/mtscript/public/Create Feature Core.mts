@@ -591,7 +591,7 @@
 	[h,if(ab.InitMisc): ab.Final = json.set(ab.Final,"CallCheckProf",ab.InitMisc)]
 	[h,if(ab.ConcMisc): ab.Final = json.set(ab.Final,"CallSaveProf",ab.ConcMisc)]
 	[h,if(ab.WeaponMisc): ab.Final = json.set(ab.Final,"CallWeaponProf",ab.WeaponMisc)]
-	[h,if(ab.ArmorMisc): ab.Final = json.set(ab.Final,"CallArmorProf",ab.ArmorMisc)]\
+	[h,if(ab.ArmorMisc): ab.Final = json.set(ab.Final,"CallArmorProf",ab.ArmorMisc)]
 };{}]
 
 [h,if(ab.PassiveScore),CODE:{
@@ -997,7 +997,7 @@
 	[h,if(ab.AttackCritTargeted>0): ab.Final = json.set(ab.Final,if(ab.AttackCritTargeted==1,"CallWeaponAttackCritTargeted",if(ab.AttackCritTargeted==2,"CallSpellCritTargeted","CallAttackCritTargeted")),1)]
 };{}]
 
-[h,if(ab.UseTime): ab.Final = json.set(ab.Final,"UseTime",1)]
+[h,if(ab.UseTime): ab.Final = json.set(ab.Final,"CallUseTime",1)]
 
 [h,if(ab.InteractTime),CODE:{
 	[h:abort(input(
@@ -1005,8 +1005,8 @@
 		" ab.DrawWeapon |  | Affects time to draw and attack with an item | CHECK "
 	))]
 
-	[h,if(ab.InteractTime): ab.Final = json.set(ab.Final,"InteractTime",1)]
-	[h,if(ab.DrawWeapon): ab.Final = json.set(ab.Final,"DrawWeapon",1)]
+	[h,if(ab.InteractTime): ab.Final = json.set(ab.Final,"CallInteractTime",1)]
+	[h,if(ab.DrawWeapon): ab.Final = json.set(ab.Final,"CallDrawWeapon",1)]
 };{}]
 
 [h,if(ab.ChangePrereqs): ab.Final = json.set(ab.Final,"ChangePrereqs",1)]
@@ -1024,23 +1024,23 @@
 
 	[h,switch(ab.EffectResolveAttack):
 		case 0: "";
-		case 1: ab.Final = json.set(ab.Final,"AttackOnHit",1);
-		case 2: ab.Final = json.set(ab.Final,"AttackOnMiss",1);
-		case 3: ab.Final = json.set(ab.Final,"AttackOnHit",1,"AttackOnMiss",1);
+		case 1: ab.Final = json.set(ab.Final,"CallAttackOnHit",1);
+		case 2: ab.Final = json.set(ab.Final,"CallAttackOnMiss",1);
+		case 3: ab.Final = json.set(ab.Final,"CallAttackOnHit",1,"CallAttackOnMiss",1);
 	]
 
 	[h,switch(ab.EffectResolveSave):
 		case 0: "";
-		case 1: ab.Final = json.set(ab.Final,"SaveSuccess",1);
-		case 2: ab.Final = json.set(ab.Final,"SaveFailure",1);
-		case 3: ab.Final = json.set(ab.Final,"SaveSuccess",1,"SaveFailure",1);
+		case 1: ab.Final = json.set(ab.Final,"CallSaveSuccess",1);
+		case 2: ab.Final = json.set(ab.Final,"CallSaveFailure",1);
+		case 3: ab.Final = json.set(ab.Final,"CallSaveSuccess",1,"CallSaveFailure",1);
 	]
 
 	[h,switch(ab.EffectResolveCheck):
 		case 0: "";
-		case 1: ab.Final = json.set(ab.Final,"CheckSuccess",1);
-		case 2: ab.Final = json.set(ab.Final,"CheckFailure",1);
-		case 3: ab.Final = json.set(ab.Final,"CheckSuccess",1,"CheckFailure",1);
+		case 1: ab.Final = json.set(ab.Final,"CallCheckSuccess",1);
+		case 2: ab.Final = json.set(ab.Final,"CallCheckFailure",1);
+		case 3: ab.Final = json.set(ab.Final,"CallCheckSuccess",1,"CallCheckFailure",1);
 	]
 
 	[h,if(ab.EffectResolveAny): ab.Final = json.set(ab.Final,"CallAfterEffect",ab.EffectResolveAny)]
@@ -1058,23 +1058,23 @@
 
 	[h,switch(ab.EffectResolveAttackTargeted):
 		case 0: "";
-		case 1: ab.Final = json.set(ab.Final,"AttackOnHitTargeted",1);
-		case 2: ab.Final = json.set(ab.Final,"AttackOnMissTargeted",1);
-		case 3: ab.Final = json.set(ab.Final,"AttackOnHitTargeted",1,"AttackOnMissTargeted",1);
+		case 1: ab.Final = json.set(ab.Final,"CallAttackOnHitTargeted",1);
+		case 2: ab.Final = json.set(ab.Final,"CallAttackOnMissTargeted",1);
+		case 3: ab.Final = json.set(ab.Final,"CallAttackOnHitTargeted",1,"CallAttackOnMissTargeted",1);
 	]
 
 	[h,switch(ab.EffectResolveSaveTargeted):
 		case 0: "";
-		case 1: ab.Final = json.set(ab.Final,"SaveSuccessTargeted",1);
-		case 2: ab.Final = json.set(ab.Final,"SaveFailureTargeted",1);
-		case 3: ab.Final = json.set(ab.Final,"SaveSuccessTargeted",1,"SaveFailureTargeted",1);
+		case 1: ab.Final = json.set(ab.Final,"CallSaveSuccessTargeted",1);
+		case 2: ab.Final = json.set(ab.Final,"CallSaveFailureTargeted",1);
+		case 3: ab.Final = json.set(ab.Final,"CallSaveSuccessTargeted",1,"CallSaveFailureTargeted",1);
 	]
 
 	[h,switch(ab.EffectResolveCheckTargeted):
 		case 0: "";
-		case 1: ab.Final = json.set(ab.Final,"CheckSuccessTargeted",1);
-		case 2: ab.Final = json.set(ab.Final,"CheckFailureTargeted",1);
-		case 3: ab.Final = json.set(ab.Final,"CheckSuccessTargeted",1,"CheckFailureTargeted",1);
+		case 1: ab.Final = json.set(ab.Final,"CallCheckSuccessTargeted",1);
+		case 2: ab.Final = json.set(ab.Final,"CallCheckFailureTargeted",1);
+		case 3: ab.Final = json.set(ab.Final,"CallCheckSuccessTargeted",1,"CallCheckFailureTargeted",1);
 	]
 
 	[h,if(ab.EffectResolveAnyTargeted): ab.Final = json.set(ab.Final,"CallAfterEffectTargeted",ab.EffectResolveAnyTargeted)]

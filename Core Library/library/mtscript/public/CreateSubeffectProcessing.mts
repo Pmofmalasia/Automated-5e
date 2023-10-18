@@ -126,14 +126,18 @@
 	[h:subeffectData = json.set(subeffectData,"ParentSubeffect",json.get(subeffectData,"ParentSubeffect")-1)]
 	[h,switch(json.get(subeffectData,"ParentPrereqs")),CODE:
 		case "AttackHit":{
-			[h:subeffectData = json.set(subeffectData,"ParentSubeffectRequirements",json.set("",
+			[h:subeffectRequirements = json.set("",
 				"Requirement","Attack",
 				"Result","Hit",
 				"Margin",json.get(subeffectData,"PrereqAttackHitMargin")
-			))]
+			)]
+			[h,if(json.contains(subeffectData,"PrereqAttackCrits")): subeffectRequirements = json.set(subeffectRequirements,"MustCrit",1)]
+
+			[h:subeffectData = json.set(subeffectData,"ParentSubeffectRequirements",subeffectRequirements)]
 
 			[h:subeffectData = json.remove(subeffectData,"ParentPrereqs")]
 			[h:subeffectData = json.remove(subeffectData,"PrereqAttackHitMargin")]
+			[h:subeffectData = json.remove(subeffectData,"PrereqAttackCrits")]
 		};
 		case "AttackMiss":{
 			[h:subeffectData = json.set(subeffectData,"ParentSubeffectRequirements",json.set("",
@@ -308,7 +312,7 @@
 			"IsModBonus",json.contains(subeffectData,"ModBonus"+whichType)
 		)]
 	};{
-		[h,if(json.get("PriorDamageType"+whichType) == "TotalDamage"):
+		[h,if(json.get(subeffectData,"PriorDamageType"+whichType) == "TotalDamage"):
 			damageTypeToGet = "All";
 			damageTypeToGet = json.append("",json.get(subeffectData,"PriorDamageType"+whichType))
 		]
@@ -923,7 +927,6 @@
 [h:subeffectData = json.remove(subeffectData,"MainEffectsNumber")]
 [h:subeffectData = json.remove(subeffectData,"MainNeedsNewSubeffect")]
 [h:subeffectData = json.remove(subeffectData,"PersistentEffectsNumber")]
-
 
 [h:ExtraDataKeys = json.fromList(json.get(subeffectData,"ExtraDataKeys"))]
 [h:extraData = ""]

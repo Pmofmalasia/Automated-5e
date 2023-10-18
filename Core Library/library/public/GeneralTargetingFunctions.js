@@ -48,14 +48,30 @@ function createPriorTargetsRows(tableID,callingType){
 	clearUnusedTable(tableID,"rowUse"+callingType+"Targets","rowTargetingEnd");
 
 	if(document.getElementById("Use"+callingType+"Targets").checked){
-		addTableRow(tableID,nextRowIndex,"row"+callingType+"TargetNumber","<th><label for='"+callingType+"TargetNumber'>Number of "+callingType+" Targets Affected:</label></th><td><input type='number' id='"+callingType+"TargetNumber' name='"+callingType+"TargetNumber' value=1 style='width:25px'><input type='checkbox' id='"+callingType+"TargetAll' name='"+callingType+"TargetAll' value=1 onchange='toggleFieldEnabled("+'"'+callingType+'TargetNumber","'+callingType+'TargetAll"'+")'> Affects All</td>");
+		addTableRow(tableID,nextRowIndex,"row"+callingType+"TargetNumber","<th><label for='"+callingType+"TargetNumber'>Number of "+callingType+" Targets Affected:</label></th><td><input type='number' id='"+callingType+"TargetNumber' name='"+callingType+"TargetNumber' value=1 style='width:25px' disabled><input type='checkbox' id='"+callingType+"TargetAll' name='"+callingType+"TargetAll' checked onchange='toggleFieldEnabled("+'"'+callingType+'TargetNumber","'+callingType+'TargetAll"'+")'> Affects All</td>");
+		nextRowIndex++;
+
+		addTableRow(tableID,nextRowIndex,"row"+callingType+"TargetLimits","<th><label for='"+callingType+"TargetLimits'>Different Limits on Targets Affected:</label></th><td><input type='checkbox' id='"+callingType+"TargetLimits' name='"+callingType+"TargetLimits' onchange='createPriorTargetsNewFilter("+'"'+tableID+'","'+callingType+'"'+")'></td>");
 		nextRowIndex++;
 	}
 	else{
-		addTableRow("CreateSubeffectTable",nextRowIndex,"rowUse"+callingType+"Origin","<th><label for='Use"+callingType+"Origin'>New Subeffect Originates from Old Target:</label></th><td><input type='checkbox' id='Use"+callingType+"Origin' name='Use"+callingType+"Origin' onchange='create"+callingType+"OriginRows("+'"CreateSubeffectTable"'+")'></td>");
+		addTableRow(tableID,nextRowIndex,"rowUse"+callingType+"Origin","<th><label for='Use"+callingType+"Origin'>New Subeffect Originates from Old Target:</label></th><td><input type='checkbox' id='Use"+callingType+"Origin' name='Use"+callingType+"Origin' onchange='create"+callingType+"OriginRows("+'"'+tableID+'"'+")'></td>");
 		nextRowIndex++;
 
-		createTargetingRows("CreateSubeffectTable","rowTargetingEnd");
+		createTargetingRows(tableID,"rowTargetingEnd");
+	}
+}
+
+function createPriorTargetsNewFilter(tableID,callingType){
+	if(document.getElementById(callingType+"TargetLimits").checked){
+		let nextRowIndex = document.getElementById("row"+callingType+"TargetLimits").rowIndex + 1;
+
+		//TODO: Should make this even more generalized, with options to either show all of the targeting options or prune them based on requirements (e.g. Creature options only if prior only targeted creatures)
+		addTableRow(tableID,nextRowIndex,"row"+callingType+"TargetType","<th><label for='"+callingType+"TargetType'>Target Type:</label></th><td><select id='"+callingType+"TargetType' name='"+callingType+"TargetType' onchange='createTargetTable("+'"'+tableID+'","row'+callingType+'TargetType","'+callingType+'TargetType"'+")'><option value='AnyCreature'>Any Creature</option><option value='AnyOtherCreature'>Any Other Creature</option><option value='AlliedCreature'>Allied Creature</option><option value='SelfOnly'>Self Only</option><option value='EnemyCreature'>Enemy Creature</option><option value='HumanoidCreature'>Humanoid Creature</option><option value='Creature'>Creature (Custom Limits)</option><option value='CreatureObject'>Creature or Object</option><option value='AnyObject'>Any Object</option><option value='ObjectNotWorn'>Object Not Held or Worn</option><option value='ObjectWorn'>Object Held or Worn</option><option value='ObjectNonmagical'>Non-Magical Object</option><option value='ObjectMagical'>Magical Object</option><option value='Object'>Object (Custom Limits)</option><option value='Effect'>Effect</option><option value='Point'>Point</option></td>");
+		nextRowIndex++;
+	}
+	else{
+		clearUnusedTable(tableID,"row"+callingType+"TargetLimits","rowTargetingEnd");
 	}
 }
 

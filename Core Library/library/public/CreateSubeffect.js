@@ -77,6 +77,9 @@ async function createParentPrereqRows(){
 	if(PrereqChoice == "AttackHit"){
 		addTableRow("CreateSubeffectTable",nextRowIndex,"rowParentPrereqExtra","<th><label for='PrereqAttackHitMargin'>Must Hit by At Least:</label></th><td><input type='number' id='PrereqAttackHitMargin' name='PrereqAttackHitMargin' min=0 value=0></td>");
 		nextRowIndex++;
+
+		addTableRow("CreateSubeffectTable",nextRowIndex,"rowParentPrereqExtra2","<th><label for='PrereqAttackCrits'>Attack Must Crit:</label></th><td><input type='checkbox' id='PrereqAttackCrits' name='PrereqAttackCrits'></td>");
+		nextRowIndex++;
 	}
 	else if(PrereqChoice == "AttackMiss"){
 		addTableRow("CreateSubeffectTable",nextRowIndex,"rowParentPrereqExtra","<th><label for='PrereqAttackMissMargin'>Must Miss by At Least:</label></th><td><input type='number' id='PrereqAttackMissMargin' name='PrereqAttackMissMargin' min=0 value=0></td>");
@@ -436,7 +439,7 @@ async function switchToPriorDamage(damageTypeNumber){
 	for(let tempInstance of ParentSubeffectDamage){
 		let tempRequest = await fetch("macro:pm.GetDisplayName@lib:pm.a5e.Core",{method:"POST",body:"['"+tempInstance.DamageType+"','sb.DamageTypes']"});
 		let tempDisplayType = await tempRequest.text();
-		let tempTypeName = tempInstance.Name;
+		let tempTypeName = tempInstance.DamageType;
 
 		if(PriorDamageTypes.includes(tempTypeName) == false){
 			PriorDamageTypes = PriorDamageTypes.push(tempTypeName);

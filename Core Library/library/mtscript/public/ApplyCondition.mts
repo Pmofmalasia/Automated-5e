@@ -23,6 +23,7 @@
 [h:ConditionAdvancePoint = json.get(a5e.EndConditionInfo,"AdvancePoint")]
 [h:ConditionAuraRange = json.get(a5e.EndConditionInfo,"AuraRange")]
 [h:ConditionAuraUnits = json.get(a5e.EndConditionInfo,"AuraUnits")]
+[h:ConditionAuraValid = json.get(a5e.EndConditionInfo,"AuraValid")]
 [h:ConditionEndTriggers = json.get(a5e.EndConditionInfo,"EndTriggers")]
 
 [h:DurationBase = json.set("","year",0,"day",0,"hour",0,"minute",0,"round",0)]

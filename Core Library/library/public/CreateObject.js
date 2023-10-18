@@ -412,7 +412,7 @@ function createActivatableRows(tableID){
 
 function createChargesRows(tableID){
 	if(document.getElementById("isCharges").value == "None"){
-		clearUnusedTable(tableID,"rowIsCharges","rowCastSpells");
+		clearUnusedTable(tableID,"rowIsCharges","rowObjectDuration");
 	}
 	else{
 		let nextRowIndex = document.getElementById("rowIsCharges").rowIndex+1;
@@ -429,7 +429,7 @@ function createChargesRows(tableID){
 		}
 
 		if(document.getElementById("rowRestoreWhen") == null){
-			addTableRow(tableID,nextRowIndex,"rowRestoreWhen","<th>Instances When Resource Recharges:</th><td><div class='check-multiple' style='width:100%'><label><input type='checkbox' id='RestoreShortRest' name='RestoreShortRest'><span>Short Rest</span></label><label><input type='checkbox' id='RestoreLongRest' name='RestoreLongRest'><span>Long Rest</span></label><label><input type='checkbox' id='RestoreDawn' name='RestoreDawn'><span>Dawn</span></label><label><input type='checkbox' id='RestoreDusk' name='RestoreDusk'><span>Dusk</span></label><label><input type='checkbox' id='RestoreStartTurn' name='RestoreStartTurn'><span>Start of Turn</span></label><label><input type='checkbox' id='RestoreInitiative' name='RestoreInitiative'><span>Rolling Initiative</span></label></div></td>");
+			addTableRow(tableID,nextRowIndex,"rowRestoreWhen","<th>Instances When Resource Recharges:</th><td><div class='check-multiple' style='width:100%'><label><input type='checkbox' id='RestoreShortRest' name='RestoreShortRest'><span>Short Rest</span></label><label><input type='checkbox' id='RestoreLongRest' name='RestoreLongRest'><span>Long Rest</span></label><label><input type='checkbox' id='RestoreDawn' name='RestoreDawn'><span>Dawn</span></label><label><input type='checkbox' id='RestoreDusk' name='RestoreDusk'><span>Dusk</span></label><label><input type='checkbox' id='RestoreStartTurn' name='RestoreStartTurn'><span>Start of Turn</span></label><label><input type='checkbox' id='RestoreInitiative' name='RestoreInitiative'><span>Rolling Initiative</span></label><label><input type='checkbox' id='RestoreItem' name='RestoreItem'><span>Charged by an Item</span></label></div></td>");
 			nextRowIndex++;
 
 			addTableRow(tableID,nextRowIndex,"rowRestoreMethod","<th><label for='RestoreMethod'>Recharge Method:</label></th><td><select id='RestoreMethod' name='RestoreMethod' onchange='createRestoreMethodRows()'><option value='Full'>Fully Recharge</option><option value='Fixed'>Fixed Amount Regained</option><option value='Rolled'>Rolled Amount</option><option value='Chance'>Chance to Recharge</option><option value='Attribute'>Based on Attribute</option><option value='Proficiency'>Based on Proficiency</option></select></td>");
@@ -447,6 +447,21 @@ function createChargesRows(tableID){
 		else if(document.getElementById("isCharges").value == "Multiple"){
 			clearUnusedTable(tableID,"rowMultiResourceButtons","rowRestoreWhen");
 		}
+	}
+}
+
+function createDurationRows(tableID,clearRowsID){
+	if(document.getElementById("isDuration").checked){
+		let nextRowIndex = document.getElementById("rowObjectDuration").rowIndex + 1;
+
+		createCustomDurationRows(tableID,"ObjectDuration",clearRowsID);
+		nextRowIndex++;
+
+		addTableRow(tableID,nextRowIndex,"rowIsPerishable","<th><label for='isPerishable'>Destroy Object when Unusable?</label></th><td><input type='checkbox' id='isPerishable' name='isPerishable'></td>");
+		nextRowIndex++;
+	}
+	else{
+		clearUnusedTable(tableID,"rowObjectDuration",clearRowsID);
 	}
 }
 

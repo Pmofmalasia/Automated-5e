@@ -8,7 +8,13 @@
 
 [h,if(json.get(SubeffectData,"ParentSubeffect")!=""),CODE:{
 	[h:ParentSubeffectNum = json.get(SubeffectData,"ParentSubeffect") + MultiEffectModifier]
-	[h:subeffect.ParentEffectData = json.get(json.path.read(pm.a5e.EffectData,"[*][?(@.WhichIntrinsicSubeffect == '"+ParentSubeffectNum+"')]"),0)]
+	[h:subeffect.ParentEffectData = json.path.read(pm.a5e.EffectData,"\$[*][?(@.WhichIntrinsicSubeffect == '"+ParentSubeffectNum+"' && @.EffectDeferred == null)]","DEFAULT_PATH_LEAF_TO_NULL")]
+	[h,if(json.isEmpty(subeffect.ParentEffectData)),CODE:{
+		[h:pm.a5e.EffectData = json.path.put(pm.a5e.EffectData,"\$[*][?(@.WhichIntrinsicSubeffect == '"+json.get(SubeffectData,"WhichIntrinsicSubeffect")+"')]","EffectDeferred",1)]
+		[h,return(0,0)]
+	};{
+		[h:subeffect.ParentEffectData = json.get(subeffect.ParentEffectData,0)]
+	}]
 	[h:ParentSubeffectRequirements = json.get(SubeffectData,"ParentSubeffectRequirements")]
 
 	[h:thisEffectData = json.set(thisEffectData,
@@ -24,6 +30,12 @@
 		)]
 	};{
 		[h:UseParentCrit = 0]
+	}]
+
+	[h:ParentMeetsPrereqs = pm.a5e.ParentSubeffectInitialPrereqs(subeffect.ParentEffectData,ParentSubeffectRequirements)]
+	[h,if(!ParentMeetsPrereqs),CODE:{
+		[h:pm.a5e.EffectData = json.path.put(pm.a5e.EffectData,"\$[*][?(@.WhichIntrinsicSubeffect == '"+json.get(SubeffectData,"WhichIntrinsicSubeffect")+"')]","EffectDeferred",1)]
+		[h,return(0,0)]
 	}]
 };{
 	[h:UseParentCrit = 0]
@@ -176,9 +188,14 @@
 [h,if(json.contains(subeffect.TargetTypes,"PriorTargets")),CODE:{
 	[h:subeffect.LinkedPriorTargets = pm.a5e.GetEffectComponent(pm.a5e.EffectData,"Targets",json.get(SubeffectData,"ParentSubeffect"))]
 
-	[h:"<!-- TODO: Will need to filter out non-creature PriorTargets in the future -->"]
-	[h:subeffect.CreatureTargetOptions = json.merge(subeffect.CreatureTargetOptions,subeffect.LinkedPriorTargets)]
+	[h:"<!-- TODO: Will need to manage non-creature PriorTargets as well in the future -->"]
 	[h:subeffect.PriorTargetingData = json.get(subeffect.TargetingData,"PriorTargets")]
+	[h:subeffect.PriorTargetLimits = json.get(subeffect.PriorTargetingData,"PriorTargetLimits")]
+	[h,if(json.get(subeffect.PriorTargetingData,"PriorTargetLimits") != ""),CODE:{
+		[h:PriorTargetCreatureFilter = json.get(subeffect.PriorTargetLimits,"Creature")]
+		[h,if(PriorTargetCreatureFilter != ""): subeffect.LinkedPriorTargets = json.get(pm.a5e.TargetCreatureFiltering(json.set("","ParentToken",ParentToken,"Origin",subeffect.TargetOrigin,"Range",subeffect.RangeData,"List",subeffect.LinkedPriorTargets),subeffect.TargetCreatureLimits),"ValidTargets")]
+	};{}]
+	[h:subeffect.CreatureTargetOptions = json.merge(subeffect.CreatureTargetOptions,subeffect.LinkedPriorTargets)]
 
 	[h,if(json.get(subeffect.PriorTargetingData,"TargetAll")),CODE:{
 		[h:subeffect.AllTargets = json.merge(subeffect.AllTargets,subeffect.LinkedPriorTargets)]

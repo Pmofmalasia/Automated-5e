@@ -256,13 +256,24 @@
 ]
 
 [h,if(json.get(objectData,"isCharges") != "None"),CODE:{
-	[h:RestoreInstances = json.append("","ShortRest","LongRest","Dawn","Dusk","StartTurn","Initiative")]
+	[h:RestoreInstances = json.append("","ShortRest","LongRest","Dawn","Dusk","StartTurn","Initiative","Item")]
 	[h,foreach(instance,RestoreInstances),CODE:{
 		[h,if(json.contains(objectData,"Restore"+instance)): objectData = json.set(objectData,"Restore"+instance,1)]	
 	}]
 };{}]
 
 [h:"<!-- TODO: Add Depleted Effects here -->"]
+
+[h,if(json.contains(objectData,"isDuration")),CODE:{
+	[h:objectDuration = json.set("",json.get(objectData,"customDurationUnits"),json.get(objectData,"customDurationValue"))]
+	[h:objectData = json.set(objectData,
+		"Duration",objectDuration,
+		"isPerishable",json.contains(objectData,"isPerishable")
+	)]
+
+	[h:objectData = json.remove(objectData,"customDurationUnits")]
+	[h:objectData = json.remove(objectData,"customDurationUnits")]
+};{}]
 
 [h:objectSpellsAllowed = "[]"]
 [h:differentSpellsNumber = number(json.get(objectData,"CastSpellNumber"))]

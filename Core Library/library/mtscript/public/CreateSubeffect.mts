@@ -48,20 +48,13 @@
 [h,if(thisSubeffectNum > 1),CODE:{
 	[h:SubeffectLinkOptions = "<option value=0>None</option>"]
 	[h,count(thisSubeffectNum - 1): SubeffectLinkOptions = SubeffectLinkOptions + "<option value="+(roll.count+1)+">"+(roll.count+1)+"</option>"]
-	
+
 	[h:CurrentFeatureData = data.getData("addon:","pm.a5e.core","ct.New"+EffectType)]
 	[h:thisPlayerCurrentFeatureData = json.get(CurrentFeatureData,getPlayerName())]
-	[h,switch(EffectType),CODE:
-		case "Spell": {
-			[h:tempPriorSubeffectData = json.get(thisPlayerCurrentFeatureData,json.length(thisPlayerCurrentFeatureData)-1)]
-			[h:PriorSubeffectData = json.get(tempPriorSubeffectData,"Subeffects")]
-		};
-		default: {
-			[h:AllPriorEffectData = json.get(thisPlayerCurrentFeatureData,"Effects")]
-			[h:CurrentEffectData = json.get(AllPriorEffectData,json.length(AllPriorEffectData)-1)]
-			[h:PriorSubeffectData = json.get(CurrentEffectData,"Subeffects")]
-		}
-	]
+
+	[h:AllPriorEffectData = json.get(thisPlayerCurrentFeatureData,"Effects")]
+	[h:CurrentEffectData = json.get(AllPriorEffectData,json.length(AllPriorEffectData)-1)]
+	[h:PriorSubeffectData = json.get(CurrentEffectData,"Subeffects")]
 
 	[h:PriorSubeffectData = base64.encode(PriorSubeffectData)]
 

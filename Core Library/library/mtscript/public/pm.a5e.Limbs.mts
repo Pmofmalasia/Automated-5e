@@ -1,7 +1,7 @@
 [h:ParentToken = arg(0)]
 [h:switchToken(ParentToken)]
 [h:a5e.UnifiedAbilities = a5e.GatherAbilities(ParentToken)]
-[h:pm.a5e.OverarchingContext = "Attack"]
+[h:pm.a5e.OverarchingContext = "Stats"]
 
 [h:StandardLimb = json.set("","Length",5,"Limits","{}")]
 [h:UsableLimbs = json.append("",

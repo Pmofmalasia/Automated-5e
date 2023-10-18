@@ -38,7 +38,7 @@
 [h:output.PC = json.get(json.get(FormattingData,"Output"),"Player")]
 [h:output.GM = json.get(json.get(FormattingData,"Output"),"GM")]
 
-[h:output.Temp = pm.AbilityTableProcessing(abilityTable,FormattingData,1)]
+[h:output.Temp = pm.AbilityTableProcessing(abilityTable,FormattingData,0)]
 
 [h:output.PC = output.PC + json.get(macro.return,"Player")+"</div></div>"]
 [h:output.GM = output.GM + json.get(macro.return,"GM")+"</div></div>"]

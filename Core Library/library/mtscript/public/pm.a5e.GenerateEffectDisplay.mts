@@ -3,7 +3,7 @@
 
 [h:tempTargetList = json.get(EffectData,"Targets")]
 [h,if(json.type(tempTargetList)=="ARRAY"):
-	targetList = json.path.delete(tempTargetList,"[?(@=='')]");
+	targetList = json.difference(tempTargetList,"['']");
 	targetList = tempTargetList
 ]
 [h:UnlistedTargetTest = json.length(tempTargetList) != json.length(targetList)]
@@ -23,7 +23,7 @@
 	}]
 }]
 [h:PriorTargetTest = json.length(TargetNameArray) != json.length(targetList)]
-[h:TargetNameArray = json.path.delete(TargetNameArray,"[?(@=='')]")]
+[h:TargetNameArray = json.difference(TargetNameArray,"['']")]
 
 [h,if(UnlistedTargetTest): TargetNameArray = json.append(TargetNameArray,"Unspecified Target")]
 [h,if(PriorTargetTest): TargetNameArray = json.append(TargetNameArray,"Prior Target")]

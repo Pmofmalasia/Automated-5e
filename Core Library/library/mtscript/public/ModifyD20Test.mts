@@ -1,5 +1,5 @@
 [h:d20Data = macro.args]
-[h:IsTooltip = 0]
+[h:IsTooltip = number(json.get(d20Data,"IsTooltip"))]
 [h:ParentToken = json.get(d20Data,"ParentToken")]
 [h:switchToken(ParentToken)]
 [h:a5e.UnifiedAbilities = a5e.GatherAbilities(ParentToken)]
@@ -11,10 +11,29 @@
 
 [h,switch(d20TestType),CODE:
 	case "Check":{
-		[h:d20RollHeader = json.get(d20Data,"Skill")]
+		[h:pm.a5e.CheckProperties(d20Data)]
+		[h:d20RollHeader = CurrentSkillDisplay]
 	};
 	case "Save":{
-		[h:d20RollHeader = json.get(d20Data,"Save")]
+		[h,SWITCH(d20Type),CODE:
+			case "Save": {
+				[h:CurrentSaveDisplay = pm.GetDisplayName(CurrentSave,"sb.Attributes")]
+				[h:PrimeStat = CurrentSave]
+			};
+			case "Concentration": {
+				[h:CurrentSaveDisplay = "Concentration"]
+				[h:PrimeStat = "Constitution"]
+			};
+			case "Death": {
+				[h:CurrentSaveDisplay = "Death"]
+				[h:PrimeStat = "None"]
+			};
+			default: {
+				[h:CurrentSaveDisplay = CurrentSave]
+				[h:PrimeStat = "None"]
+			}
+		]
+		[h:d20RollHeader = CurrentSaveDisplay]
 	};
 	case "Attack":{
 		[h:d20RollHeader = "Attack Roll"]

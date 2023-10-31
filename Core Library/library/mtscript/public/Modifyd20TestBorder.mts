@@ -31,28 +31,9 @@
 [h,MACRO("ModifyD20Test@Lib:pm.a5e.Core"): TestData]
 [h:TestData = macro.return]
 [h:abilityTable = json.get(TestData,"Table")]
+[h:UpdateD20TestData = json.remove(TestData,"Table")]
 
-[h:effectID = json.get(TestData,"ID")]
-[h,if(effectID==""),CODE:{};{
-	[h:"<!-- TODO: Add contested check data from the token setting the DC to the effect data -->"]
-	[h,switch(d20TestType),CODE:
-		case "Check":{
-			[h,if(json.get(TestData,"Contested")==1):
-				rerollEffectPath = "[*][?(@.ID=="+effectID+")]['ToResolve']['CheckDC']['DC']";
-				rerollEffectPath = "[*][?(@.ID=="+effectID+")]['ToResolve']['CheckDC']['ChecksMade']['"+ParentToken+"']"
-			]
-		};
-		case "Save":{
-			[h:rerollEffectPath = "[*][?(@.ID=="+effectID+")]['ToResolve']['SaveDC']['SavesMade']['"+ParentToken+"']"]
-		};
-		case "Attack":{
-			[h:rerollEffectPath = "[*][?(@.ID=="+effectID+")]['ToResolve']['Attack']"]
-		}
-	]
-
-	[h:rerolledEffect = json.path.set(data.getData("addon:","pm.a5e.core","gd.Effects"),rerollEffectPath,json.remove(TestData,"ID"))]
-	[h:setLibProperty("gd.Effects",rerolledEffect,"Lib:pm.a5e.Core")]
-}]
+[h,MACRO("UpdateD20TestData@Lib:pm.a5e.Core"): UpdateD20TestData]
 
 [h:output.Temp = pm.AbilityTableProcessing(abilityTable,FormattingData,1)]
 

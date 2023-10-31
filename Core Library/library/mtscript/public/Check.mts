@@ -6,7 +6,6 @@
 [h:pm.a5e.OverarchingContext = "Check"]
 [h:d20Type = json.get(d20Data,"Type")]
 [h:d20ID = json.get(d20Data,"ID")]
-[h:d20Data = json.set(d20Data,"OverallType","Check")]
 
 [h:pm.a5e.CheckProperties(d20Data)]
 

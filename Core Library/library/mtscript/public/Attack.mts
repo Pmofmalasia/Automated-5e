@@ -19,7 +19,7 @@
 	[h,count(TotalHands): OtherHands = json.append(OtherHands,roll.count)]
 	[h:OtherHandsIDs = CurrentHeldItems]
 }]
-[h:OtherWeapons = json.path.read(getProperty("a5e.stat.Inventory",ParentToken),"\$[*][?(@.ItemID in "+OtherHandsIDs+")]")]
+[h:OtherHeldItems = json.path.read(getProperty("a5e.stat.Inventory",ParentToken),"\$[*][?(@.ItemID in "+OtherHandsIDs+")]")]
 
 [h:Flavor = json.get(wa.Data,"Flavor")]
 [h:AttackNum = json.get(wa.Data,"AttackNum")]
@@ -310,7 +310,9 @@
 	
 	[h:thisAttackSubeffects = json.get(thisAttackData,"Subeffects")]
 
-	[h:rerollLinkBase = json.merge(wa.Data,json.set(thisAttackData,"TestType","Attack"))]
+	[h:d20Data = json.merge(wa.Data,json.set(thisAttackData,"TestType","Attack"))]
+	[h:d20Data = json.set(d20Data,"PreviousDamage",thisAttackAllDamage,"Target",thisAttackTarget,"ID",thisAttackEffectID)]
+	[h:rerollLinkBase = d20Data]
 	[h:wa.AdvRerollLink = macroLinkText("Modifyd20TestBorder@Lib:pm.a5e.Core","self-gm",json.set(rerollLinkBase,"PreviousDamage",thisAttackAllDamage,"Target",thisAttackTarget,"AttackNum",-1,"ID",thisAttackEffectID,"RerollData",json.set("","Advantage",1,"Disadvantage",0,"ForcedAdvantage",1)),ParentToken)]
 	[h:wa.DisRerollLink = macroLinkText("Modifyd20TestBorder@Lib:pm.a5e.Core","self-gm",json.set(rerollLinkBase,"PreviousDamage",thisAttackAllDamage,"Target",thisAttackTarget,"AttackNum",-1,"ID",thisAttackEffectID,"RerollData",json.set("","Advantage",0,"Disadvantage",1,"ForcedAdvantage",1)),ParentToken)]
 
@@ -408,12 +410,12 @@
 
 [h,if(!TwoWeaponFighting && json.contains(wa.Props,"Light")),CODE:{
 	[h:TwoHandedLinks = ""]
-	[h,foreach(weapon,OtherWeapons),CODE:{
+	[h,foreach(weapon,OtherHeldItems),CODE:{
 		[h:thisWeaponHand = -1]
 		[h,foreach(hand,CurrentHeldItems): thisWeaponHand = if(json.get(weapon,"ItemID") == hand,roll.count,thisWeaponHand)]
 		[h:thisWeaponIsLight = json.contains(json.get(weapon,"WeaponProperties"),"Light")]
 		[h,if(thisWeaponIsLight): thisWeaponLink = macroLinkText("SingleAttack@Lib:pm.a5e.Core","self-gm",json.set("","Hand",thisWeaponHand,"ParentToken",ParentToken,"AttackNum",-1,"IsTooltip",0,"TwoWeaponFighting",1),ParentToken)]
-		[h:TwoHandedLinks = listAppend(TwoHandedLinks,"<a href = '"+thisWeaponLink+"'><span style = 'color:"+LinkColor+"'>"+json.get(weapon,"DisplayName")+"</span></a>", " / ")]
+		[h,if(thisWeaponIsLight): TwoHandedLinks = listAppend(TwoHandedLinks,"<a href = '"+thisWeaponLink+"'><span style = 'color:"+LinkColor+"'>"+json.get(weapon,"DisplayName")+"</span></a>", " / ")]
 	}]
 				
 	[h,if(TwoHandedLinks != ""): abilityTable = json.append(abilityTable,json.set("",

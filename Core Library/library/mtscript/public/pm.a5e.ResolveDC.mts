@@ -58,8 +58,8 @@
 [h:"<!-- Note: Conditions that require failure to be removed are still evaled in success and vice versa, since there are 3 options for if a condition should be removed (success, failure, neither) -->"]
 [h:ConditionModificationSaveInfo = json.get(DCData,"ConditionModification")]
 [h,if(ConditionModificationSaveInfo != ""): 
-    preventConditionRemovalTest = json.get(ConditionModificationSaveInfo,DCResult);
-    preventConditionRemovalTest = 0
+    allowConditionModification = json.get(ConditionModificationSaveInfo,DCResult);
+    allowConditionModification = 1
 ]
 
 [h:pm.PassiveFunction(pm.a5e.OverarchingContext+DCResult,json.set("","ParentToken",ParentToken))]
@@ -84,7 +84,7 @@
 	}]
 };{}]
 
-[h,if(preventConditionRemovalTest==1): thisTokenConditionModificationInfo = "{}"]
+[h,if(allowConditionModification!=1): thisTokenConditionModificationInfo = "{}"]
 
  [h:"<!-- Note: Target specific effect stuff will now be merged in ResolveEffects. -->"]
 

@@ -68,8 +68,6 @@
     [h:"<!-- Will probably want to convert this to dialog so the interface for this won't be terrible -->"]
 };{}]
 
-
-
 [h:HasActiveEffects = json.contains(ab.Final,"ButtonInfo")]
 [h,if(HasActiveEffects),CODE:{
 	[h:setLibProperty("ct.NewFeature",json.set(data.getData("addon:","pm.a5e.core","ct.NewFeature"),getPlayerName(),ab.Final),"Lib:pm.a5e.Core")]
@@ -90,5 +88,5 @@
 		[h:setLibProperty("sb.MonsterFeatures",json.sort(json.append(getLibProperty("sb.MonsterFeatures","Lib:"+ab.SourceLib),ab.Final),"a","Class","Subclass","Level","DisplayName"),"Lib:"+ab.SourceLib)]
 
 		[h,MACRO("Gather Sourcebook Information@Lib:pm.a5e.Core"):""]
-	};{}]	
+	};{}]
 }]

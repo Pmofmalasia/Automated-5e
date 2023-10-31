@@ -168,6 +168,7 @@
 [h:subeffect.AllTargets = "[]"]
 [h:subeffect.MultipleTargetTypeTargets = "{}"]
 [h:subeffect.CreatureTargetOptions = "[]"]
+[h:cancelSubeffectTest = 0]
 [h,if(json.contains(subeffect.TargetTypes,"Creature")),CODE:{
 	[h:subeffect.TargetCreatureLimits = json.get(subeffect.TargetingData,"Creature")]
 	[h:subeffect.TargetOptionData = pm.a5e.TargetCreatureFiltering(json.set("","ParentToken",ParentToken,"Origin",subeffect.TargetOrigin,"Range",subeffect.RangeData),subeffect.TargetCreatureLimits)]
@@ -193,7 +194,7 @@
 	[h:subeffect.PriorTargetLimits = json.get(subeffect.PriorTargetingData,"PriorTargetLimits")]
 	[h,if(json.get(subeffect.PriorTargetingData,"PriorTargetLimits") != ""),CODE:{
 		[h:PriorTargetCreatureFilter = json.get(subeffect.PriorTargetLimits,"Creature")]
-		[h,if(PriorTargetCreatureFilter != ""): subeffect.LinkedPriorTargets = json.get(pm.a5e.TargetCreatureFiltering(json.set("","ParentToken",ParentToken,"Origin",subeffect.TargetOrigin,"Range",subeffect.RangeData,"List",subeffect.LinkedPriorTargets),subeffect.TargetCreatureLimits),"ValidTargets")]
+		[h,if(PriorTargetCreatureFilter != ""): subeffect.LinkedPriorTargets = json.get(pm.a5e.TargetCreatureFiltering(json.set("","ParentToken",ParentToken,"Origin",subeffect.TargetOrigin,"Range",subeffect.RangeData,"List",subeffect.LinkedPriorTargets),PriorTargetCreatureFilter),"ValidTargets")]
 	};{}]
 	[h:subeffect.CreatureTargetOptions = json.merge(subeffect.CreatureTargetOptions,subeffect.LinkedPriorTargets)]
 
@@ -209,6 +210,9 @@
 
 	[h:"<!-- TODO: Will need to support PriorTargets in targeting, see that macro. Move the below statement to replace the empty array in the above if() -->"]
 	[h,if(0): subeffect.MultipleTargetTypeTargets = json.set(subeffect.MultipleTargetTypeTargets,"PriorTargets",subeffect.PriorTargetsChosen)]
+
+	[h:"<!-- Note: The following is used to later abort the subeffect if there are no valid targets. Use case: Divine Smite attacking a non-fiend, undead, etc. The extra damage should not trigger at all in this instance. Without returning, there is a leftover linked effect targeting nothing and the subeffect that isn't occurring is shown in chat. -->"]
+	[h:cancelSubeffectTest = json.isEmpty(subeffect.LinkedPriorTargets)]
 }]
 
 [h,if(json.contains(subeffect.TargetTypes,"Object")),CODE:{
@@ -218,7 +222,8 @@
 	[h:"<!-- Note: Empty string 'Carried' key means that it does not matter if an item is worn or carried - resulting in 2 if statements instead of 1. -->"]
 	[h:CarriedLimits = json.get(subeffect.TargetObjectLimits,"Carried")]
 	[h,if(CarriedLimits!=0),CODE:{
-		[h,if(json.get(subeffect.TargetObjectLimits,"UseCreatureTargetingLimitsForHeld")): 
+		[h:UseTargetCreature = number(json.get(subeffect.TargetObjectLimits,"UseCreatureTargetingLimitsForHeld"))]
+		[h,if(UseTargetCreature): 
 			subeffect.HeldItemCreatureOptions = subeffect.CreatureTargetOptions;
 			subeffect.HeldItemCreatureOptions = json.get(pm.a5e.TargetCreatureFiltering(json.set("","ParentToken",ParentToken,"Origin",subeffect.TargetOrigin,"Range",subeffect.RangeData),json.get(subeffect.TargetObjectLimits,"CarryingCreatureFilter")),"ValidTargets")
 		]
@@ -244,7 +249,9 @@
 	)]
 	[h,MACRO("MixedTypeTargeting@Lib:pm.a5e.Core"): subeffect.MultiTypeTargetingData]
 	[h:subeffect.AllTargets = macro.return]
-};{}]
+};{
+	[h,if(cancelSubeffectTest): return(0)]
+}]
 
 [h:BaseSubeffectExecutionData = thisEffectData]
 [h:MissilesCompleted = 0]

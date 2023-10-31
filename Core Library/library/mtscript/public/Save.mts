@@ -6,7 +6,6 @@
 [h:pm.a5e.OverarchingContext = "Save"]
 [h:d20Type = json.get(d20Data,"Type")]
 [h:d20ID = json.get(d20Data,"ID")]
-[h:d20Data = json.set(d20Data,"OverallType","Save")]
 
 [h,if(d20ID != ""),CODE:{
 	[h:d20ThisEffect = json.path.read(data.getData("addon:","pm.a5e.core","gd.Effects"),"[*][?(@.ID=="+d20ID+")]")]

@@ -1,9 +1,8 @@
 [h:FeatureData = json.get(data.getData("addon:","pm.a5e.core","ct.NewFeature"),getPlayerName())]
 [h:FeatureName = json.get(FeatureData,"Name")]
-[h:FeatureType = json.get(FeatureData,"FeatureType")]
+[h:FeatureType = json.get(macro.args,"FeatureType")]
 [h:AddToLibTest = !number(json.get(macro.args,"UniqueMonsterFeature"))]
 
-[h:FeatureType = json.remove(FeatureData,"FeatureType")]
 [h:FeatureData = json.remove(FeatureData,"Sourcebook")]
 [h:FeatureData = json.remove(FeatureData,"EffectsNumber")]
 [h:FeatureData = json.remove(FeatureData,"SpecialEffects")]
@@ -26,7 +25,7 @@
 };{
 	[h:switchToken(ParentToken)]
 
-	[h:setProperty("a5e.stat.AllFeatures",json.append(getProperty("a5e.stat.AllFeatures"),FeatureData))]
+	[h:setProperty("a5e.stat.AllFeatures",json.append(getProperty("a5e.stat.AllFeatures"),json.set(FeatureData,"IsActive",1,"IsDisplayed",1)))]
 
 	[h,if(AddToLibTest),CODE:{
 		[h,switch(FeatureType):

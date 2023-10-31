@@ -63,7 +63,7 @@
         case "Other Attack": tempEffectType = "Attack"
     ]
 
-    [h:macro.return = json.append("",json.set("","OverallType",tempEffectType,"ID",""))]
+    [h:macro.return = json.append("",json.set("","TestType",tempEffectType,"ID",""))]
 };{
     [h:"<!-- TODO: Add ability to select multiple effects (e.g. Dispel Magic removing all spell effects of your choice). Note, this is why single targets are in an array by default. -->"]
     [h:effectChoice = json.get(effectOptions,effectChoiceIndex)]
@@ -71,7 +71,7 @@
     [h,if(json.get(effectChoice,"ID")==""),CODE:{
         [h:macro.return = json.append("",effectChoice)]
     };{
-        [h:macro.return = json.append("",json.set("","ID",json.get(effectChoice,"ID"),"Target",json.get(effectChoice,"tempThisTarget"),"OverallType",json.get(effectChoice,"tempEffectType")))]
+        [h:macro.return = json.append("",json.set("","ID",json.get(effectChoice,"ID"),"Target",json.get(effectChoice,"tempThisTarget"),"TestType",json.get(effectChoice,"tempEffectType")))]
     }]
 }]
     

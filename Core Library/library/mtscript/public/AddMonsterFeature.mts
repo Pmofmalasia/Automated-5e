@@ -6,7 +6,7 @@
     " FeatureChoice | "+SharedMonsterFeatureList+" | Choose a Feature | LIST | DELIMITER=JSON "
 ))]
 
-[h:FeatureToAdd = json.get(SharedMonsterFeatureArray,FeatureChoice)]
+[h:FeatureToAdd = json.set(json.get(SharedMonsterFeatureArray,FeatureChoice),"IsDisplayed",1,"IsActive",1)]
 
 [h:setProperty("a5e.stat.AllFeatures",json.append(getProperty("a5e.stat.AllFeatures"),FeatureToAdd))]
 

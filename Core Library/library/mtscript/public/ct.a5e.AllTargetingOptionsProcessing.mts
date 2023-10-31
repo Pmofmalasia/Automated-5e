@@ -77,21 +77,21 @@
 
 	};
 	case "":{
+		[h,if(json.contains(subeffectData,"PriorTargetLimits")),CODE:{
+			[h:TargetingReturnData = ct.a5e.AllTargetingOptionsProcessing(subeffectData,targetData,"PriorTargetType")]
+			[h:subeffectData = json.get(TargetingReturnData,"Subeffect")]
+			[h:PriorTargetsData = json.set("","PriorTargetLimits",json.get(TargetingReturnData,"Targeting"))]
+			[h:subeffectData = json.remove(subeffectData,"PriorTargetLimits")]
+		};{}]
+
 		[h,if(json.contains(subeffectData,"PriorTargetAll")),CODE:{
-			[h:PriorTargetsData = json.set("","TargetAll",1)]
+			[h:PriorTargetsData = json.set(PriorTargetsData,"TargetAll",1)]
 		};{
-			[h:PriorTargetsData = json.set("",
+			[h:PriorTargetsData = json.set(PriorTargetsData,
 				"TargetAll",0,
 				"TargetNumber",json.get(subeffectData,"PriorTargetNumber")
 			)]
 		}]
-
-		[h,if(json.contains(subeffectData,"PriorTargetLimits")),CODE:{
-			[h:PriorTargetsData = ct.a5e.AllTargetingOptionsProcessing(subeffectData,targetData,"PriorTargetLimits")]
-			[h:subeffectData = json.get(PriorTargetsData,"Subeffect")]
-			[h:PriorTargetsData = json.set(PriorTargetsData,"PriorTargetLimits",json.get(PriorTargetsData,"Targeting"))]
-			[h:subeffectData = json.remove(subeffectData,"PriorTargetLimits")]
-		};{}]
 
 		[h:targetData = json.set(targetData,"PriorTargets",PriorTargetsData)]
 

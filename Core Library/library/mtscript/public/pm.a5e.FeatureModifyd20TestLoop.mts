@@ -1,4 +1,4 @@
-[h:RollType = json.get(EffectData,"OverallType")]
+[h:RollType = json.get(EffectData,"TestType")]
 [h:RollData = EffectData]
 [h:EffectTarget = json.get(RollData,"Target")]
 

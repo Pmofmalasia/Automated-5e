@@ -70,8 +70,8 @@
     }]
     [h,if(!json.isEmpty(inclusiveConditions)): creatureTargetData = json.set(creatureTargetData,"TargetConditionsInclusive",inclusiveConditions)]
     [h,if(!json.isEmpty(exclusiveConditions)): creatureTargetData = json.set(creatureTargetData,"TargetConditionsExclusive",exclusiveConditions)]
-    [h:subeffectData = json.remove(subeffectData,"isTargetCondition"+dataKeySuffix)]
 }]
+[h:subeffectData = json.remove(subeffectData,"isTargetCondition"+dataKeySuffix)]
 
 [h,if(json.contains(subeffectData,"isAbilityScore"+dataKeySuffix)),CODE:{
     [h,foreach(tempAbility,pm.GetAttributes("Name","json")),CODE:{

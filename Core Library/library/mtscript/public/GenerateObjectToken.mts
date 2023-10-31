@@ -1,3 +1,4 @@
+
 [h:objectData = macro.args]
 [h,if(json.get(objectData,"FalseName")==""),CODE:{
 	[h:NewObjectTokenName = json.get(objectData,"DisplayName")]
@@ -8,23 +9,20 @@
 }]
 [h:NewObjectTokenType = json.get(objectData,"Type")]
 
-[h:IKnowWhatTheFuckImDoing = 0]
-[h,if(IKnowWhatTheFuckImDoing),CODE:{
+[h:JSMethodWorking = 0]
+[h,if(JSMethodWorking),CODE:{
 	[h:NewObjectImage = "ObjectImages/"+NewObjectTokenType+"/"+json.get(objectData,NewObjectTokenType+"Type")+".png"]
 	[h:ImagePresentTest = js.evalURI("isAssetPresent","lib://pm.a5e.core/isAssetPresent.js",NewObjectImage)]
 	[h,if(!ImagePresentTest): NewObjectImage = "asset://cae048d4f31ef38cac5ba0df1378c67d"]	
 };{
-	[h:BugIsFixed = 0]
-	[h,if(BugIsFixed),CODE:{
-		[h:NewObjectImage = "ObjectImages/"+NewObjectTokenType+"/"+json.get(objectData,NewObjectTokenType+"Type")+".png"]
-		[h:AllAddonFiles = library.getContents("pm.a5e.core")]
-		[h,if(json.contains(AllAddonFiles,"public/"+NewObjectImage)): 
-			NewObjectImage = "lib://pm.a5e.core/"+NewObjectImage;
-			NewObjectImage = "asset://cae048d4f31ef38cac5ba0df1378c67d"
-		]		
-	};{
-		[h:NewObjectImage = "asset://cae048d4f31ef38cac5ba0df1378c67d"]
+	[h:NewObjectImage = ""]
+	[h:AllAddonFiles = library.getContents("pm.a5e.core")]
+	[h:ValidFiletypes = json.append("",".PNG",".png",".jpeg",".JPEG",".jpg",".JPG",".webp",".WEBP")]
+	[h,foreach(filetype,ValidFiletypes),CODE:{
+		[h:tempObjectImage = "ObjectImages/"+NewObjectTokenType+"/"+json.get(objectData,NewObjectTokenType+"Type")+filetype]
+		[h,if(json.contains(AllAddonFiles,"public/"+tempObjectImage)): NewObjectImage = "lib://pm.a5e.core/"+tempObjectImage]
 	}]
+	[h,if(NewObjectImage == ""): NewObjectImage = "asset://cae048d4f31ef38cac5ba0df1378c67d"]
 }]
 
 [h:NewObjectLocation = json.get(objectData,"Location")]

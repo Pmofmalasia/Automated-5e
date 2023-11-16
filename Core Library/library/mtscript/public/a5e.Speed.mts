@@ -1,5 +1,11 @@
-[h:ParentToken = currentToken()]
-[h:a5e.UnifiedAbilities = a5e.GatherAbilities(ParentToken)]
+[h,if(argCount() == 0),CODE:{
+	[h:ParentToken = currentToken()]
+	[h:a5e.UnifiedAbilities = a5e.GatherAbilities(ParentToken)]
+};{
+	[h:ParentToken = arg(0)]
+	[h:a5e.UnifiedAbilities = arg(1)]
+}]
+
 [h:pm.a5e.OverarchingContext = "Stats"]
 [h:IsTooltip = 0]
 
@@ -10,7 +16,7 @@
 [h:EquippedArmorID = getProperty("a5e.stat.EquippedArmor")]
 [h,if(EquippedArmorID == ""):
 	tempEquippedArmorData = "[]";
-	tempEquippedArmorData = json.path.read(CurrentInventory,"[*][?(@.ItemID == '"+EquippedArmorID+"')]")
+	tempEquippedArmorData = json.path.read(CurrentInventory,"\$[*][?(@.ItemID == '"+EquippedArmorID+"')]")
 ]
 [h,if(json.isEmpty(tempEquippedArmorData)):
 	EquippedArmorData = "{}";

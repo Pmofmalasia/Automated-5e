@@ -40,6 +40,7 @@
 [h:defineFunction("pm.a5e.KeyStringsToNumbers","pm.a5e.KeyStringsToNumbers@Lib:pm.a5e.Core")]
 
 [h:"<!-- Functions for the character sheet -->"]
+[h:defineFunction("stat.a5e.UpdateStatsheet","stat.a5e.UpdateStatsheet@Lib:pm.a5e.Core")]
 [h:defineFunction("a5e.AC","a5e.AC@Lib:pm.a5e.Core")]
 [h:defineFunction("a5e.AttributeCalc","a5e.AttributeCalc@Lib:pm.a5e.Core")]
 [h:defineFunction("a5e.CastingLevel","a5e.CastingLevel@Lib:pm.a5e.Core")]

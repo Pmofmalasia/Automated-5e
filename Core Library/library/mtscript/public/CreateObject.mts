@@ -41,9 +41,13 @@
 
 <tr id='rowIsCharges'><th><label for='isCharges'>Object has Charges?</label></th><td><select id='isCharges' name='isCharges' onchange='createChargesRows("+'"CreateObjectTable"'+")'><option value='None'>None</option><option value='One'>Single Type</option><option value='Multiple'>Multiple Types</option></select></td></tr>
 
-<tr id='rowObjectDuration'><th><label for='isDuration'>Usable for Limited Time?</label></th><td><input type='checkbox' id='isDuration' name='isDuration' onchange='createDurationRows("+'"CreateObjectTable","rowIsCastSpells"'+")'><input type='hidden' id='ObjectDuration' value='Custom'></td></tr>
+<tr id='rowObjectDuration'><th><label for='isDuration'>Usable for Limited Time?</label></th><td><input type='checkbox' id='isDuration' name='isDuration' onchange='createDurationRows("+'"CreateObjectTable","rowIsSpellcastingFocus"'+")'><input type='hidden' id='ObjectDuration' value='Custom'></td></tr>
+
+<tr id='rowIsSpellcastingFocus'><th><label for='isSpellcastingFocus'>Acts as Spellcasting Focus?</label></th><td><input type='checkbox' id='isSpellcastingFocus' name='isSpellcastingFocus' onchange='createSpellcastingFocusRows("+'"CreateObjectTable","rowIsCastSpells"'+")'></td></tr>
 
 <tr id='rowIsCastSpells'><th><label for='isCastSpells'>Object Can Cast Spells?</label></th><td><input type='checkbox' id='isCastSpells' name='isCastSpells' onchange='createCastSpellsRows("+'"CreateObjectTable"'+")'><input type='hidden' id='CastSpellNumber' name='CastSpellNumber' value=0></td></tr>
+
+<tr id='rowIsImprovisedWeapon'><th><label for='isImprovisedWeapon'>Special Improvised Weapon Effect?</label></th><td><input type='checkbox' id='isImprovisedWeapon' name='isImprovisedWeapon' onchange='createImprovisedWeaponRows("+'"CreateObjectTable"'+")'></td></tr>
 
 <tr id='rowIsStackable'><th><label for='isStackable'>Object Stacks with Others in Inventory?</label></th><td><input type='checkbox' id='isStackable' name='isStackable'></td></tr>
 

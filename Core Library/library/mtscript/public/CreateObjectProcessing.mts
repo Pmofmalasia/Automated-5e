@@ -30,6 +30,10 @@
 	[h:objectData = ct.a5e.WeaponDataProcessing(objectData)]
 };{}]
 
+[h,if(json.contains(objectData,"isImprovisedWeapon")),CODE:{
+	[h:objectData = ct.a5e.WeaponDataProcessing(objectData)]
+};{}]
+
 [h,if(objectType=="Ammunition"),CODE:{
 	[h:allAmmunitionDamage = "[]"]
 	[h,count(json.get(objectData,"AmmunitionDamageInstanceNumber")),CODE:{
@@ -275,6 +279,18 @@
 	[h:objectData = json.remove(objectData,"customDurationUnits")]
 };{}]
 
+[h,if(json.contains(objectData,"isSpellcastingFocus")),CODE:{
+	[h:thisSpellcastingFocusTypes = ""]
+	[h:allSpellcastingFocusTypes = pm.a5e.GetCoreData("sb.SpellcastingFocusTypes","Name")]
+	[h,foreach(focus,allSpellcastingFocusTypes),CODE:{
+		[h,if(json.contains(objectData,"SpellcastingFocusType"+focus)): thisSpellcastingFocusTypes = json.set(thisSpellcastingFocusTypes,focus,1)]
+		[h:objectData = json.remove(objectData,"SpellcastingFocusType"+focus)]
+	}]
+
+	[h:objectData = json.set(objectData,"SpellcastingFocusTypes",thisSpellcastingFocusTypes)]
+	[h:objectData = json.remove(objectData,"isSpellcastingFocus")]
+};{}]
+
 [h:objectSpellsAllowed = "[]"]
 [h:differentSpellsNumber = number(json.get(objectData,"CastSpellNumber"))]
 [h,count(json.contains(objectData,"isCastSpells") * differentSpellsNumber),CODE:{
@@ -383,6 +399,7 @@
 [h:objectData = json.set(objectData,
 	"isWearable",json.contains(objectData,"isWearable"),
 	"isLockable",json.contains(objectData,"isLockable"),
+	"NeedsLock",json.contains(objectData,"NeedsLock"),
 	"isFlammable",json.contains(objectData,"isFlammable"),
 	"isMagnetic",json.contains(objectData,"isMagnetic"),
 	"isStackable",json.contains(objectData,"isStackable"),

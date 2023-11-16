@@ -1,10 +1,19 @@
 async function createObjectSubtypeRows(tableID,IDSuffix){
+	//Reset selections
 	clearUnusedTable(tableID,"rowObject"+IDSuffix,"rowSize");
+	let improvisedWeaponSelection = document.getElementById("isImprovisedWeapon");
+	improvisedWeaponSelection.removeAttribute("disabled","");
+	document.getElementById("isSpellcastingFocus").checked = false;
+	document.getElementById("isSpellcastingFocus").dispatchEvent(new Event("change"));
+
 	let nextRowIndex = document.getElementById("rowObject"+IDSuffix).rowIndex+1;
 	let ObjectType = document.getElementById(IDSuffix).value;
 
 	if(ObjectType == "Weapon"){
 		createWeaponTableRows(tableID,"rowObject"+IDSuffix);
+		improvisedWeaponSelection.checked = false;
+		improvisedWeaponSelection.dispatchEvent(new Event("change"));
+		improvisedWeaponSelection.setAttribute("disabled","");
 	}
 	else if(ObjectType == "Armor" || ObjectType == "Shield"){
 		document.getElementById("isWearable").checked = true;
@@ -60,6 +69,7 @@ async function createObjectSubtypeRows(tableID,IDSuffix){
 	}
 	else if(ObjectType == "Ammunition"){
 		document.getElementById("isWearable").checked = true;
+		document.getElementById("isStackable").checked = true;
 		
 		let request = await fetch("macro:pm.a5e.GetCoreData@lib:pm.a5e.Core", {method: "POST", body: "['sb.AmmunitionTypes']"});
 		let allAmmunitionTypes = await request.json();
@@ -87,28 +97,38 @@ async function createObjectSubtypeRows(tableID,IDSuffix){
 		addTableRow(tableID,nextRowIndex,"rowMagicBonus","<th><label for='MagicBonus'>Magic Bonus:</label></th><td>+ <input type='number' id='MagicBonus' name='MagicBonus' min='0' value='0' style='width:25px' onchange='MagicBonusChanges()'></td>");
 		nextRowIndex++;
 	}
-	else if(ObjectType == "CastingFocus"){
+	else if(ObjectType == "AdventuringGear"){
+		//Nothing happens, this is the miscellaneous category
+		document.getElementById("isWearable").checked = false;
+		document.getElementById("isStackable").checked = true;
+	}
+	else if(ObjectType == "SpellcastingFocus"){
 		document.getElementById("isWearable").checked = true;
+		document.getElementById("isStackable").checked = false;
+		document.getElementById("isSpellcastingFocus").checked = true;
+		document.getElementById("isSpellcastingFocus").dispatchEvent(new Event("change"));
 	}
 	else if(ObjectType == "Clothing"){
 		document.getElementById("isWearable").checked = true;
+		document.getElementById("isStackable").checked = true;
 		let request = await fetch("macro:pm.a5e.GetCoreData@lib:pm.a5e.Core", {method: "POST", body: "['sb.ClothingTypes']"});
 		let allClothingTypes = await request.json();
 		let ClothingTypeSelection = createHTMLSelectOptions(allClothingTypes);
 
-		addTableRow(tableID,nextRowIndex,"rowClothingType","<tr id='rowClothingType'><th><label for='ClothingType'>Clothing Type:</label></th><td><select id='ClothingType' name='ClothingType'>"+ClothingTypeSelection+"</select></td></tr>");
+		addTableRow(tableID,nextRowIndex,"rowClothingType","<th><label for='ClothingType'>Clothing Type:</label></th><td><select id='ClothingType' name='ClothingType'>"+ClothingTypeSelection+"</select></td>");
 		nextRowIndex++;
 	}
 	else if(ObjectType == "Container"){
 		document.getElementById("isWearable").checked = false;
+		document.getElementById("isStackable").checked = true;
 
-		addTableRow(tableID,nextRowIndex,"rowContainerWeightCapacity","<th><label for='ContainterWeightCapacity'>Weight Capacity:</label></th><td><input type='number' id='ContainterWeightCapacity' name='ContainterWeightCapacity' min=0 style='width:35px'>lbs. <input type='checkbox' id='isContainterWeightCapacity' name='isContainterWeightCapacity' onchange='toggleFieldEnabled("+'"ContainterWeightCapacity","isContainterWeightCapacity"'+")'> No limit</td>");
+		addTableRow(tableID,nextRowIndex,"rowContainerWeightCapacity","<th><label for='ContainterWeightCapacity'>Weight Capacity:</label></th><td><input type='number' id='ContainterWeightCapacity' name='ContainterWeightCapacity' min=0 step=0.1 style='width:35px'>lbs. <input type='checkbox' id='isContainterWeightCapacity' name='isContainterWeightCapacity' onchange='toggleFieldEnabled("+'"ContainterWeightCapacity","isContainterWeightCapacity"'+")'> No limit</td>");
 		nextRowIndex++;
 	
-		addTableRow(tableID,nextRowIndex,"rowContainerSolidVolumeCapacity","<th><label for='ContainterSolidVolumeCapacity'>Solid Volume Capacity:</label></th><td><input type='number' id='ContainterSolidVolumeCapacity' name='ContainterSolidVolumeCapacity' min=0 style='width:35px'><select id='ContainterSolidVolumeCapacityUnits' name='ContainterSolidVolumeCapacityUnits'><option value='cubicfeet'>Cubic Feet</option><option value='cubicyard'>Cubic Yards</option></select><input type='checkbox' id='isContainterSolidVolumeCapacity' name='isContainterSolidVolumeCapacity' onchange='toggleFieldEnabled(["+'"ContainterSolidVolumeCapacity","ContainterSolidVolumeCapacityUnits"],"isContainterSolidVolumeCapacity"'+")'>No Solids</td>");
+		addTableRow(tableID,nextRowIndex,"rowContainerSolidVolumeCapacity","<th><label for='ContainterSolidVolumeCapacity'>Solid Volume Capacity:</label></th><td><input type='number' id='ContainterSolidVolumeCapacity' name='ContainterSolidVolumeCapacity' min=0 step=0.1 style='width:35px'><select id='ContainterSolidVolumeCapacityUnits' name='ContainterSolidVolumeCapacityUnits'><option value='cubicfeet'>Cubic Feet</option><option value='cubicyard'>Cubic Yards</option></select><input type='checkbox' id='isContainterSolidVolumeCapacity' name='isContainterSolidVolumeCapacity' onchange='toggleFieldEnabled(["+'"ContainterSolidVolumeCapacity","ContainterSolidVolumeCapacityUnits"],"isContainterSolidVolumeCapacity"'+")'>No Solids</td>");
 		nextRowIndex++;
 
-		addTableRow(tableID,nextRowIndex,"rowContainerFluidVolumeCapacity","<th><label for='ContainterFluidVolumeCapacity'>Fluid Volume Capacity:</label></th><td><input type='number' id='ContainterFluidVolumeCapacity' name='ContainterFluidVolumeCapacity' min=0 style='width:35px'><select id='ContainterFluidVolumeCapacityUnits' name='ContainterFluidVolumeCapacityUnits'><option value='ounce'>Ounces</option><option value='pint'>Pints</option><option value='gallon'>Gallons</option><option value='milliliter'>Milliliters</option><option value='liter'>Liters</option></select><input type='checkbox' id='isContainterFluidVolumeCapacity' name='isContainterFluidVolumeCapacity' onchange='toggleFieldEnabled(["+'"ContainterFluidVolumeCapacity","ContainterFluidVolumeCapacityUnits"],"isContainterFluidVolumeCapacity"'+")'>No Fluids</td>");
+		addTableRow(tableID,nextRowIndex,"rowContainerFluidVolumeCapacity","<th><label for='ContainterFluidVolumeCapacity'>Fluid Volume Capacity:</label></th><td><input type='number' id='ContainterFluidVolumeCapacity' name='ContainterFluidVolumeCapacity' min=0 step=0.1 style='width:35px'><select id='ContainterFluidVolumeCapacityUnits' name='ContainterFluidVolumeCapacityUnits'><option value='ounce'>Ounces</option><option value='pint'>Pints</option><option value='gallon'>Gallons</option><option value='milliliter'>Milliliters</option><option value='liter'>Liters</option></select><input type='checkbox' id='isContainterFluidVolumeCapacity' name='isContainterFluidVolumeCapacity' onchange='toggleFieldEnabled(["+'"ContainterFluidVolumeCapacity","ContainterFluidVolumeCapacityUnits"],"isContainterFluidVolumeCapacity"'+")'>No Fluids</td>");
 		nextRowIndex++;
 
 		addTableRow(tableID,nextRowIndex,"rowContainerIgnoreWeight","<th><label for='isContainerIgnoreWeight'>Ignore Weight of Contents:</label></th><td><input type='checkbox' id='isContainerIgnoreWeight' name='isContainerIgnoreWeight'></td>");
@@ -116,21 +136,35 @@ async function createObjectSubtypeRows(tableID,IDSuffix){
 	}
 	else if(ObjectType == "Hazard" || ObjectType == "Trap"){
 		document.getElementById("isWearable").checked = false;
+		document.getElementById("isStackable").checked = true;
 	}
 	else if(ObjectType == "Potion"){
 		document.getElementById("isWearable").checked = false;
+		document.getElementById("isStackable").checked = true;
 	}
 	else if(ObjectType == "Rod"){
 		document.getElementById("isWearable").checked = true;
+		document.getElementById("isStackable").checked = false;
+	
+		document.getElementById("isSpellcastingFocus").checked = true;
+		document.getElementById("isSpellcastingFocus").dispatchEvent(new Event("change"));
+		document.getElementById("SpellcastingFocusTypeArcane").checked = true;
 	}
 	else if(ObjectType == "Scroll"){
 		document.getElementById("isWearable").checked = false;
+		document.getElementById("isStackable").checked = true;
 	}
 	else if(ObjectType == "Staff"){
 		document.getElementById("isWearable").checked = true;
+		document.getElementById("isStackable").checked = false;
+	
+		document.getElementById("isSpellcastingFocus").checked = true;
+		document.getElementById("isSpellcastingFocus").dispatchEvent(new Event("change"));
+		document.getElementById("SpellcastingFocusTypeArcane").checked = true;
 	}
 	else if(ObjectType == "Tool"){
 		document.getElementById("isWearable").checked = false;
+		document.getElementById("isStackable").checked = false;
 
 		let request = await fetch("macro:pm.a5e.GetCoreData@lib:pm.a5e.Core", {method: "POST", body: "['sb.ToolTypes']"});
 		let allToolTypes = await request.json();
@@ -146,12 +180,19 @@ async function createObjectSubtypeRows(tableID,IDSuffix){
 	}
 	else if(ObjectType == "Vehicle"){
 		document.getElementById("isWearable").checked = false;
+		document.getElementById("isStackable").checked = false;
 	}
 	else if(ObjectType == "Wand"){
 		document.getElementById("isWearable").checked = true;
+		document.getElementById("isStackable").checked = false;
+	
+		document.getElementById("isSpellcastingFocus").checked = true;
+		document.getElementById("isSpellcastingFocus").dispatchEvent(new Event("change"));
+		document.getElementById("SpellcastingFocusTypeArcane").checked = true;
 	}
 	else if(ObjectType == "Wondrous"){
 		document.getElementById("isWearable").checked = false;
+		document.getElementById("isStackable").checked = false;
 
 		let request = await fetch("macro:pm.a5e.GetCoreData@lib:pm.a5e.Core", {method: "POST", body: "['sb.ObjectTypes']"});
 		let allObjectTypes = await request.json();
@@ -525,6 +566,22 @@ async function createInitialChargesMethodRows(){
 	}
 }
 
+async function createSpellcastingFocusRows(tableID,clearRowsID){
+	if(document.getElementById("isSpellcastingFocus").checked){
+		let nextRowIndex = document.getElementById("rowIsSpellcastingFocus").rowIndex + 1;
+
+		let request = await fetch("macro:pm.a5e.GetCoreData@lib:pm.a5e.Core", {method: "POST", body: "['sb.SpellcastingFocusTypes']"});
+		allFocusTypes = await request.json();
+		focusTypeOptions = createHTMLMultiselectOptions(allFocusTypes,"SpellcastingFocusType");
+
+		addTableRow(tableID,nextRowIndex,"rowSpellcastingFocusType","<th>Spellcasting Focus Type(s):</th><td><div class='check-multiple' style='width:100%'>"+focusTypeOptions+"</div></td>");
+		nextRowIndex++;
+	}
+	else{
+		clearUnusedTable(tableID,"rowIsSpellcastingFocus",clearRowsID);
+	}	
+}
+
 async function createCastSpellsRows(tableID){
 	let nextRowIndex = document.getElementById("rowIsCastSpells").rowIndex + 1;
 
@@ -540,7 +597,17 @@ async function createCastSpellsRows(tableID){
 		//TODO: Add any modifications to spells
 	}
 	else{
-		clearUnusedTable("CreateObjectTable","rowIsCastSpells","rowIsStackable");
+		clearUnusedTable("CreateObjectTable","rowIsCastSpells","rowIsImprovisedWeapon");
+	}
+}
+
+function createImprovisedWeaponRows(tableID){
+	if(document.getElementById("isImprovisedWeapon").checked){
+		createWeaponTableRows(tableID,"rowIsImprovisedWeapon");
+		document.getElementById("WeaponClass").value = "Improvised";
+	}
+	else{
+		clearUnusedTable(tableID,"rowIsImprovisedWeapon","rowIsStackable");
 	}
 }
 
@@ -702,7 +769,7 @@ function createLockRows(tableID){
 	if(document.getElementById("isLockable").checked){
 		let nextRowIndex = document.getElementById("rowIsLockable").rowIndex + 1;
 
-		addTableRow(tableID,nextRowIndex,"rowLockDC","<th><label for='LockDC'>DC to Pick Lock</th><td><input type='number' id='LockDC' name='LockDC' value=10 min=1 style='width:30px'></td>");
+		addTableRow(tableID,nextRowIndex,"rowLockDC","<th><label for='LockDC'>DC to Pick Lock</th><td><input type='number' id='LockDC' name='LockDC' value=10 min=1 style='width:30px'><input type='checkbox' id='NeedsLock' name='NeedsLock' onchange='toggleFieldEnabled("+'"LockDC","NeedsLock"'+")'>Needs Separate Lock?</td>");
 		nextRowIndex++;
 	}
 	else{

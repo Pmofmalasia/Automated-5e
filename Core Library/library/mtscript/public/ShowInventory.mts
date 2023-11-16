@@ -9,7 +9,7 @@
 ))]
 [h:TableCellFormat = "<td style='text-align:center; padding-left:4px'>"]
 
-[h:InventoryHTML = "<tr><th style = '"+FrameAccentFormat+"'>Item</th><th style = '"+FrameAccentFormat+"'>Number</th><th style = '"+FrameAccentFormat+"'>Weight</th><th style = '"+FrameAccentFormat+"'>Use?</th></tr>"]
+[h:InventoryHTML = "<tr draggable='true'><th style = '"+FrameAccentFormat+"'>Item</th><th style = '"+FrameAccentFormat+"'>Number</th><th style = '"+FrameAccentFormat+"'>Weight</th><th style = '"+FrameAccentFormat+"'>Use?</th></tr>"]
 
 [h:TotalWeight = 0]
 [h,foreach(tempItem,CurrentInventory),CODE:{

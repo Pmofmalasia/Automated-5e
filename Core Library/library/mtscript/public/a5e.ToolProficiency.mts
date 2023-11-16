@@ -1,8 +1,15 @@
-[h:ParentToken = currentToken()]
-[h:a5e.UnifiedAbilities = a5e.GatherAbilities(ParentToken)]
-[h:pm.a5e.OverarchingContext = "Stats"]
+[h,if(argCount() == 0),CODE:{
+	[h:ParentToken = currentToken()]
+	[h:a5e.UnifiedAbilities = a5e.GatherAbilities(ParentToken)]
+};{
+	[h:ParentToken = arg(0)]
+	[h:a5e.UnifiedAbilities = arg(1)]
+}]
 
-[h:pm.ToolProfs = json.path.read(a5e.UnifiedAbilities,"\$[?(@.Tools!=null && @.IsActive>0)]['Tools']","DEFAULT_PATH_LEAF_TO_NULL")]
+[h:pm.a5e.OverarchingContext = "Stats"]
+[h:IsTooltip = 0]
+
+[h:pm.ToolProfs = json.path.read(a5e.UnifiedAbilities,"\$[*][?(@.Tools!=null && @.IsActive>0)]['Tools']","DEFAULT_PATH_LEAF_TO_NULL")]
 [h:pm.FinalProfs = "{}"]
 [h,foreach(tool,pm.GetTools("Name","json")),CODE:{
 	[h,if(json.isEmpty(pm.ToolProfs)): TempToolProfs = ""; TempToolProfs = json.path.read(pm.ToolProfs,"\$[?(@."+tool+"!=null)]['"+tool+"']","DEFAULT_PATH_LEAF_TO_NULL")]

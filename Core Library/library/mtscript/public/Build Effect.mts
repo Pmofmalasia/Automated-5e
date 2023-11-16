@@ -35,6 +35,8 @@
     [h:effectTargetOptionData = json.get(effect,"TargetedEffectOptions")]
     [h:effectMovementData = json.get(effect,"Movement")]
 
+    [h:effectWeaponData = json.get(effect,"WeaponData")]
+
     [h,if(parentTokenData!=""),CODE:{
         [h,if(whichEffect >= json.length(currentEffectData)): thisEffect = json.path.set(baseEffectData,".ID",newID); thisEffect = json.get(currentEffectData,whichEffect)]
 
@@ -233,6 +235,14 @@
         [h,if(whichEffect >= json.length(currentEffectData)): thisEffect = json.path.set(baseEffectData,".ID",newID); thisEffect = json.get(currentEffectData,whichEffect)]
 
         [h:thisEffect = json.set(thisEffect,"Movement",effectMovementData)]
+
+        [h,if(whichEffect >= json.length(currentEffectData)): currentEffectData = json.append(currentEffectData,thisEffect); currentEffectData = json.set(currentEffectData,whichEffect,thisEffect)]
+    };{}]
+    
+    [h,if(effectWeaponData!=""),CODE:{
+        [h,if(whichEffect >= json.length(currentEffectData)): thisEffect = json.path.set(baseEffectData,".ID",newID); thisEffect = json.get(currentEffectData,whichEffect)]
+
+        [h:thisEffect = json.set(thisEffect,"WeaponData",effectWeaponData)]
 
         [h,if(whichEffect >= json.length(currentEffectData)): currentEffectData = json.append(currentEffectData,thisEffect); currentEffectData = json.set(currentEffectData,whichEffect,thisEffect)]
     };{}]

@@ -1,91 +1,43 @@
-[h,if(argCount()>0): ab.ExtraInput = json.toList(arg(0),"##") ; ab.ExtraInput = ""]
-	[h:abort(input(
-	" junkVar | ---------------------- Weapon Proficiency Choice Info ---------------------- |  | LABEL | SPAN=TRUE ",
-	ab.ExtraInput,
-	" ab.Club |  | Club Proficiency | CHECK ",
-	" ab.Dagger |  | Dagger Proficiency | CHECK ",
-	" ab.Greatclub |  | Greatclub Proficiency | CHECK ",
-	" ab.Handaxe |  | Handaxe Proficiency | CHECK ",
-	" ab.Javelin |  | Javelin Proficiency | CHECK ",
-	" ab.LightHammer |  | Light Hammer Proficiency | CHECK ",
-	" ab.Mace |  | Mace Proficiency | CHECK ",
-	" ab.Quarterstaff |  | Quarterstaff Proficiency | CHECK ",
-	" ab.Sickle |  | Sickle Proficiency | CHECK ",
-	" ab.Spear |  | Spear Proficiency | CHECK ",
-	" junkVar | ------------------------------------------------------------------ |  | LABEL | SPAN=TRUE ",
-	" ab.LightCrossbow |  | Light Crossbow Proficiency | CHECK ",
-	" ab.Dart |  | Dart Proficiency | CHECK ",
-	" ab.Shortbow |  | Shortbow Proficiency | CHECK ",
-	" ab.Sling |  | Sling Proficiency | CHECK ",
-	" junkVar | ------------------------------------------------------------------ |  | LABEL | SPAN=TRUE ",
-	" ab.Battleaxe |  | Battleaxe Proficiency | CHECK ",
-	" ab.Flail |  | Flail Proficiency | CHECK ",
-	" ab.Glaive |  | Glaive Proficiency | CHECK ",
-	" ab.Greataxe |  | Greataxe Proficiency | CHECK ",
-	" ab.Greatsword |  | Greatsword Proficiency | CHECK ",
-	" ab.Halberd |  | Halberd Proficiency | CHECK ",
-	" ab.Lance |  | Lance Proficiency | CHECK ",
-	" ab.Longsword |  | Longsword Proficiency | CHECK ",
-	" ab.Maul |  | Maul Proficiency | CHECK ",
-	" ab.Morningstar |  | Morningstar Proficiency | CHECK ",
-	" ab.Pike |  | Pike Proficiency | CHECK ",
-	" ab.Rapier |  | Rapier Proficiency | CHECK ",
-	" ab.Scimitar |  | Scimitar Proficiency | CHECK ",
-	" ab.Shortsword |  | Shortsword Proficiency | CHECK ",
-	" ab.Trident |  | Trident Proficiency | CHECK ",
-	" ab.WarPick |  | War Pick Proficiency | CHECK ",
-	" ab.Warhammer |  | Warhammer Proficiency | CHECK ",
-	" ab.Whip |  | Whip Proficiency | CHECK ",
-	" junkVar | ------------------------------------------------------------------ |  | LABEL | SPAN=TRUE ",
-	" ab.Blowgun |  | Blowgun Proficiency | CHECK ",
-	" ab.HandCrossbow |  | Hand Crossbow Proficiency | CHECK ",
-	" ab.HeavyCrossbow |  | Heavy Crossbow Proficiency | CHECK ",
-	" ab.Longbow |  | Longbow Proficiency | CHECK ",
-	" ab.Net |  | Net Proficiency | CHECK "
-	))]
+[h:weaponInput = " junkVar | ---------------------- Weapon Proficiency Choice Info ---------------------- |  | LABEL | SPAN=TRUE "]
 
-	[h:ab.WeaponProfOptions = json.set("",
-		"Club",ab.Club,
-		"Dagger",ab.Dagger,
-		"Greatclub",ab.Greatclub,
-		"Handaxe",ab.Handaxe,
-		"Javelin",ab.Javelin,
-		"LightHammer",ab.LightHammer,
-		"Mace",ab.Mace,
-		"Quarterstaff",ab.Quarterstaff,
-		"Sickle",ab.Sickle,
-		"Spear",ab.Spear,
-		"LightCrossbow",ab.LightCrossbow,
-		"Dart",ab.Dart,
-		"Shortbow",ab.Shortbow,
-		"Sling",ab.Sling,
-		"Battleaxe",ab.Battleaxe,
-		"Flail",ab.Flail,
-		"Glaive",ab.Glaive,
-		"Greataxe",ab.Greataxe,
-		"Greatsword",ab.Greatsword,
-		"Halberd",ab.Halberd,
-		"Lance",ab.Lance,
-		"Longsword",ab.Longsword,
-		"Maul",ab.Maul,
-		"Morningstar",ab.Morningstar,
-		"Pike",ab.Pike,
-		"Rapier",ab.Rapier,
-		"Scimitar",ab.Scimitar,
-		"Shortsword",ab.Shortsword,
-		"Trident",ab.Trident,
-		"WarPick",ab.WarPick,
-		"Warhammer",ab.Warhammer,
-		"Whip",ab.Whip,
-		"Blowgun",ab.Blowgun,
-		"HandCrossbow",ab.HandCrossbow,
-		"HeavyCrossbow",ab.HeavyCrossbow,
-		"Longbow",ab.Longbow,
-		"Net",ab.Net
-		)]
-		
-		[h,if(argCount()>0): ab.ExtraKeys = arg(2) ; ab.ExtraKeys = ""]
-		[h,foreach(key,ab.ExtraKeys),CODE:{
-			[h:ab.WeaponProfOptions = json.set(ab.WeaponProfOptions,key,eval(json.get(arg(1),roll.count)))]
-		}]
-		[h:macro.return = ab.WeaponProfOptions]
+[h,if(argCount()>0),CODE:{
+	[h:extraInput = json.toList(arg(0),"##")]
+	[h:weaponInput = weaponInput + " ## "+ extraInput]
+};{}]
+
+[h:allWeaponClasses = json.append("",
+	json.set("","Name","Simple","DisplayName","Simple"),
+	json.set("","Name","Martial","DisplayName","Martial"),
+	json.set("","Name","Exotic","DisplayName","Exotic"),
+	json.set("","Name","Improvised","DisplayName","Improvised")
+)]
+[h,foreach(weaponClass,allWeaponClasses),CODE:{
+	[h:thisLine = "choice"+json.get(weaponClass,"Name")+" |  | "+json.get(weaponClass,"DisplayName")+" Proficiency | CHECK "]
+	[h:weaponInput = listAppend(weaponInput,thisLine," ## ")]
+}]
+
+[h:weaponInput = listAppend(weaponInput," junkVar | ------------------------------------------------------------------ |  | LABEL | SPAN=TRUE "," ## ")]
+
+[h:allWeaponTypes = pm.a5e.GetCoreData("sb.WeaponTypes")]
+[h,foreach(weaponType,allWeaponTypes),CODE:{
+	[h:thisLine = "choice"+json.get(weaponType,"Name")+" |  | "+json.get(weaponType,"DisplayName")+" Proficiency | CHECK "]
+	[h:weaponInput = listAppend(weaponInput,thisLine," ## ")]
+}]
+
+[h:abort(input(weaponInput))]
+
+[h:ab.WeaponProfOptions = "{}"]
+[h,foreach(weaponClass,allWeaponClasses),CODE:{
+	[h:isProfTest = eval("choice"+json.get(weaponClass,"Name"))]
+	[h,if(isProfTest): ab.WeaponProfOptions = json.set(ab.WeaponProfOptions,json.get(weaponClass,"Name"),1)]
+}]
+[h,foreach(weaponType,allWeaponTypes),CODE:{
+	[h:isProfTest = eval("choice"+json.get(weaponType,"Name"))]
+	[h,if(isProfTest): ab.WeaponProfOptions = json.set(ab.WeaponProfOptions,json.get(weaponType,"Name"),1)]
+}]
+
+[h,if(argCount()>0): ab.ExtraKeys = arg(2) ; ab.ExtraKeys = ""]
+[h,foreach(key,ab.ExtraKeys),CODE:{
+	[h:ab.WeaponProfOptions = json.set(ab.WeaponProfOptions,key,eval(json.get(arg(1),roll.count)))]
+}]
+[h:macro.return = ab.WeaponProfOptions]

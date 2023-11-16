@@ -44,6 +44,7 @@
 
 [h:"<!-- TODO: Switch out name with false name if needed -->"]
 [h:wa.Name = json.get(wa.WeaponUsed,"DisplayName")]
+[h:wa.ItemID = json.get(wa.WeaponUsed,"ItemID")]
 [h:wa.MagicBonus = json.get(wa.WeaponUsed,"MagicBonus")]
 [h:wa.WeaponType = json.get(wa.WeaponUsed,"WeaponType")]
 [h:wa.Class = json.get(wa.WeaponUsed,"WeaponClass")]
@@ -90,6 +91,12 @@
 [h:"<!-- TODO: Add other primary stats as a property? Or otherwise? Probably just have a 'Primary Stat' option that isn't a property which defaults to Strength or Dex if ranged. -->"]
 [h:PrimeStat = if(wa.MeleeRanged=="Ranged","Dexterity","Strength")]
 [h,if(json.get(wa.WeaponUsed,"PrimeStat")!=""): PrimeStat = json.get(wa.WeaponUsed,"PrimeStat")]
+
+[h:WeaponAttackPropertiesData = json.set(wa.WeaponUsed,
+	"Hand",ActiveHand,
+	"ThrowWeapon",ThrowingWeapon,
+	"TwoWeaponFighting",TwoWeaponFighting
+)]
 
 [h:pm.PassiveFunction("AttackProps")]
 [h:pm.PassiveFunction("WeaponAttackProps")]
@@ -183,6 +190,8 @@
 	}]
 
 	[h:CurrentAmmoCount = number(json.get(AmmunitionData,"Number"))]
+
+	[h:WeaponAttackPropertiesData = json.set(WeaponAttackPropertiesData,"AmmunitionData",AmmunitionData)]
 };{
 	[h:CurrentAmmoCount = 0]
 }]
@@ -209,6 +218,8 @@
 	[h:wa.TargetList = "[]"]
 	[h,count(AttackCount): wa.TargetList = json.merge(wa.TargetList,json.get(wa.AllTargets,roll.count))]
 }]
+
+[h:WeaponAttackPropertiesData = json.set(WeaponAttackPropertiesData,"MeleeRangedAttack",wa.MeleeRanged)]
 
 [h:AllAttacksToHit = "[]"]
 [h:AllAttacksDmg = "[]"]
@@ -376,6 +387,7 @@
 		"Damage",thisAttackAllDamage,
 		"Targets",json.append("",thisAttackTarget),
 		"ID",thisAttackEffectID,
+		"WeaponData",WeaponAttackPropertiesData,
 		"WhichIntrinsicSubeffect",WhichAttack
 	))]
 	[h:"<!-- TODO: Major issue - WhichIntrinsicSubeffect always being 0 will cause errors with multiple attacks. This whole method is flawed in the case of multiple attacks: If wIS is incremented each time, then subeffects cannot target it correctly. If not incremented, then subeffects will target ALL attacks, not just one of them. This will apply for missiles also. Currently incrementing; better solution may be to give a separate EffectID and SubeffectID. -->"]

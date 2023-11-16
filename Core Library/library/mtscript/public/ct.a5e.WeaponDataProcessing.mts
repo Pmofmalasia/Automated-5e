@@ -7,6 +7,8 @@
 }]
 [h:WeaponData = json.set(WeaponData,"WeaponTags",ChosenWeaponTagsArray)]
 
+[h,if(json.contains(WeaponData,"isWeaponNotProficient")): WeaponData = json.set(WeaponData,"isWeaponNotProficient",1)]
+
 [h:allWeaponProperties = pm.a5e.GetCoreData("sb.WeaponProperties","Name","json")]
 [h:ChosenWeaponPropertiesArray = "[]"]
 [h,foreach(tempProperty,allWeaponProperties),CODE:{

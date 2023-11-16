@@ -3,7 +3,7 @@
 
 [h:Twelve=json.get(getProperty("a5e.stat.HitDice"),"1d12")]
 [h:Ten=json.get(getProperty("a5e.stat.HitDice"),"1d10")]
-[h:Eight=json.get(getProperty("a5e.stat."),"1d8")]
+[h:Eight=json.get(getProperty("a5e.stat.HitDice"),"1d8")]
 [h:Six=json.get(getProperty("a5e.stat.HitDice"),"1d6")]
 
 [h: HDChoice=input(

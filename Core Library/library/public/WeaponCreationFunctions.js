@@ -4,6 +4,9 @@ async function createWeaponTableRows(tableID,startRowID){
 	if(document.getElementById("isWearable")!=null){
 		document.getElementById("isWearable").setAttribute("checked","");
 	}
+	if(document.getElementById("isStackable")!=null){
+		document.getElementById("isStackable").checked = false;
+	}
 
 	let request = await fetch("macro:pm.a5e.GetCoreData@lib:pm.a5e.Core", {method: "POST", body: "['sb.WeaponTypes']"});
 	let allWeaponTypes = await request.json();
@@ -23,7 +26,7 @@ async function createWeaponTableRows(tableID,startRowID){
 		nextRowIndex++;
 	}
 
-	addTableRow(tableID,nextRowIndex,"rowWeaponClass","<th><label for='WeaponClass'>Weapon Class:</label></th><td><select id='WeaponClass' name='WeaponClass'><option value='Simple'>Simple</option><option value='Martial'>Martial</option><option value='Exotic'>Exotic</option><option value='Natural'>Natural</option><option value='Improvised'>Improvised</option></select></td>");
+	addTableRow(tableID,nextRowIndex,"rowWeaponClass","<th><label for='WeaponClass'>Weapon Class:</label></th><td><select id='WeaponClass' name='WeaponClass'><option value='Natural'>Natural</option><option value='Simple'>Simple</option><option value='Martial'>Martial</option><option value='Exotic'>Exotic</option><option value='Improvised'>Improvised</option></select></td>");
 	nextRowIndex++;
 
 	addTableRow(tableID,nextRowIndex,"rowWeaponMeleeRanged","<th><label for='WeaponMeleeRanged'>Melee or Ranged:</label></th><td><select id='WeaponMeleeRanged' name='WeaponMeleeRanged' onchange='createWeaponRangeReachRows("+'"'+tableID+'",'+'"rowWeaponMeleeRanged"'+")'><option value='Melee'>Melee</option><option value='Ranged'>Ranged</option></select></td>");
@@ -89,6 +92,17 @@ async function createWeaponTypeRows(tableID){
 	}
 	else{
 		clearUnusedTable(tableID,"rowWeaponType","rowWeaponClass");
+
+		if(document.getElementById("WeaponType").value == "NaturalWeapon"){
+			let insertRowIndex = document.getElementById("rowWeaponPrimeStat").rowIndex + 1;
+
+			addTableRow(tableID,insertRowIndex,"rowWeaponNotProficient","<th><label for='isWeaponNotProficient'>Weapon PREVENTS Proficiency:</label></th><td><input type='checkbox' id='isWeaponNotProficient' name='isWeaponNotProficient'></td>");
+
+			document.getElementById("WeaponClass").value = "Natural";
+		}
+		else if(document.getElementById("rowWeaponNotProficient") != null){
+			document.getElementById(tableID).deleteRow(document.getElementById("rowWeaponNotProficient").rowIndex);
+		}
 
 		let request = await fetch("macro:pm.a5e.GetCoreData@lib:pm.a5e.Core", {method: "POST", body: "['sb.WeaponTypes']"});
 		let allWeaponTypes = await request.json();

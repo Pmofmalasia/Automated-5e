@@ -1,0 +1,15 @@
+[h:abort(input(
+	" obj.Name |  | Spellcasting Focus Type Name ",
+	" obj.Source | "+pm.GetBookInfo("DisplayName","json")+" | Which sourcebook is the spellcasting focus type from | LIST | VALUE=STRING DELIMITER=JSON "
+))]
+
+[h:obj.TypeData = json.set("",
+	"Name",pm.RemoveSpecial(obj.Name),
+	"DisplayName",obj.Name
+)]
+
+[h:obj.SourcebookLib = json.get(json.path.read(data.getData("addon:","pm.a5e.core","ms.Sources"),"\$[?(@.Name=='"+pm.RemoveSpecial(obj.Source)+"')]['Library']"),0)]
+[h:setLibProperty("sb.SpellcastingFocusTypes",json.append(getLibProperty("sb.SpellcastingFocusTypes","Lib:"+obj.SourcebookLib),obj.TypeData),"Lib:"+obj.SourcebookLib)]
+
+[r:obj.Name+" spellcasting focus type from the sourcebook "+obj.Source+" created."]
+[h,MACRO("Gather Sourcebook Information@Lib:pm.a5e.Core"):""]

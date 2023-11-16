@@ -1,8 +1,15 @@
-[h:ParentToken = currentToken()]
-[h:a5e.UnifiedAbilities = a5e.GatherAbilities(ParentToken)]
-[h:pm.a5e.OverarchingContext = "Stats"]
+[h,if(argCount() == 0),CODE:{
+	[h:ParentToken = currentToken()]
+	[h:a5e.UnifiedAbilities = a5e.GatherAbilities(ParentToken)]
+};{
+	[h:ParentToken = arg(0)]
+	[h:a5e.UnifiedAbilities = arg(1)]
+}]
 
-[h:pm.SaveProfs = json.path.read(a5e.UnifiedAbilities,"\$[?(@.Saves!=null && @.IsActive>0)]['Saves']","DEFAULT_PATH_LEAF_TO_NULL")]
+[h:pm.a5e.OverarchingContext = "Stats"]
+[h:IsTooltip = 0]
+
+[h:pm.SaveProfs = json.path.read(a5e.UnifiedAbilities,"\$[*][?(@.Saves!=null && @.IsActive>0)]['Saves']","DEFAULT_PATH_LEAF_TO_NULL")]
 [h:pm.FinalProfs = "{}"]
 [h,foreach(save,pm.GetAttributes("Name","json")),CODE:{
 	[h:tempBaseSaveProf = json.get(getProperty("a5e.stat.BaseSaves"),save)]

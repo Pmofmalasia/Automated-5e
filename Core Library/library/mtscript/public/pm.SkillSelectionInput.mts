@@ -7,7 +7,7 @@
 }]
 
 [h:sk.ToolCategoryInput = ""]
-[h:sk.ToolCategoryList = pm.GetToolTypes())]
+[h:sk.ToolCategoryList = pm.GetToolTypes()]
 [h,foreach(TempToolType,sk.ToolCategoryList): sk.ToolCategoryInput = listAppend(sk.ToolCategoryInput," sk."+json.get(TempToolType,"Name")+"Choice | No,Proficiency,Expertise,Expertise if Proficient | All "+json.get(TempToolType,"DisplayName")+"s | LIST ","##")]
 
 [h:sk.ToolInput = ""]

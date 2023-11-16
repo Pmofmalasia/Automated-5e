@@ -56,6 +56,8 @@
 [h:defineFunction("a5e.SkillProficiency","a5e.SkillProficiency@Lib:pm.a5e.Core")]
 [h:defineFunction("a5e.Speed","a5e.Speed@Lib:pm.a5e.Core")]
 [h:defineFunction("a5e.ToolProficiency","a5e.ToolProficiency@Lib:pm.a5e.Core")]
+[h:defineFunction("stat.a5e.WeaponProficiency","stat.a5e.WeaponProficiency@Lib:pm.a5e.Core")]
+[h:defineFunction("stat.a5e.ArmorProficiency","stat.a5e.ArmorProficiency@Lib:pm.a5e.Core")]
 [h:defineFunction("a5e.TotalLevel","a5e.TotalLevel@Lib:pm.a5e.Core")]
 [h:defineFunction("character.Distances","character.Distances@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.SpellSlots","pm.SpellSlots@Lib:pm.a5e.Core")]

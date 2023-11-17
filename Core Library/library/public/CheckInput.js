@@ -1,4 +1,4 @@
-async function createRegularCheckRows(tableID){
+async function createRegularCheckRows(tableID,Inventory){
 	if(document.getElementById("EffectIDChoice").value == ""){
 		let nextRowIndex = document.getElementById("rowEffectIDChoice").rowIndex + 1;
 
@@ -11,6 +11,25 @@ async function createRegularCheckRows(tableID){
 			SkillChoiceOptions = SkillChoiceOptions + "<option value='"+tempSkill.Name+"'>"+tempSkill.DisplayName+" ("+tempAtrAbbr+")</option>";
 		}
 		SkillChoiceOptions = SkillChoiceOptions + "<option value=''> --------------------- </option>";
+
+		let hasToolsTest = false;
+		for(let item of Inventory){
+			if(item.Type == "Tool"){
+				hasToolsTest = true;
+				let toolProfType;
+				if(item.ToolSubtype == ""){
+					toolProfType = item.ToolType;
+				}
+				else{
+					toolProfType = item.ToolSubtype;
+				}
+				SkillChoiceOptions = SkillChoiceOptions + "<option value='"+toolProfType+"'>"+item.DisplayName+"</option>";
+			}
+		}
+
+		if(hasToolsTest){
+			SkillChoiceOptions = SkillChoiceOptions + "<option value=''> --------------------- </option>";
+		}
 
 		let requestAttributes = await fetch("macro:pm.GetAttributes@lib:pm.a5e.Core", {method: "POST", body: ""});
 		let allAttributes = await requestAttributes.json();
@@ -43,9 +62,9 @@ async function createRegularCheckRows(tableID){
 
 async function loadUserData() {
 	let userdata = atob(await MapTool.getUserData());
-	document.getElementById('CheckInputTable').innerHTML = userdata;
+	document.getElementById('CheckInputTable').innerHTML = userdata.FormData;
 
-	createRegularCheckRows('CheckInputTable');
+	createRegularCheckRows('CheckInputTable',userdata.Inventory);
 }
 
 setTimeout(loadUserData, 1);

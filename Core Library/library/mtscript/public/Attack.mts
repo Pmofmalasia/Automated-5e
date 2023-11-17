@@ -83,8 +83,12 @@
 
 [h:wa.Props = json.get(wa.WeaponUsed,"WeaponProperties")]
 [h:wa.Magical = json.get(wa.WeaponUsed,"isMagical")]
-[h:attack.ProfTest = if(json.get(getProperty("a5e.stat.WeaponProficiencies"),wa.WeaponType)==1,1,0)]
-[h:attack.ProfTest = 1]
+[h:allWeaponProficiencies = stat.a5e.WeaponProficiency(ParentToken,a5e.UnifiedAbilities)]
+[h:attack.WeaponProfType = number(json.get(allWeaponProficiencies,wa.WeaponType)) > 0]
+[h:attack.WeaponProfClass = number(json.get(allWeaponProficiencies,wa.WeaponClass)) > 0]
+[h:attack.WeaponProfNatural = and(wa.WeaponClass == "NaturalWeapon",json.get(wa.WeaponUsed,"isWeaponNotProficient") != 1)]
+[h:tempMonsterProfTest = getProperty("a5e.stat.CreatureName") != "Adventurer"]
+[h:attack.ProfTest = or(attack.WeaponProfType,attack.WeaponProfClass,attack.WeaponProfNatural,tempMonsterProfTest)]
 [h:wa.TargetOrigin = ParentToken]
 
 [h:wa.BrutalCrit = 0]

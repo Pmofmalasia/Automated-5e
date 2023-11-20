@@ -18,18 +18,15 @@
 		case 1:{[h:outputTargets = "self"][h:linkPermissions = "gm-self"]};
 		case 2:{[h:outputTargets = "none"][h:linkPermissions = "gm"]}
 	]
-	
+
 	[h,if(SkillChoice==""),CODE:{
 		[h:ch.Choice = "No Skill Selected"]
 		[h:ch.Type = ""]
 		[h:AlternateAttribute = "None"]
 	};{
-		[h:ch.Choice = SkillChoice]
-		[h:StraightAttributeTest = json.contains(pm.GetAttributes("Name","json"),ch.Choice)]
-		[h,if(StraightAttributeTest): 
-			ch.Type = "Ability Score";
-			ch.Type = "Skill"
-		]
+		[h:CheckChoiceData = base64.decode(SkillChoice)]
+		[h:ch.Choice = json.get(CheckChoiceData,"Name")]
+		[h:ch.Type = json.get(CheckChoiceData,"Type")]
 	}]
 	
 	[h:"<!-- Note: If changes are made to outputTargets, a new method may need to be used to determine if it is GM only or not. Also may need a different method anyway for passive skills. -->"]

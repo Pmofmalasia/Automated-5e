@@ -9,7 +9,7 @@
 ))]
 [h:TableCellFormat = "<td style='text-align:center; padding-left:4px'>"]
 
-[h:InventoryHTML = "<tr draggable='true'><th style = '"+FrameAccentFormat+"'>Item</th><th style = '"+FrameAccentFormat+"'>Number</th><th style = '"+FrameAccentFormat+"'>Weight</th><th style = '"+FrameAccentFormat+"'>Use?</th></tr>"]
+[h:InventoryHTML = "<tr><th style = '"+FrameAccentFormat+"'>Item</th><th style = '"+FrameAccentFormat+"'>Number</th><th style = '"+FrameAccentFormat+"'>Weight</th><th style = '"+FrameAccentFormat+"'>Use?</th></tr>"]
 
 [h:TotalWeight = 0]
 [h,foreach(tempItem,CurrentInventory),CODE:{
@@ -30,7 +30,7 @@
 		[h,if(tempResourceData == ""):
 			tempNumberDisplay = tempNumber;
 			tempNumberDisplay = json.get(tempItem,"Resource")+"<b>/</b>"+evalMacro(json.get(tempItem,"MaxResource"))
-		]		
+		]
 	}]
 
 	[h:tempUseButton = ""]
@@ -60,10 +60,24 @@
 	[h:TotalWeight = TotalWeight + tempTotalWeight]
 }]
 
+[h:tempActivationLink = macroLinkText("Test@Lib:SRD","self-gm","",ParentToken)]
+[h:tempLink = "<a href='"+tempActivationLink+"'>Test</a>"]
+
 [h:InventoryHTML = InventoryHTML + "<tr><th style = '"+FrameAccentFormat+"'>Weight Data</th><th style = '"+FrameAccentFormat+"'>Total Carried</th><th style = '"+FrameAccentFormat+"'>Carry Capacity</th><th style = '"+FrameAccentFormat+"'>Push Capacity</th></tr>"]
 
 [h:WeightData = stat.a5e.CarryCapacity(json.set("","ParentToken",ParentToken))]
 [h:totalWeightNeedsRounding = (TotalWeight != floor(TotalWeight))]
-[h:InventoryHTML = InventoryHTML + "<tr>"+TableCellFormat+" --- </td>"+TableCellFormat+if(totalWeightNeedsRounding,round(TotalWeight,1),TotalWeight)+"</td>"+TableCellFormat+json.get(WeightData,"Carry")+"</td>"+TableCellFormat+json.get(WeightData,"Push")+"</td></tr>"]
+[h:InventoryHTML = InventoryHTML + "<tr>"+TableCellFormat+" --- </td>"+TableCellFormat+if(totalWeightNeedsRounding,round(TotalWeight,1),floor(TotalWeight))+"</td>"+TableCellFormat+json.get(WeightData,"Carry")+"</td>"+TableCellFormat+json.get(WeightData,"Push")+"</td></tr>"]
 
-[h:html.frame5("Inventory","lib://pm.a5e.core/ShowInventory.html?cachelib=false","value="+base64.encode(InventoryHTML)+"; closebutton=0; height=300")]
+[h,if(0),CODE:{
+[h:html.frame5("Inventory: "+getName(),"lib://pm.a5e.core/ShowInventory.html?cachelib=false","value="+base64.encode(InventoryHTML)+"; closebutton=0; height=300")]	
+}]
+
+[r,if(1),CODE:{
+[r,frame5("Inventory: "+getName()):{
+	[r:'<html>
+      <table id="InventoryTable">
+          '+InventoryHTML+'
+      </table></html>']
+}]
+}]

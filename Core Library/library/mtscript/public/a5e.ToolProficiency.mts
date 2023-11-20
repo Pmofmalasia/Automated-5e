@@ -9,7 +9,7 @@
 [h:pm.a5e.OverarchingContext = "Stats"]
 [h:IsTooltip = 0]
 
-[h:pm.ToolProfs = json.path.read(a5e.UnifiedAbilities,"\$[*][?(@.Tools!=null && @.IsActive>0)]['Tools']","DEFAULT_PATH_LEAF_TO_NULL")]
+[h:pm.ToolProfs = json.path.read(a5e.UnifiedAbilities,"\$[*][?(@.Skills!=null && @.IsActive>0)]['Skills']","DEFAULT_PATH_LEAF_TO_NULL")]
 [h:pm.FinalProfs = "{}"]
 [h,foreach(tool,pm.GetTools("Name","json")),CODE:{
 	[h,if(json.isEmpty(pm.ToolProfs)): TempToolProfs = ""; TempToolProfs = json.path.read(pm.ToolProfs,"\$[?(@."+tool+"!=null)]['"+tool+"']","DEFAULT_PATH_LEAF_TO_NULL")]

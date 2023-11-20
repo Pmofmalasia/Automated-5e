@@ -7,35 +7,39 @@ async function createRegularCheckRows(tableID,Inventory){
 
 		let SkillChoiceOptions = "<option value=''>No Skill</option>";
 		for(let tempSkill of allSkills){
-			tempAtrAbbr = tempSkill.Attribute.substring(0,3);
-			SkillChoiceOptions = SkillChoiceOptions + "<option value='"+tempSkill.Name+"'>"+tempSkill.DisplayName+" ("+tempAtrAbbr+")</option>";
+			let tempAtrAbbr = tempSkill.Attribute.substring(0,3);
+			let thisSkillInfo = {Name:tempSkill.Name, Type:"Skill"};
+			SkillChoiceOptions = SkillChoiceOptions + "<option value='"+btoa(JSON.stringify(thisSkillInfo))+"'>"+tempSkill.DisplayName+" ("+tempAtrAbbr+")</option>";
 		}
-		SkillChoiceOptions = SkillChoiceOptions + "<option value=''> --------------------- </option>";
+		SkillChoiceOptions = SkillChoiceOptions + "<option value=''> ------------------------ </option>";
 
 		let hasToolsTest = false;
+		let addedToolTypes = [];
 		for(let item of Inventory){
-			if(item.Type == "Tool"){
+			if(item.ToolSubtype != "" && !addedToolTypes.includes(item.ToolSubtype)){
 				hasToolsTest = true;
-				let toolProfType;
-				if(item.ToolSubtype == ""){
-					toolProfType = item.ToolType;
-				}
-				else{
-					toolProfType = item.ToolSubtype;
-				}
-				SkillChoiceOptions = SkillChoiceOptions + "<option value='"+toolProfType+"'>"+item.DisplayName+"</option>";
+				let thisToolInfo = {Name:item.ToolSubtype,Type:"Tool"};
+				SkillChoiceOptions = SkillChoiceOptions + "<option value='"+btoa(JSON.stringify(thisToolInfo))+"'>"+item.DisplayName+"</option>";
+
+				addedToolTypes.push(item.ToolSubtype);
 			}
 		}
 
 		if(hasToolsTest){
-			SkillChoiceOptions = SkillChoiceOptions + "<option value=''> --------------------- </option>";
+			//TODO: Add function for choosing 'Tool Not in Inventory' as an option
+			SkillChoiceOptions = SkillChoiceOptions + "<option value=''> ------------------------ </option>";
 		}
 
 		let requestAttributes = await fetch("macro:pm.GetAttributes@lib:pm.a5e.Core", {method: "POST", body: ""});
 		let allAttributes = await requestAttributes.json();
 
-		let AttributeOptions = createHTMLSelectOptions(allAttributes);
-		SkillChoiceOptions = SkillChoiceOptions + AttributeOptions;
+		let AttributeOptions = "";
+		for(let tempAttribute of allAttributes){
+			let thisAttributeInfo = {Name:tempAttribute.Name, Type:"Ability Score"};
+			SkillChoiceOptions = SkillChoiceOptions + "<option value='"+btoa(JSON.stringify(thisAttributeInfo))+"'>"+tempAttribute.DisplayName+"</option>";
+
+			AttributeOptions = AttributeOptions + "<option value='"+tempAttribute.Name+"'>"+tempAttribute.DisplayName+"</option>";
+		}
 
 		addTableRow(tableID,nextRowIndex,"rowSkillChoice","<th><label for='SkillChoice'>Skill:</label></th><td><select id='SkillChoice' name='SkillChoice'>"+SkillChoiceOptions+"</select></td>");
 		nextRowIndex++;
@@ -60,11 +64,15 @@ async function createRegularCheckRows(tableID,Inventory){
 	}
 }
 
-async function loadUserData() {
-	let userdata = atob(await MapTool.getUserData());
-	document.getElementById('CheckInputTable').innerHTML = userdata.FormData;
+async function populateForm(tableID,formHTML){
+	document.getElementById(tableID).innerHTML = formHTML;
+}
 
-	createRegularCheckRows('CheckInputTable',userdata.Inventory);
+async function loadUserData() {
+	let userdata = JSON.parse(atob(await MapTool.getUserData()));
+
+	await populateForm('CheckInputTable',userdata.FormData);
+	await createRegularCheckRows('CheckInputTable',userdata.Inventory);
 }
 
 setTimeout(loadUserData, 1);

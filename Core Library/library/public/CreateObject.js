@@ -133,6 +133,9 @@ async function createObjectSubtypeRows(tableID,IDSuffix){
 
 		addTableRow(tableID,nextRowIndex,"rowContainerIgnoreWeight","<th><label for='isContainerIgnoreWeight'>Ignore Weight of Contents:</label></th><td><input type='checkbox' id='isContainerIgnoreWeight' name='isContainerIgnoreWeight'></td>");
 		nextRowIndex++;
+
+		addTableRow(tableID,nextRowIndex,"rowContainerStorageTime","<th><label for='ContainerStorageTime'>Time to Store/Remove Contents:</label></th><td><select id='ContainerStorageTime' name='ContainerStorageTime' onchange='createNonstandardStorageRows("+'"'+tableID+'"'+")'><option value=''>Both are Item Interactions</option><option value='Action'>Both are Actions</option><option value='Custom'>Other</option></select></td>");
+		nextRowIndex++;
 	}
 	else if(ObjectType == "Hazard" || ObjectType == "Trap"){
 		document.getElementById("isWearable").checked = false;
@@ -321,6 +324,45 @@ async function createArmorTypeRows(ArmorOrShield){
 		}
 
 		updateWithTemplateData("CreateObjectTable",ArmorTypeData);
+	}
+}
+
+function createNonstandardStorageRows(tableID){
+	let nextRowIndex = document.getElementById("rowContainerStorageTime").rowIndex + 1;
+
+	if(document.getElementById("ContainerStorageTime").value == "Custom"){
+		let UseTimeOptionsArray = ["Free","Item Interaction","Action","Bonus Action","Reaction","1 Minute","10 Minutes","1 Hour","8 Hours","12 Hours","24 Hours"];
+		let UseTimeOptions = "";
+		for(let tempOption of UseTimeOptionsArray){
+			UseTimeOptions = UseTimeOptions + "<option value='"+tempOption+"'>"+tempOption+"</option>";
+		}
+
+		addTableRow(tableID,nextRowIndex,"rowStorageRemovalTime","<th><label for='DonTime'>Time to Remove from Container:</label></th><td><select id='DonTime' name='DonTime'>"+UseTimeOptions+"</select>");
+		document.getElementById("DonTime").value = "Item Interaction";
+		nextRowIndex++;
+
+		addTableRow(tableID,nextRowIndex,"rowStorageAddTime","<th><label for='DoffTime'>Doff Time:</label></th><td><select id='DoffTime' name='DoffTime'>"+UseTimeOptions+"</select>");
+		document.getElementById("DoffTime").value = "Item Interaction";
+		nextRowIndex++;
+
+		addTableRow(tableID,nextRowIndex,"rowDropTime","<th><label for='DropTime'>Drop Time:</label></th><td><select id='DropTime' name='DropTime'>"+UseTimeOptions+"</select>");
+		document.getElementById("DropTime").value = "Free";
+		nextRowIndex++;
+	}
+	else{
+		clearUnusedTable("CreateObjectTable","rowIsNonstandardEquip","rowIsConsumable");
+	}
+}
+
+function createConsumableRows(tableID){
+	if(document.getElementById("isConsumable").checked){
+		let nextRowIndex = document.getElementById("rowIsConsumable").rowIndex + 1;
+
+		addTableRow(tableID,nextRowIndex,"rowIsLeaveBehindContainer","<th><label for='isLeaveBehindContainer'>Leaves Behind a Container?</label></th><td><input type='checkbox' id='isLeaveBehindContainer' name='isLeaveBehindContainer' onchange='createLeaveBehindContainerRow("+'"'+tableID+'"'+")'></td>");
+		nextRowIndex++;
+	}
+	else{
+		clearUnusedTable(tableID,"rowIsConsumable","rowIsActivatable");
 	}
 }
 

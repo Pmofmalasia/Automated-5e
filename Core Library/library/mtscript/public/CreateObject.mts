@@ -57,6 +57,8 @@
 
 <tr id='rowIntegrity'><th><label for='Integrity'>Integrity:</label></th><td><select id='Integrity' name='Integrity'><option value='Resilient'>Resilient</option><option value='Fragile'>Fragile</option></select></td></tr>
 
+<tr id='rowIsCustomACHP'><th><label for='isCustomACHP'>Has Specific AC or HP Value:</label></th><td><input type='checkbox' id='isCustomACHP' name='isCustomACHP' onchange='createObjectACHPRows("+'"CreateObjectTable","rowStateOfMatter"'+")'></td></tr>
+
 <tr id='rowStateOfMatter'><th><label for='StateOfMatter'>State of Matter:</label></th><td><select id='StateOfMatter' name='StateOfMatter'><option value='Solid'>Solid</option><option value='Liquid'>Liquid</option><option value='Gas'>Gas</option><option value='Plasma'>Plasma</option></select></td></tr>
 
 <tr id='rowIsLockable'><th><label for='isLockable'>Object is Lockable:</label></th><td><input type='checkbox' id='isLockable' name='isLockable' onchange='createLockRows("+'"CreateObjectTable"'+")'></td></tr>

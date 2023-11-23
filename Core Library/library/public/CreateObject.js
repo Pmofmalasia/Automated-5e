@@ -102,12 +102,6 @@ async function createObjectSubtypeRows(tableID,IDSuffix){
 		document.getElementById("isWearable").checked = false;
 		document.getElementById("isStackable").checked = true;
 	}
-	else if(ObjectType == "SpellcastingFocus"){
-		document.getElementById("isWearable").checked = true;
-		document.getElementById("isStackable").checked = false;
-		document.getElementById("isSpellcastingFocus").checked = true;
-		document.getElementById("isSpellcastingFocus").dispatchEvent(new Event("change"));
-	}
 	else if(ObjectType == "Clothing"){
 		document.getElementById("isWearable").checked = true;
 		document.getElementById("isStackable").checked = true;
@@ -141,6 +135,13 @@ async function createObjectSubtypeRows(tableID,IDSuffix){
 		document.getElementById("isWearable").checked = false;
 		document.getElementById("isStackable").checked = true;
 	}
+	else if(ObjectType == "Light"){
+		document.getElementById("isWearable").checked = true;
+		document.getElementById("isStackable").checked = false;
+
+		addTableRow(tableID,nextRowIndex,"rowLightType","<th><label for='lightType'>Type of Light:</label></th><td><select id='lightType' name='lightType' onchange='createLightTable()'><option value='Bright'>Bright Light</option><option value='Dim'>Dim Light</option><option value='BrightDim'>Bright + Dim Light</option><option value='Darkness'>Darkness</option></select></td>");
+		nextRowIndex++;
+	}
 	else if(ObjectType == "Potion"){
 		document.getElementById("isWearable").checked = false;
 		document.getElementById("isStackable").checked = true;
@@ -156,6 +157,12 @@ async function createObjectSubtypeRows(tableID,IDSuffix){
 	else if(ObjectType == "Scroll"){
 		document.getElementById("isWearable").checked = false;
 		document.getElementById("isStackable").checked = true;
+	}
+	else if(ObjectType == "SpellcastingFocus"){
+		document.getElementById("isWearable").checked = true;
+		document.getElementById("isStackable").checked = false;
+		document.getElementById("isSpellcastingFocus").checked = true;
+		document.getElementById("isSpellcastingFocus").dispatchEvent(new Event("change"));
 	}
 	else if(ObjectType == "Staff"){
 		document.getElementById("isWearable").checked = true;
@@ -337,20 +344,16 @@ function createNonstandardStorageRows(tableID){
 			UseTimeOptions = UseTimeOptions + "<option value='"+tempOption+"'>"+tempOption+"</option>";
 		}
 
-		addTableRow(tableID,nextRowIndex,"rowStorageRemovalTime","<th><label for='DonTime'>Time to Remove from Container:</label></th><td><select id='DonTime' name='DonTime'>"+UseTimeOptions+"</select>");
-		document.getElementById("DonTime").value = "Item Interaction";
+		addTableRow(tableID,nextRowIndex,"rowStorageRemovalTime","<th><label for='StorageRemovalTime'>Time to Remove from Container:</label></th><td><select id='StorageRemovalTime' name='StorageRemovalTime'>"+UseTimeOptions+"</select><input type='checkbox' id='StorageCannotRemove' name='StorageCannotRemove' onchange='toggleFieldEnabled("+'"StorageRemovalTime","StorageCannotRemove"'+")'> <label for='StorageCannotRemove'>Cannot Remove Items?</label></td>");
+		document.getElementById("StorageRemovalTime").value = "Item Interaction";
 		nextRowIndex++;
 
-		addTableRow(tableID,nextRowIndex,"rowStorageAddTime","<th><label for='DoffTime'>Doff Time:</label></th><td><select id='DoffTime' name='DoffTime'>"+UseTimeOptions+"</select>");
-		document.getElementById("DoffTime").value = "Item Interaction";
-		nextRowIndex++;
-
-		addTableRow(tableID,nextRowIndex,"rowDropTime","<th><label for='DropTime'>Drop Time:</label></th><td><select id='DropTime' name='DropTime'>"+UseTimeOptions+"</select>");
-		document.getElementById("DropTime").value = "Free";
+		addTableRow(tableID,nextRowIndex,"rowStorageAddTime","<th><label for='StorageAddToTime'>Time to Put in Container:</label></th><td><select id='StorageAddToTime' name='StorageAddToTime'>"+UseTimeOptions+"</select><input type='checkbox' id='StorageCannotAddTo' name='StorageCannotAddTo' onchange='toggleFieldEnabled("+'"StorageAddToTime","StorageCannotAddTo"'+")'> <label for='StorageCannotAddTo'>Cannot Store Items?</label></td>");
+		document.getElementById("StorageAddToTime").value = "Item Interaction";
 		nextRowIndex++;
 	}
 	else{
-		clearUnusedTable("CreateObjectTable","rowIsNonstandardEquip","rowIsConsumable");
+		clearUnusedTable("CreateObjectTable","rowContainerStorageTime","rowSize");
 	}
 }
 
@@ -388,15 +391,15 @@ function createNonstandardEquipRows(tableID){
 			UseTimeOptions = UseTimeOptions + "<option value='"+tempOption+"'>"+tempOption+"</option>";
 		}
 
-		addTableRow(tableID,nextRowIndex,"rowDonTime","<th><label for='DonTime'>Don Time:</label></th><td><select id='DonTime' name='DonTime'>"+UseTimeOptions+"</select>");
+		addTableRow(tableID,nextRowIndex,"rowDonTime","<th><label for='DonTime'>Don Time:</label></th><td><select id='DonTime' name='DonTime'>"+UseTimeOptions+"</select></td>");
 		document.getElementById("DonTime").value = "Item Interaction";
 		nextRowIndex++;
 
-		addTableRow(tableID,nextRowIndex,"rowDoffTime","<th><label for='DoffTime'>Doff Time:</label></th><td><select id='DoffTime' name='DoffTime'>"+UseTimeOptions+"</select>");
+		addTableRow(tableID,nextRowIndex,"rowDoffTime","<th><label for='DoffTime'>Doff Time:</label></th><td><select id='DoffTime' name='DoffTime'>"+UseTimeOptions+"</select></td>");
 		document.getElementById("DoffTime").value = "Item Interaction";
 		nextRowIndex++;
 
-		addTableRow(tableID,nextRowIndex,"rowDropTime","<th><label for='DropTime'>Drop Time:</label></th><td><select id='DropTime' name='DropTime'>"+UseTimeOptions+"</select>");
+		addTableRow(tableID,nextRowIndex,"rowDropTime","<th><label for='DropTime'>Drop Time:</label></th><td><select id='DropTime' name='DropTime'>"+UseTimeOptions+"</select></td>");
 		document.getElementById("DropTime").value = "Free";
 		nextRowIndex++;
 	}
@@ -803,6 +806,19 @@ async function createCastSpellModifierRows(tableID){
 		let allAttributeOptions = createHTMLMultiselectOptions(AllAttributes,"CastSpellStat");
 
 		addTableRow(tableID,nextRowIndex,"rowCastSpellModifier","<th>Allowed Casting Stats:</th><td><div class='check-multiple' style='width:100%'>"+allAttributeOptions+"</div></td>");
+		nextRowIndex++;
+	}
+}
+
+function createObjectACHPRows(tableID,clearRowsID){
+	clearUnusedTable(tableID,"rowIsCustomACHP",clearRowsID);
+	if(document.getElementById("isCustomACHP").checked){
+		let nextRowIndex = document.getElementById("rowIsCustomACHP").rowIndex + 1;
+
+		addTableRow(tableID,nextRowIndex,"rowObjectCustomAC","<th><label for='AC'>Object AC:</th><td><input type='number' value=10 min=0 style='width:25px' id='AC' name='AC'><input type='checkbox' id='isDefaultAC' name='isDefaultAC' onchange='toggleFieldEnabled("+'"AC","isDefaultAC"'+")'> <label for='isDefaultAC'>Use Default?</label></td>");
+		nextRowIndex++;
+		
+		addTableRow(tableID,nextRowIndex,"rowObjectCustomAC","<th><label for='MaxHP'>Object HP:</th><td><input type='number' value=10 min=1 id='MaxHP' style='width:25px' name='MaxHP'><input type='checkbox' id='isDefaultMaxHP' name='isDefaultMaxHP' onchange='toggleFieldEnabled("+'"MaxHP","isDefaultMaxHP"'+")'> <label for='isDefaultMaxHP'>Use Default?</label></td>");
 		nextRowIndex++;
 	}
 }

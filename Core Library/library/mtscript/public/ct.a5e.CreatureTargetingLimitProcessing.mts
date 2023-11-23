@@ -42,8 +42,23 @@
     }]
     [h,if(!json.isEmpty(inclusiveCreatures)): creatureTargetData = json.set(creatureTargetData,"TypeInclusive",inclusiveCreatures)]
     [h,if(!json.isEmpty(exclusiveCreatures)): creatureTargetData = json.set(creatureTargetData,"TypeExclusive",exclusiveCreatures)]
-    [h:subeffectData = json.remove(subeffectData,"targetCreatureTypes"+dataKeySuffix)]
 }]
+[h:subeffectData = json.remove(subeffectData,"targetCreatureTypes"+dataKeySuffix)]
+
+[h:sizeLimitType = json.get(subeffectData,"targetCreatureSizes"+dataKeySuffix)]
+[h,if(sizeLimitType != "All"),CODE:{
+	[h:validSizes = "[]"]
+	[h:sizeList = json.append("","Diminutive","Tiny","Small","Medium","Large","Huge","Gargantuan","Colossal")]
+	[h,foreach(size,sizeList),CODE:{
+		[h:sizeCheckedTest = json.contains(subeffectData,"targetCreatureSizes"+size+dataKeySuffix)]
+		[h:validSizeTest = or(and(sizeCheckedTest,sizeLimitType=="Inclusive"),and(!sizeCheckedTest,sizeLimitType=="Exclusive"))]
+		[h,if(validSizeTest): validSizes = json.append(validSizes,size)]
+
+		[h:subeffectData = json.remove(subeffectData,"targetCreatureSizes"+size+dataKeySuffix)]
+	}]
+	[h:creatureTargetData = json.set(creatureTargetData,"Size",validSizes)]
+};{}]
+[h:subeffectData = json.remove(subeffectData,"targetCreatureSizes"+dataKeySuffix)]
 
 [h,if(json.contains(subeffectData,"targetCanSee"+dataKeySuffix)),CODE:{
     [h:creatureTargetData = json.set(creatureTargetData,"Sight",1)]

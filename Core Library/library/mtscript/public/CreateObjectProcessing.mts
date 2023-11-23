@@ -109,6 +109,59 @@
 	[h:objectData = json.remove(objectData,"ContainterFluidVolumeCapacityUnits")]
 
 	[h:objectData = json.set(objectData,"isContainerIgnoreWeight",json.contains(objectData,"isContainerIgnoreWeight"))]
+
+	[h,switch(json.get(objectData,"ContainerStorageTime")),CODE:
+		case "":{
+			[h:objectData = json.set(objectData,"ContainerStorageTime",json.set("",
+				"Store",json.set("","Value",1,"Units","interaction"),
+				"Remove",json.set("","Value",1,"Units","interaction")
+			))]
+		};
+		case "Action":{
+			[h:objectData = json.set(objectData,"ContainerStorageTime",json.set("",
+				"Store",json.set("","Value",1,"Units","action"),
+				"Remove",json.set("","Value",1,"Units","action")
+			))]
+		};
+		case "Custom":{
+			[h,switch(json.get(objectData,"StorageAddToTime")):
+				case "Free": addToStorageTimeData = json.set("","Value","","Units","instant");
+				case "Item Interaction": addToStorageTimeData = json.set("","Value",1,"Units","interaction");
+				case "Action": addToStorageTimeData = json.set("","Value",1,"Units","action");
+				case "Bonus Action": addToStorageTimeData = json.set("","Value",1,"Units","bonus");
+				case "Reaction": addToStorageTimeData = json.set("","Value",1,"Units","reaction");
+				case "1 Minute": addToStorageTimeData = json.set("","Value",1,"Units","minute");
+				case "10 Minutes": addToStorageTimeData = json.set("","Value",10,"Units","minute");
+				case "1 Hour": addToStorageTimeData = json.set("","Value",1,"Units","hour");
+				case "8 Hours": addToStorageTimeData = json.set("","Value",8,"Units","hour");
+				case "12 Hours": addToStorageTimeData = json.set("","Value",12,"Units","hour");
+				case "24 Hours": addToStorageTimeData = json.set("","Value",24,"Units","hour");
+				default: addToStorageTimeData = "{}"
+			]
+			[h:objectData = json.remove(objectData,"StorageCannotAddTo")]
+			
+			[h,switch(json.get(objectData,"StorageRemovalTime")):
+				case "Free": removeFromStorageTimeData = json.set("","Value","","Units","instant");
+				case "Item Interaction": removeFromStorageTimeData = json.set("","Value",1,"Units","interaction");
+				case "Action": removeFromStorageTimeData = json.set("","Value",1,"Units","action");
+				case "Bonus Action": removeFromStorageTimeData = json.set("","Value",1,"Units","bonus");
+				case "Reaction": removeFromStorageTimeData = json.set("","Value",1,"Units","reaction");
+				case "1 Minute": removeFromStorageTimeData = json.set("","Value",1,"Units","minute");
+				case "10 Minutes": removeFromStorageTimeData = json.set("","Value",10,"Units","minute");
+				case "1 Hour": removeFromStorageTimeData = json.set("","Value",1,"Units","hour");
+				case "8 Hours": removeFromStorageTimeData = json.set("","Value",8,"Units","hour");
+				case "12 Hours": removeFromStorageTimeData = json.set("","Value",12,"Units","hour");
+				case "24 Hours": removeFromStorageTimeData = json.set("","Value",24,"Units","hour");
+				default: removeFromStorageTimeData = "{}"
+			]
+			[h:objectData = json.remove(objectData,"StorageCannotRemove")]
+
+			[h:objectData = json.set(objectData,"ContainerStorageTime",json.set("",
+				"Store",addToStorageTimeData,
+				"Remove",removeFromStorageTimeData
+			))]
+		}
+	]
 };{}]
 
 [h,if(objectType=="Tool"),CODE:{
@@ -395,6 +448,11 @@
 		[h:objectData = json.set(objectData,"Materials",ChosenMaterials)]
 	}
 ]
+
+[h:"<!-- Note: Custom AC/HP values are already set to the correct key if needed, these remove unneeded keys in that path -->"]
+[h:objectData = json.remove(objectData,"isCustomACHP")]
+[h:objectData = json.remove(objectData,"isDefaultAC")]
+[h:objectData = json.remove(objectData,"isDefaultMaxHP")]
 
 [h:objectData = json.set(objectData,
 	"isWearable",json.contains(objectData,"isWearable"),

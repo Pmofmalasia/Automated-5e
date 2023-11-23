@@ -408,7 +408,7 @@ function createTargetTable(tableID,startRowID,selectionID,tempIDSuffix,tempNextA
 async function createCreatureTargetTable(tableID,startRowID,selectionID,IDSuffix,tempNextAnchorRow){
 	let table = document.getElementById(tableID);
 	let currentTargetTypeSelection = document.getElementById(selectionID).value;
-	let nextRowIndex = document.getElementById(startRowID).rowIndex;
+	let nextRowIndex = document.getElementById(startRowID).rowIndex + 1;
 	let IDSuffixText = "";
 	if(arguments.length > 3){
 		IDSuffixText = IDSuffix;
@@ -419,31 +419,40 @@ async function createCreatureTargetTable(tableID,startRowID,selectionID,IDSuffix
 		nextAnchorRow = tempNextAnchorRow;
 	}
 
-	let rowAllegiance = table.insertRow(nextRowIndex+1);
+	let rowAllegiance = table.insertRow(nextRowIndex);
 	rowAllegiance.id = "rowAllegiance"+IDSuffixText;
 	rowAllegiance.innerHTML = "<th><label for='targetAllegiance"+IDSuffixText+"'>Allegiance of Target:</label></th><td><select id='targetAllegiance"+IDSuffixText+"' name='targetAllegiance"+IDSuffixText+"'><option value='All'>Anyone</option><option value='Self'>Self Only</option><option value='Allies'>Allies</option><option value='AlliesNonself'>Allies Other Than Self</option><option value='NotSelf'>Anyone Other Than Self</option><option value='Enemies'>Enemies</option><option value='Nonhostile'>Nonhostile Creatures</option><option value='NonhostileNotself'>Nonhostile Creatures, Not Self</option></select></td>";
+	nextRowIndex++;
 
 	//Previously considered: function that disables/enables filtering options when 'Self' is the only viable target. Will not do because defaults are not limiting and it would allow for creation of spells only usable by certain creature types maybe? But also because nah.
 
-	let rowCreatureTypes = table.insertRow(nextRowIndex+2);
+	let rowCreatureTypes = table.insertRow(nextRowIndex);
 	rowCreatureTypes.id = "rowCreatureTypes"+IDSuffixText;
 	rowCreatureTypes.innerHTML = "<th><label for='targetCreatureTypes"+IDSuffixText+"'>Valid Creature Types:</label></th><td><select id='targetCreatureTypes"+IDSuffixText+"' name='targetCreatureTypes"+IDSuffixText+"' onchange='createCreatureTargetTypes("+'"'+tableID+'","'+IDSuffixText+'"'+")'><option value='All'>All Types</option><option value='Inclusive'>Must Be Specific Type(s)</option><option value='Exclusive'>Cannot Be Specific Type(s)</option><option value='Mixture'>Mixture of Both Above</option></select></td>";
+	nextRowIndex++;
 
-	let rowTargetSenses = table.insertRow(nextRowIndex+3);
+	addTableRow(tableID,nextRowIndex,"rowTargetCreatureSizes"+IDSuffixText,"<th><label for='targetCreatureSizes"+IDSuffixText+"'>Valid Creature Sizes:</label></th><td><select id='targetCreatureSizes"+IDSuffixText+"' name='targetCreatureSizes"+IDSuffixText+"' onchange='createCreatureTargetSizes("+'"'+tableID+'","'+IDSuffixText+'"'+")'><option value='All'>All Sizes</option><option value='Inclusive'>Must Be Specific Size(s)</option><option value='Exclusive'>Cannot Be Specific Size(s)</option></select></td>");
+	nextRowIndex++;
+
+	let rowTargetSenses = table.insertRow(nextRowIndex);
 	rowTargetSenses.id = "rowTargetSenses"+IDSuffixText;
 	rowTargetSenses.innerHTML = "<th><label for='targetCanSee"+IDSuffixText+"'>Senses Required by Target:</th><td><input type='checkbox' name='targetCanSee"+IDSuffixText+"' id='targetCanSee"+IDSuffixText+"'><label for='targetCanSee"+IDSuffixText+"'>Target Must See Caster</label><br><input type='checkbox' name='targetCanHear"+IDSuffixText+"' id='targetCanHear"+IDSuffixText+"'><label for='targetCanHear"+IDSuffixText+"'>Target Must Hear Caster</label><br><input type='checkbox' name='targetCanUnderstand"+IDSuffixText+"' id='targetCanUnderstand"+IDSuffixText+"'><label for='targetCanUnderstand"+IDSuffixText+"'>Target Must Understand Caster</label></td>";
+	nextRowIndex++;
 
-	let rowTargetCondition = table.insertRow(nextRowIndex+4);
+	let rowTargetCondition = table.insertRow(nextRowIndex);
 	rowTargetCondition.id = "rowTargetCondition"+IDSuffixText;
 	rowTargetCondition.innerHTML = "<th><label for='isTargetCondition"+IDSuffixText+"'>Condition Requirements on Target:</th><td><select name='isTargetCondition"+IDSuffixText+"' id='isTargetCondition"+IDSuffixText+"' onchange='createTargetConditionTable("+'"'+tableID+'","'+IDSuffixText+'"'+")'><option value='None'>None</option><option value='Inclusive'>Must Have Certain Conditions</option><option value='Exclusive'>Cannot Have Certain Conditions</option><option value='Mixture'>Mixture of Both Above</option></select></td>";
+	nextRowIndex++;
 	
-	let rowTargetAbilityScore = table.insertRow(nextRowIndex+5);
+	let rowTargetAbilityScore = table.insertRow(nextRowIndex);
 	rowTargetAbilityScore.id = "rowTargetAbilityScore"+IDSuffixText;
 	rowTargetAbilityScore.innerHTML = "<th><label for='isAbilityScore"+IDSuffixText+"'>Limit Targeting By Target Ability Scores:</th><td><input type='checkbox' name='isAbilityScore"+IDSuffixText+"' id='isAbilityScore"+IDSuffixText+"' onchange='createTargetAbilityScoreTable("+'"'+tableID+'","'+IDSuffixText+'"'+")'></td>";
+	nextRowIndex++;
 	
-	let rowTargetAlignment = table.insertRow(nextRowIndex+6);
+	let rowTargetAlignment = table.insertRow(nextRowIndex);
 	rowTargetAlignment.id = "rowTargetAlignment"+IDSuffixText;
 	rowTargetAlignment.innerHTML = "<th><label for='isAlignment"+IDSuffixText+"'>Limit Targeting By Alignment:</th><td><input type='checkbox' name='isAlignment"+IDSuffixText+"' id='isAlignment"+IDSuffixText+"' onchange='createTargetAlignmentTable("+'"'+tableID+'","'+IDSuffixText+'","'+nextAnchorRow+'"'+")'></td>";
+	nextRowIndex++;
 }
 
 async function createCreatureTargetTypes(tableID,IDSuffix){
@@ -453,7 +462,7 @@ async function createCreatureTargetTypes(tableID,IDSuffix){
 	let nextRowIndex = document.getElementById("rowCreatureTypes"+IDSuffix).rowIndex+1;
 
 	if(currentTargetCreatureTypeSelection == "All"){
-		clearUnusedTable(tableID,"rowCreatureTypes"+IDSuffix,"rowTargetSenses"+IDSuffix);
+		clearUnusedTable(tableID,"rowCreatureTypes"+IDSuffix,"rowTargetCreatureSizes"+IDSuffix);
 	}
 	else{
 		let request = await fetch("macro:pm.GetCreatureTypes@lib:pm.a5e.Core", {method: "POST", body: ""});
@@ -481,7 +490,7 @@ async function createCreatureTargetTypes(tableID,IDSuffix){
 				nextRowIndex++;
 			}
 			if(alreadyExclusiveTest && currentTargetCreatureTypeSelection == "Inclusive"){
-				clearUnusedTable(tableID,"rowInclusiveCreatureTypes"+IDSuffix,"rowTargetSenses"+IDSuffix);
+				clearUnusedTable(tableID,"rowInclusiveCreatureTypes"+IDSuffix,"rowTargetCreatureSizes"+IDSuffix);
 			}
 		}
 		else if(alreadyInclusiveTest){
@@ -502,6 +511,31 @@ async function createCreatureTargetTypes(tableID,IDSuffix){
 				clearUnusedTable(tableID,"rowCreatureTypes"+IDSuffix,"rowExclusiveCreatureTypes"+IDSuffix);
 			}
 		}
+	}
+}
+
+function createCreatureTargetSizes(tableID,IDSuffix){
+	clearUnusedTable(tableID,"rowTargetCreatureSizes"+IDSuffix,"rowTargetSenses"+IDSuffix);
+	let targetSizeSelection = document.getElementById("targetCreatureSizes"+IDSuffix).value;
+	let nextRowIndex = document.getElementById("rowTargetCreatureSizes"+IDSuffix).rowIndex + 1;
+
+	if(targetSizeSelection != "All"){
+		let allSizes = ["Diminutive","Tiny","Small","Medium","Large","Huge","Gargantuan","Colossal"];
+		let sizeOptions = "";
+		for (let size of allSizes){
+			sizeOptions = sizeOptions + "<label><input type='checkbox' id='targetCreatureSizes"+size+IDSuffix+"' name='targetCreatureSizes"+size+IDSuffix+"'><span>"+size+"</span></label>";
+		}
+
+		let sizeHeader;
+		if(targetSizeSelection == "Inclusive"){
+			sizeHeader = "Valid Sizes";
+		}
+		else{
+			sizeHeader = "Invalid Sizes";
+		}
+
+		addTableRow(tableID,nextRowIndex,"rowTargetCreatureSizes"+targetSizeSelection+IDSuffix,"<th>"+sizeHeader+"</th><td><div class='check-multiple' style='width:100%'>"+sizeOptions+"</div></td>");
+		nextRowIndex++;
 	}
 }
 
@@ -534,7 +568,7 @@ async function createTargetConditionTable(tableID,IDSuffix){
 				
 				let rowInclusiveSetByCaster = table.insertRow(nextRowIndex);
 				rowInclusiveSetByCaster.id = "rowInclusiveSetByCaster"+IDSuffix;
-				rowInclusiveSetByCaster.innerHTML = "<th><label for='inclusiveSetBy"+IDSuffix+"'>Must Be Inflicted by Caster?</label></th><td><input type='checkbox' id='inclusiveSetBy"+IDSuffix+"' name='inclusiveSetBy"+IDSuffix+"' value=1></td>";
+				rowInclusiveSetByCaster.innerHTML = "<th><label for='inclusiveSetBy"+IDSuffix+"'>Must Be Inflicted by User?</label></th><td><input type='checkbox' id='inclusiveSetBy"+IDSuffix+"' name='inclusiveSetBy"+IDSuffix+"' value=1></td>";
 				nextRowIndex++;
 			}
 			if(alreadyExclusiveTest && conditionChoice == "Inclusive"){

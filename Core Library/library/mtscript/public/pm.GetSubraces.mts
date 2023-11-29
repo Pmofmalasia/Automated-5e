@@ -9,8 +9,8 @@ pm.KeyChoice+"']")]
 
 [h,if(argCount() > 2): pm.Delim = if(pm.KeyChoice=="","json",arg(2)); pm.Delim = if(pm.KeyChoice=="","json",",")]
 [h,if(pm.Delim == "json"),CODE:{
-	[h,if(pm.KeyChoice==""): macro.return = json.sort(pm.Subraces,"a","DisplayName"); macro.return = json.sort(pm.Subraces,"a")]
+	[h,if(pm.KeyChoice==""): return(0,json.sort(pm.Subraces,"a","DisplayName")); return(0,json.sort(pm.Subraces,"a"))]
 };{
 	[h:pm.Subraces=listSort(json.toList(pm.Subraces,pm.Delim),"A+",pm.Delim)]
-	[h:macro.return = pm.Subraces]
+	[h:return(0,pm.Subraces)]
 }]

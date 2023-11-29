@@ -2,12 +2,12 @@
 [h,if(pm.KeyChoice==""),CODE:{
 	[h: pm.Races = data.getData("addon:","pm.a5e.core","sb.Races")]
 };{
-	[h: pm.Races = json.path.read(data.getData("addon:","pm.a5e.core","sb.Races"),"[*]['"+pm.KeyChoice+"']","DEFAULT_PATH_LEAF_TO_NULL"))]
+	[h: pm.Races = json.path.read(data.getData("addon:","pm.a5e.core","sb.Races"),"[*]['"+pm.KeyChoice+"']","DEFAULT_PATH_LEAF_TO_NULL")]
 }]
 
 [h,if(argCount()>1): pm.Delim = arg(1) ; pm.Delim = if(pm.KeyChoice=="","json",",")]
 [h,if(pm.Delim == "json"),CODE:{
-	[h,if(pm.KeyChoice!=""): macro.return = json.sort(pm.Races,"a"); macro.return = json.sort(pm.Races,"a","DisplayName")]
+	[h,if(pm.KeyChoice!=""): return(0,json.sort(pm.Races,"a")); return(0,json.sort(pm.Races,"a","DisplayName"))]
 };{
-	[h:macro.return = listSort(json.toList(pm.Races,pm.Delim),"A+",pm.Delim)]
+	[h:return(0,listSort(json.toList(pm.Races,pm.Delim),"A+",pm.Delim))]
 }]

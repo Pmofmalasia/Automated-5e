@@ -717,57 +717,7 @@
 [h:"<!-- TODO: Add this stuff here -->"]
 [h:subeffectData = json.remove(subeffectData,"isAffectSpell")]
 
-[h,switch(json.get(subeffectData,"lightType")),CODE:
-	case "None":{};
-	case "":{};
-	case "BrightDim":{
-		[h:lightData = json.set("",
-			"LightType",json.get(subeffectData,"lightType"),
-			"IsSunlight",json.contains(subeffectData,"isSunlight"),
-			"CanBlock",json.contains(subeffectData,"lightCanBlock")
-		)]
-
-		[h,if(json.contains(subeffectData,"isLightUseAoESize")):
-			lightData = json.set(lightData,
-				"UseAoESize",1,
-				"Units",json.get(subeffectData,"lightDistanceUnits"),
-				"SecondaryValue",json.get(subeffectData,"secondaryLightDistanceValue"));
-			lightData = json.set(lightData,
-				"Value",json.get(subeffectData,"lightDistanceValue"),
-				"Units",json.get(subeffectData,"lightDistanceUnits"),
-				"SecondaryValue",json.get(subeffectData,"lightDistanceValue")+json.get(subeffectData,"secondaryLightDistanceValue"))
-		]
-
-		[h:subeffectData = json.set(subeffectData,"Light",lightData)]
-		[h:subeffectData = json.remove(subeffectData,"lightDistanceValue")]
-		[h:subeffectData = json.remove(subeffectData,"lightDistanceUnits")]
-		[h:subeffectData = json.remove(subeffectData,"secondaryLightDistanceValue")]
-		[h:subeffectData = json.remove(subeffectData,"isSunlight")]
-		[h:subeffectData = json.remove(subeffectData,"isLightUseAoESize")]
-	};
-	default:{
-		[h:lightData = json.set("",
-			"LightType",json.get(subeffectData,"lightType"),
-			"IsSunlight",json.contains(subeffectData,"isSunlight"),
-			"CanBlock",json.contains(subeffectData,"lightCanBlock")
-		)]
-
-		[h,if(json.contains(subeffectData,"isLightUseAoESize")):
-			lightData = json.set(lightData,"UseAoESize",1);
-			lightData = json.set(lightData,
-				"Value",json.get(subeffectData,"lightDistanceValue"),
-				"Units",json.get(subeffectData,"lightDistanceUnits"))
-		]
-
-		[h:subeffectData = json.set(subeffectData,"Light",lightData)]
-		[h:subeffectData = json.remove(subeffectData,"lightDistanceValue")]
-		[h:subeffectData = json.remove(subeffectData,"lightDistanceUnits")]
-		[h:subeffectData = json.remove(subeffectData,"isSunlight")]
-		[h:subeffectData = json.remove(subeffectData,"isLightUseAoESize")]
-		[h:subeffectData = json.remove(subeffectData,"lightCanBlock")]
-	}
-]
-[h:subeffectData = json.remove(subeffectData,"lightType")]
+[h:subeffectData = ct.a5e.LightDataProcessing(subeffectData,"")]
 
 [h,if(json.contains(subeffectData,"isMoveTarget")),CODE:{
 	[h,if(json.get(subeffectData,"moveTargetUnits")=="Unlimited"):

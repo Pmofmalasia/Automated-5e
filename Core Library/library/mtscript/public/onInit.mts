@@ -33,6 +33,7 @@
 [h:defineFunction("ct.a5e.AllTargetingOptionsProcessing","ct.a5e.AllTargetingOptionsProcessing@Lib:pm.a5e.Core")]
 [h:defineFunction("ct.a5e.CreatureTargetingLimitProcessing","ct.a5e.CreatureTargetingLimitProcessing@Lib:pm.a5e.Core")]
 [h:defineFunction("ct.a5e.ObjectTargetingLimitProcessing","ct.a5e.ObjectTargetingLimitProcessing@Lib:pm.a5e.Core")]
+[h:defineFunction("ct.a5e.LightDataProcessing","ct.a5e.LightDataProcessing@Lib:pm.a5e.Core")]
 [h:defineFunction("ct.a5e.WeaponDataProcessing","ct.a5e.WeaponDataProcessing@Lib:pm.a5e.Core")]
 [h:defineFunction("ct.a5e.AttributeOptionProcessing","ct.a5e.AttributeOptionProcessing@Lib:pm.a5e.Core")]
 [h:defineFunction("ct.a5e.LanguageOptionProcessing","ct.a5e.LanguageOptionProcessing@Lib:pm.a5e.Core")]

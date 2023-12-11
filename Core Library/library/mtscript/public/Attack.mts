@@ -164,6 +164,7 @@
 
 [h:"<!-- TODO: Current method is to remove TWF completely to get around the no damage modifier effect (e.g. for the fighting style). Issues are #1: It is still technically TWF, so any effects that would trigger on TWF would not be able to; solution could be adding a variable that bypasses removing the mod. #2: TWF still adds damage modifier if negative; solution could be changing IsDamageModifier -->"]
 [h,if(TwoWeaponFighting),CODE:{
+	[h:"<!-- TODO: Needs to only do this if modifier isn't negative -->"]
 	[h:wa.DamageData = json.path.set(wa.DamageData,"\$[*]['IsModBonus']",0)]
 };{}]
 

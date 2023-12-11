@@ -1,16 +1,16 @@
 [h:RandomEncounterSettings = data.getData("addon:","pm.a5e.core","gd.RandomEncounterSettings")]
 
 [h:baseEncounterChance = json.get(RandomEncounterSettings,"BaseChance")]
-[h:accumulatedEncounterChance = json.set(RandomEncounterSettings,"AccumulatedChance")]
-[h:maxEncounterChance = json.set(RandomEncounterSettings,"MaxChance")]
-[h:encounterChanceIncrement = json.set(RandomEncounterSettings,"ChanceIncrement")]
+[h:accumulatedEncounterChance = json.get(RandomEncounterSettings,"AccumulatedChance")]
+[h:maxEncounterChance = json.get(RandomEncounterSettings,"MaxChance")]
+[h:encounterChanceIncrement = json.get(RandomEncounterSettings,"ChanceIncrement")]
 
 [h:currentEncounterChance = min(maxEncounterChance,baseEncounterChance + accumulatedEncounterChance)]
 
 [h:abort(input(
 	" junkVar | -------- Roll Random Encounter -------- |  | LABEL | SPAN=TRUE ",
 	" junkVar | "+currentEncounterChance+"% | Current Encounter Chance | LABEL | ",
-	" movementType | Careful,Neutral,Reckless | Party Movement Type | LIST | ",
+	" movementType | Careful,Neutral,Reckless | Party Movement Type | LIST | SELECT=1 ",
 	" situationalModifier |  | Manual Increase/Decrease to Chance ",
 	" timePassed | None,5 Minutes,10 Minutes,1 Hour,8 Hours | Time Passed | LIST | ",
 	" showPlayers |  | Show Roll to Players | CHECK "
@@ -32,6 +32,12 @@
 	"DisplayOrder","['Rules','Roll','Full']"
 ))]
 
+[h,if(encounterRoll > finalEncounterChance):
+	accumulatedEncounterChance = accumulatedEncounterChance + encounterChanceIncrement;
+	accumulatedEncounterChance = 0
+]
+[h:data.setData("addon:","pm.a5e.core","gd.RandomEncounterSettings",json.set(RandomEncounterSettings,"AccumulatedChance",accumulatedEncounterChance))]
+
 [h:ClassFeatureData = json.set("",
 	"DMOnly",showPlayers,
 	"Class","zzGeneral",
@@ -49,4 +55,4 @@
 [h:output.PC = output.PC + json.get(macro.return,"Player")+"</div></div>"]
 [h:output.GM = output.GM + json.get(macro.return,"GM")+"</div></div>"]
 [h:broadcastAsToken(output.GM,"gm")]
-[h:broadcastAsToken(output.PC,outputTargets)]
+[h,if(showPlayers): broadcastAsToken(output.PC,"not-gm")]

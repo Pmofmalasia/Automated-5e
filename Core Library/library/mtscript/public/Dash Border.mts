@@ -1,6 +1,6 @@
 [h:DashData = macro.args]
-[h:Flavor=json.get(DashData,"Flavor")]
-[h:ParentToken=json.get(DashData,"ParentToken")]
+[h:Flavor = json.get(DashData,"Flavor")]
+[h:ParentToken = json.get(DashData,"ParentToken")]
 [h:abilityTable = "[]"]
 
 [h:abilityTable = json.append(abilityTable,json.set("",
@@ -18,29 +18,29 @@
 
 [h:abilityTable = json.merge(abilityTable,json.get(DashData,"Table"))]
 
-[h:ClassFeatureData = json.set("",
-	"Flavor",Flavor,
-	"ParentToken",ParentToken,
+[h:outputRules = pm.a5e.PlayerOutputRules(json.set("",
 	"DMOnly",(getProperty("a5e.stat.Allegiance") == "Enemy"),
-	"BorderColorOverride",json.get(DashData,"BorderColorOverride"),
-	"TitleFontColorOverride",json.get(DashData,"TitleFontColorOverride"),
-	"AccentBackgroundOverride",json.get(DashData,"AccentBackgroundOverride"),
-	"AccentTextOverride",json.get(DashData,"AccentTextOverride"),
-	"TitleFont",json.get(DashData,"TitleFont"),
-	"BodyFont",json.get(DashData,"BodyFont"),
+	"OnlyRules",1,
+	"ParentToken",ParentToken
+))]
+[h:BorderData = json.set("",
+	"Flavor",Flavor,
 	"Class","zzOtherCombatActions",
-	"Name","Dash",
-	"FalseName","",
-	"OnlyRules",1
+	"Name","Dash"
 )]
 
-[h:FormattingData = pm.MacroFormat(ClassFeatureData)]
-[h:output.PC = json.get(json.get(FormattingData,"Output"),"Player")]
-[h:output.GM = json.get(json.get(FormattingData,"Output"),"GM")]
+[h:BorderOutputs = pm.a5e.BuildChatBorder(BorderData,outputRules)]
+[h:TableOutputs = pm.a5e.FullTableProcessing(abilityTable,outputRules,1)]
 
-[h:output.Temp = pm.AbilityTableProcessing(abilityTable,FormattingData,1)]
+[h:GMOutput = json.get(BorderOutputs,"GM") + json.get(TableOutputs,"GM") + "</div></div>"]
+[h:PlayerOutput = json.get(BorderOutputs,"Player") + json.get(TableOutputs,"Player") + "</div></div>"]
+[h:ChatOutputData = json.set("",
+	"GM",GMOutput,
+	"Player",PlayerOutput,
+	"MaxColNum",json.get(TableOutputs,"MaxColNum"),
+	"ColorData",json.set("",
+		"Class","zzOtherCombatActions",
+		"ParentToken",ParentToken
+))]
 
-[h:output.PC = output.PC + json.get(macro.return,"Player")+"</div></div>"]
-[h:output.GM = output.GM + json.get(macro.return,"GM")+"</div></div>"]
-[h:broadcastAsToken(output.GM,"gm")]
-[h:broadcastAsToken(output.PC,"not-gm")]
+[h,MACRO("ChatOutput@Lib:pm.a5e.Core"): ChatOutputData]

@@ -14,7 +14,6 @@
 	"choice.DarkMode | "+data.getData("addon:","pm.a5e.core","DarkMode")+" | Use Dark Mode | CHECK",
 	"choice.Vertical | "+data.getData("addon:","pm.a5e.core","VerticalDisplay")+" | Use Vertical Display | CHECK",
     "choice.ShowDice | "+data.getData("addon:","pm.a5e.core","ShowAllDice")+" | Show Individual Die Rolls | CHECK",
-    "choice.AlwaysAdvDis | "+data.getData("addon:","pm.a5e.core","AlwaysAdvDis")+" | Always Roll Advantage and Disadvantage | CHECK",
     "choice.FullSpellRules | "+data.getData("addon:","pm.a5e.core","FullSpellRules")+" | Show Full Spell Rules by Default | CHECK",
 	"choice.FullAbilityRules | "+data.getData("addon:","pm.a5e.core","FullAbilityRules")+" | Always Show Full Ability Rules in Chat | CHECK",
 	"junkVar | ------------------------------ Color Settings: Use Hex Codes ------------------------------ | | LABEL | SPAN=TRUE",
@@ -94,7 +93,6 @@
 [h:setLibProperty("DisplaySize",choice.DisplaySize,"Lib:pm.a5e.Core")]
 [h:setLibProperty("DarkMode",choice.DarkMode,"Lib:pm.a5e.Core")]
 [h:setLibProperty("VerticalDisplay",choice.Vertical,"Lib:pm.a5e.Core")]
-[h:setLibProperty("AlwaysAdvDis",choice.AlwaysAdvDis,"Lib:pm.a5e.Core")]
 [h:setLibProperty("FullSpellRules",choice.FullSpellRules,"Lib:pm.a5e.Core")]
 [h:setLibProperty("FullAbilityRules",choice.FullAbilityRules,"Lib:pm.a5e.Core")]
 [h:setLibProperty("ChatColors",choice.Colors,"Lib:pm.a5e.Core")]

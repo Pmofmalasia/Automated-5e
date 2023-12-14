@@ -9,7 +9,7 @@
 
 [h,if(cond.Context!="AfterAbility"): IsTooltip=0]
 [h:cond.Flavor=json.get(cond.DisplayObject,"Flavor")]
-[h:cond.DMOnly=if(json.get(cond.DisplayObject,"DMOnly")=="",if(getProperty("a5e.stat.Allegiance")=="Enemy",min(number(data.getData("addon:","pm.a5e.core","HideEnemyMacros")),1),if(getProperty("a5e.stat.Allegiance")=="Ally",min(number(data.getData("addon:","pm.a5e.core","HideAllyMacros")),1),0)),json.get(cond.DisplayObject,"DMOnly"))]
+[h:cond.needsSplitGMOutput=if(json.get(cond.DisplayObject,"needsSplitGMOutput")=="",if(getProperty("a5e.stat.Allegiance")=="Enemy",min(number(data.getData("addon:","pm.a5e.core","HideEnemyMacros")),1),if(getProperty("a5e.stat.Allegiance")=="Ally",min(number(data.getData("addon:","pm.a5e.core","HideAllyMacros")),1),0)),json.get(cond.DisplayObject,"needsSplitGMOutput"))]
 [h:cond.BorderColorOverride=json.get(cond.DisplayObject,"BorderColorOverride")]
 [h:cond.TitleFontColorOverride=json.get(cond.DisplayObject,"TitleFontColorOverride")]
 [h:cond.AccentBackgroundOverride=json.get(cond.DisplayObject,"AccentBackgroundOverride")]

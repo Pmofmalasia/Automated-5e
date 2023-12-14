@@ -50,7 +50,7 @@
 [h:ClassFeatureData = json.set("",
 	"Flavor","",
 	"ParentToken",currentToken(),
-	"DMOnly",(getProperty("a5e.stat.Allegiance") == "Enemy"),
+	"needsSplitGMOutput",(getProperty("a5e.stat.Allegiance") == "Enemy"),
 	"Class","zzChecksAndSaves",
 	"Name","Condition Management",
 	"FalseName","",

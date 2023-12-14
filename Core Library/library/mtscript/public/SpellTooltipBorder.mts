@@ -5,7 +5,7 @@
 [h:SpellName = json.get(AllSpellData,"Spell")]
 [h:SpellData = pm.a5e.GetSpecificSpell(SpellName)]
 [h:SpellLevel = json.get(SpellData,"Level")]
-[h:DMOnly = (getProperty("a5e.stat.Allegiance") == "Enemy")]
+[h:needsSplitGMOutput = (getProperty("a5e.stat.Allegiance") == "Enemy")]
 
 [h:AllSpellData = json.set(AllSpellData,"SpellData",SpellData)]
 [h,macro("SpellTooltip@Lib:pm.a5e.Core"): AllSpellData]
@@ -15,7 +15,7 @@
 [h:SpellDisplayName = json.get(macro.return,"DisplayName")]
 
 [h:ClassFeatureData = json.set("",
-    "DMOnly",DMOnly,
+    "needsSplitGMOutput",needsSplitGMOutput,
     "Class","Spell",
     "ClassForDisplay","zzSpell",
     "ColorSubtype",json.set("","Source",SpellSource,"Level",SpellLevel),

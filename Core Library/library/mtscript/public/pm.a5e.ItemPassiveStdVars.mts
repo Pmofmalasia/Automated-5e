@@ -6,7 +6,7 @@
 [h:"<!-- Note: pass.abilityInfo is set in pm.PassiveFunction -->"]
 
 [h:pass.Flavor=json.get(pass.DisplayObject,"Flavor")]
-[h:pass.DMOnly=if(json.get(pass.DisplayObject,"DMOnly")=="",if(getProperty("a5e.stat.Allegiance")=="Enemy",min(number(data.getData("addon:","pm.a5e.core","HideEnemyMacros")),1),if(getProperty("a5e.stat.Allegiance")=="Ally",min(number(data.getData("addon:","pm.a5e.core","HideAllyMacros")),1),0)),json.get(pass.DisplayObject,"DMOnly"))]
+[h:pass.needsSplitGMOutput=if(json.get(pass.DisplayObject,"needsSplitGMOutput")=="",if(getProperty("a5e.stat.Allegiance")=="Enemy",min(number(data.getData("addon:","pm.a5e.core","HideEnemyMacros")),1),if(getProperty("a5e.stat.Allegiance")=="Ally",min(number(data.getData("addon:","pm.a5e.core","HideAllyMacros")),1),0)),json.get(pass.DisplayObject,"needsSplitGMOutput"))]
 [h:pass.BorderColorOverride=json.get(pass.DisplayObject,"BorderColorOverride")]
 [h:pass.TitleFontColorOverride=json.get(pass.DisplayObject,"TitleFontColorOverride")]
 [h:pass.AccentBackgroundOverride=json.get(pass.DisplayObject,"AccentBackgroundOverride")]

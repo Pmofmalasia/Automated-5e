@@ -179,7 +179,7 @@
 [h:ClassFeatureData = json.set("",
 	"Flavor",json.get(macro.args,"Flavor"),
 	"ParentToken",json.get(macro.args,"ParentToken"),
-	"DMOnly",json.get(macro.args,"DMOnly"),
+	"needsSplitGMOutput",json.get(macro.args,"needsSplitGMOutput"),
 	"BorderColorOverride",if(json.get(macro.args,"BorderColorOverride")=="",if(HPChangeType<=1,"#AA2222","#03AC13"),json.get(macro.args,"BorderColorOverride")),
 	"TitleFontColorOverride",if(json.get(macro.args,"TitleFontColorOverride")=="",if(HPChangeType<=1,"#FFFFFF","#000000"),json.get(macro.args,"TitleFontColorOverride")),
 	"AccentBackgroundOverride",json.get(macro.args,"AccentBackgroundOverride"),

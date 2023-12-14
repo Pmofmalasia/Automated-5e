@@ -12,7 +12,7 @@
 [h:ForcedImage = json.get(NonSpellData,"ForcedImage")]
 [h:ForcedPortrait = json.get(NonSpellData,"ForcedPortrait")]
 [h:ForcedHandout = json.get(NonSpellData,"ForcedHandout")]
-[h:DMOnly = json.get(NonSpellData,"DMOnly")]
+[h:needsSplitGMOutput = json.get(NonSpellData,"needsSplitGMOutput")]
 [h:AuraColor = json.get(NonSpellData,"AuraColor")]
 [h:BorderColorOverride = json.get(NonSpellData,"BorderColorOverride")]
 [h:TitleFontColorOverride = json.get(NonSpellData,"TitleFontColorOverride")]
@@ -426,7 +426,7 @@
 }]
 
 [h:SpellDescriptionData = json.set(NonSpellData,"Description",CompleteSpellDescription,"SpellDisplayName",SpellDisplayName,"ForcedLevel",sLevelSelect,"Source",sSource)]
-[h:sDescriptionLink = macroLinkText("spellDescription@Lib:pm.a5e.Core",if(DMOnly,"gm","all"),SpellDescriptionData,ParentToken)]
+[h:sDescriptionLink = macroLinkText("spellDescription@Lib:pm.a5e.Core",if(needsSplitGMOutput,"gm","all"),SpellDescriptionData,ParentToken)]
 [h:SpellDescriptionFinal = if(sRulesShow==0,"<a style='color:"+LinkColor+";' href='"+sDescriptionLink+"'>Click to show full spell text</a>",CompleteSpellDescription)]
 
 [h:ReturnData = json.set(NonSpellData,"SpellData",json.append("",FinalSpellData),"Slot",if(IsCantrip,0,eLevel),"Source",sSource,"Class",sClassSelect,"Effect",pm.a5e.EffectData,"Table",abilityTable,"Description",SpellDescriptionFinal,"ShowFullRules",sRulesShow)]

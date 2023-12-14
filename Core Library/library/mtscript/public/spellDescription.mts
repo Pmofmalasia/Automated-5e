@@ -4,7 +4,7 @@
 
 [h:ClassFeatureData = json.set("",
     "ParentToken",currentToken(),
-    "DMOnly",0,
+    "needsSplitGMOutput",0,
     "Class","zzSpell",
     "ColorSubtype",json.set("","Source",sSource,"Level",sLevel),
     "Name",json.get(sp.Data,"SpellDisplayName")+": Full Description",
@@ -23,5 +23,5 @@
 [h:abilityTable = ""]
 
 [h:output.GM = output.GM + json.get(sp.Data,"Description")+"</div></div>"]
-[h:broadcastAsToken(output.GM,if(json.get(sp.Data,"DMOnly"),"gm","all"))]
+[h:broadcastAsToken(output.GM,if(json.get(sp.Data,"needsSplitGMOutput"),"gm","all"))]
 [h:"<!-- Will probably need to improve on broadcast targets later -->"]

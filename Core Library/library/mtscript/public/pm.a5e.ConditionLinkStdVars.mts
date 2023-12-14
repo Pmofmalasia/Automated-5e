@@ -23,7 +23,7 @@
 [h:pm.a5e.OverarchingContext = json.get(arg(0),"OverarchingContext")]
 
 [h:Flavor=json.get(DisplayObject,"Flavor")]
-[h:DMOnly=if(json.get(DisplayObject,"DMOnly")=="",if(getProperty("a5e.stat.Allegiance")=="Enemy",min(number(data.getData("addon:","pm.a5e.core","HideEnemyMacros")),1),if(getProperty("a5e.stat.Allegiance")=="Ally",min(number(data.getData("addon:","pm.a5e.core","HideAllyMacros")),1),0)),json.get(DisplayObject,"DMOnly"))]
+[h:needsSplitGMOutput=if(json.get(DisplayObject,"needsSplitGMOutput")=="",if(getProperty("a5e.stat.Allegiance")=="Enemy",min(number(data.getData("addon:","pm.a5e.core","HideEnemyMacros")),1),if(getProperty("a5e.stat.Allegiance")=="Ally",min(number(data.getData("addon:","pm.a5e.core","HideAllyMacros")),1),0)),json.get(DisplayObject,"needsSplitGMOutput"))]
 [h:BorderColorOverride=json.get(DisplayObject,"BorderColorOverride")]
 [h:TitleFontColorOverride=json.get(DisplayObject,"TitleFontColorOverride")]
 [h:AccentBackgroundOverride=json.get(DisplayObject,"AccentBackgroundOverride")]
@@ -45,7 +45,7 @@
 	"Flavor",Flavor,
 	"ParentToken",ParentToken,
 	"Tooltip",IsTooltip,
-	"DMOnly",DMOnly,
+	"needsSplitGMOutput",needsSplitGMOutput,
 	"FullRules",ShowFullRules,
 	"BorderColorOverride",BorderColorOverride,
 	"TitleFontColorOverride",TitleFontColorOverride,

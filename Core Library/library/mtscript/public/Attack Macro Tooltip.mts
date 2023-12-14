@@ -9,7 +9,7 @@
 	WeaponData = json.get(getProperty("a5e.stat.Weapon"),json.get(getProperty("a5e.stat.Weapon"),json.get(macro.args,"WhichHand")))
 ]
 
-[h:DMOnly=json.get(macro.args,"DMOnly")]
+[h:needsSplitGMOutput=json.get(macro.args,"needsSplitGMOutput")]
 [h:PrimeStat=if(listFind(json.get(WeaponData,"Props"),"Finesse")>-1,max(json.get(getProperty("a5e.stat.AtrMods"),"Dexterity"),json.get(getProperty("a5e.stat.AtrMods"),"Strength")),json.get(getProperty("a5e.stat.AtrMods"),"Strength"))]
 [h:PrimeStat=if(listFind(json.get(WeaponData,"Props"),"Ammunition")>-1,json.get(getProperty("a5e.stat.AtrMods"),"Dexterity"),PrimeStat)]
 [h:PrimeStat=if(listFind(json.get(WeaponData,"Props"),"WisMod")>-1,json.get(getProperty("a5e.stat.AtrMods"),"Wisdom"),PrimeStat)]
@@ -17,7 +17,7 @@
 
 [h:pm.TooltipVars()]
 
-[h:TooltipPermissions=if(or(DMOnly==0,isGM()),1,0)]
+[h:TooltipPermissions=if(or(needsSplitGMOutput==0,isGM()),1,0)]
 
 [r,if(Frame.tooltip && TooltipPermissions),CODE:{
 	[r,frame5("Ability Info"):{

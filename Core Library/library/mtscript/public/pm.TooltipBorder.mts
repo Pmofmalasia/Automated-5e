@@ -10,7 +10,7 @@
 [h:FeatureDescription=json.get(arg(0),"Effect")]
 [h:abilityTable=json.get(arg(0),"abilityTable")]
 [h:Flavor = json.get(arg(0),"Flavor")]
-[h:DMOnly=json.get(arg(0),"DMOnly")]
+[h:needsSplitGMOutput=json.get(arg(0),"needsSplitGMOutput")]
 [h:BorderColorOverride=json.get(arg(0),"BorderColorOverride")]
 [h:TitleColorOverride=json.get(arg(0),"TitleFontColorOverride")]
 [h:AccentBackgroundOverride=json.get(arg(0),"AccentBackgroundOverride")]

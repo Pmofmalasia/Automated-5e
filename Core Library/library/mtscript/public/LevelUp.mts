@@ -253,7 +253,7 @@
 [h:ClassFeatureData = json.set("",
 	"Flavor",token.name+" suddenly feels empowered by experience!",
 	"ParentToken",ParentToken,
-	"DMOnly",if(getProperty("a5e.stat.Allegiance")=="PC",0,1),
+	"needsSplitGMOutput",if(getProperty("a5e.stat.Allegiance")=="PC",0,1),
 	"BorderColorOverride","",
 	"TitleFontColorOverride","",
 	"AccentBackgroundOverride","",

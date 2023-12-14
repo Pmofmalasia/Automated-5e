@@ -20,6 +20,7 @@
 [h:data.setData("addon:","pm.a5e.core","DefaultChatSettings",defaultChatSettings)]
 [h:data.setData("addon:","pm.a5e.core","ChatSettings",defaultChatSettings)]
 [h:data.setData("addon:","pm.a5e.core","PlayerChatSettings","{}")]
+[h:data.setData("addon:","pm.a5e.core","FullRulesSettings",json.set("","Default",0))]
 
 [h:setLibProperty("DisplaySize",150,"Lib:pm.a5e.Core")]
 [h:setLibProperty("VerticalDisplay",1,"Lib:pm.a5e.Core")]

@@ -33,7 +33,7 @@
 	[h:choice.DM = 0]
 	[h:abort(input(
 		"junkVar | -------------- Settings by Button: 0 or Blank to Use Defaults -------------- | | LABEL | SPAN=TRUE ",
-		if(isGM(),"choice.DM | "+if(json.get(OldMacroSettings,"DMOnly")=="",if(getProperty("a5e.stat.Allegiance")=="Enemy",1,0),json.get(OldMacroSettings,"DMOnly"))+" | Separate DM and player outputs | CHECK ","")+"",
+		if(isGM(),"choice.DM | "+if(json.get(OldMacroSettings,"needsSplitGMOutput")=="",if(getProperty("a5e.stat.Allegiance")=="Enemy",1,0),json.get(OldMacroSettings,"needsSplitGMOutput"))+" | Separate DM and player outputs | CHECK ","")+"",
 		"choice.FullRules | "+json.get(OldMacroSettings,"ShowFullRulesOverride")+" | Show full rules in chat | CHECK ",
 		"choice.Flavor | "+json.get(OldMacroSettings,"Flavor")+" | Ability flavor text ",
 		"choice.BorderColor | "+json.get(OldMacroSettings,"BorderColorOverride")+" | Border Color",
@@ -47,7 +47,7 @@
 	
 	[h:SettingsInfo = json.set("",
 	"Name",chosenMacro,
-	"DMOnly",choice.DM,
+	"needsSplitGMOutput",choice.DM,
 	"Flavor",choice.Flavor,
 	"ShowFullRulesOverride",choice.FullRules,
 	"BorderColorOverride",if(choice.BorderColor=="0","",choice.BorderColor),

@@ -28,7 +28,7 @@
 [h:ClassFeatureData = json.set("",
 	"Flavor","",
 	"ParentToken","",
-	"DMOnly",0,
+	"needsSplitGMOutput",0,
 	"Class","zzChecksAndSaves",
 	"Name","Advance Time",
 	"FalseName","",

@@ -4,7 +4,7 @@
 [h:abilityName = json.get(arg(0),"Name")]
 [h:abilityDisplayName = if(json.get(arg(0),"DisplayName")=="",abilityName,json.get(arg(0),"DisplayName"))]
 [h:Flavor = json.get(arg(0),"Flavor")]
-[h:DMOnly = json.get(arg(0),"DMOnly")]
+[h:needsSplitGMOutput = json.get(arg(0),"needsSplitGMOutput")]
 [h:ColorSubtype = json.get(arg(0),"ColorSubtype")]
 [h:BorderColorOverride=json.get(arg(0),"BorderColorOverride")]
 [h:TitleColorOverride=json.get(arg(0),"TitleFontColorOverride")]
@@ -31,13 +31,13 @@
 [h,if(TitleColorOverride != ""): chat.Title = TitleColorOverride]
 
 [h,if(currentToken()!=""),CODE:{
-	[h:outputTest.NoRules = if(DMOnly,if(or(and(number(data.getData("addon:","pm.a5e.core","HideEnemyMacros"))<1,getProperty("a5e.stat.Allegiance")=="Enemy"),and(number(data.getData("addon:","pm.a5e.core","HideAllyMacros"))<1,getProperty("a5e.stat.Allegiance")=="Ally")),0,1),0)]
-	[h:outputTest.NoRolls = if(DMOnly,if(or(and(number(data.getData("addon:","pm.a5e.core","HideEnemyMacros"))<2,getProperty("a5e.stat.Allegiance")=="Enemy"),and(number(data.getData("addon:","pm.a5e.core","HideAllyMacros"))<2,getProperty("a5e.stat.Allegiance")=="Ally")),0,1),0)]
-	[h:outputTest.NoFullMacro = if(DMOnly,if(or(and(number(data.getData("addon:","pm.a5e.core","HideEnemyMacros"))<3,getProperty("a5e.stat.Allegiance")=="Enemy"),and(number(data.getData("addon:","pm.a5e.core","HideAllyMacros"))<3,getProperty("a5e.stat.Allegiance")=="Ally")),if(and(OnlyRules,outputTest.NoRules),1,0),1),0)]
+	[h:outputTest.NoRules = if(needsSplitGMOutput,if(or(and(number(data.getData("addon:","pm.a5e.core","HideEnemyMacros"))<1,getProperty("a5e.stat.Allegiance")=="Enemy"),and(number(data.getData("addon:","pm.a5e.core","HideAllyMacros"))<1,getProperty("a5e.stat.Allegiance")=="Ally")),0,1),0)]
+	[h:outputTest.NoRolls = if(needsSplitGMOutput,if(or(and(number(data.getData("addon:","pm.a5e.core","HideEnemyMacros"))<2,getProperty("a5e.stat.Allegiance")=="Enemy"),and(number(data.getData("addon:","pm.a5e.core","HideAllyMacros"))<2,getProperty("a5e.stat.Allegiance")=="Ally")),0,1),0)]
+	[h:outputTest.NoFullMacro = if(needsSplitGMOutput,if(or(and(number(data.getData("addon:","pm.a5e.core","HideEnemyMacros"))<3,getProperty("a5e.stat.Allegiance")=="Enemy"),and(number(data.getData("addon:","pm.a5e.core","HideAllyMacros"))<3,getProperty("a5e.stat.Allegiance")=="Ally")),if(and(OnlyRules,outputTest.NoRules),1,0),1),0)]
 };{
-	[h:outputTest.NoRules = DMOnly]
-	[h:outputTest.NoRolls = DMOnly]
-	[h:outputTest.NoFullMacro = DMOnly]
+	[h:outputTest.NoRules = needsSplitGMOutput]
+	[h:outputTest.NoRolls = needsSplitGMOutput]
+	[h:outputTest.NoFullMacro = needsSplitGMOutput]
 }]
 
 [h:width.Setting=if(data.getData("addon:","pm.a5e.core","useWidth")==2,"",if(data.getData("addon:","pm.a5e.core","useWidth")==1,"max-width:"+string(data.getData("addon:","pm.a5e.core","DisplaySize"))+"px;",'width:'+string(data.getData("addon:","pm.a5e.core","DisplaySize"))+'px;'))]

@@ -25,14 +25,14 @@
 [h:ThrowingWeapon = json.get(wa.Data,"ThrowWeapon")]
 [h:TwoWeaponFighting = json.get(wa.Data,"TwoWeaponFighting")]
 [h,if(TwoWeaponFighting == ""): TwoWeaponFighting = 0]
-[h:DMOnly = json.get(wa.Data,"DMOnly")]
-[h:DMOnly = (getProperty("a5e.stat.Allegiance") == "Enemy")]
+[h:needsSplitGMOutput = json.get(wa.Data,"needsSplitGMOutput")]
+[h:needsSplitGMOutput = (getProperty("a5e.stat.Allegiance") == "Enemy")]
 [h:ShowFullRules = 1]
 [h:wa.WeaponUsed = json.get(wa.Data,"WeaponData")]
 [h:wa.EffectIDs = json.get(wa.Data,"ID")]
 [h,if(wa.EffectIDs == ""): wa.EffectIDs = "[]"]
 
-[h:DMOnly=json.get(macro.args,"DMOnly")]
+[h:needsSplitGMOutput=json.get(macro.args,"needsSplitGMOutput")]
 [h:wa.WeaponMeleeRanged = json.get(wa.WeaponUsed,"WeaponMeleeRanged")]
 [h:wa.MeleeRanged = wa.WeaponMeleeRanged]
 [h:PrimeStat = if(wa.MeleeRanged=="Ranged","Dexterity","Strength")]
@@ -45,7 +45,7 @@
 [h:tooltipDisplaySizeOverride=json.get(macro.args,"tooltipDisplaySizeOverride")]
 [h:pm.TooltipVars()]
 
-[h:TooltipPermissions=if(or(DMOnly==0,isGM()),1,0)]
+[h:TooltipPermissions=if(or(needsSplitGMOutput==0,isGM()),1,0)]
 
 [h:abilityTable = "[]"]
 

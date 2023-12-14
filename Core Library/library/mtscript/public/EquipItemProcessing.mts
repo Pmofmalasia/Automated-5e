@@ -208,7 +208,7 @@
 [h:ClassFeatureData = json.set("",
 	"Flavor",Flavor,
 	"ParentToken",ParentToken,
-	"DMOnly",(getProperty("a5e.stat.Allegiance") == "Enemy"),
+	"needsSplitGMOutput",(getProperty("a5e.stat.Allegiance") == "Enemy"),
 	"Class","Item",
 	"Name","Equipment",
 	"FalseName","",

@@ -34,7 +34,7 @@
 [h,switch(json.get(ChangeHPData,"OutputTargets")),CODE:
 	case "Everyone":{[h:outputTargets = "not-gm"][h:linkPermissions = "gm-self"]};
 	case "YouAndDM":{[h:outputTargets = "self"][h:linkPermissions = "gm-self"]};
-	case "DMOnly":{[h:outputTargets = "none"][h:linkPermissions = "gm"]}
+	case "needsSplitGMOutput":{[h:outputTargets = "none"][h:linkPermissions = "gm"]}
 ]
 
 [h:FinalHPData = json.set("",
@@ -70,7 +70,7 @@
 [h:ClassFeatureData = json.set("",
 	"Flavor","",
 	"ParentToken",ParentToken,
-	"DMOnly",(getProperty("a5e.stat.Allegiance",ParentToken) == "Enemy"),
+	"needsSplitGMOutput",(getProperty("a5e.stat.Allegiance",ParentToken) == "Enemy"),
 	"Class","zzChangeHP",
 	"ColorSubtype",if(IsDamage,"Damage","Healing"),
 	"Name","Change HP",

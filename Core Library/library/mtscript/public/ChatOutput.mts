@@ -5,7 +5,7 @@
 
 [h:ColorData = json.get(OutputData,"ColorData")]
 [h:defaultBorderColors = pm.a5e.DefaultColors(ColorData)]
-[h:DefaultChatSettings = data.getData("addon","pm.a5e.core","ChatSettings")]
+[h:DefaultChatSettings = data.getData("addon:","pm.a5e.core","ChatSettings")]
 
 [h:BorderColorOverride = json.get(ColorData,"BorderColorOverride")]
 [h:TitleColorOverride = json.get(ColorData,"TitleFontColorOverride")]
@@ -16,21 +16,23 @@
 [h:TitleColor = json.get(defaultBorderColors,"TitleColor")]
 
 [h:allPlayers = getAllPlayerNames("json")]
-[h,if(0): personalizedChatSettings = data.getData("addon:","pm.a5e.core","PlayerChatSettings")]
+[h:personalizedChatSettings = data.getData("addon:","pm.a5e.core","PlayerChatSettings")]
 [h,foreach(player,allPlayers),CODE:{
-	[h,if(json.contains(personalizedChatSettings,player)):
-		finalChatSettings = json.merge(defaultChatSettings,json.get(personalizedChatSettings,player));
-		finalChatSettings = defaultChatSettings
+	[h:playerName = pm.RemoveSpecial(player)]
+	[h,if(json.contains(personalizedChatSettings,playerName)):
+		finalChatSettings = json.merge(DefaultChatSettings,json.get(personalizedChatSettings,playerName));
+		finalChatSettings = DefaultChatSettings
 	]
 	[h:isVertical = json.get(finalChatSettings,"VerticalDisplay")]
 	[h:isDarkMode = json.get(finalChatSettings,"DarkMode")]
 	[h:TitleFont = json.get(finalChatSettings,"TitleFont")]
 	[h:BodyFont = json.get(finalChatSettings,"BodyFont")]
 
-	[h:BackgroundColor = if(isDarkMode,json.get(finalChatSettings,'DarkBackground'),json.get(finalChatSettings,'LightBackground'))]
-	[h:BackgroundTextColor = if(isDarkMode,json.get(finalChatSettings,'DarkText'),json.get(finalChatSettings,'LightText'))]
-	[h:AccentBackground = if(isDarkMode,json.get(finalChatSettings,"DarkAccentBackground"),json.get(finalChatSettings,"LightAccentBackground"))]
-	[h:AccentText = if(isDarkMode,json.get(finalChatSettings,"DarkAccentText"),json.get(finalChatSettings,"LightAccentText"))]
+	[h:finalChatColors = json.get(finalChatSettings,"ChatColors")]
+	[h:BackgroundColor = if(isDarkMode,json.get(finalChatColors,'DarkBackground'),json.get(finalChatColors,'LightBackground'))]
+	[h:BackgroundTextColor = if(isDarkMode,json.get(finalChatColors,'DarkText'),json.get(finalChatColors,'LightText'))]
+	[h:AccentBackground = if(isDarkMode,json.get(finalChatColors,"DarkAccentBackground"),json.get(finalChatColors,"LightAccentBackground"))]
+	[h:AccentText = if(isDarkMode,json.get(finalChatColors,"DarkAccentText"),json.get(finalChatColors,"LightAccentText"))]
 
 	[h:AccentFormat = "text-align:center; background-color:"+AccentBackground+"; color:"+AccentText+";" + if(isVertical,"width:100%"," width:20%;")]
 	[h:VerticalFormat=if(isVertical,"</th></tr><tr style='text-align:center;'><td style='","</th><td style='padding-left:4px; valign:middle;")]

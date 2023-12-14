@@ -30,7 +30,7 @@
 	};{}]
 }]
 
-[h:SpellData = json.set("","Spell",SpellName,"FreeCasting",1,"ForcedLevel",SpellLevel,"ForcedClass",json.set("","Class","Item","ItemData",ItemData),"DMOnly",DMOnly)]
+[h:SpellData = json.set("","Spell",SpellName,"FreeCasting",1,"ForcedLevel",SpellLevel,"ForcedClass",json.set("","Class","Item","ItemData",ItemData),"needsSplitGMOutput",needsSplitGMOutput)]
 
 [h:pm.a5e.FeatureSpell(abilityInfo,SpellData,FeatureDescription)]
 

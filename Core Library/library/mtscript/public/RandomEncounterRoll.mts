@@ -39,7 +39,7 @@
 [h:data.setData("addon:","pm.a5e.core","gd.RandomEncounterSettings",json.set(RandomEncounterSettings,"AccumulatedChance",accumulatedEncounterChance))]
 
 [h:ClassFeatureData = json.set("",
-	"DMOnly",showPlayers,
+	"needsSplitGMOutput",showPlayers,
 	"Class","zzGeneral",
 	"Name","Random Encounter Roll",
 	"FalseName","",

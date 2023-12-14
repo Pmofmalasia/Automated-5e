@@ -18,29 +18,22 @@
 
 [h:abilityTable = json.merge(abilityTable,json.get(DashData,"Table"))]
 
-[h:outputRules = pm.a5e.PlayerOutputRules(json.set("",
-	"DMOnly",(getProperty("a5e.stat.Allegiance") == "Enemy"),
-	"OnlyRules",1,
-	"ParentToken",ParentToken
-))]
 [h:BorderData = json.set("",
 	"Flavor",Flavor,
-	"Class","zzOtherCombatActions",
-	"Name","Dash"
+	"Name","Dash",
+	"DisplayName","Dash",
+	"FalseName","",
+	"DisplayClass","zzOtherCombatActions",
+	"ColorSubtype",""
+)]
+[h:AllOutputComponents = json.set("",
+	"ParentToken",ParentToken,
+	"needsSplitGMOutput",(getProperty("a5e.stat.Allegiance") == "Enemy"),
+	"BorderData",BorderData,
+	"Table",abilityTable,
+	"ShowFullRulesType",json.append("","Dash","OtherCombatActions"),
+	"Description","When you take the Dash action, you gain extra movement for the current turn. The increase equals your speed, after applying any modifiers. With a speed of 30 feet, for example, you can move up to 60 feet on your turn if you dash.<br><br>Any increase or decrease to your speed changes this additional movement by the same amount. If your speed of 30 feet is reduced to 15 feet, for instance, you can move up to 30 feet this turn if you dash.",
+	"AbridgedDescription","This turn, you gain a bonus equal to your speed after applying modifiers."
 )]
 
-[h:BorderOutputs = pm.a5e.BuildChatBorder(BorderData,outputRules)]
-[h:TableOutputs = pm.a5e.FullTableProcessing(abilityTable,outputRules,1)]
-
-[h:GMOutput = json.get(BorderOutputs,"GM") + json.get(TableOutputs,"GM") + "</div></div>"]
-[h:PlayerOutput = json.get(BorderOutputs,"Player") + json.get(TableOutputs,"Player") + "</div></div>"]
-[h:ChatOutputData = json.set("",
-	"GM",GMOutput,
-	"Player",PlayerOutput,
-	"MaxColNum",json.get(TableOutputs,"MaxColNum"),
-	"ColorData",json.set("",
-		"Class","zzOtherCombatActions",
-		"ParentToken",ParentToken
-))]
-
-[h,MACRO("ChatOutput@Lib:pm.a5e.Core"): ChatOutputData]
+[h,MACRO("GatherOutputComponents@Lib:pm.a5e.Core"): AllOutputComponents]

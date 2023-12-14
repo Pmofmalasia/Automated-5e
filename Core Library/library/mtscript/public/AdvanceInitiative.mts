@@ -29,7 +29,7 @@
 	[h:ClassFeatureData = json.set("",
 		"Flavor","",
 		"ParentToken",tokenEndingTurn,
-		"DMOnly",0,
+		"needsSplitGMOutput",0,
 		"Class","zzInitiative",
 		"Name","Advance Initiative: "+getName(tokenEndingTurn)+" to "+getName(tokenStartingTurn),
 		"FalseName","Advance Initiative",

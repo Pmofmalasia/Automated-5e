@@ -6,7 +6,7 @@
 [h:ClassFeatureData = json.set("",
 	"Flavor",json.get(EffectData,"Flavor"),
 	"ParentToken",ParentToken,
-	"DMOnly",(getProperty("a5e.stat.Allegiance") == "Enemy"),
+	"needsSplitGMOutput",(getProperty("a5e.stat.Allegiance") == "Enemy"),
 	"Class",json.get(EffectData,"Class"),
 	"Name",json.get(EffectData,"DisplayName"),
 	"FalseName",json.get(EffectData,"FalseName"),
@@ -21,7 +21,7 @@
 
 [h:EffectToExecute = json.get(EffectData,"Effect")]
 [h:FinalEffectData = json.set(EffectData,
-	"DMOnly",(getProperty("a5e.stat.Allegiance") == "Enemy")
+	"needsSplitGMOutput",(getProperty("a5e.stat.Allegiance") == "Enemy")
 )]
 
 [h,macro("ExecuteEffect@Lib:pm.a5e.Core"): FinalEffectData]

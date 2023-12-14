@@ -21,7 +21,7 @@
 	[h:ClassFeatureData = json.set("",
 		"Flavor",if(SaveDescription=="",Flavor,SaveDescription),
 		"ParentToken",ParentToken,
-		"DMOnly",if(outputTargets=="none",1,0),
+		"needsSplitGMOutput",if(outputTargets=="none",1,0),
 		"Class","zzChecksAndSaves",
 		"Name","Saving Throw",
 		"FalseName","",

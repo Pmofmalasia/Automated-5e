@@ -1,5 +1,5 @@
 [h:ClassFeatureData = json.set("",
-	"DMOnly",DMOnly,
+	"needsSplitGMOutput",needsSplitGMOutput,
 	"BorderColorOverride",BorderColorOverride,
 	"TitleFontColorOverride",TitleFontColorOverride,
 	"AccentBackgroundOverride",AccentBackgroundOverride,

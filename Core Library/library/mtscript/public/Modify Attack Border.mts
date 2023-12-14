@@ -5,7 +5,7 @@
 [h:ClassFeatureData = json.set("",
 	"Flavor",json.get(WeaponData,"Flavor"),
 	"ParentToken",ParentToken,
-	"DMOnly",(getProperty("a5e.stat.Allegiance") == "Enemy"),
+	"needsSplitGMOutput",(getProperty("a5e.stat.Allegiance") == "Enemy"),
 	"Class","zzWeaponAttack",
 	"Name",json.get(WeaponData,"Name")+" Attack Reroll",
 	"FalseName","Weapon Attack",

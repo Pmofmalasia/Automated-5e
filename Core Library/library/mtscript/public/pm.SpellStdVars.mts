@@ -8,7 +8,7 @@
 [h:ForcedImage=json.get(arg(0),"SummonTokenImage")]
 [h:ForcedPortrait=json.get(arg(0),"SummonPortrait")]
 [h:ForcedHandout=json.get(arg(0),"SummonHandout")]
-[h:DMOnly=json.get(arg(0),"DMOnly")]
+[h:needsSplitGMOutput=json.get(arg(0),"needsSplitGMOutput")]
 [h:InnateCast=json.get(arg(0),"InnateCast")]
 [h:MonsterCast=json.get(arg(0),"MonsterCast")]
 [h:IsTooltip=json.get(arg(0),"IsTooltip")]

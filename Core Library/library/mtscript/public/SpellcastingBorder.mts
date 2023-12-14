@@ -5,7 +5,7 @@
 [h:SpellName = json.get(AllSpellData,"Spell")]
 [h:SpellData = pm.a5e.GetSpecificSpell(SpellName)]
 [h:pm.a5e.EffectData = "[]"]
-[h:DMOnly = 0]
+[h:needsSplitGMOutput = 0]
 
 [h:AllSpellData = json.set(AllSpellData,"SpellData",SpellData)]
 [h,macro("Spellcasting@Lib:pm.a5e.Core"): AllSpellData]
@@ -19,7 +19,7 @@
 [h:ClassFeatureData = json.set("",
     "Flavor",Flavor,
     "ParentToken",ParentToken,
-    "DMOnly",DMOnly,
+    "needsSplitGMOutput",needsSplitGMOutput,
     "Class","zzSpell",
     "ColorSubtype",json.set("","Source",SpellSource,"Level",SpellSlot),
     "Name",json.get(SpellData,"DisplayName"),
@@ -46,7 +46,7 @@
 	"ParentToken",ParentToken
 )]
 
-[h:output.PC = output.PC + if(DMOnly,"",SpellDescription)+"</div></div>"]
+[h:output.PC = output.PC + if(needsSplitGMOutput,"",SpellDescription)+"</div></div>"]
 [h:output.GM = output.GM + SpellDescription+"</div></div>"]
 
 [h:broadcastAsToken(output.GM,"gm")]

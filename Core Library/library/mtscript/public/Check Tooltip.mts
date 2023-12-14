@@ -32,7 +32,7 @@
 ))]
 
 [h:ClassFeatureData = json.set("",
-	"DMOnly",json.get(tooltipData,"DMOnly"),
+	"needsSplitGMOutput",json.get(tooltipData,"needsSplitGMOutput"),
 	"BorderColorOverride",json.get(tooltipData,"BorderColorOverride"),
 	"TitleFontColorOverride",json.get(tooltipData,"TitleFontColorOverride"),
 	"AccentBackgroundOverride",json.get(tooltipData,"AccentBackgroundOverride"),

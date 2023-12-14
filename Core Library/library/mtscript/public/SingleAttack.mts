@@ -38,7 +38,7 @@
 	"WeaponData",WeaponData,
 	"ThrowWeapon",ThrowWeapon,
 	"AttackNum",-1,
-	"DMOnly",(getProperty("a5e.stat.Allegiance") == "Enemy")
+	"needsSplitGMOutput",(getProperty("a5e.stat.Allegiance") == "Enemy")
 )]
 
 [h:IsTooltip = number(json.get(AttackData,"IsTooltip"))]
@@ -50,7 +50,7 @@
 	[h:ClassFeatureData = json.set("",
 		"Flavor",json.get(WeaponData,"Flavor"),
 		"ParentToken",ParentToken,
-		"DMOnly",(getProperty("a5e.stat.Allegiance") == "Enemy"),
+		"needsSplitGMOutput",(getProperty("a5e.stat.Allegiance") == "Enemy"),
 		"Class","zzWeaponAttack",
 		"Name","Current Weapon: "+if(ThrowWeapon,"Throwing ","")+json.get(WeaponData,"DisplayName"),
 		"FalseName","Weapon Attack",
@@ -64,7 +64,7 @@
 	[h:ClassFeatureData = json.set("",
 		"Flavor",json.get(WeaponData,"Flavor"),
 		"ParentToken",ParentToken,
-		"DMOnly",(getProperty("a5e.stat.Allegiance") == "Enemy"),
+		"needsSplitGMOutput",(getProperty("a5e.stat.Allegiance") == "Enemy"),
 		"Class","zzWeaponAttack",
 		"Name",if(ThrowWeapon,"Thrown ","")+json.get(WeaponData,"DisplayName")+" Attack",
 		"FalseName","Weapon Attack",

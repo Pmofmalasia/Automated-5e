@@ -6,8 +6,14 @@
 [h,foreach(tempToken,a5e.AuraTokens),CODE:{
 	[h:tempFeatures = pm.a5e.GatherNonAuraFeatures(tempToken)]
 	[h:tempAuraFeatures = json.path.read(tempFeatures,"\$[*][?(@.Aura != null)]","DEFAULT_PATH_LEAF_TO_NULL")]
-	[h:tempAuraFeatures = json.path.read(tempAuraFeatures,"\$[*][?(@.Aura.Range >= "+getDistance(tempToken)+")]","DEFAULT_PATH_LEAF_TO_NULL")]
-	[h:a5e.UnifiedAbilitiesEDITTHISLATER = json.merge(a5e.UnifiedAbilities,json.path.put(tempAuraFeatures,"\$[*]","AbilityType","Aura"))]
+	[h,foreach(auraFeature,tempAuraFeatures),CODE:{
+		[h:thisAuraData = json.get(auraFeature,"Aura")]
+		[h:ValidTargets = pm.a5e.TargetCreatureFiltering(
+			json.set("","ParentToken",tempToken,"List",json.append("",ParentToken),"Range",json.get(thisAuraData,"Range")),
+			json.get(json.get(thisAuraData,"Targeting"),"Creature")
+		)]
+		[h,if(json.contains(ValidTargets,ParentToken)): a5e.UnifiedAbilities = json.append(a5e.UnifiedAbilities,auraFeature)]
+	}]
 	[h:"<!-- NOTE: Current issue - this method does not allow for adjusting aura range based on magic items, other features, etc. Perhaps could be adjusted at the time of setting the condition. -->"]
 }]
 [h:macro.return = a5e.UnifiedAbilities]

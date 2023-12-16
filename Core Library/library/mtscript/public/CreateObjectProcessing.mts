@@ -164,6 +164,10 @@
 	]
 };{}]
 
+[h,if(objectType=="Light"),CODE:{
+	[h:objectData = ct.a5e.LightDataProcessing(objectData,"")]
+};{}]
+
 [h,if(objectType=="Tool"),CODE:{
 	[h,if(json.contains(objectData,"isNewToolSubtypeTemplate")),CODE:{
 		[h:newToolDisplayName = json.get(objectData,"NewToolTypeDisplayName")]

@@ -13,7 +13,7 @@
 </head>
 <body>
     <form name="Inventory" id="Inventory" onsubmit="submitData()" method="json">
-      <table id="InventoryTable">
+      <table id="InventoryTable" ondrop='dropItem(event)' ondragover='allowDrop(event)'>
           
       </table>
     </form>

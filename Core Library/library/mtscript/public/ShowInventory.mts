@@ -55,7 +55,7 @@
 
 	[h,if(tempUseButton == ""): tempUseButton = "---"]
 
-	[h:InventoryHTML = InventoryHTML + "<tr>"+TableCellFormat+tempDisplayName+"</td>"+TableCellFormat+tempNumberDisplay+"</td>"+TableCellFormat+"<span title='"+tempWeight+" Each'>"+if(weightNeedsRounding,round(tempTotalWeight,1),tempTotalWeight)+"</span></td>"+TableCellFormat+tempUseButton+"</td></tr>"]
+	[h:InventoryHTML = InventoryHTML + "<tr draggable='true' ondragstart='dragItem(event)' id='rowItemID"+json.get(tempItem,"ItemID")+"'>"+TableCellFormat+tempDisplayName+"</td>"+TableCellFormat+tempNumberDisplay+"</td>"+TableCellFormat+"<span title='"+tempWeight+" Each'>"+if(weightNeedsRounding,round(tempTotalWeight,1),tempTotalWeight)+"</span></td>"+TableCellFormat+tempUseButton+"</td></tr>"]
 
 	[h:TotalWeight = TotalWeight + tempTotalWeight]
 }]
@@ -69,15 +69,4 @@
 [h:totalWeightNeedsRounding = (TotalWeight != floor(TotalWeight))]
 [h:InventoryHTML = InventoryHTML + "<tr>"+TableCellFormat+" --- </td>"+TableCellFormat+if(totalWeightNeedsRounding,round(TotalWeight,1),floor(TotalWeight))+"</td>"+TableCellFormat+json.get(WeightData,"Carry")+"</td>"+TableCellFormat+json.get(WeightData,"Push")+"</td></tr>"]
 
-[h,if(1),CODE:{
-[h:html.frame5("Inventory: "+getName(),"lib://pm.a5e.core/ShowInventory.html?cachelib=false","value="+base64.encode(InventoryHTML)+"; closebutton=0; height=300")]	
-}]
-
-[r,if(0),CODE:{
-[r,frame5("Inventory: "+getName()):{
-	[r:'<html>
-      <table id="InventoryTable">
-          '+InventoryHTML+'
-      </table></html>']
-}]
-}]
+[h:html.frame5("Inventory: "+getName(),"lib://pm.a5e.core/ShowInventory.html?cachelib=false","value="+base64.encode(InventoryHTML)+"; closebutton=0; height=300")]

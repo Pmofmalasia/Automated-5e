@@ -139,7 +139,10 @@ async function createObjectSubtypeRows(tableID,IDSuffix){
 		document.getElementById("isWearable").checked = true;
 		document.getElementById("isStackable").checked = false;
 
-		addTableRow(tableID,nextRowIndex,"rowLightType","<th><label for='lightType'>Type of Light:</label></th><td><select id='lightType' name='lightType' onchange='createLightTable()'><option value='Bright'>Bright Light</option><option value='Dim'>Dim Light</option><option value='BrightDim'>Bright + Dim Light</option><option value='Darkness'>Darkness</option></select></td>");
+		addTableRow(tableID,nextRowIndex,"rowLightType"+IDSuffix,"<th><label for='lightType"+IDSuffix+"'>Type of Light:</label></th><td><select id='lightType"+IDSuffix+"' name='lightType"+IDSuffix+"' onchange='createLightTable("+'"CreateObjectTable","rowSize","'+IDSuffix+'"'+")'><option value='Bright'>Bright Light</option><option value='Dim'>Dim Light</option><option value='BrightDim'>Bright + Dim Light</option><option value='Darkness'>Darkness</option></select></td>");
+		nextRowIndex++;
+
+		addTableRow(tableID,nextRowIndex,"rowLightFuel","<th><label for='LightFuel'>Light Requires Fuel:</label></th><td><select id='LightFuel' name='LightFuel'><option value=''>None</option><option value='Oil'>Oil</option><option value='Other'>Other Fuel</option></select></td>");
 		nextRowIndex++;
 	}
 	else if(ObjectType == "Potion"){

@@ -1,12 +1,12 @@
 [h:ParentToken = json.get(macro.args,"ParentToken")]
 [h:switchToken(ParentToken)]
 [h:a5e.UnifiedAbilities = a5e.GatherAbilities(ParentToken)]
-[h:fs.Groups = json.path.read(a5e.UnifiedAbilities,"[*][?(@.FightingStyleList!=null)]","DEFAULT_PATH_LEAF_TO_NULL")]
+[h:fs.Groups = json.path.read(a5e.UnifiedAbilities,"\$[*][?(@.FightingStyleList!=null)]","DEFAULT_PATH_LEAF_TO_NULL")]
 [h:fs.GroupNum = json.length(fs.Groups)]
 
 [h:fs.Input = ""]
 [h:IsTooltip = 0]
-[h:"<!-- Note: Need to add a mechanism for determining the allowed number of fighting styles; actually get the display name for the class/subclass for the group header -->"]
+[h:"<!-- TODO: Need to add a mechanism for determining the allowed number of fighting styles; actually get the display name for the class/subclass for the group header -->"]
 [h:fs.AllowedChoices = ""]
 [h:fs.Current = "{}"]
 [h:fs.AllOptions = "{}"]
@@ -59,37 +59,34 @@
 	[h,MACRO("NewFeatureAddition@Lib:pm.a5e.Core"): json.set(json.path.put(macro.return,"['Abilities'][*]","AssociatedClass",json.get(TempGroup,"Class")),"ParentToken",ParentToken)]
 	[h,MACRO("FeatureRemoval@Lib:pm.a5e.Core"): json.set("","Features",fs.Removed,"ParentToken",ParentToken)]
 	
-	[h:fs.ChosenStr = json.toList(json.path.read(getProperty("a5e.stat.AllFeatures"),"[?(@.Class=='FightingStyle' && @.AssociatedClass=='"+json.get(TempGroup,"Class")+"' && @.IsActive > 0)]['DisplayName']"),if(data.getData("addon:","pm.a5e.core","VerticalDisplay")==1,"<br>",", "))]
-	
+	[h:fs.ChosenStr = json.toList(json.path.read(getProperty("a5e.stat.AllFeatures"),"\$[*][?(@.Class=='FightingStyle' && @.AssociatedClass=='"+json.get(TempGroup,"Class")+"' && @.IsActive > 0)]['DisplayName']"),"%{VerticalListFormat}")]
+
 	[h:TempDisplayName = pm.GetDisplayName(json.get(TempGroup,"Class"),"sb.Classes")]
 	
 	[h:abilityTable = json.append(abilityTable,json.set("","ShowIfCondensed",1,"Header",if(fs.GroupNum==1,"",TempDisplayName+" ")+"Fighting Styles Chosen","FalseHeader","","FullContents","","RulesContents",fs.ChosenStr,"RollContents","","DisplayOrder","['Rules','Roll','Full']","Error",if(fs.ChosenCount>json.get(fs.AllowedChoices,TempGroupName),"Too many "+if(fs.GroupNum==1,"",TempDisplayName+" ")+"fighting styles were chosen!","")))]
 }]
 
-[h:fs.DuplicateTest = json.path.read(getProperty("a5e.stat.AllFeatures"),"[*][?(@.Class=='FightingStyle')]['Name']")]
+[h:fs.DuplicateTest = json.path.read(getProperty("a5e.stat.AllFeatures"),"\$[*][?(@.Class=='FightingStyle')]['Name']")]
 [h:fs.Duplicates = json.difference(json.unique(fs.DuplicateTest),fs.DuplicateTest)]
-[h:"<!-- Need a way to display the duplicates as an alert, since they do not have a table row to be linked with by default - and can't insert in other table rows, since there might be duplicates also. May need a mechanism for inserting only an alert without a table. Could probably have the error color change if the header says error also (could choose a different name since error might make it seem like something is wrong, but alert won't work since there's an Alert feature!) -->"]
+[h:"<!-- TODO: Need a way to display the duplicates as an alert, since they do not have a table row to be linked with by default - and can't insert in other table rows, since there might be duplicates also. May need a mechanism for inserting only an alert without a table. Could probably have the error color change if the header says error also (could choose a different name since error might make it seem like something is wrong, but alert won't work since there's an Alert feature!) -->"]
 [h,if(!json.isEmpty(fs.Duplicates)),CODE:{
 	[h:fs.Duplicates = ""]
 };{}]
 
-[h:ClassFeatureData = json.set("",
-	"Flavor","",
+[h:BorderData = json.set("",
+	"Name","ManageFightingStyles",
+	"DisplayName","Manage Fighting Styles",
+	"FalseName","",
+	"DisplayClass","FightingStyle",
+	"ColorSubtype",""
+)]
+[h:AllOutputComponents = json.set("",
 	"ParentToken",ParentToken,
 	"needsSplitGMOutput",(getProperty("a5e.stat.Allegiance") == "Enemy"),
-	"Class","FightingStyle",
-	"Name","Manage Fighting Styles",
-	"FalseName","",
-	"OnlyRules",1
-	)]
+	"BorderData",BorderData,
+	"Table",abilityTable,
+	"ShowFullRulesType",json.append("","Dodge","OtherCombatActions"),
+	"OutputTargets",""
+)]
 
-[h:FormattingData = pm.MacroFormat(ClassFeatureData)]
-[h:output.PC = json.get(json.get(FormattingData,"Output"),"Player")]
-[h:output.GM = json.get(json.get(FormattingData,"Output"),"GM")]
-
-[h:output.Temp = pm.AbilityTableProcessing(abilityTable,FormattingData,1)]
-[h:output.PC = output.PC + json.get(output.Temp,"Player")+"</div></div>"]
-[h:output.GM = output.GM + json.get(output.Temp,"GM")+"</div></div>"]
-
-[h:broadcastAsToken(output.GM,"gm")]
-[h:broadcastAsToken(output.PC,"not-gm")]
+[h,MACRO("GatherOutputComponents@Lib:pm.a5e.Core"): AllOutputComponents]

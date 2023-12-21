@@ -18,29 +18,23 @@
 
 [h:abilityTable = json.merge(abilityTable,json.get(HideData,"Table"))]
 
-[h:ClassFeatureData = json.set("",
+[h:BorderData = json.set("",
 	"Flavor",Flavor,
+	"Name","Hide",
+	"DisplayName","Hide",
+	"FalseName","",
+	"DisplayClass","zzOtherCombatActions",
+	"ColorSubtype",""
+)]
+[h:AllOutputComponents = json.set("",
 	"ParentToken",ParentToken,
 	"needsSplitGMOutput",(getProperty("a5e.stat.Allegiance") == "Enemy"),
-	"BorderColorOverride",json.get(HideData,"BorderColorOverride"),
-	"TitleFontColorOverride",json.get(HideData,"TitleFontColorOverride"),
-	"AccentBackgroundOverride",json.get(HideData,"AccentBackgroundOverride"),
-	"AccentTextOverride",json.get(HideData,"AccentTextOverride"),
-	"TitleFont",json.get(HideData,"TitleFont"),
-	"BodyFont",json.get(HideData,"BodyFont"),
-	"Class","zzOtherCombatActions",
-	"Name","Hide",
-	"FalseName","",
-	"OnlyRules",1
+	"BorderData",BorderData,
+	"Table",abilityTable,
+	"ShowFullRulesType",json.append("","Hide","OtherCombatActions"),
+	"OutputTargets","",
+	"Description","When you take the Hide action, you make a Dexterity (Stealth) check in an attempt to hide, following the rules in chapter 7 for hiding. If you succeed, you gain certain benefits, as described in the \"Unseen Attackers and Targets\" section in the Player's Handbook.",
+	"AbridgedDescription","You make a Stealth check contested by other creatures' Passive Perception or Perception check if actively looking. If you succeed, you have advantage on attacks against targets that cannot see you. Attacking gives away your location."
 )]
 
-[h:FormattingData = pm.MacroFormat(ClassFeatureData)]
-[h:output.PC = json.get(json.get(FormattingData,"Output"),"Player")]
-[h:output.GM = json.get(json.get(FormattingData,"Output"),"GM")]
-
-[h:output.Temp = pm.AbilityTableProcessing(abilityTable,FormattingData,1)]
-
-[h:output.PC = output.PC + json.get(macro.return,"Player")+"</div></div>"]
-[h:output.GM = output.GM + json.get(macro.return,"GM")+"</div></div>"]
-[h:broadcastAsToken(output.GM,"gm")]
-[h:broadcastAsToken(output.PC,"not-gm")]
+[h,MACRO("GatherOutputComponents@Lib:pm.a5e.Core"): AllOutputComponents]

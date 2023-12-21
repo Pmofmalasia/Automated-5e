@@ -18,29 +18,23 @@
 
 [h:abilityTable = json.merge(abilityTable,json.get(DodgeData,"Table"))]
 
-[h:ClassFeatureData = json.set("",
+[h:BorderData = json.set("",
 	"Flavor",Flavor,
+	"Name","Dodge",
+	"DisplayName","Dodge",
+	"FalseName","",
+	"DisplayClass","zzOtherCombatActions",
+	"ColorSubtype",""
+)]
+[h:AllOutputComponents = json.set("",
 	"ParentToken",ParentToken,
 	"needsSplitGMOutput",(getProperty("a5e.stat.Allegiance") == "Enemy"),
-	"BorderColorOverride",json.get(DodgeData,"BorderColorOverride"),
-	"TitleFontColorOverride",json.get(DodgeData,"TitleFontColorOverride"),
-	"AccentBackgroundOverride",json.get(DodgeData,"AccentBackgroundOverride"),
-	"AccentTextOverride",json.get(DodgeData,"AccentTextOverride"),
-	"TitleFont",json.get(DodgeData,"TitleFont"),
-	"BodyFont",json.get(DodgeData,"BodyFont"),
-	"Class","zzOtherCombatActions",
-	"Name","Dodge",
-	"FalseName","",
-	"OnlyRules",1
+	"BorderData",BorderData,
+	"Table",abilityTable,
+	"ShowFullRulesType",json.append("","Dodge","OtherCombatActions"),
+	"OutputTargets","",
+	"Description","When you take the Dodge action, you focus entirely on avoiding attacks. Until the start of your next turn, any attack roll made against you has disadvantage if you can see the attacker, and you make Dexterity saving throws with advantage. You lose this benefit if you are incapacitated (as explained in the appendix) or if your speed drops to 0.",
+	"AbridgedDescription","Until the start of your next turn, any attack roll made against you has disadvantage if you can see the attacker, and you make Dexterity saving throws with advantage. You lose this benefit if you are incapacitated or your speed drops to 0."
 )]
 
-[h:FormattingData = pm.MacroFormat(ClassFeatureData)]
-[h:output.PC = json.get(json.get(FormattingData,"Output"),"Player")]
-[h:output.GM = json.get(json.get(FormattingData,"Output"),"GM")]
-
-[h:output.Temp = pm.AbilityTableProcessing(abilityTable,FormattingData,1)]
-
-[h:output.PC = output.PC + json.get(macro.return,"Player")+"</div></div>"]
-[h:output.GM = output.GM + json.get(macro.return,"GM")+"</div></div>"]
-[h:broadcastAsToken(output.GM,"gm")]
-[h:broadcastAsToken(output.PC,"not-gm")]
+[h,MACRO("GatherOutputComponents@Lib:pm.a5e.Core"): AllOutputComponents]

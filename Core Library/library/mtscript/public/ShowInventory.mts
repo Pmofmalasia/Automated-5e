@@ -9,7 +9,7 @@
 ))]
 [h:TableCellFormat = "<td style='text-align:center; padding-left:4px'>"]
 
-[h:InventoryHTML = "<tr><th style = '"+FrameAccentFormat+"'>Item</th><th style = '"+FrameAccentFormat+"'>Number</th><th style = '"+FrameAccentFormat+"'>Weight</th><th style = '"+FrameAccentFormat+"'>Use?</th></tr>"]
+[h:InventoryHTML = "<tr><th style = '"+FrameAccentFormat+"'>Item<input type='hidden' id='ParentToken' name='ParentToken' value='"+ParentToken+"'></th><th style = '"+FrameAccentFormat+"'>Number</th><th style = '"+FrameAccentFormat+"'>Weight</th><th style = '"+FrameAccentFormat+"'>Use?</th></tr>"]
 
 [h:TotalWeight = 0]
 [h,foreach(tempItem,CurrentInventory),CODE:{
@@ -55,15 +55,12 @@
 
 	[h,if(tempUseButton == ""): tempUseButton = "---"]
 
-	[h:InventoryHTML = InventoryHTML + "<tr draggable='true' ondragstart='dragItem(event)' id='rowItemID"+json.get(tempItem,"ItemID")+"'>"+TableCellFormat+tempDisplayName+"</td>"+TableCellFormat+tempNumberDisplay+"</td>"+TableCellFormat+"<span title='"+tempWeight+" Each'>"+if(weightNeedsRounding,round(tempTotalWeight,1),tempTotalWeight)+"</span></td>"+TableCellFormat+tempUseButton+"</td></tr>"]
+	[h:InventoryHTML = InventoryHTML + "<tr draggable='true' ondragstart='dragItem(event)' ondrop='dropItem(event)' ondragover='allowDrop(event)' id='rowItemID"+json.get(tempItem,"ItemID")+"'>"+TableCellFormat+tempDisplayName+"</td>"+TableCellFormat+tempNumberDisplay+"</td>"+TableCellFormat+"<span title='"+tempWeight+" Each'>"+if(weightNeedsRounding,round(tempTotalWeight,1),tempTotalWeight)+"</span></td>"+TableCellFormat+tempUseButton+"</td></tr>"]
 
 	[h:TotalWeight = TotalWeight + tempTotalWeight]
 }]
 
-[h:tempActivationLink = macroLinkText("Test@Lib:SRD","self-gm","",ParentToken)]
-[h:tempLink = "<a href='"+tempActivationLink+"'>Test</a>"]
-
-[h:InventoryHTML = InventoryHTML + "<tr><th style = '"+FrameAccentFormat+"'>Weight Data</th><th style = '"+FrameAccentFormat+"'>Total Carried</th><th style = '"+FrameAccentFormat+"'>Carry Capacity</th><th style = '"+FrameAccentFormat+"'>Push Capacity</th></tr>"]
+[h:InventoryHTML = InventoryHTML + "<tr ondrop='dropItem(event)' ondragover='allowDrop(event)'><th style = '"+FrameAccentFormat+"'>Weight Data</th><th style = '"+FrameAccentFormat+"'>Total Carried</th><th style = '"+FrameAccentFormat+"'>Carry Capacity</th><th style = '"+FrameAccentFormat+"'>Push Capacity</th></tr>"]
 
 [h:WeightData = stat.a5e.CarryCapacity(json.set("","ParentToken",ParentToken))]
 [h:totalWeightNeedsRounding = (TotalWeight != floor(TotalWeight))]

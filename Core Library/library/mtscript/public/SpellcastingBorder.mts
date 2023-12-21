@@ -5,7 +5,7 @@
 [h:SpellName = json.get(AllSpellData,"Spell")]
 [h:SpellData = pm.a5e.GetSpecificSpell(SpellName)]
 [h:pm.a5e.EffectData = "[]"]
-[h:needsSplitGMOutput = 0]
+[h:needsSplitGMOutput = (getProperty("a5e.stat.Allegiance") == "Enemy")]
 
 [h:AllSpellData = json.set(AllSpellData,"SpellData",SpellData)]
 [h,macro("Spellcasting@Lib:pm.a5e.Core"): AllSpellData]
@@ -16,41 +16,35 @@
 [h:ShowFullRules = json.get(macro.return,"ShowFullRules")]
 [h:SpellDescription = json.get(macro.return,"Description")]
 
-[h:ClassFeatureData = json.set("",
-    "Flavor",Flavor,
-    "ParentToken",ParentToken,
-    "needsSplitGMOutput",needsSplitGMOutput,
-    "Class","zzSpell",
-    "ColorSubtype",json.set("","Source",SpellSource,"Level",SpellSlot),
-    "Name",json.get(SpellData,"DisplayName"),
-    "FalseName","Spellcasting",
-    "OnlyRules",ShowFullRules
-)]
-
-[h:FormattingData = pm.MacroFormat(ClassFeatureData)]
-[h:output.PC = json.get(json.get(FormattingData,"Output"),"Player")]
-[h:output.GM = json.get(json.get(FormattingData,"Output"),"GM")]
-
-[h:output.Temp = pm.AbilityTableProcessing(abilityTable,FormattingData,ShowFullRules)]
-[h:output.PC = output.PC + json.get(output.Temp,"Player")]
-[h:output.GM = output.GM + json.get(output.Temp,"GM")]
-
 [h:pm.a5e.BaseEffectData = json.set("",
     "Class","Spell",
-    "ClassForDisplay","zzSpell",
-	"DisplayName",json.get(SpellData,"DisplayName"),
-    "ColorSubtype",json.set("","Source",SpellSource,"Level",SpellSlot),
+    "DisplayClass","zzSpell",
+	"DisplayName",,
+    "ColorSubtype",,
     "FalseName","Spellcasting",
 	"Type","Spell",
 	"ID",pm.a5e.GenerateEffectID(),
 	"ParentToken",ParentToken
 )]
 
-[h:output.PC = output.PC + if(needsSplitGMOutput,"",SpellDescription)+"</div></div>"]
-[h:output.GM = output.GM + SpellDescription+"</div></div>"]
-
-[h:broadcastAsToken(output.GM,"gm")]
-[h:broadcastAsToken(output.PC,"not-gm")]
+[h:BorderData = json.set("",
+	"Flavor",Flavor,
+	"Name",json.get(SpellData,"Name"),
+	"DisplayName",json.get(SpellData,"DisplayName"),
+	"FalseName","Spellcasting",
+	"DisplayClass","zzSpell",
+	"ColorSubtype",json.set("","Source",SpellSource,"Level",SpellSlot)
+)]
+[h:AllOutputComponents = json.set("",
+	"ParentToken",ParentToken,
+	"needsSplitGMOutput",needsSplitGMOutput,
+	"BorderData",BorderData,
+	"Table",abilityTable,
+	"ShowFullRulesType",json.append("","Spell"),
+	"OutputTargets","",
+	"Description",SpellDescription,
+	"AbridgedDescription",SpellDescription
+)]
 
 [h,MACRO("Build Effect@Lib:pm.a5e.Core"): json.set("","CurrentEffects",pm.a5e.EffectData,"ToMerge",effectsToMerge,"BaseEffect",pm.a5e.BaseEffectData)]
 [h:pm.a5e.EffectData = macro.return]

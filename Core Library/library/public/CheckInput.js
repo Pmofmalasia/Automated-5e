@@ -16,7 +16,7 @@ async function createRegularCheckRows(tableID,Inventory){
 		let hasToolsTest = false;
 		let addedToolTypes = [];
 		for(let item of Inventory){
-			if(item.ToolSubtype != "" && !addedToolTypes.includes(item.ToolSubtype)){
+			if(item.ToolSubtype != null && item.ToolSubtype != "" && !addedToolTypes.includes(item.ToolSubtype)){
 				hasToolsTest = true;
 				let thisToolInfo = {Name:item.ToolSubtype,Type:"Tool"};
 				SkillChoiceOptions = SkillChoiceOptions + "<option value='"+btoa(JSON.stringify(thisToolInfo))+"'>"+item.DisplayName+"</option>";

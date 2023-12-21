@@ -1,10 +1,12 @@
 <head>
     <title>Inventory</title>
     <script type="text/javascript"  src="lib://pm.a5e.core/ShowInventory.js?cachelib=false"></script>
+    <script type="text/javascript"  src="lib://pm.a5e.core/GeneralJSFunctions.js?cachelib=false"></script>
 	<link rel="stylesheet" href="lib://net.rptools.maptool/css/mt-theme.css">
     <style>
       tr:nth-child(even){
-        background-color: aquamarine;
+        background-color: rgb(108, 223, 184);
+		color: black;
       }
 		table{
 			width:100%
@@ -13,7 +15,7 @@
 </head>
 <body>
     <form name="Inventory" id="Inventory" onsubmit="submitData()" method="json">
-      <table id="InventoryTable" ondrop='dropItem(event)' ondragover='allowDrop(event)'>
+      <table id="InventoryTable">
           
       </table>
     </form>

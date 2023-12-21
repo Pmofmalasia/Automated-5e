@@ -1,6 +1,7 @@
 [h:OutputData = macro.args]
 [h:PlayerOutput = json.get(OutputData,"Player")]
 [h:GMOutput = json.get(OutputData,"GM")]
+[h:OutputTargets = json.get(OutputData,"OutputTargets")]
 [h:MaxColNum = json.get(OutputData,"MaxColNum")]
 
 [h:ColorData = json.get(OutputData,"ColorData")]
@@ -16,8 +17,31 @@
 [h:TitleColor = json.get(defaultBorderColors,"TitleColor")]
 
 [h:allPlayers = getAllPlayerNames("json")]
+[h,if(OutputTargets == ""),CODE:{
+	[h:finalPlayersList = allPlayers]
+};{
+	[h,if(json.type(OutputTargets) == "UNKNOWN"): OutputTargets = json.append("",OutputTargets)]
+	[h:finalPlayersList = "[]"]
+	[h,foreach(target,OutputTargets),CODE:{
+		[h,switch(target):
+			"gm": addedTargets = "[]";
+			"not-gm": addedTargets = ;
+			"self": addedTargets = json.append("",getPlayerName());
+			"gm-self": addedTargets = json.append("",getPlayerName());
+			"all": addedTargets = allPlayers;
+			"none": addedTargets = "[]";
+			"not-self": addedTargets = json.difference(allPlayers,getPlayerName());
+			"not-gm-self": addedTargets = json.difference(allPlayers,getPlayerName());
+			default: addedTargets = json.append("",target)
+		]
+
+		[h:finalPlayersList = json.merge(finalPlayersList,addedTargets)]
+	}]
+	[h:allGMs = json.path.read(player.getConnectedPlayers(),"\$[*][?(@.role == 'GM')]['name']")]
+	[h:finalPlayersList = json.union(finalPlayersList,allGMs)]
+}]
 [h:personalizedChatSettings = data.getData("addon:","pm.a5e.core","PlayerChatSettings")]
-[h,foreach(player,allPlayers),CODE:{
+[h,foreach(player,finalPlayersList),CODE:{
 	[h:playerName = pm.RemoveSpecial(player)]
 	[h,if(json.contains(personalizedChatSettings,playerName)):
 		finalChatSettings = json.merge(DefaultChatSettings,json.get(personalizedChatSettings,playerName));
@@ -38,6 +62,7 @@
 	[h:VerticalFormat=if(isVertical,"</th></tr><tr style='text-align:center;'><td style='","</th><td style='padding-left:4px; valign:middle;")]
 	[h:VerticalFormatFinalBonus=if(isVertical,"</td></tr><tr style='text-align:center;'><td style='","</td><td style='padding-left:4px; valign:middle; text-align:right")]
 	[h:ColNumFormat = if(isVertical,"; colspan='"+MaxColNum+"'","")]
+	[h:VerticalListFormat = if(isVertical,"<br>",", ")]
 
 	[h:"<!-- Note: switch is used here because in the past there were options to limit to max-width as well (doesn't work with this version of CSS though). Leaving it for the future in case options are reintroduced. -->"]
 	[h,switch(json.get(finalChatSettings,"UseWidth")):

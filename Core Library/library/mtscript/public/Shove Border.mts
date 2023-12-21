@@ -4,27 +4,6 @@
 [h:outputTargets = "not-gm"]
 [h:pm.a5e.EffectData = "[]"]
 
-[h:ClassFeatureData = json.set("",
-	"Flavor",Flavor,
-	"ParentToken",ParentToken,
-	"needsSplitGMOutput",(getProperty("a5e.stat.Allegiance") == "Enemy"),
-	"BorderColorOverride",json.get(ShoveData,"BorderColorOverride"),
-	"TitleFontColorOverride",json.get(ShoveData,"TitleFontColorOverride"),
-	"AccentBackgroundOverride",json.get(ShoveData,"AccentBackgroundOverride"),
-	"AccentTextOverride",json.get(ShoveData,"AccentTextOverride"),
-	"TitleFont",json.get(ShoveData,"TitleFont"),
-	"BodyFont",json.get(ShoveData,"BodyFont"),
-	"Class","zzChecksAndSaves",
-	"Name","Shove",
-	"FalseName","",
-	"OnlyRules",0
-)]
-
-[h:FormattingData = pm.MacroFormat(ClassFeatureData)]
-
-[h:output.PC = json.get(json.get(FormattingData,"Output"),"Player")]
-[h:output.GM = json.get(json.get(FormattingData,"Output"),"GM")]
-
 [h:pm.a5e.BaseEffectData = json.set("",
 	"Class","zzChecksAndSaves",
 	"DisplayName","Shove",
@@ -45,9 +24,23 @@
 [h,if(!json.isEmpty(pm.a5e.EffectData)): setLibProperty("gd.Effects",json.merge(data.getData("addon:","pm.a5e.core","gd.Effects"),pm.a5e.EffectData),"Lib:pm.a5e.Core")]
 [h,MACRO("BuildEffectsFrame@Lib:pm.a5e.Core"): ""]
 
-[h:output.Temp = pm.AbilityTableProcessing(abilityTable,FormattingData,1)]
+[h:BorderData = json.set("",
+	"Flavor",Flavor,
+	"Name","Shove",
+	"DisplayName","Shove",
+	"FalseName","",
+	"DisplayClass","zzOtherCombatActions",
+	"ColorSubtype",""
+)]
+[h:AllOutputComponents = json.set("",
+	"ParentToken",ParentToken,
+	"needsSplitGMOutput",(getProperty("a5e.stat.Allegiance") == "Enemy"),
+	"BorderData",BorderData,
+	"Table",abilityTable,
+	"ShowFullRulesType",json.append("","Shove","OtherCombatActions"),
+	"OutputTargets",outputTargets,
+	"Description","Using the Attack action, you can make a special melee attack to shove a creature, either to knock it prone or push it away from you. If you're able to make multiple attacks with the Attack action, this attack replaces one of them.<br><br>The target of your shove must be no more than one size larger than you, and it must be within your reach. You make a Strength (Athletics) check contested by the target's Strength (Athletics) or Dexterity (Acrobatics) check (the target chooses the ability to use). You succeed automatically if the target is incapacitated. If you succeed, you either knock the target prone or push it 5 feet away from you.",
+	"AbridgedDescription","When you take the Attack action, you can replace attacks with a special melee attack, shoving a creature within your reach no more than one size larger than you. You make an Athletics contested by the target's choice of Athletics or Acrobatics, succeeding automatically if the target is incapacitated. If you succeed, you either knock the target prone or push it 5 feet away from you."
+)]
 
-[h:output.PC = output.PC + json.get(macro.return,"Player")+"</div></div>"]
-[h:output.GM = output.GM + json.get(macro.return,"GM")+"</div></div>"]
-[h:broadcastAsToken(output.GM,"gm")]
-[h:broadcastAsToken(output.PC,outputTargets)]
+[h,MACRO("GatherOutputComponents@Lib:pm.a5e.Core"): AllOutputComponents]

@@ -39,32 +39,25 @@
 
 [h:setProperty("a5e.stat.DeathSaves",json.set("","Successes",0,"Failures",0))]
 
-[h:ClassFeatureData = json.set("",
+[h:"<!-- TODO: Settings: outputTargets options -->"]
+[h:outputTargets = if(getProperty("a5e.stat.Allegiance") == "PC","not-gm","none")]
+[h:BorderData = json.set("",
 	"Flavor",Flavor,
-	"ParentToken",json.get(sr.Data,"ParentToken"),
-	"needsSplitGMOutput",(getProperty("a5e.stat.Allegiance") == "Enemy"),
-	"BorderColorOverride",if(json.get(sr.Data,"BorderColorOverride")=="","#444444",json.get(sr.Data,"BorderColorOverride")),
-	"TitleFontColorOverride",if(json.get(sr.Data,"TitleFontColorOverride")=="","#FFFFFF",json.get(sr.Data,"TitleFontColorOverride")),
-	"AccentBackgroundOverride",json.get(sr.Data,"AccentBackgroundOverride"),
-	"AccentTextOverride",json.get(sr.Data,"AccentTextOverride"),
-	"TitleFont",json.get(sr.Data,"TitleFont"),
-	"BodyFont",json.get(sr.Data,"BodyFont"),
-	"Class","",
-	"Name","Short Rest",
+	"Name","ShortRest",
+	"DisplayName","Short Rest",
 	"FalseName","",
-	"OnlyRules",0
+	"DisplayClass","zzRest",
+	"ColorSubtype",""
+)]
+[h:AllOutputComponents = json.set("",
+	"ParentToken",ParentToken,
+	"needsSplitGMOutput",(getProperty("a5e.stat.Allegiance") == "Enemy"),
+	"BorderData",BorderData,
+	"Table",abilityTable,
+	"ShowFullRulesType",json.append("","ShortRest","Rest"),
+	"OutputTargets",outputTargets,
+	"Description",token.name+" has completed a <b>Short Rest</b>.",
+	"AbridgedDescription",token.name+" has completed a <b>Short Rest</b>."
 )]
 
-[h:FormattingData = pm.MacroFormat(ClassFeatureData)]
-[h:DamageColor=pm.DamageColor()]
-[h:HealingColor=pm.HealingColor()]
-[h:CritColor=pm.CritColor()]
-[h:CritFailColor=pm.CritFailColor()]
-[h:LinkColor=pm.LinkColor()]
-
-[h:output.Temp = pm.AbilityTableProcessing(abilityTable,FormattingData,1)]
-
-[h:output.PC = json.get(json.get(FormattingData,"Output"),"Player")+json.get(output.Temp,"Player")+token.name+" has completed a <b>Short Rest</b></div></div>"]
-[h:output.GM = json.get(json.get(FormattingData,"Output"),"GM")+json.get(output.Temp,"GM")+token.name+" has completed a <b>Short Rest</b></div></div>"]
-[h:broadcastAsToken(output.GM,"gm")]
-[h:broadcastAsToken(output.PC,if(isGM(),"none","self"))]
+[h,MACRO("GatherOutputComponents@Lib:pm.a5e.Core"): AllOutputComponents]

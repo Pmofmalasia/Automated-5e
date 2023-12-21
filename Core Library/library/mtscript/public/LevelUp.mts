@@ -250,47 +250,22 @@
 }]
 
 [h:"<!-- Start of output creation -->"]
-[h:ClassFeatureData = json.set("",
-	"Flavor",token.name+" suddenly feels empowered by experience!",
+[h:outputTargets = if(getProperty("a5e.stat.Allegiance")=="PC","not-gm","none")]
+[h:BorderData = json.set("",
+	"Flavor",Flavor,
+	"Name","LevelUp",
+	"DisplayName","Level Up!",
+	"FalseName","",
+	"DisplayClass",lu.Class,
+	"ColorSubtype",""
+)]
+[h:AllOutputComponents = json.set("",
 	"ParentToken",ParentToken,
 	"needsSplitGMOutput",if(getProperty("a5e.stat.Allegiance")=="PC",0,1),
-	"BorderColorOverride","",
-	"TitleFontColorOverride","",
-	"AccentBackgroundOverride","",
-	"AccentTextOverride","",
-	"TitleFont","",
-	"BodyFont","",
-	"Class",lu.Class,
-	"Name","Level Up!",
-	"FalseName","",
-	"OnlyRules",0
+	"BorderData",BorderData,
+	"Table",abilityTable,
+	"ShowFullRulesType",json.append("","LevelUp",lu.Class,"Class"),
+	"OutputTargets",outputTargets
 )]
 
-[h:FormattingData = pm.MacroFormat(ClassFeatureData)]
-
-[h:AccentFormat = json.get(FormattingData,"AccentFormat")]
-[h:VerticalFormat = json.get(FormattingData,"VerticalFormat")]
-[h:VerticalFormatLinks = json.get(FormattingData,"VerticalFormatLinks")]
-[h:TableFormat = json.get(FormattingData,"TableFormat")]
-[h:outputTest.NoFullMacro = json.get(FormattingData,"NoFullMacro")]
-[h:outputTest.NoRolls = json.get(FormattingData,"NoRolls")]
-[h:outputTest.NoRules = json.get(FormattingData,"NoRules")]
-[h:DamageColor = pm.DamageColor()]
-[h:HealingColor = pm.HealingColor()]
-[h:CritColor = pm.CritColor()]
-[h:CritFailColor = pm.CritFailColor()]
-[h:LinkColor = pm.LinkColor()]
-
-[h:output.PC = json.get(json.get(FormattingData,"Output"),"Player")]
-[h:output.GM = json.get(json.get(FormattingData,"Output"),"GM")]
-
-[h:output.Temp = pm.AbilityTableProcessing(abilityTable,FormattingData,1,ParentToken)]
-
-[h:output.PC = output.PC + json.get(output.Temp,"Player")]
-[h:output.GM = output.GM + json.get(output.Temp,"GM")]
-
-[h:AbilityGainedText = ""]
-[h:output.PC = output.PC + AbilityGainedText + "</div></div>"]
-[h:output.GM = output.GM + AbilityGainedText + "</div></div>"]
-[h:broadcastAsToken(output.PC,"not-gm")]
-[h:broadcastAsToken(output.GM,"gm")]
+[h,MACRO("GatherOutputComponents@Lib:pm.a5e.Core"): AllOutputComponents]

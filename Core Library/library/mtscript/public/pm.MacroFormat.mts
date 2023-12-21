@@ -1,5 +1,5 @@
 [h:abilityClass = json.get(arg(0),"Class")]
-[h:DisplayClass = json.get(arg(0),"ClassForDisplay")]
+[h:DisplayClass = json.get(arg(0),"DisplayClass")]
 [h,if(DisplayClass!=""): abilityClass = DisplayClass]
 [h:abilityName = json.get(arg(0),"Name")]
 [h:abilityDisplayName = if(json.get(arg(0),"DisplayName")=="",abilityName,json.get(arg(0),"DisplayName"))]

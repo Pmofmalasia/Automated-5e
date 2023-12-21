@@ -4,7 +4,7 @@
 [h:"<!-- ColorSubtype is optional - for classes with multiple border colors stored in an object (denotes key to get from that object, mostly for spells) -->"]
 [h:effID = json.get(effFull,"ID")]
 [h:effClass = json.get(effFull,"Class")]
-[h:effClassForDisplay = json.get(effFull,"ClassForDisplay")]
+[h:effDisplayClass = json.get(effFull,"DisplayClass")]
 [h:effColorSubtype = json.get(effFull,"ColorSubtype")]
 [h:ParentToken = json.get(effFull,"ParentToken")]
 [h:parentStillAvailable = json.contains(getTokens("json"),ParentToken)]
@@ -59,15 +59,19 @@
 
 	[h,if(!ParentSubeffectRequirementsMet),CODE:{
 		[h,if(json.length(effTargets)==1): titleAddon = " on "+getName(json.get(effTargets,0)); titleAddon = ""]
-		[h:ClassFeatureData = json.set("",
-			"Flavor","",
+
+		[h:BorderData = json.set("",
+			"DisplayName","Resolve Effects"+titleAddon,
+			"DisplayClass",if(effDisplayClass=="",if(effClass=="","zzChecksAndSaves",effClass),effDisplayClass),
+			"ColorSubtype",effColorSubtype
+		)]
+		[h:AllOutputComponents = json.set("",
 			"ParentToken",ParentToken,
 			"needsSplitGMOutput",0,
-			"Class",if(effClassForDisplay=="",if(effClass=="","zzChecksAndSaves",effClass),effClassForDisplay),
-			"ColorSubtype",effColorSubtype,
-			"Name","Resolve Effects"+titleAddon,
-			"FalseName","",
-			"OnlyRules",0
+			"BorderData",BorderData,
+			"Table","[]",
+			"ShowFullRulesType","[]",
+			"OutputTargets",""
 		)]
 
 		[h:remainingTargetsList = json.difference(remainingTargetsList,effTargets)]
@@ -77,11 +81,11 @@
 		[h:"<!-- TODO: Will need to add further info for resolving LinkedEffects of LinkedEffects that do not meet reqs, likely in the form of making a UDF that covers for here and later in ResolveEffects. -->"]
 
 		[h,if(!json.isEmpty(remainingTargetsList)):
-			setLibProperty("gd.Effects",json.path.set(data.getData("addon:","pm.a5e.core","gd.Effects"),"[*][?(@.ID=="+effID+")]",effFull),"Lib:pm.a5e.Core");
+			setLibProperty("gd.Effects",json.path.set(data.getData("addon:","pm.a5e.core","gd.Effects"),"\$[*][?(@.ID=="+effID+")]",effFull),"Lib:pm.a5e.Core");
 			setLibProperty("gd.Effects",json.path.delete(data.getData("addon:","pm.a5e.core","gd.Effects"),"\$[*][?(@.ID=="+effID+")]"),"Lib:pm.a5e.Core")
 		]
 
-		[h:return(0,json.set("","Table","[]","FeatureData",ClassFeatureData,"Targets",effTargets))]
+		[h:return(0,json.set("","Table","[]","OutputComponents",AllOutputComponents,"Targets",effTargets))]
 	};{}]
 };{
 	[h:UseParentCrit = 0]
@@ -534,24 +538,31 @@
 	[h,if(json.type(onlyTarget) == "OBJECT"),CODE:{
 		[h,if(json.get(onlyTarget,"HeldBy") != ""): targetToken = json.get(onlyTarget,"HeldBy")]
 		[h,if(json.get(onlyTarget,"HeldBy") != ""): onlyTokenDisplayName = getName(targetToken)+"'s "+json.get(onlyTarget,"DisplayName")]
+		[h,if(json.get(onlyTarget,"HeldBy") != ""): BorderParentToken = json.get(onlyTarget,"HeldBy")]
 	};{
 		[h:targetToken = onlyTarget]
 		[h:onlyTokenDisplayName = getName(targetToken)]
+		[h:BorderParentToken = targetToken]
 	}]
 
 	[h:titleAddon = " on "+onlyTokenDisplayName]
 };{
 	[h:titleAddon = ""]
+	[h:BorderParentToken = ParentToken]
 }]
-[h:ClassFeatureData = json.set("",
-	"Flavor","",
-	"ParentToken",ParentToken,
-	"needsSplitGMOutput",0,
-	"Class",if(effClassForDisplay=="",if(effClass=="","zzChecksAndSaves",effClass),effClassForDisplay),
-	"ColorSubtype",effColorSubtype,
-	"Name","Resolve Effects"+titleAddon,
-	"FalseName","",
-	"OnlyRules",0
+
+[h:BorderData = json.set("",
+	"DisplayName","Resolve Effects"+titleAddon,
+	"DisplayClass",if(effDisplayClass=="",if(effClass=="","zzChecksAndSaves",effClass),effDisplayClass),
+	"ColorSubtype",effColorSubtype
+)]
+[h:AllOutputComponents = json.set("",
+	"ParentToken",BorderParentToken,
+	"needsSplitGMOutput",(getProperty("a5e.stat.Allegiance") == "Enemy"),
+	"BorderData",BorderData,
+	"Table",abilityTable,
+	"ShowFullRulesType","[]",
+	"OutputTargets",""
 )]
 
-[h:macro.return = json.set("","Table",abilityTable,"FeatureData",ClassFeatureData,"Targets",effTargets)]
+[h:macro.return = json.set("","Table",abilityTable,"OutputComponents",AllOutputComponents,"Targets",effTargets)]

@@ -82,6 +82,12 @@ function createHTMLMultiselectOptions(inputData,prefix,changeFunction,extraArgum
 	return finalOptions;
 }
 
+async function MTFunction(functionName,functionArgs){
+	let request = await fetch("macro:js.a5e.MaptoolFunction@Lib:pm.a5e.Core", {method: "POST", body: "["+functionName+","+JSON.stringify(functionArgs)+"]"});
+	let result = await request.json();
+	return result[0];
+}
+
 async function submitData(formName,nextMacroName){
     let form = document.getElementById(formName);
     let submitData = Object.fromEntries(new FormData(form));

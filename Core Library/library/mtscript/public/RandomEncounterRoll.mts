@@ -38,21 +38,23 @@
 ]
 [h:data.setData("addon:","pm.a5e.core","gd.RandomEncounterSettings",json.set(RandomEncounterSettings,"AccumulatedChance",accumulatedEncounterChance))]
 
-[h:ClassFeatureData = json.set("",
-	"needsSplitGMOutput",showPlayers,
-	"Class","zzGeneral",
-	"Name","Random Encounter Roll",
+[h:BorderData = json.set("",
+	"Flavor","",
+	"Name","RandomEncounterRoll",
+	"DisplayName","Random Encounter Roll",
 	"FalseName","",
-	"OnlyRules",0
+	"DisplayClass","zzGeneral",
+	"ColorSubtype",""
+)]
+[h:AllOutputComponents = json.set("",
+	"ParentToken","",
+	"needsSplitGMOutput",showPlayers,
+	"BorderData",BorderData,
+	"Table",abilityTable,
+	"ShowFullRulesType",json.append("","RandomEncounter"),
+	"OutputTargets",outputTargets,
+	"Description","",
+	"AbridgedDescription",""
 )]
 
-[h:FormattingData = pm.MacroFormat(ClassFeatureData)]
-[h:output.PC = json.get(json.get(FormattingData,"Output"),"Player")]
-[h:output.GM = json.get(json.get(FormattingData,"Output"),"GM")]
-
-[h:output.Temp = pm.AbilityTableProcessing(abilityTable,FormattingData,1)]
-	
-[h:output.PC = output.PC + json.get(macro.return,"Player")+"</div></div>"]
-[h:output.GM = output.GM + json.get(macro.return,"GM")+"</div></div>"]
-[h:broadcastAsToken(output.GM,"gm")]
-[h,if(showPlayers): broadcastAsToken(output.PC,"not-gm")]
+[h,MACRO("GatherOutputComponents@Lib:pm.a5e.Core"): AllOutputComponents]

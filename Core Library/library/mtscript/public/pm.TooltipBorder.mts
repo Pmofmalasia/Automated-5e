@@ -2,7 +2,7 @@
 	abilityClass = json.get(arg(0),"Class");
 	abilityClass = if(json.get(arg(0),"Class")==getProperty("a5e.stat.Race"),"Innate",json.get(arg(0),"Class"))
 ]
-[h:DisplayClass = json.get(arg(0),"ClassForDisplay")]
+[h:DisplayClass = json.get(arg(0),"DisplayClass")]
 [h,if(DisplayClass!=""): abilityClass = DisplayClass]
 [h:ColorSubtype = json.get(arg(0),"ColorSubtype")]
 [h:abilityName = json.get(arg(0),"Name")]

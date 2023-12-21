@@ -336,5 +336,3 @@
 [h:Concentration=if(ConcentrationFailure>0,"",Concentration)]
 
 [h:"<!--- Lost Concentration Notice --->"]
-
-[h:broadcastAsToken(hp.Output)]

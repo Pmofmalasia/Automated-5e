@@ -17,7 +17,7 @@
 [h:ClassFeatureData = json.set("",
     "needsSplitGMOutput",needsSplitGMOutput,
     "Class","Spell",
-    "ClassForDisplay","zzSpell",
+    "DisplayClass","zzSpell",
     "ColorSubtype",json.set("","Source",SpellSource,"Level",SpellLevel),
     "Name",pm.RemoveSpecial(SpellName),
     "DisplayName",SpellDisplayName,

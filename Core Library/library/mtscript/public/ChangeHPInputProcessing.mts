@@ -45,7 +45,7 @@
     "ConcSaveAdvantage",or(json.get(ChangeHPData,"ConcSaveAdvantage")==3,json.get(ChangeHPData,"ConcSaveAdvantage")==4),
     "ConcSaveDisadvantage",or(json.get(ChangeHPData,"ConcSaveAdvantage")==0,json.get(ChangeHPData,"ConcSaveAdvantage")==1),
     "ConcForcedAdvantage",or(json.get(ChangeHPData,"ConcSaveAdvantage")==0,json.get(ChangeHPData,"ConcSaveAdvantage")==4),
-    "PCOutput",outputTargets
+    "OutputTargets",outputTargets
 )]
 
 [h:abilityTable = "[]"]
@@ -67,25 +67,22 @@
 }]
 
 [h:ParentToken = if(json.length(TargetTokens)==1,json.get(TargetTokens,0),"")]
-[h:ClassFeatureData = json.set("",
+[h:BorderData = json.set("",
 	"Flavor","",
+	"Name","ChangeHP",
+	"DisplayName","Change HP",
+	"FalseName","",
+	"DisplayClass","zzChangeHP",
+	"ColorSubtype",if(IsDamage,"Damage","Healing")
+)]
+[h:AllOutputComponents = json.set("",
 	"ParentToken",ParentToken,
 	"needsSplitGMOutput",(getProperty("a5e.stat.Allegiance",ParentToken) == "Enemy"),
-	"Class","zzChangeHP",
-	"ColorSubtype",if(IsDamage,"Damage","Healing"),
-	"Name","Change HP",
-	"FalseName","",
-	"OnlyRules",0
+	"BorderData",BorderData,
+	"Table",abilityTable,
+	"ShowFullRulesType",json.append("","ChangeHP"),
+	"Description","",
+	"AbridgedDescription",""
 )]
 
-[h:FormattingData = pm.MacroFormat(ClassFeatureData)]
-
-[h:output.PC = json.get(json.get(FormattingData,"Output"),"Player")]
-[h:output.GM = json.get(json.get(FormattingData,"Output"),"GM")]
-
-[h:output.Temp = pm.AbilityTableProcessing(abilityTable,FormattingData,1)]
-
-[h:output.PC = output.PC + json.get(macro.return,"Player")+"</div></div>"]
-[h:output.GM = output.GM + json.get(macro.return,"GM")+"</div></div>"]
-[h:broadcastAsToken(output.GM,"gm",",",ParentToken)]
-[h:broadcastAsToken(output.PC,outputTargets,",",ParentToken)]
+[h,MACRO("GatherOutputComponents@Lib:pm.a5e.Core"): AllOutputComponents]

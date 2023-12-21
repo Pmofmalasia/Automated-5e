@@ -273,10 +273,6 @@
 [h:sSource = "Arcane"]
 [h,if(json.type(sClassSelectData)=="OBJECT"): sSource = if(json.get(sClassSelectData,"MagicSource")=="",sSource,json.get(sClassSelectData,"MagicSource"))]
 
-[h:DefaultDisplayData = pm.SpellColors(json.set("","Level",if(IsCantrip,"0",string(eLevel)),"Source",sSource))]
-[h:BorderColor = json.get(DefaultDisplayData,"Border")]
-[h:TextColor = json.get(DefaultDisplayData,"Title")]
-
 [h:"<!--- TODO: Decide on what data to store for concentration --->"]
 [h,if(ConcentrationLostLevel != ""): isConcentrationLost = (eLevel > ConcentrationLostLevel); isConcentrationLost = 0]
 [h,if(getState("Concentrating") && isConcentration==1 && !isConcentrationLost),CODE:{
@@ -405,7 +401,7 @@
 	"Class","Spell",
 	"Source",sSource,
 	"PrimeStat",PrimeStat,
-	"ClassForDisplay","zzSpell",
+	"DisplayClass","zzSpell",
 	"ColorSubtype",json.set("","Source",sSource,"Level",eLevel)
 )]
 [h,foreach(tempSubeffect,SpellSubeffects): pm.a5e.ExecuteSubeffect(tempSubeffect,json.set("","InstancePrefixes",json.append("","Spell"),"BaseData",SpellDataWithSelections))]
@@ -425,9 +421,16 @@
 	]
 }]
 
-[h:SpellDescriptionData = json.set(NonSpellData,"Description",CompleteSpellDescription,"SpellDisplayName",SpellDisplayName,"ForcedLevel",sLevelSelect,"Source",sSource)]
-[h:sDescriptionLink = macroLinkText("spellDescription@Lib:pm.a5e.Core",if(needsSplitGMOutput,"gm","all"),SpellDescriptionData,ParentToken)]
-[h:SpellDescriptionFinal = if(sRulesShow==0,"<a style='color:"+LinkColor+";' href='"+sDescriptionLink+"'>Click to show full spell text</a>",CompleteSpellDescription)]
+[h:SpellDescriptionData = json.set("",
+	"ParentToken",ParentToken,
+	"DisplayClass","zzSpell",
+	"ColorSubtype",json.set("","Level",if(IsCantrip,"0",string(eLevel)),"Source",sSource),
+	"Description",CompleteSpellDescription,
+	"needsSplitGMOutput",1
+)]
+[h:sDescriptionLink = macroLinkText("FullDescription@Lib:pm.a5e.Core",if(needsSplitGMOutput,"gm","all"),json.set(SpellDescriptionData,"OutputTargets","self"),ParentToken)]
+[h:sDescriptionAllLink = macroLinkText("FullDescription@Lib:pm.a5e.Core",if(needsSplitGMOutput,"gm","all"),json.set(SpellDescriptionData,"OutputTargets","all"),ParentToken)]
+[h:SpellDescriptionFinal = if(sRulesShow==0,"Show full spell text to: <a style='color:%{LinkColor};' href='"+sDescriptionLink+"'>Self</a> <a style='color:%{LinkColor};' href='"+sDescriptionAllLink+"'>Everyone</a>",CompleteSpellDescription)]
 
 [h:ReturnData = json.set(NonSpellData,"SpellData",json.append("",FinalSpellData),"Slot",if(IsCantrip,0,eLevel),"Source",sSource,"Class",sClassSelect,"Effect",pm.a5e.EffectData,"Table",abilityTable,"Description",SpellDescriptionFinal,"ShowFullRules",sRulesShow)]
 [h:macro.return = ReturnData]

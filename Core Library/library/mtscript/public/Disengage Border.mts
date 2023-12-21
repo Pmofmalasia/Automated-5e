@@ -18,29 +18,23 @@
 
 [h:abilityTable = json.merge(abilityTable,json.get(DisengageData,"Table"))]
 
-[h:ClassFeatureData = json.set("",
+[h:BorderData = json.set("",
 	"Flavor",Flavor,
+	"Name","Disengage",
+	"DisplayName","Disengage",
+	"FalseName","",
+	"DisplayClass","zzOtherCombatActions",
+	"ColorSubtype",""
+)]
+[h:AllOutputComponents = json.set("",
 	"ParentToken",ParentToken,
 	"needsSplitGMOutput",(getProperty("a5e.stat.Allegiance") == "Enemy"),
-	"BorderColorOverride",json.get(DisengageData,"BorderColorOverride"),
-	"TitleFontColorOverride",json.get(DisengageData,"TitleFontColorOverride"),
-	"AccentBackgroundOverride",json.get(DisengageData,"AccentBackgroundOverride"),
-	"AccentTextOverride",json.get(DisengageData,"AccentTextOverride"),
-	"TitleFont",json.get(DisengageData,"TitleFont"),
-	"BodyFont",json.get(DisengageData,"BodyFont"),
-	"Class","zzOtherCombatActions",
-	"Name","Disengage",
-	"FalseName","",
-	"OnlyRules",1
+	"BorderData",BorderData,
+	"Table",abilityTable,
+	"ShowFullRulesType",json.append("","Disengage","OtherCombatActions"),
+	"OutputTargets","",
+	"Description","If you take the Disengage action, your movement doesn't provoke opportunity attacks for the rest of the turn.",
+	"AbridgedDescription","Your movement doesn't provoke opportunity attacks this turn."
 )]
 
-[h:FormattingData = pm.MacroFormat(ClassFeatureData)]
-[h:output.PC = json.get(json.get(FormattingData,"Output"),"Player")]
-[h:output.GM = json.get(json.get(FormattingData,"Output"),"GM")]
-
-[h:output.Temp = pm.AbilityTableProcessing(abilityTable,FormattingData,1)]
-
-[h:output.PC = output.PC + json.get(macro.return,"Player")+"</div></div>"]
-[h:output.GM = output.GM + json.get(macro.return,"GM")+"</div></div>"]
-[h:broadcastAsToken(output.GM,"gm")]
-[h:broadcastAsToken(output.PC,"not-gm")]
+[h,MACRO("GatherOutputComponents@Lib:pm.a5e.Core"): AllOutputComponents]

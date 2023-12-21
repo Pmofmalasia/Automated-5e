@@ -26,27 +26,24 @@
 [h:abilityTable = json.merge(abilityTable,macro.return)]
 
 [h,if(json.length(abilityTable)>2),CODE:{
-	[h:ClassFeatureData = json.set("",
+[h:"<!-- TODO: Will need to split if needsSplitGMOutput if end token needs and start does not (or vice versa) -->"]
+	[h:BorderData = json.set("",
 		"Flavor","",
+		"Name","Initiative",
+		"DisplayName","Initiative",
+		"FalseName","",
+		"DisplayClass","zzInitiative",
+		"ColorSubtype",""
+	)]
+	[h:AllOutputComponents = json.set("",
 		"ParentToken",tokenEndingTurn,
 		"needsSplitGMOutput",0,
-		"Class","zzInitiative",
-		"Name","Advance Initiative: "+getName(tokenEndingTurn)+" to "+getName(tokenStartingTurn),
-		"FalseName","Advance Initiative",
-		"OnlyRules",0
-		)]
+		"BorderData",BorderData,
+		"Table",abilityTable,
+		"ShowFullRulesType",json.append("","Initiative")
+	)]
 
-	[h:FormattingData = pm.MacroFormat(ClassFeatureData)]
-	[h:output.PC = json.get(json.get(FormattingData,"Output"),"Player")]
-	[h:output.GM = json.get(json.get(FormattingData,"Output"),"GM")]
-	
-	[h:output.Temp = pm.AbilityTableProcessing(abilityTable,FormattingData,1)]
-	[h:output.PC = output.PC + json.get(output.Temp,"Player")+"</div></div>"]
-	[h:output.GM = output.GM + json.get(output.Temp,"GM")+"</div></div>"]
-	
-	[h:broadcastAsToken(output.GM,"gm")]
-	[h:broadcastAsToken(output.PC,"not-gm")]
-	
+	[h,MACRO("GatherOutputComponents@Lib:pm.a5e.Core"): AllOutputComponents]
 };{}]
 [h:selectTokens(tokenStartingTurn, 0)]
 [h:nextInitiative()]

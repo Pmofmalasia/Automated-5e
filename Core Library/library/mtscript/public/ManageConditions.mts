@@ -47,23 +47,23 @@
 [h:abilityTable = "[]"]
 [h:FeatureDescription = pm.a5e.CreateDisplayList(cn.RemovedList,"and")+" deactivated by the GM."]
 
-[h:ClassFeatureData = json.set("",
-	"Flavor","",
-	"ParentToken",currentToken(),
-	"needsSplitGMOutput",(getProperty("a5e.stat.Allegiance") == "Enemy"),
-	"Class","zzChecksAndSaves",
-	"Name","Condition Management",
+[h:BorderData = json.set("",
+	"Flavor",Flavor,
+	"Name","ConditionManagement",
+	"DisplayName","Condition Management",
 	"FalseName","",
-	"OnlyRules",1
+	"DisplayClass","zzGeneral",
+	"ColorSubtype",""
+)]
+[h:AllOutputComponents = json.set("",
+	"ParentToken",ParentToken,
+	"needsSplitGMOutput",(getProperty("a5e.stat.Allegiance") == "Enemy"),
+	"BorderData",BorderData,
+	"Table",abilityTable,
+	"ShowFullRulesType",json.append("","Condition"),
+	"OutputTargets","",
+	"Description",FeatureDescription,
+	"AbridgedDescription",FeatureDescription
 )]
 
-[h:FormattingData = pm.MacroFormat(ClassFeatureData)]
-[h:output.PC = json.get(json.get(FormattingData,"Output"),"Player")]
-[h:output.GM = json.get(json.get(FormattingData,"Output"),"GM")]
-
-[h:output.Temp = pm.AbilityTableProcessing(abilityTable,FormattingData,1)]
-
-[h:output.PC = output.PC + json.get(macro.return,"Player")+FeatureDescription]
-[h:output.GM = output.GM + json.get(macro.return,"GM")+FeatureDescription]
-[h:broadcastAsToken(output.GM,"gm")]
-[h:broadcastAsToken(output.PC,"not-gm")]
+[h,MACRO("GatherOutputComponents@Lib:pm.a5e.Core"): AllOutputComponents]

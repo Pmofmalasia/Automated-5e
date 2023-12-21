@@ -3,23 +3,8 @@
 [h:switchToken(ParentToken)]
 [h:pm.a5e.EffectData = "[]"]
 
-[h:ClassFeatureData = json.set("",
-	"Flavor",json.get(EffectData,"Flavor"),
-	"ParentToken",ParentToken,
-	"needsSplitGMOutput",(getProperty("a5e.stat.Allegiance") == "Enemy"),
-	"Class",json.get(EffectData,"Class"),
-	"Name",json.get(EffectData,"DisplayName"),
-	"FalseName",json.get(EffectData,"FalseName"),
-	"ClassForDisplay",json.get(EffectData,"ClassForDisplay"),
-	"ColorSubtype",json.get(EffectData,"ColorSubtype"),
-	"OnlyRules",0
-)]
-
-[h:FormattingData = pm.MacroFormat(ClassFeatureData)]
-[h:output.PC = json.get(json.get(FormattingData,"Output"),"Player")]
-[h:output.GM = json.get(json.get(FormattingData,"Output"),"GM")]
-
 [h:EffectToExecute = json.get(EffectData,"Effect")]
+[h:"<!-- Note: Unsure why needsSplitGMOutput is set here, shouldn't be needed until later -->"]
 [h:FinalEffectData = json.set(EffectData,
 	"needsSplitGMOutput",(getProperty("a5e.stat.Allegiance") == "Enemy")
 )]
@@ -34,7 +19,7 @@
 	"Type",json.get(EffectData,"Class"),
 	"ID",pm.a5e.GenerateEffectID(),
 	"FalseName",json.get(EffectData,"FalseName"),
-	"ClassForDisplay",json.get(EffectData,"ClassForDisplay"),
+	"DisplayClass",json.get(EffectData,"DisplayClass"),
 	"ColorSubtype",json.get(EffectData,"ColorSubtype"),
 	"ParentToken",ParentToken
 )]
@@ -50,12 +35,23 @@
 	EffectDescription = base64.decode(json.get(EffectToExecute,"Description"))
 ]
 
-[h:"<!-- TODO: Fix this, temporary -->"]
-[h,if(getProperty("a5e.stat.Allegiance") == "Enemy"): PlayerEffectDescription = ""; PlayerEffectDescription = EffectDescription]
+[h:BorderData = json.set("",
+	"Flavor",json.get(EffectData,"Flavor"),
+	"Name",json.get(EffectData,"Name"),
+	"DisplayName",json.get(EffectData,"DisplayName"),
+	"FalseName",json.get(EffectData,"FalseName"),
+	"DisplayClass",json.get(EffectData,"Class"),
+	"ColorSubtype",json.get(EffectData,"ColorSubtype")
+)]
+[h:AllOutputComponents = json.set("",
+	"ParentToken",ParentToken,
+	"needsSplitGMOutput",(getProperty("a5e.stat.Allegiance") == "Enemy"),
+	"BorderData",BorderData,
+	"Table",abilityTable,
+	"ShowFullRulesType",json.append("",json.get(EffectData,"Class"),"Feature"),
+	"OutputTargets","",
+	"Description",EffectDescription,
+	"AbridgedDescription",EffectDescription
+)]
 
-[h:output.Temp = pm.AbilityTableProcessing(abilityTable,FormattingData,0)]
-[h:output.PC = output.PC + json.get(output.Temp,"Player")+PlayerEffectDescription+"</div></div>"]
-[h:output.GM = output.GM + json.get(output.Temp,"GM")+EffectDescription+"</div></div>"]
-
-[h:broadcastAsToken(output.GM,"gm")]
-[h:broadcastAsToken(output.PC,"not-gm")]
+[h,MACRO("GatherOutputComponents@Lib:pm.a5e.Core"): AllOutputComponents]

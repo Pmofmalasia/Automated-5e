@@ -52,7 +52,7 @@
 	[h,MACRO("NewFeatureAddition@Lib:pm.a5e.Core"): json.set(macro.return,"ParentToken",ParentToken)]
 	[h,MACRO("FeatureRemoval@Lib:pm.a5e.Core"): json.set("","Features",pm.RemovedAbilities,"ParentToken",ParentToken)]
 	
-	[h:pm.AbilitiesChosenStr = json.toList(json.path.read(getProperty("a5e.stat.AllFeatures"),"\$[*][?(@.Master.Name=='"+currentFeatureName+"' && @.Master.Class=='"+currentFeatureClass+"' && @.Master.Subclass=='"+currentFeatureSubclass+"' && @.IsActive > 0)]['DisplayName']"),if(data.getData("addon:","pm.a5e.core","VerticalDisplay")==1,"<br>",", "))]
+	[h:pm.AbilitiesChosenStr = json.toList(json.path.read(getProperty("a5e.stat.AllFeatures"),"\$[*][?(@.Master.Name=='"+currentFeatureName+"' && @.Master.Class=='"+currentFeatureClass+"' && @.Master.Subclass=='"+currentFeatureSubclass+"' && @.IsActive > 0)]['DisplayName']"),"%{VerticalListFormat}")]
 }]
 
 [h:abilityTable = json.append(abilityTable,json.set("",

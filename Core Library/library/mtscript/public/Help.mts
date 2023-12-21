@@ -67,6 +67,6 @@
 	[h,MACRO("ApplyCondition@Lib:pm.a5e.Core"): ConditionData]
 }]
 [h:ConditionReturnData = macro.return]
-[h:abilityTable = json.get(ConditionReturnData,"Table")]
+[h:abilityTable = json.get(ConditionReturnData,"Table","HelpType",HelpType)]
 
 [h:macro.return = ConditionReturnData]

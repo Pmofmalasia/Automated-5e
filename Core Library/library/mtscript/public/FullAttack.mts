@@ -4,20 +4,6 @@
 [h:WeaponData = json.get(getProperty("a5e.stat.Weapon"),json.get(getProperty("a5e.stat.Weapon"),json.get(AttackData,"Hand")))]
 [h:pm.a5e.EffectData = "[]"]
 
-[h:ClassFeatureData = json.set("",
-	"Flavor",json.get(WeaponData,"Flavor"),
-	"ParentToken",ParentToken,
-	"needsSplitGMOutput",(getProperty("a5e.stat.Allegiance") == "Enemy"),
-	"Class","zzWeaponAttack",
-	"Name",json.get(WeaponData,"Name")+" Attack",
-	"FalseName","Weapon Attack",
-	"OnlyRules",0
-)]
-
-[h:FormattingData = pm.MacroFormat(ClassFeatureData)]
-[h:output.PC = json.get(json.get(FormattingData,"Output"),"Player")]
-[h:output.GM = json.get(json.get(FormattingData,"Output"),"GM")]
-
 [h:AttackData = json.set(AttackData,
 	"WeaponData",WeaponData,
 	"ThrowWeapon",0,
@@ -43,9 +29,23 @@
 [h,if(!json.isEmpty(pm.a5e.EffectData)): setLibProperty("gd.Effects",json.merge(data.getData("addon:","pm.a5e.core","gd.Effects"),pm.a5e.EffectData),"Lib:pm.a5e.Core")]
 [h,MACRO("BuildEffectsFrame@Lib:pm.a5e.Core"): ""]
 
-[h:output.Temp = pm.AbilityTableProcessing(abilityTable,FormattingData,1)]
-[h:output.PC = output.PC + json.get(output.Temp,"Player")+"</div></div>"]
-[h:output.GM = output.GM + json.get(output.Temp,"GM")+"</div></div>"]
+[h:BorderData = json.set("",
+	"Flavor",json.get(WeaponData,"Flavor"),
+	"Name",json.get(WeaponData,"Name")+"Attack",
+	"DisplayName",json.get(WeaponData,"DisplayName")+" Attack",
+	"FalseName","Weapon Attack",
+	"DisplayClass","zzWeaponAttack",
+	"ColorSubtype",""
+)]
+[h:AllOutputComponents = json.set("",
+	"ParentToken",ParentToken,
+	"needsSplitGMOutput",(getProperty("a5e.stat.Allegiance") == "Enemy"),
+	"BorderData",BorderData,
+	"Table",abilityTable,
+	"ShowFullRulesType",json.append("","WeaponAttack","Attack"),
+	"OutputTargets","",
+	"Description",base64.decode(json.get(WeaponData,"Description")),
+	"AbridgedDescription",base64.decode(json.get(WeaponData,"AbridgedDescription"))
+)]
 
-[h:broadcastAsToken(output.GM,"gm")]
-[h:broadcastAsToken(output.PC,"not-gm")]
+[h,MACRO("GatherOutputComponents@Lib:pm.a5e.Core"): AllOutputComponents]

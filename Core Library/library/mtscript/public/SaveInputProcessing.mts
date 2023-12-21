@@ -18,20 +18,6 @@
 		case 2:{[h:outputTargets = "none"][h:linkPermissions = "gm"]}
 	]
 
-	[h:ClassFeatureData = json.set("",
-		"Flavor",if(SaveDescription=="",Flavor,SaveDescription),
-		"ParentToken",ParentToken,
-		"needsSplitGMOutput",if(outputTargets=="none",1,0),
-		"Class","zzChecksAndSaves",
-		"Name","Saving Throw",
-		"FalseName","",
-		"OnlyRules",0
-	)]
-
-	[h:FormattingData = pm.MacroFormat(ClassFeatureData)]
-	[h:output.PC = json.get(json.get(FormattingData,"Output"),"Player")]
-	[h:output.GM = json.get(json.get(FormattingData,"Output"),"GM")]
-
 	[h:SaveData = json.set("",
 		"Save",SaveChoice,
 		"Type","Save",
@@ -40,19 +26,33 @@
 		"Advantage",or(AdvantageChoice==3,AdvantageChoice==4),
 		"Disadvantage",or(AdvantageChoice==0,AdvantageChoice==1),
 		"ForcedAdvantage",or(AdvantageChoice==0,AdvantageChoice==4),
-		"PCOutput",outputTargets
+		"OutputTargets",outputTargets
 	)]
 
 	[h,MACRO("Save@Lib:pm.a5e.Core"): SaveData]
 	[h:SaveData = macro.return]
 	[h:abilityTable = json.get(SaveData,"Table")]
-	
-	[h:output.Temp = pm.AbilityTableProcessing(abilityTable,FormattingData,1)]
-	
-	[h:output.PC = output.PC + json.get(macro.return,"Player")+"</div></div>"]
-	[h:output.GM = output.GM + json.get(macro.return,"GM")+"</div></div>"]
-	[h:broadcastAsToken(output.GM,"gm")]
-	[h:broadcastAsToken(output.PC,outputTargets)]
+
+	[h:BorderData = json.set("",
+		"Flavor",if(CheckDescription=="",Flavor,CheckDescription),
+		"Name","SavingThrow",
+		"DisplayName","Saving Throw",
+		"FalseName","",
+		"DisplayClass","zzChecksAndSaves",
+		"ColorSubtype",""
+	)]
+	[h:AllOutputComponents = json.set("",
+		"ParentToken",ParentToken,
+		"needsSplitGMOutput",(getProperty("a5e.stat.Allegiance") == "Enemy"),
+		"BorderData",BorderData,
+		"Table",abilityTable,
+		"ShowFullRulesType",json.append("","Check","ChecksAndSaves"),
+		"OutputTargets",outputTargets,
+		"Description","",
+		"AbridgedDescription",""
+	)]
+
+	[h,MACRO("GatherOutputComponents@Lib:pm.a5e.Core"): AllOutputComponents]
 };{
 	[h:EffectToResolve = json.get(json.path.read(data.getData("addon:","pm.a5e.core","gd.Effects"),"[*][?(@.ID =='"+EffectIDChoice+"')]"),0)]
 

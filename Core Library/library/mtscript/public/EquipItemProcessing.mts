@@ -202,23 +202,7 @@
 [h:EquipItemData = macro.args]
 [h:Flavor = json.get(EquipItemData,"Flavor")]
 [h:ParentToken = json.get(EquipItemData,"ParentToken")]
-[h:outputTargets = "not-gm"]
 [h:pm.a5e.EffectData = "[]"]
-
-[h:ClassFeatureData = json.set("",
-	"Flavor",Flavor,
-	"ParentToken",ParentToken,
-	"needsSplitGMOutput",(getProperty("a5e.stat.Allegiance") == "Enemy"),
-	"Class","Item",
-	"Name","Equipment",
-	"FalseName","",
-	"OnlyRules",0
-)]
-
-[h:FormattingData = pm.MacroFormat(ClassFeatureData)]
-
-[h:output.PC = json.get(json.get(FormattingData,"Output"),"Player")]
-[h:output.GM = json.get(json.get(FormattingData,"Output"),"GM")]
 
 [h:pm.a5e.BaseEffectData = json.set("",
 	"Class","Item",
@@ -228,9 +212,26 @@
 	"ParentToken",ParentToken
 )]
 
-[h:output.Temp = pm.AbilityTableProcessing(abilityTable,FormattingData,0)]
+[h:outputTargets = "not-gm"]
+[h:"<!-- TODO: Settings: May want to have the option to restrict equipment changes to only the user + GM -->"]
 
-[h:output.PC = output.PC + json.get(macro.return,"Player") + EquipmentDescription + "</div></div>"]
-[h:output.GM = output.GM + json.get(macro.return,"GM") + EquipmentDescription + "</div></div>"]
-[h:broadcastAsToken(output.GM,"gm")]
-[h:broadcastAsToken(output.PC,outputTargets)]
+[h:BorderData = json.set("",
+	"Flavor",Flavor,
+	"Name","Equipment",
+	"DisplayName","Equipment",
+	"FalseName","",
+	"DisplayClass","Item",
+	"ColorSubtype",""
+)]
+[h:AllOutputComponents = json.set("",
+	"ParentToken",ParentToken,
+	"needsSplitGMOutput",(getProperty("a5e.stat.Allegiance") == "Enemy"),
+	"BorderData",BorderData,
+	"Table",abilityTable,
+	"ShowFullRulesType",json.append("","Equipment","Item"),
+	"OutputTargets","",
+	"Description",EquipmentDescription,
+	"AbridgedDescription",EquipmentDescription
+)]
+
+[h,MACRO("GatherOutputComponents@Lib:pm.a5e.Core"): AllOutputComponents]

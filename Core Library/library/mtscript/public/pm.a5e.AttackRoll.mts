@@ -7,7 +7,7 @@
 [h,switch(d20AdvantageBalance),CODE:
     case -1:{
         [h:d20EffectiveRoll = math.arrayMin(d20AllRolls)]
-        [h:attack.FormulaPrefix = "1d20 <span style='color:"+DamageColor+"'>with Dis</span>"]
+        [h:attack.FormulaPrefix = "1d20 <span style='color:%{FailureTextColor}'>with Dis</span>"]
     };
     case 0:{
         [h:d20EffectiveRoll = json.get(d20AllRolls,0)]
@@ -15,7 +15,7 @@
     };
     case 1:{
         [h:d20EffectiveRoll = math.arrayMax(d20AllRolls)]
-        [h:attack.FormulaPrefix = "1d20 <span style='color:"+HealingColor+"'>with Adv</span>"]
+        [h:attack.FormulaPrefix = "1d20 <span style='color:%{SuccessTextColor}'>with Adv</span>"]
     }
 ]
 

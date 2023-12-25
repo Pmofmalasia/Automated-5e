@@ -3,10 +3,6 @@
 [h:ParentToken=json.get(DeathData,"ParentToken")]
 [h:switchToken(ParentToken)]
 
-[h:DamageColor = pm.DamageColor()]
-[h:HealingColor = pm.HealingColor()]
-[h:LinkColor = pm.LinkColor()]
-
 [h,if(json.get(DeathData,"PriorDeath")==""),CODE:{};{
 	[h:setProperty("a5e.stat.HP",json.get(DeathData,"PriorHP"))]
 	[h:setBar("Health",getProperty("a5e.stat.HP")/getProperty("a5e.stat.MaxHP"))]
@@ -52,13 +48,13 @@
 		[h:setProperty("a5e.stat.DeathSaves",if(json.get(ReturnData,"Value")<10,json.set(getProperty("a5e.stat.DeathSaves"),"Failures",min(3,FailCount+1)),json.set(getProperty("a5e.stat.DeathSaves"),"Successes",min(3,SuccessCount+1))))]
 	}]
 	
-	[h:DeathMessage = "Successes: <b><span style='font-size:2em; color:"+HealingColor+"'>"+json.get(getProperty("a5e.stat.DeathSaves"),"Successes")+"</span></b> / Failures: <b><span style='font-size:2em; color:"+DamageColor+"'>"+json.get(getProperty("a5e.stat.DeathSaves"),"Failures")+"</span></b>"]
+	[h:DeathMessage = "Successes: <b><span style='font-size:2em; color:%{SuccessTextColor}'>"+json.get(getProperty("a5e.stat.DeathSaves"),"Successes")+"</span></b> / Failures: <b><span style='font-size:2em; color:%{FailureTextColor}'>"+json.get(getProperty("a5e.stat.DeathSaves"),"Failures")+"</span></b>"]
 	[h,if(json.get(a5e.stat.DeathSaves,"Failures")==3),CODE:{
-		[h:DeathMessage = "Failures: <b><span style='font-size:2em; color:"+DamageColor+"'>"+json.get(getProperty("a5e.stat.DeathSaves"),"Failures")+"</span></b>"]
+		[h:DeathMessage = "Failures: <b><span style='font-size:2em; color:%{FailureTextColor}'>"+json.get(getProperty("a5e.stat.DeathSaves"),"Failures")+"</span></b>"]
 		[h:setState("Dead",1)]
 	};{}]
 	[h,if(json.get(a5e.stat.DeathSaves,"Successes")==3),CODE:{
-		[h:DeathMessage = "Successes: <b><span style='font-size:2em; color:"+HealingColor+"'>"+json.get(getProperty("a5e.stat.DeathSaves"),"Successes")+"</span></b>"]
+		[h:DeathMessage = "Successes: <b><span style='font-size:2em; color:%{SuccessTextColor}'>"+json.get(getProperty("a5e.stat.DeathSaves"),"Successes")+"</span></b>"]
 		[h:setState("Dying",0)]
 	};{}]
 	

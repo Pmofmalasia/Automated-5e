@@ -192,7 +192,6 @@
 	"OnlyRules",0
 	)]
 
-[h:FormattingData = pm.MacroFormat(ClassFeatureData)]
 [h:hp.Output = hp.Output + json.get(json.get(FormattingData,"Output"),"GM")]
 
 [h:AccentFormat = json.get(FormattingData,"AccentFormat")]
@@ -202,12 +201,6 @@
 [h:outputTest.NoFullMacro = json.get(FormattingData,"NoFullMacro")]
 [h:outputTest.NoRolls = json.get(FormattingData,"NoRolls")]
 [h:outputTest.NoRules = json.get(FormattingData,"NoRules")]
-[h:DamageColor=pm.DamageColor()]
-[h:HealingColor=pm.HealingColor()]
-[h:CritColor=pm.CritColor()]
-[h:CritFailColor=pm.CritFailColor()]
-[h:LinkColor=pm.LinkColor()]
-
 [h:"<!--- Damage HP Change --->"]
 
 [h,if(HPChangeType<=1),CODE:{

@@ -322,14 +322,7 @@
 [h:abilityFalseName = "Spellcasting"]
 [h:abilityOnlyRules = 0]
 
-[h:DamageColor = pm.DamageColor()]
-[h:HealingColor = pm.HealingColor()]
-[h:CritColor = pm.CritColor()]
-[h:CritFailColor = pm.CritFailColor()]
-[h:LinkColor = pm.LinkColor()]
-[h:abilityTable = ""]
-
-[h:abilityTable = json.append(abilityTable,json.set("",
+[h:abilityTable = json.append("[]",json.set("",
 	"ShowIfCondensed",0,
 	"Header","Spell Class and Level",
 	"FalseHeader","",
@@ -430,7 +423,7 @@
 )]
 [h:sDescriptionLink = macroLinkText("FullDescription@Lib:pm.a5e.Core",if(needsSplitGMOutput,"gm","all"),json.set(SpellDescriptionData,"OutputTargets","self"),ParentToken)]
 [h:sDescriptionAllLink = macroLinkText("FullDescription@Lib:pm.a5e.Core",if(needsSplitGMOutput,"gm","all"),json.set(SpellDescriptionData,"OutputTargets","all"),ParentToken)]
-[h:SpellDescriptionFinal = if(sRulesShow==0,"Show full spell text to: <a style='color:%{LinkColor};' href='"+sDescriptionLink+"'>Self</a> <a style='color:%{LinkColor};' href='"+sDescriptionAllLink+"'>Everyone</a>",CompleteSpellDescription)]
+[h:SpellDescriptionFinal = if(sRulesShow==0,"Show full spell text to: <a style='color:%{LinkTextColor};' href='"+sDescriptionLink+"'>Self</a> <a style='color:%{LinkTextColor};' href='"+sDescriptionAllLink+"'>Everyone</a>",CompleteSpellDescription)]
 
 [h:ReturnData = json.set(NonSpellData,"SpellData",json.append("",FinalSpellData),"Slot",if(IsCantrip,0,eLevel),"Source",sSource,"Class",sClassSelect,"Effect",pm.a5e.EffectData,"Table",abilityTable,"Description",SpellDescriptionFinal,"ShowFullRules",sRulesShow)]
 [h:macro.return = ReturnData]

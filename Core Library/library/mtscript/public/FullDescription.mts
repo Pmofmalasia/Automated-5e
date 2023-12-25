@@ -1,15 +1,15 @@
-[h:sp.Data = macro.args]
-[h:ParentToken = json.get(sp.Data,"ParentToken")]
-[h:DisplayClass = json.get(sp.Data,"DisplayClass")]
-[h:ColorSubtype = json.get(sp.Data,"ColorSubtype")]
-[h:Description = json.get(sp.Data,"Description")]
-[h:OutputTargets = json.get(sp.Data,"OutputTargets")]
+[h:DescriptionData = macro.args]
+[h:ParentToken = json.get(DescriptionData,"ParentToken")]
+[h:DisplayClass = json.get(DescriptionData,"DisplayClass")]
+[h:ColorSubtype = json.get(DescriptionData,"ColorSubtype")]
+[h:Description = json.get(DescriptionData,"Description")]
+[h:OutputTargets = json.get(DescriptionData,"OutputTargets")]
 
 [h:BorderData = json.set("",
-	"DisplayName",json.get(sp.Data,"DisplayName")+": Full Description",
+	"DisplayName",json.get(DescriptionData,"DisplayName")+": Full Description",
 	"FalseName","",
-	"DisplayClass","zzSpell",
-	"ColorSubtype",json.set("","Source",sSource,"Level",sLevel)
+	"DisplayClass",DisplayClass,
+	"ColorSubtype",ColorSubtype
 )]
 [h:AllOutputComponents = json.set("",
 	"ParentToken",ParentToken,

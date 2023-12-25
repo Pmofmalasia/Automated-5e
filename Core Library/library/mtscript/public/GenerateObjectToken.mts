@@ -158,13 +158,14 @@
 [h:setProperty("a5e.stat.MaxHP",objectMaxHP)]
 [h:setProperty("a5e.stat.HP",objectMaxHP)]
 
+[h:ButtonColorData = pm.a5e.BorderColors("Item","",NewObjectTokenID)]
 [h,if(json.get(objectData,"isEffectRandom")==1),CODE:{
 	[h:tempAbilityProps = json.set("",
 		"applyToSelected",1,
 		"autoExecute",1,
-		"color",json.get(data.getData("addon:","pm.a5e.core","ClassBorderColors"),"Item"),
+		"color",json.get(ButtonColorData,"Border"),
 		"command",'[h,MACRO("ExecuteEffectBorder@Lib:pm.a5e.Core"): '+json.set(objectData,"Effect",json.get(objectData,"Effects"),"ParentToken",NewObjectTokenID)+']',
-		"fontColor",json.get(data.getData("addon:","pm.a5e.core","ClassTitleColors"),"Item"),
+		"fontColor",json.get(ButtonColorData,"Title"),
 		"group","Item Effects",
 		"label",if(json.get(tempAbility,"DisplayName") == "",json.get(objectData,"DisplayName"),json.get(tempAbility,"DisplayName")),
 		"minWidth",89,
@@ -177,9 +178,9 @@
 		[h:tempAbilityProps = json.set("",
 			"applyToSelected",1,
 			"autoExecute",1,
-			"color",json.get(data.getData("addon:","pm.a5e.core","ClassBorderColors"),"Item"),
+			"color",json.get(ButtonColorData,"Border"),
 			"command",'[h,MACRO("ExecuteEffectBorder@Lib:pm.a5e.Core"): '+json.set(objectData,"Effect",json.append("",tempAbility),"ParentToken",NewObjectTokenID)+']',
-			"fontColor",json.get(data.getData("addon:","pm.a5e.core","ClassTitleColors"),"Item"),
+			"fontColor",json.get(ButtonColorData,"Title"),
 			"group","Item Effects",
 			"label",if(json.get(tempAbility,"DisplayName") == "",json.get(objectData,"DisplayName"),json.get(tempAbility,"DisplayName")),
 			"minWidth",89,

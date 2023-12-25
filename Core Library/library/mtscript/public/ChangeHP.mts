@@ -175,12 +175,6 @@
 
 [h:setBar("Health",(getProperty("a5e.stat.HP")/getProperty("a5e.stat.MaxHP")))]
 
-[h:DamageColor = pm.DamageColor()]
-[h:HealingColor = pm.HealingColor()]
-[h:CritColor = pm.CritColor()]
-[h:CritFailColor = pm.CritFailColor()]
-[h:LinkColor = pm.LinkColor()]
-
 [h:abilityTable = "[]"]
 [h,if(hp.TempHPGain!=0),CODE:{
 	[h:TempHPLinks = json.path.read(getProperty("a5e.stat.ConditionGroups"),"\$[*][?(@.EndTriggers.TempHPLost==1)]")]
@@ -190,7 +184,7 @@
 				"ShowIfCondensed",1,
 				"Header","Temporary HP",
 				"FalseHeader","",
-				"FullContents","<span style='font-size:1.5em; color:"+HealingColor+"'>"+abs(hp.TempHP)+"</span>",
+				"FullContents","<span style='font-size:1.5em; color:%{HealingTextColor}'>"+abs(hp.TempHP)+"</span>",
 				"RulesContents","",
 				"RollContents","",
 				"DisplayOrder","['Rules','Roll','Full']"
@@ -226,7 +220,7 @@
 	"ShowIfCondensed",1,
 	"Header","Total "+if(hp.ChangeValue>0,"Healing","Damage"),
 	"FalseHeader","",
-	"FullContents","<span style='font-size:1.5em; color:"+if(hp.ChangeValue>0,HealingColor,DamageColor)+"'>"+abs(hp.ChangeValue)+"</span>",
+	"FullContents","<span style='font-size:1.5em; color:"+if(hp.ChangeValue>0,"%{HealingTextColor}","%{DamageTextColor}")+"'>"+abs(hp.ChangeValue)+"</span>",
 	"RulesContents",if(listCount(hp.DamageDealtString," + ")>1,hp.DamageDealtString+" = ",""),
 	"RollContents","",
 	"DisplayOrder","['Rules','Roll','Full']"
@@ -241,7 +235,7 @@
 	"Header","Death Saves",
 	"FalseHeader","",
 	"FullContents","",
-	"RulesContents",if(json.get(getProperty("a5e.stat.DeathSaves"),"Failures")==3,"Failures: <b><span style='font-size:2em; color:"+DamageColor+"'>"+json.get(getProperty("a5e.stat.DeathSaves"),"Failures")+"</span></b>","Successes: <b><span style='font-size:2em; color:"+HealingColor+"'>"+json.get(getProperty("a5e.stat.DeathSaves"),"Successes")+"</span></b> / Failures: <b><span style='font-size:2em; color:"+DamageColor+"'>"+json.get(getProperty("a5e.stat.DeathSaves"),"Failures")+"</span></b>"),
+	"RulesContents",if(json.get(getProperty("a5e.stat.DeathSaves"),"Failures")==3,"Failures: <b><span style='font-size:2em; color:%{FailureTextColor}'>"+json.get(getProperty("a5e.stat.DeathSaves"),"Failures")+"</span></b>","Successes: <b><span style='font-size:2em; color:%{SuccessTextColor}'>"+json.get(getProperty("a5e.stat.DeathSaves"),"Successes")+"</span></b> / Failures: <b><span style='font-size:2em; color:%{FailureTextColor}'>"+json.get(getProperty("a5e.stat.DeathSaves"),"Failures")+"</span></b>"),
 	"RollContents","",
 	"DisplayOrder","['Rules','Roll','Full']"
 	))]
@@ -293,7 +287,7 @@
 		"DisplayOrder","['Rules','Roll','Full']",
 		"BonusSectionNum",1,
 		"BonusSectionType1","Full",
-		"BonusBody1","<span style='color:"+if(hp.PassedSave,HealingColor+"'>Maintained",DamageColor+"'>Broken")+"</span>"
+		"BonusBody1","<span style='color:"+if(hp.PassedSave,"%{SuccessTextColor}'>Maintained","%{FailureTextColor}'>Broken")+"</span>"
 	))]
 	
 	[h:abilityTable = json.merge(abilityTable,json.get(macro.return,"Table"))]

@@ -37,12 +37,6 @@
 	}
 ]
 
-[h:DamageColor = pm.DamageColor()]
-[h:HealingColor = pm.HealingColor()]
-[h:CritColor = pm.CritColor()]
-[h:CritFailColor = pm.CritFailColor()]
-[h:LinkColor = pm.LinkColor()]
-
 [h:d20AutoFail = 0]
 [h:d20AutoSuccess = 0]
 [h:pm.PassiveFunction("SaveAutoResult")]
@@ -52,7 +46,7 @@
 	[h:abilityTable = json.append("",json.set("",
 		"ShowIfCondensed",1,
 		"Header",CurrentSaveDisplay,
-		"FullContents",if(d20AutoSuccess,"<span style='color: "+HealingColor+"; font-size:1.25em'>Automatic Success</span>","<span style='color: "+DamageColor+"; font-size:1.25em'>Automatic Failure</span>"),
+		"FullContents",if(d20AutoSuccess,"<span style='color:%{SuccessTextColor}; font-size:1.25em'>Automatic Success</span>","<span style='color:%{FailureTextColor}; font-size:1.25em'>Automatic Failure</span>"),
 		"DisplayOrder","['Rules','Roll','Full']"
 	))]
 
@@ -87,8 +81,8 @@
 	[h,foreach(tempRoll,d20AllRolls),CODE:{
 		[h:d20ChooseDieLink = macroLinkText("Modifyd20TestBorder@Lib:pm.a5e.Core","self-gm",json.set(d20Data,"ForcedRoll",tempRoll),ParentToken)]
 		[h,if(d20TotalRolled == 1):
-			extraRollsDisplay = "Reroll: <a href = '"+d20AdvRerollLink+"'><span style = 'color:"+LinkColor+"'>Adv.</span></a> / <a href = '"+d20DisRerollLink+"'><span style = 'color:"+LinkColor+"'>Dis.</span></a>";
-			extraRollsDisplay = listAppend(extraRollsDisplay,"Roll <a href = '"+d20ChooseDieLink+"'><span style = 'color:"+LinkColor+"'; title = 'Use this roll'>#"+(roll.count+1)+"</span></a>: "+tempRoll," / ")
+			extraRollsDisplay = "Reroll: <a href = '"+d20AdvRerollLink+"'><span style = 'color:%{LinkTextColor}'>Adv.</span></a> / <a href = '"+d20DisRerollLink+"'><span style = 'color:%{LinkTextColor}'>Dis.</span></a>";
+			extraRollsDisplay = listAppend(extraRollsDisplay,"Roll <a href = '"+d20ChooseDieLink+"'><span style = 'color:%{LinkTextColor}'; title = 'Use this roll'>#"+(roll.count+1)+"</span></a>: "+tempRoll," / ")
 		]
 	}]
 
@@ -96,7 +90,7 @@
 		"ShowIfCondensed",1,
 		"Header",CurrentSaveDisplay,
 		"FalseHeader","",
-		"FullContents","<b><span style='"+if(FinalRoll==20,"font-size:2em; color:"+CritColor,if(FinalRoll==1,"font-size:2em; color:"+CritFailColor,"font-size:1.5em"))+"'>"+(FinalRoll+TotalBonus)+"</span></b>",
+		"FullContents","<b><span style='"+if(FinalRoll==20,"font-size:2em; color:%{CritTextColor}",if(FinalRoll==1,"font-size:2em; color:%{CritFailTextColor}","font-size:1.5em"))+"'>"+(FinalRoll+TotalBonus)+"</span></b>",
 		"RulesContents","<span "+if(!json.isEmpty(d20AdvantageMessageArray),"title='"+pm.a5e.CreateDisplayList(d20AdvantageMessageArray,"and")+"'","")+">"+d20TotalRolled+"d20"+if(d20TotalRolled>1," choose one ","")+rollFormula+"</span> = ",
 		"RollContents",FinalRoll+rollString+" = ",
 		"DisplayOrder","['Rules','Roll','Full']",
@@ -113,7 +107,7 @@
 	[h:extraRollsDisplay = ""]
 	[h,foreach(tempRoll,d20AllRolls),CODE:{
 		[h:d20ChooseDieLink = macroLinkText("Modifyd20TestBorder@Lib:pm.a5e.Core","self-gm",json.set(d20Data,"ForcedRoll",tempRoll),ParentToken)]
-		[h:extraRollsDisplay = listAppend(extraRollsDisplay,"Roll <a href = '"+d20ChooseDieLink+"'><span style = 'color:"+LinkColor+"'; title = 'Use this roll'>#"+(roll.count+1)+"</span></a>: "+tempRoll," / ")]
+		[h:extraRollsDisplay = listAppend(extraRollsDisplay,"Roll <a href = '"+d20ChooseDieLink+"'><span style = 'color:%{LinkTextColor}'; title = 'Use this roll'>#"+(roll.count+1)+"</span></a>: "+tempRoll," / ")]
 	}]
 	[h:extraRollsDisplay = "("+extraRollsDisplay+")"]
 	
@@ -121,8 +115,8 @@
 		"ShowIfCondensed",1,
 		"Header",CurrentSaveDisplay,
 		"FalseHeader","",
-		"FullContents","<b><span style='"+if(FinalRoll==20,"font-size:2em; color:"+CritColor,if(FinalRoll==1,"font-size:2em; color:"+CritFailColor,"font-size:1.5em"))+"'>"+(FinalRoll+TotalBonus)+"</span></b>",
-		"RulesContents","1d20 <span"+if(!json.isEmpty(d20AdvantageMessageArray)," title='"+pm.a5e.CreateDisplayList(d20AdvantageMessageArray,"and")+"'","")+" style='color:"+if(d20AdvantageBalance==1,HealingColor+"'>with Adv",DamageColor+"'>with Dis")+"</span>"+rollFormula+" = ",
+		"FullContents","<b><span style='"+if(FinalRoll==20,"font-size:2em; color:%{CritTextColor}",if(FinalRoll==1,"font-size:2em; color:%{CritFailTextColor}","font-size:1.5em"))+"'>"+(FinalRoll+TotalBonus)+"</span></b>",
+		"RulesContents","1d20 <span"+if(!json.isEmpty(d20AdvantageMessageArray)," title='"+pm.a5e.CreateDisplayList(d20AdvantageMessageArray,"and")+"'","")+" style='color:"+if(d20AdvantageBalance==1,"%{SuccessTextColor}'>with Adv","%{FailureTextColor}'>with Dis")+"</span>"+rollFormula+" = ",
 		"RollContents",FinalRoll+rollString+" = ",
 		"DisplayOrder","['Rules','Roll','Full']",
 		"BonusSectionNum",1,

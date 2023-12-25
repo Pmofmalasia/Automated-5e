@@ -15,18 +15,17 @@
 	[h:abilityTable = json.append(abilityTable,pm.a5e.CreateBasicTableLine(
 		currentFeatureDisplayName,
 		currentFeatureEffect,
-		"<a href='"+currentFeatureTooltipLink+"' style='color:"+pm.LinkColor()+"'>Feature Info</a>"
+		"<a href='"+currentFeatureTooltipLink+"' style='color:%{LinkTextColor}'>Feature Info</a>"
 	))]
 };{
-	[h:tempLinkColor = pm.LinkColor()]
 	[h,if(ShowFullRules):
 		abilityTable = json.append(abilityTable,pm.a5e.CreateBasicTableLine(
 			currentFeatureDisplayName,
 			currentFeatureEffect,
-			json.set("","Type","Rules","Body","<a href='"+currentFeatureLink+"' style='color:"+tempLinkColor+"'>Use Feature</a> / <a href='"+currentFeatureTooltipLink+"' style='color:"+tempLinkColor+"'>Feature Info</a>")));
+			json.set("","Type","Rules","Body","<a href='"+currentFeatureLink+"' style='color:%{LinkTextColor}'>Use Feature</a> / <a href='"+currentFeatureTooltipLink+"' style='color:%{LinkTextColor}'>Feature Info</a>")));
 		abilityTable = json.append(abilityTable,pm.a5e.CreateBasicTableLine(
 			currentFeatureDisplayName,
-			"<a href='"+currentFeatureLink+"' style='color:"+tempLinkColor+"'>Use Feature</a> / <a href='"+currentFeatureTooltipLink+"' style='color:"+tempLinkColor+"'>Feature Info</a>"
+			"<a href='"+currentFeatureLink+"' style='color:%{LinkTextColor}'>Use Feature</a> / <a href='"+currentFeatureTooltipLink+"' style='color:%{LinkTextColor}'>Feature Info</a>"
 		))
 	]
 

@@ -1,12 +1,8 @@
-[h:pm.TooltipBorder(json.set("",
-    "Class","zzWeaponAttack",
-    "Name","Effect Management",
-    "DisplayName","Effect Management"
-))]
 [h:effectsTableCellFormat = "<td style='text-align:center; padding-left:4px'>"]
 
 [h:incompleteEffects = data.getData("addon:","pm.a5e.core","gd.Effects")]
-[h:em.TableLines = "<tr><th style = '"+FrameAccentFormat+"'>Origin</th><th style = '"+FrameAccentFormat+"'>Target(s)</th><th style = '"+FrameAccentFormat+"'>Status</th><th style = '"+FrameAccentFormat+"' colspan=3>How to Resolve</th></tr>"]
+[h:"<!-- TODO: Rework following colors to be adjustable -->"]
+[h:em.TableLines = "<tr><th style = 'text-align:center; background-color:#504A40; color#FAF9F7; width:120px;'>Origin</th><th style = 'text-align:center; background-color:#504A40; color#FAF9F7; width:120px;'>Target(s)</th><th style = 'text-align:center; background-color:#504A40; color#FAF9F7; width:120px;'>Status</th><th style = 'text-align:center; background-color:#504A40; color#FAF9F7; width:120px;' colspan=3>How to Resolve</th></tr>"]
 [h:"<!-- TODO: Change removal of blank string so that targets can be selected by the DM on resolution. Blank string occurs when 'Target Not Displayed' is selected during targeting. -->"]
 
 [h,foreach(effect,incompleteEffects),CODE:{

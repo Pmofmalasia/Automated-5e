@@ -85,12 +85,6 @@
 	[h:TotalBonus = json.get(d20Data,"TotalBonus") + newBonus]
 }]
 
-[h:DamageColor = pm.DamageColor()]
-[h:HealingColor = pm.HealingColor()]
-[h:CritColor = pm.CritColor()]
-[h:CritFailColor = pm.CritFailColor()]
-[h:LinkColor = pm.LinkColor()]
-
 [h,if(d20AdvantageBalance == 0),CODE:{
 	[h:FinalRoll = json.get(d20AllRolls,0)]
 
@@ -115,8 +109,8 @@
 	[h,foreach(tempRoll,d20AllRolls),CODE:{
 		[h:d20ChooseDieLink = macroLinkText("Modifyd20TestBorder@Lib:pm.a5e.Core","self-gm",json.set(d20Data,"ForcedRoll",tempRoll),ParentToken)]
 		[h,if(d20TotalRolled == 1):
-			extraRollsDisplay = "Reroll: <a href = '"+d20AdvRerollLink+"'><span style = 'color:"+LinkColor+"'>Adv.</span></a> / <a href = '"+d20DisRerollLink+"'><span style = 'color:"+LinkColor+"'>Dis.</span></a>";
-			extraRollsDisplay = listAppend(extraRollsDisplay,"Roll <a href = '"+d20ChooseDieLink+"'><span style = 'color:"+LinkColor+"'; title = 'Use this roll'>#"+(roll.count+1)+"</span></a>: "+tempRoll," / ")
+			extraRollsDisplay = "Reroll: <a href = '"+d20AdvRerollLink+"'><span style = 'color:%{LinkTextColor}'>Adv.</span></a> / <a href = '"+d20DisRerollLink+"'><span style = 'color:%{LinkTextColor}'>Dis.</span></a>";
+			extraRollsDisplay = listAppend(extraRollsDisplay,"Roll <a href = '"+d20ChooseDieLink+"'><span style = 'color:%{LinkTextColor}'; title = 'Use this roll'>#"+(roll.count+1)+"</span></a>: "+tempRoll," / ")
 		]
 	}]
 
@@ -124,7 +118,7 @@
 		"ShowIfCondensed",1,
 		"Header",d20RollHeader,
 		"FalseHeader","",
-		"FullContents","<b><span style='"+if(FinalRoll==20,"font-size:2em; color:"+CritColor,if(FinalRoll==1,"font-size:2em; color:"+CritFailColor,"font-size:1.5em"))+"'>"+(FinalRoll+TotalBonus)+"</span></b>",
+		"FullContents","<b><span style='"+if(FinalRoll==20,"font-size:2em; color:%{CritTextColor}",if(FinalRoll==1,"font-size:2em; color:%{CritFailTextColor}","font-size:1.5em"))+"'>"+(FinalRoll+TotalBonus)+"</span></b>",
 		"RulesContents",d20TotalRolled+"d20"+if(d20TotalRolled>1," choose one ","")+rollFormula+" = ",
 		"RollContents",FinalRoll+rollString+" = ",
 		"DisplayOrder","['Rules','Roll','Full']",
@@ -141,7 +135,7 @@
 	[h:extraRollsDisplay = ""]
 	[h,foreach(tempRoll,d20AllRolls),CODE:{
 		[h:d20ChooseDieLink = macroLinkText("Modifyd20TestBorder@Lib:pm.a5e.Core","self-gm",json.set(d20Data,"ForcedRoll",tempRoll),ParentToken)]
-		[h:extraRollsDisplay = listAppend(extraRollsDisplay,"Roll <a href = '"+d20ChooseDieLink+"'><span style = 'color:"+LinkColor+"'; title = 'Use this roll'>#"+(roll.count+1)+"</span></a>: "+tempRoll," / ")]
+		[h:extraRollsDisplay = listAppend(extraRollsDisplay,"Roll <a href = '"+d20ChooseDieLink+"'><span style = 'color:%{LinkTextColor}'; title = 'Use this roll'>#"+(roll.count+1)+"</span></a>: "+tempRoll," / ")]
 	}]
 	[h:extraRollsDisplay = "("+extraRollsDisplay+")"]
 	
@@ -149,8 +143,8 @@
 		"ShowIfCondensed",1,
 		"Header",d20RollHeader,
 		"FalseHeader","",
-		"FullContents","<b><span style='"+if(FinalRoll==20,"font-size:2em; color:"+CritColor,if(FinalRoll==1,"font-size:2em; color:"+CritFailColor,"font-size:1.5em"))+"'>"+(FinalRoll+TotalBonus)+"</span></b>",
-		"RulesContents","1d20 <span style='color:"+if(d20AdvantageBalance==1,HealingColor+"'>with Adv",DamageColor+"'>with Dis")+"</span>"+rollFormula+" = ",
+		"FullContents","<b><span style='"+if(FinalRoll==20,"font-size:2em; color:%{CritTextColor}",if(FinalRoll==1,"font-size:2em; color:%{CritFailTextColor}","font-size:1.5em"))+"'>"+(FinalRoll+TotalBonus)+"</span></b>",
+		"RulesContents","1d20 <span style='color:"+if(d20AdvantageBalance==1,"%{SuccessTextColor}'>with Adv","%{FailureTextColor}'>with Dis")+"</span>"+rollFormula+" = ",
 		"RollContents",FinalRoll+rollString+" = ",
 		"DisplayOrder","['Rules','Roll','Full']",
 		"BonusSectionNum",1,

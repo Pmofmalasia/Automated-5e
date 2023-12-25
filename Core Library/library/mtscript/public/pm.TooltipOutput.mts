@@ -5,12 +5,11 @@
 [h:output.Temp=""]
 
 [h:pm.AbilityTableTooltip()]
-
 [h:tooltipTableText=json.get(tooltipTables,"TooltipTable")]
 [h:tooltipFrameTableText=json.get(tooltipTables,"FrameTable")]
 
 [h:TooltipPermission=if(or(needsSplitGMOutput==0,isGM(),isOwner()),1,0)]
-	
+
 [r,if(Frame.tooltip && TooltipPermission),CODE:{
 	[r,frame5("Ability Info"):{[r:strformat('<html>'+pm.BorderFrame+if(tooltipFrameTableText=="","",'<table style="font-size:1em; color: '+BodyTextFinal.tooltip+';">'+tooltipFrameTableText+'</table><br>')+FeatureDescription+'</div></div></html>')]}]
 };{}]

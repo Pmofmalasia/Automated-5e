@@ -35,7 +35,7 @@
 
         [h,MACRO("CreateSpellMacroLabel@Lib:pm.a5e.Core"): thisSpellName]
         [h:SpellMacroLabel = macro.return]
-        [h:DefaultDisplayData = pm.SpellColors(json.set("","Level",string(json.get(SpellData,"Level")),"Source","Arcane"))]
+        [h:DefaultDisplayData = pm.a5e.BorderColors("zzSpell",json.set("","Level",string(json.get(SpellData,"Level")),"Source","Arcane"),ParentToken)]
         [h:BorderColor = json.get(DefaultDisplayData,"Border")]
         [h:TextColor = json.get(DefaultDisplayData,"Title")]
         [h:CastAtLevel = json.get(MonsterData,"InnateSpell"+SafeCounter+"Level")]

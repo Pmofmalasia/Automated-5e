@@ -7,12 +7,6 @@
 [h:pm.a5e.EffectData = "[]"]
 [h:abilityTable = "[]"]
 
-[h:DamageColor = pm.DamageColor()]
-[h:HealingColor = pm.HealingColor()]
-[h:CritColor = pm.CritColor()]
-[h:CritFailColor = pm.CritFailColor()]
-[h:LinkColor = pm.LinkColor()]
-
 [h:"<!-- TODO: Need a better way to actually set these values and not just placeholders -->"]
 [h:AHLTier = number(json.get(EffectData,"AHLTier"))]
 [h:sClassSelect = json.get(EffectData,"sClassSelect")]

@@ -81,14 +81,14 @@
 		"ShowIfCondensed",1,
 		"Header","Attack Roll",
 		"FalseHeader","",
-		"FullContents","<span style='"+if(attack.CritTest,"font-size:2em; color:"+CritColor,if(attack.CritFailTest,"font-size:2em; color:"+CritFailColor,"font-size:1.5em"))+"'>"+json.get(subeffect.AttackData,"Value")+"</span>",
+		"FullContents","<span style='"+if(attack.CritTest,"font-size:2em; color:%{CritTextColor}",if(attack.CritFailTest,"font-size:2em; color:%{CritFailTextColor}","font-size:1.5em"))+"'>"+json.get(subeffect.AttackData,"Value")+"</span>",
 		"RulesContents",json.get(subeffect.AttackData,"FormulaPrefix")+json.get(subeffect.AttackData,"Formula")+" = ",
 		"RollContents",json.get(subeffect.AttackData,"FinalRoll")+json.get(subeffect.AttackData,"RollString")+" = ",
 		"DisplayOrder","['Rules','Roll','Full']"
 	)]
 
 	[h,if(json.get(subeffect.AttackData,"AdvantageBalance")==0):
-		ToHitTableLine = json.set(ToHitTableLine,"BonusBody1","Reroll: <a href = '"+subeffect.AdvRerollLink+"'><span style = 'color:"+LinkColor+"'>Adv.</span></a> / <a href = '"+subeffect.DisRerollLink+"'><span style = 'color:"+LinkColor+"'>Dis.</span></a>");
+		ToHitTableLine = json.set(ToHitTableLine,"BonusBody1","Reroll: <a href = '"+subeffect.AdvRerollLink+"'><span style = 'color:%{LinkTextColor}'>Adv.</span></a> / <a href = '"+subeffect.DisRerollLink+"'><span style = 'color:%{LinkTextColor}'>Dis.</span></a>");
 		ToHitTableLine = json.set(ToHitTableLine,"BonusBody1","(Roll #1: "+(roll1+thisAttackToHit-if(thisAttackAdvDis==1,max(roll1,roll2),min(roll1,roll2)))+" / Roll #2: "+(roll2+thisAttackToHit-if(thisAttackAdvDis==1,max(roll1,roll2),min(roll1,roll2)))+")")
 	]
 	
@@ -168,7 +168,7 @@
 		"ShowIfCondensed",1,
 		"Header",DamageTypeDisplay+if(or(tempDamageType=="Healing",tempDamageType=="TempHP"),""," Damage"),
 		"FalseHeader","",
-		"FullContents","<span style='"+if(attack.CritTest,"font-size:2em; color:"+CritColor,"font-size:1.5em")+"'>"+if(attack.CritTest,json.get(thisDamageTypeInfo,"CritTotal"),json.get(thisDamageTypeInfo,"Total"))+"</span>",
+		"FullContents","<span style='"+if(attack.CritTest,"font-size:2em; color:%{CritTextColor}","font-size:1.5em")+"'>"+if(attack.CritTest,json.get(thisDamageTypeInfo,"CritTotal"),json.get(thisDamageTypeInfo,"Total"))+"</span>",
 		"RulesContents",if(attack.CritTest,json.get(thisDamageTypeInfo,"CritFormula"),json.get(thisDamageTypeInfo,"Formula"))+" = ",
 		"RollContents",if(attack.CritTest,json.get(thisDamageTypeInfo,"CritString"),json.get(thisDamageTypeInfo,"String"))+" = ",
 		"DisplayOrder","['Rules','Roll','Full']"

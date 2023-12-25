@@ -21,12 +21,12 @@
 [h:OnlyRules=json.get(arg(0),"OnlyRules")]
 
 [h,if(abilityClass=="zzSpell"),CODE:{
-	[h:tempColors = pm.SpellColors(ColorSubtype)]
+	[h:tempColors = pm.a5e.SpellColors(ColorSubtype)]
 	[h:tooltip.Border = json.get(tempColors,"Border")]
 	[h:tooltip.Title = json.get(tempColors,"Title")]
 };{
-	[h:tooltip.Border = pm.BorderColor(abilityClass,ColorSubtype)]
-	[h:tooltip.Title = pm.TitleColor(abilityClass,ColorSubtype)]
+	[h:tooltip.Border = pm.a5e.BorderColors(abilityClass,ColorSubtype)]
+	[h:tooltip.Title = pm.a5e.TitleColors(abilityClass,ColorSubtype)]
 }]
 			
 [h,if(BorderColorOverride == ""),CODE:{};{

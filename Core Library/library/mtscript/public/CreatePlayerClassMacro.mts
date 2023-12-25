@@ -18,12 +18,14 @@
 		[h:pm.NewMacroTooltip = '']	
 	}]
 
+	
+	[h:ButtonColorData = pm.a5e.BorderColors(json.get(ability,"Class"),"",ParentToken)]
 	[h:pm.NewMacroProps = json.set("",
 		"applyToSelected",0,
 		"autoExecute",1,
-		"color",pm.BorderColor(json.get(ability,"Class")),
+		"color",json.get(ButtonColorData,"Border"),
 		"command",pm.NewMacroCommand,
-		"fontColor",pm.TitleColor(json.get(ability,"Class")),
+		"fontColor",json.get(ButtonColorData,"Title"),
 		"fontSize","1.00em",
 		"includeLabel",0,
 		"group"," New Macros",

@@ -17,7 +17,7 @@
 [h:output.PC = if(outputTest.NoFullMacro,output.PC,if(outputTest.NoRules,output.PC+"<b>"+FalseName+"</b>",output.PC+output.Temp))]
 [h:output.GM = output.GM + output.Temp]
 
-[h:output.Temp = "<div style='background-color:%{BackgroundColor}; color: %{BackgroundTextColor}; padding:2px; width:100%; font-family:%{BodyFont}'>"]
+[h:output.Temp = "<div style='background-color:%{BackgroundColor}; color:%{BackgroundTextColor}; padding:2px; width:100%; font-family:%{BodyFont}'>"]
 
 [h:output.PC = if(outputTest.NoFullMacro,output.PC,output.PC+output.Temp)]
 [h:output.GM = output.GM + output.Temp]
@@ -25,7 +25,5 @@
 [h:output.Temp = if(Flavor=="","","<div style='text-align:center; background-color:%{AccentBackground}; color:%{AccentText};'>"+"<i>"+Flavor+"</i></div>")]
 [h:output.PC = if(outputTest.NoFullMacro,output.PC,output.PC+output.Temp)]
 [h:output.GM = output.GM + output.Temp]
-
-[h:BackgroundFormat = "background-color:%{BackgroundColor}; color: %{BackgroundText}; padding:2px; font-family:%{BodyFont}"]
 
 [h:macro.return = json.set("","Player",output.PC,"GM",output.GM)]

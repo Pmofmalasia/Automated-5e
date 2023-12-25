@@ -1,7 +1,17 @@
-[h:width.Setting=' width:'+if(json.get(data.getData("addon:","pm.a5e.core","TooltipDisplaySize"),getPlayerName())=="",json.get(data.getData("addon:","pm.a5e.core","TooltipDisplaySize"),"Default"),json.get(data.getData("addon:","pm.a5e.core","TooltipDisplaySize"),getPlayerName()))+'px;']
-
 [h:Frame.tooltip = if(json.get(data.getData("addon:","pm.a5e.core","TooltipFrame"),getPlayerName())=="",""+json.get(data.getData("addon:","pm.a5e.core","TooltipFrame"),"Default"),json.get(data.getData("addon:","pm.a5e.core","TooltipFrame"),getPlayerName())+"")]
 [h:Mouseover.tooltip = if(json.get(data.getData("addon:","pm.a5e.core","TooltipMouseover"),getPlayerName())=="",""+json.get(data.getData("addon:","pm.a5e.core","TooltipMouseover"),"Default"),json.get(data.getData("addon:","pm.a5e.core","TooltipMouseover"),getPlayerName())+"")]
+
+
+
+
+
+
+
+
+
+
+[h:width.Setting=' width:'+if(json.get(data.getData("addon:","pm.a5e.core","TooltipDisplaySize"),getPlayerName())=="",json.get(data.getData("addon:","pm.a5e.core","TooltipDisplaySize"),"Default"),json.get(data.getData("addon:","pm.a5e.core","TooltipDisplaySize"),getPlayerName()))+'px;']
+
 [h:DisplaySize.tooltip = if(json.get(data.getData("addon:","pm.a5e.core","TooltipDisplaySize"),getPlayerName())=="",""+json.get(data.getData("addon:","pm.a5e.core","TooltipDisplaySize"),"Default"),json.get(data.getData("addon:","pm.a5e.core","TooltipDisplaySize"),getPlayerName())+"")]
 [h:DisplayType.tooltip = if(json.get(data.getData("addon:","pm.a5e.core","TooltipDisplayType"),getPlayerName())=="",json.get(data.getData("addon:","pm.a5e.core","TooltipDisplayType"),"Default"),json.get(data.getData("addon:","pm.a5e.core","TooltipDisplayType"),getPlayerName()))]
 [h:TitleFont.tooltip = if(json.get(data.getData("addon:","pm.a5e.core","TooltipTitleFont"),getPlayerName())=="",""+json.get(data.getData("addon:","pm.a5e.core","TooltipTitleFont"),"Default"),json.get(data.getData("addon:","pm.a5e.core","TooltipTitleFont"),getPlayerName())+"")]
@@ -18,7 +28,14 @@
 [h:BodyDarkAccentText.tooltip = if(json.get(data.getData("addon:","pm.a5e.core","TooltipDarkAccentText"),getPlayerName())=="",json.get(data.getData("addon:","pm.a5e.core","TooltipDarkAccentText"),"Default"),json.get(data.getData("addon:","pm.a5e.core","TooltipDarkAccentText"),getPlayerName())+"")]
 [h:BodyLightAccentText.tooltip = if(json.get(data.getData("addon:","pm.a5e.core","TooltipLightAccentText"),getPlayerName())=="",json.get(data.getData("addon:","pm.a5e.core","TooltipLightAccentText"),"Default"),json.get(data.getData("addon:","pm.a5e.core","TooltipLightAccentText"),getPlayerName())+"")]
 
-[h:VerticalFormat=if(json.get(data.getData("addon:","pm.a5e.core","TooltipVertical"),getPlayerName())=="",if(json.get(data.getData("addon:","pm.a5e.core","TooltipVertical"),"Default")==1,"</th></tr><tr style='text-align:center;'><td>","</th><td style='padding-left:4px'>"),if(json.get(data.getData("addon:","pm.a5e.core","TooltipVertical"),getPlayerName())==1,"</th></tr><tr style='text-align:center;'><td>","</th><td style='padding-left:4px'>"))]
+[h:VerticalFormat=if(json.get(data.getData("addon:","pm.a5e.core","TooltipVertical"),getPlayerName())=="",if(json.get(data.getData("addon:","pm.a5e.core","TooltipVertical"),"Default")==1,
+
+
+"</th></tr><tr style='text-align:center;'><td>",
+"</th><td style='padding-left:4px'>"
+
+
+),if(json.get(data.getData("addon:","pm.a5e.core","TooltipVertical"),getPlayerName())==1,"</th></tr><tr style='text-align:center;'><td>","</th><td style='padding-left:4px'>"))]
 
 [h:BodyBackgroundFinal.tooltip = if(DarkMode.tooltip==1,BodyDarkBackground.tooltip,BodyLightBackground.tooltip)]
 [h:BodyTextFinal.tooltip = string(if(DarkMode.tooltip==1,BodyDarkText.tooltip,BodyLightText.tooltip))]

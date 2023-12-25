@@ -119,11 +119,6 @@
 [h:IsTooltip = 0]
 [h:AnyTargetNeedsFurtherResolution = 0]
 [h:pm.a5e.OverarchingContext = json.get(effFull,"Context")]
-[h:DamageColor = pm.DamageColor()]
-[h:HealingColor = pm.HealingColor()]
-[h:CritColor = pm.CritColor()]
-[h:CritFailColor = pm.CritFailColor()]
-[h:LinkColor = pm.LinkColor()]
 
 [h:abilityTable = "[]"]
 [h,foreach(tempTarget,effTargets),CODE:{
@@ -209,7 +204,7 @@
 			"ShowIfCondensed",1,
 			"Header","Attack Result",
 			"FalseHeader","",
-			"FullContents","<span style='color:"+HealingColor+"'>Hit</span>",
+			"FullContents","<span style='color:%{SuccessTextColor}'>Hit</span>",
 			"RulesContents","",
 			"RollContents","",
 			"DisplayOrder","['Rules','Roll','Full']"
@@ -234,7 +229,7 @@
 			"ShowIfCondensed",1,
 			"Header","Attack Result",
 			"FalseHeader","",
-			"FullContents","<span style='color:"+DamageColor+"'>Miss</span>",
+			"FullContents","<span style='color:%{FailureTextColor}'>Miss</span>",
 			"RulesContents","",
 			"RollContents","",
 			"DisplayOrder","['Rules','Roll','Full']"
@@ -327,8 +322,8 @@
 			]
 
 			[h,if(SavePassed):
-				saveResultText = "<span style='color:"+HealingColor+"'>"+if(autoResultTest,"Automatic ","")+"Success</span>";
-				saveResultText = "<span style='color:"+DamageColor+"'>"+if(autoResultTest,"Automatic ","")+"Failure</span>"
+				saveResultText = "<span style='color:%{SuccessTextColor}'>"+if(autoResultTest,"Automatic ","")+"Success</span>";
+				saveResultText = "<span style='color:%{FailureTextColor}'>"+if(autoResultTest,"Automatic ","")+"Failure</span>"
 			]
 
 			[h:abilityTable = json.append(abilityTable,json.set("",
@@ -413,8 +408,8 @@
 			]
 
 			[h,if(CheckPassed):
-				checkResultText = "<span style='color:"+HealingColor+"'>Success</span>";
-				checkResultText = "<span style='color:"+DamageColor+"'>Failure</span>"
+				checkResultText = "<span style='color:%{SuccessTextColor}'>Success</span>";
+				checkResultText = "<span style='color:%{FailureTextColor}'>Failure</span>"
 			]
 
 			[h:abilityTable = json.append(abilityTable,json.set("",

@@ -26,7 +26,8 @@
 	"GM",GMOutput,
 	"Player",PlayerOutput,
 	"MaxColNum",json.get(TableOutputs,"MaxColNum"),
-	"ColorData",BorderData
+	"ColorData",BorderData,
+	"ParentToken",ParentToken
 )]
 
 [h,MACRO("ChatOutput@Lib:pm.a5e.Core"): ChatOutputData]

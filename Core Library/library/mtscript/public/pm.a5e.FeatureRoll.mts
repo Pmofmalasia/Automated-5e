@@ -11,7 +11,6 @@
 	[h:pm.AdvantageBalance = 0]
 }]
 [h:pm.a5e.FeatureComponentStdVars(arg(0))]
-[h:DamageColor = pm.DamageColor()]
 
 [h,if(json.type(pm.baseDieSize)=="OBJECT"),CODE:{
 	[h:pm.PassiveFunction("DieSize",json.set("","SpecificFeature",json.get(pm.baseDieSize,"Name")+json.get(pm.baseDieSize,"Class")+json.get(pm.baseDieSize,"Subclass"),"ParentToken",ParentToken))]
@@ -44,7 +43,7 @@
 			"ShowIfCondensed",1,
 			"Header","Roll"+if(pm.ExtraRolls>0," #"+(roll.count+1),""),
 			"FalseHeader","",
-			"FullContents","<b><span style='color:"+DamageColor+"; font-size:1.5em'>"+json.get(pm.MiscRoll,"Total")+"</span></b>",
+			"FullContents","<b><span style='color:%{DamageTextColor}; font-size:1.5em'>"+json.get(pm.MiscRoll,"Total")+"</span></b>",
 			"RulesContents",if(pm.baseDieNum==0,"",pm.baseDieNum+"d"+pm.baseDieSize+pm.PlusMinus(pm.baseBonus,0)+" = "),
 			"RollContents",if(or(pm.baseDieNum==0,and(pm.baseDieNum==1,pm.baseBonus==0)),"",json.get(pm.MiscRoll,"String")+" = "),
 			"DisplayOrder","['Rules','Roll','Full']")

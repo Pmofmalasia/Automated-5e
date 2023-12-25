@@ -230,12 +230,6 @@
 [h:AllAttacksDmg = "[]"]
 [h:AllAttacksSubeffects = "[]"]
 
-[h:DamageColor = pm.DamageColor()]
-[h:HealingColor = pm.HealingColor()]
-[h:CritColor = pm.CritColor()]
-[h:CritFailColor = pm.CritFailColor()]
-[h:LinkColor = pm.LinkColor()]
-
 [h:SafeAttackCounter = 0]
 [h,count(AttackCount),CODE:{
 	[h:thisAttackData = wa.Data]
@@ -336,7 +330,7 @@
 
 	[h,if(thisAttackAdvDis == 0),CODE:{
 		[h:ToHitTableLine = json.set(ToHitTableLine,
-			"BonusBody1","Reroll: <a href = '"+wa.AdvRerollLink+"'><span style = 'color:"+LinkColor+"'>Adv.</span></a> / <a href = '"+wa.DisRerollLink+"'><span style = 'color:"+LinkColor+"'>Dis.</span></a>"
+			"BonusBody1","Reroll: <a href = '"+wa.AdvRerollLink+"'><span style = 'color:%{LinkTextColor}'>Adv.</span></a> / <a href = '"+wa.DisRerollLink+"'><span style = 'color:%{LinkTextColor}'>Dis.</span></a>"
 		)]
 	};{
 		[h:extraRollsDisplay = ""]
@@ -351,7 +345,7 @@
 		"ShowIfCondensed",1,
 		"Header","Attack Roll",
 		"FalseHeader","",
-		"FullContents","<span style='"+if(thisAttackCrit,"font-size:2em; color:"+CritColor,if(thisAttackCritFail,"font-size:2em; color:"+CritFailColor,"font-size:1.5em"))+"'>"+thisAttackToHit+"</span>",
+		"FullContents","<span style='"+if(thisAttackCrit,"font-size:2em; color:%{CritTextColor}",if(thisAttackCritFail,"font-size:2em; color:%{CritFailTextColor}","font-size:1.5em"))+"'>"+thisAttackToHit+"</span>",
 		"RulesContents","<span "+if(!json.isEmpty(thisAttackAdvantageMessages),"title='"+pm.a5e.CreateDisplayList(thisAttackAdvantageMessages,"and")+"'","")+">"+json.get(thisAttackData,"FormulaPrefix")+thisAttackToHitRules+"</span> = ",
 		"RollContents",thisAttackFinalRoll+thisAttackToHitStr+" = ",
 		"DisplayOrder","['Rules','Roll','Full']",
@@ -375,7 +369,7 @@
 			"ShowIfCondensed",1,
 			"Header",json.get(tempDamageInstance,"DamageType")+" Damage",
 			"FalseHeader","",
-			"FullContents","<span style='"+if(thisAttackCrit,"font-size:2em; color:"+CritColor,"font-size:1.5em")+"'>"+if(thisAttackCrit,thisAttackCritDmg,thisAttackDmg)+"</span>",
+			"FullContents","<span style='"+if(thisAttackCrit,"font-size:2em; color:%{CritTextColor}","font-size:1.5em")+"'>"+if(thisAttackCrit,thisAttackCritDmg,thisAttackDmg)+"</span>",
 			"RulesContents",if(thisAttackCrit,thisAttackCritDmgRules,thisAttackDmgRules)+" = ",
 			"RollContents",if(thisAttackCrit,thisAttackCritDmgStr,thisAttackDmgStr)+" = ",
 			"DisplayOrder","['Rules','Roll','Full']"
@@ -432,7 +426,7 @@
 		[h,foreach(hand,CurrentHeldItems): thisWeaponHand = if(json.get(weapon,"ItemID") == hand,roll.count,thisWeaponHand)]
 		[h:thisWeaponIsLight = json.contains(json.get(weapon,"WeaponProperties"),"Light")]
 		[h,if(thisWeaponIsLight): thisWeaponLink = macroLinkText("SingleAttack@Lib:pm.a5e.Core","self-gm",json.set("","Hand",thisWeaponHand,"ParentToken",ParentToken,"AttackNum",-1,"IsTooltip",0,"TwoWeaponFighting",1),ParentToken)]
-		[h,if(thisWeaponIsLight): TwoHandedLinks = listAppend(TwoHandedLinks,"<a href = '"+thisWeaponLink+"'><span style = 'color:"+LinkColor+"'>"+json.get(weapon,"DisplayName")+"</span></a>", " / ")]
+		[h,if(thisWeaponIsLight): TwoHandedLinks = listAppend(TwoHandedLinks,"<a href = '"+thisWeaponLink+"'><span style = 'color:%{LinkTextColor}'>"+json.get(weapon,"DisplayName")+"</span></a>", " / ")]
 	}]
 				
 	[h,if(TwoHandedLinks != ""): abilityTable = json.append(abilityTable,json.set("",

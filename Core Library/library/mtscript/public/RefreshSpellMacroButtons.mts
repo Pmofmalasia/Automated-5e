@@ -82,8 +82,7 @@
 
 	[h:pm.NewMacroTooltip = '[h:Flavor=""][h:BorderColorOverride=""][h:TitleFontColorOverride=""][h:tooltipDisplaySizeOverride=""][h:TitleFont=""][h:BodyFont=""][h:ForcedClass=""][h:needsSplitGMOutput=0][h:placeholdToAdd=""][h:TooltipData = json.set("","Flavor",Flavor,"Spell","'+tempSpell+'","ParentToken",currentToken(),"BorderColorOverride",BorderColorOverride,"TitleFontColorOverride",TitleFontColorOverride,"tooltipDisplaySizeOverride",tooltipDisplaySizeOverride,"TitleFont",TitleFont,"BodyFont",BodyFont,"ForcedClass",ForcedClass,"needsSplitGMOutput",needsSplitGMOutput,"IsTooltip",1,"placeholdToAdd",placeholdToAdd)][h,MACRO("SpellTooltipBorder@Lib:pm.a5e.Core"): TooltipData]']
 
-	[h:"<!-- TODO: Source is temporarily set to Arcane permanently until Divine is implemented -->"]
-	[h:DefaultDisplayData = pm.SpellColors(json.set("","Level",string(json.get(SpellData,"Level")),"Source",MagicSource))]
+	[h:DefaultDisplayData = pm.a5e.BorderColors("zzSpell",json.set("","Level",string(json.get(SpellData,"Level")),"Source",MagicSource),ParentToken)]
 	[h:BorderColor = json.get(DefaultDisplayData,"Border")]
 	[h:TextColor = json.get(DefaultDisplayData,"Title")]
 

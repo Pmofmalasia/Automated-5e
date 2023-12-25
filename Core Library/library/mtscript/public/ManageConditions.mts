@@ -1,4 +1,4 @@
-[h:ItemsWithConditions = json.path.read(getProperty("a5e.stat.Inventory"),"[*][?(@.ItemConditions != null && @.ItemConditions != '')]","DEFAULT_PATH_LEAF_TO_NULL")]
+[h:ItemsWithConditions = json.path.read(getProperty("a5e.stat.Inventory"),"\$[*][?(@.ItemConditions != null && @.ItemConditions != '')]","DEFAULT_PATH_LEAF_TO_NULL")]
 
 [h:cn.Input = " junkVar | -------------- Manage Active Conditions -------------- |  | LABEL | SPAN=TRUE ## ClearAllTest |  | Remove all active "+if(json.isEmpty(ItemsWithConditions),"","non-item ")+"conditions | CHECK "]
 
@@ -48,7 +48,7 @@
 [h:FeatureDescription = pm.a5e.CreateDisplayList(cn.RemovedList,"and")+" deactivated by the GM."]
 
 [h:BorderData = json.set("",
-	"Flavor",Flavor,
+	"Flavor","",
 	"Name","ConditionManagement",
 	"DisplayName","Condition Management",
 	"FalseName","",
@@ -56,7 +56,7 @@
 	"ColorSubtype",""
 )]
 [h:AllOutputComponents = json.set("",
-	"ParentToken",ParentToken,
+	"ParentToken",currentToken(),
 	"needsSplitGMOutput",(getProperty("a5e.stat.Allegiance") == "Enemy"),
 	"BorderData",BorderData,
 	"Table",abilityTable,

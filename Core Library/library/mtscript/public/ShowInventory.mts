@@ -2,14 +2,10 @@
 [h:ParentToken = json.get(ShowInventoryData,"ParentToken")]
 [h:CurrentInventory = getProperty("a5e.stat.Inventory")]
 
-[h:pm.TooltipBorder(json.set("",
-    "Class","zzWeaponAttack",
-    "Name","Inventory",
-    "DisplayName","Inventory"
-))]
 [h:TableCellFormat = "<td style='text-align:center; padding-left:4px'>"]
 
-[h:InventoryHTML = "<tr><th style = '"+FrameAccentFormat+"'>Item<input type='hidden' id='ParentToken' name='ParentToken' value='"+ParentToken+"'></th><th style = '"+FrameAccentFormat+"'>Number</th><th style = '"+FrameAccentFormat+"'>Weight</th><th style = '"+FrameAccentFormat+"'>Use?</th></tr>"]
+[h:"<!-- TODO: Rework following colors to be adjustable -->"]
+[h:InventoryHTML = "<tr><th style = 'text-align:center; background-color:#504A40; color#FAF9F7; width:120px;'>Item<input type='hidden' id='ParentToken' name='ParentToken' value='"+ParentToken+"'></th><th style = 'text-align:center; background-color:#504A40; color#FAF9F7; width:120px;'>Number</th><th style = 'text-align:center; background-color:#504A40; color#FAF9F7; width:120px;'>Weight</th><th style = 'text-align:center; background-color:#504A40; color#FAF9F7; width:120px;'>Use?</th></tr>"]
 
 [h:TotalWeight = 0]
 [h,foreach(tempItem,CurrentInventory),CODE:{
@@ -60,7 +56,7 @@
 	[h:TotalWeight = TotalWeight + tempTotalWeight]
 }]
 
-[h:InventoryHTML = InventoryHTML + "<tr ondrop='dropItem(event)' ondragover='allowDrop(event)'><th style = '"+FrameAccentFormat+"'>Weight Data</th><th style = '"+FrameAccentFormat+"'>Total Carried</th><th style = '"+FrameAccentFormat+"'>Carry Capacity</th><th style = '"+FrameAccentFormat+"'>Push Capacity</th></tr>"]
+[h:InventoryHTML = InventoryHTML + "<tr ondrop='dropItem(event)' ondragover='allowDrop(event)'><th style = 'text-align:center; background-color:#504A40; color#FAF9F7; width:120px;'>Weight Data</th><th style = 'text-align:center; background-color:#504A40; color#FAF9F7; width:120px;'>Total Carried</th><th style = 'text-align:center; background-color:#504A40; color#FAF9F7; width:120px;'>Carry Capacity</th><th style = 'text-align:center; background-color:#504A40; color#FAF9F7; width:120px;'>Push Capacity</th></tr>"]
 
 [h:WeightData = stat.a5e.CarryCapacity(json.set("","ParentToken",ParentToken))]
 [h:totalWeightNeedsRounding = (TotalWeight != floor(TotalWeight))]

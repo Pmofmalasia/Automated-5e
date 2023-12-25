@@ -20,9 +20,6 @@
 	[h:damTarget = ""]
 }]
 
-[h:DamageColor = pm.DamageColor()]
-[h:HealingColor = pm.HealingColor()]
-
 [h,if(json.type(pm.baseDieSize)=="OBJECT"),CODE:{
 	[h:pm.PassiveFunction("DieSize",json.set("","SpecificFeature",json.get(pm.baseDieSize,"Name")+json.get(pm.baseDieSize,"Class")+json.get(pm.baseDieSize,"Subclass"),"ParentToken",ParentToken))]
 };{}]
@@ -72,7 +69,7 @@
 		"ShowIfCondensed",1,
 		"Header",DamageTypeDisplay+if(or(pm.DamageType=="Healing",pm.DamageType=="TempHP"),""," Damage"),
 		"FalseHeader","",
-		"FullContents","<b><span style='color:"+if(or(pm.DamageType=="Healing",pm.DamageType=="TempHP"),HealingColor,DamageColor)+"; font-size:1.5em'>"+json.get(pm.DamageRoll,if(damIsCrit,"Crit","")+"Total")+"</span></b>",
+		"FullContents","<b><span style='color:"+if(or(pm.DamageType=="Healing",pm.DamageType=="TempHP"),"%{HealingTextColor}","%{DamageTextColor}")+"; font-size:1.5em'>"+json.get(pm.DamageRoll,if(damIsCrit,"Crit","")+"Total")+"</span></b>",
 		"RulesContents",if(json.get(pm.DamageRoll,if(damIsCrit,"Crit","")+"Formula")=="","",json.get(pm.DamageRoll,if(damIsCrit,"Crit","")+"Formula")+" = "),
 		"RollContents",if(or(pm.baseDieNum==0,and(pm.baseDieNum==1,pm.DamageBonus==0)),"",json.get(pm.DamageRoll,if(damIsCrit,"Crit","")+"String")+" = "),
 		"DisplayOrder","['Rules','Roll','Full']"

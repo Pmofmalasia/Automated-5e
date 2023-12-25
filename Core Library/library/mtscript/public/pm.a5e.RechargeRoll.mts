@@ -18,12 +18,12 @@
 	"ShowIfCondensed",1,
 	"Header","Recharge Roll",
 	"FalseHeader","",
-	"FullContents","<b><span style='color:"+if(RollSuccess,pm.HealingColor(),pm.DamageColor())+"; font-size:1.5em'>"+json.get(RollData,"Total")+"</span></b>",
+	"FullContents","<b><span style='color:"+if(RollSuccess,"%{SuccessTextColor}","%{FailureTextColor}")+"; font-size:1.5em'>"+json.get(RollData,"Total")+"</span></b>",
 	"RulesContents",1+"d"+json.get(RechargeRollInfo,"DieSize")+" = ",
 	"RollContents",json.get(RollData,"String")+" = ",
 	"DisplayOrder","['Rules','Roll','Full']"
 ))]
 
-[h,if(RollSuccess): setProperty("a5e.stat.AllFeatures",json.path.set(getProperty("a5e.stat.AllFeatures"),"[*][?("+pm.a5e.PathFeatureFilter(RechargeFeature)+")]['Resource']",evalMacro(json.get(RechargeFeature,"MaxResource"))))]
+[h,if(RollSuccess): setProperty("a5e.stat.AllFeatures",json.path.set(getProperty("a5e.stat.AllFeatures"),"\$[*][?("+pm.a5e.PathFeatureFilter(RechargeFeature)+")]['Resource']",evalMacro(json.get(RechargeFeature,"MaxResource"))))]
 
 [h:macro.return = json.set("","Table",abilityTable)]

@@ -1,5 +1,6 @@
 [h:abilityTable = ""]
 [h:tooltipData = macro.args]
+[h:ParentToken = json.get(tooltipData,"ParentToken")]
 
 [h,foreach(TempAttribute,pm.GetAttributes()),CODE:{
 	[h:ProfType = json.get(getProperty("a5e.stat.Saves"),json.get(TempAttribute,"Name"))]
@@ -21,19 +22,21 @@
 	))]
 }]
 
-[h:ClassFeatureData = json.set("",
-	"needsSplitGMOutput",json.get(tooltipData,"needsSplitGMOutput"),
-	"BorderColorOverride",json.get(tooltipData,"BorderColorOverride"),
-	"TitleFontColorOverride",json.get(tooltipData,"TitleFontColorOverride"),
-	"AccentBackgroundOverride",json.get(tooltipData,"AccentBackgroundOverride"),
-	"AccentTextOverride",json.get(tooltipData,"AccentTextOverride"),
-	"TitleFont",json.get(tooltipData,"TitleFont"),
-	"BodyFont",json.get(tooltipData,"BodyFont"),
-	"Class","zzChecksAndSaves",
-	"Name","",
+[h:BorderData = json.set("",
+	"Name","SaveBonuses",
 	"DisplayName","Save Bonuses",
-	"Effect","",
-	"abilityTable",abilityTable
+	"FalseName","",
+	"DisplayClass","zzChecksAndSaves",
+	"ColorSubtype",""
 )]
-
-[r:pm.TooltipOutput(ClassFeatureData)]
+[h:TooltipOutputComponents = json.set("",
+	"ParentToken",ParentToken,
+	"needsSplitGMOutput",(getProperty("a5e.stat.Allegiance") == "Enemy"),
+	"BorderData",BorderData,
+	"Table",abilityTable,
+	"ShowFullRulesType",json.append("","Save","ChecksAndSaves"),
+	"OutputTargets","",
+	"Description","",
+	"AbridgedDescription",""
+)]
+[r,MACRO("GatherTooltipComponents@Lib:pm.a5e.Core"): TooltipOutputComponents]

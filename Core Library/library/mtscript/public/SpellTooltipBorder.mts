@@ -14,14 +14,21 @@
 [h:SpellDescription = json.get(macro.return,"Description")]
 [h:SpellDisplayName = json.get(macro.return,"DisplayName")]
 
-[h:ClassFeatureData = json.set("",
-    "needsSplitGMOutput",needsSplitGMOutput,
-    "Class","Spell",
-    "DisplayClass","zzSpell",
-    "ColorSubtype",json.set("","Source",SpellSource,"Level",SpellLevel),
-    "Name",pm.RemoveSpecial(SpellName),
-    "DisplayName",SpellDisplayName,
-    "Effect",SpellDescription,
-    "abilityTable",json.remove(abilityTable,0)
+[h:BorderData = json.set("",
+	"Name",SpellName,
+	"DisplayName",SpellDisplayName,
+	"FalseName","Spellcasting",
+	"DisplayClass","zzSpell",
+	"ColorSubtype",json.set("","Source",SpellSource,"Level",SpellLevel)
 )]
-[r:pm.TooltipOutput(ClassFeatureData)]
+[h:TooltipOutputComponents = json.set("",
+	"ParentToken",ParentToken,
+	"needsSplitGMOutput",needsSplitGMOutput,
+	"BorderData",BorderData,
+	"Table",json.remove(abilityTable,0),
+	"ShowFullRulesType",json.append("",SpellName,"Spell"),
+	"OutputTargets","",
+	"Description",SpellDescription,
+	"AbridgedDescription",SpellDescription
+)]
+[r,MACRO("GatherTooltipComponents@Lib:pm.a5e.Core"): TooltipOutputComponents]

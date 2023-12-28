@@ -263,15 +263,8 @@
 [h:defineFunction("pm.a5e.FeatureTooltipCall","pm.a5e.FeatureTooltipCall@Lib:pm.a5e.Core",0,0)]
 [h:defineFunction("pm.a5e.FeatureFormatCall","pm.a5e.FeatureFormatCall@Lib:pm.a5e.Core",0,0)]
 [h:defineFunction("pm.a5e.CreateDisplayList","pm.a5e.CreateDisplayList@Lib:pm.a5e.Core")]
-[h:defineFunction("pm.a5e.SpellColors","pm.a5e.SpellColors@Lib:pm.a5e.Core")]
-[h:defineFunction("pm.a5e.TitleColors","pm.a5e.TitleColors@Lib:pm.a5e.Core")]
 
 [h:defineFunction("pm.ErrorFormat","pm.ErrorFormat@Lib:pm.a5e.Core",0,0)]
-
-[h:defineFunction("pm.TooltipBorder","pm.TooltipBorder@Lib:pm.a5e.Core",1,0)]
-[h:defineFunction("pm.TooltipOutput","pm.TooltipOutput@Lib:pm.a5e.Core")]
-[h:defineFunction("pm.TooltipVars","pm.TooltipVars@Lib:pm.a5e.Core",1,0)]
-[h:defineFunction("pm.AbilityTableTooltip","pm.AbilityTableTooltip@Lib:pm.a5e.Core",1,0)]
 
 [h:"<!-- Functions for Spells -->"]
 [h:defineFunction("pm.a5e.SpellFilter","pm.a5e.SpellFilter@Lib:pm.a5e.Core")]

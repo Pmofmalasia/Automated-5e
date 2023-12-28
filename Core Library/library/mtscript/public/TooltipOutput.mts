@@ -34,26 +34,13 @@
 
 [h:GMOutput = "<html>"+GMOutput+"</html>"]
 [h:PlayerOutput = "<html>"+PlayerOutput+"</html>"]
-
-[h:broadcast(strformat(GMOutput))]
-
-[r,frame5("Ability Info"):{[r:strformat(GMOutput)]}]
-[h:return(0)]
-
-[h:'<html>'+'</html>']
+[h,if(isGM()):
+	FinalOutput = GMOutput;
+	FinalOutput = PlayerOutput
+]
 
 [r,if(isTooltipFrame && TooltipPermission),CODE:{
-	[r,if(isGM()),CODE:{
-		[r,frame5("Ability Info"):{[r:strformat(GMOutput)]}]
-	};{
-		[r,frame5("Ability Info"):{[r:strformat(PlayerOutput)]}]
-	}]
+	[h:html.frame5("Ability Info","lib://pm.a5e.core/TooltipFrame.html?cachelib=false","value="+base64.encode(strformat(FinalOutput))+"; closebutton=0; height=300")]
 };{}]
 
-[r,if(isTooltipMouseover && TooltipPermission),CODE:{
-	[r,if(isGM()),CODE:{
-		[r:strformat('<html>'+GMOutput+'</html>')]
-	};{
-		[r:strformat('<html>'+PlayerOutput+'</html>')]
-	}]
-};{}]
+[r,if(isTooltipMouseover && TooltipPermission): strformat(FinalOutput)]

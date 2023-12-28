@@ -35,7 +35,7 @@
 [h:AccentFormat = "text-align:center; background-color:"+AccentBackground+"; color:"+AccentText+";" + if(isVertical,"width:100%"," width:20%;")]
 [h:VerticalFormat = if(isVertical,"</th></tr><tr style='text-align:center;'><td style='","</th><td style='padding-left:4px; valign:middle;")]
 [h:VerticalFormatFinalBonus = if(isVertical,"</td></tr><tr style='text-align:center;'><td style='","</td><td style='padding-left:4px; valign:middle; text-align:right")]
-[h:ColNumFormat = if(isVertical,"; colspan='"+MaxColNum+"'","")]
+[h:ColNumFormat = if(isVertical,"","; colspan='"+MaxColNum+"'")]
 [h:VerticalListFormat = if(isVertical,"<br>",", ")]
 
 [h:"<!-- Note: switch is used here because in the past there were options to limit to max-width as well (doesn't work with this version of CSS though). Leaving it for the future in case options are reintroduced. -->"]
@@ -43,4 +43,4 @@
 	case 0: TableWidth = "width:"+string(json.get(tempOutputSettings,"DisplaySize"))+"px;";
 	case 1: TableWidth = ""
 ]
-[h:TableFormat = "padding:3px; "+if(isVertical,"width:100%; ",TableWidth)+"color: %{BackgroundTextColor}"]
+[h:TableFormat = "color:"+BackgroundTextColor+"; padding:3px; "+if(isVertical,"width:100%; ",TableWidth)]

@@ -1,5 +1,6 @@
 [h:abilityTable = ""]
 [h:tooltipData = macro.args]
+[h:ParentToken = json.get(tooltipData,"ParentToken")]
 
 [h,foreach(TempSkill,pm.GetSkills()),CODE:{
 	[h:ProfType = json.get(getProperty("a5e.stat.Skills"),json.get(TempSkill,"Name"))]
@@ -31,19 +32,21 @@
 	"DisplayOrder","['Rules','Roll','Full']"
 ))]
 
-[h:ClassFeatureData = json.set("",
-	"needsSplitGMOutput",json.get(tooltipData,"needsSplitGMOutput"),
-	"BorderColorOverride",json.get(tooltipData,"BorderColorOverride"),
-	"TitleFontColorOverride",json.get(tooltipData,"TitleFontColorOverride"),
-	"AccentBackgroundOverride",json.get(tooltipData,"AccentBackgroundOverride"),
-	"AccentTextOverride",json.get(tooltipData,"AccentTextOverride"),
-	"TitleFont",json.get(tooltipData,"TitleFont"),
-	"BodyFont",json.get(tooltipData,"BodyFont"),
-	"Class","zzChecksAndSaves",
-	"Name","",
+[h:BorderData = json.set("",
+	"Name","SkillBonuses",
 	"DisplayName","Skill Bonuses",
-	"Effect","",
-	"abilityTable",abilityTable
-	)]
-
-[r:pm.TooltipOutput(ClassFeatureData)]
+	"FalseName","",
+	"DisplayClass","zzChecksAndSaves",
+	"ColorSubtype",""
+)]
+[h:TooltipOutputComponents = json.set("",
+	"ParentToken",ParentToken,
+	"needsSplitGMOutput",(getProperty("a5e.stat.Allegiance") == "Enemy"),
+	"BorderData",BorderData,
+	"Table",abilityTable,
+	"ShowFullRulesType",json.append("","Check","ChecksAndSaves"),
+	"OutputTargets","",
+	"Description","",
+	"AbridgedDescription",""
+)]
+[r,MACRO("GatherTooltipComponents@Lib:pm.a5e.Core"): TooltipOutputComponents]

@@ -13,7 +13,30 @@
 	"VerticalDisplay",1,
 	"UseWidth",0,
 	"DarkMode",1,
-	"ChatColors",'{"DarkBackground":"#27241D","DarkText":"#FAF9F7","DarkAccentBackground":"#504A40","DarkAccentText":"#FAF9F7","DarkDamageText":"#AA2222","DarkHealingText":"#22AA22","DarkFailureText":"#AA2222","DarkSuccessText":"#22AA22","DarkCritText":"#AA2222","DarkCritFailText":"#00B8D9","DarkLinkColor":"#FF0000","LightBackground":"#FAF9F7","LightText":"#27241D","LightAccentBackground":"#D3CEC4","LightAccentText":"#27241D","LightDamageText":"#AA2222","LightHealingText":"#22AA22","LightFailureText":"#AA2222","LightSuccessText":"#22AA22","LightCritText":"#AA2222","LightCritFailText":"#00B8D9","LightLinkColor":"#303F9F"}',
+	"ChatColors",'{
+		"DarkBackground":"#27241D",
+		"DarkText":"#FAF9F7",
+		"DarkAccentBackground":"#504A40",
+		"DarkAccentText":"#FAF9F7",
+		"DarkDamageText":"#AA2222",
+		"DarkHealingText":"#22AA22",
+		"DarkFailureText":"#AA2222",
+		"DarkSuccessText":"#22AA22",
+		"DarkCritText":"#AA2222",
+		"DarkCritFailText":"#00B8D9",
+		"DarkLinkColor":"#FF0000",
+		"LightBackground":"#FAF9F7",
+		"LightText":"#27241D",
+		"LightAccentBackground":"#D3CEC4",
+		"LightAccentText":"#27241D",
+		"LightDamageText":"#AA2222",
+		"LightHealingText":"#22AA22",
+		"LightFailureText":"#AA2222",
+		"LightSuccessText":"#22AA22",
+		"LightCritText":"#AA2222",
+		"LightCritFailText":"#00B8D9",
+		"LightLinkColor":"#303F9F"
+	}',
 	"BorderColors",BorderColors,
 	"TitleColors",TitleColors,
 	"BodyFont","Default",
@@ -35,94 +58,47 @@
 [h:data.setData("addon:","pm.a5e.core","TooltipSettings",defaultTooltipSettings)]
 [h:data.setData("addon:","pm.a5e.core","PlayerTooltipSettings","{}")]
 
-[h:setLibProperty("FontOptions","Default,Century Gothic,Comic Sans MS,Courier New,Georgia,Lucida Bright,Papyrus,Tahoma,Times New Roman,Trebuchet MS,Verdana,Custom","Lib:pm.a5e.Core")]
-[h:setLibProperty("AuraOptions","Green,Red,White,Orange,Yellow,Blue,Purple,Black","Lib:pm.a5e.Core")]
-[h:setLibProperty("FullSpellRules",0,"Lib:pm.a5e.Core")]
-[h:setLibProperty("ChatIndividual",0,"Lib:pm.a5e.Core")]
-[h:setLibProperty("HideAllyMacros",0,"Lib:pm.a5e.Core")]
-[h:setLibProperty("HideEnemyMacros",2,"Lib:pm.a5e.Core")]
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-[h:setLibProperty("TooltipFrame",'{"Default":1}',"Lib:pm.a5e.Core")]
-[h:setLibProperty("TooltipMouseover",'{"Default":0}',"Lib:pm.a5e.Core")]
-[h:setLibProperty("TooltipDarkMode",'{"Default":1}',"Lib:pm.a5e.Core")]
-[h:setLibProperty("TooltipDisplaySize",'{"Default":500}',"Lib:pm.a5e.Core")]
-[h:setLibProperty("TooltipDisplayType",'{"Default":0}',"Lib:pm.a5e.Core")]
-[h:setLibProperty("TooltipVertical",'{"Default":0}',"Lib:pm.a5e.Core")]
-[h:setLibProperty("TooltipDarkBackground",'{"Default":"#27241D"}',"Lib:pm.a5e.Core")]
-[h:setLibProperty("TooltipDarkText",'{"Default":"#FAF9F7"}',"Lib:pm.a5e.Core")]
-[h:setLibProperty("TooltipDarkAccent",'{"Default":"#504A40"}',"Lib:pm.a5e.Core")]
-[h:setLibProperty("TooltipDarkAccentText",'{"Default":"#FAF9F7"}',"Lib:pm.a5e.Core")]
-[h:setLibProperty("TooltipLightBackground",'{"Default":"#FAF9F7"}',"Lib:pm.a5e.Core")]
-[h:setLibProperty("TooltipLightText",'{"Default":"#27241D"}',"Lib:pm.a5e.Core")]
-[h:setLibProperty("TooltipLightAccent",'{"Default":"#D3CEC4"}',"Lib:pm.a5e.Core")]
-[h:setLibProperty("TooltipLightAccentText",'{"Default":"#27241D"}',"Lib:pm.a5e.Core")]
-[h:setLibProperty("TooltipTitleFont",'{"Default":""}',"Lib:pm.a5e.Core")]
-[h:setLibProperty("TooltipBodyFont",'{"Default":""}',"Lib:pm.a5e.Core")]
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+[h:data.setData("addon:","pm.a5e.core","FontOptions",json.append("","Default","Century Gothic","Comic Sans MS","Courier New","Georgia","Lucida Bright","Papyrus","Tahoma","Times New Roman","Trebuchet MS","Verdana","Custom"))]
+[h:data.setData("addon:","pm.a5e.core","AuraOptions",json.append("","Green","Red","White","Orange","Yellow","Blue","Purple","Black"))]
+[h:data.setData("addon:","pm.a5e.core","FullSpellRules",0)]
+[h:data.setData("addon:","pm.a5e.core","ChatIndividual",0)]
+[h:data.setData("addon:","pm.a5e.core","HideAllyMacros",0)]
+[h:data.setData("addon:","pm.a5e.core","HideEnemyMacros",2)]
 
 [h:data.setData("addon:","pm.a5e.core","gd.RandomEncounterSettings",'{"BaseChance":5,"AccumulatedChance":0,"MaxChance":"15","ChanceIncrement":1}')]
 
-[h:setLibProperty("ms.Sources",'[{"DisplayName":"Systems Reference Document","Name":"SystemsReferenceDocument","Library":"SRD","Banned":0},{"DisplayName":"Automated 5th Edition","Name":"Automated5thEdition","Library":"A5E","Banned":0}]',"Lib:pm.a5e.Core")]
-[h:setLibProperty("sb.Attributes",'[]',"Lib:pm.a5e.Core")]
-[h:setLibProperty("sb.Skills",'[]',"Lib:pm.a5e.Core")]
-[h:setLibProperty("sb.Tools",'[]',"Lib:pm.a5e.Core")]
-[h:setLibProperty("sb.ToolTypes",'[]',"Lib:pm.a5e.Core")]
-[h:setLibProperty("sb.Backgrounds",'[]',"Lib:pm.a5e.Core")]
-[h:setLibProperty("sb.Classes",'[]',"Lib:pm.a5e.Core")]
-[h:setLibProperty("sb.Subclasses",'[]',"Lib:pm.a5e.Core")]
-[h:setLibProperty("sb.Races",'[]',"Lib:pm.a5e.Core")]
-[h:setLibProperty("sb.Subraces",'[]',"Lib:pm.a5e.Core")]
-[h:setLibProperty("sb.CreatureTypes",'[]',"Lib:pm.a5e.Core")]
-[h:setLibProperty("sb.Languages",'[]',"Lib:pm.a5e.Core")]
-[h:setLibProperty("sb.Abilities",'[]',"Lib:pm.a5e.Core")]
-[h:setLibProperty("sb.AbilityUpdates",'[]',"Lib:pm.a5e.Core")]
-[h:setLibProperty("sb.Conditions",'[]',"Lib:pm.a5e.Core")]
-[h:setLibProperty("sb.Feats",'[]',"Lib:pm.a5e.Core")]
-[h:setLibProperty("sb.DamageTypes",'[]',"Lib:pm.a5e.Core")]
-[h:setLibProperty("sb.CastingAbilities",'{}',"Lib:pm.a5e.Core")]
-[h:setLibProperty("sb.ConditionTags",'[]',"Lib:pm.a5e.Core")]
-[h:setLibProperty("sb.DamageTypeTags",'[]',"Lib:pm.a5e.Core")]
-[h:setLibProperty("sb.SpellSchools",'[]',"Lib:pm.a5e.Core")]
-[h:setLibProperty("sb.Spells",'[]',"Lib:pm.a5e.Core")]
-[h:setLibProperty("sb.SpellLists",'{}',"Lib:pm.a5e.Core")]
-[h:setLibProperty("sb.MonsterFeatures",'[]',"Lib:pm.a5e.Core")]
-[h:setLibProperty("sb.CreatureSubtypes",'[]',"Lib:pm.a5e.Core")]
+[h:data.setData("addon:","pm.a5e.core","ms.Sources",'[{"DisplayName":"Systems Reference Document","Name":"SystemsReferenceDocument","Library":"SRD","Banned":0},{"DisplayName":"Automated 5th Edition","Name":"Automated5thEdition","Library":"A5E","Banned":0}]')]
+[h:data.setData("addon:","pm.a5e.core","sb.Attributes",'[]')]
+[h:data.setData("addon:","pm.a5e.core","sb.Skills",'[]')]
+[h:data.setData("addon:","pm.a5e.core","sb.Tools",'[]')]
+[h:data.setData("addon:","pm.a5e.core","sb.ToolTypes",'[]')]
+[h:data.setData("addon:","pm.a5e.core","sb.Backgrounds",'[]')]
+[h:data.setData("addon:","pm.a5e.core","sb.Classes",'[]')]
+[h:data.setData("addon:","pm.a5e.core","sb.Subclasses",'[]')]
+[h:data.setData("addon:","pm.a5e.core","sb.Races",'[]')]
+[h:data.setData("addon:","pm.a5e.core","sb.Subraces",'[]')]
+[h:data.setData("addon:","pm.a5e.core","sb.CreatureTypes",'[]')]
+[h:data.setData("addon:","pm.a5e.core","sb.Languages",'[]')]
+[h:data.setData("addon:","pm.a5e.core","sb.Abilities",'[]')]
+[h:data.setData("addon:","pm.a5e.core","sb.AbilityUpdates",'[]')]
+[h:data.setData("addon:","pm.a5e.core","sb.Conditions",'[]')]
+[h:data.setData("addon:","pm.a5e.core","sb.Feats",'[]')]
+[h:data.setData("addon:","pm.a5e.core","sb.DamageTypes",'[]')]
+[h:data.setData("addon:","pm.a5e.core","sb.CastingAbilities",'{}')]
+[h:data.setData("addon:","pm.a5e.core","sb.ConditionTags",'[]')]
+[h:data.setData("addon:","pm.a5e.core","sb.DamageTypeTags",'[]')]
+[h:data.setData("addon:","pm.a5e.core","sb.SpellSchools",'[]')]
+[h:data.setData("addon:","pm.a5e.core","sb.Spells",'[]')]
+[h:data.setData("addon:","pm.a5e.core","sb.SpellLists",'{}')]
+[h:data.setData("addon:","pm.a5e.core","sb.MonsterFeatures",'[]')]
+[h:data.setData("addon:","pm.a5e.core","sb.CreatureSubtypes",'[]')]
 
-[h:setLibProperty("LanguageOptions",'{"Standard":1,"Exotic":1,"Monstrous":0,"Secret":0}',"Lib:pm.a5e.Core")]
-[h:setLibProperty("LanguageSourcebooks",'{}',"Lib:pm.a5e.Core")]
-[h:setLibProperty("AttributeSourcebooks",'{}',"Lib:pm.a5e.Core")]
-[h:setLibProperty("BackgroundSourcebooks",'{}',"Lib:pm.a5e.Core")]
+[h:data.setData("addon:","pm.a5e.core","LanguageOptions",'{"Standard":1,"Exotic":1,"Monstrous":0,"Secret":0}')]
+[h:data.setData("addon:","pm.a5e.core","LanguageSourcebooks",'{}')]
+[h:data.setData("addon:","pm.a5e.core","AttributeSourcebooks",'{}')]
+[h:data.setData("addon:","pm.a5e.core","BackgroundSourcebooks",'{}')]
 
-[h:setLibProperty("gd.Effects",'[]',"Lib:pm.a5e.Core")]
+[h:data.setData("addon:","pm.a5e.core","gd.Effects",'[]')]
 
 [broadcast("First-time setup complete.")]
 [h:"<!-- TODO: Add link to Gather Sourcebook Effects here since it cannot be called in on(First)Init in an addon -->"]

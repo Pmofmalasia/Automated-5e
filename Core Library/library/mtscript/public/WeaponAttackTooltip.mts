@@ -38,18 +38,7 @@
 [h:PrimeStat = if(wa.MeleeRanged=="Ranged","Dexterity","Strength")]
 [h,if(json.get(wa.WeaponUsed,"PrimeStat")!=""): PrimeStat = json.get(wa.WeaponUsed,"PrimeStat")]
 
-[h:BorderColorOverride=json.get(macro.args,"BorderColorOverride")]
-[h:TitleFontColorOverride=json.get(macro.args,"TitleFontColorOverride")]
-[h:TitleFont=json.get(macro.args,"TitleFont")]
-[h:BodyFont=json.get(macro.args,"BodyFont")]
-[h:tooltipDisplaySizeOverride=json.get(macro.args,"tooltipDisplaySizeOverride")]
-[h:pm.TooltipVars()]
-
-[h:TooltipPermissions=if(or(needsSplitGMOutput==0,isGM()),1,0)]
-
-[h:abilityTable = "[]"]
-
-[h:abilityTable = json.append(abilityTable,json.set("",
+[h:abilityTable = json.append("[]",json.set("",
 	"ShowIfCondensed",1,
 	"Header","To Hit",
 	"FullContents","",

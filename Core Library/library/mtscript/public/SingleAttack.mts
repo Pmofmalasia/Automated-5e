@@ -47,17 +47,24 @@
 	[h:abilityTable = json.get(macro.return,"Table")]
 	[h:AttackDescription = json.get(macro.return,"Description")]
 
-	[h:ClassFeatureData = json.set("",
-		"Flavor",json.get(WeaponData,"Flavor"),
+	[h:BorderData = json.set("",
+		"Name","CurrentWeapon:"+if(ThrowWeapon,"Throwing ","")+json.get(WeaponData,"Name"),
+		"DisplayName","Current Weapon: "+if(ThrowWeapon,"Throwing ","")+json.get(WeaponData,"DisplayName"),
+		"FalseName","Weapon Attack",
+		"DisplayClass","zzWeaponAttack",
+		"ColorSubtype",""
+	)]
+	[h:TooltipOutputComponents = json.set("",
 		"ParentToken",ParentToken,
 		"needsSplitGMOutput",(getProperty("a5e.stat.Allegiance") == "Enemy"),
-		"Class","zzWeaponAttack",
-		"Name","Current Weapon: "+if(ThrowWeapon,"Throwing ","")+json.get(WeaponData,"DisplayName"),
-		"FalseName","Weapon Attack",
-		"Effect",AttackDescription,
-		"abilityTable",abilityTable
+		"BorderData",BorderData,
+		"Table",abilityTable,
+		"ShowFullRulesType",json.append("","WeaponAttack","Attack","Item"),
+		"OutputTargets","",
+		"Description",AttackDescription,
+		"AbridgedDescription",AttackDescription
 	)]
-	[r:pm.TooltipOutput(ClassFeatureData)]
+	[r,MACRO("GatherTooltipComponents@Lib:pm.a5e.Core"): TooltipOutputComponents]
 };{
 	[h:pm.a5e.EffectData = "[]"]
 

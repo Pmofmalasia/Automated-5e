@@ -40,7 +40,7 @@
 		"ForcedAdvantage",or(AdvantageChoice==0,AdvantageChoice==4),
 		"OutputTargets",outputTargets
 	)]
-	
+
 	[h,MACRO("Check@Lib:pm.a5e.Core"): CheckData]
 	[h:CheckData = macro.return]
 	[h:abilityTable = json.get(CheckData,"Table")]
@@ -66,7 +66,7 @@
 
 	[h,MACRO("GatherOutputComponents@Lib:pm.a5e.Core"): AllOutputComponents]
 };{
-	[h:EffectToResolve = json.get(json.path.read(data.getData("addon:","pm.a5e.core","gd.Effects"),"[*][?(@.ID =='"+EffectIDChoice+"')]"),0)]
+	[h:EffectToResolve = json.get(json.path.read(data.getData("addon:","pm.a5e.core","gd.Effects"),"\$[*][?(@.ID =='"+EffectIDChoice+"')]"),0)]
 
 	[h,MACRO("ResolveEffectsBorder@Lib:pm.a5e.Core"): json.set(EffectToResolve,"SpecificTargets",ParentToken)]
 

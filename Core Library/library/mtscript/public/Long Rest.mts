@@ -67,8 +67,6 @@
 
 [h:pm.PassiveFunction("LongRest")]
 
-[h:ArcaneWard=if(json.get(getProperty("a5e.stat.Subclasses"),"Wizard")=="Abjuration",json.set(ArcaneWard,"HP",0,"Active",0,"Use",1),ArcaneWard)]
-
 [h:state.Dying=if(getProperty("a5e.stat.HP") <= 0, 1, 0)]
 [h:bar.Health = getProperty("a5e.stat.HP") / getProperty("a5e.stat.MaxHP")]
 

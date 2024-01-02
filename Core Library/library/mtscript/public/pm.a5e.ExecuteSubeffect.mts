@@ -11,7 +11,7 @@
 	[h:subeffect.ParentEffectData = json.path.read(pm.a5e.EffectData,"\$[*][?(@.WhichIntrinsicSubeffect == '"+ParentSubeffectNum+"' && @.EffectDeferred == null)]","DEFAULT_PATH_LEAF_TO_NULL")]
 	[h,if(json.isEmpty(subeffect.ParentEffectData)),CODE:{
 		[h:pm.a5e.EffectData = json.path.put(pm.a5e.EffectData,"\$[*][?(@.WhichIntrinsicSubeffect == '"+json.get(SubeffectData,"WhichIntrinsicSubeffect")+"')]","EffectDeferred",1)]
-		[h,return(0,0)]
+		[h:return(0,0)]
 	};{
 		[h:subeffect.ParentEffectData = json.get(subeffect.ParentEffectData,0)]
 	}]
@@ -35,7 +35,7 @@
 	[h:ParentMeetsPrereqs = pm.a5e.ParentSubeffectInitialPrereqs(subeffect.ParentEffectData,ParentSubeffectRequirements)]
 	[h,if(!ParentMeetsPrereqs),CODE:{
 		[h:pm.a5e.EffectData = json.path.put(pm.a5e.EffectData,"\$[*][?(@.WhichIntrinsicSubeffect == '"+json.get(SubeffectData,"WhichIntrinsicSubeffect")+"')]","EffectDeferred",1)]
-		[h,return(0,0)]
+		[h:return(0,0)]
 	}]
 };{
 	[h:UseParentCrit = 0]

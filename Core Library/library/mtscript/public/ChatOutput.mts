@@ -5,16 +5,16 @@
 [h:MaxColNum = json.get(OutputData,"MaxColNum")]
 [h:ParentToken = json.get(OutputData,"ParentToken")]
 
-[h:ColorData = json.get(OutputData,"ColorData")]
-[h:DisplayClass = json.get(ColorData,"DisplayClass")]
-[h:ColorSubtype = json.get(ColorData,"ColorSubtype")]
+[h:BorderData = json.get(OutputData,"BorderData")]
+[h:DisplayClass = json.get(BorderData,"DisplayClass")]
+[h:ColorSubtype = json.get(BorderData,"ColorSubtype")]
 [h:defaultBorderColors = pm.a5e.BorderColors(DisplayClass,ColorSubtype,ParentToken)]
 [h:DefaultChatSettings = data.getData("addon:","pm.a5e.core","ChatSettings")]
 
-[h:BorderColorOverride = json.get(ColorData,"BorderColorOverride")]
-[h:TitleColorOverride = json.get(ColorData,"TitleFontColorOverride")]
-[h:AccentBackgroundOverride = json.get(ColorData,"AccentBackgroundOverride")]
-[h:AccentTextOverride = json.get(ColorData,"AccentTextOverride")]
+[h:BorderColorOverride = json.get(BorderData,"BorderColorOverride")]
+[h:TitleColorOverride = json.get(BorderData,"TitleFontColorOverride")]
+[h:AccentBackgroundOverride = json.get(BorderData,"AccentBackgroundOverride")]
+[h:AccentTextOverride = json.get(BorderData,"AccentTextOverride")]
 
 [h:BorderColor = json.get(defaultBorderColors,"Border")]
 [h:TitleColor = json.get(defaultBorderColors,"Title")]
@@ -27,14 +27,14 @@
 	[h:finalPlayersList = "[]"]
 	[h,foreach(target,OutputTargets),CODE:{
 		[h,switch(target):
-			"gm": addedTargets = "[]";
-			"not-gm": addedTargets = ;
-			"self": addedTargets = json.append("",getPlayerName());
-			"gm-self": addedTargets = json.append("",getPlayerName());
-			"all": addedTargets = allPlayers;
-			"none": addedTargets = "[]";
-			"not-self": addedTargets = json.difference(allPlayers,getPlayerName());
-			"not-gm-self": addedTargets = json.difference(allPlayers,getPlayerName());
+			case "gm": addedTargets = "[]";
+			case "not-gm": addedTargets = allPlayers;
+			case "self": addedTargets = json.append("",getPlayerName());
+			case "gm-self": addedTargets = json.append("",getPlayerName());
+			case "all": addedTargets = allPlayers;
+			case "none": addedTargets = "[]";
+			case "not-self": addedTargets = json.difference(allPlayers,getPlayerName());
+			case "not-gm-self": addedTargets = json.difference(allPlayers,getPlayerName());
 			default: addedTargets = json.append("",target)
 		]
 
@@ -44,6 +44,8 @@
 	[h:finalPlayersList = json.union(finalPlayersList,allGMs)]
 }]
 [h:personalizedChatSettings = data.getData("addon:","pm.a5e.core","PlayerChatSettings")]
+
+[h:switchToken(ParentToken)]
 [h,foreach(player,finalPlayersList),CODE:{
 	[h:playerName = pm.RemoveSpecial(player)]
 	[h,if(json.contains(personalizedChatSettings,playerName)):

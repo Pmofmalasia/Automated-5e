@@ -5,16 +5,16 @@
 [h:MaxColNum = json.get(OutputData,"MaxColNum")]
 [h:ParentToken = json.get(OutputData,"ParentToken")]
 
-[h:ColorData = json.get(OutputData,"ColorData")]
-[h:DisplayClass = json.get(ColorData,"DisplayClass")]
-[h:ColorSubtype = json.get(ColorData,"ColorSubtype")]
+[h:BorderData = json.get(OutputData,"BorderData")]
+[h:DisplayClass = json.get(BorderData,"DisplayClass")]
+[h:ColorSubtype = json.get(BorderData,"ColorSubtype")]
 [h:defaultBorderColors = pm.a5e.BorderColors(DisplayClass,ColorSubtype,ParentToken)]
 [h:DefaultTooltipSettings = data.getData("addon:","pm.a5e.core","TooltipSettings")]
 
-[h:BorderColorOverride = json.get(ColorData,"BorderColorOverride")]
-[h:TitleColorOverride = json.get(ColorData,"TitleFontColorOverride")]
-[h:AccentBackgroundOverride = json.get(ColorData,"AccentBackgroundOverride")]
-[h:AccentTextOverride = json.get(ColorData,"AccentTextOverride")]
+[h:BorderColorOverride = json.get(BorderData,"BorderColorOverride")]
+[h:TitleColorOverride = json.get(BorderData,"TitleFontColorOverride")]
+[h:AccentBackgroundOverride = json.get(BorderData,"AccentBackgroundOverride")]
+[h:AccentTextOverride = json.get(BorderData,"AccentTextOverride")]
 
 [h:BorderColor = json.get(defaultBorderColors,"Border")]
 [h:TitleColor = json.get(defaultBorderColors,"Title")]

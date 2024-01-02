@@ -24,7 +24,7 @@
 	"Player",PlayerOutput,
 	"GM",GMOutput,
 	"MaxColNum",json.get(TableOutputs,"MaxColNum"),
-	"ColorData",BorderData,
+	"BorderData",BorderData,
 	"ParentToken",ParentToken
 )]
 [r,MACRO("TooltipOutput@Lib:pm.a5e.Core"): TooltipOutputData]

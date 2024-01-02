@@ -22,12 +22,10 @@
 [h:NoFullMacro = json.get(OutputRules,"NoFullMacro")]
 [h:GMOutput = json.get(BorderOutputs,"GM") + json.get(TableOutputs,"GM") + json.get(DescriptionOutputs,"GM") + "</div></div>"]
 [h:PlayerOutput = json.get(BorderOutputs,"Player") + json.get(TableOutputs,"Player") + json.get(DescriptionOutputs,"Player") + if(NoFullMacro,"","</div></div>")]
-[h:ChatOutputData = json.set("",
+[h:ChatOutputData = json.set(ChatOutputData,
 	"GM",GMOutput,
 	"Player",PlayerOutput,
-	"MaxColNum",json.get(TableOutputs,"MaxColNum"),
-	"ColorData",BorderData,
-	"ParentToken",ParentToken
+	"MaxColNum",json.get(TableOutputs,"MaxColNum")
 )]
 
 [h,MACRO("ChatOutput@Lib:pm.a5e.Core"): ChatOutputData]

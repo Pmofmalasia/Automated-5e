@@ -334,7 +334,7 @@
 		)]
 	};{
 		[h:extraRollsDisplay = ""]
-		[h,foreach(tempRoll,thisAttackd20Rolls): extraRollsDisplay = listAppend(extraRollsDisplay,"Roll #"+(roll.count+1)+": "+(tempRoll+thisAttackToHit-thisAttackFinalRoll)," / ")]
+		[h,foreach(tempRoll,thisAttackd20Rolls): extraRollsDisplay = listAppend(extraRollsDisplay,"Roll <a href = '"+macroLinkText("Modifyd20TestBorder@Lib:pm.a5e.Core","self-gm",json.set(d20Data,"ForcedRoll",tempRoll),ParentToken)+"'><span style = 'color:%{LinkTextColor}'; title = 'Use this roll'>#"+(roll.count+1)+"</span></a>: "+(tempRoll+thisAttackToHit-thisAttackFinalRoll)," / ")]
 		[h:extraRollsDisplay = "("+extraRollsDisplay+")"]
 		[h:ToHitTableLine = json.set(ToHitTableLine,
 			"BonusBody1",extraRollsDisplay

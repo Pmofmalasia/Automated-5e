@@ -89,7 +89,9 @@
 [h:tempHitDieObject = json.set("","1d6",0,"1d8",0,"1d10",0,"1d12",0)]
 [h:HitDieNum = json.get(MonsterData,"HitDieNum")]
 [h:setProperty("a5e.stat.MaxHitDice",json.set(tempHitDieObject,"1d"+json.get(MonsterData,"HitDieSize"),HitDieNum))]
-
+[h:broadcast(HitDieNum)]
+[h:broadcast(getProperty("a5e.stat.AtrMods"))]
+[h:broadcast(json.get(getProperty("a5e.stat.AtrMods"),"Constitution"))]
 [h:HPFromCon = HitDieNum * json.get(getProperty("a5e.stat.AtrMods"),"Constitution")]
 
 [h:setProperty("a5e.stat.RolledMaxHP",json.get(MonsterData,"MaxHP") - HPFromCon)]

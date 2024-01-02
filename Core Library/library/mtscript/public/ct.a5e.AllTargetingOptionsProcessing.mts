@@ -77,6 +77,7 @@
 
 	};
 	case "":{
+		[h:PriorTargetsData = "{}"]
 		[h,if(json.contains(subeffectData,"PriorTargetLimits")),CODE:{
 			[h:TargetingReturnData = ct.a5e.AllTargetingOptionsProcessing(subeffectData,targetData,"PriorTargetType")]
 			[h:subeffectData = json.get(TargetingReturnData,"Subeffect")]

@@ -166,6 +166,16 @@
 
 [h,if(objectType=="Light"),CODE:{
 	[h:objectData = ct.a5e.LightDataProcessing(objectData,"")]
+
+	[h,switch(json.get(objectData,"LightFuel")),CODE:
+		case "Oil":{
+			[h:allObjects = pm.a5e.GetCoreData("sb.Objects")]
+			[h:oilFlaskData = json.get(json.path.read(allObjects,"\$[*][?(@.Name == 'OilFlask')]"))]
+			[h:oilFlaskID = json.get(oilFlaskData,"ObjectID")]
+			[h:objectData = json.set(objectData,"LightFuel",oilFlaskID)]
+		};
+		default:{}
+	]
 };{}]
 
 [h,if(objectType=="Tool"),CODE:{

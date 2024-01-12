@@ -6,7 +6,7 @@
 	dataKeySuffix = ""
 ]
 
-[h,switch(json.get(subeffectData,thisTargetKey)),CODE:
+[h,switch(json.get(subeffectData,thisTargetKey+dataKeySuffix)),CODE:
 	case "AnyCreature":{
 		[h:targetData = json.set(targetData,"Creature","{}")]
 	};
@@ -47,28 +47,28 @@
 		[h:targetData = json.set(targetData,"Object",json.set("","Magical",1))]
 	};
 	case "Object":{
-		[h:ObjectTargetingData = ct.a5e.ObjectTargetingLimitProcessing(subeffectData)]
+		[h:ObjectTargetingData = ct.a5e.ObjectTargetingLimitProcessing(subeffectData,dataKeySuffix)]
 		[h:subeffectData = json.get(ObjectTargetingData,"Subeffect")]
 		[h:ObjectData = json.get(ObjectTargetingData,"Object")]
 		[h:targetData = json.set(targetData,"Object",ObjectData)]
 	};
 	case "CreatureObject":{
-		[h:CreatureTargetingData = ct.a5e.AllTargetingOptionsProcessing(subeffectData,targetData,"CreatureTargetType")]
+		[h:CreatureTargetingData = ct.a5e.AllTargetingOptionsProcessing(subeffectData,targetData,"CreatureTargetType",dataKeySuffix)]
 		[h:subeffectData = json.get(CreatureTargetingData,"Subeffect")]
 		[h:targetData = json.get(CreatureTargetingData,"Targeting")]
 
-		[h:ObjectTargetingData = ct.a5e.AllTargetingOptionsProcessing(subeffectData,targetData,"ObjectTargetLimits")]
+		[h:ObjectTargetingData = ct.a5e.AllTargetingOptionsProcessing(subeffectData,targetData,"ObjectTargetLimits",dataKeySuffix)]
 		[h:subeffectData = json.get(ObjectTargetingData,"Subeffect")]
 		[h:targetData = json.get(ObjectTargetingData,"Targeting")]
 	};
 	case "Point":{
-		[h:targetData = json.set(targetData,"Point",json.set("","OnGround",json.contains(subeffectData,"pointOnGround")))]
-		[h:subeffectData = json.remove(subeffectData,"pointOnGround")]
+		[h:targetData = json.set(targetData,"Point",json.set("","OnGround",json.contains(subeffectData,"pointOnGround"+dataKeySuffix)))]
+		[h:subeffectData = json.remove(subeffectData,"pointOnGround"+dataKeySuffix)]
 
-		[h:PointTargetingData = ct.a5e.AllTargetingOptionsProcessing(subeffectData,targetData,"secondaryTargetType")]
+		[h:PointTargetingData = ct.a5e.AllTargetingOptionsProcessing(subeffectData,targetData,"secondaryTargetType",dataKeySuffix)]
 		[h:subeffectData = json.get(PointTargetingData,"Subeffect")]
 		[h:targetData = json.get(PointTargetingData,"Targeting")]
-		[h:subeffectData = json.remove(subeffectData,"secondaryTargetType")]
+		[h:subeffectData = json.remove(subeffectData,"secondaryTargetType"+dataKeySuffix)]
 	};
 	case "Effect":{
 
@@ -78,30 +78,30 @@
 	};
 	case "":{
 		[h:PriorTargetsData = "{}"]
-		[h,if(json.contains(subeffectData,"PriorTargetLimits")),CODE:{
-			[h:TargetingReturnData = ct.a5e.AllTargetingOptionsProcessing(subeffectData,targetData,"PriorTargetType")]
+		[h,if(json.contains(subeffectData,"PriorTargetLimits"+dataKeySuffix)),CODE:{
+			[h:TargetingReturnData = ct.a5e.AllTargetingOptionsProcessing(subeffectData,targetData,"PriorTargetType",dataKeySuffix)]
 			[h:subeffectData = json.get(TargetingReturnData,"Subeffect")]
 			[h:PriorTargetsData = json.set("","PriorTargetLimits",json.get(TargetingReturnData,"Targeting"))]
-			[h:subeffectData = json.remove(subeffectData,"PriorTargetLimits")]
+			[h:subeffectData = json.remove(subeffectData,"PriorTargetLimits"+dataKeySuffix)]
 		};{}]
 
-		[h,if(json.contains(subeffectData,"PriorTargetAll")),CODE:{
+		[h,if(json.contains(subeffectData,"PriorTargetAll"+dataKeySuffix)),CODE:{
 			[h:PriorTargetsData = json.set(PriorTargetsData,"TargetAll",1)]
 		};{
 			[h:PriorTargetsData = json.set(PriorTargetsData,
 				"TargetAll",0,
-				"TargetNumber",json.get(subeffectData,"PriorTargetNumber")
+				"TargetNumber",json.get(subeffectData,"PriorTargetNumber"+dataKeySuffix)
 			)]
 		}]
 
 		[h:targetData = json.set(targetData,"PriorTargets",PriorTargetsData)]
 
-		[h:subeffectData = json.remove(subeffectData,"UsePriorTargets")]
-		[h:subeffectData = json.remove(subeffectData,"PriorTargetNumber")]
-		[h:subeffectData = json.remove(subeffectData,"PriorTargetAll")]
+		[h:subeffectData = json.remove(subeffectData,"UsePriorTargets"+dataKeySuffix)]
+		[h:subeffectData = json.remove(subeffectData,"PriorTargetNumber"+dataKeySuffix)]
+		[h:subeffectData = json.remove(subeffectData,"PriorTargetAll"+dataKeySuffix)]
 	};
 	default: {}
 ]
-[h:subeffectData = json.remove(subeffectData,thisTargetKey)]
+[h:subeffectData = json.remove(subeffectData,thisTargetKey+dataKeySuffix)]
 
 [h:macro.return = json.set("","Subeffect",subeffectData,"Targeting",targetData)]

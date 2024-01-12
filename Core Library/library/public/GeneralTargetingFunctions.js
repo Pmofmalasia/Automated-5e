@@ -35,43 +35,53 @@ async function createTargetingRows(tableID,startRowID,IDSuffix){
 	nextRowIndex++;
 
 	//Note: Free hand option will be moved to being a requirement for creating an object
-	addTableRow(tableID,nextRowIndex,"Target"+IDSuffix,"<th><label for='TargetType"+IDSuffix+"'>Target Type:</label></th><td><select id='TargetType"+IDSuffix+"' name='TargetType"+IDSuffix+"' onchange='createTargetTable("+'"'+tableID+'","Target'+IDSuffix+'","TargetType'+IDSuffix+'"'+")'><option value='AnyCreature'>Any Creature</option><option value='AnyOtherCreature'>Any Other Creature</option><option value='AlliedCreature'>Allied Creature</option><option value='SelfOnly'>Self Only</option><option value='EnemyCreature'>Enemy Creature</option><option value='HumanoidCreature'>Humanoid Creature</option><option value='Creature'>Creature (Custom Limits)</option><option value='CreatureObject'>Creature or Object</option><option value='AnyObject'>Any Object</option><option value='ObjectNotWorn'>Object Not Held or Worn</option><option value='ObjectWorn'>Object Held or Worn</option><option value='ObjectNonmagical'>Non-Magical Object</option><option value='ObjectMagical'>Magical Object</option><option value='Object'>Object (Custom Limits)</option><option value='Effect'>Effect</option><option value='Point'>Point</option></td>");
+	addTableRow(tableID,nextRowIndex,"Target"+IDSuffix,"<th><label for='TargetType"+IDSuffix+"'>Target Type:</label></th><td><select id='TargetType"+IDSuffix+"' name='TargetType"+IDSuffix+"' onchange='createTargetTable("+'"'+tableID+'","Target","TargetType","'+IDSuffix+'"'+")'><option value='AnyCreature'>Any Creature</option><option value='AnyOtherCreature'>Any Other Creature</option><option value='AlliedCreature'>Allied Creature</option><option value='SelfOnly'>Self Only</option><option value='EnemyCreature'>Enemy Creature</option><option value='HumanoidCreature'>Humanoid Creature</option><option value='Creature'>Creature (Custom Limits)</option><option value='CreatureObject'>Creature or Object</option><option value='AnyObject'>Any Object</option><option value='ObjectNotWorn'>Object Not Held or Worn</option><option value='ObjectWorn'>Object Held or Worn</option><option value='ObjectNonmagical'>Non-Magical Object</option><option value='ObjectMagical'>Magical Object</option><option value='Object'>Object (Custom Limits)</option><option value='Effect'>Effect</option><option value='Point'>Point</option></td>");
 	nextRowIndex++;
 
 	addTableRow(tableID,nextRowIndex,"rowTargetingEnd"+IDSuffix,"");
 	nextRowIndex++;
-	document.getElementById("rowTargetingEnd").setAttribute("hidden","");
+	document.getElementById("rowTargetingEnd"+IDSuffix).setAttribute("hidden","");
 }
 
-function createPriorTargetsRows(tableID,callingType){
-	let nextRowIndex = document.getElementById("rowUse"+callingType+"Targets").rowIndex + 1;
-	clearUnusedTable(tableID,"rowUse"+callingType+"Targets","rowTargetingEnd");
+function createPriorTargetsRows(tableID,callingType,tempIDSuffix){
+	let IDSuffix = "";
+	if (arguments.length > 2){
+		IDSuffix = tempIDSuffix
+	}
 
-	if(document.getElementById("Use"+callingType+"Targets").checked){
-		addTableRow(tableID,nextRowIndex,"row"+callingType+"TargetNumber","<th><label for='"+callingType+"TargetNumber'>Number of "+callingType+" Targets Affected:</label></th><td><input type='number' id='"+callingType+"TargetNumber' name='"+callingType+"TargetNumber' value=1 style='width:25px' disabled><input type='checkbox' id='"+callingType+"TargetAll' name='"+callingType+"TargetAll' checked onchange='toggleFieldEnabled("+'"'+callingType+'TargetNumber","'+callingType+'TargetAll"'+")'> Affects All</td>");
+	let nextRowIndex = document.getElementById("rowUse"+callingType+"Targets"+IDSuffix).rowIndex + 1;
+	clearUnusedTable(tableID,"rowUse"+callingType+"Targets"+IDSuffix,"rowTargetingEnd"+IDSuffix);
+
+	if(document.getElementById("Use"+callingType+"Targets"+IDSuffix).checked){
+		addTableRow(tableID,nextRowIndex,"row"+callingType+"TargetNumber"+IDSuffix,"<th><label for='"+callingType+"TargetNumber"+IDSuffix+"'>Number of "+callingType+" Targets Affected:</label></th><td><input type='number' id='"+callingType+"TargetNumber"+IDSuffix+"' name='"+callingType+"TargetNumber"+IDSuffix+"' value=1 style='width:25px' disabled><input type='checkbox' id='"+callingType+"TargetAll"+IDSuffix+"' name='"+callingType+"TargetAll"+IDSuffix+"' checked onchange='toggleFieldEnabled("+'"'+callingType+'TargetNumber'+IDSuffix+'","'+callingType+'TargetAll'+IDSuffix+'"'+")'> Affects All</td>");
 		nextRowIndex++;
 
-		addTableRow(tableID,nextRowIndex,"row"+callingType+"TargetLimits","<th><label for='"+callingType+"TargetLimits'>Different Limits on Targets Affected:</label></th><td><input type='checkbox' id='"+callingType+"TargetLimits' name='"+callingType+"TargetLimits' onchange='createPriorTargetsNewFilter("+'"'+tableID+'","'+callingType+'"'+")'></td>");
+		addTableRow(tableID,nextRowIndex,"row"+callingType+"TargetLimits"+IDSuffix,"<th><label for='"+callingType+"TargetLimits"+IDSuffix+"'>Different Limits on Targets Affected:</label></th><td><input type='checkbox' id='"+callingType+"TargetLimits"+IDSuffix+"' name='"+callingType+"TargetLimits"+IDSuffix+"' onchange='createPriorTargetsNewFilter("+'"'+tableID+'","'+callingType+'","'+tempIDSuffix+'"'+")'></td>");
 		nextRowIndex++;
 	}
 	else{
-		addTableRow(tableID,nextRowIndex,"rowUse"+callingType+"Origin","<th><label for='Use"+callingType+"Origin'>New Subeffect Originates from Old Target:</label></th><td><input type='checkbox' id='Use"+callingType+"Origin' name='Use"+callingType+"Origin' onchange='create"+callingType+"OriginRows("+'"'+tableID+'"'+")'></td>");
+		addTableRow(tableID,nextRowIndex,"rowUse"+callingType+"Origin"+IDSuffix,"<th><label for='Use"+callingType+"Origin"+IDSuffix+"'>New Subeffect Originates from Old Target:</label></th><td><input type='checkbox' id='Use"+callingType+"Origin"+IDSuffix+"' name='Use"+callingType+"Origin"+IDSuffix+"' onchange='create"+callingType+"OriginRows("+'"'+tableID+'","'+tempIDSuffix+'"'+")'></td>");
 		nextRowIndex++;
 
-		createTargetingRows(tableID,"rowTargetingEnd");
+		createTargetingRows(tableID,"rowTargetingEnd"+IDSuffix);
 	}
 }
 
-function createPriorTargetsNewFilter(tableID,callingType){
-	if(document.getElementById(callingType+"TargetLimits").checked){
-		let nextRowIndex = document.getElementById("row"+callingType+"TargetLimits").rowIndex + 1;
+function createPriorTargetsNewFilter(tableID,callingType,tempIDSuffix){
+	let IDSuffix = "";
+	if (arguments.length > 2){
+		IDSuffix = tempIDSuffix
+	}
+
+	if(document.getElementById(callingType+"TargetLimits"+IDSuffix).checked){
+		let nextRowIndex = document.getElementById("row"+callingType+"TargetLimits"+IDSuffix).rowIndex + 1;
 
 		//TODO: Should make this even more generalized, with options to either show all of the targeting options or prune them based on requirements (e.g. Creature options only if prior only targeted creatures)
-		addTableRow(tableID,nextRowIndex,"row"+callingType+"TargetType","<th><label for='"+callingType+"TargetType'>Target Type:</label></th><td><select id='"+callingType+"TargetType' name='"+callingType+"TargetType' onchange='createTargetTable("+'"'+tableID+'","row'+callingType+'TargetType","'+callingType+'TargetType"'+")'><option value='AnyCreature'>Any Creature</option><option value='AnyOtherCreature'>Any Other Creature</option><option value='AlliedCreature'>Allied Creature</option><option value='SelfOnly'>Self Only</option><option value='EnemyCreature'>Enemy Creature</option><option value='HumanoidCreature'>Humanoid Creature</option><option value='Creature'>Creature (Custom Limits)</option><option value='CreatureObject'>Creature or Object</option><option value='AnyObject'>Any Object</option><option value='ObjectNotWorn'>Object Not Held or Worn</option><option value='ObjectWorn'>Object Held or Worn</option><option value='ObjectNonmagical'>Non-Magical Object</option><option value='ObjectMagical'>Magical Object</option><option value='Object'>Object (Custom Limits)</option><option value='Effect'>Effect</option><option value='Point'>Point</option></td>");
+		addTableRow(tableID,nextRowIndex,"row"+callingType+"TargetType"+IDSuffix,"<th><label for='"+callingType+"TargetType"+IDSuffix+"'>Target Type:</label></th><td><select id='"+callingType+"TargetType"+IDSuffix+"' name='"+callingType+"TargetType"+IDSuffix+"' onchange='createTargetTable("+'"'+tableID+'","row'+callingType+'TargetType","'+callingType+'TargetType","'+IDSuffix+'"'+")'><option value='AnyCreature'>Any Creature</option><option value='AnyOtherCreature'>Any Other Creature</option><option value='AlliedCreature'>Allied Creature</option><option value='SelfOnly'>Self Only</option><option value='EnemyCreature'>Enemy Creature</option><option value='HumanoidCreature'>Humanoid Creature</option><option value='Creature'>Creature (Custom Limits)</option><option value='CreatureObject'>Creature or Object</option><option value='AnyObject'>Any Object</option><option value='ObjectNotWorn'>Object Not Held or Worn</option><option value='ObjectWorn'>Object Held or Worn</option><option value='ObjectNonmagical'>Non-Magical Object</option><option value='ObjectMagical'>Magical Object</option><option value='Object'>Object (Custom Limits)</option><option value='Effect'>Effect</option><option value='Point'>Point</option></td>");
 		nextRowIndex++;
 	}
 	else{
-		clearUnusedTable(tableID,"row"+callingType+"TargetLimits","rowTargetingEnd");
+		clearUnusedTable(tableID,"row"+callingType+"TargetLimits"+IDSuffix,"rowTargetingEnd"+IDSuffix);
 	}
 }
 
@@ -366,7 +376,7 @@ function createTargetTable(tableID,startRowID,selectionID,tempIDSuffix,tempNextA
 		IDSuffix = tempIDSuffix
 	}
 	
-	let nextAnchorRow = "rowTargetingEnd";
+	let nextAnchorRow = "rowTargetingEnd"+IDSuffix;
 	if (arguments.length > 4){
 		nextAnchorRow = tempNextAnchorRow;
 	}
@@ -376,32 +386,32 @@ function createTargetTable(tableID,startRowID,selectionID,tempIDSuffix,tempNextA
 		createCreatureTargetTable(tableID,startRowID,selectionID,IDSuffix,nextAnchorRow);
 	}
 	else if(currentTargetTypeSelection == "Object"){
-		createObjectTargetTable(tableID,startRowID,selectionID,nextAnchorRow);
+		createObjectTargetTable(tableID,startRowID,selectionID,nextAnchorRow,IDSuffix);
 	}
 	else if(currentTargetTypeSelection == "CreatureObject"){
-		addTableRow(tableID,nextRowIndex,"rowIsolatedCreatureTargetOptions","<th><label for='CreatureTargetType'>Creature Targeting Limits:</label></th><td><select id='CreatureTargetType' name='CreatureTargetType' onchange='createTargetTable("+'"'+tableID+'","rowIsolatedCreatureTargetOptions","CreatureTargetType","'+IDSuffix+'","rowIsolatedObjectTargetOptions"'+")'><option value='AnyCreature'>Any Creature</option><option value='AnyOtherCreature'>Any Other Creature</option><option value='AlliedCreature'>Allied Creature</option><option value='SelfOnly'>Self Only</option><option value='EnemyCreature'>Enemy Creature</option><option value='HumanoidCreature'>Humanoid Creature</option><option value='Creature'>Creature (Custom Limits)</option></selected></td>");
+		addTableRow(tableID,nextRowIndex,"rowIsolatedCreatureTargetOptions"+IDSuffix,"<th><label for='CreatureTargetType"+IDSuffix+"'>Creature Targeting Limits:</label></th><td><select id='CreatureTargetType"+IDSuffix+"' name='CreatureTargetType"+IDSuffix+"' onchange='createTargetTable("+'"'+tableID+'","rowIsolatedCreatureTargetOptions","CreatureTargetType","'+IDSuffix+'","rowIsolatedObjectTargetOptions"'+")'><option value='AnyCreature'>Any Creature</option><option value='AnyOtherCreature'>Any Other Creature</option><option value='AlliedCreature'>Allied Creature</option><option value='SelfOnly'>Self Only</option><option value='EnemyCreature'>Enemy Creature</option><option value='HumanoidCreature'>Humanoid Creature</option><option value='Creature'>Creature (Custom Limits)</option></selected></td>");
 		nextRowIndex++;
 
-		addTableRow(tableID,nextRowIndex,"rowIsolatedObjectTargetOptions","<th><label for='ObjectTargetLimits'>Object Targeting Limits:</label></th><td><select id='ObjectTargetLimits' name='ObjectTargetLimits' onchange='createTargetTable("+'"'+tableID+'","rowIsolatedObjectTargetOptions","ObjectTargetLimits","'+IDSuffix+'","'+nextAnchorRow+'"'+")'><option value='AnyObject'>Any Object</option><option value='ObjectNotWorn' selected>Object Not Held or Worn</option><option value='ObjectWorn'>Object Held or Worn</option><option value='Object'>Object (Custom Limits)</option></selected></td>");
+		addTableRow(tableID,nextRowIndex,"rowIsolatedObjectTargetOptions"+IDSuffix,"<th><label for='ObjectTargetLimits"+IDSuffix+"'>Object Targeting Limits:</label></th><td><select id='ObjectTargetLimits"+IDSuffix+"' name='ObjectTargetLimits"+IDSuffix+"' onchange='createTargetTable("+'"'+tableID+'","rowIsolatedObjectTargetOptions","ObjectTargetLimits","'+IDSuffix+'","'+nextAnchorRow+'"'+")'><option value='AnyObject'>Any Object</option><option value='ObjectNotWorn' selected>Object Not Held or Worn</option><option value='ObjectWorn'>Object Held or Worn</option><option value='Object'>Object (Custom Limits)</option></selected></td>");
 		nextRowIndex++;
 	}
 	else if(currentTargetTypeSelection == "Effect"){
 
 	}
 	else if(currentTargetTypeSelection == "Point"){
-		addTableRow(tableID,nextRowIndex,"rowPointOnGround","<th><label for='pointOnGround'>Point Must Be on the Ground:</label></th><td><input type='checkbox' id='pointOnGround' name='pointOnGround'></td>");
+		addTableRow(tableID,nextRowIndex,"rowPointOnGround"+IDSuffix,"<th><label for='pointOnGround"+IDSuffix+"'>Point Must Be on the Ground:</label></th><td><input type='checkbox' id='pointOnGround"+IDSuffix+"' name='pointOnGround"+IDSuffix+"'></td>");
 		nextRowIndex++;
 
-		let secondaryTargetOptions = document.getElementById("TargetType").innerHTML;
+		let secondaryTargetOptions = document.getElementById("TargetType"+IDSuffix).innerHTML;
 		secondaryTargetOptions = "<option value='None'>None</option>" + secondaryTargetOptions;
 
-		addTableRow(tableID,nextRowIndex,"rowSecondaryTarget","<th><label for='secondaryTargetType'>Secondary Target Type:</label></th><td><select id='secondaryTargetType' name='secondaryTargetType' onchange='createTargetTable("+'"'+tableID+'","rowSecondaryTarget","secondaryTargetType"'+")'></select></td>");
+		addTableRow(tableID,nextRowIndex,"rowSecondaryTarget"+IDSuffix,"<th><label for='secondaryTargetType"+IDSuffix+"'>Secondary Target Type:</label></th><td><select id='secondaryTargetType"+IDSuffix+"' name='secondaryTargetType"+IDSuffix+"' onchange='createTargetTable("+'"'+tableID+'","rowSecondaryTarget","secondaryTargetType","'+IDSuffix+'"'+")'></select></td>");
 		nextRowIndex++;
-		document.getElementById("secondaryTargetType").innerHTML = secondaryTargetOptions;
+		document.getElementById("secondaryTargetType"+IDSuffix).innerHTML = secondaryTargetOptions;
 	
 		//removes Point option
-		let secondaryTargetSelection = document.getElementById("secondaryTargetType");
-		secondaryTargetSelection = document.getElementById("secondaryTargetType").remove(document.getElementById("secondaryTargetType").options.length - 1);
+		let secondaryTargetSelection = document.getElementById("secondaryTargetType"+IDSuffix);
+		secondaryTargetSelection = document.getElementById("secondaryTargetType"+IDSuffix).remove(document.getElementById("secondaryTargetType"+IDSuffix).options.length - 1);
 	}
 }
 
@@ -414,7 +424,7 @@ async function createCreatureTargetTable(tableID,startRowID,selectionID,IDSuffix
 		IDSuffixText = IDSuffix;
 	}
 	
-	let nextAnchorRow = "rowTargetingEnd";
+	let nextAnchorRow = "rowTargetingEnd"+IDSuffix;
 	if (arguments.length > 4){
 		nextAnchorRow = tempNextAnchorRow;
 	}
@@ -685,96 +695,95 @@ async function createTargetAlignmentTable(tableID,IDSuffix,nextAnchorRow){
 	}
 }
 
-async function createObjectTargetTable(tableID,startRowID,selectionID){
-	let currentTargetTypeSelection = document.getElementById(selectionID).value;
+async function createObjectTargetTable(tableID,startRowID,selectionID,IDSuffix){
+	let currentTargetTypeSelection = document.getElementById(selectionID+IDSuffix).value;
 	
 	let nextRowIndex = document.getElementById(startRowID).rowIndex + 1;
 	let optionLimits = "<option value=''>Not Relevant</option><option value='Inclusive'>Required</option><option value='Exclusive'>Invalid</option>";
 
-
-	addTableRow(tableID,nextRowIndex,"rowObjectTargetWornCarried","<th><label for='ObjectTargetWornCarried'>Object is Worn or Carried:</label></th><td><select id='ObjectTargetWornCarried' name='ObjectTargetWornCarried' onchange='createHeldObjectCreatureLimitRows("+'"'+tableID+'"'+")'><option value='NotWorn'>Cannot Be Worn</option><option value='Worn'>Must be Worn</option><option value=''>Not Relevant</option></select></td>");
+	addTableRow(tableID,nextRowIndex,"rowObjectTargetWornCarried"+IDSuffix,"<th><label for='ObjectTargetWornCarried"+IDSuffix+"'>Object is Worn or Carried:</label></th><td><select id='ObjectTargetWornCarried"+IDSuffix+"' name='ObjectTargetWornCarried"+IDSuffix+"' onchange='createHeldObjectCreatureLimitRows("+'"'+tableID+'","'+IDSuffix+'"'+")'><option value='NotWorn'>Cannot Be Worn</option><option value='Worn'>Must be Worn</option><option value=''>Not Relevant</option></select></td>");
 	nextRowIndex++;
 
 	//TODO: Need a way to both do this and object subtype conveniently
-	addTableRow(tableID,nextRowIndex,"rowObjectTargetType","<th><label for='ObjectTargetType'>Limit by Object Type:</label></th><td><select id='ObjectTargetType' name='ObjectTargetType' onchange='createObjectTargetTypeRows("+'"'+tableID+'"'+")'><option value='All'>All Types</option><option value='Inclusive'>Must Be Type(s)</option><option value='Exclusive'>Cannot Be Type(s)</option><option value='Mixture'>Mixture of Both</option></select><input type='checkbox' id='' name='' onchange=''>Use Subtypes?</td>");
+	addTableRow(tableID,nextRowIndex,"rowObjectTargetType"+IDSuffix,"<th><label for='ObjectTargetType"+IDSuffix+"'>Limit by Object Type:</label></th><td><select id='ObjectTargetType"+IDSuffix+"' name='ObjectTargetType"+IDSuffix+"' onchange='createObjectTargetTypeRows("+'"'+tableID+'","'+IDSuffix+'"'+")'><option value='All'>All Types</option><option value='Inclusive'>Must Be Type(s)</option><option value='Exclusive'>Cannot Be Type(s)</option><option value='Mixture'>Mixture of Both</option></select><input type='checkbox' id='' name='' onchange=''>Use Subtypes?</td>");
 	nextRowIndex++;
 
-	addTableRow(tableID,nextRowIndex,"rowObjectTargetMagical","<th><label for='ObjectTargetMagical'>Object is Magical:</label></th><td><select id='ObjectTargetMagical' name='ObjectTargetMagical'>"+optionLimits+"</select></td>");
+	addTableRow(tableID,nextRowIndex,"rowObjectTargetMagical"+IDSuffix,"<th><label for='ObjectTargetMagical"+IDSuffix+"'>Object is Magical:</label></th><td><select id='ObjectTargetMagical"+IDSuffix+"' name='ObjectTargetMagical"+IDSuffix+"'>"+optionLimits+"</select></td>");
 	nextRowIndex++;
 
-	addTableRow(tableID,nextRowIndex,"rowObjectTargetSize","<th><label for='ObjectTargetSizeType'>Object Size Limits:</label></th><td><select id='ObjectTargetSizeType' name='ObjectTargetSizeType'><option value=''>Not Relevant</option><option value='Maximum'>Maximum</option><option value='Minimum'>Minimum</option></select><select id='ObjectTargetSize' name='ObjectTargetSize'><option value='Diminutive'>Diminutive</option><option value='Tiny'>Tiny</option><option value='Small'>Small</option><option value='Medium'>Medium</option><option value='Large'>Large</option><option value='Huge'>Huge</option><option value='Gargantuan'>Gargantuan</option><option value='Colossal'>Colossal</option></select></td>");
+	addTableRow(tableID,nextRowIndex,"rowObjectTargetSize"+IDSuffix,"<th><label for='ObjectTargetSizeType"+IDSuffix+"'>Object Size Limits:</label></th><td><select id='ObjectTargetSizeType"+IDSuffix+"' name='ObjectTargetSizeType"+IDSuffix+"'><option value=''>Not Relevant</option><option value='Maximum'>Maximum</option><option value='Minimum'>Minimum</option></select><select id='ObjectTargetSize"+IDSuffix+"' name='ObjectTargetSize"+IDSuffix+"'><option value='Diminutive'>Diminutive</option><option value='Tiny'>Tiny</option><option value='Small'>Small</option><option value='Medium'>Medium</option><option value='Large'>Large</option><option value='Huge'>Huge</option><option value='Gargantuan'>Gargantuan</option><option value='Colossal'>Colossal</option></select></td>");
 	nextRowIndex++;
 
-	addTableRow(tableID,nextRowIndex,"rowObjectTargetWeight","<th><label for='ObjectTargetWeightType'>Object Weight Limits:</label></th><td><select id='ObjectTargetWeightType' name='ObjectTargetWeightType'><option value=''>Not Relevant</option><option value='Maximum'>Maximum</option><option value='Minimum'>Minimum</option></select><input type='number' id='ObjectTargetWeight' name='ObjectTargetWeight' value=0 min=0 style='width:30px'></td>");
+	addTableRow(tableID,nextRowIndex,"rowObjectTargetWeight"+IDSuffix,"<th><label for='ObjectTargetWeightType"+IDSuffix+"'>Object Weight Limits:</label></th><td><select id='ObjectTargetWeightType"+IDSuffix+"' name='ObjectTargetWeightType"+IDSuffix+"'><option value=''>Not Relevant</option><option value='Maximum'>Maximum</option><option value='Minimum'>Minimum</option></select><input type='number' id='ObjectTargetWeight"+IDSuffix+"' name='ObjectTargetWeight"+IDSuffix+"' value=0 min=0 style='width:30px'></td>");
 	nextRowIndex++;
 
-	addTableRow(tableID,nextRowIndex,"rowObjectTargetTags","<th><label for='ObjectTargetTags'>Limit by Object Tags:</label></th><td><select id='ObjectTargetTags' name='ObjectTargetTags' onchange='createObjectTargetTagRows("+'"'+tableID+'"'+")'><option value='All'>All Types</option><option value='Inclusive'>Must Be Specific Type(s)</option><option value='Exclusive'>Cannot Be Specific Type(s)</option><option value='Mixture'>Mixture of Both Above</option></select></td>");
+	addTableRow(tableID,nextRowIndex,"rowObjectTargetTags"+IDSuffix,"<th><label for='ObjectTargetTags"+IDSuffix+"'>Limit by Object Tags:</label></th><td><select id='ObjectTargetTags"+IDSuffix+"' name='ObjectTargetTags"+IDSuffix+"' onchange='createObjectTargetTagRows("+'"'+tableID+'","'+IDSuffix+'"'+")'><option value='All'>All Types</option><option value='Inclusive'>Must Be Specific Type(s)</option><option value='Exclusive'>Cannot Be Specific Type(s)</option><option value='Mixture'>Mixture of Both Above</option></select></td>");
 	nextRowIndex++;
 
-	addTableRow(tableID,nextRowIndex,"rowObjectTargetFlammable","<th><label for='ObjectTargetFlammable'>Object is Flammable:</label></th><td><select id='ObjectTargetFlammable' name='ObjectTargetFlammable'>"+optionLimits+"</select></td>");
+	addTableRow(tableID,nextRowIndex,"rowObjectTargetFlammable"+IDSuffix,"<th><label for='ObjectTargetFlammable"+IDSuffix+"'>Object is Flammable:</label></th><td><select id='ObjectTargetFlammable"+IDSuffix+"' name='ObjectTargetFlammable"+IDSuffix+"'>"+optionLimits+"</select></td>");
 	nextRowIndex++;
 
-	addTableRow(tableID,nextRowIndex,"rowObjectTargetMagnetic","<th><label for='ObjectTargetMagnetic'>Object is Magnetic:</label></th><td><select id='ObjectTargetMagnetic' name='ObjectTargetMagnetic'>"+optionLimits+"</select></td>");
+	addTableRow(tableID,nextRowIndex,"rowObjectTargetMagnetic"+IDSuffix,"<th><label for='ObjectTargetMagnetic"+IDSuffix+"'>Object is Magnetic:</label></th><td><select id='ObjectTargetMagnetic"+IDSuffix+"' name='ObjectTargetMagnetic"+IDSuffix+"'>"+optionLimits+"</select></td>");
 	nextRowIndex++;
 }
 
-function createHeldObjectCreatureLimitRows(tableID){
-	let HeldSelection = document.getElementById("ObjectTargetWornCarried").value;
+function createHeldObjectCreatureLimitRows(tableID,IDSuffix){
+	let HeldSelection = document.getElementById("ObjectTargetWornCarried"+IDSuffix).value;
 
 	if(HeldSelection == "NotWorn"){
-		clearUnusedTable(tableID,"rowObjectTargetWornCarried","rowObjectTargetType");
+		clearUnusedTable(tableID,"rowObjectTargetWornCarried"+IDSuffix,"rowObjectTargetType"+IDSuffix);
 	}
-	else if(document.getElementById("rowHoldingCreatureLimits") == null && document.getElementById("rowIsUseCreatureTargetingLimits") == null){
-		let nextRowIndex = document.getElementById("rowObjectTargetWornCarried") + 1;
+	else if(document.getElementById("rowHoldingCreatureLimits"+IDSuffix) == null && document.getElementById("rowIsUseCreatureTargetingLimits"+IDSuffix) == null){
+		let nextRowIndex = document.getElementById("rowObjectTargetWornCarried"+IDSuffix) + 1;
 		let TargetTypeCreatureValues = ["AnyCreature","AnyOtherCreature","AlliedCreature","SelfOnly","EnemyCreature","HumanoidCreature","Creature","CreatureObject"];
 
 		//Checking for any creature limits from primary, secondary, or CreatureObject targeting methods
-		let NoCreatureLimits = document.getElementById("CreatureTargetType") == null;
-		if(document.getElementById("secondaryTargetType") != null && NoCreatureLimits){
-			NoCreatureLimits = !TargetTypeCreatureValues.includes(document.getElementById("secondaryTargetType").value);
+		let NoCreatureLimits = document.getElementById("CreatureTargetType"+IDSuffix) == null;
+		if(document.getElementById("secondaryTargetType"+IDSuffix) != null && NoCreatureLimits){
+			NoCreatureLimits = !TargetTypeCreatureValues.includes(document.getElementById("secondaryTargetType"+IDSuffix).value);
 		}
 		if(NoCreatureLimits){
-			NoCreatureLimits = !TargetTypeCreatureValues.includes(document.getElementById("TargetType").value);
+			NoCreatureLimits = !TargetTypeCreatureValues.includes(document.getElementById("TargetType"+IDSuffix).value);
 		}
 
 		if(NoCreatureLimits){
-			createHoldingCreatureLimitRows(tableID,"rowObjectTargetWornCarried");
+			createHoldingCreatureLimitRows(tableID,"rowObjectTargetWornCarried"+IDSuffix);
 		}
 		else{
-			addTableRow(tableID,nextRowIndex,"rowIsUseCreatureTargetingLimits","<th><label for='isUseCreatureTargetingLimits'>Same Creature Limits as Previous Entry:</label></th><td><input type='checkbox' id='isUseCreatureTargetingLimits' name='isUseCreatureTargetingLimits' onchange='createHoldingCreatureLimitRows("+'"'+tableID+'","rowIsUseCreatureTargetingLimits"'+")' checked></td>");
+			addTableRow(tableID,nextRowIndex,"rowIsUseCreatureTargetingLimits"+IDSuffix,"<th><label for='isUseCreatureTargetingLimits"+IDSuffix+"'>Same Creature Limits as Previous Entry:</label></th><td><input type='checkbox' id='isUseCreatureTargetingLimits"+IDSuffix+"' name='isUseCreatureTargetingLimits"+IDSuffix+"' onchange='createHoldingCreatureLimitRows("+'"'+tableID+'","rowIsUseCreatureTargetingLimits","'+IDSuffix+'"'+")' checked></td>");
 			nextRowIndex++;
 		}
 	}
 }
 
-function createHoldingCreatureLimitRows(tableID,startRowID){
+function createHoldingCreatureLimitRows(tableID,startRowID,IDSuffix){
 	let nextRowIndex = document.getElementById(startRowID).rowIndex + 1;
 	let createRowsTest;
 
-	if(document.getElementById("isUseCreatureTargetingLimits") == null){
+	if(document.getElementById("isUseCreatureTargetingLimits"+IDSuffix) == null){
 		createRowsTest = true;
 	}
 	else{
-		createRowsTest = document.getElementById("isUseCreatureTargetingLimits").checked;
+		createRowsTest = document.getElementById("isUseCreatureTargetingLimits"+IDSuffix).checked;
 	}
 
 	if(createRowsTest){
-		addTableRow(tableID,nextRowIndex,"rowHoldingCreatureLimits","<th><label for='HoldingCreatureLimits'>Holding Creature Targeting Limits:</label></th><td><select id='HoldingCreatureLimits' name='HoldingCreatureLimits' onchange='createTargetTable("+'"'+tableID+'","rowHoldingCreatureLimits","HoldingCreatureLimits","HoldingObject","rowObjectTargetType"'+")'><option value='AnyCreature'>Any Creature</option><option value='AnyOtherCreature'>Any Other Creature</option><option value='AlliedCreature'>Allied Creature</option><option value='SelfOnly'>Self Only</option><option value='EnemyCreature'>Enemy Creature</option><option value='HumanoidCreature'>Humanoid Creature</option><option value='Creature'>Creature (Custom Limits)</option></selected></td>");
+		addTableRow(tableID,nextRowIndex,"rowHoldingCreatureLimits"+IDSuffix,"<th><label for='HoldingCreatureLimits"+IDSuffix+"'>Holding Creature Targeting Limits:</label></th><td><select id='HoldingCreatureLimits"+IDSuffix+"' name='HoldingCreatureLimits"+IDSuffix+"' onchange='createTargetTable("+'"'+tableID+'","rowHoldingCreatureLimits","HoldingCreatureLimits","HoldingObject","rowObjectTargetType","'+IDSuffix+'"'+")'><option value='AnyCreature'>Any Creature</option><option value='AnyOtherCreature'>Any Other Creature</option><option value='AlliedCreature'>Allied Creature</option><option value='SelfOnly'>Self Only</option><option value='EnemyCreature'>Enemy Creature</option><option value='HumanoidCreature'>Humanoid Creature</option><option value='Creature'>Creature (Custom Limits)</option></selected></td>");
 		nextRowIndex++
 	}
 	else{
-		clearUnusedTable(tableID,startRowID,"rowObjectTargetType");
+		clearUnusedTable(tableID,startRowID,"rowObjectTargetType"+IDSuffix);
 	}
 }
 
-async function createObjectTargetTypeRows(tableID){
+async function createObjectTargetTypeRows(tableID,IDSuffix){
 	//TODO: Not complete at all, just copied from creature types
 	let table = document.getElementById(tableID);
-	let nextRowIndex = document.getElementById("rowObjectTargetType").rowIndex + 1;
-	let currentTargetObjectTypeSelection = document.getElementById("ObjectTargetType").value;
+	let nextRowIndex = document.getElementById("rowObjectTargetType"+IDSuffix).rowIndex + 1;
+	let currentTargetObjectTypeSelection = document.getElementById("ObjectTargetType"+IDSuffix).value;
 
 	if(currentTargetObjectTypeSelection == "All"){
-		clearUnusedTable(tableID,"rowObjectTargetType","rowObjectTargetMagical");
+		clearUnusedTable(tableID,"rowObjectTargetType"+IDSuffix,"rowObjectTargetMagical"+IDSuffix);
 	}
 	else{
 		let request = await fetch("macro:pm.a5e.GetCoreData@lib:pm.a5e.Core", {method: "POST", body: "['sb.ObjectTypes']"});
@@ -783,13 +792,13 @@ async function createObjectTargetTypeRows(tableID){
 		let ObjectTypeIncludeOptions = "";
 		let ObjectTypeExcludeOptions = "";
 		for(let tempType of allObjectTypes){
-			ObjectTypeIncludeOptions = ObjectTypeIncludeOptions + "<label><input type='checkbox' id='ObjectTypeTargetInclusive"+tempType.Name+"' name='ObjectTypeTargetInclusive"+tempType.Name+"' value=1><span>"+tempType.DisplayName+"</span></label>";
+			ObjectTypeIncludeOptions = ObjectTypeIncludeOptions + "<label><input type='checkbox' id='ObjectTypeTargetInclusive"+IDSuffix+tempType.Name+"' name='ObjectTypeTargetInclusive"+IDSuffix+tempType.Name+"' value=1><span>"+tempType.DisplayName+"</span></label>";
 
-			ObjectTypeExcludeOptions = ObjectTypeExcludeOptions + "<label><input type='checkbox' id='ObjectTypeTargetExclusive"+tempType.Name+"' name='ObjectTypeTargetExclusive"+tempType.Name+"' value=1><span>"+tempType.DisplayName+"</span></label>";
+			ObjectTypeExcludeOptions = ObjectTypeExcludeOptions + "<label><input type='checkbox' id='ObjectTypeTargetExclusive"+IDSuffix+tempType.Name+"' name='ObjectTypeTargetExclusive"+IDSuffix+tempType.Name+"' value=1><span>"+tempType.DisplayName+"</span></label>";
 		}
 
-		let alreadyInclusiveTest = (table.rows.namedItem("rowInclusiveObjectTypes") != null);
-		let alreadyExclusiveTest = (table.rows.namedItem("rowExclusiveObjectTypes") != null);
+		let alreadyInclusiveTest = (table.rows.namedItem("rowInclusiveObjectTypes"+IDSuffix) != null);
+		let alreadyExclusiveTest = (table.rows.namedItem("rowExclusiveObjectTypes"+IDSuffix) != null);
 
 		if(currentTargetObjectTypeSelection == "Inclusive" || currentTargetObjectTypeSelection == "Mixture"){
 			if(alreadyInclusiveTest){
@@ -797,12 +806,12 @@ async function createObjectTargetTypeRows(tableID){
 			}
 			else{
 				let rowInclusiveObjectTypes = table.insertRow(nextRowIndex);
-				rowInclusiveObjectTypes.id = "rowInclusiveObjectTypes";
+				rowInclusiveObjectTypes.id = "rowInclusiveObjectTypes"+IDSuffix;
 				rowInclusiveObjectTypes.innerHTML = "<th>Required Object Types:</th><td><div class='check-multiple' style='width:100%'>"+ObjectTypeIncludeOptions+"</div></td>";
 				nextRowIndex++;
 			}
 			if(alreadyExclusiveTest && currentTargetObjectTypeSelection == "Inclusive"){
-				clearUnusedTable(tableID,"rowInclusiveObjectTypes","rowTargetSenses");
+				clearUnusedTable(tableID,"rowInclusiveObjectTypes"+IDSuffix,"rowTargetSenses"+IDSuffix);
 			}
 		}
 		else if(alreadyInclusiveTest){
@@ -812,7 +821,7 @@ async function createObjectTargetTypeRows(tableID){
 		if(currentTargetObjectTypeSelection == "Exclusive" || currentTargetObjectTypeSelection == "Mixture"){
 			if(!alreadyExclusiveTest){
 				let rowExclusiveObjectTypes = table.insertRow(nextRowIndex);
-				rowExclusiveObjectTypes.id = "rowExclusiveObjectTypes";
+				rowExclusiveObjectTypes.id = "rowExclusiveObjectTypes"+IDSuffix;
 				rowExclusiveObjectTypes.innerHTML = "<th>Disallowed Object Types:</th><td><div class='check-multiple' style='width:100%'>"+ObjectTypeExcludeOptions+"</div></td>";
 				nextRowIndex++;
 			}
@@ -820,19 +829,19 @@ async function createObjectTargetTypeRows(tableID){
 				nextRowIndex++;
 			}
 			if(alreadyInclusiveTest && currentTargetObjectTypeSelection == "Exclusive"){
-				clearUnusedTable(tableID,"rowObjectTypes","rowExclusiveObjectTypes");
+				clearUnusedTable(tableID,"rowObjectTypes"+IDSuffix,"rowExclusiveObjectTypes"+IDSuffix);
 			}
 		}
 	}
 }
 
-async function createObjectTargetTagRows(tableID){
+async function createObjectTargetTagRows(tableID,IDSuffix){
 	let table = document.getElementById(tableID);
-	let nextRowIndex = document.getElementById("rowObjectTargetTags").rowIndex + 1;
-	let currentTargetObjectTagSelection = document.getElementById("ObjectTargetTags").value;
+	let nextRowIndex = document.getElementById("rowObjectTargetTags"+IDSuffix).rowIndex + 1;
+	let currentTargetObjectTagSelection = document.getElementById("ObjectTargetTags"+IDSuffix).value;
 
 	if(currentTargetObjectTagSelection == "All"){
-		clearUnusedTable(tableID,"rowObjectTargetTags","rowObjectTargetFlammable");
+		clearUnusedTable(tableID,"rowObjectTargetTags"+IDSuffix,"rowObjectTargetFlammable"+IDSuffix);
 	}
 	else{
 		let requestMaterialTags = await fetch("macro:pm.a5e.GetCoreData@lib:pm.a5e.Core", {method: "POST", body: "['sb.MaterialTags']"});
@@ -843,22 +852,22 @@ async function createObjectTargetTagRows(tableID){
 
 		let allTags = allMaterialTags.concat(allObjectTags);
 
-		let ObjectTypeIncludeOptions = createHTMLMultiselectOptions(allTags,"ObjectTargetTagsInclusive");
-		let ObjectTypeExcludeOptions = createHTMLMultiselectOptions(allTags,"ObjectTargetTagsExclusive");
+		let ObjectTypeIncludeOptions = createHTMLMultiselectOptions(allTags,"ObjectTargetTagsInclusive"+IDSuffix);
+		let ObjectTypeExcludeOptions = createHTMLMultiselectOptions(allTags,"ObjectTargetTagsExclusive"+IDSuffix);
 
-		let alreadyInclusiveTest = (table.rows.namedItem("rowObjectTargetTagsInclusive") != null);
-		let alreadyExclusiveTest = (table.rows.namedItem("rowObjectTargetTagsExclusive") != null);
+		let alreadyInclusiveTest = (table.rows.namedItem("rowObjectTargetTagsInclusive"+IDSuffix) != null);
+		let alreadyExclusiveTest = (table.rows.namedItem("rowObjectTargetTagsExclusive"+IDSuffix) != null);
 
 		if(currentTargetObjectTagSelection == "Inclusive" || currentTargetObjectTagSelection == "Mixture"){
 			if(alreadyInclusiveTest){
 				nextRowIndex++;
 			}
 			else{
-				addTableRow(tableID,nextRowIndex,"rowObjectTargetTagsInclusive","<th>Required Object Tags:</th><td><div class='check-multiple' style='width:100%'>"+ObjectTypeIncludeOptions+"</div></td>");
+				addTableRow(tableID,nextRowIndex,"rowObjectTargetTagsInclusive"+IDSuffix,"<th>Required Object Tags:</th><td><div class='check-multiple' style='width:100%'>"+ObjectTypeIncludeOptions+"</div></td>");
 				nextRowIndex++;
 			}
 			if(alreadyExclusiveTest && currentTargetObjectTagSelection == "Inclusive"){
-				table.deleteRow(document.getElementById("rowObjectTargetTagsExclusive").rowIndex);
+				table.deleteRow(document.getElementById("rowObjectTargetTagsExclusive"+IDSuffix).rowIndex);
 			}
 		}
 		else if(alreadyInclusiveTest){
@@ -867,14 +876,14 @@ async function createObjectTargetTagRows(tableID){
 		
 		if(currentTargetObjectTagSelection == "Exclusive" || currentTargetObjectTagSelection == "Mixture"){
 			if(!alreadyExclusiveTest){
-				addTableRow(tableID,nextRowIndex,"rowObjectTargetTagsExclusive","<th>Disallowed Object Tags:</th><td><div class='check-multiple' style='width:100%'>"+ObjectTypeExcludeOptions+"</div></td>");
+				addTableRow(tableID,nextRowIndex,"rowObjectTargetTagsExclusive"+IDSuffix,"<th>Disallowed Object Tags:</th><td><div class='check-multiple' style='width:100%'>"+ObjectTypeExcludeOptions+"</div></td>");
 				nextRowIndex++;
 			}
 			else{
 				nextRowIndex++;
 			}
 			if(alreadyInclusiveTest && currentTargetObjectTagSelection == "Exclusive"){
-				table.deleteRow(document.getElementById("rowObjectTargetTagsInclusive").rowIndex);
+				table.deleteRow(document.getElementById("rowObjectTargetTagsInclusive"+IDSuffix).rowIndex);
 			}
 		}
 	}

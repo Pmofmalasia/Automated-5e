@@ -1,13 +1,8 @@
 [h:abilityName = pm.RemoveSpecial(abilityName)]
 [h:abilitySubclass = pm.RemoveSpecial(abilitySubclass)]
-[h:abilityInfo = json.path.read(getProperty("a5e.stat.AllFeatures"),"[?("+pm.a5e.PathFeatureFilter(json.set("","Name",abilityName,"Class",abilityClass,"Subclass",abilitySubclass))+")]")]
 [h:abilityPriorData = arg(0)]
-[h:ParentToken=json.get(abilityPriorData,"ParentToken")]
-
-[h,if(json.isEmpty(abilityInfo)):
-	assert(0,"Feature "+abilityDisplayName+" not found on "+getName(ParentToken)+"!");
-	abilityInfo = json.get(abilityInfo,0)
-]
+[h:abilityInfo = abilityPriorData]
+[h:ParentToken = json.get(abilityPriorData,"ParentToken")]
 
 [h:DisplayArray = json.get(abilityInfo,"Settings")]
 [h,if(DisplayArray == ""),CODE:{

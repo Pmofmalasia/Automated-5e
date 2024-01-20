@@ -3,7 +3,12 @@
 
 [h:sameGroupTest = -1]
 
-[h,foreach(conditionGroup,json.get(oldEffect,"ConditionInfo")): sameGroupTest = if(json.equals(json.get(newEffect,"EndInfo"),json.get(json.get(oldEffect,"ConditionInfo"),"EndInfo")),roll.count,sameGroupTest)]
+[h,foreach(conditionGroup,json.get(oldEffect,"ConditionInfo")): sameGroupTest = if(
+	and(
+		json.equals(json.get(newEffect,"EndInfo"),json.get(json.get(oldEffect,"ConditionInfo"),"EndInfo")),
+		json.equals(json.get(newEffect,"Aura"),json.get(json.get(oldEffect,"ConditionInfo"),"Aura"))
+	),roll.count,sameGroupTest)
+]
 
 [h,if(sameGroupTest>=0),CODE:{
     [h:oldEffectNewConditions = json.merge(json.get(json.get(json.get(oldEffect,"ConditionInfo"),sameGroupTest),"Conditions"),json.get(newEffect,"Conditions"))]

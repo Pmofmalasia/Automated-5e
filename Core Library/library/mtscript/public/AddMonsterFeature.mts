@@ -10,4 +10,12 @@
 
 [h:setProperty("a5e.stat.AllFeatures",json.append(getProperty("a5e.stat.AllFeatures"),FeatureToAdd))]
 
+[h:MacroCreationData = json.set("",
+	"AbilityList",json.get(FeatureToAdd,"ButtonInfo"),
+	"Effects",json.get(FeatureToAdd,"Effects"),
+	"ParentToken",currentToken()
+)]
+
+[h,MACRO("CreatePlayerClassMacro@Lib:pm.a5e.Core"): MacroCreationData]
+
 [h:broadcast("Added "+json.get(SharedMonsterFeatureList,FeatureChoice)+" feature to "+getName()+".")]

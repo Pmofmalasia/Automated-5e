@@ -43,8 +43,10 @@
 [h:pm.TargetSizeMin = json.get(arg(1),"SizeMin")]
 [h:pm.TargetTypeInclusive = json.get(arg(1),"TypeInclusive")]
 [h:pm.TargetSubtypeInclusive = json.get(arg(1),"SubtypeInclusive")]
+[h:pm.TargetCreatureNameInclusive = json.get(arg(1),"CreatureNameInclusive")]
 [h:pm.TargetTypeExclusive = json.get(arg(1),"TypeExclusive")]
 [h:pm.TargetSubtypeExclusive = json.get(arg(1),"SubtypeExclusive")]
+[h:pm.TargetCreatureNameExclusive = json.get(arg(1),"CreatureNameExclusive")]
 [h:pm.TargetSight = if(json.get(arg(1),"Sight")=="",0,json.get(arg(1),"Sight"))]
 [h:pm.TargetHearing = if(json.get(arg(1),"Hearing")=="",0,json.get(arg(1),"Hearing"))]
 [h:pm.TargetUnderstand = if(json.get(arg(1),"Understand")=="",0,json.get(arg(1),"Understand"))]
@@ -114,6 +116,13 @@
 		pm.SubtypeTest = if(or(pm.TargetSubtypeInclusive==getProperty("a5e.stat.Race",target),pm.TargetSubtypeInclusive=="Any",pm.TargetSubtypeInclusive==""),1,0);
 		pm.SubtypeTest = if(json.contains(pm.TargetSubtypeInclusive,pm.RemoveSpecial(getProperty("a5e.stat.Race",target))),1,0)
 	]
+	
+	[h,if(json.type(pm.TargetCreatureNameInclusive) == "UNKNOWN"):
+		pm.CreatureNameTest = or(
+			pm.TargetCreatureNameInclusive==getProperty("a5e.stat.CreatureName",target),pm.TargetCreatureNameInclusive=="Any",
+			pm.TargetCreatureNameInclusive=="");
+		pm.CreatureNameTest = json.contains(pm.TargetCreatureNameInclusive,getProperty("a5e.stat.CreatureName",target))
+	]
 	 
 	[h,if(json.type(pm.TargetTypeExclusive) == "UNKNOWN"):
 		pm.TypeTest = if(or(pm.TargetTypeExclusive!=getProperty("a5e.stat.CreatureType",target),pm.TargetTypeExclusive==""),pm.TypeTest,0);
@@ -124,12 +133,25 @@
 		pm.SubtypeTest = if(or(pm.TargetSubtypeExclusive!=getProperty("a5e.stat.Race",target),pm.TargetSubtypeExclusive==""),pm.SubtypeTest,0);
 		pm.SubtypeTest = if(json.contains(pm.TargetSubtypeExclusive,pm.RemoveSpecial(getProperty("a5e.stat.Race",target))),0,pm.SubtypeTest)
 	]
-	 
-	[h:pm.IntTest = if(and(json.get(getProperty("a5e.stat.Attributes",target),"Intelligence")>pm.TargetIntMin,json.get(getProperty("a5e.stat.Attributes",target),"Intelligence")<pm.TargetIntMax),1,0)]
+	
+	[h,if(json.type(pm.TargetCreatureNameExclusive) == "UNKNOWN"):
+		pm.CreatureNameTest = min(or(
+			pm.TargetCreatureNameExclusive!=getProperty("a5e.stat.CreatureName",target),
+			pm.TargetCreatureNameExclusive==""),
+		pm.CreatureNameTest);
+		pm.CreatureNameTest = min(!json.contains(pm.TargetCreatureNameExclusive,getProperty("a5e.stat.CreatureName",target)),pm.CreatureNameTest)
+	]
+
+	[h:"<!-- BUGFIX: CRITICAL: Any attempt to use Int as a parameter for auras (or, in the future, other properties calculated via UnifiedAbilities) will cause crashes on ALL tokens if that aura is active. Only solution I can think of currently is swapping getProperty() for a5e.AttributeCalc(target,pm.a5e.GatherThisTokenFeatures(target,0)) - but this would outright prevent intelligence calculations from taking auras into account for ALL targeting (not just aura targeting). -->"]
+	[h,if(and(pm.TargetIntMax == 999999,pm.TargetIntMin == 0)):
+		pm.IntTest = 1;
+		pm.IntTest = if(and(json.get(getProperty("a5e.stat.Attributes",target),"Intelligence")>pm.TargetIntMin,json.get(getProperty("a5e.stat.Attributes",target),"Intelligence")<pm.TargetIntMax),1,0)
+	]
    
+	[h:"<!-- TODO: Move the CanSeeTest to targeting functions unless sight is required, because it shouldn't prevent valid unseen targets from being on the list for AoEs and similar effects which do not have to worry about players seeing the targets in an input -->"]
 	[h:AmountTargetIsVisible = canSeeToken(target,pm.TargetOrigin)]
 	[h:CanSeeTest = !json.isEmpty(AmountTargetIsVisible)]
-	[h,if(CanSeeTest): pm.ValidTargets = if(and(pm.AllegianceTest,pm.TypeTest,pm.SubtypeTest,pm.IntTest,pm.SizeTest),json.append(pm.ValidTargets,target),pm.ValidTargets)]
+	[h,if(CanSeeTest): pm.ValidTargets = if(and(pm.AllegianceTest,pm.TypeTest,pm.SubtypeTest,pm.CreatureNameTest,pm.IntTest,pm.SizeTest),json.append(pm.ValidTargets,target),pm.ValidTargets)]
 }]
 
 [h:macro.return = json.set("","ValidTargets",pm.ValidTargets,"SelfOnly",0)]

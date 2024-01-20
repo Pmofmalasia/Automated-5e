@@ -61,22 +61,23 @@
 	};{}]
 }]
 
-[h:"<!-- TODO: json.path: Can replace the loop to delete conditions with no remaining targets and replace it with junkVar if they ever patch json.path functions to compare arrays. -->"]
 [h:RemovedSetBy = json.unique(json.path.read(RemovedConditionsFinal,"\$[*][?(@.SetBy!='')]['SetBy']"))]
-[h:RemovedSetBy = json.intersection(getTokens(),RemovedSetBy)]
+[h:RemovedSetBy = json.intersection(getTokens("json"),RemovedSetBy)]
 [h,foreach(setBy,RemovedSetBy),CODE:{
 	[h:switchToken(setBy)]
+
 	[h:RemovedGroups = json.unique(json.path.read(RemovedConditionsFinal,"\$[*][?(@.SetBy=='"+setBy+"')]['GroupID']"))]
 	[h:RemovedGroupFilter = "@.GroupID=="+json.toList(RemovedGroups,+" || @.GroupID==")]
-	[h:setProperty("a5e.stat.ConditionsSet",json.path.delete(getProperty("a5e.stat.ConditionsSet"),"\$[*][?("+RemovedGroupFilter+")]['Targets'][?(@=='"+ParentToken+"')]"))]
-	[h,if(TargetType == "Item"): setProperty("a5e.stat.ConditionsSet",json.path.delete(getProperty("a5e.stat.ConditionsSet"),"\$[*][?("+RemovedGroupFilter+")]['Targets'][*][?(@.ItemID == '"+TargetID+"')]"))]
-	[h:junkVar = json.path.delete(getProperty("a5e.stat.ConditionsSet"),"\$[*][?(@.Targets == [])]")]
-	[h:tempCounter = json.length(getProperty("a5e.stat.ConditionsSet"))-1]
-	[h,count(json.length(a5e.stat.ConditionsSet)),CODE:{
-		[h:noTargetsTest = json.isEmpty(json.get(json.get(getProperty("a5e.stat.ConditionsSet"),tempCounter),"Targets"))]
-		[h,if(noTargetsTest): setProperty("a5e.stat.ConditionsSet",json.remove(getProperty("a5e.stat.ConditionsSet"),tempCounter))]
-		[h:tempCounter = tempCounter - 1]
+	[h:prunedConditionsSet = getProperty("a5e.stat.ConditionsSet")]
+	[h,foreach(tempConditionGroup,prunedConditionsSet),CODE:{
+		[h:removedGroupTest = json.contains(RemovedGroups,json.get(tempConditionGroup,"GroupID"))]
+		[h,if(removedGroupTest): prunedConditionsSet = json.path.set(prunedConditionsSet,"\$["+roll.count+"]['Targets']",json.difference(json.get(tempConditionGroup,"Targets"),ParentToken))]
 	}]
+	[h,if(TargetType == "Item"): setProperty("a5e.stat.ConditionsSet",json.path.delete(getProperty("a5e.stat.ConditionsSet"),"\$[*][?("+RemovedGroupFilter+")]['Targets'][*][?(@.ItemID == '"+TargetID+"')]"))]
+
+	[h:prunedConditionsSet = json.path.delete(prunedConditionsSet,"\$[*][?(@.Targets empty true)]")]
+
+	[h:setProperty("a5e.stat.ConditionsSet",prunedConditionsSet)]
 }]
 [h:switchToken(ParentToken)]
 

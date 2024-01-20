@@ -1,13 +1,13 @@
 [h:cond.abilityName = pm.RemoveSpecial(cond.abilityName)]
 [h:cond.abilitySubclass = pm.RemoveSpecial(cond.abilitySubclass)]
-[h:cond.Context = arg(0)]
-[h:cond.Info = pass.abilityInfo]
+[h:cond.Info = base64.decode(arg(0))]
+[h:cond.Context = json.get(cond.Info,"Context")]
 [h:cond.Library = json.get(cond.Info,"Library")]
 
 [h:cond.DisplayObject = json.get(cond.Info,"Settings")]
 [h,if(cond.DisplayObject == ""): cond.DisplayObject = "{}"]
 
-[h,if(cond.Context!="AfterAbility"): IsTooltip=0]
+[h,if(cond.Context!="AfterAbility"): IsTooltip = 0]
 [h:cond.Flavor=json.get(cond.DisplayObject,"Flavor")]
 [h:cond.needsSplitGMOutput=if(json.get(cond.DisplayObject,"needsSplitGMOutput")=="",if(getProperty("a5e.stat.Allegiance")=="Enemy",min(number(data.getData("addon:","pm.a5e.core","HideEnemyMacros")),1),if(getProperty("a5e.stat.Allegiance")=="Ally",min(number(data.getData("addon:","pm.a5e.core","HideAllyMacros")),1),0)),json.get(cond.DisplayObject,"needsSplitGMOutput"))]
 [h:cond.BorderColorOverride=json.get(cond.DisplayObject,"BorderColorOverride")]

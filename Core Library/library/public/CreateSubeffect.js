@@ -524,12 +524,13 @@ async function createAHLDamage(damageTypeNumber){
 }
 
 async function createConditionTable(){
-	let table = document.getElementById("CreateSubeffectTable");
+	let tableID = document.getElementById("rowCondition").closest("table").id;
+	let table = document.getElementById(tableID);
 	let nextRowIndex = document.getElementById("rowCondition").rowIndex + 1;
 	let conditionChoice = document.getElementById("isCondition").value;
 
 	if(conditionChoice == "None"){
-		clearUnusedTable("CreateSubeffectTable","rowCondition","rowSummons");
+		clearUnusedTable(tableID,"rowCondition","rowSummons");
 	}
 	else{
 		let alreadyAlwaysAddedTest = (table.rows.namedItem("rowConditionsAlwaysAdded") != null);
@@ -561,16 +562,7 @@ async function createConditionTable(){
 			}
 
 			if(alreadyOptionsTest && conditionChoice == "All"){
-				let tempRemovalId = 0;
-
-				if(checkEffectType()=="Spell"){
-					tempRemovalId = "rowConditionSameDuration";
-				}
-				else{
-					tempRemovalId = "rowConditionDuration";
-				}
-
-				clearUnusedTable("CreateSubeffectTable","rowConditionOptions",tempRemovalId);
+				clearUnusedTable(tableID,"rowConditionOptions","rowIsAura");
 				table.deleteRow(document.getElementById("rowConditionOptions").rowIndex);
 			}
 		}
@@ -607,18 +599,25 @@ async function createConditionTable(){
 			}
 			if(alreadyAlwaysAddedTest && conditionChoice == "Choose"){
 				//ConditionOptions is likely being inserted one row too much when going from all --> choose, so endinfo stuff gets removed here
-				clearUnusedTable("CreateSubeffectTable","rowCondition","rowConditionOptions");
+				clearUnusedTable(tableID,"rowCondition","rowConditionOptions");
 			}
 		}
 
 		if(!alreadyEndInfoTest){
-			if(checkEffectType()=="Spell"){
-				let rowConditionSameDuration = table.insertRow(nextRowIndex);
-				rowConditionSameDuration.id = "rowConditionSameDuration";
-				rowConditionSameDuration.innerHTML = "<th><label for='isConditionSameDuration'>Duration is Same as Spell's?</label></th><input type='checkbox' id='isConditionSameDuration' name='isConditionSameDuration' onchange='conditionAlternateDuration()' checked></td>";
-				nextRowIndex++;                
-			}
-			else{
+			addTableRow(tableID,nextRowIndex,"rowIsAura","<th><label for='isAura'>Condition is an Aura:</label></th><td><input type='checkbox' id='isAura' name='isAura' onchange='createAuraRows()'></td>");
+			nextRowIndex++;
+
+			addTableRow(tableID,nextRowIndex,"rowIsAuraEnd","");
+			document.getElementById("rowIsAuraEnd").setAttribute("hidden","");
+			nextRowIndex++;
+
+			let rowConditionSameDuration = table.insertRow(nextRowIndex);
+			rowConditionSameDuration.id = "rowConditionSameDuration";
+			rowConditionSameDuration.innerHTML = "<th><label for='isConditionSameDuration'>Duration is Same as Spell's?</label></th><input type='checkbox' id='isConditionSameDuration' name='isConditionSameDuration' onchange='conditionAlternateDuration()' checked></td>";
+			nextRowIndex++;
+
+			if(checkEffectType()!="Spell"){
+				document.getElementById("rowConditionSameDuration").setAttribute("hidden","");
 				conditionAlternateDuration();
 				nextRowIndex++;
 			}
@@ -699,22 +698,11 @@ async function createMultiUniqueConditionRow(conditionPrefix){
 }
 
 async function conditionAlternateDuration(){
-	let isSameDuration;
-	let nextRowIndex;
+	let isSameDuration = false;
+	let nextRowIndex = document.getElementById("rowConditionSameDuration").rowIndex + 1;
 
 	if(checkEffectType()=="Spell"){
 		isSameDuration = document.getElementById("isConditionSameDuration").checked;
-		nextRowIndex = document.getElementById("rowConditionSameDuration").rowIndex + 1;
-	}
-	else{
-		isSameDuration = false;
-
-		if(document.getElementById("rowConditionOptions")==null){
-			nextRowIndex = document.getElementById("rowConditionsAlwaysAdded").rowIndex+1;
-		}
-		else{
-			nextRowIndex = document.getElementById("rowConditionOptionsNumber").rowIndex+1;
-		}
 	}
 
 	if(isSameDuration){
@@ -844,6 +832,30 @@ async function createConditionNonDurationEnd(){
 		}
 
 		clearUnusedTable("CreateSubeffectTable","rowIsConditionNonDurationEnd",endRowID)
+	}
+}
+
+async function createAuraRows(){
+	let tableID = document.getElementById("rowIsAura").closest("table").id;
+
+	if(document.getElementById("isAura").checked){
+		await createTargetingRows(tableID,"rowIsAuraEnd","Aura");
+
+		document.getElementById("RangeTypeAura").value = "SelfRanged";
+		document.getElementById("RangeTypeAura").onchange();
+		document.getElementById("RangeAura").setAttribute("hidden","");
+
+		document.getElementById("AoEAura").setAttribute("hidden","");
+
+		document.getElementById("MustTargetAllAura").checked = true;
+
+		document.getElementById("isTargetNumberUnlimitedAura").checked = true;
+		document.getElementById("isTargetNumberUnlimitedAura").onchange();
+
+		document.getElementById("rowMissilesAura").setAttribute("hidden","");
+	}
+	else{
+		clearUnusedTable(tableID,"rowIsAura","rowIsAuraEnd");
 	}
 }
 

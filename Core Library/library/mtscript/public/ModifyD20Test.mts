@@ -15,6 +15,7 @@
 		[h:d20RollHeader = CurrentSkillDisplay]
 	};
 	case "Save":{
+		[h:CurrentSave = json.get(d20Data,"Save")]
 		[h,SWITCH(d20Type),CODE:
 			case "Save": {
 				[h:CurrentSaveDisplay = pm.GetDisplayName(CurrentSave,"sb.Attributes")]

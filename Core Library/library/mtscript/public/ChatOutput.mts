@@ -40,12 +40,14 @@
 
 		[h:finalPlayersList = json.merge(finalPlayersList,addedTargets)]
 	}]
-	[h:allGMs = json.path.read(player.getConnectedPlayers(),"\$[*][?(@.role == 'GM')]['name']")]
-	[h:finalPlayersList = json.union(finalPlayersList,allGMs)]
+	[h,if(0),CODE:{
+		[h:allGMs = json.path.read(player.getConnectedPlayers(),"\$[*][?(@.role == 'GM')]['name']")]
+		[h:finalPlayersList = json.union(finalPlayersList,allGMs)]		
+	}]
 }]
 [h:personalizedChatSettings = data.getData("addon:","pm.a5e.core","PlayerChatSettings")]
 
-[h:switchToken(ParentToken)]
+[h,if(ParentToken != ""): switchToken(ParentToken)]
 [h,foreach(player,finalPlayersList),CODE:{
 	[h:playerName = pm.RemoveSpecial(player)]
 	[h,if(json.contains(personalizedChatSettings,playerName)):
@@ -59,4 +61,18 @@
 		broadcastAsToken(strformat(GMOutput),player);
 		broadcastAsToken(strformat(PlayerOutput),player)
 	]
+}]
+
+[h:"<!-- TODO: Bugfix MT: Remove the below code and remove the above from if(0) if/when player.getConnectedPlayers() is fixed -->"]
+[h:excludedPlayersList = json.difference(finalPlayersList,allPlayers)]
+[h,foreach(player,excludedPlayersList),if(isGM(player)),CODE:{
+	[h:playerName = pm.RemoveSpecial(player)]
+	[h,if(json.contains(personalizedChatSettings,playerName)):
+		finalChatSettings = json.merge(DefaultChatSettings,json.get(personalizedChatSettings,playerName));
+		finalChatSettings = DefaultChatSettings
+	]
+
+	[h:pm.a5e.OutputVariables(finalChatSettings,0)]
+
+	[h:broadcastAsToken(strformat(GMOutput),player)]
 }]

@@ -5,8 +5,7 @@
 [h:pm.Duration = json.get(arg(2),"Value")]
 [h:pm.DurationUnits = json.get(arg(2),"Units")]
 [h:pm.AdvancePoint = json.get(arg(2),"AdvancePoint")]
-[h:pm.AuraRange = if(json.get(arg(2),"AuraRange")=="",0,json.get(arg(2),"AuraRange"))]
-[h:pm.AuraUnits = json.get(arg(2),"AuraUnits")]
+[h:pm.AuraInfo = json.get(arg(2),"Aura")]
 
 [h,if(argCount()>3): pm.ConditionEndTriggers = if(arg(3)=="","{}",arg(3)); pm.ConditionEndTriggers = ""]
 [h:pm.a5e.FeatureComponentStdVars(arg(0))]
@@ -29,8 +28,6 @@
 	"Duration",pm.Duration,
 	"DurationUnits",pm.DurationUnits,
 	"AdvancePoint",pm.AdvancePoint,
-	"AuraRange",pm.AuraRange,
-	"AuraUnits",pm.AuraUnits,
 	"EndTriggers",pm.ConditionEndTriggers
 )]
 
@@ -70,6 +67,7 @@
 			[h,MACRO("ApplyCondition@Lib:pm.a5e.Core"): json.set("",
 				"Conditions",pm.ConditionInfo,
 				"EndInfo",pm.ConditionEndInfo,
+				"Aura",pm.AuraInfo,
 				"SetBy",ParentToken,
 				"Target",ParentToken,
 				"GroupID",pm.GroupID
@@ -127,7 +125,7 @@
 			"DisplayOrder","['Rules','Roll','Full']"
 		))]
 		
-		[h:pm.ConditionsToSet = json.set("","Conditions",pm.ConditionInfo,"EndInfo",pm.ConditionEndInfo)]
+		[h:pm.ConditionsToSet = json.set("","Conditions",pm.ConditionInfo,"EndInfo",pm.ConditionEndInfo,"Aura",pm.AuraInfo)]
 
 		[h:effectsToMerge = json.append("",json.set("","ConditionInfo",pm.ConditionsToSet))]
 		[h,MACRO("Build Effect@Lib:pm.a5e.Core"): json.set("","CurrentEffects",pm.a5e.EffectData,"ToMerge",effectsToMerge,"BaseEffect",pm.a5e.BaseEffectData,"WhichEffect",whichEffect)]

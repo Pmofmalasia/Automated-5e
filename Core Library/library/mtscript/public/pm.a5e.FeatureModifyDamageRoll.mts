@@ -54,9 +54,11 @@
         json.get(NewDamageData,"DamageType"),
         NonDamageData
     )]
-
+	[h:return(!IsTooltip)]
+	[h:"<!-- Note: pm.DamageRoll is set as part of pm.a5e.FeatureDamageRoll -->"]
     [h:ModifyHowData = json.set(ModifyHowData,"DamageInstance",pm.DamageRoll)]
-}]
+};{}]
+[h:return(!IsTooltip)]
 
 [h,MACRO("ModifyDamageRoll@Lib:pm.a5e.Core"): json.append("",EffectDamageToModify,ModifyHowData)]
 

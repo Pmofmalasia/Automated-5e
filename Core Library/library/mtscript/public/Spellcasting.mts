@@ -12,7 +12,10 @@
 [h:ForcedImage = json.get(NonSpellData,"ForcedImage")]
 [h:ForcedPortrait = json.get(NonSpellData,"ForcedPortrait")]
 [h:ForcedHandout = json.get(NonSpellData,"ForcedHandout")]
-[h:needsSplitGMOutput = json.get(NonSpellData,"needsSplitGMOutput")]
+[h,if(json.get(NonSpellData,"needsSplitGMOutput") == ""):
+	needsSplitGMOutput = (getProperty("a5e.stat.Allegiance") == "Enemy");
+	needsSplitGMOutput = json.get(NonSpellData,"needsSplitGMOutput")
+]
 [h:AuraColor = json.get(NonSpellData,"AuraColor")]
 [h:BorderColorOverride = json.get(NonSpellData,"BorderColorOverride")]
 [h:TitleFontColorOverride = json.get(NonSpellData,"TitleFontColorOverride")]
@@ -315,7 +318,7 @@
 [h,if(and(!isConcentrationLost,isConcentration==1)): setState("Concentrating",1)]
 [h,if(and(!isConcentrationLost,isConcentration==1)): setProperty("a5e.stat.Concentration",SpellName)]
 
-[h:CompendiumLink=concat('<a style="color:'+TextColor+';" href=',BaseLink,replace(SpellDisplayName,' ','-'),'>',SpellDisplayName,'</a>')]
+[h:CompendiumLink=concat('<a style="color:%{LinkColor};" href=',BaseLink,replace(SpellDisplayName,' ','-'),'>',SpellDisplayName,'</a>')]
 
 [h:abilityClass = sClassSelect]
 [h:abilityDisplayName = "<b>"+CompendiumLink+"</b> ("+if(IsCantrip,"Cantrip",SpellLevel)+") <i>"+if(CastAsRitual," (ritual)","")+"</i>"]

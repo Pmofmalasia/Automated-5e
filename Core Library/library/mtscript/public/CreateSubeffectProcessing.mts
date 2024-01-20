@@ -449,6 +449,19 @@
 		"Conditions",json.merge(conditionsAlwaysAdded,conditionOptions),
 		"EndInfo",conditionEndInfo
 	)]
+
+	[h,if(json.contains(subeffectData,"isAura")),CODE:{
+		[h:GeneralTargetingReturn = ct.a5e.GeneralTargetingProcessing(subeffectData,"Aura")]
+		[h:subeffectData = json.get(GeneralTargetingReturn,"Subeffect")]
+		[h:AuraGeneralTargetingData = json.get(GeneralTargetingReturn,"Targeting")]
+
+		[h:AllTargetingData = ct.a5e.AllTargetingOptionsProcessing(subeffectData,"{}","TargetType","Aura")]
+		[h:subeffectData = json.get(AllTargetingData,"Subeffect")]
+		[h:targetData = json.get(AllTargetingData,"Targeting")]
+
+		[h:AuraTargetingData = json.set(AuraGeneralTargetingData,"TargetLimits",targetData)]
+		[h:allConditionInfo = json.set(allConditionInfo,"Aura",AuraTargetingData)]
+	};{}]
 	
 	[h:subeffectData = json.set(subeffectData,"ConditionInfo",allConditionInfo)]
 };{}]
@@ -800,61 +813,17 @@
 ]
 [h:subeffectData = json.remove(subeffectData,"isCreateObject")]
 
-[h:subeffectData = json.set(subeffectData,"UsePriorOrigin",json.contains(subeffectData,"UsePriorOrigin"))]
-
-[h,if(json.get(subeffectData,"RangeType") == "SelfRanged" || json.get(subeffectData,"RangeType") == "Ranged"),CODE:{
-	[h:rangeData = json.set("",
-		"Value",number(json.get(subeffectData,"RangeValue")),
-		"Units",json.get(subeffectData,"RangeUnits")
-	)]
-	[h,if(json.get(subeffectData,"RangeScalingAHL") != "0" && json.contains(subeffectData,"RangeScalingAHL")):
-		rangeData = json.set(rangeData,
-			"AHLScaling",number(json.get(subeffectData,"RangeScalingAHL")),
-			"AHLValue",number(json.get(subeffectData,"RangeValueAHL")));
-			rangeData = json.set(rangeData,
-			"AHLScaling",0,
-			"AHLValue",0)
-	]
-	[h:subeffectData = json.remove(subeffectData,"RangeValue")]
-	[h:subeffectData = json.remove(subeffectData,"RangeUnits")]
-	[h:subeffectData = json.remove(subeffectData,"RangeScalingAHL")]
-	[h:subeffectData = json.remove(subeffectData,"RangeValueAHL")]
-	[h:subeffectData = json.set(subeffectData,"Range",rangeData)]
-};{}]
-
-[h:subeffectData = json.set(subeffectData,"MustTargetAll",json.contains(subeffectData,"MustTargetAll"))]
-
-[h,switch(json.get(subeffectData,"aoeShape")),CODE:
-	case "None":{};
-	case "":{};
-	case "Choose":{
-		[h:AoEShapes = json.append("","Cone","Cube","Cylinder","Half Sphere","Line","Panels","Sphere","Wall")]
-		[h:AoEShapeOptions = "[]"]
-		[h,foreach(tempShape,AoEShapes),CODE:{
-			[h:isOptionTest = json.contains(subeffectData,"is"+pm.RemoveSpecial(tempShape)+"AOEMulti")]
-			[h,if(isOptionTest): AoEShapeData = ct.a5e.AoEDataProcessing(tempShape)]
-			[h,if(isOptionTest): AoEShapeOptions = json.append(AoEShapeOptions,json.set(AoEShapeData,"Shape",pm.RemoveSpecial(tempShape)))]
-			[h:subeffectData = json.remove(subeffectData,"is"+pm.RemoveSpecial(tempShape)+"AOEMulti")]
-		}]
-
-		[h:subeffectData = json.set(subeffectData,"AoEOptions",AoEShapeOptions)]
-	};
-	default:{
-		[h:AoEShapeData = ct.a5e.AoEDataProcessing(json.get(subeffectData,"aoeShape"))]
-
-		[h:subeffectData = json.set(subeffectData,"AoE",json.set(AoEShapeData,"Shape",pm.RemoveSpecial(json.get(subeffectData,"aoeShape"))))]
-	}
-]
-[h:subeffectData = json.remove(subeffectData,"aoeShape")]
-
-[h:subeffectData = json.remove(subeffectData,"isMissiles")]
+[h:GeneralTargetingReturn = ct.a5e.GeneralTargetingProcessing(subeffectData,"")]
+[h:subeffectData = json.get(GeneralTargetingReturn,"Subeffect")]
+[h:GeneralTargetingData = json.get(GeneralTargetingReturn,"Targeting")]
+[h:subeffectData = json.merge(subeffectData,GeneralTargetingData)]
 
 [h:targetData = "{}"]
 [h:AllTargetingData = ct.a5e.AllTargetingOptionsProcessing(subeffectData,targetData,"TargetType")]
 [h:subeffectData = json.get(AllTargetingData,"Subeffect")]
 [h:targetData = json.get(AllTargetingData,"Targeting")]
 
-[h:"<!-- TODO: Incorporate isSight (can you see the target) into targetData - or maybe not? Since it's kinda info on the caster? Will consider. Maybe store in both locations (caster can see, target can be seen). -->"]
+[h:"<!-- TODO: Incorporate isSight (can you see the target) into targetData - or maybe not? Since it's kinda info on the caster? Will consider. Maybe store in both locations (caster can see, target can be seen). This would be more easily solvable if updates allowing more detailed invisibility/sight rules are made to MT. -->"]
 [h:subeffectData = json.set(subeffectData,"TargetLimits",targetData)]
 [h:subeffectData = json.remove(subeffectData,"MaxCover")]
 

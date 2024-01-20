@@ -337,6 +337,7 @@
 			))]
 
 			[h,if(json.contains(thisTokenModifiableComponents,"Table")): abilityTable = json.merge(abilityTable,json.get(thisTokenModifiableComponents,"Table"))]
+			[h:needsFurtherResolution = max(needsFurtherResolution,json.get(thisTokenModifiableComponents,"NeedsAdditionalResolution"))]
 		};
 		default:{}
 	]
@@ -423,6 +424,7 @@
 			))]
 
 			[h,if(json.contains(thisTokenModifiableComponents,"Table")): abilityTable = json.merge(abilityTable,json.get(thisTokenModifiableComponents,"Table"))]
+			[h:needsFurtherResolution = max(needsFurtherResolution,json.get(thisTokenModifiableComponents,"NeedsAdditionalResolution"))]
 		};
 		default:{}
 	]

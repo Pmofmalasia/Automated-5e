@@ -23,7 +23,7 @@
 	[h:switchTest = ""]
 }]
 
-[h:pm.ValidAbilities = json.path.read(a5e.UnifiedAbilities,"[*][?(@.IsActive>0 && @.Call"+a5e.CallingInstance+if(passiveSpecificFeature=="","!=0","=='"+passiveSpecificFeature+"'")+" && @.Call"+a5e.CallingInstance+"!=null)]","DEFAULT_PATH_LEAF_TO_NULL")]
+[h:pm.ValidAbilities = json.path.read(a5e.UnifiedAbilities,"\$[*][?(@.IsActive>0 && @.Call"+a5e.CallingInstance+if(passiveSpecificFeature=="","!=0","=='"+passiveSpecificFeature+"'")+" && @.Call"+a5e.CallingInstance+"!=null)]","DEFAULT_PATH_LEAF_TO_NULL")]
 [h:"<!-- TODO: BUGFIX: When nesting one passivefunction into another, a5e.CallingInstance changes in the second passivefunction. This means that AbilityCallingInstanceValue will be incorrect in the loop after the second passivefunction finishes. -->"]
 [h,foreach(ability,pm.ValidAbilities),CODE:{
 	[h,switch(json.get(ability,"AbilityType")):
@@ -32,7 +32,7 @@
 		case "ItemCondition": a5efunctionName = "pm."+json.get(ability,"Name")+json.get(ability,"Class")+json.get(ability,"Subclass")+"ConditionPassive";
 		default: a5efunctionName = "pm."+json.get(ability,"Name")+json.get(ability,"Class")+json.get(ability,"Subclass")+"Passive"
 	]
-	[h:pass.abilityInfo = ability]
+	[h:thisFeatureArgs = json.set(ability,"Context",a5e.CallingInstance)]
 	[h:AbilityCallingInstanceValue = json.get(ability,"Call"+a5e.CallingInstance)]
 	[h:pm.ValidFunction = isFunctionDefined(a5efunctionName)]
 	[h:pm.SpecificAbilityTest = json.type(AbilityCallingInstanceValue)]
@@ -43,11 +43,11 @@
 	[h:"<!-- Not UNKNOWN (should be ARRAY) + no arg: Ability being called is acting on the ability being run. If ability being run is in the preset list, then ability is called. -->"]
 	[h,if(pm.SpecificAbilityTest=="UNKNOWN"),CODE:{
 		[h,if(argCount()>1 && pm.ValidFunction): pm.ValidFunction = (AbilityCallingInstanceValue == if(passiveSpecificFeature=="",1,passiveSpecificFeature))]
-		[h,if(pm.ValidFunction): evalMacro("[h:"+a5efunctionName+"('"+a5e.CallingInstance+"')]")]
+		[h,if(pm.ValidFunction): evalMacro("[h:"+a5efunctionName+"('"+base64.encode(thisFeatureArgs)+"')]")]
 		[h,if(!pm.ValidFunction && substring(AbilityCallingInstanceValue,0,1) == "["): pm.a5e.ExecutePassiveFeature(ability,AbilityCallingInstanceValue)]
 	};{
 		[h:pm.ThisAbilityTest = json.contains(AbilityCallingInstanceValue,json.set("","Name",json.get(abilityInfo,"Name"),"DisplayName",json.get(abilityInfo,"DisplayName"),"Class",json.get(abilityInfo,"Class"),"Subclass",json.get(abilityInfo,"Subclass")))]
-		[h,if(pm.ValidFunction && pm.ThisAbilityTest): evalMacro("[h:"+a5efunctionName+"('"+a5e.CallingInstance+"')]")]
+		[h,if(pm.ValidFunction && pm.ThisAbilityTest): evalMacro("[h:"+a5efunctionName+"('"+base64.encode(thisFeatureArgs)+"')]")]
 	}]
 }]
 

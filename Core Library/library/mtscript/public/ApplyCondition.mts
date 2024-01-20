@@ -1,5 +1,6 @@
 [h:a5e.ConditionsTemp = json.get(macro.args,"Conditions")]
 [h:a5e.EndConditionInfo = json.get(macro.args,"EndInfo")]
+[h:a5e.AuraInfo = json.get(macro.args,"Aura")]
 [h:a5e.GroupID = json.get(macro.args,"GroupID")]
 [h:TargetData = json.get(macro.args,"Target")]
 [h,if(json.type(TargetData) == "OBJECT"),CODE:{
@@ -21,9 +22,6 @@
 [h:ConditionDuration = json.get(a5e.EndConditionInfo,"Duration")]
 [h:ConditionDurationUnits = json.get(a5e.EndConditionInfo,"DurationUnits")]
 [h:ConditionAdvancePoint = json.get(a5e.EndConditionInfo,"AdvancePoint")]
-[h:ConditionAuraRange = json.get(a5e.EndConditionInfo,"AuraRange")]
-[h:ConditionAuraUnits = json.get(a5e.EndConditionInfo,"AuraUnits")]
-[h:ConditionAuraValid = json.get(a5e.EndConditionInfo,"AuraValid")]
 [h:ConditionEndTriggers = json.get(a5e.EndConditionInfo,"EndTriggers")]
 
 [h:DurationBase = json.set("","year",0,"day",0,"hour",0,"minute",0,"round",0)]
@@ -72,6 +70,7 @@
 [h:a5e.Conditions = json.path.put(a5e.Conditions,"\$[*]","SetBy",ConditionSetBy)]
 [h:a5e.Conditions = json.path.put(a5e.Conditions,"\$[*]","GroupID",a5e.GroupID)]
 [h:a5e.Conditions = json.path.put(a5e.Conditions,"\$[*]","IsActive",1)]
+[h,if(a5e.AuraInfo != ""): a5e.Conditions = json.path.put(a5e.Conditions,"\$[*]","Aura",a5e.AuraInfo)]
 
 [h:"<!-- The following line sets any previously set conditions of the same name as inactive. The reasoning is based on PHB 205: effects of the same spell cast multiple times don't combine, and the most potent effect applies while they overlap - OR, if equally potent, the most recent effect applies. In lieu of being able to calculate which is more 'potent' ahead of time (which, at times, can be abstract), the latter method is the one used at all times instead. Will continue to think of ways to enforce the more 'potent' effect when possible. For now, the current method should cover the majority of cases, and should add an option to change which is active in the Condition Management macro to cover edge cases. Note: There is a similar ruling on PHB 290 for base conditions, so this is not limited to spells. -->"]
 [h,switch(TargetType),CODE:
@@ -83,7 +82,6 @@
 	}
 ]
 
-
 [h,foreach(condition,a5e.Conditions),CODE:{
 	[h:StateExistsTest = !json.isEmpty(json.path.read(getInfo("campaign"),"\$.states.*.[?(@.name=='"+json.get(condition,"Name")+"')]"))]
 	[h,if(StateExistsTest),CODE:{
@@ -92,6 +90,12 @@
 		[h,if(json.get(condition,"BackupState")!="" && json.get(condition,"IsAssociated")!=1): setState(json.get(condition,"BackupState"),1)]
 	}]
 }]
+
+[h,if(a5e.AuraInfo != ""),CODE:{
+	[h:AuraRange = json.get(json.get(a5e.AuraInfo,"Range"),"Value")]
+	[h:AuraColor = if(getProperty("a5e.stat.Allegiance") == "Enemy","Red","Green")]
+	[h:setLight("A5E_Auras",AuraColor + " " + AuraRange,1)]
+};{}]
 
 [h:a5e.GroupingInfo = json.set("",
 	"EndTriggers",ConditionEndTriggers,

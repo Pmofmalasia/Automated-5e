@@ -136,4 +136,6 @@
 ]
 [h:subeffectData = json.remove(subeffectData,"ObjectTargetMagnetic"+IDSuffix)]
 
+[h:objectTargetData = json.set(objectTargetData,"MaxCover",json.get(subeffectData,"MaxCover"))]
+
 [h:macro.return = json.set("","Subeffect",subeffectData,"Object",objectTargetData)]

@@ -4,6 +4,7 @@
 [h:currentFeatureExtraData = json.get(extraInfo,"ExtraData")]
 [h:pm.a5e.FeatureComponentStdVars(arg(0))]
 
+[h:currentFeatureExtraData = json.merge(currentFeatureExtraData,currentFeatureInfo)]
 [h:currentFeatureLibrary = json.get(currentFeatureInfo,"Library")]
 [h:currentFeatureType = json.get(currentFeatureInfo,"Type")]
 [h:currentFeatureContext = json.get(currentFeatureInfo,"Context")]

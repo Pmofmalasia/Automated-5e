@@ -1,7 +1,7 @@
 [h:pass.abilityName = pm.RemoveSpecial(pass.abilityName)]
 [h:pass.abilitySubclass = pm.RemoveSpecial(pass.abilitySubclass)]
-[h:pass.Context = arg(0)]
-[h:pass.FeatureInfo = json.get(json.path.read(getProperty("a5e.stat.AllFeatures"),"[*][?(@.Name=='"+pass.abilityName+"' && @.Class=='"+pass.abilityClass+"' && @.Subclass=='"+pass.AbilitySubclass+"')]"),0)]
+[h:pass.FeatureInfo = base64.decode(arg(0))]
+[h:pass.Context = json.get(pass.FeatureInfo,"Context")]
 [h:pass.DisplayObject = json.get(pass.FeatureInfo,"Settings")]
 [h,if(pass.DisplayObject == ""): pass.DisplayObject = "{}"]
 

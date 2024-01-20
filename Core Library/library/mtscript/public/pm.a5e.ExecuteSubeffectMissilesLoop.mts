@@ -211,7 +211,10 @@
 		subeffect.ConditionEndInfo = json.set(subeffect.ConditionEndInfo,"AdvancePoint","EndofTurn")
 	]
 
-	[h:thisEffectData = json.set(thisEffectData,"ConditionInfo",json.set("","Conditions",subeffect.Conditions,"EndInfo",subeffect.ConditionEndInfo))]
+	[h:"<!-- TODO: Add in any modification needed to be done to aura range/valid targets/etc. here -->"]
+	[h:subeffect.AuraInfo = json.get(tempConditionInfo,"Aura")]
+
+	[h:thisEffectData = json.set(thisEffectData,"ConditionInfo",json.set("","Conditions",subeffect.Conditions,"EndInfo",subeffect.ConditionEndInfo,"Aura",subeffect.AuraInfo))]
 
 	[h:subeffect.ConditionNames = pm.a5e.CreateDisplayList(json.path.read(subeffect.Conditions,"[*]['DisplayName']"),"and")]
 	[h:abilityTable = json.append(abilityTable,json.set("",

@@ -19,8 +19,8 @@
 [h:pm.a5e.BaseEffectData = json.set("",
     "Class","Spell",
     "DisplayClass","zzSpell",
-	"DisplayName",,
-    "ColorSubtype",,
+	"DisplayName",json.get(SpellData,"DisplayName"),
+    "ColorSubtype",json.set("","Source",SpellSource,"Level",SpellSlot),
     "FalseName","Spellcasting",
 	"Type","Spell",
 	"ID",pm.a5e.GenerateEffectID(),
@@ -45,6 +45,8 @@
 	"Description",SpellDescription,
 	"AbridgedDescription",SpellDescription
 )]
+
+[h,MACRO("GatherOutputComponents@Lib:pm.a5e.Core"): AllOutputComponents]
 
 [h,MACRO("Build Effect@Lib:pm.a5e.Core"): json.set("","CurrentEffects",pm.a5e.EffectData,"ToMerge",effectsToMerge,"BaseEffect",pm.a5e.BaseEffectData)]
 [h:pm.a5e.EffectData = macro.return]

@@ -9,7 +9,6 @@
 [h:IsTooltip = 0]
 [h:AdditionalDCResolution = 0]
 [h:abilityTable = "[]"]
-
 [h:"<!-- Note: Below is a dummy placeholder since a5e.UnifiedAbilities will be set in PassiveFunction anyway -->"]
 [h:a5e.UnifiedAbilities = "[]"]
 

@@ -46,7 +46,7 @@
 }]
 [h:lu.OldConMod = json.get(getProperty("a5e.stat.AtrMods"),"Constitution")]
 
-[h:lu.SubclassTest = if(json.get(json.path.read(lu.ClassArray,"\$[?(@.Name=='"+lu.Class+"')]['SubclassLevel']"),0)==lu.NewLevel,1,0)]
+[h:lu.SubclassTest = if(json.get(json.path.read(lu.ClassArray,"\$[*][?(@.Name=='"+lu.Class+"')]['SubclassLevel']"),0)==lu.NewLevel,1,0)]
 [h,if(lu.SubclassTest),CODE:{
 	[h:abort(input(
 		" lu.SubclassChoice | "+pm.GetSubclasses(lu.Class,"DisplayName")+" | Choose a subclass | RADIO | VALUE=STRING "
@@ -153,7 +153,7 @@
 	[h:setProperty("a5e.stat.AllFeatures",json.append(getProperty("a5e.stat.AllFeatures"),json.set(ability,"IsDisplayed",1,"IsActive",1)))]
 	[h:lu.DisplayNewAbilities = listAppend(lu.DisplayNewAbilities,json.get(ability,"DisplayName"),"<br>")]
 }]
-[h:setProperty("a5e.stat.AllFeatures",json.path.set(getProperty("a5e.stat.AllFeatures"),"\$[?(@.Class=='"+lu.Class+"' && @.MagicItemLink=='None')]['Level']",lu.NewLevel))]
+[h:setProperty("a5e.stat.AllFeatures",json.path.set(getProperty("a5e.stat.AllFeatures"),"\$[*][?(@.Class=='"+lu.Class+"' || @.Race == '"+pm.RemoveSpecial(getProperty("a5e.stat.Race"))+"')]['Level']",lu.NewLevel))]
 
 [h:"<!-- Adds newly gained resources to the abilities array, see above. If resource existed previously, added resource amount = New difference - old difference. If resource did not exist previously, just sets resource = maxresource. -->"]
 [h:noFeaturesTest = json.isEmpty(getProperty("a5e.stat.AllFeatures"))]
@@ -166,11 +166,11 @@
 		[h:lu.MultiResourceList = json.fields(lu.CurrentResource,"json")]
 		[h:TempNewResources = ""]
 		[h,foreach(resource,lu.MultiResourceList): TempNewResources = json.set(TempNewResources,resource,json.get(lu.CurrentResource,resource)+json.get(lu.CurrentMax,resource)-json.get(json.get(lu.OldResourcesMax,json.get(ability,"Name")+json.get(ability,"Class")+json.get(ability,"Subclass")),resource))]
-		[h:setProperty("a5e.stat.AllFeatures",json.path.set(getProperty("a5e.stat.AllFeatures"),"\$[?(@.Name=='"+json.get(ability,"Name")+"' && @.Class=='"+json.get(ability,"Class")+"' && @.Subclass=='"+json.get(ability,"Subclass")+"')]['Resource']",TempNewResources))]
+		[h:setProperty("a5e.stat.AllFeatures",json.path.set(getProperty("a5e.stat.AllFeatures"),"\$[*][?(@.Name=='"+json.get(ability,"Name")+"' && @.Class=='"+json.get(ability,"Class")+"' && @.Subclass=='"+json.get(ability,"Subclass")+"')]['Resource']",TempNewResources))]
 	};{
 		[h,if(lu.CurrentResource == ""):
-			setProperty("a5e.stat.AllFeatures",json.path.put(getProperty("a5e.stat.AllFeatures"),"\$[?(@.Name=='"+json.get(ability,"Name")+"' && @.Class=='"+json.get(ability,"Class")+"' && @.Subclass=='"+json.get(ability,"Subclass")+"')]","Resource",evalMacro(json.get(ability,"MaxResource")))); 
-			setProperty("a5e.stat.AllFeatures",json.path.set(getProperty("a5e.stat.AllFeatures"),"\$[?(@.Name=='"+json.get(ability,"Name")+"' && @.Class=='"+json.get(ability,"Class")+"' && @.Subclass=='"+json.get(ability,"Subclass")+"')]['Resource']",lu.CurrentResource+lu.CurrentMax-json.get(lu.OldResourcesMax,json.get(ability,"Name")+json.get(ability,"Class")+json.get(ability,"Subclass"))))]
+			setProperty("a5e.stat.AllFeatures",json.path.put(getProperty("a5e.stat.AllFeatures"),"\$[*][?(@.Name=='"+json.get(ability,"Name")+"' && @.Class=='"+json.get(ability,"Class")+"' && @.Subclass=='"+json.get(ability,"Subclass")+"')]","Resource",evalMacro(json.get(ability,"MaxResource")))); 
+			setProperty("a5e.stat.AllFeatures",json.path.set(getProperty("a5e.stat.AllFeatures"),"\$[*][?(@.Name=='"+json.get(ability,"Name")+"' && @.Class=='"+json.get(ability,"Class")+"' && @.Subclass=='"+json.get(ability,"Subclass")+"')]['Resource']",lu.CurrentResource+lu.CurrentMax-json.get(lu.OldResourcesMax,json.get(ability,"Name")+json.get(ability,"Class")+json.get(ability,"Subclass"))))]
 	}]
 }]
 
@@ -253,7 +253,6 @@
 [h:"<!-- Start of output creation -->"]
 [h:outputTargets = if(getProperty("a5e.stat.Allegiance")=="PC","not-gm","none")]
 [h:BorderData = json.set("",
-	"Flavor",Flavor,
 	"Name","LevelUp",
 	"DisplayName","Level Up!",
 	"FalseName","",

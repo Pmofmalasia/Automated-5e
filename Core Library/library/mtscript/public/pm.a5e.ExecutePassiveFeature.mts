@@ -10,7 +10,7 @@
         [h:pass.abilityFalseName = "Class Feature"]
         [h:pass.FeatureFullDescription = ""]
         [h:pass.FeatureAbridgedDescription = ""]
-        [h:pm.a5e.FeaturePassiveStdVars(arg(0))]
+        [h:pm.a5e.FeaturePassiveStdVars(base64.encode(tempAbilityInfo))]
     };
     case "Condition":{
         [h:cond.abilityName = json.get(tempAbilityInfo,"Name")]
@@ -20,7 +20,7 @@
         [h:cond.abilityFalseName = "Class Feature"]
         [h:cond.FeatureFullDescription = ""]
         [h:cond.FeatureAbridgedDescription = ""]
-        [h:pm.a5e.ConditionPassiveStdVars(arg(0))]
+        [h:pm.a5e.ConditionPassiveStdVars(base64.encode(tempAbilityInfo))]
     }
 ]
 

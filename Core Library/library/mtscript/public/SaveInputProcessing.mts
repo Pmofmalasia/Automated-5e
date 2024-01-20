@@ -34,7 +34,7 @@
 	[h:abilityTable = json.get(SaveData,"Table")]
 
 	[h:BorderData = json.set("",
-		"Flavor",if(CheckDescription=="",Flavor,CheckDescription),
+		"Flavor",if(SaveDescription=="",Flavor,SaveDescription),
 		"Name","SavingThrow",
 		"DisplayName","Saving Throw",
 		"FalseName","",

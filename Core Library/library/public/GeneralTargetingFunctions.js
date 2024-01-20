@@ -22,20 +22,20 @@ async function createTargetingRows(tableID,startRowID,IDSuffix){
 	addTableRow(tableID,nextRowIndex,"rowMustTargetAll"+IDSuffix,"<th><label for='MustTargetAll"+IDSuffix+"'>Must Affect All Valid Targets:</label></th><td><input type='checkbox' id='MustTargetAll"+IDSuffix+"' name='MustTargetAll"+IDSuffix+"'></td>");
 	nextRowIndex++;
 
-	addTableRow(tableID,nextRowIndex,"rowMultitargetDistance"+IDSuffix,"<th><label for='MultitargetDistance"+IDSuffix+"'>Maximum Distance Between Targets:</label></th><td><input type='number' id='MultitargetDistance"+IDSuffix+"' name='MultitargetDistance"+IDSuffix+"' value=5 min=0 style='width:25px' disabled><input type='checkbox' id='isMultitargetDistanceUnlimited"+IDSuffix+"' name='isMultitargetDistanceUnlimited"+IDSuffix+"' value=1 checked onchange='toggleFieldEnabled("+'"MultitargetDistance'+IDSuffix+'","isMultitargetDistanceUnlimited'+IDSuffix+'"'+")'>Same as Overall Range</td>");
+	addTableRow(tableID,nextRowIndex,"rowMultitargetDistance"+IDSuffix,"<th><label for='MultitargetDistance"+IDSuffix+"'>Maximum Distance Between Targets:</label></th><td><input type='number' id='MultitargetDistance"+IDSuffix+"' name='MultitargetDistance"+IDSuffix+"' value=5 min=0 style='width:25px' disabled><input type='checkbox' id='isMultitargetDistanceUnlimited"+IDSuffix+"' name='isMultitargetDistanceUnlimited"+IDSuffix+"' checked onchange='toggleFieldEnabled("+'"MultitargetDistance'+IDSuffix+'","isMultitargetDistanceUnlimited'+IDSuffix+'"'+")'>Same as Overall Range</td>");
 	nextRowIndex++;
 
-	addTableRow(tableID,nextRowIndex,"rowMissiles"+IDSuffix,"<th><label for='isMissiles"+IDSuffix+"'>Is it a Missile Effect?</label></th><td><input type='checkbox' id='isMissiles"+IDSuffix+"' name='isMissiles"+IDSuffix+"' onchange='createMissilesRows("+'"'+tableID+'"'+")'></td>");
+	addTableRow(tableID,nextRowIndex,"rowMissiles"+IDSuffix,"<th><label for='isMissiles"+IDSuffix+"'>Is it a Missile Effect?</label></th><td><input type='checkbox' id='isMissiles"+IDSuffix+"' name='isMissiles"+IDSuffix+"' onchange='createMissilesRows("+'"'+tableID+'","'+IDSuffix+'"'+")'></td>");
 	nextRowIndex++;
 
 	addTableRow(tableID,nextRowIndex,"rowTargetCover"+IDSuffix,"<th><label for='MaxCover"+IDSuffix+"'>Most Cover Target Can Be Behind:</th><td><select name='MaxCover"+IDSuffix+"' id='MaxCover"+IDSuffix+"'><option value='None'>None</option><option value='Half'>Half</option><option value='ThreeQuarters' selected>Three-Quarters</option><option value='Full'>Full</option></select></td>");
 	nextRowIndex++;
 
-	addTableRow(tableID,nextRowIndex,"rowIsSight"+IDSuffix,"<th><label for='isSight"+IDSuffix+"'>Requires Sight on Target:</label></th><td><input type='checkbox' id='isSight"+IDSuffix+"' name='isSight"+IDSuffix+"' value=1></td>");
+	addTableRow(tableID,nextRowIndex,"rowIsSight"+IDSuffix,"<th><label for='isSight"+IDSuffix+"'>Requires Sight on Target:</label></th><td><input type='checkbox' id='isSight"+IDSuffix+"' name='isSight"+IDSuffix+"'></td>");
 	nextRowIndex++;
 
 	//Note: Free hand option will be moved to being a requirement for creating an object
-	addTableRow(tableID,nextRowIndex,"Target"+IDSuffix,"<th><label for='TargetType"+IDSuffix+"'>Target Type:</label></th><td><select id='TargetType"+IDSuffix+"' name='TargetType"+IDSuffix+"' onchange='createTargetTable("+'"'+tableID+'","Target","TargetType","'+IDSuffix+'"'+")'><option value='AnyCreature'>Any Creature</option><option value='AnyOtherCreature'>Any Other Creature</option><option value='AlliedCreature'>Allied Creature</option><option value='SelfOnly'>Self Only</option><option value='EnemyCreature'>Enemy Creature</option><option value='HumanoidCreature'>Humanoid Creature</option><option value='Creature'>Creature (Custom Limits)</option><option value='CreatureObject'>Creature or Object</option><option value='AnyObject'>Any Object</option><option value='ObjectNotWorn'>Object Not Held or Worn</option><option value='ObjectWorn'>Object Held or Worn</option><option value='ObjectNonmagical'>Non-Magical Object</option><option value='ObjectMagical'>Magical Object</option><option value='Object'>Object (Custom Limits)</option><option value='Effect'>Effect</option><option value='Point'>Point</option></td>");
+	addTableRow(tableID,nextRowIndex,"Target"+IDSuffix,"<th><label for='TargetType"+IDSuffix+"'>Target Type:</label></th><td><select id='TargetType"+IDSuffix+"' name='TargetType"+IDSuffix+"' onchange='createTargetTable("+'"'+tableID+'","Target'+IDSuffix+'","TargetType'+IDSuffix+'","'+IDSuffix+'"'+")'><option value='AnyCreature'>Any Creature</option><option value='AnyOtherCreature'>Any Other Creature</option><option value='AlliedCreature'>Allied Creature</option><option value='SelfOnly'>Self Only</option><option value='EnemyCreature'>Enemy Creature</option><option value='HumanoidCreature'>Humanoid Creature</option><option value='Creature'>Creature (Custom Limits)</option><option value='CreatureObject'>Creature or Object</option><option value='AnyObject'>Any Object</option><option value='ObjectNotWorn'>Object Not Held or Worn</option><option value='ObjectWorn'>Object Held or Worn</option><option value='ObjectNonmagical'>Non-Magical Object</option><option value='ObjectMagical'>Magical Object</option><option value='Object'>Object (Custom Limits)</option><option value='Effect'>Effect</option><option value='Point'>Point</option></td>");
 	nextRowIndex++;
 
 	addTableRow(tableID,nextRowIndex,"rowTargetingEnd"+IDSuffix,"");
@@ -46,7 +46,7 @@ async function createTargetingRows(tableID,startRowID,IDSuffix){
 function createPriorTargetsRows(tableID,callingType,tempIDSuffix){
 	let IDSuffix = "";
 	if (arguments.length > 2){
-		IDSuffix = tempIDSuffix
+		IDSuffix = tempIDSuffix;
 	}
 
 	let nextRowIndex = document.getElementById("rowUse"+callingType+"Targets"+IDSuffix).rowIndex + 1;
@@ -56,29 +56,29 @@ function createPriorTargetsRows(tableID,callingType,tempIDSuffix){
 		addTableRow(tableID,nextRowIndex,"row"+callingType+"TargetNumber"+IDSuffix,"<th><label for='"+callingType+"TargetNumber"+IDSuffix+"'>Number of "+callingType+" Targets Affected:</label></th><td><input type='number' id='"+callingType+"TargetNumber"+IDSuffix+"' name='"+callingType+"TargetNumber"+IDSuffix+"' value=1 style='width:25px' disabled><input type='checkbox' id='"+callingType+"TargetAll"+IDSuffix+"' name='"+callingType+"TargetAll"+IDSuffix+"' checked onchange='toggleFieldEnabled("+'"'+callingType+'TargetNumber'+IDSuffix+'","'+callingType+'TargetAll'+IDSuffix+'"'+")'> Affects All</td>");
 		nextRowIndex++;
 
-		addTableRow(tableID,nextRowIndex,"row"+callingType+"TargetLimits"+IDSuffix,"<th><label for='"+callingType+"TargetLimits"+IDSuffix+"'>Different Limits on Targets Affected:</label></th><td><input type='checkbox' id='"+callingType+"TargetLimits"+IDSuffix+"' name='"+callingType+"TargetLimits"+IDSuffix+"' onchange='createPriorTargetsNewFilter("+'"'+tableID+'","'+callingType+'","'+tempIDSuffix+'"'+")'></td>");
+		addTableRow(tableID,nextRowIndex,"row"+callingType+"TargetLimits"+IDSuffix,"<th><label for='"+callingType+"TargetLimits"+IDSuffix+"'>Different Limits on Targets Affected:</label></th><td><input type='checkbox' id='"+callingType+"TargetLimits"+IDSuffix+"' name='"+callingType+"TargetLimits"+IDSuffix+"' onchange='createPriorTargetsNewFilter("+'"'+tableID+'","'+callingType+'","'+IDSuffix+'"'+")'></td>");
 		nextRowIndex++;
 	}
 	else{
-		addTableRow(tableID,nextRowIndex,"rowUse"+callingType+"Origin"+IDSuffix,"<th><label for='Use"+callingType+"Origin"+IDSuffix+"'>New Subeffect Originates from Old Target:</label></th><td><input type='checkbox' id='Use"+callingType+"Origin"+IDSuffix+"' name='Use"+callingType+"Origin"+IDSuffix+"' onchange='create"+callingType+"OriginRows("+'"'+tableID+'","'+tempIDSuffix+'"'+")'></td>");
+		addTableRow(tableID,nextRowIndex,"rowUse"+callingType+"Origin"+IDSuffix,"<th><label for='Use"+callingType+"Origin"+IDSuffix+"'>New Subeffect Originates from Old Target:</label></th><td><input type='checkbox' id='Use"+callingType+"Origin"+IDSuffix+"' name='Use"+callingType+"Origin"+IDSuffix+"' onchange='create"+callingType+"OriginRows("+'"'+tableID+'","'+IDSuffix+'"'+")'></td>");
 		nextRowIndex++;
 
-		createTargetingRows(tableID,"rowTargetingEnd"+IDSuffix);
+		createTargetingRows(tableID,"rowTargetingEnd"+IDSuffix,"");
 	}
 }
 
 function createPriorTargetsNewFilter(tableID,callingType,tempIDSuffix){
 	let IDSuffix = "";
 	if (arguments.length > 2){
-		IDSuffix = tempIDSuffix
+		IDSuffix = tempIDSuffix;
 	}
 
 	if(document.getElementById(callingType+"TargetLimits"+IDSuffix).checked){
 		let nextRowIndex = document.getElementById("row"+callingType+"TargetLimits"+IDSuffix).rowIndex + 1;
+		console.log(nextRowIndex);
 
 		//TODO: Should make this even more generalized, with options to either show all of the targeting options or prune them based on requirements (e.g. Creature options only if prior only targeted creatures)
-		addTableRow(tableID,nextRowIndex,"row"+callingType+"TargetType"+IDSuffix,"<th><label for='"+callingType+"TargetType"+IDSuffix+"'>Target Type:</label></th><td><select id='"+callingType+"TargetType"+IDSuffix+"' name='"+callingType+"TargetType"+IDSuffix+"' onchange='createTargetTable("+'"'+tableID+'","row'+callingType+'TargetType","'+callingType+'TargetType","'+IDSuffix+'"'+")'><option value='AnyCreature'>Any Creature</option><option value='AnyOtherCreature'>Any Other Creature</option><option value='AlliedCreature'>Allied Creature</option><option value='SelfOnly'>Self Only</option><option value='EnemyCreature'>Enemy Creature</option><option value='HumanoidCreature'>Humanoid Creature</option><option value='Creature'>Creature (Custom Limits)</option><option value='CreatureObject'>Creature or Object</option><option value='AnyObject'>Any Object</option><option value='ObjectNotWorn'>Object Not Held or Worn</option><option value='ObjectWorn'>Object Held or Worn</option><option value='ObjectNonmagical'>Non-Magical Object</option><option value='ObjectMagical'>Magical Object</option><option value='Object'>Object (Custom Limits)</option><option value='Effect'>Effect</option><option value='Point'>Point</option></td>");
-		nextRowIndex++;
+		addTableRow(tableID,nextRowIndex,"row"+callingType+"TargetType"+IDSuffix,"<th><label for='"+callingType+"TargetType"+IDSuffix+"'>Target Type:</label></th><td><select id='"+callingType+"TargetType"+IDSuffix+"' name='"+callingType+"TargetType"+IDSuffix+"' onchange='createTargetTable("+'"'+tableID+'","row'+callingType+'TargetType'+IDSuffix+'","'+callingType+'TargetType'+IDSuffix+'","'+IDSuffix+'"'+")'><option value='AnyCreature'>Any Creature</option><option value='AnyOtherCreature'>Any Other Creature</option><option value='AlliedCreature'>Allied Creature</option><option value='SelfOnly'>Self Only</option><option value='EnemyCreature'>Enemy Creature</option><option value='HumanoidCreature'>Humanoid Creature</option><option value='Creature'>Creature (Custom Limits)</option><option value='CreatureObject'>Creature or Object</option><option value='AnyObject'>Any Object</option><option value='ObjectNotWorn'>Object Not Held or Worn</option><option value='ObjectWorn'>Object Held or Worn</option><option value='ObjectNonmagical'>Non-Magical Object</option><option value='ObjectMagical'>Magical Object</option><option value='Object'>Object (Custom Limits)</option><option value='Effect'>Effect</option><option value='Point'>Point</option></td>");
 	}
 	else{
 		clearUnusedTable(tableID,"row"+callingType+"TargetLimits"+IDSuffix,"rowTargetingEnd"+IDSuffix);
@@ -279,7 +279,7 @@ async function createAoETable(tableID,whichShape,IDSuffix){
 		else if(whichShape == "Panels"){
 			let rowPanelsDimensions = table.insertRow(nextRowIndex);
 			rowPanelsDimensions.id = "rowPanelsDimensions"+IDSuffix;
-			rowPanelsDimensions.innerHTML = "<th><label for='panelsNumber"+IDSuffix+">Panel Number and Side Length:</label></th><td><input type='number' id='panelsNumber"+IDSuffix+"' name='panelsNumber"+IDSuffix+"' min=0 style='width:25px' value=10> panels, <input type='number' id='panelsDimensionValue"+IDSuffix+"' name='panelsDimensionValue"+IDSuffix+"' min=0 style='width:25px' value=0><select id='panelsDimensionUnits"+IDSuffix+"' name='panelsDimensionUnits"+IDSuffix+"'><option value='Feet'>Feet</option><option value='Miles'>Miles</option></select></td>";
+			rowPanelsDimensions.innerHTML = "<th><label for='panelsNumber"+IDSuffix+"'>Panel Number and Side Length:</label></th><td><input type='number' id='panelsNumber"+IDSuffix+"' name='panelsNumber"+IDSuffix+"' min=0 style='width:25px' value=10> panels, <input type='number' id='panelsDimensionValue"+IDSuffix+"' name='panelsDimensionValue"+IDSuffix+"' min=0 style='width:25px' value=0><select id='panelsDimensionUnits"+IDSuffix+"' name='panelsDimensionUnits"+IDSuffix+"'><option value='Feet'>Feet</option><option value='Miles'>Miles</option></select></td>";
 			nextRowIndex++;
 
 			if(checkEffectType()=="Spell"){
@@ -294,7 +294,7 @@ async function createAoETable(tableID,whichShape,IDSuffix){
 		else if(whichShape == "Sphere"){
 			let rowSphereDimensions = table.insertRow(nextRowIndex);
 			rowSphereDimensions.id = "rowSphereDimensions"+IDSuffix;
-			rowSphereDimensions.innerHTML = "<th><label for='sphereDimensionValue"+IDSuffix+">Sphere Radius:</label></th><td><input type='number' id='sphereDimensionValue"+IDSuffix+"' name='sphereDimensionValue"+IDSuffix+"' min=0 style='width:25px' value=0><select id='sphereDimensionUnits"+IDSuffix+"' name='sphereDimensionUnits"+IDSuffix+"'><option value='Feet'>Feet</option><option value='Miles'>Miles</option></select></td>";
+			rowSphereDimensions.innerHTML = "<th><label for='sphereDimensionValue"+IDSuffix+"'>Sphere Radius:</label></th><td><input type='number' id='sphereDimensionValue"+IDSuffix+"' name='sphereDimensionValue"+IDSuffix+"' min=0 style='width:25px' value=0><select id='sphereDimensionUnits"+IDSuffix+"' name='sphereDimensionUnits"+IDSuffix+"'><option value='Feet'>Feet</option><option value='Miles'>Miles</option></select></td>";
 			nextRowIndex++;
 
 			if(checkEffectType()=="Spell"){
@@ -348,7 +348,7 @@ async function createTargetNumberToggle(tableID,IDSuffix){
 }
 
 async function createMissilesRows(tableID,IDSuffix){
-	if(document.getElementById("isMissiles").checked){
+	if(document.getElementById("isMissiles"+IDSuffix).checked){
 		let nextRowIndex = document.getElementById("rowMissiles"+IDSuffix).rowIndex + 1;
 
 		addTableRow(tableID,nextRowIndex,"rowMissileNumber"+IDSuffix,"<th><label for='MissileNumber"+IDSuffix+"'>Number of Missiles:</label></th><td><input type='number' id='MissileNumber"+IDSuffix+"' name='MissileNumber"+IDSuffix+"' value=1 min=1 style='width:25px'></td>");
@@ -369,16 +369,16 @@ async function createMissilesRows(tableID,IDSuffix){
 }
 
 function createTargetTable(tableID,startRowID,selectionID,tempIDSuffix,tempNextAnchorRow){
-	let currentTargetTypeSelection = document.getElementById(selectionID).value;
-	let nextRowIndex = document.getElementById(startRowID).rowIndex + 1;
 	let IDSuffix = "";
 	if (arguments.length > 3){
 		IDSuffix = tempIDSuffix
 	}
+	let currentTargetTypeSelection = document.getElementById(selectionID).value;
+	let nextRowIndex = document.getElementById(startRowID).rowIndex + 1;
 	
 	let nextAnchorRow = "rowTargetingEnd"+IDSuffix;
 	if (arguments.length > 4){
-		nextAnchorRow = tempNextAnchorRow;
+		nextAnchorRow = tempNextAnchorRow + IDSuffix;
 	}
 	clearUnusedTable(tableID,startRowID,nextAnchorRow);
 
@@ -386,13 +386,13 @@ function createTargetTable(tableID,startRowID,selectionID,tempIDSuffix,tempNextA
 		createCreatureTargetTable(tableID,startRowID,selectionID,IDSuffix,nextAnchorRow);
 	}
 	else if(currentTargetTypeSelection == "Object"){
-		createObjectTargetTable(tableID,startRowID,selectionID,nextAnchorRow,IDSuffix);
+		createObjectTargetTable(tableID,startRowID,selectionID,IDSuffix,nextAnchorRow);
 	}
 	else if(currentTargetTypeSelection == "CreatureObject"){
-		addTableRow(tableID,nextRowIndex,"rowIsolatedCreatureTargetOptions"+IDSuffix,"<th><label for='CreatureTargetType"+IDSuffix+"'>Creature Targeting Limits:</label></th><td><select id='CreatureTargetType"+IDSuffix+"' name='CreatureTargetType"+IDSuffix+"' onchange='createTargetTable("+'"'+tableID+'","rowIsolatedCreatureTargetOptions","CreatureTargetType","'+IDSuffix+'","rowIsolatedObjectTargetOptions"'+")'><option value='AnyCreature'>Any Creature</option><option value='AnyOtherCreature'>Any Other Creature</option><option value='AlliedCreature'>Allied Creature</option><option value='SelfOnly'>Self Only</option><option value='EnemyCreature'>Enemy Creature</option><option value='HumanoidCreature'>Humanoid Creature</option><option value='Creature'>Creature (Custom Limits)</option></selected></td>");
+		addTableRow(tableID,nextRowIndex,"rowIsolatedCreatureTargetOptions"+IDSuffix,"<th><label for='CreatureTargetType"+IDSuffix+"'>Creature Targeting Limits:</label></th><td><select id='CreatureTargetType"+IDSuffix+"' name='CreatureTargetType"+IDSuffix+"' onchange='createTargetTable("+'"'+tableID+'","rowIsolatedCreatureTargetOptions'+IDSuffix+'","CreatureTargetType'+IDSuffix+'","'+IDSuffix+'","rowIsolatedObjectTargetOptions"'+")'><option value='AnyCreature'>Any Creature</option><option value='AnyOtherCreature'>Any Other Creature</option><option value='AlliedCreature'>Allied Creature</option><option value='SelfOnly'>Self Only</option><option value='EnemyCreature'>Enemy Creature</option><option value='HumanoidCreature'>Humanoid Creature</option><option value='Creature'>Creature (Custom Limits)</option></selected></td>");
 		nextRowIndex++;
 
-		addTableRow(tableID,nextRowIndex,"rowIsolatedObjectTargetOptions"+IDSuffix,"<th><label for='ObjectTargetLimits"+IDSuffix+"'>Object Targeting Limits:</label></th><td><select id='ObjectTargetLimits"+IDSuffix+"' name='ObjectTargetLimits"+IDSuffix+"' onchange='createTargetTable("+'"'+tableID+'","rowIsolatedObjectTargetOptions","ObjectTargetLimits","'+IDSuffix+'","'+nextAnchorRow+'"'+")'><option value='AnyObject'>Any Object</option><option value='ObjectNotWorn' selected>Object Not Held or Worn</option><option value='ObjectWorn'>Object Held or Worn</option><option value='Object'>Object (Custom Limits)</option></selected></td>");
+		addTableRow(tableID,nextRowIndex,"rowIsolatedObjectTargetOptions"+IDSuffix,"<th><label for='ObjectTargetLimits"+IDSuffix+"'>Object Targeting Limits:</label></th><td><select id='ObjectTargetLimits"+IDSuffix+"' name='ObjectTargetLimits"+IDSuffix+"' onchange='createTargetTable("+'"'+tableID+'","rowIsolatedObjectTargetOptions'+IDSuffix+'","ObjectTargetLimits'+IDSuffix+'","'+IDSuffix+'","'+nextAnchorRow+'"'+")'><option value='AnyObject'>Any Object</option><option value='ObjectNotWorn' selected>Object Not Held or Worn</option><option value='ObjectWorn'>Object Held or Worn</option><option value='Object'>Object (Custom Limits)</option></selected></td>");
 		nextRowIndex++;
 	}
 	else if(currentTargetTypeSelection == "Effect"){
@@ -405,7 +405,7 @@ function createTargetTable(tableID,startRowID,selectionID,tempIDSuffix,tempNextA
 		let secondaryTargetOptions = document.getElementById("TargetType"+IDSuffix).innerHTML;
 		secondaryTargetOptions = "<option value='None'>None</option>" + secondaryTargetOptions;
 
-		addTableRow(tableID,nextRowIndex,"rowSecondaryTarget"+IDSuffix,"<th><label for='secondaryTargetType"+IDSuffix+"'>Secondary Target Type:</label></th><td><select id='secondaryTargetType"+IDSuffix+"' name='secondaryTargetType"+IDSuffix+"' onchange='createTargetTable("+'"'+tableID+'","rowSecondaryTarget","secondaryTargetType","'+IDSuffix+'"'+")'></select></td>");
+		addTableRow(tableID,nextRowIndex,"rowSecondaryTarget"+IDSuffix,"<th><label for='secondaryTargetType"+IDSuffix+"'>Secondary Target Type:</label></th><td><select id='secondaryTargetType"+IDSuffix+"' name='secondaryTargetType"+IDSuffix+"' onchange='createTargetTable("+'"'+tableID+'","rowSecondaryTarget'+IDSuffix+'","secondaryTargetType'+IDSuffix+'","'+IDSuffix+'"'+")'></select></td>");
 		nextRowIndex++;
 		document.getElementById("secondaryTargetType"+IDSuffix).innerHTML = secondaryTargetOptions;
 	
@@ -416,13 +416,13 @@ function createTargetTable(tableID,startRowID,selectionID,tempIDSuffix,tempNextA
 }
 
 async function createCreatureTargetTable(tableID,startRowID,selectionID,IDSuffix,tempNextAnchorRow){
-	let table = document.getElementById(tableID);
-	let currentTargetTypeSelection = document.getElementById(selectionID).value;
-	let nextRowIndex = document.getElementById(startRowID).rowIndex + 1;
 	let IDSuffixText = "";
 	if(arguments.length > 3){
 		IDSuffixText = IDSuffix;
 	}
+	let table = document.getElementById(tableID);
+	let currentTargetTypeSelection = document.getElementById(selectionID).value;
+	let nextRowIndex = document.getElementById(startRowID).rowIndex + 1;
 	
 	let nextAnchorRow = "rowTargetingEnd"+IDSuffix;
 	if (arguments.length > 4){
@@ -696,7 +696,7 @@ async function createTargetAlignmentTable(tableID,IDSuffix,nextAnchorRow){
 }
 
 async function createObjectTargetTable(tableID,startRowID,selectionID,IDSuffix){
-	let currentTargetTypeSelection = document.getElementById(selectionID+IDSuffix).value;
+	let currentTargetTypeSelection = document.getElementById(selectionID).value;
 	
 	let nextRowIndex = document.getElementById(startRowID).rowIndex + 1;
 	let optionLimits = "<option value=''>Not Relevant</option><option value='Inclusive'>Required</option><option value='Exclusive'>Invalid</option>";

@@ -204,6 +204,7 @@
 [h:defineFunction("pm.a5e.RechargeRoll","pm.a5e.RechargeRoll@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.a5e.StartAndEndTurnEffects","pm.a5e.StartAndEndTurnEffects@Lib:pm.a5e.Core",0,0)]
 [h:defineFunction("pm.a5e.GenerateEffectDisplay","pm.a5e.GenerateEffectDisplay@Lib:pm.a5e.Core")]
+[h:defineFunction("pm.a5e.TriggerConditionEnd","pm.a5e.TriggerConditionEnd@Lib:pm.a5e.Core")]
 
 [h:"<!-- Functions for general use -->"]
 [h:defineFunction("pm.DieRoller","pm.DieRoller@Lib:pm.a5e.Core")]

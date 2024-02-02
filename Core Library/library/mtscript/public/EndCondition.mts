@@ -67,7 +67,7 @@
 	[h:switchToken(setBy)]
 
 	[h:RemovedGroups = json.unique(json.path.read(RemovedConditionsFinal,"\$[*][?(@.SetBy=='"+setBy+"')]['GroupID']"))]
-	[h:RemovedGroupFilter = "@.GroupID=="+json.toList(RemovedGroups,+" || @.GroupID==")]
+	[h:RemovedGroupFilter = "@.GroupID=='"+json.toList(RemovedGroups,+"' || @.GroupID=='")]
 	[h:prunedConditionsSet = getProperty("a5e.stat.ConditionsSet")]
 	[h,foreach(tempConditionGroup,prunedConditionsSet),CODE:{
 		[h:removedGroupTest = json.contains(RemovedGroups,json.get(tempConditionGroup,"GroupID"))]

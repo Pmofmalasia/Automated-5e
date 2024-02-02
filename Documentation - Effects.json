@@ -1,0 +1,99 @@
+{
+	"Class":"String Containing Class of Effect",
+	"DisplayClass":"String Containing Class of Effect as related to border color",
+	"ColorSubtype":"Optional extra info for choosing border color. For spells (main use), object with keys 'Source' and 'Level' for level of spell and source of magic (arcane, primal, divine, etc.)",
+	"DisplayName":"",
+	"Name":"",
+	"FalseName":"",
+	"Type":"String Containing overall type of effect",
+	"ParentToken":"Token causing the effect. Blank if done by 'the world'",
+	"ID":"Unique ID for effect",
+	"Targets":"Array of token IDs of all targets, or objects containing holder's tokenID and ItemID for items",
+	"RemainingTargets":"Same as above, with targets who have had the execution of the effect completed removed.",
+	"ToResolve":{
+		"(Not a key)":"Object containing the bulk of the information requiring adjustment of target tokens. Keys Attack, Damage, ConditionInfo, ConditionModificationInfo, CheckDC, SaveDC, Movement all contain data for their respective effects.",
+		"Attack":{
+			"d20Rolls":"Array of all d20s rolled for the final ToHit of the attack.",
+			"FinalRoll":"Number containing final d20 roll after accounting for adv/dis/etc.",
+			"Advantage":"Number containing number of sources of advantage. May need to be expanded into detailed object containing data about source of each point of advantage for easier nullification of advantage later.",
+			"Disadvantage":"Same as above for Disadvantage.",
+			"AdvantageMessageArray":"Array of strings containing mouseover text showing adv/dis sources",
+			"AdvantageBalance":"Number showing final outcome of adv/dis: -1 = dis; 0 = neutral; 1 = adv",
+			"PrimeStat":"String of Name of primary stat for feature",
+			"TotalBonus":"Number of total ToHit bonus",
+			"Value":"Number, final total ToHit value",
+			"RollString":"String for displaying all rolls involved",
+			"Formula":"String for displaying rules behind rolls",
+			"FormulaPrefix":"I actually have no idea why I set it up this way. TODO: Figure out why.",
+			"CritRange":"Number; Minimum d20 roll to trigger a crit",
+			"AutoCrit":"Bool; Does attack AutoCrit",
+			"AutoCritFail":"Bool; does attack auto fail",
+			"CritTest":"Bool; did attack crit",
+			"CritFailTest":"Bool; did attack crit fail"
+		},
+		"Damage":[{
+			"(Not a Key)":"Array of objects, each their own instance of damage.",
+			"IsSpell":"Bool; yes/no is source of damage a spell",
+			"IsWeapon":"Bool; yes/no is source a weapon",
+			"IsAttack":"Bool; yes/no is source from an attack (possibly redundant with presence of Attack key)",
+			"ScalingBase":"Number level of scaling for any AHL effects",
+			"PrimeStat":"String of Name of primary stat for damage",
+			"Array":"Array of numbers; all rolled damage dice",
+			"Dice":"Array of numbers; die sizes corresponding to each roll in the 'Array' key",
+			"Total":"Number; final damage total",
+			"String":"String; representation of damage rolls for output",
+			"MaxTotal":"Number; max possible damage (max rolls + flat damage)",
+			"Bonus":"Number; flat bonus to damage",
+			"BonusString":"String; representation of all flat damage bonuses before totaled",
+			"Formula":"String for displaying rules behind rolls and flat bonuses",
+			"CritFormula":"String; Same as above with added crit dice",
+			"CritDice":"Array of numbers; Same as 'Dice' key but with dice rolled on crit",
+			"CritArray":"Array of numbers; Same as 'Array' key but with dice rolled on crit",
+			"CritString":"String; same as 'String' key with dice on crit",
+			"CritTotal":"Number; Total damage on crit",
+			"CritMaxTotal":"Number; Max damage on crit",
+			"DamageType":"String; Damage type of this instance",
+			"Modifier":"Number multiplier for total damage, before res/vuln/etc.",
+			"NoModification":"Bool; True to prevent modification/reduction by any means (e.g. resistances, damage reduction)"
+		}],
+		"ConditionInfo":[{
+			"(Not a Key)":"Array of objects, each contains conditions grouped by their EndInfo (duration, triggers to end, etc.) and Aura info.",
+			"Conditions":[{
+				"(Not a Key)":"Array of objects, each object is a condition to be applied."
+			}],
+			"EndInfo":{
+				"EndTriggers":{
+					"(Not a Key)":"Keys in this object correspond to instances that may end the condition. Value of key changes depending on method of ending condition.",
+					"EndInstance - Bool":"Bool; yes/no does condition end when triggering instance happens. If yes, ends without further resolution",
+					"EndInstance - Object, Repeat Save":{
+						"SaveType":"String; Type of save required",
+						"DC":"Number; DC of save to end condition"
+					}
+				},
+				"Duration":"Number; numeric value for duration condition will last. Blank string for no duration",
+				"DurationUnits":"String; units for duration",
+				"AdvancePoint":"String; at what point the duration progresses. Options are EndofTurn, StartofTurn, EndofSetByTurn, StartofSetByTurn",
+				"UseSpellDuration":"Bool; replaces 'Duration' and 'DurationUnits' keys. Uses duration of spell if true."
+			},
+			"Aura":"TODO"
+		}],
+		"SaveDC":{
+			"DC":"Number; DC of save",
+			"SaveType":"String; Type of save required",
+			"DamageModifier":{
+				"DamageHalved":"Number; Effect on successful save: 0 = No reduction, 1 = Damage Halved, 2 = Damage completely nullified.",
+				"TypesInclusive":"String or Array; Names of damage types that can be reduced on success",
+				"TypesExclusive":"String or Array; Same as above but types NOT affected"
+			},
+			"ConditionsResisted":{
+				"Inclusive":"String or Array; Names of conditions resisted on success. Use string 'All' to resist all conditions.",
+				"Exclusive":"String or Array; Same as above for conditions not resisted, no 'All' option available."
+			}
+		},
+		"Resource":{
+			"ResourceName":"String; Name of resource",
+			"ResourceType":"String; Type of resource (e.g. Feature, SpellSlot, HitDie)",
+			"Used":"Number; Amount of resource used"
+		}
+	}
+}

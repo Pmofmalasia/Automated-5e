@@ -44,25 +44,6 @@
 
 [h:setProperty("a5e.stat.Concentration","")]
 
-[h:OldExhaustion = getProperty("a5e.stat.Exhaustion")]
-[h:setProperty("a5e.stat.Exhaustion",Max(getProperty("a5e.stat.Exhaustion")-1,0))]
-[h:setState("Exhaustion1",if(getProperty("a5e.stat.Exhaustion")==1,1,0))]
-[h:setState("Exhaustion2",if(getProperty("a5e.stat.Exhaustion")==2,1,0))]
-[h:setState("Exhaustion3",if(getProperty("a5e.stat.Exhaustion")==3,1,0))]
-[h:setState("Exhaustion4",if(getProperty("a5e.stat.Exhaustion")==4,1,0))]
-[h:setState("Exhaustion5",if(getProperty("a5e.stat.Exhaustion")==5,1,0))]
-[h,if(getProperty("a5e.stat.Exhaustion") == 0): exhaustionMessage = "Exhaustion fully recovered."; exhaustionMessage = "Disadvantage on ability checks"+if(getProperty("a5e.stat.Exhaustion")>=2 && getProperty("a5e.stat.Exhaustion")<5,", speed halved","")+if(getProperty("a5e.stat.Exhaustion")>=3,", disadvantage on attack rolls and saving throws","")+if(getProperty("a5e.stat.Exhaustion")>=4,", hit point maximum halved","")+if(getProperty("a5e.stat.Exhaustion")>=5,", speed reduced to 0","")]
-	
-[h,if(OldExhaustion>0): abilityTable = json.append(abilityTable,json.set("",
-	"ShowIfCondensed",1,
-	"Header","Level "+getProperty("a5e.stat.Exhaustion")+" Exhaustion",
-	"FalseHeader","",
-	"FullContents",exhaustionMessage,
-	"RulesContents","",
-	"RollContents","",
-	"DisplayOrder","['Full','Rules','Roll']"
-))]
-
 [h:pm.a5e.EventResourceRestoration(json.append("","LongRest","Dawn"))]
 
 [h:pm.PassiveFunction("LongRest")]

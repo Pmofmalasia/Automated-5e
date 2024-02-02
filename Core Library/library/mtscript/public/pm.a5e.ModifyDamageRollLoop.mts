@@ -84,8 +84,10 @@
         [h:"<!-- Possibly do 'choice' by making an array with 0/1 for reroll/don't reroll; 0s set by either not eligible or not chosen -->"]
         [h:"<!-- Only need this reroll stuff and adjusting the strings for min/max rolls. Maybe change min/max to json.path. Will likely want to make a table line for rerolls at the very least. -->"]     
     };
-    case "ChangeDamageType":{
-        [h:ModifiablePriorDamage = json.path.set(ModifiablePriorDamage,"[*]['DamageType']",json.get(tempInstance,"DamageType"))]
+    case "ForcedChange":{
+		[h:ChangedData = json.get(tempInstance,"Changes")]
+		[h:ChangedKeys = json.fields(ChangedData,"json")]
+		[h,foreach(key,ChangedKeys): ModifiablePriorDamage = json.path.set(ModifiablePriorDamage,"\$[*]['"+key+"']",json.get(ChangedData,key))]
     };
     case "UseMaxRoll":{
         [h,foreach(damageInstance,ModifiablePriorDamage),CODE:{

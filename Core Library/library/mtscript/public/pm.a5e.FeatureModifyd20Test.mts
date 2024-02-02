@@ -19,15 +19,15 @@
 	[h,switch(TestType),CODE:
 		case "Check":{
 			[h,if(effectID!=""): RollData = json.get(json.merge(
-				json.path.read(data.getData("addon:","pm.a5e.core","gd.Effects"),"[*][?(@.ID=="+effectID+" && @.ParentToken=='"+EffectTarget+"')]['ToResolve']['CheckDC']['DC']"),
-				json.path.read(data.getData("addon:","pm.a5e.core","gd.Effects"),"[*][?(@.ID=="+effectID+")]['ToResolve']['CheckDC']['ChecksMade']['"+EffectTarget+"']")),0)
+				json.path.read(data.getData("addon:","pm.a5e.core","gd.Effects"),"[*][?(@.ID=='"+effectID+"' && @.ParentToken=='"+EffectTarget+"')]['ToResolve']['CheckDC']['DC']"),
+				json.path.read(data.getData("addon:","pm.a5e.core","gd.Effects"),"[*][?(@.ID=='"+effectID+"')]['ToResolve']['CheckDC']['ChecksMade']['"+EffectTarget+"']")),0)
 			]
 		};
 		case "Save":{
-			[h,if(effectID!=""): RollData = json.get(json.path.read(data.getData("addon:","pm.a5e.core","gd.Effects"),"[*][?(@.ID=="+effectID+")]['ToResolve']['SaveDC']['SavesMade']['"+EffectTarget+"']"),0)]
+			[h,if(effectID!=""): RollData = json.get(json.path.read(data.getData("addon:","pm.a5e.core","gd.Effects"),"[*][?(@.ID=='"+effectID+"')]['ToResolve']['SaveDC']['SavesMade']['"+EffectTarget+"']"),0)]
 		};
 		case "Attack":{
-			[h,if(effectID!=""): RollData = json.get(json.path.read(data.getData("addon:","pm.a5e.core","gd.Effects"),"[*][?(@.ID=="+effectID+" && @.ParentToken=='"+EffectTarget+"')]['ToResolve']['Attack']"),0)]
+			[h,if(effectID!=""): RollData = json.get(json.path.read(data.getData("addon:","pm.a5e.core","gd.Effects"),"[*][?(@.ID=='"+effectID+"' && @.ParentToken=='"+EffectTarget+"')]['ToResolve']['Attack']"),0)]
 		};
 		default:{[h:return(0)]}
 	]

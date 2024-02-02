@@ -20,19 +20,6 @@
 
 [h:setProperty("stat.Concentration","")]
 
-[h,if(getProperty("a5e.stat.Exhaustion") == 0): exhaustionMessage = "Exhaustion fully recovered."; exhaustionMessage = "Disadvantage on ability checks"+if(getProperty("a5e.stat.Exhaustion")>=2 && getProperty("a5e.stat.Exhaustion")<5,", speed halved","")+if(getProperty("a5e.stat.Exhaustion")>=3,", disadvantage on attack rolls and saving throws","")+if(getProperty("a5e.stat.Exhaustion")>=4,", hit point maximum halved","")+if(getProperty("a5e.stat.Exhaustion")>=5,", speed reduced to 0","")]
-	
-[h,if(getProperty("a5e.stat.Exhaustion")>0): abilityTable = json.append(abilityTable,json.set("",
-	"ShowIfCondensed",1,
-	"Header","Level "+getProperty("a5e.stat.Exhaustion")+" Exhaustion",
-	"FalseHeader","",
-	"FullContents",exhaustionMessage,
-	"RulesContents","",
-	"RollContents","",
-	"DisplayOrder","['Full','Rules','Roll']",
-	"Value",""
-))]
-
 [h:pm.a5e.EventResourceRestoration("ShortRest")]
 
 [h:pm.PassiveFunction("ShortRest")]

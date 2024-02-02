@@ -24,12 +24,14 @@
 	[h:return(ValidSaveTypeTest,0)]
 };{}]
 
-[h,if(json.contains(ForcedSavePrerequisites,"ConditionsResisted") && json.contains(EffectToResolve,"ConditionInfo")),CODE:{
+[h,if(json.contains(EffectToResolve,"ConditionInfo")),CODE:{
 	[h:SaveConditionsResisted = json.get(EffectForcedSaveData,"ConditionsResisted")]
 	[h,if(SaveConditionsResisted == ""): return(0,0)]
 	[h:SaveConditionsResistedInclusive = json.get(SaveConditionsResisted,"Inclusive")]
 	[h:SaveConditionsResistedExclusive = json.get(SaveConditionsResisted,"Exclusive")]
-	[h:EffectConditionsApplied = json.get(json.get(EffectToResolve,"ConditionInfo"),"Conditions")]
+	[h:tempEffectConditionsApplied = json.path.read(json.get(EffectToResolve,"ConditionInfo"),"\$[*]['Conditions']")]
+	[h:EffectConditionsApplied = "[]"]
+	[h,foreach(conditionGroup,tempEffectConditionsApplied): EffectConditionsApplied = json.merge(EffectConditionsApplied,conditionGroup)]
 
 	[h:SaveConditionsResisted = "[]"]
 
@@ -42,17 +44,25 @@
 
 	[h:"<!-- Note: Doesn't make sense for ConditionsResistedExclusive to be 'All' -->"]
 	[h,if(SaveConditionsResistedExclusive != ""): SaveConditionsResisted = json.difference(SaveConditionsResisted,SaveConditionsResistedExclusive)]
+};{
+	[h:SaveConditionsResisted = "[]"]
+}]
 
+[h,if(json.contains(ForcedSavePrerequisites,"ConditionNames")),CODE:{
 	[h:ConditionPrereqMet = 0]
 
-	[h:ConditionNamePrereq = json.get(ForcedSavePrerequisites,"ConditionName")]
+	[h:ConditionNamePrereq = json.get(ForcedSavePrerequisites,"ConditionNames")]
 	[h,if(ConditionNamePrereq != ""),CODE:{
 		[h,if(json.type(ConditionNamePrereq) == "UNKNOWN"): ConditionNamePrereq = json.append("",ConditionNamePrereq)]
 		[h:ConditionPrereqMet = !json.isEmpty(json.path.read(SaveConditionsResisted,"\$[*][?(@.Name in "+ConditionNamePrereq+")]"))]
 	};{}]
 
+	[h:return(ConditionPrereqMet,0)]
+};{}]
+
+[h,if(json.contains(ForcedSavePrerequisites,"ConditionTypes")),CODE:{
 	[h:"<!-- TODO: json.path bugfix: update type json.path -->"]
-	[h:ConditionTypePrereq = json.get(ForcedSavePrerequisites,"ConditionType")]
+	[h:ConditionTypePrereq = json.get(ForcedSavePrerequisites,"ConditionTypes")]
 	[h,if(ConditionTypePrereq != "" && !ConditionPrereqMet),CODE:{
 		[h,if(json.type(ConditionTypePrereq) == "UNKNOWN"): ConditionTypePrereq = json.append("",ConditionTypePrereq)]
 		[h:ConditionPrereqMet = !json.isEmpty(json.path.read(SaveConditionsResisted,"\$[*]['ConditionTags'][?(@ in "+ConditionTypePrereq+")]"))]

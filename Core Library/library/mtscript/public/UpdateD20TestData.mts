@@ -8,15 +8,15 @@
 	[h,switch(d20TestType),CODE:
 		case "Check":{
 			[h,if(json.get(TestData,"Contested")==1):
-				rerollEffectPath = "[*][?(@.ID=="+effectID+")]['ToResolve']['CheckDC']['DC']";
-				rerollEffectPath = "[*][?(@.ID=="+effectID+")]['ToResolve']['CheckDC']['ChecksMade']['"+ParentToken+"']"
+				rerollEffectPath = "[*][?(@.ID=='"+effectID+"')]['ToResolve']['CheckDC']['DC']";
+				rerollEffectPath = "[*][?(@.ID=='"+effectID+"')]['ToResolve']['CheckDC']['ChecksMade']['"+ParentToken+"']"
 			]
 		};
 		case "Save":{
-			[h:rerollEffectPath = "[*][?(@.ID=="+effectID+")]['ToResolve']['SaveDC']['SavesMade']['"+ParentToken+"']"]
+			[h:rerollEffectPath = "[*][?(@.ID=='"+effectID+"')]['ToResolve']['SaveDC']['SavesMade']['"+ParentToken+"']"]
 		};
 		case "Attack":{
-			[h:rerollEffectPath = "[*][?(@.ID=="+effectID+")]['ToResolve']['Attack']"]
+			[h:rerollEffectPath = "[*][?(@.ID=='"+effectID+"')]['ToResolve']['Attack']"]
 		}
 	]
 

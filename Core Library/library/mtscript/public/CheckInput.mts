@@ -30,7 +30,7 @@
 
 		[h,if(json.get(tempEffect,"ParentSubeffect")==""): 
 			NoActiveParentTest = 1;
-			NoActiveParentTest = json.isEmpty(json.path.read(data.getData("addon:","pm.a5e.core","gd.Effects"),"[*][?(@.ID == "+json.get(tempEffect,"ParentSubeffect")+")]"))
+			NoActiveParentTest = json.isEmpty(json.path.read(data.getData("addon:","pm.a5e.core","gd.Effects"),"[*][?(@.ID == '"+json.get(tempEffect,"ParentSubeffect")+"')]"))
 		]
 
 		[h,if(NoActiveParentTest): EffectsForcingCheckOptions = "<option value='"+tempEffectID+"'>"+tempEffectName+" "+tempEffectSkillDisplay+"</option>"]

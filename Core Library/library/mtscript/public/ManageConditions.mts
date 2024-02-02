@@ -3,7 +3,7 @@
 [h:cn.Input = " junkVar | -------------- Manage Active Conditions -------------- |  | LABEL | SPAN=TRUE ## ClearAllTest |  | Remove all active "+if(json.isEmpty(ItemsWithConditions),"","non-item ")+"conditions | CHECK "]
 
 [h,foreach(condGroup,getProperty("a5e.stat.ConditionGroups")),CODE:{
-	[h:condDisplayNames = json.path.read(getProperty("a5e.stat.ConditionList"),"[*][?(@.GroupID=="+json.get(condGroup,"GroupID")+")]['DisplayName']")]
+	[h:condDisplayNames = json.path.read(getProperty("a5e.stat.ConditionList"),"\$[*][?(@.GroupID=='"+json.get(condGroup,"GroupID")+"')]['DisplayName']")]
 	[h:cn.Input = listAppend(cn.Input," choice"+json.get(condGroup,"GroupID")+" |  | Remove "+json.toList(condDisplayNames,", ")+" | CHECK ","##")]
 }]
 
@@ -29,7 +29,7 @@
 	[h:cn.RemovalTest = or(ClearAllTest,eval("choice"+json.get(condGroup,"GroupID")))]
 	[h,if(cn.RemovalTest),CODE:{
 		[h,MACRO("EndCondition@Lib:pm.a5e.Core"): json.set("","Target",currentToken(),"GroupID",json.get(condGroup,"GroupID"))]
-		[h:cn.RemovedList = json.merge(cn.RemovedList,json.path.read(macro.return,"['Removed'][*]['DisplayName']"))]
+		[h:cn.RemovedList = json.merge(cn.RemovedList,json.path.read(macro.return,"\$['Removed'][*]['DisplayName']"))]
 	};{}]
 }]
 
@@ -40,7 +40,7 @@
 			"GroupID",json.get(condition,"GroupID")
 		)]
 		[h,MACRO("EndCondition@Lib:pm.a5e.Core"): EndConditionData]
-		[h:cn.RemovedList = json.merge(cn.RemovedList,json.path.read(macro.return,"['Removed'][*]['DisplayName']"))]
+		[h:cn.RemovedList = json.merge(cn.RemovedList,json.path.read(macro.return,"\$['Removed'][*]['DisplayName']"))]
 	};{}]
 }]
 

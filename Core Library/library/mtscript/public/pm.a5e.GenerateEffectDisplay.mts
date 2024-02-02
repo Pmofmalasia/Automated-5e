@@ -50,7 +50,7 @@
 	em.SecondPassDisplay = "Unresolved"
 ]
 
-[h:LinkedEffectNumber = json.length(json.path.read(incompleteEffects,"[*][?(@.ParentSubeffect == "+json.get(EffectData,"ID")+")]"))]
+[h:LinkedEffectNumber = json.length(json.path.read(incompleteEffects,"[*][?(@.ParentSubeffect == '"+json.get(EffectData,"ID")+"')]"))]
 [h,if(LinkedEffectNumber > 0): em.SecondPassDisplay = em.SecondPassDisplay+ "<br>" + LinkedEffectNumber + " Linked Effect"+if(LinkedEffectNumber==1,"","s")]
 
 [h:InvolvedTokensDisplay = if(targetName=="Self",parentName+" (self)",parentName+" vs. "+targetName)]

@@ -16,7 +16,7 @@
 			newDuration = "{}"
 		]
 		[h:NewConditionGroups = json.append(NewConditionGroups,json.set(condition,"Duration",newDuration))]
-		[h:setProperty("a5e.stat.ConditionList",json.path.set(getProperty("a5e.stat.ConditionList"),"\$[*][?(@.GroupID=="+json.get(condition,"GroupID")+")]['Duration']",newDuration))]
+		[h:setProperty("a5e.stat.ConditionList",json.path.set(getProperty("a5e.stat.ConditionList"),"\$[*][?(@.GroupID=='"+json.get(condition,"GroupID")+"')]['Duration']",newDuration))]
 	}]
 	[h:setProperty("a5e.stat.ConditionGroups",NewConditionGroups)]
 	[h:ConditionsExpired = json.unique(json.path.read(getProperty("a5e.stat.ConditionList"),"\$[*][?(@.Duration.Expired==1)]['GroupID']"))]

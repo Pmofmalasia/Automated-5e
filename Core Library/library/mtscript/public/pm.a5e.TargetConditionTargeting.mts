@@ -9,7 +9,7 @@
 
 	[h:condOptions = json.append("","None")]
 	[h,foreach(condGroup,thisTokenTargetableConditionGroups),CODE:{
-		[h:condDisplayNames = json.path.read(getProperty("a5e.stat.ConditionList",target),"[*][?(@.GroupID=="+condGroup+")]['DisplayName']")]
+		[h:condDisplayNames = json.path.read(getProperty("a5e.stat.ConditionList",target),"[*][?(@.GroupID=='"+condGroup+"')]['DisplayName']")]
 		[h,if(NumberAllowed==1):
 			condOptions = json.append(condOptions,pm.a5e.CreateDisplayList(condDisplayNames,"and"));
 			conditionTargetingInput = listAppend(conditionTargetingInput," choice"+target+condGroup+" |  | "+pm.a5e.CreateDisplayList(condDisplayNames,"and")+" | CHECK ","##")

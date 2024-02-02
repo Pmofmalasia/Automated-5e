@@ -138,12 +138,12 @@
 [h,if(ConditionSetBy!=""),CODE:{
 	[h:switchToken(ConditionSetBy)]
 	[h:"<!-- New group test needs to be done on SetBy token but not target token because group may have already been created by another target going through this macro. -->"]
-	[h:newGroupTest = json.isEmpty(json.path.read(getProperty("a5e.stat.ConditionsSet"),"\$[*][?(@.GroupID=="+a5e.GroupID+")]"))]
+	[h:newGroupTest = json.isEmpty(json.path.read(getProperty("a5e.stat.ConditionsSet"),"\$[*][?(@.GroupID=='"+a5e.GroupID+"')]"))]
 	[h,if(newGroupTest),CODE:{
 		[h:setProperty("a5e.stat.ConditionsSet",json.append(getProperty("a5e.stat.ConditionsSet"),json.set(a5e.GroupingInfo,"Targets",json.append("",TargetData))))]
 	};{
-		[h:NewTargets = json.append(json.get(json.path.read(getProperty("a5e.stat.ConditionsSet"),"\$[*][?(@.GroupID=="+a5e.GroupID+")]['Targets']"),0),TargetData)]
-		[h:setProperty("a5e.stat.ConditionsSet",json.path.set(getProperty("a5e.stat.ConditionsSet"),"\$[*][?(@.GroupID=="+a5e.GroupID+")]['Targets']",NewTargets))]
+		[h:NewTargets = json.append(json.get(json.path.read(getProperty("a5e.stat.ConditionsSet"),"\$[*][?(@.GroupID=='"+a5e.GroupID+"')]['Targets']"),0),TargetData)]
+		[h:setProperty("a5e.stat.ConditionsSet",json.path.set(getProperty("a5e.stat.ConditionsSet"),"\$[*][?(@.GroupID=='"+a5e.GroupID+"')]['Targets']",NewTargets))]
 	}]
 	[h:switchToken(ParentToken)]
 };{}]

@@ -8,7 +8,7 @@
     case "ID":{
         [h:EffectID = json.get(EffectToModifyData,"ID")]
         [h:currentEffects = data.getData("addon:","pm.a5e.core","gd.Effects")]
-        [h:EffectToModify = json.get(json.path.read(currentEffects,"[*][?(@.ID=="+EffectID+")]"),0)]
+        [h:EffectToModify = json.get(json.path.read(currentEffects,"[*][?(@.ID=='"+EffectID+"')]"),0)]
         [h:HasToResolveTest = json.get(EffectToModify,"ToResolve") != ""]
         [h,if(HasToResolveTest):
             HasDamageTest = json.get(json.get(EffectToModify,"ToResolve"),"Damage") != "";
@@ -67,9 +67,9 @@
 [h,switch(EffectToModifySource),CODE:
     case "ID":{
         [h,switch(HasToResolveTest+""+HasDamageTest):
-            case "11": setLibProperty("gd.Effects",json.path.set(currentEffects,"[*][?(@.ID=="+EffectID+")]['ToResolve']['Damage']",ModifiedDamage),"Lib:pm.a5e.Core")
-            case "10": setLibProperty("gd.Effects",json.path.put(currentEffects,"[*][?(@.ID=="+EffectID+")]['ToResolve']","Damage",ModifiedDamage),"Lib:pm.a5e.Core");
-            default: setLibProperty("gd.Effects",json.path.put(currentEffects,"[*][?(@.ID=="+EffectID+")]","ToResolve",json.set("","Damage",ModifiedDamage)),"Lib:pm.a5e.Core")
+            case "11": setLibProperty("gd.Effects",json.path.set(currentEffects,"[*][?(@.ID=='"+EffectID+"')]['ToResolve']['Damage']",ModifiedDamage),"Lib:pm.a5e.Core")
+            case "10": setLibProperty("gd.Effects",json.path.put(currentEffects,"[*][?(@.ID=='"+EffectID+"')]['ToResolve']","Damage",ModifiedDamage),"Lib:pm.a5e.Core");
+            default: setLibProperty("gd.Effects",json.path.put(currentEffects,"[*][?(@.ID=='"+EffectID+"')]","ToResolve",json.set("","Damage",ModifiedDamage)),"Lib:pm.a5e.Core")
         ]
     };
     case "CurrentEffect":{

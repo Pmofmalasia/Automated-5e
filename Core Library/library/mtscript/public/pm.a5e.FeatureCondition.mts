@@ -49,7 +49,7 @@
 			))]
 		};
 		case "11":{
-			[h:pm.CurrentDuration = pm.DurationDisplay(json.get(json.path.read(getProperty("a5e.stat.ConditionList"),"[*][?(@.GroupID=="+json.get(pm.GroupIDTest,0)+")]['Duration']"),0))]
+			[h:pm.CurrentDuration = pm.DurationDisplay(json.get(json.path.read(getProperty("a5e.stat.ConditionList"),"[*][?(@.GroupID=='"+json.get(pm.GroupIDTest,0)+"')]['Duration']"),0))]
 			[h:json.set("","Toggle",1,"IsActive",0)]
 			[h:abilityTable = json.append(abilityTable,json.set("",
 				"ShowIfCondensed",1,

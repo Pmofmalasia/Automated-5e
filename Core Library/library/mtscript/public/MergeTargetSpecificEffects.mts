@@ -2,5 +2,5 @@
 [h:generalEffects = json.get(macro.args,"General")]
 
 [h,if(json.contains(targetSpecificEffects,"ModifyDamage")),CODE:{
-
+	
 };{}]

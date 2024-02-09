@@ -64,7 +64,7 @@
 }]
 
 [h:"<!-- TODO: Bugfix MT: Remove the below code and remove the above from if(0) if/when player.getConnectedPlayers() is fixed -->"]
-[h:excludedPlayersList = json.difference(finalPlayersList,allPlayers)]
+[h:excludedPlayersList = json.difference(allPlayers,finalPlayersList)]
 [h,foreach(player,excludedPlayersList),if(isGM(player)),CODE:{
 	[h:playerName = pm.RemoveSpecial(player)]
 	[h,if(json.contains(personalizedChatSettings,playerName)):

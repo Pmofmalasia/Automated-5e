@@ -158,7 +158,7 @@
 [h:setProperty("a5e.stat.MaxHP",objectMaxHP)]
 [h:setProperty("a5e.stat.HP",objectMaxHP)]
 
-[h:ButtonColorData = pm.a5e.BorderColors("Item","",NewObjectTokenID)]
+[h:ButtonColorData = pm.a5e.BorderColors("Item","","")]
 [h,if(json.get(objectData,"isEffectRandom")==1),CODE:{
 	[h:tempAbilityProps = json.set("",
 		"applyToSelected",1,

@@ -48,11 +48,11 @@
 )]
 [h:AllOutputComponents = json.set("",
 	"ParentToken","",
-	"needsSplitGMOutput",showPlayers,
+	"needsSplitGMOutput",!showPlayers,
 	"BorderData",BorderData,
 	"Table",abilityTable,
 	"ShowFullRulesType",json.append("","RandomEncounter"),
-	"OutputTargets",outputTargets,
+	"OutputTargets","",
 	"Description","",
 	"AbridgedDescription",""
 )]

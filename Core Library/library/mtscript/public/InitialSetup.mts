@@ -1,5 +1,6 @@
-[macro("Reset to Default@Lib:pm.a5e.Core"):""]
-[macro("Add Basic Macros@Lib:pm.a5e.Core"):""][h:RaceArray = pm.GetRaces()]
+[macro("ResetToDefault@Lib:pm.a5e.Core"):""]
+[macro("AddBasicMacros@Lib:pm.a5e.Core"):""]
+[h:RaceArray = pm.GetRaces()]
 [h:RaceOptions = json.path.read(RaceArray,"[*].DisplayName")]
 
 [h:charCreationHTML = "<tr><th><label for='charName'>Character Name:</label></th><td><input type='text' id='charName' name='charName' autofocus></td></tr>

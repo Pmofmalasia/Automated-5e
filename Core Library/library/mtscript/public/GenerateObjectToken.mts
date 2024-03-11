@@ -17,7 +17,7 @@
 };{
 	[h:NewObjectImage = ""]
 	[h:AllAddonFiles = library.getContents("pm.a5e.core")]
-	[h:ValidFiletypes = json.append("",".PNG",".png",".jpeg",".JPEG",".jpg",".JPG",".webp",".WEBP")]
+	[h:ValidFiletypes = json.append("",".PNG",".png",".jpeg",".JPEG",".jpg",".JPG",".webp",".WEBP",".svg",".SVG")]
 	[h,foreach(filetype,ValidFiletypes),CODE:{
 		[h:tempObjectImage = "ObjectImages/"+NewObjectTokenType+"/"+json.get(objectData,NewObjectTokenType+"Type")+filetype]
 		[h,if(json.contains(AllAddonFiles,"public/"+tempObjectImage)): NewObjectImage = "lib://pm.a5e.core/"+tempObjectImage]

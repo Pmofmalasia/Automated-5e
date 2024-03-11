@@ -1,12 +1,12 @@
-[h:NotALibTest = if(json.contains(getTokens("json"),getSelected()),1,0)]
+[h:NotALibTest = json.contains(getTokens("json"),getSelected())]
 [h:assert(NotALibTest,"Resetting Library tokens will break everything - please don't do that.")]
 
-[h:Confirmation=input(
+[h:abort(input(
 	"junkVar | "+getTokenImage()+" |  | LABEL | SPAN=TRUE ICON=TRUE ",
 	"Answeryn|No,Yes|Do you really wish to reset this token?|LIST"
-)]
-[h:abort(Confirmation)]
+))]
 [h:abort(Answeryn)]
+
 [h:setPropertyType("A5ECreature")]
 
 [h:PropNames=getPropertyNamesRaw("json")]

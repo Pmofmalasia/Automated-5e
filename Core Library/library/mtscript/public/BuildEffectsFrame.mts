@@ -8,7 +8,7 @@
 [h,foreach(effect,incompleteEffects),CODE:{
 	[h:NoEffectTest = json.get(effect,"ToResolve") == ""]
 	[h,if(json.get(effect,"ParentSubeffect") != ""):
-		CurrentParentSubeffectTest = !json.isEmpty(json.path.read(incompleteEffects,"[*][?(@.ID == '"+json.get(effect,"ParentSubeffect")+"')]"));
+		CurrentParentSubeffectTest = !json.isEmpty(json.path.read(incompleteEffects,"\$[*][?(@.ID == '"+json.get(effect,"ParentSubeffect")+"')]"));
 		CurrentParentSubeffectTest = 0
 	]
 

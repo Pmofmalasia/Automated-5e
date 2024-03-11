@@ -1,0 +1,13 @@
+.context-button {
+  display: inline-block;
+  height: 60px;
+}
+.context-button input {
+  display: inline;
+  border: 2px solid #000000;
+  border-radius: 8px;
+  padding: 16px;
+}
+.context-button label {
+  display: block;
+}

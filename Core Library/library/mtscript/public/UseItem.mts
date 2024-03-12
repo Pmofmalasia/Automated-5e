@@ -1,6 +1,8 @@
 [h:UseItemData = macro.args]
 [h:ItemEffects = json.get(UseItemData,"Effects")]
+[h:ParentToken = json.get(UseItemData,"ParentToken")]
 [h:EffectsNumber = json.length(ItemEffects)]
+[h:switchToken(ParentToken)]
 
 [h,if(EffectsNumber==1),CODE:{
 	[h:ChosenEffect = json.get(ItemEffects,0)]
@@ -35,5 +37,7 @@
 		)]
 	}]
 };{}]
+
+[h:return(0,getProperty("a5e.stat.Inventory"))]
 
 [h,MACRO("ShowInventory@Lib:pm.a5e.Core"): json.set("","ParentToken",json.get(UseItemData,"ParentToken"))]

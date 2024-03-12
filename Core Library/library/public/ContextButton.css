@@ -9,11 +9,11 @@
   padding: 6px;
   height: 30px;
   width: 30px;
-  background-size: 26px 26px;
+  background-size: cover;
 }
 
 .context-button button:hover{
-	border: 2px solid #444444;
+	border: 2px solid #777777;
 }
 
 .context-button image{

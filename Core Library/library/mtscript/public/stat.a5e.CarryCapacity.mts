@@ -1,4 +1,5 @@
 [h:ParentToken = json.get(arg(0),"ParentToken")]
+[h:switchToken(ParentToken)]
 [h:a5e.UnifiedAbilities = a5e.GatherAbilities(ParentToken)]
 [h:pm.a5e.OverarchingContext = "Stats"]
 [h:IsTooltip = 0]

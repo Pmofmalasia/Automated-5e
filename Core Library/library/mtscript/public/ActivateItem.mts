@@ -4,7 +4,10 @@
 [h:ParentToken = json.get(ItemActivationData,"ParentToken")]
 [h:switchToken(ParentToken)]
 
-[h:ActivatedItemInventory = json.path.set(getProperty("a5e.stat.Inventory"),"\$[*][?(@.ItemID=='"+ActivatedItemID+"')]['IsActive']",ActivateItem)]
+[h:"<!-- TODO: Will eventually add validation to if you're allowed to activate the item - e.g. requiring a command word but silenced -->"]
+[h:isActivated = ActivateItem]
+
+[h:ActivatedItemInventory = json.path.set(getProperty("a5e.stat.Inventory"),"\$[*][?(@.ItemID=='"+ActivatedItemID+"')]['IsActive']",isActivated)]
 [h:setProperty("a5e.stat.Inventory",ActivatedItemInventory)]
 
-[h,MACRO("ShowInventory@Lib:pm.a5e.Core"): json.set("","ParentToken",ParentToken)]
+[h:return(0,isActivated)]

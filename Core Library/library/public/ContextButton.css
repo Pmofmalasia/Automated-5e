@@ -1,24 +1,22 @@
 .context-button {
   display: inline-block;
-  height: 35px;
 }
 .context-button button {
-  display: inline;
   border: 2px solid #000000;
   border-radius: 8px;
-  padding: 6px;
-  height: 30px;
-  width: 30px;
-  background-size: cover;
+  padding: 0px;
+  height: 36px;
+  width: 36px;
 }
 
 .context-button button:hover{
 	border: 2px solid #777777;
 }
 
-.context-button image{
-	height: 26px;
-	width: 26px;
+.context-button img{
+	height: 32px;
+	width: 32px;
+	border: 0px;
 }
 
 .context-button button:active{

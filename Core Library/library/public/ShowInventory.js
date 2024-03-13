@@ -58,13 +58,13 @@ async function createInventoryTable(){
 		InventoryTableHTML = InventoryTableHTML + "<tr class='Inventory-list' draggable='true' ondragstart='dragItem(event)' ondrop='dropItem(event)' ondragover='allowDrop(event)' id='rowItemID"+Item.ItemID+"'>"+thisRowInnerHTML+"</tr>";
 	}
 
-	InventoryTableHTML = InventoryTableHTML + "<tr ondrop='dropItem(event)' ondragover='allowDrop(event)'><th style = 'text-align:center; background-color:#504A40; color#FAF9F7; width:120px;'>Weight Data</th><th style = 'text-align:center; background-color:#504A40; color#FAF9F7; width:120px;'>Current Weight</th><th style = 'text-align:center; background-color:#504A40; color#FAF9F7; width:120px;'>Carry Capacity</th><th style = 'text-align:center; background-color:#504A40; color#FAF9F7; width:120px;'>Push Capacity</th></tr>";
+	InventoryTableHTML = InventoryTableHTML + "<tr ondrop='dropItem(event)' ondragover='allowDrop(event)'><th style = 'text-align:center; background-color:#504A40; color:#FAF9F7; width:120px;'>Weight Data</th><th style = 'text-align:center; background-color:#504A40; color:#FAF9F7; width:120px;'>Current Weight</th><th style = 'text-align:center; background-color:#504A40; color:#FAF9F7; width:120px;'>Carry Capacity</th><th style = 'text-align:center; background-color:#504A40; color:#FAF9F7; width:120px;'>Push Capacity</th></tr>";
 	
 	let submitData = {"ParentToken":ParentToken};
 	let request = await fetch("macro:stat.a5e.CarryCapacity@lib:pm.a5e.Core", {method: "POST", body: JSON.stringify(submitData)});
 	let WeightData = await request.json();
 
-	InventoryTableHTML = InventoryTableHTML + "<tr class='Inventory-list' background-color='rgb(108, 223, 184)'><td> --- </td><td>"+Math.round(allItemsWeight)+"</td><td>"+WeightData.Carry+"</td><td>"+WeightData.Push+"</td></tr>";
+	InventoryTableHTML = InventoryTableHTML + "<tr class='Inventory-list' style='background-color:rgb(108, 223, 184); color:black'><td> --- </td><td>"+Math.round(allItemsWeight)+"</td><td>"+WeightData.Carry+"</td><td>"+WeightData.Push+"</td></tr>";
 
 	document.getElementById("InventoryTable").innerHTML = InventoryTableHTML;
 }
@@ -95,8 +95,8 @@ async function updateItemRow(Item){
 			NumberDisplay = Item.Resource+"<b>/</b>"+ResourceData;
 		}
 		else{
-			let resourceNames = ResourceData.keys();
-			let resourceDisplayNames = ResourceData.ResourceDisplayName;
+			let resourceNames = Object.keys(ResourceData);
+			let resourceDisplayNames = Item.ResourceDisplayName;
 			let isFirst = true;
 			for(let tempResourceName of resourceNames){
 				if(isFirst){
@@ -106,7 +106,7 @@ async function updateItemRow(Item){
 				else{
 					NumberDisplay = NumberDisplay + "<br>";
 				}
-				NumberDisplay = NumberDisplay + resourceDisplayNames[tempResourceName]+": " + Item.Resource[tempResourceName] + "<b>/<b>" + ResourceData[tempResourceName];
+				NumberDisplay = NumberDisplay + resourceDisplayNames[tempResourceName]+": " + Item.Resource[tempResourceName] + "<b>/</b>" + ResourceData[tempResourceName];
 			}
 		}			
 	}
@@ -115,7 +115,7 @@ async function updateItemRow(Item){
 
 	let isActive = Item.IsActive > 0;
 	if(Item.Type == "Container"){
-		thisRowContextButtons = thisRowContextButtons + "<span title='Close Container, or Drag an Item to Store'><button type='button' id='Container"+thisItemID+"' onclick='toggleContainer()' value='open'><img src='lib://pm.a5e.core/InterfaceImages/Container_Open.svg?cachelib=false'></button></span>";
+		thisRowContextButtons = thisRowContextButtons + " <span id='ContainerTitle"+thisItemID+"' title='Close Container, or Drag an Item to Store'><button type='button' id='Container"+thisItemID+"' onclick='toggleContainer()' value='open'><img src='lib://pm.a5e.core/InterfaceImages/Container_Open.png?cachelib=false'></button></span> ";
 	}
 
 	if(Item.isActivatable == 1){
@@ -124,26 +124,26 @@ async function updateItemRow(Item){
 		let needsActivation;
 		if(isActive){
 			buttonImage = "Deactivate_Item";
-			buttonTitle = "<span title='Deactivate Item'>"
+			buttonTitle = " <span id='ActivateTitle"+thisItemID+"' title='Deactivate Item'>"
 			needsActivation = 0;
 		}
 		else{
 			buttonImage = "Activate_Item";
-			buttonTitle = "<span title='Activate Item'>"
+			buttonTitle = " <span id='ActivateTitle"+thisItemID+"' title='Activate Item'>"
 			needsActivation = 1;
 		}
-		thisRowContextButtons = thisRowContextButtons + buttonTitle + "<button id='Activate"+thisItemID+"' type='button' onclick='toggleActivation("+'"'+thisItemID+'",'+needsActivation+")'><img src='lib://pm.a5e.core/InterfaceImages/"+buttonImage+".svg?cachelib=false'></button></span>";
+		thisRowContextButtons = thisRowContextButtons + buttonTitle + "<button id='Activate"+thisItemID+"' type='button' onclick='toggleActivation("+'"'+thisItemID+'",'+needsActivation+")'><img src='lib://pm.a5e.core/InterfaceImages/"+buttonImage+".png?cachelib=false'></button></span> ";
 	}
 
 	if(typeof Item.Effects == "object" && isActive){
-		thisRowContextButtons = thisRowContextButtons + "<span title='Use Item'><button type='button' id='Use"+thisItemID+"' onclick='useItem("+'"'+thisItemID+'"'+")'><img src='lib://pm.a5e.core/InterfaceImages/Use.svg?cachelib=false'></button></span>";
+		thisRowContextButtons = thisRowContextButtons + " <span id='UseTitle"+thisItemID+" title='Use Item'><button type='button' id='Use"+thisItemID+"' onclick='useItem("+'"'+thisItemID+'"'+")'><img src='lib://pm.a5e.core/InterfaceImages/Use.png?cachelib=false'></button></span> ";
 	}
 
 	if(typeof Item.ItemSpellcasting == "object" && isActive){
-		thisRowContextButtons = thisRowContextButtons + "<span title='Cast Spell'><button type='button' id='Cast"+thisItemID+"' onclick='castSpell("+'"'+thisItemID+'"'+")' style='background-image:url(lib://pm.a5e.core/InterfaceImages/Cast_Spell.svg?cachelib=false)'></button></span>";
+		thisRowContextButtons = thisRowContextButtons + " <span id='CastTitle"+thisItemID+"' title='Cast Spell'><button type='button' id='Cast"+thisItemID+"' onclick='castSpell("+'"'+thisItemID+'"'+")'><img src='lib://pm.a5e.core/InterfaceImages/Cast_Spell.png?cachelib=false'></button></span> ";
 	}
 
-	thisRowContextButtons = thisRowContextButtons + "<span title='Show Rules'><button type='button' id='Rules"+thisItemID+"' onclick='showRules("+'"'+thisItemID+'"'+")'><img src='lib://pm.a5e.core/InterfaceImages/Rules.svg?cachelib=false'></button></span>";
+	thisRowContextButtons = thisRowContextButtons + " <span id='RulesTitle"+thisItemID+"' title='Show Rules'><button type='button' id='Rules"+thisItemID+"' onclick='showRules("+'"'+thisItemID+'"'+")'><img src='lib://pm.a5e.core/InterfaceImages/Rules.png?cachelib=false'></button></span> ";
 
 	thisRowContextButtons = thisRowContextButtons+"</span>";
 
@@ -156,19 +156,22 @@ async function updateItemRow(Item){
 
 async function toggleActivation(ItemID,needsActivation){
 	let submitData = {
-		"ParentToken":ParentToken,"Activate":needsActivation,
+		"ParentToken":ParentToken,
+		"Activate":needsActivation,
 		"Item":ItemID
 	};
 	let request = await fetch("macro:ActivateItem@Lib:pm.a5e.Core", {method: "POST", body: JSON.stringify(submitData)});
 	let activationResult = await request.text();
 
 	if(activationResult == 1){
-		document.getElementById("Activate"+ItemID).innerHTML = "<img src='lib://pm.a5e.core/InterfaceImages/Deactivate_Item.svg?cachelib=false'>";
+		document.getElementById("Activate"+ItemID).innerHTML = "<img src='lib://pm.a5e.core/InterfaceImages/Deactivate_Item.png?cachelib=false'>";
 		document.getElementById("Activate"+ItemID).onclick = "toggleActivation("+'"'+ItemID+'",0'+")";
+		document.getElementById("ActivateTitle"+ItemID).title = "Deactivate Item";
 	}
 	else{
-		document.getElementById("Activate"+ItemID).innerHTML = "<img src='lib://pm.a5e.core/InterfaceImages/Activate_Item.svg?cachelib=false'>";
+		document.getElementById("Activate"+ItemID).innerHTML = "<img src='lib://pm.a5e.core/InterfaceImages/Activate_Item.png?cachelib=false'>";
 		document.getElementById("Activate"+ItemID).onclick = "toggleActivation("+'"'+ItemID+'",1'+")";
+		document.getElementById("ActivateTitle"+ItemID).title = "Activate Item";
 	}
 }
 

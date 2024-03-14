@@ -1,6 +1,9 @@
 [h:functionToExecute = arg(0)]
 [h:functionArgs = arg(1)]
 
+[h:"<!-- For debugging -->"]
+[h:link = macroLinkText("js.a5e.MaptoolFunction@Lib:pm.a5e.Core","gm",json.append("",functionToExecute,functionArgs))]
+
 [h,if(json.type(functionArgs) == "ARRAY"),CODE:{
 	[h:functionArgsString = ""]
 	[h,foreach(arg,functionArgs),CODE:{
@@ -15,4 +18,5 @@
 }]
 
 [h:functionResult = evalMacro("[r:"+functionToExecute+"("+functionArgsString+")]")]
+
 [h:return(0,json.append("",functionResult))]

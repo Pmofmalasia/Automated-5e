@@ -38,6 +38,7 @@
 	}]
 };{}]
 
+[h:"<!-- TODO: Add method for comparing returned and prior inventory in js, then update the changed rows (and add new row for new items) -->"]
 [h:return(0,getProperty("a5e.stat.Inventory"))]
 
 [h,MACRO("ShowInventory@Lib:pm.a5e.Core"): json.set("","ParentToken",json.get(UseItemData,"ParentToken"))]

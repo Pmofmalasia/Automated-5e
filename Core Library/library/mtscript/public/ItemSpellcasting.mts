@@ -2,6 +2,7 @@
 [h:SpellName = json.get(SpellData,"Name")]
 [h:SpellLevel = json.get(SpellData,"Level")]
 [h:ParentToken = json.get(SpellData,"Name")]
+[h:switchToken(ParentToken)]
 [h:ItemID = json.get(SpellData,"ItemID")]
 [h:ItemData = json.path.read(getProperty("a5e.stat.Inventory"),"\$[*][?(@.ItemID == '"+ItemID+"')]")]
 [h:assert(!json.isEmpty(ItemData),"Item not found in inventory!")]

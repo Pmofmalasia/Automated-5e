@@ -9,10 +9,17 @@ function clearUnusedTable(tableID,startRowID,endRowID){
     }
 }
 
-function addTableRow(tableID,rowIndex,rowID,rowHTML){
+function addTableRow(tableID,rowIndex,rowAttributes,rowHTML){
     let table = document.getElementById(tableID);
     let newRow = table.insertRow(rowIndex);
-    newRow.id = rowID;
+	if (typeof rowAttributes == "object"){
+		for(let key of Object.keys(rowAttributes)){
+			newRow[key] = rowAttributes[key];
+		}
+	}
+	else{
+		newRow.id = rowAttributes;
+	}
     newRow.innerHTML = rowHTML;
 }
 
@@ -83,6 +90,9 @@ function createHTMLMultiselectOptions(inputData,prefix,changeFunction,extraArgum
 }
 
 async function MTFunction(functionName,functionArgs){
+	if(!Array.isArray(functionArgs)){
+		functionArgs = [functionArgs];
+	}
 	let request = await fetch("macro:js.a5e.MaptoolFunction@Lib:pm.a5e.Core", {method: "POST", body: "["+functionName+","+JSON.stringify(functionArgs)+"]"});
 	let result = await request.json();
 	return result[0];

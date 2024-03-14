@@ -35,30 +35,27 @@ function rearrangeInventory(oldIndex,newIndex){
 		Inventory.splice(newIndex,0,item);
 		newIndex++;
 	}
-console.log("Move");
+
 	updateInventory();
 }
 
 async function updateInventory(){
-	console.log(Inventory);
-	await MTFunction("setProperty",["a5e.stat.Inventory",JSON.stringify(Inventory),ParentToken]);
-	console.log("moved");
+	let request = await fetch("macro:js.setProperty@Lib:pm.a5e.Core", {method: "POST", body: '["a5e.stat.Inventory",'+JSON.stringify(Inventory)+','+ParentToken+']'});
 }
 
 async function createInventoryTable(){
 	let InventoryTableHTML = "<tr><th style = 'text-align:center; background-color:#504A40; color#FAF9F7; width:120px;'>Item</th><th style = 'text-align:center; background-color:#504A40; color#FAF9F7; width:120px;'>Number</th><th style = 'text-align:center; background-color:#504A40; color#FAF9F7; width:120px;'>Weight</th><th style = 'text-align:center; background-color:#504A40; color#FAF9F7; width:120px;'>Context Menu</th></tr>";
 	let allItemsWeight = 0;
-	let TableCellFormat = "<td style='text-align:center; padding-left:4px'>";
 
 	for(let Item of Inventory){
-		let thisRowUpdate = await updateItemRow(Item);
+		let thisRowUpdate = await generateItemRow(Item);
 		let thisRowInnerHTML = thisRowUpdate.RowText;
 		allItemsWeight = allItemsWeight + thisRowUpdate.Weight;
 
 		InventoryTableHTML = InventoryTableHTML + "<tr class='Inventory-list' draggable='true' ondragstart='dragItem(event)' ondrop='dropItem(event)' ondragover='allowDrop(event)' id='rowItemID"+Item.ItemID+"'>"+thisRowInnerHTML+"</tr>";
 	}
 
-	InventoryTableHTML = InventoryTableHTML + "<tr ondrop='dropItem(event)' ondragover='allowDrop(event)'><th style = 'text-align:center; background-color:#504A40; color:#FAF9F7; width:120px;'>Weight Data</th><th style = 'text-align:center; background-color:#504A40; color:#FAF9F7; width:120px;'>Current Weight</th><th style = 'text-align:center; background-color:#504A40; color:#FAF9F7; width:120px;'>Carry Capacity</th><th style = 'text-align:center; background-color:#504A40; color:#FAF9F7; width:120px;'>Push Capacity</th></tr>";
+	InventoryTableHTML = InventoryTableHTML + "<tr id='rowWeightHeaders' ondrop='dropItem(event)' ondragover='allowDrop(event)'><th style = 'text-align:center; background-color:#504A40; color:#FAF9F7; width:120px;'>Weight Data</th><th style = 'text-align:center; background-color:#504A40; color:#FAF9F7; width:120px;'>Current Weight</th><th style = 'text-align:center; background-color:#504A40; color:#FAF9F7; width:120px;'>Carry Capacity</th><th style = 'text-align:center; background-color:#504A40; color:#FAF9F7; width:120px;'>Push Capacity</th></tr>";
 	
 	let submitData = {"ParentToken":ParentToken};
 	let request = await fetch("macro:stat.a5e.CarryCapacity@lib:pm.a5e.Core", {method: "POST", body: JSON.stringify(submitData)});
@@ -69,8 +66,9 @@ async function createInventoryTable(){
 	document.getElementById("InventoryTable").innerHTML = InventoryTableHTML;
 }
 
-async function updateItemRow(Item){
-	//This gets hung up sometimes so the frame doesn't load - not sure why
+async function generateItemRow(Item){
+	let debug = false;
+		if(debug){console.log("1");}
 	let DisplayName = Item.DisplayName;
 	if(DisplayName.length > 21){
 		DisplayName = "<span title='"+DisplayName+"'>"+DisplayName.substring(0,18)+"...</span>";
@@ -84,8 +82,10 @@ async function updateItemRow(Item){
 		TotalWeight = ItemNumber * Weight;
 	}
 	let displayWeight = Math.round(Weight);
+if(debug){console.log("2");}
 
 	let ResourceData = await MTFunction("evalMacro",[Item.MaxResource]);
+	if(debug){console.log("3");}
 	let NumberDisplay = "";
 	if (ResourceData == ""){
 		NumberDisplay = ItemNumber;
@@ -110,6 +110,7 @@ async function updateItemRow(Item){
 			}
 		}			
 	}
+	if(debug){console.log("4");}
 
 	let thisRowContextButtons = "<span class='context-button'>";
 
@@ -117,6 +118,7 @@ async function updateItemRow(Item){
 	if(Item.Type == "Container"){
 		thisRowContextButtons = thisRowContextButtons + " <span id='ContainerTitle"+thisItemID+"' title='Close Container, or Drag an Item to Store'><button type='button' id='Container"+thisItemID+"' onclick='toggleContainer()' value='open'><img src='lib://pm.a5e.core/InterfaceImages/Container_Open.png?cachelib=false'></button></span> ";
 	}
+	if(debug){console.log("5");}
 
 	if(Item.isActivatable == 1){
 		let buttonImage;
@@ -124,29 +126,33 @@ async function updateItemRow(Item){
 		let needsActivation;
 		if(isActive){
 			buttonImage = "Deactivate_Item";
-			buttonTitle = " <span id='ActivateTitle"+thisItemID+"' title='Deactivate Item'>"
+			buttonTitle = " <span id='ActivateTitle"+thisItemID+"' title='Deactivate Item'><input type='hidden' id='needsActivation"+thisItemID+"' value=0>"
 			needsActivation = 0;
 		}
 		else{
 			buttonImage = "Activate_Item";
-			buttonTitle = " <span id='ActivateTitle"+thisItemID+"' title='Activate Item'>"
+			buttonTitle = " <span id='ActivateTitle"+thisItemID+"' title='Activate Item'><input type='hidden' id='needsActivation"+thisItemID+"' value=1>"
 			needsActivation = 1;
 		}
 		thisRowContextButtons = thisRowContextButtons + buttonTitle + "<button id='Activate"+thisItemID+"' type='button' onclick='toggleActivation("+'"'+thisItemID+'",'+needsActivation+")'><img src='lib://pm.a5e.core/InterfaceImages/"+buttonImage+".png?cachelib=false'></button></span> ";
 	}
+	if(debug){console.log("6");}
 
 	if(typeof Item.Effects == "object" && isActive){
 		thisRowContextButtons = thisRowContextButtons + " <span id='UseTitle"+thisItemID+" title='Use Item'><button type='button' id='Use"+thisItemID+"' onclick='useItem("+'"'+thisItemID+'"'+")'><img src='lib://pm.a5e.core/InterfaceImages/Use.png?cachelib=false'></button></span> ";
 	}
+	if(debug){console.log("7");}
 
 	if(typeof Item.ItemSpellcasting == "object" && isActive){
 		thisRowContextButtons = thisRowContextButtons + " <span id='CastTitle"+thisItemID+"' title='Cast Spell'><button type='button' id='Cast"+thisItemID+"' onclick='castSpell("+'"'+thisItemID+'"'+")'><img src='lib://pm.a5e.core/InterfaceImages/Cast_Spell.png?cachelib=false'></button></span> ";
 	}
+	if(debug){console.log("8");}
 
 	thisRowContextButtons = thisRowContextButtons + " <span id='RulesTitle"+thisItemID+"' title='Show Rules'><button type='button' id='Rules"+thisItemID+"' onclick='showRules("+'"'+thisItemID+'"'+")'><img src='lib://pm.a5e.core/InterfaceImages/Rules.png?cachelib=false'></button></span> ";
 
 	thisRowContextButtons = thisRowContextButtons+"</span>";
 
+	if(debug){console.log("9");}
 	let returnData = {
 		"RowText":"<td>"+DisplayName+"</td><td>"+NumberDisplay+"</td><td><span title='"+Weight+" Each'>"+displayWeight+"</span></td><td>"+thisRowContextButtons+"</td>",
 		"Weight":TotalWeight
@@ -154,10 +160,35 @@ async function updateItemRow(Item){
 	return returnData;
 }
 
-async function toggleActivation(ItemID,needsActivation){
+async function updateItems(ItemList){
+	for(let Item of ItemList){
+		let thisRowUpdate = await generateItemRow(Item);
+		thisItemRow = document.getElementById("rowItemID"+Item.ItemID);
+		if(thisItemRow == null){
+			let newRowIndex = document.getElementById("rowWeightHeaders").rowIndex;
+			let thisItemAttributes = {
+				"id":"rowItemID"+Item.ItemID,
+				"class":"Inventory-list",
+				"draggable":"true",
+				"ondragstart":"dragItem(event)",
+				"ondrop":"dropItem(event)",
+				"ondragover":"allowDrop(event)"
+			};
+
+			//I think the events will not set correctly
+			thisItemRow = 
+			addTableRow("InventoryTable",newRowIndex,thisItemAttributes,thisRowUpdate.RowText);
+		}
+		else{
+			thisItemRow.innerHTML = thisRowUpdate.RowText;
+		}
+	}
+}
+
+async function toggleActivation(ItemID){
 	let submitData = {
 		"ParentToken":ParentToken,
-		"Activate":needsActivation,
+		"Activate":document.getElementById("needsActivation"+ItemID).value,
 		"Item":ItemID
 	};
 	let request = await fetch("macro:ActivateItem@Lib:pm.a5e.Core", {method: "POST", body: JSON.stringify(submitData)});
@@ -165,12 +196,12 @@ async function toggleActivation(ItemID,needsActivation){
 
 	if(activationResult == 1){
 		document.getElementById("Activate"+ItemID).innerHTML = "<img src='lib://pm.a5e.core/InterfaceImages/Deactivate_Item.png?cachelib=false'>";
-		document.getElementById("Activate"+ItemID).onclick = "toggleActivation("+'"'+ItemID+'",0'+")";
+		document.getElementById("needsActivation"+ItemID).value = 0;
 		document.getElementById("ActivateTitle"+ItemID).title = "Deactivate Item";
 	}
 	else{
 		document.getElementById("Activate"+ItemID).innerHTML = "<img src='lib://pm.a5e.core/InterfaceImages/Activate_Item.png?cachelib=false'>";
-		document.getElementById("Activate"+ItemID).onclick = "toggleActivation("+'"'+ItemID+'",1'+")";
+		document.getElementById("needsActivation"+ItemID).value = 1;
 		document.getElementById("ActivateTitle"+ItemID).title = "Activate Item";
 	}
 }
@@ -195,6 +226,8 @@ async function loadUserData(){
 	Inventory = userdata.Inventory;
 	
 	createInventoryTable();
+
+	document.title = "Inventory: "+userdata.TokenName;
 }
 
 setTimeout(loadUserData, 1);

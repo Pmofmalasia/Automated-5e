@@ -6,6 +6,19 @@ function dragItem(ev){
 function dropItem(ev){
 	ev.preventDefault();
 	let movedRow = document.getElementById(ev.dataTransfer.getData("text"));
+
+	let contextButtonDropTarget = ev.target.closest("button");
+	if(contextButtonDropTarget != null){
+		let contextButtonInfo = contextButtonDropTarget.id;
+		let containerTest = contextButtonInfo.substring(0,9);
+		if(containerTest == "Container"){
+			//doStuff
+			return;
+		}
+
+
+	}
+
 	let dropTarget = ev.target.closest("tr");
 
 	let oldIndex = movedRow.rowIndex;
@@ -199,7 +212,8 @@ async function storeItem(ItemID,ContainerID){
 		ContainerData.Contents = [ItemID];
 	}
 
-	Inventory
+	let ContainerIndex = Inventory.findIndex(obj => obj.ItemID == ContainerID);
+	Inventory[ContainerIndex] = ContainerData;
 }
 
 async function toggleActivation(ItemID){

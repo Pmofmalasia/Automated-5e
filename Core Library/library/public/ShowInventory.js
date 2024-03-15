@@ -185,6 +185,23 @@ async function updateItems(ItemList){
 	}
 }
 
+async function storeItem(ItemID,ContainerID){
+	let ContainerData = getItemData(ContainerID);
+
+	let containedItems = ContainerData.Contents;
+	if(Array.isArray(containedItems)){
+		if(!containedItems.includes(ItemID)){
+			containedItems.push(ItemID);
+			ContainerData.Contents = containedItems;
+		};
+	}
+	else{
+		ContainerData.Contents = [ItemID];
+	}
+
+	Inventory
+}
+
 async function toggleActivation(ItemID){
 	let submitData = {
 		"ParentToken":ParentToken,
@@ -207,15 +224,28 @@ async function toggleActivation(ItemID){
 }
 
 async function useItem(ItemID){
-	let itemData = Inventory.filter(function(Inventory){
-		return Inventory.ItemID == ItemID;
-	});
-	itemData = itemData[0];
+	itemData = getItemData(ItemID);
+	itemData.ParentToken = ParentToken;
 
 	let request = await fetch("macro:UseItem@Lib:pm.a5e.Core", {method: "POST", body: JSON.stringify(itemData)});
 	let resultingInventory = await request.json();
 
 	//compare resultingInventory with Inventory here to find differences, then update those rows
+}
+
+async function castSpell(ItemID){
+	itemData = getItemData(ItemID);
+	itemData.ParentToken = ParentToken;
+
+	let request = await fetch("macro:ItemSpellcastingInput@Lib:pm.a5e.Core", {method: "POST", body: JSON.stringify(itemData)});
+	let resultingInventory = await request.json();
+}
+
+function getItemData(ItemID){
+	let itemData = Inventory.filter(function(Inventory){
+		return Inventory.ItemID == ItemID;
+	});
+	return itemData[0];
 }
 
 async function loadUserData(){

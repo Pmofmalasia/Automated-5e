@@ -5,8 +5,8 @@
   border: 2px solid #000000;
   border-radius: 8px;
   padding: 0px;
-  height: 36px;
-  width: 36px;
+  height: 30px;
+  width: 30px;
 }
 
 .context-button button:hover{
@@ -14,8 +14,8 @@
 }
 
 .context-button img{
-	height: 32px;
-	width: 32px;
+	height: 26px;
+	width: 26px;
 	border: 0px;
 }
 

@@ -23,3 +23,16 @@
 	border: 2px solid #FFFFFF;
 	transform: translateY(2px);
 }
+		
+.stored-item tr:nth-child(even){
+	background-color: white;
+	color: black;
+}
+.stored-item tr:nth-child(odd){
+	background-color: rgb(221, 178, 114);
+	color: black;
+}
+.stored-item th{
+	margin-left: 10px;
+	font-style: italic;
+}

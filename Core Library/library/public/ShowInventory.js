@@ -5,7 +5,8 @@ function dragItem(ev){
 
 function dropItem(ev){
 	ev.preventDefault();
-	let movedRow = document.getElementById(ev.dataTransfer.getData("text"));
+	let movedRowID = ev.dataTransfer.getData("text");
+	let movedRow = document.getElementById(movedRowID);
 
 	let contextButtonDropTarget = ev.target.closest("button");
 	if(contextButtonDropTarget != null){
@@ -19,10 +20,17 @@ function dropItem(ev){
 	let dropTarget = ev.target.closest("tr");
 
 	let oldIndex = movedRow.rowIndex;
-	let newIndex = dropTarget.rowIndex;
+	let movedItemData = Inventory[oldIndex - 1];
 
 	let targetTable = dropTarget.parentNode;
 	targetTable.insertBefore(movedRow,dropTarget);
+
+	if(Array.isArray(movedItemData.Contents)){
+		for(let containedItem of movedItemData.Contents){
+			targetTable.insertBefore(document.getElementById("rowItemID"+containedItem),dropTarget);
+		}
+	}
+	let newIndex = movedRow.rowIndex;
 
 	rearrangeInventory(oldIndex,newIndex);
 }
@@ -52,9 +60,9 @@ function dropStoreItem(ev,ContainerID){
 
 		//just need to get index of last item in stored list here
 		let targetTable = movedRow.parentNode;
-		let oldIndex = movedRow.rowIndex
-		let newIndex = document.getElementById("rowItemID"+ContainerID).rowIndex + storedItemNum;
-		targetTable.insertBefore(movedRow,targetTable.rows[newIndex + 1]);
+		let oldIndex = movedRow.rowIndex;
+		let newIndex = document.getElementById("rowItemID"+ContainerID).rowIndex + storedItemNum + 1;
+		targetTable.insertBefore(movedRow,targetTable.rows[newIndex]);
 	
 		rearrangeInventory(oldIndex,newIndex);
 	}
@@ -71,47 +79,38 @@ function rearrangeInventory(oldIndex,newIndex){
 	//Minus 1 because inventory indices don't include the header row
 	oldIndex = oldIndex - 1;
 	newIndex = newIndex - 1;
-
-	let movedItemID = document.getElementById("InventoryTable").rows[oldIndex].id.substring(9);
-	let movedItemData = getItemData(movedItemID);
+	let movedItemData = Inventory[oldIndex];
 	let itemsMovedNum = 1;
 
-	if(movedItemData.Contents != null && movedItemData.Contents != ""){
-		itemsMovedNum = Inventory.Contents.length + 1;
+	if(Array.isArray(movedItemData.Contents)){
+		itemsMovedNum = movedItemData.Contents.length + 1;
 	}
 
-	//this won't physically move the items
+	//moves tracking in JSON, not visually
 	let itemsMoved = Inventory.splice(oldIndex,itemsMovedNum);
-	for(let item of itemsMoved){
-		Inventory.splice(newIndex,0,item);
-		newIndex++;
-	}
+	Inventory.splice(newIndex,0,...itemsMoved);
 
 	updateInventory();
 }
 
 async function updateInventory(){
-	let request = await fetch("macro:js.setProperty@Lib:pm.a5e.Core", {method: "POST", body: '["a5e.stat.Inventory",'+JSON.stringify(Inventory)+','+ParentToken+']'});
+	await fetch("macro:js.setProperty@Lib:pm.a5e.Core", {method: "POST", body: '["a5e.stat.Inventory",'+JSON.stringify(Inventory)+','+ParentToken+']'});
 }
 
 async function createInventoryTable(){
 	let InventoryTableHTML = "<tr><th style = 'text-align:center; background-color:#504A40; color#FAF9F7; width:120px;'>Item</th><th style = 'text-align:center; background-color:#504A40; color#FAF9F7; width:120px;'>Number</th><th style = 'text-align:center; background-color:#504A40; color#FAF9F7; width:120px;'>Weight</th><th style = 'text-align:center; background-color:#504A40; color#FAF9F7; width:120px;'>Context Menu</th></tr>";
 	let allItemsWeight = 0;
-	let recentContainerContents = [];
 
 	for(let Item of Inventory){
 		let thisRowUpdate = await generateItemRow(Item);
 		let thisRowInnerHTML = thisRowUpdate.RowText;
 		allItemsWeight = allItemsWeight + thisRowUpdate.Weight;
-		let itemContents = Item.Contents;
-		if(itemContents != null){
-			recentContainerContents = itemContents;
-		}
 		
 		let thisRowClass = "inventory-list";
-		if(recentContainerContents.includes(Item.ItemID)){
+		if(Item.StoredIn != null){
 			thisRowClass = "stored-item";
 		}
+		console.log(Item.DisplayName+": "+thisRowClass);
 
 		InventoryTableHTML = InventoryTableHTML + "<tr class='"+thisRowClass+"' draggable='true' ondragstart='dragItem(event)' ondrop='dropItem(event)' ondragover='allowDrop(event)' id='rowItemID"+Item.ItemID+"'>"+thisRowInnerHTML+"</tr>";
 	}
@@ -129,8 +128,8 @@ async function createInventoryTable(){
 
 async function generateItemRow(Item){
 	let debug = false;
-		if(debug){console.log("1");}
 	let DisplayName = Item.DisplayName;
+		if(debug){console.log(DisplayName);}
 	if(DisplayName.length > 21){
 		DisplayName = "<span title='"+DisplayName+"'>"+DisplayName.substring(0,18)+"...</span>";
 	}
@@ -227,9 +226,14 @@ async function updateItems(ItemList){
 		thisItemRow = document.getElementById("rowItemID"+Item.ItemID);
 		if(thisItemRow == null){
 			let newRowIndex = document.getElementById("rowWeightHeaders").rowIndex;
+			let thisItemStored = Item.StoredIn;
+			let thisItemClass = "inventory-list";
+			if(thisItemStored != null){
+				thisItemClass = "stored-item";
+			}
 			let thisItemAttributes = {
 				"id":"rowItemID"+Item.ItemID,
-				"class":"Inventory-list",
+				"class":thisItemClass,
 				"draggable":"true",
 				"ondragstart":"dragItem(event)",
 				"ondrop":"dropItem(event)",
@@ -270,6 +274,7 @@ function toggleContainer(ContainerID){
 
 function storeItem(ItemID,ContainerID){
 	let ContainerData = getItemData(ContainerID);
+	let storedItemData = getItemData(ItemID);
 
 	let containedItems = ContainerData.Contents;
 	if(Array.isArray(containedItems)){
@@ -282,8 +287,22 @@ function storeItem(ItemID,ContainerID){
 		ContainerData.Contents = [ItemID];
 	}
 
+	if(document.getElementById("Container"+ContainerID).value == "closed"){
+		document.getElementById("rowItemID"+ItemID).setAttribute("hidden","");
+	}
+
 	let ContainerIndex = Inventory.findIndex(obj => obj.ItemID == ContainerID);
 	Inventory[ContainerIndex] = ContainerData;
+
+	let priorContainerID = storedItemData.StoredIn;
+	if(priorContainerID != null){
+		let priorContainerData = getItemData(priorContainerID);
+		priorContainerData.Contents.splice(priorContainerContents.indexOf(ItemID),1);
+		let priorContainerIndex = Inventory.findIndex(obj => obj.ItemID == priorContainerID);
+		Inventory[priorContainerIndex] = priorContainerData;
+	}
+
+	Inventory[Inventory.indexOf(storedItemData)].StoredIn = ContainerID;
 
 	return ContainerData;
 }
@@ -291,6 +310,11 @@ function storeItem(ItemID,ContainerID){
 function unpackItem(ItemID,ContainerID){
 	//Specifically removes item from contents list of container, this function does not move it on the list as the destination depends on method of unpacking
 
+	let storedItemData = getItemData(ItemID);
+	let storedItemIndex = Inventory.indexOf(storedItemData);
+	delete storedItemData.StoredIn;
+	Inventory[storedItemIndex] = storedItemData;
+	
 	let ContainerData = getItemData(ContainerID);
 	let containedItems = ContainerData.Contents;
 	if(Array.isArray(containedItems)){

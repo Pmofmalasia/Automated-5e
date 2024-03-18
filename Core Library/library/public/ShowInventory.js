@@ -61,8 +61,8 @@ function dropStoreItem(ev,ContainerID){
 		//just need to get index of last item in stored list here
 		let targetTable = movedRow.parentNode;
 		let oldIndex = movedRow.rowIndex;
-		let newIndex = document.getElementById("rowItemID"+ContainerID).rowIndex + storedItemNum + 1;
-		targetTable.insertBefore(movedRow,targetTable.rows[newIndex]);
+		let newIndex = document.getElementById("rowItemID"+ContainerID).rowIndex + storedItemNum;
+		targetTable.insertBefore(movedRow,targetTable.rows[newIndex + 1]);
 	
 		rearrangeInventory(oldIndex,newIndex);
 	}
@@ -98,7 +98,7 @@ async function updateInventory(){
 }
 
 async function createInventoryTable(){
-	let InventoryTableHTML = "<tr><th style = 'text-align:center; background-color:#504A40; color#FAF9F7; width:120px;'>Item</th><th style = 'text-align:center; background-color:#504A40; color#FAF9F7; width:120px;'>Number</th><th style = 'text-align:center; background-color:#504A40; color#FAF9F7; width:120px;'>Weight</th><th style = 'text-align:center; background-color:#504A40; color#FAF9F7; width:120px;'>Context Menu</th></tr>";
+	let InventoryTableHTML = "<tr position='sticky' top=15px><th style = 'text-align:center; background-color:#504A40; color#FAF9F7; width:120px;'>Item</th><th style = 'text-align:center; background-color:#504A40; color#FAF9F7; width:120px;'>Number</th><th style = 'text-align:center; background-color:#504A40; color#FAF9F7; width:120px;'>Weight</th><th style = 'text-align:center; background-color:#504A40; color#FAF9F7; width:120px;'>Context Menu</th></tr>";
 	let allItemsWeight = 0;
 
 	for(let Item of Inventory){
@@ -110,7 +110,6 @@ async function createInventoryTable(){
 		if(Item.StoredIn != null){
 			thisRowClass = "stored-item";
 		}
-		console.log(Item.DisplayName+": "+thisRowClass);
 
 		InventoryTableHTML = InventoryTableHTML + "<tr class='"+thisRowClass+"' draggable='true' ondragstart='dragItem(event)' ondrop='dropItem(event)' ondragover='allowDrop(event)' id='rowItemID"+Item.ItemID+"'>"+thisRowInnerHTML+"</tr>";
 	}
@@ -130,6 +129,10 @@ async function generateItemRow(Item){
 	let debug = false;
 	let DisplayName = Item.DisplayName;
 		if(debug){console.log(DisplayName);}
+	let thisRowClass = "inventory-list";
+	if(Item.StoredIn != null){
+		thisRowClass = "stored-item";
+	}
 	if(DisplayName.length > 21){
 		DisplayName = "<span title='"+DisplayName+"'>"+DisplayName.substring(0,18)+"...</span>";
 	}

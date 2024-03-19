@@ -98,7 +98,7 @@ async function updateInventory(){
 }
 
 async function createInventoryTable(){
-	let InventoryTableHTML = "<tr position='sticky' top=15px><th style = 'text-align:center; background-color:#504A40; color#FAF9F7; width:120px;'>Item</th><th style = 'text-align:center; background-color:#504A40; color#FAF9F7; width:120px;'>Number</th><th style = 'text-align:center; background-color:#504A40; color#FAF9F7; width:120px;'>Weight</th><th style = 'text-align:center; background-color:#504A40; color#FAF9F7; width:120px;'>Context Menu</th></tr>";
+	let InventoryTableHTML = "<tr style='position:sticky; top:15px'><th style = 'text-align:center; background-color:#504A40; color#FAF9F7; width:120px;'>Item</th><th style = 'text-align:center; background-color:#504A40; color#FAF9F7; width:120px;'>Number</th><th style = 'text-align:center; background-color:#504A40; color#FAF9F7; width:120px;'>Weight</th><th style = 'text-align:center; background-color:#504A40; color#FAF9F7; width:120px;'>Context Menu</th></tr>";
 	let allItemsWeight = 0;
 
 	for(let Item of Inventory){
@@ -132,9 +132,6 @@ async function generateItemRow(Item){
 	let thisRowClass = "inventory-list";
 	if(Item.StoredIn != null){
 		thisRowClass = "stored-item";
-	}
-	if(DisplayName.length > 21){
-		DisplayName = "<span title='"+DisplayName+"'>"+DisplayName.substring(0,18)+"...</span>";
 	}
 	let thisItemID = Item.ItemID;
 

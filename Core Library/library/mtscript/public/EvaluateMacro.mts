@@ -1,0 +1,1 @@
+[h:return(0,evalMacro(macro.args))]

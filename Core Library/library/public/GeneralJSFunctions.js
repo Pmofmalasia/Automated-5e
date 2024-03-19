@@ -89,6 +89,17 @@ function createHTMLMultiselectOptions(inputData,prefix,changeFunction,extraArgum
 	return finalOptions;
 }
 
+async function evaluateMacro(macro){
+	try {
+		let uri = "macro:EvaluateMacro@lib:pm.a5e.Core";
+		let r = await fetch(uri, { method: "POST", body: macro });
+		let result = await r.text();
+		return result;
+	} catch (error) {
+		console.log("### evaluateMacro: " + error.stack);
+	}
+}
+
 async function MTFunction(functionName,functionArgs){
 	if(!Array.isArray(functionArgs)){
 		functionArgs = [functionArgs];

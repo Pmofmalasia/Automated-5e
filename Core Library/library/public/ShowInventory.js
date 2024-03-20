@@ -94,7 +94,7 @@ function rearrangeInventory(oldIndex,newIndex){
 }
 
 async function updateInventory(){
-	await fetch("macro:js.setProperty@Lib:pm.a5e.Core", {method: "POST", body: '["a5e.stat.Inventory",'+JSON.stringify(Inventory)+','+ParentToken+']'});
+	evaluateMacro("[r:setProperty('a5e.stat.Inventory','"+JSON.stringify(Inventory)+"','"+ParentToken+"')]");
 }
 
 async function createInventoryTable(){
@@ -111,7 +111,7 @@ async function createInventoryTable(){
 			thisRowClass = "stored-item";
 		}
 
-		InventoryTableHTML = InventoryTableHTML + "<tr class='"+thisRowClass+"' draggable='true' ondragstart='dragItem(event)' ondrop='dropItem(event)' ondragover='allowDrop(event)' id='rowItemID"+Item.ItemID+"'>"+thisRowInnerHTML+"</tr>";
+		InventoryTableHTML = InventoryTableHTML + "<tr class='"+thisRowClass+"' draggable='true' ondragstart='dragItem(event)' ondrop='dropItem(event)' ondragover='allowDrop(event)' id='rowItemID"+Item.ItemID+"'><details open><summary>"+thisRowInnerHTML+"</summary></details></tr>";
 	}
 
 	InventoryTableHTML = InventoryTableHTML + "<tr id='rowWeightHeaders' ondrop='dropItem(event)' ondragover='allowDrop(event)'><th style = 'text-align:center; background-color:#504A40; color:#FAF9F7; width:120px;'>Weight Data</th><th style = 'text-align:center; background-color:#504A40; color:#FAF9F7; width:120px;'>Current Weight</th><th style = 'text-align:center; background-color:#504A40; color:#FAF9F7; width:120px;'>Carry Capacity</th><th style = 'text-align:center; background-color:#504A40; color:#FAF9F7; width:120px;'>Push Capacity</th></tr>";
@@ -172,12 +172,17 @@ if(debug){console.log("2");}
 	}
 	if(debug){console.log("4");}
 
+	let itemTypeButton = "<span class='context-button'>";
+	if(Item.Type == "Container"){
+		itemTypeButton = itemTypeButton + " <span id='ContainerTitle"+thisItemID+"' title='Close Container, or Drag an Item to Store'><button type='button' id='Container"+thisItemID+"' onclick='toggleContainer("+'"'+thisItemID+'"'+")' ondrop='dropStoreItem(event,"+'"'+thisItemID+'"'+")' ondragover='allowDrop(event)' value='open'><img src='lib://pm.a5e.core/InterfaceImages/Container_Open.png'></button></span></span> ";
+	}
+	else{
+
+	}
+
 	let thisRowContextButtons = "<span class='context-button'>";
 
 	let isActive = Item.IsActive > 0;
-	if(Item.Type == "Container"){
-		thisRowContextButtons = thisRowContextButtons + " <span id='ContainerTitle"+thisItemID+"' title='Close Container, or Drag an Item to Store'><button type='button' id='Container"+thisItemID+"' onclick='toggleContainer("+'"'+thisItemID+'"'+")' ondrop='dropStoreItem(event,"+'"'+thisItemID+'"'+")' ondragover='allowDrop(event)' value='open'><img src='lib://pm.a5e.core/InterfaceImages/Container_Open.png?cachelib=false'></button></span> ";
-	}
 	if(debug){console.log("5");}
 
 	if(Item.isActivatable == 1){
@@ -194,21 +199,21 @@ if(debug){console.log("2");}
 			buttonTitle = " <span id='ActivateTitle"+thisItemID+"' title='Activate Item'><input type='hidden' id='needsActivation"+thisItemID+"' value=1>"
 			needsActivation = 1;
 		}
-		thisRowContextButtons = thisRowContextButtons + buttonTitle + "<button id='Activate"+thisItemID+"' type='button' onclick='toggleActivation("+'"'+thisItemID+'",'+needsActivation+")'><img src='lib://pm.a5e.core/InterfaceImages/"+buttonImage+".png?cachelib=false'></button></span> ";
+		thisRowContextButtons = thisRowContextButtons + buttonTitle + "<button id='Activate"+thisItemID+"' type='button' onclick='toggleActivation("+'"'+thisItemID+'",'+needsActivation+")'><img src='lib://pm.a5e.core/InterfaceImages/"+buttonImage+".png'></button></span> ";
 	}
 	if(debug){console.log("6");}
 
 	if(typeof Item.Effects == "object" && isActive){
-		thisRowContextButtons = thisRowContextButtons + " <span id='UseTitle"+thisItemID+" title='Use Item'><button type='button' id='Use"+thisItemID+"' onclick='useItem("+'"'+thisItemID+'"'+")'><img src='lib://pm.a5e.core/InterfaceImages/Use.png?cachelib=false'></button></span> ";
+		thisRowContextButtons = thisRowContextButtons + " <span id='UseTitle"+thisItemID+" title='Use Item'><button type='button' id='Use"+thisItemID+"' onclick='useItem("+'"'+thisItemID+'"'+")'><img src='lib://pm.a5e.core/InterfaceImages/Use.png'></button></span> ";
 	}
 	if(debug){console.log("7");}
 
 	if(typeof Item.ItemSpellcasting == "object" && isActive){
-		thisRowContextButtons = thisRowContextButtons + " <span id='CastTitle"+thisItemID+"' title='Cast Spell'><button type='button' id='Cast"+thisItemID+"' onclick='castSpell("+'"'+thisItemID+'"'+")'><img src='lib://pm.a5e.core/InterfaceImages/Cast_Spell.png?cachelib=false'></button></span> ";
+		thisRowContextButtons = thisRowContextButtons + " <span id='CastTitle"+thisItemID+"' title='Cast Spell'><button type='button' id='Cast"+thisItemID+"' onclick='castSpell("+'"'+thisItemID+'"'+")'><img src='lib://pm.a5e.core/InterfaceImages/Cast_Spell.png'></button></span> ";
 	}
 	if(debug){console.log("8");}
 
-	thisRowContextButtons = thisRowContextButtons + " <span id='RulesTitle"+thisItemID+"' title='Show Rules'><button type='button' id='Rules"+thisItemID+"' onclick='showRules("+'"'+thisItemID+'"'+")'><img src='lib://pm.a5e.core/InterfaceImages/Rules.png?cachelib=false'></button></span> ";
+	thisRowContextButtons = thisRowContextButtons + " <span id='RulesTitle"+thisItemID+"' title='Show Rules'><button type='button' id='Rules"+thisItemID+"' onclick='showRules("+'"'+thisItemID+'"'+")'><img src='lib://pm.a5e.core/InterfaceImages/Rules.png'></button></span> ";
 
 	thisRowContextButtons = thisRowContextButtons+"</span>";
 
@@ -258,14 +263,14 @@ function toggleContainer(ContainerID){
 
 	if(isOpen){
 		containerButton.value = "closed";
-		containerButton.innerHTML = "<img src='lib://pm.a5e.core/InterfaceImages/Container_Closed.png?cachelib=false'>";
+		containerButton.innerHTML = "<img src='lib://pm.a5e.core/InterfaceImages/Container_Closed.png'>";
 		for(let itemID of containedItems){
 			document.getElementById("rowItemID"+itemID).setAttribute("hidden","");
 		}
 	}
 	else{
 		containerButton.value = "open";
-		containerButton.innerHTML = "<img src='lib://pm.a5e.core/InterfaceImages/Container_Open.png?cachelib=false'>";
+		containerButton.innerHTML = "<img src='lib://pm.a5e.core/InterfaceImages/Container_Open.png'>";
 		for(let itemID of containedItems){
 			document.getElementById("rowItemID"+itemID).removeAttribute("hidden","");
 		}
@@ -340,12 +345,12 @@ async function toggleActivation(ItemID){
 	let activationResult = await request.text();
 
 	if(activationResult == 1){
-		document.getElementById("Activate"+ItemID).innerHTML = "<img src='lib://pm.a5e.core/InterfaceImages/Deactivate_Item.png?cachelib=false'>";
+		document.getElementById("Activate"+ItemID).innerHTML = "<img src='lib://pm.a5e.core/InterfaceImages/Deactivate_Item.png'>";
 		document.getElementById("needsActivation"+ItemID).value = 0;
 		document.getElementById("ActivateTitle"+ItemID).title = "Deactivate Item";
 	}
 	else{
-		document.getElementById("Activate"+ItemID).innerHTML = "<img src='lib://pm.a5e.core/InterfaceImages/Activate_Item.png?cachelib=false'>";
+		document.getElementById("Activate"+ItemID).innerHTML = "<img src='lib://pm.a5e.core/InterfaceImages/Activate_Item.png'>";
 		document.getElementById("needsActivation"+ItemID).value = 1;
 		document.getElementById("ActivateTitle"+ItemID).title = "Activate Item";
 	}

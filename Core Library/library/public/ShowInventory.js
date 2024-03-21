@@ -98,7 +98,7 @@ async function updateInventory(){
 }
 
 async function createInventoryTable(){
-	let InventoryTableHTML = "<tr style='position:sticky; top:15px'><th style = 'text-align:center; background-color:#504A40; color#FAF9F7; width:120px;'>Item</th><th style = 'text-align:center; background-color:#504A40; color#FAF9F7; width:120px;'>Number</th><th style = 'text-align:center; background-color:#504A40; color#FAF9F7; width:120px;'>Weight</th><th style = 'text-align:center; background-color:#504A40; color#FAF9F7; width:120px;'>Context Menu</th></tr>";
+	let InventoryTableHTML = "<tr style='position:sticky; top:15px'><th style = 'text-align:left; background-color:#504A40; color#FAF9F7; width:120px;'>Item</th><th style = 'text-align:right; background-color:#504A40; color#FAF9F7; width:120px;'>Number</th><th style = 'text-align:right; background-color:#504A40; color#FAF9F7; width:120px;'>Weight</th><th style = 'text-align:right; background-color:#504A40; color#FAF9F7; width:120px;'>Context Menu</th></tr>";
 	let allItemsWeight = 0;
 
 	for(let Item of Inventory){
@@ -111,16 +111,16 @@ async function createInventoryTable(){
 			thisRowClass = "stored-item";
 		}
 
-		InventoryTableHTML = InventoryTableHTML + "<tr class='"+thisRowClass+"' draggable='true' ondragstart='dragItem(event)' ondrop='dropItem(event)' ondragover='allowDrop(event)' id='rowItemID"+Item.ItemID+"'><details open><summary>"+thisRowInnerHTML+"</summary></details></tr>";
+		InventoryTableHTML = InventoryTableHTML + "<tr class='"+thisRowClass+"' draggable='true' ondragstart='dragItem(event)' ondrop='dropItem(event)' ondragover='allowDrop(event)' id='rowItemID"+Item.ItemID+"'>"+thisRowInnerHTML+"</tr>";
 	}
 
-	InventoryTableHTML = InventoryTableHTML + "<tr id='rowWeightHeaders' ondrop='dropItem(event)' ondragover='allowDrop(event)'><th style = 'text-align:center; background-color:#504A40; color:#FAF9F7; width:120px;'>Weight Data</th><th style = 'text-align:center; background-color:#504A40; color:#FAF9F7; width:120px;'>Current Weight</th><th style = 'text-align:center; background-color:#504A40; color:#FAF9F7; width:120px;'>Carry Capacity</th><th style = 'text-align:center; background-color:#504A40; color:#FAF9F7; width:120px;'>Push Capacity</th></tr>";
+	InventoryTableHTML = InventoryTableHTML + "<tr id='rowWeightHeaders' ondrop='dropItem(event)' ondragover='allowDrop(event)'><th style = 'text-align:left; background-color:#504A40; color:#FAF9F7; width:120px;'>Weight Data</th><th style = 'text-align:right; background-color:#504A40; color:#FAF9F7; width:120px;'>Current Weight</th><th style = 'text-align:right; background-color:#504A40; color:#FAF9F7; width:120px;'>Carry Capacity</th><th style = 'text-align:right; background-color:#504A40; color:#FAF9F7; width:120px;'>Push Capacity</th></tr>";
 	
 	let submitData = {"ParentToken":ParentToken};
 	let request = await fetch("macro:stat.a5e.CarryCapacity@lib:pm.a5e.Core", {method: "POST", body: JSON.stringify(submitData)});
 	let WeightData = await request.json();
 
-	InventoryTableHTML = InventoryTableHTML + "<tr class='Inventory-list' style='background-color:rgb(108, 223, 184); color:black'><td> --- </td><td>"+Math.round(allItemsWeight)+"</td><td>"+WeightData.Carry+"</td><td>"+WeightData.Push+"</td></tr>";
+	InventoryTableHTML = InventoryTableHTML + "<tr class='Inventory-list' style='background-color:rgb(108, 223, 184); color:black'><td style='text-align:center'> --- </td><td style='text-align:right'>"+Math.round(allItemsWeight)+"</td><td style='text-align:right'>"+WeightData.Carry+"</td><td style='text-align:right'>"+WeightData.Push+"</td></tr>";
 
 	document.getElementById("InventoryTable").innerHTML = InventoryTableHTML;
 }
@@ -172,15 +172,13 @@ if(debug){console.log("2");}
 	}
 	if(debug){console.log("4");}
 
-	let itemTypeButton = "<span class='context-button'>";
+	let thisRowContextButtons = "<span class='context-button'>";
 	if(Item.Type == "Container"){
-		itemTypeButton = itemTypeButton + " <span id='ContainerTitle"+thisItemID+"' title='Close Container, or Drag an Item to Store'><button type='button' id='Container"+thisItemID+"' onclick='toggleContainer("+'"'+thisItemID+'"'+")' ondrop='dropStoreItem(event,"+'"'+thisItemID+'"'+")' ondragover='allowDrop(event)' value='open'><img src='lib://pm.a5e.core/InterfaceImages/Container_Open.png'></button></span></span> ";
+		thisRowContextButtons = thisRowContextButtons + " <span id='ContainerTitle"+thisItemID+"' title='Close Container, or Drag an Item to Store'><button type='button' id='Container"+thisItemID+"' onclick='toggleContainer("+'"'+thisItemID+'"'+")' ondrop='dropStoreItem(event,"+'"'+thisItemID+'"'+")' ondragover='allowDrop(event)' value='open'><img src='lib://pm.a5e.core/InterfaceImages/Container_Open.png'></button></span> ";
 	}
 	else{
 
 	}
-
-	let thisRowContextButtons = "<span class='context-button'>";
 
 	let isActive = Item.IsActive > 0;
 	if(debug){console.log("5");}
@@ -219,7 +217,7 @@ if(debug){console.log("2");}
 
 	if(debug){console.log("9");}
 	let returnData = {
-		"RowText":"<td>"+DisplayName+"</td><td>"+NumberDisplay+"</td><td><span title='"+Weight+" Each'>"+displayWeight+"</span></td><td>"+thisRowContextButtons+"</td>",
+		"RowText":"<td style='text-align:left'>"+DisplayName+"</td><td style='text-align:right'>"+NumberDisplay+"</td><td style='text-align:right'><span title='"+Weight+" Each'>"+displayWeight+"</span></td><td style='text-align:right'>"+thisRowContextButtons+"</td>",
 		"Weight":TotalWeight
 	};
 	return returnData;

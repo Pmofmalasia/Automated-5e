@@ -98,29 +98,41 @@ async function updateInventory(){
 }
 
 async function createInventoryTable(){
-	let InventoryTableHTML = "<tr style='position:sticky; top:15px'><th style = 'text-align:left; background-color:#504A40; color#FAF9F7; width:120px;'>Item</th><th style = 'text-align:right; background-color:#504A40; color#FAF9F7; width:120px;'>Number</th><th style = 'text-align:right; background-color:#504A40; color#FAF9F7; width:120px;'>Weight</th><th style = 'text-align:right; background-color:#504A40; color#FAF9F7; width:120px;'>Context Menu</th></tr>";
 	let allItemsWeight = 0;
+	let maxRowDepth = 1;
+	let allItemRows = "";
 
 	for(let Item of Inventory){
 		let thisRowUpdate = await generateItemRow(Item);
 		let thisRowInnerHTML = thisRowUpdate.RowText;
 		allItemsWeight = allItemsWeight + thisRowUpdate.Weight;
-		
 		let thisRowClass = "inventory-list";
-		if(Item.StoredIn != null){
+		
+		let thisRowDepth = 1;
+		let containerTestData = Item;
+		while(containerTestData.StoredIn != null){
+			thisRowDepth++;
+			containerTestData = getItemData(containerTestData.StoredIn);
 			thisRowClass = "stored-item";
 		}
 
-		InventoryTableHTML = InventoryTableHTML + "<tr class='"+thisRowClass+"' draggable='true' ondragstart='dragItem(event)' ondrop='dropItem(event)' ondragover='allowDrop(event)' id='rowItemID"+Item.ItemID+"'>"+thisRowInnerHTML+"</tr>";
+		maxRowDepth = Math.max(maxRowDepth,thisRowDepth);
+
+		allItemRows = allItemRows + "<tr class='"+thisRowClass+"' draggable='true' ondragstart='dragItem(event)' ondrop='dropItem(event)' ondragover='allowDrop(event)' id='rowItemID"+Item.ItemID+"' style='border-color:purple'>"+thisRowInnerHTML+"</tr>";
 	}
 
-	InventoryTableHTML = InventoryTableHTML + "<tr id='rowWeightHeaders' ondrop='dropItem(event)' ondragover='allowDrop(event)'><th style = 'text-align:left; background-color:#504A40; color:#FAF9F7; width:120px;'>Weight Data</th><th style = 'text-align:right; background-color:#504A40; color:#FAF9F7; width:120px;'>Current Weight</th><th style = 'text-align:right; background-color:#504A40; color:#FAF9F7; width:120px;'>Carry Capacity</th><th style = 'text-align:right; background-color:#504A40; color:#FAF9F7; width:120px;'>Push Capacity</th></tr>";
-	
+	//temporary while making row depths more dynamic
+	maxRowDepth = 5;
+
+	let InventoryTableHTML = "<tr style='position:sticky; top:15px' class='inventory-list'><th></th><th style = 'text-align:left;' colspan='"+maxRowDepth+"'>Item</th><th style = 'text-align:right'>Number</th><th style = 'text-align:right'>Weight</th><th style = 'text-align:right'>Context Menu</th></tr>" + allItemRows;
+
+	InventoryTableHTML = InventoryTableHTML + "<tr class='weight-data' id='rowWeightHeaders' ondrop='dropItem(event)' ondragover='allowDrop(event)'><th></th><th style = 'text-align:left' colspan='"+maxRowDepth+"'>Weight Data</th><th style = 'text-align:right'>Current Weight</th><th style = 'text-align:right'>Carry Capacity</th><th style = 'text-align:right'>Push Capacity</th></tr>";
+
 	let submitData = {"ParentToken":ParentToken};
 	let request = await fetch("macro:stat.a5e.CarryCapacity@lib:pm.a5e.Core", {method: "POST", body: JSON.stringify(submitData)});
 	let WeightData = await request.json();
 
-	InventoryTableHTML = InventoryTableHTML + "<tr class='Inventory-list' style='background-color:rgb(108, 223, 184); color:black'><td style='text-align:center'> --- </td><td style='text-align:right'>"+Math.round(allItemsWeight)+"</td><td style='text-align:right'>"+WeightData.Carry+"</td><td style='text-align:right'>"+WeightData.Push+"</td></tr>";
+	InventoryTableHTML = InventoryTableHTML + "<tr class='inventory-list' style='background-color:rgb(108, 223, 184); color:black'><td></td><td style='text-align:center' colspan='"+maxRowDepth+"'> --- </td><td style='text-align:right'>"+Math.round(allItemsWeight)+"</td><td style='text-align:right'>"+WeightData.Carry+"</td><td style='text-align:right'>"+WeightData.Push+"</td></tr>";
 
 	document.getElementById("InventoryTable").innerHTML = InventoryTableHTML;
 }
@@ -129,10 +141,15 @@ async function generateItemRow(Item){
 	let debug = false;
 	let DisplayName = Item.DisplayName;
 		if(debug){console.log(DisplayName);}
-	let thisRowClass = "inventory-list";
-	if(Item.StoredIn != null){
-		thisRowClass = "stored-item";
+	
+	let nameColspan = 5;
+	let spacerCell = "<td>";
+	let isStored = Item.StoredIn != null;
+	if(isStored){
+		nameColspan = nameColspan - 1;
+		spacerCell = "<td class='inventory-spacer'>";
 	}
+	
 	let thisItemID = Item.ItemID;
 
 	let ItemNumber = Item.Number;
@@ -171,14 +188,15 @@ if(debug){console.log("2");}
 		}			
 	}
 	if(debug){console.log("4");}
-
-	let thisRowContextButtons = "<span class='context-button'>";
 	if(Item.Type == "Container"){
-		thisRowContextButtons = thisRowContextButtons + " <span id='ContainerTitle"+thisItemID+"' title='Close Container, or Drag an Item to Store'><button type='button' id='Container"+thisItemID+"' onclick='toggleContainer("+'"'+thisItemID+'"'+")' ondrop='dropStoreItem(event,"+'"'+thisItemID+'"'+")' ondragover='allowDrop(event)' value='open'><img src='lib://pm.a5e.core/InterfaceImages/Container_Open.png'></button></span> ";
+		spacerCell = spacerCell + "<span class='context-button'><span id='ContainerTitle"+thisItemID+"' title='Close Container, or Drag an Item to Store'><button type='button' id='Container"+thisItemID+"' onclick='toggleContainer("+'"'+thisItemID+'"'+")' ondrop='dropStoreItem(event,"+'"'+thisItemID+'"'+")' ondragover='allowDrop(event)' value='open'><img src='lib://pm.a5e.core/InterfaceImages/Container_Open.png'></button></span></span>";
 	}
 	else{
 
 	}
+	spacerCell = spacerCell + "</td>"
+
+	let thisRowContextButtons = "<span class='context-button'>";
 
 	let isActive = Item.IsActive > 0;
 	if(debug){console.log("5");}
@@ -217,7 +235,7 @@ if(debug){console.log("2");}
 
 	if(debug){console.log("9");}
 	let returnData = {
-		"RowText":"<td style='text-align:left'>"+DisplayName+"</td><td style='text-align:right'>"+NumberDisplay+"</td><td style='text-align:right'><span title='"+Weight+" Each'>"+displayWeight+"</span></td><td style='text-align:right'>"+thisRowContextButtons+"</td>",
+		"RowText":spacerCell+"<td style='text-align:left' colspan='"+nameColspan+"'>"+DisplayName+"</td><td style='text-align:right'>"+NumberDisplay+"</td><td style='text-align:right'><span title='"+Weight+" Each'>"+displayWeight+"</span></td><td style='text-align:right'>"+thisRowContextButtons+"</td>",
 		"Weight":TotalWeight
 	};
 	return returnData;
@@ -333,6 +351,14 @@ function unpackItem(ItemID,ContainerID){
 	}
 }
 
+function updateContainerIndenting(){
+	let table = document.getElementById("InventoryTable");
+	let storedItemRows = table.getElementsByClassName("inventory-spacer");
+	for(let spacerTag of storedItemRows){
+		
+	}
+}
+
 async function toggleActivation(ItemID){
 	let submitData = {
 		"ParentToken":ParentToken,
@@ -385,6 +411,7 @@ async function loadUserData(){
 
 	ParentToken = userdata.ParentToken;
 	Inventory = userdata.Inventory;
+	maxColumnDepth = 1;
 	
 	createInventoryTable();
 

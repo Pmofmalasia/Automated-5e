@@ -3,16 +3,26 @@
 	color: #FAF9F7;
 }
 
+.spacer-row{
+	min-height: 10px;
+}
+
+.spacer-row td{
+	background-color:#504A40;
+	color: #FAF9F7;
+	min-width: 20px;
+}
+
 .inventory-list th,td:first-of-type{
 	max-width: min-content;
 }
 
-.stored-item td:first-of-type{
-	max-width: min-content;
+.inventory-spacer{
 	background-color: var(--mt-theme-color-background);
 	border-right-color: var(--mt-theme-color-foreground);
 	border-right-style: solid;
 	border-right-width: 2px;
+	text-align: right;
 }
 
 .weight-data th{

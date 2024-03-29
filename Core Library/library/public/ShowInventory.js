@@ -1,22 +1,118 @@
 async function createInventoryTable(){
 	let allItemsWeight = 0;
-	let maxRowDepth = 1;
 	let allItemRows = "";
+	let currentDepth = 1;
+	let containerDepths = {};
 
 	for(let Item of Inventory){
-		let thisRowUpdate = await generateItemRow(Item);
-		let thisRowInnerHTML = thisRowUpdate.RowText;
-		allItemsWeight = allItemsWeight + thisRowUpdate.Weight;
-
+		let debug = false;
+		let DisplayName = Item.DisplayName;
+			if(debug){console.log(DisplayName);}
+	
+		//TODO: Need to set initial spacing here
+		let thisItemID = Item.ItemID;
+	
+		let currentDepth = 1;
 		let thisRowClass = "inventory-list";
-		if(Item.StoredIn != null){
+		let containerStoredIn = Item.StoredIn;
+		if(containerStoredIn != null){
 			thisRowClass = "stored-item";
+			currentDepth = containerDepths[containerStoredIn] + 1;
 		}
 
-		allItemRows = allItemRows + "<tr class='"+thisRowClass+"' draggable='true' ondragstart='dragItem(event)' ondrop='dropItem(event)' ondragover='allowDrop(event)' id='rowItemID"+Item.ItemID+"' style='border-color:purple'>"+thisRowInnerHTML+"</tr>";
+		if(Item.Contents != null){
+			containerDepths[thisItemID] = currentDepth;
+		}
+
+		let ItemNumber = Item.Number;
+		let Weight = Item.Weight;
+		let TotalWeight = 0;
+		if(typeof ItemNumber == "number" && typeof Weight == "number"){
+			TotalWeight = ItemNumber * Weight;
+		}
+		let displayWeight = Math.round(Weight);
+	if(debug){console.log("2");}
+	
+		let ResourceData = await MTFunction("evalMacro",[Item.MaxResource]);
+		if(debug){console.log("3");}
+		let NumberDisplay = "";
+		if (ResourceData == ""){
+			NumberDisplay = ItemNumber;
+		}
+		else{
+			if(typeof ResourceData == "number"){
+				NumberDisplay = Item.Resource+"<b>/</b>"+ResourceData;
+			}
+			else{
+				let resourceNames = Object.keys(ResourceData);
+				let resourceDisplayNames = Item.ResourceDisplayName;
+				let isFirst = true;
+				for(let tempResourceName of resourceNames){
+					if(isFirst){
+						//I'm like 99% sure there's a function that would make doing this unnecessary but I don't feel like finding it
+						isFirst = false;
+					}
+					else{
+						NumberDisplay = NumberDisplay + "<br>";
+					}
+					NumberDisplay = NumberDisplay + resourceDisplayNames[tempResourceName]+": " + Item.Resource[tempResourceName] + "<b>/</b>" + ResourceData[tempResourceName];
+				}
+			}			
+		}
+		if(debug){console.log("4");}
+
+		let spacerCell = "<td class='inventory-spacer' id='Spacer"+thisItemID+"' colspan='"+currentDepth+"'>";
+		if(Item.Type == "Container"){
+			spacerCell = spacerCell + "<span class='context-button'><span id='ContainerTitle"+thisItemID+"' title='Close Container, or Drag an Item to Store'><button type='button' id='Container"+thisItemID+"' onclick='toggleContainer("+'"'+thisItemID+'"'+")' ondrop='dropStoreItem(event,"+'"'+thisItemID+'"'+")' ondragover='allowDrop(event)' value='open'><img src='lib://pm.a5e.core/InterfaceImages/Container_Open.png'></button></span></span>";
+		}
+		spacerCell = spacerCell + "</td>";
+	
+		let thisRowContextButtons = "<span class='context-button'>";
+	
+		let isActive = Item.IsActive > 0;
+		if(debug){console.log("5");}
+	
+		if(Item.isActivatable == 1){
+			let buttonImage;
+			let buttonTitle;
+			let needsActivation;
+			if(isActive){
+				buttonImage = "Deactivate_Item";
+				buttonTitle = " <span id='ActivateTitle"+thisItemID+"' title='Deactivate Item'><input type='hidden' id='needsActivation"+thisItemID+"' value=0>"
+				needsActivation = 0;
+			}
+			else{
+				buttonImage = "Activate_Item";
+				buttonTitle = " <span id='ActivateTitle"+thisItemID+"' title='Activate Item'><input type='hidden' id='needsActivation"+thisItemID+"' value=1>"
+				needsActivation = 1;
+			}
+			thisRowContextButtons = thisRowContextButtons + buttonTitle + "<button id='Activate"+thisItemID+"' type='button' onclick='toggleActivation("+'"'+thisItemID+'",'+needsActivation+")'><img src='lib://pm.a5e.core/InterfaceImages/"+buttonImage+".png'></button></span> ";
+		}
+		if(debug){console.log("6");}
+	
+		if(typeof Item.Effects == "object" && isActive){
+			thisRowContextButtons = thisRowContextButtons + " <span id='UseTitle"+thisItemID+" title='Use Item'><button type='button' id='Use"+thisItemID+"' onclick='useItem("+'"'+thisItemID+'"'+")'><img src='lib://pm.a5e.core/InterfaceImages/Use.png'></button></span> ";
+		}
+		if(debug){console.log("7");}
+	
+		if(typeof Item.ItemSpellcasting == "object" && isActive){
+			thisRowContextButtons = thisRowContextButtons + " <span id='CastTitle"+thisItemID+"' title='Cast Spell'><button type='button' id='Cast"+thisItemID+"' onclick='castSpell("+'"'+thisItemID+'"'+")'><img src='lib://pm.a5e.core/InterfaceImages/Cast_Spell.png'></button></span> ";
+		}
+		if(debug){console.log("8");}
+	
+		thisRowContextButtons = thisRowContextButtons + " <span id='RulesTitle"+thisItemID+"' title='Show Rules'><button type='button' id='Rules"+thisItemID+"' onclick='showRules("+'"'+thisItemID+'"'+")'><img src='lib://pm.a5e.core/InterfaceImages/Rules.png'></button></span> ";
+	
+		thisRowContextButtons = thisRowContextButtons+"</span>";
+	
+		if(debug){console.log("9");}
+		let thisRowInnerHTML = spacerCell+"<td id='Name"+thisItemID+"' style='text-align:left' colspan='1'>"+DisplayName+"</td><td style='text-align:right'>"+NumberDisplay+"</td><td style='text-align:right'><span title='"+Weight+" Each'>"+displayWeight+"<input type='hidden' id='Weight"+thisItemID+"' value="+TotalWeight+"></span></td><td style='text-align:right'>"+thisRowContextButtons+"</td>";
+
+		allItemsWeight = allItemsWeight + TotalWeight;
+
+		allItemRows = allItemRows + "<tr class='"+thisRowClass+"' draggable='true' ondragstart='dragItem(event)' ondrop='dropItem(event)' ondragover='allowDrop(event)' id='rowItemID"+Item.ItemID+"'>"+thisRowInnerHTML+"</tr>";
 	}
 
-	let InventoryTableHTML = "<tr id='rowInventoryHeader' style='position:sticky; top:15px' class='inventory-list'><th></th><th id='NameHeader' style = 'text-align:left;' colspan='1'>Item</th><th style = 'text-align:right'>Number</th><th style = 'text-align:right'>Weight</th><th style = 'text-align:right'>Context Menu</th></tr>" + allItemRows;
+	let InventoryTableHTML = "<tr id='rowInventoryHeader' style='position:sticky; top:15px' class='inventory-list'><th></th><th id='NameHeader' style = 'text-align:left;' colspan='1'>Item</th><th style = 'text-align:right'>Number</th><th style = 'text-align:right'>Weight</th><th style = 'text-align:right'>Context Menu</th></tr><tr id='rowSpacer' class='spacer-row' style='height:10px'></tr>" + allItemRows;
 
 	InventoryTableHTML = InventoryTableHTML + "<tr class='weight-data' id='rowWeightHeaders' ondrop='dropItem(event)' ondragover='allowDrop(event)'><th></th><th id='WeightHeader' style = 'text-align:left' colspan='1'>Weight Data</th><th style = 'text-align:right'>Current Weight</th><th style = 'text-align:right'>Carry Capacity</th><th style = 'text-align:right'>Push Capacity</th></tr>";
 
@@ -32,111 +128,7 @@ async function createInventoryTable(){
 }
 
 async function generateItemRow(Item){
-	let debug = false;
-	let DisplayName = Item.DisplayName;
-		if(debug){console.log(DisplayName);}
-	
-	let spacerCell = "<td class='inventory-spacer'>";
-	let isStored = Item.StoredIn != null;
-	if(isStored){
-		nameColspan = nameColspan - 1;
-		spacerCell = "";
-	}
-	let containerTestData = Item;
-	while(containerTestData.StoredIn != null){
-		thisRowDepth++;
-		containerTestData = getItemData(containerTestData.StoredIn);
-		thisRowClass = "stored-item";
-	}
-	
-	let thisItemID = Item.ItemID;
 
-	let ItemNumber = Item.Number;
-	let Weight = Item.Weight;
-	let TotalWeight = 0;
-	if(typeof ItemNumber == "number" && typeof Weight == "number"){
-		TotalWeight = ItemNumber * Weight;
-	}
-	let displayWeight = Math.round(Weight);
-if(debug){console.log("2");}
-
-	let ResourceData = await MTFunction("evalMacro",[Item.MaxResource]);
-	if(debug){console.log("3");}
-	let NumberDisplay = "";
-	if (ResourceData == ""){
-		NumberDisplay = ItemNumber;
-	}
-	else{
-		if(typeof ResourceData == "number"){
-			NumberDisplay = Item.Resource+"<b>/</b>"+ResourceData;
-		}
-		else{
-			let resourceNames = Object.keys(ResourceData);
-			let resourceDisplayNames = Item.ResourceDisplayName;
-			let isFirst = true;
-			for(let tempResourceName of resourceNames){
-				if(isFirst){
-					//I'm like 99% sure there's a function that would make doing this unnecessary but I don't feel like finding it
-					isFirst = false;
-				}
-				else{
-					NumberDisplay = NumberDisplay + "<br>";
-				}
-				NumberDisplay = NumberDisplay + resourceDisplayNames[tempResourceName]+": " + Item.Resource[tempResourceName] + "<b>/</b>" + ResourceData[tempResourceName];
-			}
-		}			
-	}
-	if(debug){console.log("4");}
-	if(Item.Type == "Container"){
-		spacerCell = spacerCell + "<span class='context-button'><span id='ContainerTitle"+thisItemID+"' title='Close Container, or Drag an Item to Store'><button type='button' id='Container"+thisItemID+"' onclick='toggleContainer("+'"'+thisItemID+'"'+")' ondrop='dropStoreItem(event,"+'"'+thisItemID+'"'+")' ondragover='allowDrop(event)' value='open'><img src='lib://pm.a5e.core/InterfaceImages/Container_Open.png'></button></span></span>";
-	}
-	else{
-
-	}
-	spacerCell = spacerCell + "</td>"
-
-	let thisRowContextButtons = "<span class='context-button'>";
-
-	let isActive = Item.IsActive > 0;
-	if(debug){console.log("5");}
-
-	if(Item.isActivatable == 1){
-		let buttonImage;
-		let buttonTitle;
-		let needsActivation;
-		if(isActive){
-			buttonImage = "Deactivate_Item";
-			buttonTitle = " <span id='ActivateTitle"+thisItemID+"' title='Deactivate Item'><input type='hidden' id='needsActivation"+thisItemID+"' value=0>"
-			needsActivation = 0;
-		}
-		else{
-			buttonImage = "Activate_Item";
-			buttonTitle = " <span id='ActivateTitle"+thisItemID+"' title='Activate Item'><input type='hidden' id='needsActivation"+thisItemID+"' value=1>"
-			needsActivation = 1;
-		}
-		thisRowContextButtons = thisRowContextButtons + buttonTitle + "<button id='Activate"+thisItemID+"' type='button' onclick='toggleActivation("+'"'+thisItemID+'",'+needsActivation+")'><img src='lib://pm.a5e.core/InterfaceImages/"+buttonImage+".png'></button></span> ";
-	}
-	if(debug){console.log("6");}
-
-	if(typeof Item.Effects == "object" && isActive){
-		thisRowContextButtons = thisRowContextButtons + " <span id='UseTitle"+thisItemID+" title='Use Item'><button type='button' id='Use"+thisItemID+"' onclick='useItem("+'"'+thisItemID+'"'+")'><img src='lib://pm.a5e.core/InterfaceImages/Use.png'></button></span> ";
-	}
-	if(debug){console.log("7");}
-
-	if(typeof Item.ItemSpellcasting == "object" && isActive){
-		thisRowContextButtons = thisRowContextButtons + " <span id='CastTitle"+thisItemID+"' title='Cast Spell'><button type='button' id='Cast"+thisItemID+"' onclick='castSpell("+'"'+thisItemID+'"'+")'><img src='lib://pm.a5e.core/InterfaceImages/Cast_Spell.png'></button></span> ";
-	}
-	if(debug){console.log("8");}
-
-	thisRowContextButtons = thisRowContextButtons + " <span id='RulesTitle"+thisItemID+"' title='Show Rules'><button type='button' id='Rules"+thisItemID+"' onclick='showRules("+'"'+thisItemID+'"'+")'><img src='lib://pm.a5e.core/InterfaceImages/Rules.png'></button></span> ";
-
-	thisRowContextButtons = thisRowContextButtons+"</span>";
-
-	if(debug){console.log("9");}
-	let returnData = {
-		"RowText":spacerCell+"<td style='text-align:left' colspan='"+nameColspan+"'>"+DisplayName+"</td><td style='text-align:right'>"+NumberDisplay+"</td><td style='text-align:right'><span title='"+Weight+" Each'>"+displayWeight+"</span></td><td style='text-align:right'>"+thisRowContextButtons+"</td>",
-		"Weight":TotalWeight
-	};
 	return returnData;
 }
 
@@ -162,18 +154,23 @@ function dropItem(ev){
 	let dropTarget = ev.target.closest("tr");
 
 	let oldIndex = movedRow.rowIndex;
-	let movedItemData = Inventory[oldIndex - 1];
+	let movedItemData = Inventory[oldIndex - extraRowNum];
 
 	let targetTable = dropTarget.parentNode;
 	targetTable.insertBefore(movedRow,dropTarget);
 
+	console.log(movedItemData);
+	console.log(movedItemData.Contents);
+
 	if(Array.isArray(movedItemData.Contents)){
 		for(let containedItem of movedItemData.Contents){
+			console.log(containedItem);
 			targetTable.insertBefore(document.getElementById("rowItemID"+containedItem),dropTarget);
 		}
 	}
 	let newIndex = movedRow.rowIndex;
 
+	console.log(oldIndex+", "+newIndex);
 	rearrangeInventory(oldIndex,newIndex);
 }
 
@@ -186,26 +183,55 @@ function dropStoreItem(ev,ContainerID){
 	let contextButtonDropTarget = ev.target.closest("button");
 	if(contextButtonDropTarget != null){
 		let ContainerData = getItemData(ContainerID);
+		let movedItemData = getItemData(movedItemID);
 		let ContainerContents = ContainerData.Contents;
 		if(!Array.isArray(ContainerContents)){
 			ContainerContents = [];
 		}
-		let storedItemNum = ContainerContents.length;
+
+		let returnData;
+		let storedItemNum;
+		//storedItemNum must be set before unpacking and after storing
 		if(ContainerContents.includes(movedItemID)){
-			unpackItem(movedItemID,ContainerID);
+			console.log("before unpack");
+			storedItemNum = ContainerContents.length;
+			returnData = unpackItem(movedItemData,ContainerData);
 			movedRow.class = "inventory-list";
 		}
 		else{
-			storeItem(movedItemID,ContainerID);
+			console.log("storing");
+			returnData = storeItem(movedItemData,ContainerData);
+			storedItemNum = ContainerContents.length;
 			movedRow.class = "stored-item";
 		}
+
+		console.log("update spacer");
+		updateSpacerSpan(movedItemData,returnData.SpacerShift);
+		console.log("update indent");
+		updateContainerIndenting();
 
 		//just need to get index of last item in stored list here
 		let targetTable = movedRow.parentNode;
 		let oldIndex = movedRow.rowIndex;
+
+		//BUGFIX: this does not work if the last item is a container with something in it
+			console.log("get index");
 		let newIndex = document.getElementById("rowItemID"+ContainerID).rowIndex + storedItemNum;
-		targetTable.insertBefore(movedRow,targetTable.rows[newIndex + 1]);
+		let NextRow = document.getElementById("rowItemID"+ContainerID).nextElementSibling;
+		let NextSpacer = NextRow.firstElementChild;
+		let NextSpacerSpan = Number(NextSpacer.colSpan);
+		targetTable.insertBefore(movedRow,targetTable.rows[newIndex]);
+
+		while(NextSpacerSpan > movedSpacerSpan){
+			//Moves until the spacer depth equals that of the moved item (and therefore is not contained within the moved item)
+			let currentRow = NextRow;
+			NextRow = NextRow.nextElementSibling;
+			NextSpacer = NextRow.firstElementChild;
+			NextSpacerSpan = Number(NextSpacer.colSpan);
+			targetTable.insertBefore(currentRow,targetTable.rows[newIndex]);
+		};
 	
+		console.log("rearrange");
 		rearrangeInventory(oldIndex,newIndex);
 	}
 	else{
@@ -218,9 +244,9 @@ function allowDrop(ev){
 }
 
 function rearrangeInventory(oldIndex,newIndex){
-	//Minus 1 because inventory indices don't include the header row
-	oldIndex = oldIndex - 1;
-	newIndex = newIndex - 1;
+	//moves tracking in JSON, not visually
+	oldIndex = oldIndex - extraRowNum;
+	newIndex = newIndex - extraRowNum;
 	let movedItemData = Inventory[oldIndex];
 	let itemsMovedNum = 1;
 
@@ -228,7 +254,6 @@ function rearrangeInventory(oldIndex,newIndex){
 		itemsMovedNum = movedItemData.Contents.length + 1;
 	}
 
-	//moves tracking in JSON, not visually
 	let itemsMoved = Inventory.splice(oldIndex,itemsMovedNum);
 	Inventory.splice(newIndex,0,...itemsMoved);
 
@@ -237,36 +262,6 @@ function rearrangeInventory(oldIndex,newIndex){
 
 async function updateInventory(){
 	evaluateMacro("[r:setProperty('a5e.stat.Inventory','"+JSON.stringify(Inventory)+"','"+ParentToken+"')]");
-}
-
-async function updateItems(ItemList){
-	for(let Item of ItemList){
-		let thisRowUpdate = await generateItemRow(Item);
-		thisItemRow = document.getElementById("rowItemID"+Item.ItemID);
-		if(thisItemRow == null){
-			let newRowIndex = document.getElementById("rowWeightHeaders").rowIndex;
-			let thisItemStored = Item.StoredIn;
-			let thisItemClass = "inventory-list";
-			if(thisItemStored != null){
-				thisItemClass = "stored-item";
-			}
-			let thisItemAttributes = {
-				"id":"rowItemID"+Item.ItemID,
-				"class":thisItemClass,
-				"draggable":"true",
-				"ondragstart":"dragItem(event)",
-				"ondrop":"dropItem(event)",
-				"ondragover":"allowDrop(event)"
-			};
-
-			//I think the events will not set correctly
-			thisItemRow = 
-			addTableRow("InventoryTable",newRowIndex,thisItemAttributes,thisRowUpdate.RowText);
-		}
-		else{
-			thisItemRow.innerHTML = thisRowUpdate.RowText;
-		}
-	}
 }
 
 function toggleContainer(ContainerID){
@@ -279,6 +274,7 @@ function toggleContainer(ContainerID){
 		containerButton.value = "closed";
 		containerButton.innerHTML = "<img src='lib://pm.a5e.core/InterfaceImages/Container_Closed.png'>";
 		for(let itemID of containedItems){
+			//perhaps change this to while itemID isn't the last one in the list, hide the rows (to hide contained container contents) - and loop through row indices instead of contained items. Need corresponding update to opening. NOTE: this method would not apply changes to container if it is the last contained item
 			document.getElementById("rowItemID"+itemID).setAttribute("hidden","");
 		}
 	}
@@ -292,8 +288,24 @@ function toggleContainer(ContainerID){
 }
 
 function storeItem(ItemID,ContainerID){
-	let ContainerData = getItemData(ContainerID);
-	let storedItemData = getItemData(ItemID);
+	let storedItemData;
+	if(typeof ItemID == "object"){
+		storedItemData = ItemID;
+		ItemID = storedItemData.ItemID+"";	
+	}
+	else{
+		storedItemData = getItemData(ItemID);
+	}
+	let ContainerData;
+	if(typeof ContainerID == "object"){
+		ContainerData = ContainerID;
+		ContainerID = ContainerData.ItemID+"";	
+	}
+	else{
+		ContainerData = getItemData(ItemID);
+	}
+	
+	document.getElementById("rowItemID"+ItemID).class = "stored-item";
 
 	let containedItems = ContainerData.Contents;
 	if(Array.isArray(containedItems)){
@@ -323,29 +335,72 @@ function storeItem(ItemID,ContainerID){
 
 	Inventory[Inventory.indexOf(storedItemData)].StoredIn = ContainerID;
 
-	return ContainerData;
+	let SpacerShift = Number(document.getElementById("Spacer"+ContainerID).colSpan);
+
+	return {
+		"ContainerData":ContainerData,
+		"SpacerShift":SpacerShift
+	};
 }
 
-function unpackItem(ItemID,ContainerID){
+function unpackItem(ItemID,ContainerData){
+	let storedItemData;
+	if(typeof ItemID == "object"){
+		storedItemData = ItemID;
+		ItemID = storedItemData.ItemID+"";	
+	}
+	else{
+		storedItemData = getItemData(ItemID);
+	}
 	//Specifically removes item from contents list of container, this function does not move it on the list as the destination depends on method of unpacking
 
-	let storedItemData = getItemData(ItemID);
 	let storedItemIndex = Inventory.indexOf(storedItemData);
 	delete storedItemData.StoredIn;
 	Inventory[storedItemIndex] = storedItemData;
 	
-	let ContainerData = getItemData(ContainerID);
+	document.getElementById("rowItemID"+ItemID).class = "inventory-list";
+
 	let containedItems = ContainerData.Contents;
 	if(Array.isArray(containedItems)){
 		let unpackedIndex = containedItems.indexOf(ItemID);
 		if(unpackedIndex != -1){
 			containedItems.splice(unpackedIndex,1);
 			ContainerData.Contents = containedItems;
+			console.log("unpacking spacer prior span: "+document.getElementById("Spacer"+ItemID).colSpan);
+			let spacerShift = Number(document.getElementById("Spacer"+ItemID).colSpan) - 1;
+			console.log("unpacking spacer shift: "+spacerShift);
 
 			let ContainerIndex = Inventory.indexOf(ContainerData);
 			Inventory[ContainerIndex] = ContainerData;
-			return ContainerData;
+			return {
+				"ContainerData":ContainerData,
+				"SpacerShift":-spacerShift
+			};
 		}
+	}
+}
+
+function updateSpacerSpan(MovedItemData,SpacerShift){
+	let MovedItemID = MovedItemData.ItemID;
+	console.log(MovedItemID);
+	let movedSpacerSpan = document.getElementById("Spacer"+MovedItemID).colSpan;
+	console.log(movedSpacerSpan);
+	console.log(SpacerShift);
+	
+	document.getElementById("Spacer"+MovedItemID).colSpan = Number(document.getElementById("Spacer"+MovedItemID).colSpan) + SpacerShift;
+	console.log(document.getElementById("Spacer"+MovedItemID).colSpan);
+
+	if(MovedItemData.Contents != null){
+		let NextRow = document.getElementById("rowItemID"+MovedItemID).nextElementSibling;
+		let NextSpacer = NextRow.firstElementChild;
+		let NextSpacerSpan = Number(NextSpacer.colSpan);
+		while(NextSpacerSpan > movedSpacerSpan){
+			//Moves until the spacer depth equals that of the moved item (and therefore is not contained within the moved item)
+			NextSpacer.colSpan = NextSpacerSpan + SpacerShift;
+			NextRow = NextRow.nextElementSibling;
+			NextSpacer = NextRow.firstElementChild;
+			NextSpacerSpan = Number(NextSpacer.colSpan);
+		};	
 	}
 }
 
@@ -354,16 +409,22 @@ function updateContainerIndenting(){
 	let storedItemRows = table.getElementsByClassName("inventory-spacer");
 	maxColumnDepth = 1;
 	for(let spacerTag of storedItemRows){
-		maxColumnDepth = Math.max(maxColumnDepth,Number(spacerTag.colspan));
+		maxColumnDepth = Math.max(maxColumnDepth,Number(spacerTag.colSpan));
 	}
 	
-	document.getElementById("NameHeader").colspan = maxColumnDepth;
-	document.getElementById("WeightHeader").colspan = maxColumnDepth;
-	document.getElementById("WeightColumn").colspan = maxColumnDepth;
+	document.getElementById("NameHeader").colSpan = maxColumnDepth;
+	document.getElementById("WeightHeader").colSpan = maxColumnDepth;
+	document.getElementById("WeightColumn").colSpan = maxColumnDepth;
+
+	let spacerRowInnerHTML = "";
+	for(let i=0; i<(maxColumnDepth + 4); i++){
+		spacerRowInnerHTML = spacerRowInnerHTML + "<td></td>";
+	}
+	document.getElementById("rowSpacer").innerHTML = spacerRowInnerHTML;
 	
 	for(let spacerTag of storedItemRows){
 		let nameColumn = spacerTag.nextElementSibling;
-		nameColumn.colspan = maxColumnDepth - Number(spacerTag.colspan) + 1;
+		nameColumn.colSpan = maxColumnDepth - Number(spacerTag.colSpan) + 1;
 	}
 }
 
@@ -420,6 +481,7 @@ async function loadUserData(){
 	ParentToken = userdata.ParentToken;
 	Inventory = userdata.Inventory;
 	maxColumnDepth = 1;
+	extraRowNum = 2;
 	
 	createInventoryTable();
 

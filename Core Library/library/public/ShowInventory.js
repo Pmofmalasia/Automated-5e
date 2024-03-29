@@ -127,11 +127,6 @@ async function createInventoryTable(){
 	updateContainerIndenting();
 }
 
-async function generateItemRow(Item){
-
-	return returnData;
-}
-
 function dragItem(ev){
 	ev.dataTransfer.clearData();
 	ev.dataTransfer.setData("text",ev.target.id);
@@ -155,20 +150,16 @@ function dropItem(ev){
 
 	let oldIndex = movedRow.rowIndex;
 	let movedItemData = Inventory[oldIndex - extraRowNum];
+	let movedSpacerSpan = Number(movedRow.firstElementChild.colSpan);
+	let NextRow = movedRow.nextElementSibling;
 
 	let targetTable = dropTarget.parentNode;
 	targetTable.insertBefore(movedRow,dropTarget);
 
-	console.log(movedItemData);
-	console.log(movedItemData.Contents);
-
-	if(Array.isArray(movedItemData.Contents)){
-		for(let containedItem of movedItemData.Contents){
-			console.log(containedItem);
-			targetTable.insertBefore(document.getElementById("rowItemID"+containedItem),dropTarget);
-		}
-	}
 	let newIndex = movedRow.rowIndex;
+
+	//this is going above where it's supposed to be
+	moveContents(targetTable,movedSpacerSpan,NextRow,newIndex);
 
 	console.log(oldIndex+", "+newIndex);
 	rearrangeInventory(oldIndex,newIndex);
@@ -177,7 +168,7 @@ function dropItem(ev){
 function dropStoreItem(ev,ContainerID){
 	ev.preventDefault();
 	let movedRow = document.getElementById(ev.dataTransfer.getData("text"));
-	let movedItemID = movedRow.id.substring(9);
+	let movedItemID = idFromRowID(movedRow.id);
 
 	//May need additional check here to make sure that it is a container button, not sure if different functions covers this
 	let contextButtonDropTarget = ev.target.closest("button");
@@ -472,6 +463,24 @@ function getItemData(ItemID){
 		return Inventory.ItemID == ItemID;
 	});
 	return itemData[0];
+}
+
+function idFromRowID(rowID){
+	return rowID.substring(9);
+}
+
+function moveContents(targetTable,movedSpacerSpan,nextRow,newIndex){
+	let NextSpacer = nextRow.firstElementChild;
+	let NextSpacerSpan = Number(NextSpacer.colSpan);
+
+	while(NextSpacerSpan > movedSpacerSpan){
+		//Moves until the spacer depth equals that of the moved item (and therefore is not contained within the moved item)
+		let currentRow = nextRow;
+		nextRow = nextRow.nextElementSibling;
+		NextSpacer = nextRow.firstElementChild;
+		NextSpacerSpan = Number(NextSpacer.colSpan);
+		targetTable.insertBefore(currentRow,targetTable.rows[newIndex]);
+	};
 }
 
 async function loadUserData(){

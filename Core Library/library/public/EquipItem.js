@@ -194,7 +194,7 @@ async function loadUserData(){
 	addTableRow(tableID,nextRowIndex,"rowWornItemsHeader","<th text-align='center' colspan='2'>Other Worn Items</th>");
 	nextRowIndex++;
 
-	addTableRow(tableID,nextRowIndex,"rowSubmit","<th text-align='center' colspan='2'><input type='submit' id='submitButton' value='Change Equipment'></th>");
+	addTableRow(tableID,nextRowIndex,"rowSubmit","<th text-align='center' colspan='2'><input type='submit' class='theme-fix-submit' id='submitButton' value='Change Equipment'></th>");
 	nextRowIndex++;
 
 	initialEquipmentRows("EquipItemTable",userdata.Inventory,userdata.HeldItems,userdata.Limbs,userdata.EquippedArmor,userdata.AttunementSlots,userdata.NaturalWeapons);

@@ -110,6 +110,6 @@
 
 [h:DisplaySettingsHTML = DisplaySettingsHTML + "<tr id='rowLightLinkText'><th><label for='LightLinkText'>Light Mode Link Color:</label></th><td><input type='color' id='LightLinkText' name='LightLinkText' value='"+json.get(currentChatColors,"LightLinkText")+"'></td></tr>"]
 
-[h:DisplaySettingsHTML = DisplaySettingsHTML + "<tr id='rowSubmit'><th text-align='center' colspan='2'><input type='submit' id='submitButton' value='Submit'></tr>"]
+[h:DisplaySettingsHTML = DisplaySettingsHTML + "<tr id='rowSubmit'><th text-align='center' colspan='2'><input type='submit' class='theme-fix-submit' id='submitButton' value='Submit'></tr>"]
 
 [h:html.dialog5("DisplaySettings","lib://pm.a5e.core/DisplaySettings.html?cachelib=false","value="+base64.encode(DisplaySettingsHTML)+"; closebutton=0; height=800")]

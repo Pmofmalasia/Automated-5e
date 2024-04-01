@@ -26,6 +26,6 @@
 [h:skillsList = pm.GetSkills()]
 [h,foreach(tempSkill,skillsList): skillSelectionHTML = skillSelectionHTML + "<tr id='rowSkillProf"+json.get(tempSkill,"Name")+"'><th><label for='SkillProf"+json.get(tempSkill,"Name")+"'>"+json.get(tempSkill,"DisplayName")+":</label></th><td><select id='SkillProf"+json.get(tempSkill,"Name")+"' name='SkillProf"+json.get(tempSkill,"Name")+"'><option value='0'>Not Proficient</option><option value='1'"+if(json.get(currentSkills,json.get(tempSkill,"Name"))==1," selected","")+">Proficiency</option><option value='2'"+if(json.get(currentSkills,json.get(tempSkill,"Name"))==2," selected","")+">Expertise</option></select></td></tr>"]
 
-[h:skillSelectionHTML = skillSelectionHTML + "</tr><tr><th text-align='center' colspan='2'><input type='submit' id='submitButton' value='Submit'></th></tr>"]
+[h:skillSelectionHTML = skillSelectionHTML + "</tr><tr><th text-align='center' colspan='2'><input type='submit' class='theme-fix-submit' id='submitButton' value='Submit'></th></tr>"]
 
 [h:html.dialog5("Skill Selection","lib://pm.a5e.core/BaseSkillSelection.html?cachelib=false","value="+base64.encode(skillSelectionHTML)+"; closebutton=0; width=325; height=775")]

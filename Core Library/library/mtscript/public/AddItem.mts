@@ -16,6 +16,6 @@
 
 <tr id='rowNumberAdded'><th><label for='NumberAdded'>Number to Add:</label></th><td><input type='number' id='NumberAdded' name='NumberAdded' min=1 value=1 style='width:35px'></td></tr>
 
-<tr><th text-align='center' colspan='2'><input type='submit' id='submitButton' value='Give to "+getName(ParentToken)+"'></th></tr><input type='hidden' name='ParentToken' id='ParentToken' value='"+ParentToken+"'>"]
+<tr><th text-align='center' colspan='2'><input type='submit' class='theme-fix-submit' id='submitButton' value='Give to "+getName(ParentToken)+"'></th></tr><input type='hidden' name='ParentToken' id='ParentToken' value='"+ParentToken+"'>"]
 
 [h:html.dialog5("AddItem","lib://pm.a5e.core/AddItem.html?cachelib=false","value="+base64.encode(ItemHTML)+"; width=500; height=400; closebutton=0")]

@@ -22,6 +22,22 @@
 	NewInventory = json.path.delete(getProperty("a5e.stat.Inventory"),"\$[*][?(@.ItemID == '"+DroppedItem+"')]");
 	NewInventory = json.path.set(getProperty("a5e.stat.Inventory"),"\$[*][?(@.ItemID == '"+DroppedItem+"')]['Number']",NewInventoryNumber)
 ]
+
+[h:ContainerID = json.get(ItemData,"StoredIn")]
+[h,if(ContainerID != ""),CODE:{
+	[h:ContainerData = json.path.read(NewInventory,"\$[*][?(@.ItemID == '"+ContainerID+"')]")]
+	[h,if(!json.isEmpty(ContainerData)),CODE:{
+		[h:ContainerData = json.get(ContainerData,0)]
+		[h:ContainerContents = json.get(ContainerData,"Contents")]
+		[h,if(ContainerContents != ""): 
+			droppedItemContainerIndex = json.indexOf(ContainerContents,DroppedItem);
+			droppedItemContainerIndex = -1
+		]
+		[h,if(droppedItemContainerIndex != -1): ContainerContents = json.remove(droppedItemContainerIndex)]
+		[h:NewInventory = json.path.set(NewInventory,"\$[*][?(@.ItemID == '"+ContainerID+"')]['Contents']",ContainerContents)]
+	};{}]
+};{}]
+
 [h:setProperty("a5e.stat.Inventory",NewInventory)]
 [h:ItemData = json.set(ItemData,"Number",FinalDroppedNumber)]
 

@@ -89,6 +89,6 @@
 
 <tr id='rowNeedsPersistentEffect'><th><span title='Check if an effect needs to make additional rolls/force others to make them if not linked to an effect at a later time, e.g. many AoE effects that persist'><label for='needsPersistentEffect'>Has a Persistent Effect:</label></span></th><td><select id='needsPersistentEffect' name='needsPersistentEffect' onchange='createPersistentEffectRows("+'"CreateSubeffectTable"'+")'><option value=''>None</option><option value='Same'>Same Effect</option><option value='Different'>Different Effect</option></select></td></tr>
 
-<tr id='submitRow'><th text-align='center' colspan='2'><input type='submit' id='submitButton' value='Submit'></th></tr>"]
+<tr id='submitRow'><th text-align='center' colspan='2'><input type='submit' class='theme-fix-submit' id='submitButton' value='Submit'></th></tr>"]
 
 [h:html.dialog5("SubeffectCreation","lib://pm.a5e.core/CreateSubeffect.html?cachelib=false","value="+base64.encode(SubeffectHTML)+"; closebutton=0; width=675; height=1050")]

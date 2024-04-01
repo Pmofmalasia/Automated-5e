@@ -1,15 +1,15 @@
 .inventory-list th{
-	background-color:#504A40;
-	color: #FAF9F7;
+	background-color:var(--mt-theme-color-button-pressed-background);
+	color: var(--mt-theme-color-foreground);
 }
 
 .spacer-row{
-	min-height: 10px;
+	min-height: 4px;
 }
 
 .spacer-row td{
-	background-color:#504A40;
-	color: #FAF9F7;
+	background-color:var(--mt-theme-color-button-pressed-background);
+	color: var(--mt-theme-color-foreground);
 	min-width: 20px;
 }
 
@@ -26,6 +26,11 @@
 }
 
 .weight-data th{
-	background-color:#504A40;
-	color: #FAF9F7;
+	background-color:var(--mt-theme-color-button-pressed-background);
+	color: var(--mt-theme-color-foreground);
+}
+
+.footer{
+	background-color:var(--mt-theme-color-button-pressed-background);
+	color: var(--mt-theme-color-foreground);
 }

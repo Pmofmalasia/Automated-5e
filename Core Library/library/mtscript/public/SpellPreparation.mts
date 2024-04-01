@@ -24,6 +24,6 @@
     [h:SpellPrepDisplay = SpellPrepDisplay + macro.return]
 }]
 
-[h:SpellPrepDisplay = SpellPrepDisplay + "</tr><tr><th text-align='center' colspan='2'><input type='submit' id='submitButton' value='Submit'></th></tr>"]
+[h:SpellPrepDisplay = SpellPrepDisplay + "</tr><tr><th text-align='center' colspan='2'><input type='submit' class='theme-fix-submit' id='submitButton' value='Submit'></th></tr>"]
 
 [h:html.dialog5("Spell Preparation","lib://pm.a5e.core/SpellPreparation.html?cachelib=false","value="+base64.encode(SpellPrepDisplay)+"; closebutton=0; width=500; height=500")]

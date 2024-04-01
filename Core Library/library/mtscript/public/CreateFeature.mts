@@ -28,6 +28,6 @@
 
 <tr id='rowAbridgedDescription'><th text-align='center' colspan='2'><label for='AbridgedDescription'>Optional Abridged Description:</label></th colspan='2'></th></tr><tr id='rowAbridgedFeatureTextArea'><th><textarea id='AbridgedDescription' name='AbridgedDescription' rows='4' style='width:197%'></textarea></th></tr>"]
 
-[h:CreateFeatureHTML = CreateFeatureHTML + "<tr><th text-align='center' colspan='2'><input type='submit' id='submitButton' value='Submit'></th></tr>"]
+[h:CreateFeatureHTML = CreateFeatureHTML + "<tr><th text-align='center' colspan='2'><input type='submit' class='theme-fix-submit' id='submitButton' value='Submit'></th></tr>"]
 
 [h:html.dialog5("Feature Creation","lib://pm.a5e.core/CreateFeature.html?cachelib=false","value="+base64.encode(CreateFeatureHTML)+"; closebutton=0; width=675; height=1050")]

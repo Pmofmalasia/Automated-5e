@@ -48,6 +48,6 @@
 
 [h:SubraceInputHTML = SubraceInputHTML + "<tr id='rowLibrary'><th><label for='Library'>Subrace Sourcebook:</label></th><td><select id='Library' name='Library'>"+sourcebookOptions+"</select></td></tr>"]
 
-[h:SubraceInputHTML = SubraceInputHTML + "<tr id='rowSubmit'><th text-align='center' colspan='2'><input type='submit' id='submitButton' value='Submit'></th></tr>"]
+[h:SubraceInputHTML = SubraceInputHTML + "<tr id='rowSubmit'><th text-align='center' colspan='2'><input type='submit' class='theme-fix-submit' id='submitButton' value='Submit'></th></tr>"]
 
 [h:html.dialog5("Subrace Creation","lib://pm.a5e.core/CreateSubrace.html?cachelib=false","value="+base64.encode(SubraceInputHTML)+"; closebutton=0; width=500; height=500")]

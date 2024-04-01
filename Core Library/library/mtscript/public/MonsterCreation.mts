@@ -79,6 +79,6 @@
 
 [h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowAllegiance'><th><label for='Allegiance'>Allegiance to Party:</label></th><td><select id='Allegiance' name='Allegiance'><option value='Enemy'>Enemy</option><option value='Ally'>Ally</option><option value='Neutral'>Neutral</option></td></tr>"]
 
-[h:monsterCreationHTML = monsterCreationHTML + "<tr><th text-align='center' colspan='2'><input type='submit' id='submitButton' value='Submit'></th></tr>"]
+[h:monsterCreationHTML = monsterCreationHTML + "<tr><th text-align='center' colspan='2'><input type='submit' class='theme-fix-submit' id='submitButton' value='Submit'></th></tr>"]
 
 [h:html.dialog5("Monster Creation","lib://pm.a5e.core/MonsterCreation.html?cachelib=false","value="+base64.encode(monsterCreationHTML)+"; closebutton=0; width=400; height=1050")]

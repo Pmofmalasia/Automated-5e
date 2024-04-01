@@ -25,6 +25,6 @@
 
 [h:ChangeHPHTML = ChangeHPHTML + "<tr id='rowOutputTargets'><th><label for='OutputTargets'>Who Sees the Result?</label></th><td><select id='OutputTargets' name='OutputTargets'><option value='Everyone'"+if(getProperty("a5e.stat.Allegiance") != "Enemy"," selected","")+">Everyone</option>"+if(isGM(),"","<option value='YouAndDM'>You and DM</option>")+"<option value='needsSplitGMOutput'"+if(getProperty("a5e.stat.Allegiance") == "Enemy"," selected","")+">DM Only</option></select></td></tr>"]
 
-[h:ChangeHPHTML = ChangeHPHTML + "<tr><th text-align='center' colspan='2'><input type='submit' id='submitButton' value='Submit'></th></tr>"]
+[h:ChangeHPHTML = ChangeHPHTML + "<tr><th text-align='center' colspan='2'><input type='submit' class='theme-fix-submit' id='submitButton' value='Submit'></th></tr>"]
 
 [h:html.dialog5("ChangeHPInput","lib://pm.a5e.core/ChangeHPInput.html?cachelib=false","value="+base64.encode(ChangeHPHTML)+"; closebutton=0; width=450; height=500")]

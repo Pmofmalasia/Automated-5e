@@ -31,6 +31,6 @@
 
 [h:CreateVisionTypeHTML = CreateVisionTypeHTML + "<tr id='rowLibrary'><th><label for='Library'>Vision Type Sourcebook:</label></th><td><select id='Library' name='Library'>"+sourcebookOptions+"</select></td></tr>"]
 
-[h:CreateVisionTypeHTML = CreateVisionTypeHTML + "<tr id='rowSubmit'><th text-align='center' colspan='2'><input type='submit' id='submitButton' value='Submit'></th></tr>"]
+[h:CreateVisionTypeHTML = CreateVisionTypeHTML + "<tr id='rowSubmit'><th text-align='center' colspan='2'><input type='submit' class='theme-fix-submit' id='submitButton' value='Submit'></th></tr>"]
 
 [h:html.dialog5("Vision Type Creation","lib://pm.a5e.core/CreateVisionType.html?cachelib=false","value="+base64.encode(CreateVisionTypeHTML)+"; closebutton=0; width=400; height=500")]

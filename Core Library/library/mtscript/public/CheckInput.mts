@@ -39,7 +39,7 @@
 	[h:CheckInputHTML = CheckInputHTML + "<tr id='rowEffectIDChoice'><th><label for='EffectIDChoice'>Make Check for Effect:</label></th><td><select id='EffectIDChoice' name='EffectIDChoice' onchange='createRegularCheckRows("+'"CheckInputTable"'+")'>"+EffectsForcingCheckOptions+"<option value=''>Other Check Not Linked to Effect</option></select></td></tr>"]
 }]
 
-[h:CheckInputHTML = CheckInputHTML + "<tr id='rowSubmit'><th text-align='center' colspan='2'><input type='submit' id='submitButton' value='Make Check'></tr>"]
+[h:CheckInputHTML = CheckInputHTML + "<tr id='rowSubmit'><th text-align='center' colspan='2'><input type='submit' class='theme-fix-submit' id='submitButton' value='Make Check'></tr>"]
 
 [h:checkInputData = json.set("",
 	"FormData",CheckInputHTML,

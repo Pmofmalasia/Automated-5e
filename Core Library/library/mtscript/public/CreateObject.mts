@@ -77,6 +77,6 @@
 
 <tr id='rowDescription'><th text-align='center' colspan='2'><label for='Description'>Full Item Description:</label></th colspan='2'></th></tr><tr id='rowItemTextArea'><th><textarea id='Description' name='Description' rows='10' style='width:155%'></textarea></th>
 
-<tr><th text-align='center' colspan='2'><input type='submit' id='submitButton' value='Submit'></th></tr>"]
+<tr><th text-align='center' colspan='2'><input type='submit' class='theme-fix-submit' id='submitButton' value='Submit'></th></tr>"]
 
 [h:html.dialog5("ObjectCreation","lib://pm.a5e.core/CreateObject.html?cachelib=false","value="+base64.encode(ObjectHTML)+"; closebutton=0; height=800; width=600")]

@@ -17,6 +17,6 @@
 
 [h:GiveItemInputHTML = GiveItemInputHTML + "<tr id='rowNumberGiven'><th><label for='NumberGiven'>Number Given:</label></th><td><input type='number' id='NumberGiven' name='NumberGiven' min=1 value="+json.get(json.get(CurrentInventory,0),"Number")+" style='width:35px'> (Maximum "+json.get(json.get(CurrentInventory,0),"Number")+")</td></tr>"]
 
-[h:GiveItemInputHTML = GiveItemInputHTML + "<tr id='rowSubmit'><th text-align='center' colspan='2'><input type='submit' id='submitButton' value='Give Item'></th></tr>"]
+[h:GiveItemInputHTML = GiveItemInputHTML + "<tr id='rowSubmit'><th text-align='center' colspan='2'><input type='submit' class='theme-fix-submit' id='submitButton' value='Give Item'></th></tr>"]
 
 [h:html.dialog5("GiveItemInput","lib://pm.a5e.core/GiveItem.html?cachelib=false","value="+base64.encode(GiveItemInputHTML)+"; width=500; height=285; closebutton=0")]

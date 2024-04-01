@@ -1,0 +1,19 @@
+input[type=submit].theme-fix-submit {
+	background-color: var(--mt-theme-color-button-start-background);
+	color: var(--mt-theme-color-button-start-foreground);
+}
+
+input[type=submit].theme-fix-submit:hover {
+	background-color: var(--mt-theme-color-button-background-hover);
+}
+
+input[type=submit].theme-fix-submit:active {
+	background-color: var(--mt-theme-color-button-end-background);
+}
+
+input[type=submit].theme-fix-submit:disabled {
+	background-color: var(--mt-theme-color-button-background-disabled);
+	color: var(--mt-theme-color-button-foreground-disabled);
+	border-width: var(--mt-theme-color-disabled-border-size);
+	border-color: var(--mt-theme-color-disabled-border-color);
+}

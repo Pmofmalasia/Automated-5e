@@ -151,13 +151,10 @@ function dropItem(ev){
 	let dropTarget = ev.target.closest("tr");
 
 	let oldIndex = movedRow.rowIndex;
-	let movedItemData = Inventory[oldIndex - extraRowNum];
 	let movedSpacerSpan = Number(movedRow.firstElementChild.colSpan);
-	let NextRow = movedRow.nextElementSibling;
 
 	let targetTable = dropTarget.parentNode;
-	targetTable.insertBefore(movedRow,dropTarget);
-	let movedItemNum = 1 + moveContents(targetTable,movedSpacerSpan,NextRow,dropTarget.rowIndex);
+	let movedItemNum = moveItem(targetTable,movedSpacerSpan,movedRow,dropTarget);
 
 	let newIndex = movedRow.rowIndex;
 
@@ -184,7 +181,8 @@ function dropStoreItem(ev,ContainerID){
 			ContainerContents = [];
 		}
 
-		let newIndex = getNextUnstoredIndex(document.getElementById("rowItemID"+ContainerID));
+		let insertionTargetRow = getNextUnstoredRow(document.getElementById("rowItemID"+ContainerID));
+		let newIndex = insertionTargetRow.rowIndex;
 		let movedItemNum = 1;
 		//Note: Should determine behavior for unpacking an item that is packed within a nested container - probably should go outside of all the containers if dragged to button of its container, and moved to upper layers only if dragged to that layer's button
 		
@@ -193,11 +191,9 @@ function dropStoreItem(ev,ContainerID){
 		if(ContainerContents.includes(movedItemID)){
 			let returnData = unpackItem(movedItemData,ContainerData);
 			movedRow.class = "inventory-list";
-			let nextRow = movedRow.nextElementSibling;
 			let movedSpacerSpan = movedRow.firstElementChild.colSpan;
 
-			targetTable.insertBefore(movedRow,targetTable.rows[newIndex]);
-			movedItemNum = movedItemNum + moveContents(targetTable,movedSpacerSpan,nextRow,newIndex);
+			movedItemNum = moveItem(targetTable,movedSpacerSpan,movedRow,insertionTargetRow);
 
 			updateSpacerSpan(movedItemData,returnData.SpacerShift);
 			updateContainerIndenting();
@@ -206,14 +202,12 @@ function dropStoreItem(ev,ContainerID){
 		else{
 			let returnData = storeItem(movedItemData,ContainerData);
 			movedRow.class = "stored-item";
-			let nextRow = movedRow.nextElementSibling;
 			let movedSpacerSpan = movedRow.firstElementChild.colSpan;
 
 			updateSpacerSpan(movedItemData,returnData.SpacerShift);
 			updateContainerIndenting();
 
-			targetTable.insertBefore(movedRow,targetTable.rows[newIndex]);
-			movedItemNum = movedItemNum + moveContents(targetTable,movedSpacerSpan,nextRow,newIndex);
+			movedItemNum = moveItem(targetTable,movedSpacerSpan,movedRow,insertionTargetRow);
 		}
 	
 		rearrangeInventory(oldIndex,newIndex,movedItemNum);
@@ -507,35 +501,29 @@ function idFromRowID(rowID){
 	return rowID.substring(9);
 }
 
-function moveContents(targetTable,movedSpacerSpan,nextRow,newIndex){
+function moveItem(targetTable,movedSpacerSpan,nextRow,insertionTargetRow){
 	let NextSpacer = nextRow.firstElementChild;
 	let NextSpacerSpan = Number(NextSpacer.colSpan);
 	let movedItemNum = 0;
 
-	console.log("NextSpacerSpan: "+NextSpacerSpan+"; movedSpacerSpan: "+movedSpacerSpan+"; newIndex: "+newIndex);
-	while(NextSpacerSpan > movedSpacerSpan){
+	console.log("NextSpacerSpan: "+NextSpacerSpan+"; movedSpacerSpan: "+movedSpacerSpan);
+	do {
 		//Moves until the spacer depth equals that of the moved item (and therefore is not contained within the moved item)
 		let currentRow = nextRow;
 		nextRow = nextRow.nextElementSibling;
 		NextSpacer = nextRow.firstElementChild;
 		NextSpacerSpan = Number(NextSpacer.colSpan);
 
-		console.log("Moving "+(currentRow.firstElementChild.nextElementSibling.innerHTML)+" to row "+newIndex);
-
-		if(Number(currentRow.rowIndex) > newIndex){
-			targetTable.insertBefore(currentRow,targetTable.rows[newIndex + movedItemNum]);
-		}
-		else{
-			targetTable.insertBefore(currentRow,targetTable.rows[newIndex]);			
-		}
+		console.log("Moving "+(currentRow.firstElementChild.nextElementSibling.innerHTML));
+		targetTable.insertBefore(currentRow,insertionTargetRow);
 
 		movedItemNum++;
-	};
+	} while (NextSpacerSpan > movedSpacerSpan);
 
 	return movedItemNum;
 }
 
-function getNextUnstoredIndex(originRow){
+function getNextUnstoredRow(originRow){
 	let originSpacerSpan = originRow.firstElementChild.colSpan;
 	let nextRow = originRow.nextElementSibling;
 	let nextSpacerSpan = Number(nextRow.firstElementChild.colSpan);
@@ -545,7 +533,7 @@ function getNextUnstoredIndex(originRow){
 		nextSpacerSpan = Number(nextRow.firstElementChild.colSpan);
 	}
 	console.log("got unstored index");
-	return nextRow.rowIndex;
+	return nextRow;
 }
 
 async function loadUserData(){

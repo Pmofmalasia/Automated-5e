@@ -154,9 +154,8 @@ function dropItem(ev){
 	let movedSpacerSpan = Number(movedRow.firstElementChild.colSpan);
 
 	let targetTable = dropTarget.parentNode;
+	let newIndex = dropTarget.rowIndex;
 	let movedItemNum = moveItem(targetTable,movedSpacerSpan,movedRow,dropTarget);
-
-	let newIndex = movedRow.rowIndex;
 
 	rearrangeInventory(oldIndex,newIndex,movedItemNum);
 }
@@ -219,31 +218,6 @@ function dropStoreItem(ev,ContainerID){
 
 function allowDrop(ev){
 	ev.preventDefault();
-}
-
-function rearrangeInventory(oldIndex,newIndex,itemsMovedNum){
-	//moves tracking in JSON, not visually
-	oldIndex = oldIndex - extraRowNum;
-	newIndex = newIndex - extraRowNum;
-	console.log("Rearrange JSON - Old: "+oldIndex+"; New: "+newIndex+"; MovedNum: "+itemsMovedNum);
-
-	let itemsMoved = Inventory.splice(oldIndex,itemsMovedNum);
-	let i = 0;
-	for(let item of itemsMoved){
-		Inventory.splice(newIndex+i,0,item);
-		i++;
-		console.log("Rearrange: "+item.DisplayName);
-	}
-
-	updateInventory();
-}
-
-async function updateInventory(){
-	console.log("updating inv");
-	for(let item of Inventory){
-		console.log("Final check: "+item.DisplayName);
-	}
-	evaluateMacro("[r:setProperty('a5e.stat.Inventory','"+JSON.stringify(Inventory)+"','"+ParentToken+"')]");
 }
 
 function toggleContainer(ContainerID){
@@ -501,6 +475,7 @@ function idFromRowID(rowID){
 	return rowID.substring(9);
 }
 
+//moves item visually on table
 function moveItem(targetTable,movedSpacerSpan,nextRow,insertionTargetRow){
 	let NextSpacer = nextRow.firstElementChild;
 	let NextSpacerSpan = Number(NextSpacer.colSpan);
@@ -521,6 +496,33 @@ function moveItem(targetTable,movedSpacerSpan,nextRow,insertionTargetRow){
 	} while (NextSpacerSpan > movedSpacerSpan);
 
 	return movedItemNum;
+}
+
+//moves item in JSON, not visually
+function rearrangeInventory(oldIndex,newIndex,itemsMovedNum){
+	oldIndex = oldIndex - extraRowNum;
+	newIndex = newIndex - extraRowNum;
+	console.log("Rearrange JSON - Old: "+oldIndex+"; New: "+newIndex+"; MovedNum: "+itemsMovedNum);
+
+	let itemsMoved = Inventory.splice(oldIndex,itemsMovedNum);
+	if(newIndex > oldIndex){
+		newIndex = newIndex - itemsMovedNum;
+	}
+
+	let remainderItems = Inventory.splice(newIndex);
+
+	Inventory.push(...itemsMoved);
+	Inventory.push(...remainderItems);
+
+	updateInventory();
+}
+
+async function updateInventory(){
+	console.log("updating inv");
+	for(let item of Inventory){
+		console.log("Final check: "+item.DisplayName);
+	}
+	evaluateMacro("[r:setProperty('a5e.stat.Inventory','"+JSON.stringify(Inventory)+"','"+ParentToken+"')]");
 }
 
 function getNextUnstoredRow(originRow){

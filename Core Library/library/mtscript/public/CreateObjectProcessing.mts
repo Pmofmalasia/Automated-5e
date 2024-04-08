@@ -164,18 +164,29 @@
 	]
 };{}]
 
-[h,if(objectType=="Light"),CODE:{
+[h:lightData = "{}"]
+[h,if(objectType=="Light" && !json.contains(objectData,"isComplexLight")),CODE:{
 	[h:objectData = ct.a5e.LightDataProcessing(objectData,"")]
+	[h:lightData = json.get(objectData,"Light")]
+	[h:objectData = json.remove(lightData,"Light")]
 
 	[h,switch(json.get(objectData,"LightFuel")),CODE:
 		case "Oil":{
 			[h:allObjects = pm.a5e.GetCoreData("sb.Objects")]
-			[h:oilFlaskData = json.get(json.path.read(allObjects,"\$[*][?(@.Name == 'OilFlask')]"))]
+			[h:oilFlaskData = json.get(json.path.read(allObjects,"\$[*][?(@.Name == 'OilFlask')]"),0)]
 			[h:oilFlaskID = json.get(oilFlaskData,"ObjectID")]
-			[h:objectData = json.set(objectData,"LightFuel",oilFlaskID)]
+			[h:lightData = json.set(lightData,"ResourceRechargeItem",json.append("",oilFlaskID))]
 		};
 		default:{}
 	]
+
+	[h:objectData = json.remove(objectData,"LightFuel")]
+
+	[h,MACRO("InputDurationProcessing@Lib:pm.a5e.Core"): json.set("","InputData",objectData,"Prefix","LightDuration")]
+	[h:lightDurationData = macro.return]
+	[h:objectData = json.get(lightDurationData,"OutputData")]
+	[h:lightDurationData = json.get(lightDurationData,"DurationInfo")]
+	[h:lightData = json.set(lightData,"Duration",lightDurationData)]
 };{}]
 
 [h,if(objectType=="Tool"),CODE:{

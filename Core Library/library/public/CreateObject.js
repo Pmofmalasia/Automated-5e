@@ -135,15 +135,23 @@ async function createObjectSubtypeRows(tableID,IDSuffix){
 		document.getElementById("isWearable").checked = false;
 		document.getElementById("isStackable").checked = true;
 	}
-	else if(ObjectType == "Light"){
+	else if(ObjectType == "LightSource"){
 		document.getElementById("isWearable").checked = true;
 		document.getElementById("isStackable").checked = false;
 
-		addTableRow(tableID,nextRowIndex,"rowLightType"+IDSuffix,"<th><label for='lightType"+IDSuffix+"'>Type of Light:</label></th><td><select id='lightType"+IDSuffix+"' name='lightType"+IDSuffix+"' onchange='createLightTable("+'"CreateObjectTable","rowSize","'+IDSuffix+'"'+")'><option value='Bright'>Bright Light</option><option value='Dim'>Dim Light</option><option value='BrightDim'>Bright + Dim Light</option><option value='Darkness'>Darkness</option></select></td>");
+		addTableRow(tableID,nextRowIndex,"rowIsComplexLight"+IDSuffix,"<th><label for='isComplexLight"+IDSuffix+"'>Light is Complex:</label></th><td><input type='checkbox' id='isComplexLight"+IDSuffix+"' name='isComplexLight"+IDSuffix+"' onchange='toggleComplexLight("+'"'+IDSuffix+'","rowLightFuel"'+")'></td>");
 		nextRowIndex++;
 
-		addTableRow(tableID,nextRowIndex,"rowLightFuel","<th><label for='LightFuel'>Light Requires Fuel:</label></th><td><select id='LightFuel' name='LightFuel'><option value=''>None</option><option value='Oil'>Oil Flask</option><option value='Other'>Other Fuel</option></select></td>");
+		addTableRow(tableID,nextRowIndex,"rowLightType"+IDSuffix,"<th><label for='lightType"+IDSuffix+"'>Type of Light:</label></th><td><select id='lightType"+IDSuffix+"' name='lightType"+IDSuffix+"' onchange='createLightTable("+'"rowLightFuel","'+IDSuffix+'"'+")'><option value='Bright'>Bright Light</option><option value='Dim'>Dim Light</option><option value='BrightDim'>Bright + Dim Light</option><option value='Darkness'>Darkness</option></select></td>");
 		nextRowIndex++;
+
+		addTableRow(tableID,nextRowIndex,"rowLightFuel","<th><label for='LightFuel'>Light Can be Refueled:</label></th><td><select id='LightFuel' name='LightFuel'><option value=''>None</option><option value='Oil'>Oil Flask</option><option value='Other'>Other Fuel</option></select></td>");
+		nextRowIndex++;
+
+		createCustomDurationRows(tableID,"LightDuration","rowSize");
+		nextRowIndex++;
+		
+		document.getElementById("lightType"+IDSuffix).dispatchEvent(new Event("change"));
 	}
 	else if(ObjectType == "Potion"){
 		document.getElementById("isWearable").checked = false;
@@ -360,6 +368,26 @@ function createNonstandardStorageRows(tableID){
 	}
 }
 
+function toggleComplexLight(IDSuffix,endRowID){
+	let complexToggleRow = document.getElementById("rowIsComplexLight"+IDSuffix);
+	let tableID = complexToggleRow.closest("table").id;
+
+	if(document.getElementById("isComplexLight"+IDSuffix).checked){
+		clearUnusedTable(tableID,complexToggleRow.id,endRowID);
+	}
+	else{
+		let nextRowIndex = complexToggleRow.rowIndex + 1;
+
+		addTableRow(tableID,nextRowIndex,"rowLightType"+IDSuffix,"<th><label for='lightType"+IDSuffix+"'>Type of Light:</label></th><td><select id='lightType"+IDSuffix+"' name='lightType"+IDSuffix+"' onchange='createLightTable("+'"rowLightFuel","'+IDSuffix+'"'+")'><option value='Bright'>Bright Light</option><option value='Dim'>Dim Light</option><option value='BrightDim'>Bright + Dim Light</option><option value='Darkness'>Darkness</option></select></td>");
+		nextRowIndex++;
+
+		addTableRow(tableID,nextRowIndex,"rowLightFuel","<th><label for='LightFuel'>Light Requires Fuel:</label></th><td><select id='LightFuel' name='LightFuel'><option value=''>None</option><option value='Oil'>Oil Flask</option><option value='Other'>Other Fuel</option></select></td>");
+		nextRowIndex++;
+		
+		document.getElementById("lightType"+IDSuffix).dispatchEvent(new Event("change"));
+	}
+}
+
 function createConsumableRows(tableID){
 	if(document.getElementById("isConsumable").checked){
 		let nextRowIndex = document.getElementById("rowIsConsumable").rowIndex + 1;
@@ -376,11 +404,11 @@ function createArmorDexterityRows(tableID){
 	if(document.getElementById("ArmorIsDexterityBonus").checked){
 		let nextRowIndex = document.getElementById("rowArmorIsDexterityBonus").rowIndex + 1;
 
-		addTableRow("CreateObjectTable",nextRowIndex,"rowArmorDexCap","<th><label for='ArmorDexCap'>Maximum Dexterity Bonus:</label></th><td><input type='number' id='ArmorDexCap' name='ArmorDexCap' min='0' value='2' style='width:25px' disabled><input type='checkbox' id='ArmorNoDexCap' name='ArmorNoDexCap' onchange='toggleFieldEnabled("+'"ArmorDexCap","ArmorNoDexCap"'+")' checked><label for='ArmorNoDexCap'> Unlimited?</label></td>");
+		addTableRow(tableID,nextRowIndex,"rowArmorDexCap","<th><label for='ArmorDexCap'>Maximum Dexterity Bonus:</label></th><td><input type='number' id='ArmorDexCap' name='ArmorDexCap' min='0' value='2' style='width:25px' disabled><input type='checkbox' id='ArmorNoDexCap' name='ArmorNoDexCap' onchange='toggleFieldEnabled("+'"ArmorDexCap","ArmorNoDexCap"'+")' checked><label for='ArmorNoDexCap'> Unlimited?</label></td>");
 		nextRowIndex++;
 	}
 	else{
-		document.getElementById("CreateObjectTable").deleteRow(document.getElementById("rowArmorDexCap").rowIndex);	
+		document.getElementById(tableID).deleteRow(document.getElementById("rowArmorDexCap").rowIndex);	
 	}
 }
 
@@ -539,18 +567,18 @@ function createChargesRows(tableID){
 	}
 }
 
-function createDurationRows(tableID,clearRowsID){
+function createDurationRows(tableID,endRowID){
 	if(document.getElementById("isDuration").checked){
 		let nextRowIndex = document.getElementById("rowObjectDuration").rowIndex + 1;
 
-		createCustomDurationRows(tableID,"ObjectDuration",clearRowsID);
+		createCustomDurationRows(tableID,"ObjectDuration",endRowID);
 		nextRowIndex++;
 
 		addTableRow(tableID,nextRowIndex,"rowIsPerishable","<th><label for='isPerishable'>Destroy Object when Unusable?</label></th><td><input type='checkbox' id='isPerishable' name='isPerishable'></td>");
 		nextRowIndex++;
 	}
 	else{
-		clearUnusedTable(tableID,"rowObjectDuration",clearRowsID);
+		clearUnusedTable(tableID,"rowObjectDuration",endRowID);
 	}
 }
 
@@ -573,19 +601,20 @@ function removeMultiResourceRows(tableID){
 }
 
 async function createRestoreMethodRows(){
-	clearUnusedTable("CreateObjectTable","rowRestoreMethod","rowInitialChargesMethod");
+	let tableID = document.getElementById("rowRestoreMethod").closest("table").id;
+	clearUnusedTable(tableID,"rowRestoreMethod","rowInitialChargesMethod");
 	let nextRowIndex = document.getElementById("rowRestoreMethod").rowIndex+1;
 
 	if(document.getElementById("RestoreMethod").value == "Fixed"){
-		addTableRow("CreateObjectTable",nextRowIndex,"rowRestoreAmount","<th><label for='RestoreAmount'>Amount Recharged:</label></th><td><input type='number' id='RestoreAmount' name='RestoreAmount' min='0' value='1' style='width:35px'></td>");
+		addTableRow(tableID,nextRowIndex,"rowRestoreAmount","<th><label for='RestoreAmount'>Amount Recharged:</label></th><td><input type='number' id='RestoreAmount' name='RestoreAmount' min='0' value='1' style='width:35px'></td>");
 	}
 	else if(document.getElementById("RestoreMethod").value == "Rolled"){
-		addTableRow("CreateObjectTable",nextRowIndex,"rowRestoreAmount","<th><label for='RestoreAmountDieNumber'>Amount Recharged:</label></th><td><input type='number' id='RestoreAmountDieNumber' name='RestoreAmountDieNumber' min='0' value='1' style='width:25px'> d <input type='number' id='RestoreAmountDieSize' name='RestoreAmountDieSize' min='0' value='6' style='width:25px'> + <input type='number' id='RestoreAmountBonus' name='RestoreAmountBonus' value=0 style='width:25px'></td>");
+		addTableRow(tableID,nextRowIndex,"rowRestoreAmount","<th><label for='RestoreAmountDieNumber'>Amount Recharged:</label></th><td><input type='number' id='RestoreAmountDieNumber' name='RestoreAmountDieNumber' min='0' value='1' style='width:25px'> d <input type='number' id='RestoreAmountDieSize' name='RestoreAmountDieSize' min='0' value='6' style='width:25px'> + <input type='number' id='RestoreAmountBonus' name='RestoreAmountBonus' value=0 style='width:25px'></td>");
 	}
 	else if(document.getElementById("RestoreMethod").value == "Chance"){
-		addTableRow("CreateObjectTable",nextRowIndex,"rowRestoreChance","<th><label for='RestoreChanceDieNumber'>Dice Rolled:</label></th><td><input type='number' id='RestoreChanceDieNumber' name='RestoreChanceDieNumber' min='0' value='1' style='width:25px'> d <input type='number' id='RestoreChanceDieSize' name='RestoreChanceDieSize' min='0' value='6' style='width:25px'> + <input type='number' id='RestoreChanceBonus' name='RestoreChanceBonus' value=0 style='width:25px'></td>");
+		addTableRow(tableID,nextRowIndex,"rowRestoreChance","<th><label for='RestoreChanceDieNumber'>Dice Rolled:</label></th><td><input type='number' id='RestoreChanceDieNumber' name='RestoreChanceDieNumber' min='0' value='1' style='width:25px'> d <input type='number' id='RestoreChanceDieSize' name='RestoreChanceDieSize' min='0' value='6' style='width:25px'> + <input type='number' id='RestoreChanceBonus' name='RestoreChanceBonus' value=0 style='width:25px'></td>");
 		
-		addTableRow("CreateObjectTable",nextRowIndex,"rowRestoreChanceTarget","<th><label for='RestoreChanceTarget'>Minimum Successful Recharge Roll:</label></th><td><input type='number' id='RestoreChanceTarget' name='RestoreChanceTarget' min='0' value='5' style='width:25px'></td>");
+		addTableRow(tableID,nextRowIndex,"rowRestoreChanceTarget","<th><label for='RestoreChanceTarget'>Minimum Successful Recharge Roll:</label></th><td><input type='number' id='RestoreChanceTarget' name='RestoreChanceTarget' min='0' value='5' style='width:25px'></td>");
 	}
 	else if(document.getElementById("RestoreMethod").value == "Attribute"){
 		let request = await fetch("macro:pm.GetAttributes@lib:pm.a5e.Core", {method: "POST", body: ""});
@@ -595,26 +624,27 @@ async function createRestoreMethodRows(){
 			AttributeOptions = AttributeOptions + "<option value='"+tempAttribute.Name+"'>"+tempAttribute.DisplayName+"</option>";
 		}
 
-		addTableRow("CreateObjectTable",nextRowIndex,"rowRestoreAmount","<th><label for='RestoreAmountMultiplier'>Amount Recharged:</label></th><td>(<input type='number' id='RestoreAmountMultiplier' name='RestoreAmountMultiplier' min='0' value='1' style='width:25px'> * <select id='RestoreAmountAttribute' name='RestoreAmountAttribute'>"+AttributeOptions+"</select>) + <input type='number' id='RestoreAmountBonus' name='RestoreAmountBonus' value=0 style='width:25px'></td>");
+		addTableRow(tableID,nextRowIndex,"rowRestoreAmount","<th><label for='RestoreAmountMultiplier'>Amount Recharged:</label></th><td>(<input type='number' id='RestoreAmountMultiplier' name='RestoreAmountMultiplier' min='0' value='1' style='width:25px'> * <select id='RestoreAmountAttribute' name='RestoreAmountAttribute'>"+AttributeOptions+"</select>) + <input type='number' id='RestoreAmountBonus' name='RestoreAmountBonus' value=0 style='width:25px'></td>");
 	}
 	else if(document.getElementById("RestoreMethod").value == "Proficiency"){
-		addTableRow("CreateObjectTable",nextRowIndex,"rowRestoreAmount","<th><label for='RestoreAmountMultiplier'>Amount Recharged:</label></th><td>(<input type='number' id='RestoreAmountMultiplier' name='RestoreAmountMultiplier' min='0' value='1' style='width:25px'> * Proficiency) + <input type='number' id='RestoreAmountBonus' name='RestoreAmountBonus' value=0 style='width:25px'></td>");
+		addTableRow(tableID,nextRowIndex,"rowRestoreAmount","<th><label for='RestoreAmountMultiplier'>Amount Recharged:</label></th><td>(<input type='number' id='RestoreAmountMultiplier' name='RestoreAmountMultiplier' min='0' value='1' style='width:25px'> * Proficiency) + <input type='number' id='RestoreAmountBonus' name='RestoreAmountBonus' value=0 style='width:25px'></td>");
 	}
 }
 
 async function createInitialChargesMethodRows(){
-	clearUnusedTable("CreateObjectTable","rowInitialChargesMethod","rowHasDepletedEffect");
+	let tableID = document.getElementById("rowInitialChargesMethod").closest("table").id;
+	clearUnusedTable(tableID,"rowInitialChargesMethod","rowHasDepletedEffect");
 	let nextRowIndex = document.getElementById("rowInitialChargesMethod").rowIndex+1;
 
 	if(document.getElementById("InitialChargesMethod").value == "Fixed"){
-		addTableRow("CreateObjectTable",nextRowIndex,"rowInitialChargesAmount","<th><label for='InitialChargesAmount'>Initial Charges:</label></th><td><input type='number' id='InitialChargesAmount' name='InitialChargesAmount' min='0' value='1' style='width:35px'></td>");
+		addTableRow(tableID,nextRowIndex,"rowInitialChargesAmount","<th><label for='InitialChargesAmount'>Initial Charges:</label></th><td><input type='number' id='InitialChargesAmount' name='InitialChargesAmount' min='0' value='1' style='width:35px'></td>");
 	}
 	else if(document.getElementById("InitialChargesMethod").value == "Rolled"){
-		addTableRow("CreateObjectTable",nextRowIndex,"rowInitialChargesAmount","<th><label for='InitialChargesAmountDieNumber'>Initial Charges:</label></th><td><input type='number' id='InitialChargesAmountDieNumber' name='InitialChargesAmountDieNumber' min='0' value='1' style='width:25px'> d <input type='number' id='InitialChargesAmountDieSize' name='InitialChargesAmountDieSize' min='0' value='6' style='width:25px'> + <input type='number' id='InitialChargesAmountBonus' name='InitialChargesAmountBonus' value=0 style='width:25px'></td>");
+		addTableRow(tableID,nextRowIndex,"rowInitialChargesAmount","<th><label for='InitialChargesAmountDieNumber'>Initial Charges:</label></th><td><input type='number' id='InitialChargesAmountDieNumber' name='InitialChargesAmountDieNumber' min='0' value='1' style='width:25px'> d <input type='number' id='InitialChargesAmountDieSize' name='InitialChargesAmountDieSize' min='0' value='6' style='width:25px'> + <input type='number' id='InitialChargesAmountBonus' name='InitialChargesAmountBonus' value=0 style='width:25px'></td>");
 	}
 }
 
-async function createSpellcastingFocusRows(tableID,clearRowsID){
+async function createSpellcastingFocusRows(tableID,endRowID){
 	if(document.getElementById("isSpellcastingFocus").checked){
 		let nextRowIndex = document.getElementById("rowIsSpellcastingFocus").rowIndex + 1;
 
@@ -626,7 +656,7 @@ async function createSpellcastingFocusRows(tableID,clearRowsID){
 		nextRowIndex++;
 	}
 	else{
-		clearUnusedTable(tableID,"rowIsSpellcastingFocus",clearRowsID);
+		clearUnusedTable(tableID,"rowIsSpellcastingFocus",endRowID);
 	}	
 }
 
@@ -645,7 +675,7 @@ async function createCastSpellsRows(tableID){
 		//TODO: Add any modifications to spells
 	}
 	else{
-		clearUnusedTable("CreateObjectTable","rowIsCastSpells","rowIsImprovisedWeapon");
+		clearUnusedTable(tableID,"rowIsCastSpells","rowIsImprovisedWeapon");
 	}
 }
 
@@ -813,8 +843,8 @@ async function createCastSpellModifierRows(tableID){
 	}
 }
 
-function createObjectACHPRows(tableID,clearRowsID){
-	clearUnusedTable(tableID,"rowIsCustomACHP",clearRowsID);
+function createObjectACHPRows(tableID,endRowID){
+	clearUnusedTable(tableID,"rowIsCustomACHP",endRowID);
 	if(document.getElementById("isCustomACHP").checked){
 		let nextRowIndex = document.getElementById("rowIsCustomACHP").rowIndex + 1;
 

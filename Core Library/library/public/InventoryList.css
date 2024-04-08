@@ -18,11 +18,11 @@
 }
 
 .inventory-spacer{
-	background-color: var(--mt-theme-color-background);
-	border-right-color: var(--mt-theme-color-foreground);
-	border-right-style: solid;
-	border-right-width: 2px;
 	text-align: right;
+}
+
+.stored-item td.inventory-spacer{
+	background-color: var(--mt-theme-color-background);
 }
 
 .weight-data th{

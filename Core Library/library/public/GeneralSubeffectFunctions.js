@@ -1,8 +1,9 @@
-function createLightTable(tableID,endRowID,idSuffix){
+function createLightTable(endRowID,idSuffix){
 	let finalIDSuffix = "";
-	if(arguments.length > 2){
+	if(arguments.length > 1){
 		finalIDSuffix = idSuffix;
 	}
+	let tableID = document.getElementById("rowLightType"+finalIDSuffix).closest("table").id;
 
 	let nextRowIndex = document.getElementById("rowLightType"+finalIDSuffix).rowIndex+1;
 	let lightSelection = document.getElementById("lightType"+finalIDSuffix).value;

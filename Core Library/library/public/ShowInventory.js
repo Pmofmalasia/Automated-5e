@@ -5,7 +5,6 @@ async function createInventoryTable(){
 	let containerDepths = {};
 
 	for(let Item of Inventory){
-		let debug = false;
 		let DisplayName = Item.DisplayName;
 			if(debug){console.log(DisplayName);}
 	
@@ -30,7 +29,7 @@ async function createInventoryTable(){
 		if(typeof ItemNumber == "number" && typeof Weight == "number"){
 			TotalWeight = ItemNumber * Weight;
 		}
-		let displayWeight = Math.round(Weight);
+		let displayWeight = Math.round(TotalWeight);
 	if(debug){console.log("2");}
 	
 		let ResourceData = await MTFunction("evalMacro",[Item.MaxResource]);
@@ -135,8 +134,6 @@ function dragItem(ev){
 
 function dropItem(ev){
 	ev.preventDefault();
-	let movedRowID = ev.dataTransfer.getData("text");
-	let movedRow = document.getElementById(movedRowID);
 
 	let contextButtonDropTarget = ev.target.closest("button");
 	if(contextButtonDropTarget != null){
@@ -146,16 +143,45 @@ function dropItem(ev){
 			return;
 		}
 	}
-	console.log("------------------------------------------");
 
 	let dropTarget = ev.target.closest("tr");
 
-	let oldIndex = movedRow.rowIndex;
+	let movedRowID = ev.dataTransfer.getData("text");
+	let movedRow = document.getElementById(movedRowID);
+	let movedItemID = idFromRowID(movedRowID);
+	let oldIndex = Number(movedRow.rowIndex);
+	let movedItemData = Inventory[oldIndex - extraRowNum];
 	let movedSpacerSpan = Number(movedRow.firstElementChild.colSpan);
 
 	let targetTable = dropTarget.parentNode;
 	let newIndex = dropTarget.rowIndex;
-	let movedItemNum = moveItem(targetTable,movedSpacerSpan,movedRow,dropTarget);
+
+	let movedItemContainer = getContainer(movedRow);
+	let dropTargetContainer = getContainer(dropTarget);
+	let returnData = {"ContainerData":"","SpacerShift":0};
+	let movedItemNum;
+
+	if(dropTargetContainer != movedItemContainer){
+		if(dropTargetContainer != ""){
+			returnData = storeItem(movedItemID,dropTargetContainer);
+
+			updateSpacerSpan(movedItemData,returnData.SpacerShift);
+			updateContainerIndenting();
+
+			movedItemNum = moveItem(targetTable,movedSpacerSpan,movedRow,dropTarget);
+		}
+		else if(movedItemContainer != ""){
+			returnData = unpackItem(movedItemID,movedItemContainer);
+
+			movedItemNum = moveItem(targetTable,movedSpacerSpan,movedRow,dropTarget);
+
+			updateSpacerSpan(movedItemData,returnData.SpacerShift);
+			updateContainerIndenting();
+		}
+	}
+	else{
+		movedItemNum = moveItem(targetTable,movedSpacerSpan,movedRow,dropTarget);	
+	}
 
 	rearrangeInventory(oldIndex,newIndex,movedItemNum);
 }
@@ -168,7 +194,6 @@ function dropStoreItem(ev,ContainerID){
 	if(movedItemID == ContainerID){
 		return;
 	}
-	console.log("------------------------------------------");
 
 	//May need additional check here to make sure that it is a container button, not sure if different functions covers this
 	let contextButtonDropTarget = ev.target.closest("button");
@@ -180,27 +205,35 @@ function dropStoreItem(ev,ContainerID){
 			ContainerContents = [];
 		}
 
-		let insertionTargetRow = getNextUnstoredRow(document.getElementById("rowItemID"+ContainerID));
-		let newIndex = insertionTargetRow.rowIndex;
+		let insertionTargetRow;
+		let newIndex;
 		let movedItemNum = 1;
-		//Note: Should determine behavior for unpacking an item that is packed within a nested container - probably should go outside of all the containers if dragged to button of its container, and moved to upper layers only if dragged to that layer's button
-		
 		let targetTable = movedRow.parentNode;
 		let oldIndex = movedRow.rowIndex;
+
 		if(ContainerContents.includes(movedItemID)){
+			insertionTargetRow = getNextUnstoredRow(document.getElementById("rowItemID"+ContainerID),true);
+			if(insertionTargetRow === movedRow){
+				insertionTargetRow = getNextUnstoredRow(movedRow,true);
+			}
+			newIndex = insertionTargetRow.rowIndex;
+
 			let returnData = unpackItem(movedItemData,ContainerData);
-			movedRow.class = "inventory-list";
 			let movedSpacerSpan = movedRow.firstElementChild.colSpan;
 
 			movedItemNum = moveItem(targetTable,movedSpacerSpan,movedRow,insertionTargetRow);
 
 			updateSpacerSpan(movedItemData,returnData.SpacerShift);
 			updateContainerIndenting();
-
 		}
 		else{
+			insertionTargetRow = getNextUnstoredRow(document.getElementById("rowItemID"+ContainerID),false);
+			if(insertionTargetRow === movedRow){
+				insertionTargetRow = getNextUnstoredRow(movedRow,false);
+			}
+			newIndex = insertionTargetRow.rowIndex;
+
 			let returnData = storeItem(movedItemData,ContainerData);
-			movedRow.class = "stored-item";
 			let movedSpacerSpan = movedRow.firstElementChild.colSpan;
 
 			updateSpacerSpan(movedItemData,returnData.SpacerShift);
@@ -273,46 +306,14 @@ function storeItem(ItemID,ContainerID){
 		ContainerData = getItemData(ContainerID);
 	}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	//moving items from one container to another does not quite work
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 	let priorSpacerShift = 0;
 	let priorContainerID = storedItemData.StoredIn;
 	if(priorContainerID != null){
 		let returnData = unpackItem(ItemID,priorContainerID);
 		priorSpacerShift = returnData.SpacerShift;
 	}
-	
-	document.getElementById("rowItemID"+ItemID).class = "stored-item";
+
+	document.getElementById("rowItemID"+ItemID).className = "stored-item";
 
 	let containedItems = ContainerData.Contents;
 	if(Array.isArray(containedItems)){
@@ -332,7 +333,6 @@ function storeItem(ItemID,ContainerID){
 	let ContainerIndex = Inventory.findIndex(obj => obj.ItemID == ContainerID);
 	Inventory[ContainerIndex] = ContainerData;
 
-
 	Inventory[Inventory.indexOf(storedItemData)].StoredIn = ContainerID;
 
 	let SpacerShift = Number(document.getElementById("Spacer"+ContainerID).colSpan) + priorSpacerShift;
@@ -343,7 +343,7 @@ function storeItem(ItemID,ContainerID){
 	};
 }
 
-function unpackItem(ItemID,ContainerData){
+function unpackItem(ItemID,ContainerID){
 	let storedItemData;
 	if(typeof ItemID == "object"){
 		storedItemData = ItemID;
@@ -352,13 +352,21 @@ function unpackItem(ItemID,ContainerData){
 	else{
 		storedItemData = getItemData(ItemID);
 	}
+	let ContainerData;
+	if(typeof ContainerID == "object"){
+		ContainerData = ContainerID;
+		ContainerID = ContainerData.ItemID+"";	
+	}
+	else{
+		ContainerData = getItemData(ContainerID);
+	}
 	//Specifically removes item from contents list of container, this function does not move it on the list as the destination depends on method of unpacking
 
 	let storedItemIndex = Inventory.indexOf(storedItemData);
 	delete storedItemData.StoredIn;
 	Inventory[storedItemIndex] = storedItemData;
 	
-	document.getElementById("rowItemID"+ItemID).class = "inventory-list";
+	document.getElementById("rowItemID"+ItemID).className = "inventory-list";
 
 	let containedItems = ContainerData.Contents;
 	if(Array.isArray(containedItems)){
@@ -370,7 +378,6 @@ function unpackItem(ItemID,ContainerData){
 
 			let ContainerIndex = Inventory.indexOf(ContainerData);
 			Inventory[ContainerIndex] = ContainerData;
-			console.log("end unpack");
 			return {
 				"ContainerData":ContainerData,
 				"SpacerShift":-spacerShift
@@ -396,7 +403,6 @@ function updateSpacerSpan(MovedItemData,SpacerShift){
 			NextSpacer = NextRow.firstElementChild;
 			NextSpacerSpan = Number(NextSpacer.colSpan);
 		};
-		console.log("spacer updated");
 	}
 }
 
@@ -422,7 +428,6 @@ function updateContainerIndenting(){
 		let nameColumn = spacerTag.nextElementSibling;
 		nameColumn.colSpan = maxColumnDepth - Number(spacerTag.colSpan) + 1;
 	}
-	console.log("indenting updated");
 }
 
 async function toggleActivation(ItemID){
@@ -449,6 +454,7 @@ async function toggleActivation(ItemID){
 async function useItem(ItemID){
 	itemData = getItemData(ItemID);
 	itemData.ParentToken = ParentToken;
+	itemData.IsTooltip = 0;
 
 	let request = await fetch("macro:UseItem@Lib:pm.a5e.Core", {method: "POST", body: JSON.stringify(itemData)});
 	let resultingInventory = await request.json();
@@ -459,6 +465,7 @@ async function useItem(ItemID){
 async function castSpell(ItemID){
 	itemData = getItemData(ItemID);
 	itemData.ParentToken = ParentToken;
+	itemData.IsTooltip = 0;
 
 	let request = await fetch("macro:ItemSpellcastingInput@Lib:pm.a5e.Core", {method: "POST", body: JSON.stringify(itemData)});
 	let resultingInventory = await request.json();
@@ -477,23 +484,22 @@ function idFromRowID(rowID){
 
 //moves item visually on table
 function moveItem(targetTable,movedSpacerSpan,nextRow,insertionTargetRow){
+	let firstRowMoved = nextRow;
 	let NextSpacer = nextRow.firstElementChild;
 	let NextSpacerSpan = Number(NextSpacer.colSpan);
 	let movedItemNum = 0;
 
-	console.log("NextSpacerSpan: "+NextSpacerSpan+"; movedSpacerSpan: "+movedSpacerSpan);
-	do {
+	do{
 		//Moves until the spacer depth equals that of the moved item (and therefore is not contained within the moved item)
 		let currentRow = nextRow;
 		nextRow = nextRow.nextElementSibling;
 		NextSpacer = nextRow.firstElementChild;
 		NextSpacerSpan = Number(NextSpacer.colSpan);
 
-		console.log("Moving "+(currentRow.firstElementChild.nextElementSibling.innerHTML));
 		targetTable.insertBefore(currentRow,insertionTargetRow);
 
 		movedItemNum++;
-	} while (NextSpacerSpan > movedSpacerSpan);
+	} while(NextSpacerSpan > movedSpacerSpan && nextRow != firstRowMoved);
 
 	return movedItemNum;
 }
@@ -502,7 +508,6 @@ function moveItem(targetTable,movedSpacerSpan,nextRow,insertionTargetRow){
 function rearrangeInventory(oldIndex,newIndex,itemsMovedNum){
 	oldIndex = oldIndex - extraRowNum;
 	newIndex = newIndex - extraRowNum;
-	console.log("Rearrange JSON - Old: "+oldIndex+"; New: "+newIndex+"; MovedNum: "+itemsMovedNum);
 
 	let itemsMoved = Inventory.splice(oldIndex,itemsMovedNum);
 	if(newIndex > oldIndex){
@@ -518,24 +523,41 @@ function rearrangeInventory(oldIndex,newIndex,itemsMovedNum){
 }
 
 async function updateInventory(){
-	console.log("updating inv");
-	for(let item of Inventory){
-		console.log("Final check: "+item.DisplayName);
-	}
 	evaluateMacro("[r:setProperty('a5e.stat.Inventory','"+JSON.stringify(Inventory)+"','"+ParentToken+"')]");
 }
 
-function getNextUnstoredRow(originRow){
+function getNextUnstoredRow(originRow,exitAllContainers){
 	let originSpacerSpan = originRow.firstElementChild.colSpan;
 	let nextRow = originRow.nextElementSibling;
 	let nextSpacerSpan = Number(nextRow.firstElementChild.colSpan);
+
+	if(exitAllContainers){
+		//This option makes items stored in nested containers come all the way out when used
+		originSpacerSpan = 1;
+	}
 
 	while(nextSpacerSpan > originSpacerSpan){
 		nextRow = nextRow.nextElementSibling;
 		nextSpacerSpan = Number(nextRow.firstElementChild.colSpan);
 	}
-	console.log("got unstored index");
+
 	return nextRow;
+}
+
+function getContainer(containedRow){
+	let containedRowSpan = Number(containedRow.firstElementChild.colSpan);
+	if(containedRowSpan > 1){
+		let previousRow = containedRow;
+		let previousRowSpan = Number(previousRow.firstElementChild.colSpan);
+		while(previousRowSpan === containedRowSpan){
+			previousRow = previousRow.previousElementSibling;
+			previousRowSpan = previousRow.firstElementChild.colSpan;
+		}
+		return idFromRowID(previousRow.id);
+	}
+	else{
+		return "";
+	}
 }
 
 async function loadUserData(){
@@ -548,6 +570,7 @@ async function loadUserData(){
 	Inventory = userdata.Inventory;
 	maxColumnDepth = 1;
 	extraRowNum = 2;
+	debug = false;
 	
 	createInventoryTable();
 

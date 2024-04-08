@@ -1,11 +1,7 @@
-[h:ItemSpellcastingData = macro.args]
-[h:ItemID = json.get(ItemSpellcastingData,"ItemID")]
-[h:ParentToken = json.get(ItemSpellcastingData,"ParentToken")]
+[h:ItemData = macro.args]
+[h:ItemID = json.get(ItemData,"ItemID")]
+[h:ParentToken = json.get(ItemData,"ParentToken")]
 [h:switchToken(ParentToken)]
-
-[h:ItemData = json.path.read(getProperty("a5e.stat.Inventory"),"\$[*][?(@.ItemID == '"+ItemID+"')]")]
-[h:assert(!json.isEmpty(ItemData),"Item not found in inventory!")]
-[h:ItemData = json.get(ItemData,0)]
 
 [h:SpellOptionsData = json.get(ItemData,"ItemSpellcasting")]
 [h,if(json.length(SpellOptionsData) > 1),CODE:{
@@ -21,6 +17,6 @@
 	[h:SpellChoice = json.get(SpellOptionsData,0)]
 }]
 
-[h,MACRO("ItemSpellcasting@Lib:pm.a5e.Core"): json.merge(SpellChoice,ItemSpellcastingData)]
+[h,MACRO("ItemSpellcasting@Lib:pm.a5e.Core"): json.set(ItemData,"ItemSpellChoice",SpellChoice)]
 
 [h:return(0,json.append("",ItemID))]

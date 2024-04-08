@@ -23,3 +23,9 @@
 	border: 2px solid #FFFFFF;
 	transform: translateY(2px);
 }
+
+.equipment-button button{
+	height: 54px;
+	width: 54px;
+	border: 0px;
+}

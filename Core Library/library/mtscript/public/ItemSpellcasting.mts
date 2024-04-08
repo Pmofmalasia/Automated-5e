@@ -1,12 +1,10 @@
-[h:SpellData = macro.args]
-[h:SpellName = json.get(SpellData,"Name")]
-[h:SpellLevel = json.get(SpellData,"Level")]
-[h:ParentToken = json.get(SpellData,"Name")]
+[h:ItemData = macro.args]
+[h:ItemSpellData = json.get(ItemData,"ItemSpellChoice")]
+[h:SpellName = json.get(ItemSpellData,"Name")]
+[h:SpellLevel = json.get(ItemSpellData,"Level")]
+[h:ParentToken = json.get(ItemData,"ParentToken")]
 [h:switchToken(ParentToken)]
-[h:ItemID = json.get(SpellData,"ItemID")]
-[h:ItemData = json.path.read(getProperty("a5e.stat.Inventory"),"\$[*][?(@.ItemID == '"+ItemID+"')]")]
-[h:assert(!json.isEmpty(ItemData),"Item not found in inventory!")]
-[h:ItemData = json.get(ItemData,0)]
+[h:ItemID = json.get(ItemData,"ItemID")]
 [h:abilityName = "Item Spellcasting"]
 [h:abilityDisplayName = json.get(ItemData,"DisplayName")]
 [h:SpellcastingOptionsNumber = json.length(json.get(ItemData,"ItemSpellcasting"))]
@@ -16,9 +14,9 @@
 [h:abilityFalseName = "Item Effect"]
 [h:FeatureFullDescription = ""]
 [h:FeatureAbridgedDescription = ""]
-[h:pm.a5e.ItemStdVars(SpellData)]
+[h:pm.a5e.ItemStdVars(ItemData)]
 
-[h:ItemSpellcastingResource = json.get(SpellData,"UseResource")]
+[h:ItemSpellcastingResource = json.get(ItemSpellData,"UseResource")]
 [h,if(ItemSpellcastingResource != ""),CODE:{
 	[h:pm.a5e.FeatureResources(abilityInfo,ItemSpellcastingResource)]
 	[h:BaseResourceUsed = json.get(json.get(ItemSpellcastingResource,"Feature"),"ResourceUsed")]
@@ -31,9 +29,8 @@
 	};{}]
 }]
 
-[h:SpellData = json.set("","Spell",SpellName,"FreeCasting",1,"ForcedLevel",SpellLevel,"ForcedClass",json.set("","Class","Item","ItemData",ItemData),"needsSplitGMOutput",needsSplitGMOutput)]
-
-[h:pm.a5e.FeatureSpell(abilityInfo,SpellData,FeatureDescription)]
+[h:FinalItemSpellcastingData = json.set("","Spell",SpellName,"FreeCasting",1,"ForcedLevel",SpellLevel,"ForcedClass",json.set("","Class","Item","ItemData",ItemData),"needsSplitGMOutput",needsSplitGMOutput)]
+[h:pm.a5e.FeatureSpell(abilityInfo,FinalItemSpellcastingData,FeatureDescription)]
 
 [h:pm.a5e.StdFeatureEnd()]
 

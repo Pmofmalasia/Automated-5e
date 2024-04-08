@@ -2,6 +2,52 @@
 [h:IsTooltip = arg(1)]
 [h:abilityTable = "[]"]
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+[h:"<!-- Need to add new resource types linked to features/etc, as well as how these things would be expended/restored/accessed/etc.
+
+Add an key to feature obj which is an array of all time resources currently active-->"]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 [h:pm.FeatureResourceData = json.get(pm.ResourceInfo,"Feature")]
 [h:pm.FeatureBackupResourceData = json.get(pm.ResourceInfo,"FeatureBackup")]
 [h:pm.SpellSlotData = json.get(pm.ResourceInfo,"SpellSlots")]

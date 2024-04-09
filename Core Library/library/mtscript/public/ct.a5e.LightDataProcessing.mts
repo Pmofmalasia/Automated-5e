@@ -9,7 +9,7 @@
 		[h:lightData = json.set("",
 			"LightType",lightType,
 			"IsSunlight",json.contains(subeffectData,"isSunlight"+dataKeySuffix),
-			"CanBlock",json.contains(subeffectData,"lightCanBlock"+dataKeySuffix)
+			"isCoverable",json.contains(subeffectData,"lightCanBlock"+dataKeySuffix)
 		)]
 
 		[h,if(json.contains(subeffectData,"isLightUseAoESize"+dataKeySuffix)):
@@ -34,7 +34,7 @@
 		[h:lightData = json.set("",
 			"LightType",lightType,
 			"IsSunlight",json.contains(subeffectData,"isSunlight"+dataKeySuffix),
-			"CanBlock",json.contains(subeffectData,"lightCanBlock"+dataKeySuffix)
+			"isCoverable",json.contains(subeffectData,"lightCanBlock"+dataKeySuffix)
 		)]
 
 		[h,if(json.contains(subeffectData,"isLightUseAoESize"+dataKeySuffix)):

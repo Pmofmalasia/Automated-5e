@@ -1,5 +1,6 @@
 [h:LightData = macro.args]
 [h:ParentToken = json.get(LightData,"ParentToken")]
+[h:switchToken(ParentToken)]
 
 [h:AllLightTypes = pm.a5e.Lights(ParentToken)]
 
@@ -10,11 +11,31 @@
 [h:CoverableLightInput = ""]
 [h:CoverableLightNames = "[]"]
 [h,foreach(light,CoverableLights),CODE:{
-	[h:lightType = json.get(light,"Type")]
-	[h:lightDistance = json.get(light,"Distance")]
-	[h:lightAngle = json.get(light,"Angle")]
-	[h:lightTypeDisplayName = pm.GetDisplayName(lightType,"sb.Lights")]
+	[h:lightDisplayName = json.get(light,"DisplayName")]
+	[h:lightType = json.get(light,"LightType")]
+	[h:lightUnits = pm.StandardRange(json.get(light,"Units"))]
+	[h:lightDistanceDisplay = json.get(light,"Value")]
+	[h:lightSecondaryDistanceDisplay = json.get(light,"SecondaryValue")]
+
+	[h,if(lightUnits == "Miles"),CODE:{
+		[h:lightDistance = lightDistanceDisplay * 5280]
+		[h,if(lightSecondaryDistance != ""):
+			lightSecondaryDistance = lightSecondaryDistanceDisplay * 5280;
+			lightSecondaryDistance = ""
+		]
+	};{
+		[h:lightDistance = lightDistanceDisplay]
+		[h:lightSecondaryDistance = lightSecondaryDistanceDisplay]
+	}]
+
+	[h,if(json.contains(light,"isLightCone")):
+		lightAngle = "90";
+		lightAngle = ""
+	]
+	[h:lightTypeDisplay = lightDisplayName + ": " + lightDistanceDisplay + if(lightSecondaryDistance != "","/"+lightSecondaryDistanceDisplay,"") + " " + lightUnits + if(lightAngle != ""," Cone","")]
 	[h:lightName = lightType+lightDistance+if(lightAngle=="","","Angle"+lightAngle)]
+
+	[h:"<!-- Need to look up and add syntax for secondary distance -->"]
 
 	[h:CoverableLightNames = json.append(CoverableLightNames,lightName)]
 	[h:CoverableLightInput = listAppend(CoverableLightInput," choice"+roll.count+" | "+json.contains(ActiveLights,lightName)+" | "+lightTypeDisplay+" | CHECK "," ## ")]
@@ -25,10 +46,10 @@
 [h:PermanentLightInput = ""]
 [h:PermanentLightNames = "[]"]
 [h,foreach(light,PermanentLights),CODE:{
-	[h:lightType = json.get(light,"Type")]
+	[h:lightType = json.get(light,"LightType")]
 	[h:lightDistance = json.get(light,"Distance")]
 	[h:lightAngle = json.get(light,"Angle")]
-	[h:lightTypeDisplayName = pm.GetDisplayName(lightType,"sb.Lights")]
+	[h:lightTypeDisplay = ]
 	[h:lightName = lightType+lightDistance+if(lightAngle=="","","Angle"+lightAngle)]
 
 	[h:PermanentLightNames = json.append(PermanentLightNames,lightName)]

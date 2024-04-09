@@ -175,9 +175,14 @@
 			[h:allObjects = pm.a5e.GetCoreData("sb.Objects")]
 			[h:oilFlaskData = json.get(json.path.read(allObjects,"\$[*][?(@.Name == 'OilFlask')]"),0)]
 			[h:oilFlaskID = json.get(oilFlaskData,"ObjectID")]
-			[h:lightData = json.set(lightData,"ResourceRechargeItem",json.append("",oilFlaskID))]
+			[h:objectData = json.set(objectData,"TimeResourceRechargeItem",json.append("",oilFlaskID))]
 		};
-		default:{}
+		case "None":{
+
+		};
+		default:{
+			[h:"<!-- TODO: Add some resolution for looking up other specific items here -->"]
+		}
 	]
 
 	[h:objectData = json.remove(objectData,"LightFuel")]
@@ -185,8 +190,9 @@
 	[h,MACRO("InputDurationProcessing@Lib:pm.a5e.Core"): json.set("","InputData",objectData,"Prefix","LightDuration")]
 	[h:lightDurationData = macro.return]
 	[h:objectData = json.get(lightDurationData,"OutputData")]
-	[h:lightDurationData = json.get(lightDurationData,"DurationInfo")]
-	[h:lightData = json.set(lightData,"Duration",lightDurationData)]
+	[h:lightTimeResource = json.set("",json.get(lightDurationData,"Units"),json.get(lightDurationData,"Value"))]
+	[h:objectData = json.set(objectData,"TimeResourceMax",lightTimeResource,"TimeResource",lightTimeResource)]
+	[h:lightPassiveFunctionText = "[h:LightTypes = json.append(LightTypes,json.set('"+lightData+"','DisplayName',pass.abilityDisplayName)]"]
 };{}]
 
 [h,if(objectType=="Tool"),CODE:{

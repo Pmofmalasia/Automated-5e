@@ -1531,62 +1531,6 @@ async function createAffectSpellTagFilterRows(){
 	}
 }
 
-async function createLightTable(){
-	let table = document.getElementById("CreateSubeffectTable");
-	let nextRowIndex = document.getElementById("rowLightType").rowIndex+1;
-	let lightSelection = document.getElementById("lightType").value;
-
-	clearUnusedTable("CreateSubeffectTable","rowLightType","rowIsMoveTarget");
-
-	if(lightSelection == ""){
-
-	}
-	else{
-		if(lightSelection == "Darkness"){
-			let rowLightInfo = table.insertRow(nextRowIndex);
-			rowLightInfo.id = "rowLightInfo";
-			rowLightInfo.innerHTML = "<th><label for='lightDistanceValue'>Size of Darkness:</label></th><td><input type='number' id='lightDistanceValue' name='lightDistanceValue' min=0 value=30 style='width:25px'><select id='lightDistanceUnits' name='lightDistanceUnits'><option value='Feet'>Feet</option><option value='Miles'>Miles</option></select></td>";
-			nextRowIndex++;
-		}
-		else if(lightSelection == "BrightDim"){
-			let rowLightInfo = table.insertRow(nextRowIndex);
-			rowLightInfo.id = "rowLightInfo";
-			rowLightInfo.innerHTML = "<th><label for='lightDistanceValue'>Size of Light/Dim Light:</label></th><td><input type='number' id='lightDistanceValue' name='lightDistanceValue' min=0 value=30 style='width:25px'><select id='lightDistanceUnits' name='lightDistanceUnits'><option value='Feet'>Feet</option><option value='Miles'>Miles</option></select> bright <b>/</b> <input type='number' id='secondaryLightDistanceValue' name='secondaryLightDistanceValue' min=0 value=30 style='width:25px'> dim</td>";
-			nextRowIndex++;
-
-			let rowIsSunlight = table.insertRow(nextRowIndex);
-			rowIsSunlight.id = "rowIsSunlight";
-			rowIsSunlight.innerHTML = "<th><label for='isSunlight'>Counts as Sunlight:</label></th><td><input type='checkbox' id='isSunlight' name='isSunlight' value=1></td>";
-			nextRowIndex++;
-		}
-		else if(lightSelection == "Obscure"){
-			let rowLightInfo = table.insertRow(nextRowIndex);
-			rowLightInfo.id = "rowLightInfo";
-			rowLightInfo.innerHTML = "<th><label for='lightDistanceValue'>Size of Obscured Area:</label></th><td><input type='number' id='lightDistanceValue' name='lightDistanceValue' min=0 value=30 style='width:25px'><select id='lightDistanceUnits' name='lightDistanceUnits'><option value='Feet'>Feet</option><option value='Miles'>Miles</option></select></td>";
-			nextRowIndex++;
-		}
-		else{
-			let rowLightInfo = table.insertRow(nextRowIndex);
-			rowLightInfo.id = "rowLightInfo";
-			rowLightInfo.innerHTML = "<th><label for='lightDistanceValue'>Size of Light:</label></th><td><input type='number' id='lightDistanceValue' name='lightDistanceValue' min=0 value=30 style='width:25px'><select id='lightDistanceUnits' name='lightDistanceUnits'><option value='Feet'>Feet</option><option value='Miles'>Miles</option></select></td>";
-			nextRowIndex++;
-
-			let rowIsSunlight = table.insertRow(nextRowIndex);
-			rowIsSunlight.id = "rowIsSunlight";
-			rowIsSunlight.innerHTML = "<th><label for='isSunlight'>Counts as Sunlight:</label></th><td><input type='checkbox' id='isSunlight' name='isSunlight' value=1></td>";
-			nextRowIndex++;
-		}
-
-		addTableRow("CreateSubeffectTable",nextRowIndex,"rowLightCanBlock","<th><label for='lightCanBlock'>Light Can Be Blocked if Covered:</label></th><td><input type='checkbox' id='lightCanBlock' name='lightCanBlock'></td>");
-		nextRowIndex++;
-
-		if(document.getElementById("aoeShape").value != "None"){
-			let UseAoESizeIndex = document.getElementById("rowLightInfo").rowIndex+1;
-			addTableRow("CreateSubeffectTable",UseAoESizeIndex,"rowLightUseAoESize","<th><label for='isLightUseAoESize'>Use AoE For Size:</label></th><td><input type='checkbox' id='isLightUseAoESize' name='isLightUseAoESize' onchange='toggleFieldEnabled("+'"lightDistanceValue","isLightUseAoESize"'+")'></td>");
-		}
-	}
-}
-
 async function createMoveTargetTable(){
 	let table = document.getElementById("CreateSubeffectTable");
 	let nextRowIndex = document.getElementById("rowIsMoveTarget").rowIndex+1;

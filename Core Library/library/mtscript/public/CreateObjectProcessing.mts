@@ -191,7 +191,7 @@
 	[h:lightDurationData = macro.return]
 	[h:objectData = json.get(lightDurationData,"OutputData")]
 	[h:lightTimeResource = json.set("",json.get(lightDurationData,"Units"),json.get(lightDurationData,"Value"))]
-	[h:objectData = json.set(objectData,"TimeResourceMax",lightTimeResource,"TimeResource",lightTimeResource)]
+	[h:objectData = json.set(objectData,"TimeResourceMax",lightTimeResource,"TimeResource",lightTimeResource,"TimeResourceActive",0)]
 	[h:lightPassiveFunctionText = "[h:LightTypes = json.append(LightTypes,json.set('"+lightData+"','DisplayName',pass.abilityDisplayName)]"]
 };{}]
 

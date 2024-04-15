@@ -561,8 +561,6 @@ function getContainer(containedRow){
 }
 
 async function loadUserData(){
-	//IDEA: May change the determining factor for yes/no is container to if it has the 'Contents' key - would then need to change object creation to include 'Contents' key by default for containers. This would allow things without the base 'Container' type to be containers if needed.
-
 	let userdata = atob(await MapTool.getUserData());
 	userdata = JSON.parse(userdata);
 

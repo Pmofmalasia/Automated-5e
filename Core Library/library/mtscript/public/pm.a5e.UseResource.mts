@@ -52,6 +52,7 @@ Add an key to feature obj which is an array of all time resources currently acti
 [h:pm.FeatureBackupResourceData = json.get(pm.ResourceInfo,"FeatureBackup")]
 [h:pm.SpellSlotData = json.get(pm.ResourceInfo,"SpellSlots")]
 [h:pm.HitDiceData = json.get(pm.ResourceInfo,"HitDice")]
+[h:pm.TimeResourceData = json.get(pm.ResourceInfo,"TimeResource")]
 
 [h,if(pm.FeatureResourceData!=""),CODE:{
 	[h:pm.FeatureResource = json.get(pm.FeatureResourceData,"Resource")]
@@ -541,6 +542,20 @@ Add an key to feature obj which is an array of all time resources currently acti
 	[h:currentFeatureResourceSpentType = ""]
 	[h:currentFeatureResourceSpentAmount = ResourceUsed]
 	[h:currentFeatureResourceSpentName = ""]
+
+	[h,if(pm.TimeResourceData != ""),CODE:{
+		[h:timeResourceLine = json.set("",
+			"ShowIfCondensed",1,
+			"Header","Uses Time as a Resource",
+			"FalseHeader","",
+			"FullContents","",
+			"RulesContents",if(json.get(pm.TimeResourceData,"isTimeActive") == 1,"Toggle On","Toggle Off"),
+			"RollContents","",
+			"DisplayOrder","['Rules','Roll','Full']"
+		)]
+		[h:abilityTable = json.append(abilityTable,timeResourceLine)]
+	};{}]
+
 	[h:return(0,json.set("","Table",abilityTable),"Data","")]
 };{}]
 
@@ -599,6 +614,20 @@ Add an key to feature obj which is an array of all time resources currently acti
 	[h:currentFeatureResourceSpentType = ""]
 	[h:currentFeatureResourceSpentAmount = ResourceUsed]
 	[h:currentFeatureResourceSpentName = ""]
+
+	[h,if(pm.TimeResourceData != ""),CODE:{
+		[h:timeResourceLine = json.set("",
+			"ShowIfCondensed",1,
+			"Header","Uses Time as a Resource",
+			"FalseHeader","",
+			"FullContents","",
+			"RulesContents",if(json.get(pm.TimeResourceData,"isTimeActive") == 1,"Toggle On","Toggle Off"),
+			"RollContents","",
+			"DisplayOrder","['Rules','Roll','Full']"
+		)]
+		[h:abilityTable = json.append(abilityTable,timeResourceLine)]
+	};{}]
+	
 	[h:return(0,json.set("","Table",abilityTable,"Data",""))]
 };{}]
 
@@ -817,7 +846,37 @@ Add an key to feature obj which is an array of all time resources currently acti
 				"Used",ResourceUsed
 			)]
 		}]
+	};
+	default:{
+		[h:resourceData = "{}"]
 	}
 ]
+
+[h,if(pm.TimeResourceData != ""),CODE:{
+	[h:isTimeActive = json.get(pm.TimeResourceData,"isTimeActive")]
+	[h:timeResourceLine = json.set("",
+		"ShowIfCondensed",1,
+		"Header","Time Resource",
+		"FalseHeader","",
+		"FullContents","",
+		"RulesContents",if(isTimeActive == 1,"Toggled On","Toggled Off"),
+		"RollContents","",
+		"DisplayOrder","['Rules','Roll','Full']"
+	)]
+	[h:abilityTable = json.append(abilityTable,timeResourceLine)]
+
+	[h:resourceData = json.set(resourceData,
+		"TimeResourceName",pm.RemoveSpecial(json.get(pm.TimeResourceData,"Name")),
+		"isTimeActive",isTimeActive
+	)]
+	[h:timeResourceSourceData = pm.a5e.ResourceSourceData(json.get(pm.TimeResourceData,"ResourceSource"),pm.TimeResourceData)]
+	[h:timeSourceProperty = json.get(timeResourceSourceData,"Property")]
+	[h:timeSourcePath = json.get(timeResourceSourceData,"Path")]
+	[h:updatedTimeResourceInfo = getProperty(timeSourceProperty)]
+	[h:updatedTimeResourceInfo = json.path.set(updatedTimeResourceInfo,timeSourcePath+"['TimeResourceActive']",isTimeActive)]
+	[h:setProperty(timeSourceProperty,updatedTimeResourceInfo)]
+
+	[h:"<!-- TODO: Need to fold this in with options of resource to use. Also, need to allow for minimum time used, likely setting minimum time as TimeResourceActive and counting it down. Then deducting any leftover time if deactivated early. -->"]
+};{}]
 
 [h:macro.return = json.set("","Data",resourceData,"Table",abilityTable)]

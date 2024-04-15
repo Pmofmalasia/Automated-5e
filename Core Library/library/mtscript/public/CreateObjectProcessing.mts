@@ -88,6 +88,8 @@
 }]
 
 [h,if(objectType=="Container"),CODE:{
+	[h:objectData = json.set(objectData,"Contents","[]")]
+
 	[h,if(!json.contains(objectData,"isContainterSolidVolumeCapacity")),CODE:{
 		[h:objectData = json.set(objectData,"SolidCapacity",json.set("",
 			"Value",json.get(objectData,"ContainterSolidVolumeCapacity"),

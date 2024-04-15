@@ -135,7 +135,7 @@
 [h:damage.Total = damage.Total + damage.PriorPercentBonus]
 
 [h:"<!-- TODO: Temporarily separate out addedRolledDice and regular rolled dice array so the order can be natty dice, natty crit dice, added dice, added crit dice in the array -->"]
-[h:damage.FinalCritDice = json.merge(damage.AllCritDice,damage.AddedRolledDice)]
+[h:damage.FinalCritDice = json.merge(damage.AllCritDice,damage.AddedRolledDice,damage.AddedRolledDice)]
 [h:damage.CritArray = "[]"]
 [h,foreach(die,damage.FinalCritDice),CODE:{
 	[h,if(die > 0):

@@ -637,7 +637,27 @@
 		[h:ResourceData = json.set(ResourceData,"HitDice",HitDiceData)]
 	};{}]
 
-	[h:"<!-- TODO: Add resource selection from feature other than the one being created -->"]
+	[h:"<!-- TODO: Add resource selection from feature other than the one being created (for any resource and for time resource) -->"]
+	
+	[h,if(json.get(subeffectData,"isToggleTimeResource") > 0),CODE:{
+		[h:UniqueResourceIdentificationData = json.set("",
+			"Name",FeatureName,
+			"Class",json.get(thisPlayerCurrentFeatureData,"Class"),
+			"Subclass",json.get(thisPlayerCurrentFeatureData,"Subclass")
+		)]
+
+		[h,switch(EffectType):
+			case "Object": UniqueResourceIdentificationData = json.set(UniqueResourceIdentificationData,"ResourceSource","Item");
+			case "Weapon": UniqueResourceIdentificationData = json.set(UniqueResourceIdentificationData,"ResourceSource","Item");
+			case "Condition": UniqueResourceIdentificationData = json.set(UniqueResourceIdentificationData,"ResourceSource","Condition");
+			default: UniqueResourceIdentificationData = json.set(UniqueResourceIdentificationData,"ResourceSource","Feature")
+		]
+
+		[h:TimeResourceData = json.set("","isTimeActive",if(json.get(subeffectData,"isToggleTimeResource") == 2,0,1),"Resource",UniqueResourceIdentificationData)]
+		[h:subeffectData = json.remove(subeffectData,"isToggleTimeResource")]
+
+		[h:ResourceData = json.set(ResourceData,"TimeResource",TimeResourceData)]
+	};{}]
 
 	[h:subeffectData = json.set(subeffectData,"UseResource",ResourceData)]
 };{}]

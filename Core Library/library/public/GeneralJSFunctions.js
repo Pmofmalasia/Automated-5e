@@ -2,7 +2,6 @@ function clearUnusedTable(tableID,startRowID,endRowID){
     let table = document.getElementById(tableID);
     let startRowIndex = document.getElementById(startRowID).rowIndex;
     let endRowIndex = document.getElementById(endRowID).rowIndex;
-    
     while(startRowIndex+1 != endRowIndex){
         table.deleteRow(startRowIndex+1);
         endRowIndex = endRowIndex - 1;

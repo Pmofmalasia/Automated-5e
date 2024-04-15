@@ -1051,6 +1051,9 @@ function createUseResourceRows(){
 
 		addTableRow("CreateSubeffectTable",nextRowIndex,"rowIsUseOtherFeatureResource","<th><label for='isUseOtherFeatureResource'>Uses Other Feature Resources:</label></th><td><select id='isUseOtherFeatureResource' name='isUseOtherFeatureResource' onchange='createOtherFeatureResourceRows()'><option value='0'>No</option><option value='1'>Yes, Main</option><option value='2'>Yes, Backup</option></select></td>");
 		nextRowIndex++;
+
+		addTableRow("CreateSubeffectTable",nextRowIndex,"rowToggleTimeResource","<th><label for='isToggleTimeResource'>Expends Time Resource:</label></th><td><select id='isToggleTimeResource' name='isToggleTimeResource' onchange=''><option value='0'>No</option><option value='1'>Yes, Turns On</option><option value='2'>Yes, Turns Off</option></select></td>");
+		nextRowIndex++;
 	}
 	else{
 		clearUnusedTable("CreateSubeffectTable","rowIsUseResource","rowUncommonEffects");
@@ -1110,7 +1113,7 @@ function createOtherFeatureResourceRows(){
 		//In addition to the UseUniqueResource input above, will need option for using the name only and not subclass info (e.g. Channel Divinity)
 	}
 	else{
-		clearUnusedTable("CreateSubeffectTable","rowIsUseOtherFeatureResource","rowUncommonEffects");
+		clearUnusedTable("CreateSubeffectTable","rowIsUseOtherFeatureResource","rowToggleTimeResource");
 	}
 }
 

@@ -75,6 +75,36 @@
 		"DisplayOrder","['Rules','Roll','Full']"
 	))]
 
+	[h:TimeResourcesExpired = "[]"]
+	[h:"<!-- Advance time from items with a TimeResource that is active -->"]
+	[h:TimeResourceInventory = json.path.read(getProperty("a5e.stat.Inventory"),"\$[*][?(@.TimeResource != null && @.TimeResourceActive != 0 && @.TimeResourceActive != null)]","DEFAULT_PATH_LEAF_TO_NULL")]
+	[h,foreach(item,TimeResourceInventory),CODE:{
+		[h:newDuration = pm.a5e.AdvanceTime(json.set(TimeAdvancedData,"Duration",json.get(item,"TimeResource")))]
+		[h:ExpiredTest = json.get(newDuration,"Expired") == 1]
+		[h,if(ExpiredTest): setProperty("a5e.stat.Inventory",json.path.set(getProperty("a5e.stat.Inventory"),"\$[*][?(@.ItemID=='"+json.get(item,"ItemID")+"')]['IsActive']",0))]
+		[h,if(ExpiredTest): TimeResourcesExpired = json.append(TimeResourcesExpired,item)]
+	}]
+
+	[h:"<!-- Advance time from items with a TimeResource that is active -->"]
+	[h:TimeResourceFeature = json.path.read(getProperty("a5e.stat.AllFeatures"),"\$[*][?(@.TimeResource != null && @.TimeResourceActive != 0 && @.TimeResourceActive != null)]","DEFAULT_PATH_LEAF_TO_NULL")]
+	[h,foreach(feature,TimeResourceFeature),CODE:{
+		[h:newDuration = pm.a5e.AdvanceTime(json.set(TimeAdvancedData,"Duration",json.get(feature,"TimeResource")))]
+		[h:ExpiredTest = json.get(newDuration,"Expired") == 1]
+		[h,if(ExpiredTest): setProperty("a5e.stat.AllFeatures",json.path.set(getProperty("a5e.stat.AllFeatures"),"\$[*][?(@.ItemID=='"+json.get(item,"ItemID")+"')]['IsActive']",0))]
+		[h,if(ExpiredTest): TimeResourcesExpired = json.append(TimeResourcesExpired,item)]
+	}]
+
+	[h:TimeResourceEndDisplayList = pm.a5e.CreateDisplayList(json.unique(json.path.read(TimeResourcesExpired,"\$[*]['DisplayName']")),"and")]
+	[h,if(!json.isEmpty(TimeResourcesExpired)): thisTokenNewTableLines = json.append(thisTokenNewTableLines,json.set("",
+		"ShowIfCondensed",1,
+		"Header","Features out of Time",
+		"FalseHeader","",
+		"FullContents","",
+		"RulesContents",TimeResourceEndDisplayList,
+		"RollContents","",
+		"DisplayOrder","['Rules','Roll','Full']"
+	))]
+
 	[h:"<!-- TODO: Advance from features (cooldowns) and restore resource, or whatever other method is used to track -->"]
 	[h:validAbilities = json.path.read(getProperty("a5e.stat.AllFeatures"),"\$[*][?(@.Cooldown != null && @.Cooldown.round != null)]","DEFAULT_PATH_LEAF_TO_NULL")]
 	[h:EndedCooldowns = "[]"]

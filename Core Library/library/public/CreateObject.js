@@ -956,7 +956,7 @@ function createActiveEffectsRow(){
 	let ActiveEffectsSelection = document.getElementById("HasActiveEffects").checked;
 
 	if(ActiveEffectsSelection){
-		addTableRow("CreateObjectTable",nextRowIndex,"rowActiveEffectsNumber","<th><label for='ActiveEffectsNumber'>Number of Effects:</label></th><td><input type='number' id='ActiveEffectsNumber' name='ActiveEffectsNumber' value='1' min='1' style='width:25px'></td>");
+		addTableRow("CreateObjectTable",nextRowIndex,"rowActiveEffectsNumber","<th><label for='ActiveEffectsNumber'>Number of Effects:</label></th><td><input type='number' id='ActiveEffectsNumber' name='ActiveEffectsNumber' value='1' min='1' style='width:25px' onchange='createEffectChoiceMethodRow()'></td>");
 		nextRowIndex++;
 
 		addTableRow("CreateObjectTable",nextRowIndex,"rowActiveEffectsRandom","<th><label for='isEffectRandom'>Effect is Random:</label></th><td><input type='checkbox' id='isEffectRandom' name='isEffectRandom'></td>");
@@ -964,6 +964,21 @@ function createActiveEffectsRow(){
 	}
 	else{
 		clearUnusedTable("CreateObjectTable","rowHasActiveEffects","rowSourcebook");
+	}
+}
+
+function createEffectChoiceMethodRow(){
+	let nextRowIndex = document.getElementById("rowActiveEffectsNumber").rowIndex + 1;
+	let tableID = document.getElementById("rowActiveEffectsNumber").closest("table").id;
+	let currentEffectsNumber = document.getElementById("ActiveEffectsNumber").value;
+	
+	if(currentEffectsNumber > 1){
+		if(document.getElementById("rowEffectChoiceMethod") == null){
+			addTableRow(tableID,nextRowIndex,"rowEffectChoiceMethod","<th><label for='EffectChoiceMethod'>Method of Choosing Effect:</label></th><td><select id='EffectChoiceMethod' name='EffectChoiceMethod' onchange='createAdditionalEffectMethodRows()'><option value=''>User Choice</option><option value='Random'>Random</option><option value='Target'>Target Dependent</option><option value='StoredValue'>Based on Prior Choice</option><option value='OutsideRoll'>Based on Outside Roll</option><option value='ResourceType'>Type of Resource Used</option><option value='ItemActivationState'>Item Activation State</option></select></td>");
+		}
+	}
+	else if(document.getElementById("rowEffectChoiceMethod") != null){
+		clearUnusedTable(tableID,"rowActiveEffectsNumber","rowSourcebook");
 	}
 }
 

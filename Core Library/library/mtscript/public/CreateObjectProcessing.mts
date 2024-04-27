@@ -591,6 +591,7 @@
 			"WhichSubeffect",1+(objectType=="Weapon"),
 			"WhichEffect",1,
 			"EffectsNumber",ActiveEffectsNumber,
+			"EffectChoiceMethod",json.get(objectData,"EffectChoiceMethod"),
 			"EffectType","Object"
 		)]
 	};{

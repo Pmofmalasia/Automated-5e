@@ -42,6 +42,32 @@
 		[h:currentEffectData = "{}"]
 	}]
 
+	[h,switch(json.get(subeffectData,"EffectsChoiceMethod")),CODE:
+		case "Random":{
+
+		};
+		case "Target":{
+
+		};
+		case "StoredValue":{
+
+		};
+		case "OutsideRoll":{
+
+		};
+		case "ResourceType":{
+
+		};
+		case "ItemActivationState":{
+			[h:"<!-- TODO: Add multiple activation states in the future -->"]
+			[h:currentEffectData = json.set(currentEffectData,"ValidActivationState",json.get(subeffectData,"ValidActivationState"))]
+			[h:subeffectData = json.remove(subeffectData,"ValidActivationState")]
+		};
+		default: {
+			
+		}
+	]
+
 	[h,switch(json.get(subeffectData,"UseTime")),CODE:
 		case "Action":{
 			[h:castTimeInfo = json.set("","Value",1,"Units","action")]

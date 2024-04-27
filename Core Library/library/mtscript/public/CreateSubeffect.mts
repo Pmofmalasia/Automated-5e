@@ -3,6 +3,7 @@
 [h:EffectType = json.get(subeffectData,"EffectType")]
 [h:thisSubeffectNum = json.get(subeffectData,"WhichSubeffect")]
 [h:EffectsNumber = json.get(subeffectData,"EffectsNumber")]
+[h:EffectChoiceMethod = json.get(subeffectData,"EffectChoiceMethod")]
 [h:isPersistentEffect = number(json.get(subeffectData,"isPersistentEffect"))]
 [h:ExtraData = json.get(subeffectData,"ExtraData")]
 
@@ -15,6 +16,31 @@
 	[h,if(EffectsNumber > 1),CODE:{
 		[h:SubeffectHTML = SubeffectHTML + "<tr id='rowEffectName'><th><label for='EffectDisplayName'>This Effect's Name:</label></th><td><input type='text' id='EffectDisplayName' name='EffectDisplayName'></td></tr>"]
 	};{}]
+
+	[h,switch(EffectChoiceMethod),CODE:
+		case "Random":{
+
+		};
+		case "Target":{
+
+		};
+		case "StoredValue":{
+
+		};
+		case "OutsideRoll":{
+
+		};
+		case "ResourceType":{
+
+		};
+		case "ItemActivationState":{
+			[h:"<!-- TODO: Add multiple activation states in the future -->"]
+			[h:SubeffectHTML = SubeffectHTML + "<input type='hidden' id='EffectChoiceMethod' name='EffectChoiceMethod' value='"+EffectChoiceMethod+"'><tr id='rowEffectItemActivationStates'><th><label for='ValidActivationState'>Effect Useable When:</label></th><td><select id='ValidActivationState' name='ValidActivationState'><option value='1'>Item is Active</option><option value='0'>Item is Inactive</option></select></td></tr>"]
+		};
+		default: {
+			
+		}
+	]
 
 	[h:UseTimeOptions = json.append("","Action","Bonus Action","Reaction","1 Minute","10 Minutes","1 Hour","8 Hours","12 Hours","24 Hours","Custom")]
 	[h,if(isPersistentEffect): UseTimeOptions = json.merge(json.append("","No Cost"),UseTimeOptions)]

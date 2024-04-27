@@ -563,6 +563,8 @@
 	[h:ResourceData = "{}"]
 	[h:subeffectData = json.remove(subeffectData,"isUseResource")]
 
+	[h:"<!-- NOTE: Item resources do not set their ItemIDs yet because they don't exist until the item is added. This will occur in AddItemProcessing or similar functions. -->"]
+
 	[h,if(json.get(subeffectData,"isUseUniqueResource") > 0),CODE:{
 		[h:UniqueResourceIdentificationData = json.set("",
 			"Name",FeatureName,
@@ -599,8 +601,8 @@
 			ResourceData = json.set(ResourceData,"Feature",UniqueResourceData);
 			ResourceData = json.set(ResourceData,"FeatureBackup",UniqueResourceData)
 		]
-		[h:subeffectData = json.remove(subeffectData,"isUseUniqueResource")]
 	};{}]
+	[h:subeffectData = json.remove(subeffectData,"isUseUniqueResource")]
 
 	[h,if(json.get(subeffectData,"isUseSpellSlots") > 0),CODE:{
 		[h:SpellResourceData = json.set("",
@@ -608,7 +610,6 @@
 			"SpellLevelMin",json.get(subeffectData,"UseSpellSlotMin")
 		)]
 		[h:subeffectData = json.remove(subeffectData,"UseSpellSlotMin")]
-		[h:subeffectData = json.remove(subeffectData,"isUseSpellSlots")]
 
 		[h,if(!json.contains(subeffectData,"isNoSpellSlotUseLimit")): SpellResourceData = json.set(SpellResourceData,"SpellLevelMax",json.get(subeffectData,"UseSpellSlotMax"))]
 		[h:subeffectData = json.remove(subeffectData,"isNoSpellSlotUseLimit")]
@@ -616,6 +617,7 @@
 
 		[h:ResourceData = json.set(ResourceData,"SpellSlots",SpellResourceData)]
 	};{}]
+	[h:subeffectData = json.remove(subeffectData,"isUseSpellSlots")]
 
 	[h,if(json.get(subeffectData,"isUseHitDice") > 0),CODE:{
 		[h:HitDiceData = json.set("",
@@ -623,7 +625,6 @@
 			"ResourceUsed",json.get(subeffectData,"UseHitDiceMin"),
 			"Increment",json.get(subeffectData,"UseHitDiceIncrements")
 		)]
-		[h:subeffectData = json.remove(subeffectData,"isUseHitDice")]
 		[h:subeffectData = json.remove(subeffectData,"UseHitDiceMin")]
 		[h:subeffectData = json.remove(subeffectData,"UseHitDiceIncrements")]
 
@@ -636,8 +637,10 @@
 
 		[h:ResourceData = json.set(ResourceData,"HitDice",HitDiceData)]
 	};{}]
+	[h:subeffectData = json.remove(subeffectData,"isUseHitDice")]
 
 	[h:"<!-- TODO: Add resource selection from feature other than the one being created (for any resource and for time resource) -->"]
+	[h:subeffectData = json.remove(subeffectData,"isUseOtherFeatureResource")]
 	
 	[h,if(json.get(subeffectData,"isToggleTimeResource") > 0),CODE:{
 		[h:UniqueResourceIdentificationData = json.set("",
@@ -832,6 +835,8 @@
 	default: {}
 ]
 [h:subeffectData = json.remove(subeffectData,"isCreateObject")]
+
+[h,if(json.get(subeffectData,"isActivateItem") == ""): subeffectData = json.remove(subeffectData,"isActivateItem")]
 
 [h:GeneralTargetingReturn = ct.a5e.GeneralTargetingProcessing(subeffectData,"")]
 [h:subeffectData = json.get(GeneralTargetingReturn,"Subeffect")]

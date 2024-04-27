@@ -13,6 +13,7 @@
 	[h:objectMinWeight = ""]
 	[h:objectTagsInclusive = ""]
 	[h:objectTagsExclusive = ""]
+	[h:objectPredeterminedList = ""]
 };{
 	[h,switch(json.get(ObjectFilterData,"Carried")):
 		case "": objectCarriedFilter = "";
@@ -33,6 +34,8 @@
 
 	[h:objectTagsInclusive = json.get(ObjectFilterData,"TagsInclusive")]
 	[h:objectTagsExclusive = json.get(ObjectFilterData,"TagsExclusive")]
+
+	[h:objectPredeterminedList = json.get(ObjectFilterData,"List")]
 }]
 
 [h:allValidItems = "[]"]
@@ -51,6 +54,8 @@
 			thisCreatureValidObjects = json.path.read(getProperty("a5e.stat.Inventory",creature),"\$[*][?(@.ItemID in "+thisCreatureWornItems+")]")
 		]
 	}]
+
+	[h,if(objectPredeterminedList != ""): thisCreatureValidObjects = json.path.read("\$[*][?(@.ItemID in "+objectPredeterminedList+")]")]
 
 	[h,if(objectFlammableFilter != ""): thisCreatureValidObjects = json.path.read(thisCreatureValidObjects,"\$[*][?(@.isFlammable == "+objectFlammableFilter+")]")]
 	[h,if(objectMagicalFilter != ""): thisCreatureValidObjects = json.path.read(thisCreatureValidObjects,"\$[*][?(@.isMagical == "+objectMagicalFilter+")]")]

@@ -1156,6 +1156,11 @@ async function createUncommonEffectsRows(){
 
 		addTableRow("CreateSubeffectTable",nextRowIndex,"rowIsWeaponAttack","<th><label for='isWeaponAttack'>Makes a Weapon Attack?</label></th><td><input type='checkbox' id='isWeaponAttack' name='isWeaponAttack' value=1 onchange='createWeaponAttackTable()'></td>");
 		nextRowIndex++;
+
+		let effectType = checkEffectType();
+		if(effectType == "Object" || effectType == "Weapon"){
+			addTableRow("CreateSubeffectTable",nextRowIndex,"rowIsActivateItem","<th><label for='isActivateItem'>Activates this Item:</label></th><td><select id='isActivateItem' name='isActivateItem'><option value=''>No Effect</option><option value='Activate'>Activate Item</option><option value='Deactivate'>Deactivate Item</option><option value='Toggle'>Toggle Activation</option></select></td>");
+		}
 	}
 	else{
 		clearUnusedTable("CreateSubeffectTable","rowUncommonEffects","Range");

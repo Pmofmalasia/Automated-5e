@@ -126,9 +126,10 @@
 [h,if(json.contains(SubeffectData,"isTargetNumberUnlimited")),CODE:{
 	[h:subeffect.TargetNumber = 99999999999]
 };{
-	[h:subeffect.TargetNumber = json.get(SubeffectData,"TargetNumber")]
-	[h,if(json.get(SubeffectData,"TargetNumberAHLScaling") != 0 && AHLTier > 0),CODE:{
-		[h:subeffect.TargetNumber = subeffect.TargetNumber + (json.get(SubeffectData,"TargetNumberAHL") * floor(AHLTier / json.get(SubeffectData,"TargetNumberAHLScaling")))]
+	[h:subeffect.TargetNumber = number(json.get(SubeffectData,"TargetNumber"))]
+	[h:subeffect.TargetNumberAHLScaling = number(json.get(SubeffectData,"TargetNumberAHLScaling"))]
+	[h,if(subeffect.TargetNumberAHLScaling != 0 && AHLTier > 0),CODE:{
+		[h:subeffect.TargetNumber = subeffect.TargetNumber + (number(json.get(SubeffectData,"TargetNumberAHL")) * floor(AHLTier / subeffect.TargetNumberAHLScaling))]
 	};{}]
 }]
 
@@ -168,8 +169,10 @@
 [h:subeffect.AllTargets = "[]"]
 [h:subeffect.MultipleTargetTypeTargets = "{}"]
 [h:subeffect.CreatureTargetOptions = "[]"]
+[h:noTargetingTest = 1]
 [h:cancelSubeffectTest = 0]
 [h,if(json.contains(subeffect.TargetTypes,"Creature")),CODE:{
+	[h:noTargetingTest = 0]
 	[h:subeffect.TargetCreatureLimits = json.get(subeffect.TargetingData,"Creature")]
 	[h:subeffect.TargetOptionData = pm.a5e.TargetCreatureFiltering(json.set("","ParentToken",ParentToken,"Origin",subeffect.TargetOrigin,"Range",subeffect.RangeData),subeffect.TargetCreatureLimits)]
 	
@@ -187,6 +190,7 @@
 }]
 
 [h,if(json.contains(subeffect.TargetTypes,"PriorTargets")),CODE:{
+	[h:noTargetingTest = 0]
 	[h:subeffect.LinkedPriorTargets = pm.a5e.GetEffectComponent(pm.a5e.EffectData,"Targets",json.get(SubeffectData,"ParentSubeffect"))]
 
 	[h:"<!-- TODO: Will need to manage non-creature PriorTargets as well in the future -->"]
@@ -216,6 +220,7 @@
 }]
 
 [h,if(json.contains(subeffect.TargetTypes,"Object")),CODE:{
+	[h:noTargetingTest = 0]
 	[h:subeffect.TargetObjectLimits = json.get(subeffect.TargetingData,"Object")]
 	[h:subeffect.ObjectTargetOptions = "[]"]
 
@@ -241,7 +246,7 @@
 	]
 }]
 
-[h,if(!json.isEmpty(subeffect.MultipleTargetTypeTargets)),CODE:{
+[h,if(!json.isEmpty(subeffect.MultipleTargetTypeTargets) && !noTargetingTest),CODE:{
 	[h:subeffect.MultiTypeTargetingData = json.set("",
 		"ValidTargets",subeffect.MultipleTargetTypeTargets,
 		"TargetingInstances",MissileCount,
@@ -271,3 +276,15 @@
 	[h:PersistentEffectData = json.set(PersistentEffectData,"AHLTier",AHLTier)]
 	[h:setProperty("a5e.stat.ActiveEffects",json.append(getProperty("a5e.stat.ActiveEffects"),PersistentEffectData))]
 }]
+
+[h:subeffect.ActivateItem = json.get(SubeffectData,"isActivateItem")]
+[h,if(subeffect.ActivateItem != ""),CODE:{
+	[h:subeffect.ItemID = json.get(BaseEffectData,"ItemID")]
+	[h,switch(subeffect.ActivateItem):
+		case "Activate": finalActivationState = 1;
+		case "Deactivate": finalActivationState = 0;
+		case "Toggle": finalActivationState = json.contains(json.path.read(getProperty("a5e.stat.Inventory",ParentToken),"\$[*][?(@.ItemID == '"+subeffect.ItemID+"')]['IsActive']"),0);
+	]
+
+	[h:setProperty("a5e.stat.Inventory",json.path.set(getProperty("a5e.stat.Inventory",ParentToken),"\$[*][?(@.ItemID == '"+subeffect.ItemID+"')]['IsActive']",finalActivationState),ParentToken)]
+};{}]

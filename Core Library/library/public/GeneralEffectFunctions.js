@@ -14,7 +14,7 @@ function createCustomUseTimeRows(tableID,baseVariableName,clearRowsID){
 	}
 }
 
-function createCustomDurationRows(tableID,baseVariableName,clearRowsID,rowTitle){
+function createCustomDurationRows(tableID,baseVariableName,clearRowsID){
 	let currentDuration = document.getElementById(baseVariableName);
 	let nextRowIndex = document.getElementById(clearRowsID).rowIndex;
 	let priorRowID;
@@ -33,13 +33,9 @@ function createCustomDurationRows(tableID,baseVariableName,clearRowsID,rowTitle)
 		priorRowID = thisRow.previousElementSibling.id;
 	}
 
-	if(arguments.length < 4){
-		rowTitle = "Custom Duration";
-	}
-
 	clearUnusedTable(tableID,priorRowID,clearRowsID);
 	if(currentDuration=="Custom"){
-		addTableRow(tableID,nextRowIndex,"rowCustom"+baseVariableName,"<th><label for='custom"+baseVariableName+"'>"+rowTitle+":</label></th><td><input type='number' id='custom"+baseVariableName+"Value' name='custom"+baseVariableName+"Value' min='1' style='width:25px'><select id='custom"+baseVariableName+"Units' name='custom"+baseVariableName+"Units'><option value='Turn'>Turn</option><option value='Round'>Round</option><option value='Minute'>Minute</option><option value='Hour'>Hour</option><option value='Day'>Day</option><option value='Year'>Year</option></select></td>");
+		addTableRow(tableID,nextRowIndex,"rowCustom"+baseVariableName,"<th><label for='custom"+baseVariableName+"'>Custom Duration:</label></th><td><input type='number' id='custom"+baseVariableName+"Value' name='custom"+baseVariableName+"Value' min='1' style='width:25px'><select id='custom"+baseVariableName+"Units' name='custom"+baseVariableName+"Units'><option value='Turn'>Turn</option><option value='Round'>Round</option><option value='Minute'>Minute</option><option value='Hour'>Hour</option><option value='Day'>Day</option><option value='Year'>Year</option></select></td>");
 	}
 }
 

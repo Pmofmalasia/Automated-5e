@@ -139,17 +139,26 @@ async function createObjectSubtypeRows(tableID,IDSuffix){
 		document.getElementById("isWearable").checked = true;
 		document.getElementById("isStackable").checked = false;
 
-		addTableRow(tableID,nextRowIndex,"rowIsComplexLight"+IDSuffix,"<th><label for='isComplexLight"+IDSuffix+"'>Light is Complex:</label></th><td><input type='checkbox' id='isComplexLight"+IDSuffix+"' name='isComplexLight"+IDSuffix+"' onchange='toggleComplexLight("+'"'+IDSuffix+'","rowLightFuel"'+")'></td>");
-		nextRowIndex++;
-
 		addTableRow(tableID,nextRowIndex,"rowLightType"+IDSuffix,"<th><label for='lightType"+IDSuffix+"'>Type of Light:</label></th><td><select id='lightType"+IDSuffix+"' name='lightType"+IDSuffix+"' onchange='createLightTable("+'"rowLightFuel","'+IDSuffix+'"'+")'><option value='Bright'>Bright Light</option><option value='Dim'>Dim Light</option><option value='BrightDim'>Bright + Dim Light</option><option value='Darkness'>Darkness</option></select></td>");
 		nextRowIndex++;
 
 		addTableRow(tableID,nextRowIndex,"rowLightFuel","<th><label for='LightFuel'>Light Can be Refueled:</label></th><td><select id='LightFuel' name='LightFuel'><option value=''>None</option><option value='Oil'>Oil Flask</option><option value='Other'>Other Fuel</option></select></td>");
 		nextRowIndex++;
 
-		createCustomDurationRows(tableID,"LightDuration","rowSize","Maximum Light Duration");
+		createCustomDurationRows(tableID,"LightDuration","rowSize");
 		nextRowIndex++;
+		let lightDurationRow = document.getElementById("rowCustomLightDuration");
+		lightDurationRow.firstElementChild.firstElementChild.innerHTML = "Maximum Light Duration:";
+		document.getElementById("customLightDurationValue").value = 4;
+		document.getElementById("customLightDurationUnits").value = "Hour";
+
+		let lightDurationUnitsSelector = document.getElementById("customLightDurationUnits");
+		let lightDurationToggle = document.createElement("input");
+		lightDurationToggle.type = "checkbox";
+		lightDurationToggle.id = "isLightDurationUnlimited";
+		lightDurationToggle.name = "isLightDurationUnlimited";
+		lightDurationToggle.onchange = function(){toggleLightDuration()};
+		lightDurationUnitsSelector.after(lightDurationToggle,"Unlimited?");
 		
 		document.getElementById("lightType"+IDSuffix).dispatchEvent(new Event("change"));
 	}
@@ -368,23 +377,6 @@ function createNonstandardStorageRows(tableID){
 	}
 }
 
-function toggleComplexLight(IDSuffix,endRowID){
-	let complexToggleRow = document.getElementById("rowIsComplexLight"+IDSuffix);
-	let tableID = complexToggleRow.closest("table").id;
-
-	if(document.getElementById("isComplexLight"+IDSuffix).checked){
-		clearUnusedTable(tableID,complexToggleRow.id,endRowID);
-	}
-	else{
-		let nextRowIndex = complexToggleRow.rowIndex + 1;
-
-		addTableRow(tableID,nextRowIndex,"rowLightType"+IDSuffix,"<th><label for='lightType"+IDSuffix+"'>Type of Light:</label></th><td><select id='lightType"+IDSuffix+"' name='lightType"+IDSuffix+"' onchange='createLightTable("+'"rowLightFuel","'+IDSuffix+'"'+")'><option value='Bright'>Bright Light</option><option value='Dim'>Dim Light</option><option value='BrightDim'>Bright + Dim Light</option><option value='Darkness'>Darkness</option></select></td>");
-		nextRowIndex++;
-		
-		document.getElementById("lightType"+IDSuffix).dispatchEvent(new Event("change"));
-	}
-}
-
 function createConsumableRows(tableID){
 	if(document.getElementById("isConsumable").checked){
 		let nextRowIndex = document.getElementById("rowIsConsumable").rowIndex + 1;
@@ -407,6 +399,12 @@ function createArmorDexterityRows(tableID){
 	else{
 		document.getElementById(tableID).deleteRow(document.getElementById("rowArmorDexCap").rowIndex);	
 	}
+}
+
+function toggleLightDuration(){
+	toggleFieldEnabled(["customLightDurationValue","customLightDurationUnits"],"isLightDurationUnlimited");
+	
+	activationTimeResourceRow();
 }
 
 function createNonstandardEquipRows(tableID){
@@ -502,25 +500,111 @@ function createNewToolRows(tableID){
 	}
 }
 
-function createActivatableRows(tableID){
+function createActivatableRows(){
+	let tableID = document.getElementById("rowIsActivatable").closest("table").id;
 	let nextRowIndex = document.getElementById("rowIsActivatable").rowIndex + 1;
 
 	if(document.getElementById("isActivatable").checked){
+		addTableRow(tableID,nextRowIndex,"rowIsActivationEffect","<th><label for='isActivationEffect'>Instantaneous Effect on Activation/Deactivation:</label></th><td><select id='isActivationEffect' name='isActivationEffect' onchange='createActivationEffectRows()'><option value=''>No (Passive Only)</option><option value='Activation'>Activation Only</option><option value='Deactivation'>Deactivation Only</option><option value='Both'>Both</option><select></td>");
+		nextRowIndex++;
+
 		let UseTimeOptionsArray = ["Free","Item Interaction","Action","Bonus Action","Reaction","1 Minute","10 Minutes","1 Hour","8 Hours","12 Hours","24 Hours"];
 		let UseTimeOptions = "";
 		for(let tempOption of UseTimeOptionsArray){
 			UseTimeOptions = UseTimeOptions + "<option value='"+tempOption+"'>"+tempOption+"</option>";
 		}
 
-		addTableRow(tableID,nextRowIndex,"rowActivationUseTime","<th><label for='ActivationUseTime'>Activation Time:</label></th><td><select id='ActivationUseTime' name='ActivationUseTime'>"+UseTimeOptions+"</select>");
+		addTableRow(tableID,nextRowIndex,"rowActivationUseTime","<th><label for='ActivationUseTime'>Activation Time:</label></th><td><select id='ActivationUseTime' name='ActivationUseTime'>"+UseTimeOptions+"</select></td>");
 		document.getElementById("ActivationUseTime").value = "Bonus Action";
 		nextRowIndex++;
 
-		addTableRow(tableID,nextRowIndex,"rowActivationComponents","<th><label for='ActivationComponents'>Activation Requirements:</label></th><td><select id='ActivationComponents' name='ActivationComponents'><option value='None'>No Components</option><option value='Verbal'>Command Word (Verbal)</option><option value='Somatic'>Interaction (Somatic)</option><option value='Both'>Verbal and Somatic</option></select>");
+		addTableRow(tableID,nextRowIndex,"rowActivationComponents","<th><label for='ActivationComponents'>Activation Requirements:</label></th><td><select id='ActivationComponents' name='ActivationComponents'><option value='None'>No Components</option><option value='Verbal'>Command Word (Verbal)</option><option value='Somatic'>Interaction (Somatic)</option><option value='Both'>Verbal and Somatic</option></select></td>");
 		nextRowIndex++;
+
+		activationTimeResourceRow(tableID);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//Next thing to do: Create ActivationEffects and DeactivationEffects. Simple lights automatically add one that turns the light off/on if one is not made for you. ActivateItem runs effect through ExecuteEffect. Need to sort out having multiple places where subeffects can be created (fine in JSON, hard for input tracking the data)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	}
 	else{
 		clearUnusedTable("CreateObjectTable","rowIsActivatable","rowIsCharges");
+	}
+}
+
+function createActivationEffectRows(){
+
+}
+
+function activationTimeResourceRow(){
+	let needsTimeRow = false;
+
+	if(!document.getElementById("isActivatable").checked){
+		
+	}
+	else if(document.getElementById("isActivationEffect").value != ""){
+		
+	}
+	else{
+		let timeResource = document.getElementById("rowIsTimeResource");
+		if(timeResource != null){
+			needsTimeRow = timeResource.checked;
+		}
+
+		let lightDuration = document.getElementById("customLightDurationValue");
+		if(lightDuration != null){
+			needsTimeRow = !lightDuration.disabled;
+		}
+	}
+	
+	if(needsTimeRow){
+		let nextRowIndex = document.getElementById("rowActivationComponents").rowIndex + 1;
+		let tableID = document.getElementById("rowActivationComponents").closest("table").id;
+		addTableRow(tableID,nextRowIndex,"rowActivationUseTimeResource","<th><label for='isActivationUseTimeResource'>Activation Uses Time Resource:</label></th><td><input type='checkbox' id='isActivationUseTimeResource' name='isActivationUseTimeResource'></td>");
+	}
+	else if(document.getElementById("rowActivationUseTimeResource") != null){
+		document.getElementById("rowActivationUseTimeResource").remove();
 	}
 }
 
@@ -585,8 +669,10 @@ function addMultiResourceRows(tableID){
 	let nextRowIndex = document.getElementById("rowMultiResource"+(NewResourceNumber - 1)).rowIndex + 1;
 	document.getElementById("MultiResourceNumber").value = NewResourceNumber;
 	
-	addTableRow(tableID,nextRowIndex,"rowMultiResource"+NewResourceNumber,"<th text-align='center' colspan='2'><label for='ResourceDisplayName"+NewResourceNumber+"'>Resource #"+(NewResourceNumber+1)+" Name:</label><input type='text' id='ResourceDisplayName"+NewResourceNumber+"' name='ResourceDisplayName"+NewResourceNumber+"'> Maximum Charges:<input type='number' id='MaxResource"+NewResourceNumber+"' name='MaxResource"+NewResourceNumber+"' min='0' value='0' style='width:35px'></th>");
+	addTableRow(tableID,nextRowIndex,"rowMultiResource"+NewResourceNumber,"<th text-align='center' colspan='2'><label for='ResourceDisplayName"+NewResourceNumber+"'>Resource #"+(NewResourceNumber+1)+" Name:</label> <input type='text' id='ResourceDisplayName"+NewResourceNumber+"' name='ResourceDisplayName"+NewResourceNumber+"'> Maximum Charges:<input type='number' id='MaxResource"+NewResourceNumber+"' name='MaxResource"+NewResourceNumber+"' min='0' value='0' style='width:35px'></th>");
 	nextRowIndex++;
+
+	//TODO: Needs addition of resource types: Dice, Time, and Spell Slot
 }
 
 function removeMultiResourceRows(tableID){
@@ -666,7 +752,7 @@ async function createCastSpellsRows(tableID){
 
 		addSpellSelectionRows(tableID);
 			
-		addTableRow(tableID,nextRowIndex,"rowCastSpellModifierHow","<th>Spell Attack/DC Modifier Method:</th><td><select id='CastSpellModifierHow' name='CastSpellModifierHow' onchange='createCastSpellModifierRows("+'"'+tableID+'"'+")'><option value='AnyClass'>Any Class Spell Modifier</option><option value='SpecificClass'>Specific Class Spell Modifier</option><option value='SetValue'>Preset Modifier</option><option value='Stat'>Based on a Stat</option></select>");
+		addTableRow(tableID,nextRowIndex,"rowCastSpellModifierHow","<th>Spell Attack/DC Modifier Method:</th><td><select id='CastSpellModifierHow' name='CastSpellModifierHow' onchange='createCastSpellModifierRows("+'"'+tableID+'"'+")'><option value='AnyClass'>Any Class Spell Modifier</option><option value='SpecificClass'>Specific Class Spell Modifier</option><option value='SetValue'>Preset Modifier</option><option value='Stat'>Based on a Stat</option></select></td>");
 		nextRowIndex++;
 
 		//TODO: Add any modifications to spells

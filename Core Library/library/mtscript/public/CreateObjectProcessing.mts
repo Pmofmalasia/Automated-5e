@@ -167,8 +167,8 @@
 };{}]
 
 [h:lightData = "{}"]
-[h,if(objectType=="Light" && !json.contains(objectData,"isComplexLight")),CODE:{
-	[h:objectData = ct.a5e.LightDataProcessing(objectData,"")]
+[h,if(objectType=="Light"),CODE:{
+	[h:objectData = ct.a5e.LightDataProcessing(objectData,"Type")]
 	[h:lightData = json.get(objectData,"Light")]
 	[h:objectData = json.remove(lightData,"Light")]
 
@@ -194,8 +194,31 @@
 	[h:objectData = json.get(lightDurationData,"OutputData")]
 	[h:lightTimeResource = json.set("",json.get(lightDurationData,"Units"),json.get(lightDurationData,"Value"))]
 	[h:objectData = json.set(objectData,"TimeResourceMax",lightTimeResource,"TimeResource",lightTimeResource,"TimeResourceActive",0)]
-	[h:lightPassiveFunctionText = "[h:LightTypes = json.append(LightTypes,json.set('"+lightData+"','DisplayName',pass.abilityDisplayName)]"]
-};{}]
+	[h:objectData = json.set(objectData,"CallLights",json.set("","Context","Lights","Effects",json.append("",lightData)))]
+	[h:lightActivationEffect = json.set("",
+		"UseTime",json.set("","Value",1,"Units","interaction"),
+		"Duration","{}",
+		"isConcentration",0,
+		"Subeffects",json.append("",json.set("",
+			"RangeType","Touch",
+			"UseResource",json.set("",
+				"TimeResource",json.set("",
+					"isTimeActive",1,
+					"Resource",json.set("",
+						"Name",ObjectName,
+						"Class","Item",
+						"Subclass","",
+						"ResourceSource","Item"
+					)
+				)
+			)
+		))
+	)]
+	[h:lightDeactivationEffect = json.path.set(lightActivationEffect,"\$['Subeffects'][0]['UseResource']['TimeResource']['isTimeActive']",0)]
+};{
+	[h:lightActivationEffect = ""]
+	[h:lightDeactivationEffect = ""]
+}]
 
 [h,if(objectType=="Tool"),CODE:{
 	[h,if(json.contains(objectData,"isNewToolSubtypeTemplate")),CODE:{
@@ -316,7 +339,13 @@
 		case "Both": objectData = json.set(objectData,"ActivationVerbalComponent",1,"ActivationSomaticComponent",1)
 	]
 	[h:objectData = json.remove(objectData,"ActivationComponents")]
-};{}]
+	
+	[h,if(lightActivationEffect != ""): objectData = json.set(objectData,"ActivationEffects",json.append("",lightActivationEffect))]
+	[h,if(lightDeactivationEffect != ""): objectData = json.set(objectData,"DeactivationEffects",json.append("",lightDeactivationEffect))]
+};{
+	[h,if(lightActivationEffect != ""): objectData = json.set(objectData,"ActivationEffects",json.append("",lightActivationEffect))]
+	[h,if(lightDeactivationEffect != ""): objectData = json.set(objectData,"DeactivationEffects",json.append("",lightDeactivationEffect))]
+}]
 
 [h,switch(json.get(objectData,"isCharges")),CODE:
 	case "None":{};

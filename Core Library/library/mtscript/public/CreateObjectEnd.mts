@@ -25,6 +25,13 @@
 	[h:ObjectData = json.remove(ObjectData,"isEffectRandom")]
 };{}]
 
+[h,if(json.get(ObjectData,"tempLightEffects")!=""),CODE:{
+	[h:ObjectEffects = json.get(ObjectData,"Effects")]
+	[h:ObjectEffects = json.merge(ObjectEffects,json.get(ObjectData,"tempLightEffects"))]
+	[h:ObjectData = json.set(ObjectData,"Effects",ObjectEffects)]
+	[h:ObjectEffects = json.remove(ObjectData,"tempLightEffects")]
+};{}]
+
 [h:ParentToken = json.get(macro.args,"ParentToken")]
 [h,if(ParentToken == ""),CODE:{
 	[h,if(newTemplateTest),CODE:{
@@ -34,10 +41,11 @@
 	[h:setLibProperty("sb.Objects",json.append(getLibProperty("sb.Objects","Lib:"+json.get(ObjectData,"Library")),ObjectData),"Lib:"+json.get(ObjectData,"Library"))]
 };{
 	[h:switchToken(ParentToken)]
-
-	[h:ItemID = eval("1d10000") + "a5e" + json.get(getInfo("client"),"timeInMs")]
-	[h:ObjectData = json.set(ObjectData,"ItemID",ItemID)]
-	[h:setProperty("a5e.stat.Inventory",json.append(getProperty("a5e.stat.Inventory"),ObjectData))]
+	[h,MACRO("AddItemProcessing@Lib:pm.a5e.Core"): json.set("",
+		"ParentToken",ParentToken,
+		"ItemChoice",ObjectData,
+		"NumberAdded",1
+	)]
 }]
 
 [h:broadcast("Object "+json.get(ObjectData,"DisplayName")+" created.")]

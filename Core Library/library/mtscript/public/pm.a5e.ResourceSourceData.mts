@@ -1,4 +1,4 @@
-[h:ResourceSource = arg(0)]
+[h:resourceSource = arg(0)]
 [h:resourceInfo = arg(1)]
 
 [h,switch(resourceSource),CODE:

@@ -4,7 +4,6 @@
 [h:IsTooltip = 0]
 
 [h:LightTypes = "[]"]
+[h:pm.PassiveFunction("Lights")]
 
-[h:pm.PassiveFunction("Light")]
-
-[h:return(0,FinalLightTypes)]
+[h:return(0,LightTypes)]

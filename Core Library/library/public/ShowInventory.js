@@ -90,7 +90,9 @@ async function createInventoryTable(){
 		}
 		if(debug){console.log("6");}
 	
-		if(typeof Item.Effects == "object" && isActive){
+		let useItemTest = (typeof Item.Effects == "object" && isActive);
+		let bypassActiveTest = (Item.EffectChoiceMethod == "ItemActivationState");
+		if(useItemTest || bypassActiveTest){
 			thisRowContextButtons = thisRowContextButtons + " <span id='UseTitle"+thisItemID+" title='Use Item'><button type='button' id='Use"+thisItemID+"' onclick='useItem("+'"'+thisItemID+'"'+")'><img src='lib://pm.a5e.core/InterfaceImages/Use.png'></button></span> ";
 		}
 		if(debug){console.log("7");}

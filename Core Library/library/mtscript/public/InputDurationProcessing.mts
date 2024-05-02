@@ -31,8 +31,8 @@
 	case "Until Dispelled":{
 		
 	};
-	case "Custom":{
-		[h:durationInfo = json.set("","Value",json.get(InputData,"custom"+Prefix+"Value"),"Units",json.get(InputData,"custom"+Prefix+"Units"))]
+	default:{
+		[h:durationInfo = json.set("","Value",json.get(InputData,"custom"+Prefix+"Value"),"Units",pm.StandardDuration(json.get(InputData,"custom"+Prefix+"Units")))]
 		[h:InputData = json.remove(InputData,"custom"+Prefix+"Value")]
 		[h:InputData = json.remove(InputData,"custom"+Prefix+"Units")]
 	}

@@ -42,7 +42,7 @@
 		[h:currentEffectData = "{}"]
 	}]
 
-	[h,switch(json.get(subeffectData,"EffectsChoiceMethod")),CODE:
+	[h,switch(json.get(subeffectData,"EffectChoiceMethod")),CODE:
 		case "Random":{
 
 		};

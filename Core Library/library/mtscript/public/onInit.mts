@@ -69,6 +69,7 @@
 [h:defineFunction("pm.a5e.Limbs","pm.a5e.Limbs@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.a5e.TokenActiveConditions","pm.a5e.TokenActiveConditions@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.a5e.Vision","pm.a5e.Vision@Lib:pm.a5e.Core")]
+[h:defineFunction("pm.a5e.Lights","pm.a5e.Lights@Lib:pm.a5e.Core")]
 
 [h:"<!-- Functions for Equipment -->"]
 [h:defineFunction("pm.a5e.CalculateShieldAC","pm.a5e.CalculateShieldAC@Lib:pm.a5e.Core")]
@@ -156,6 +157,7 @@
 [h:defineFunction("pass.a5e.MaxHPBonus","pass.a5e.MaxHPBonus@Lib:pm.a5e.Core",0,0)]
 [h:defineFunction("pass.a5e.VisionBonus","pass.a5e.VisionBonus@Lib:pm.a5e.Core",0,0)]
 [h:defineFunction("pass.a5e.Lights","pass.a5e.Lights@Lib:pm.a5e.Core",0,0)]
+[h:defineFunction("pass.a5e.ExecutePassiveLights","pass.a5e.ExecutePassiveLights@Lib:pm.a5e.Core",0,0)]
 [h:defineFunction("pass.a5e.LifespanBonus","pass.a5e.LifespanBonus@Lib:pm.a5e.Core",0,0)]
 [h:defineFunction("pass.a5e.AdjustProficiency","pass.a5e.AdjustProficiency@Lib:pm.a5e.Core",0,0)]
 [h:defineFunction("pass.a5e.d20AutoResult","pass.a5e.d20AutoResult@Lib:pm.a5e.Core",0,0)]

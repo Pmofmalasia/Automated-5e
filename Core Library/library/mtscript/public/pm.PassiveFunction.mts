@@ -55,7 +55,7 @@
 		case "OBJECT":{
 			[h:"<!-- TODO: Actually implement this generic passive function option -->"]
 			[h:passiveFeatureData = json.set(ability,"PassiveEffects",AbilityCallingInstanceValue)]
-			[h:pm.a5e.ExecutePassiveEffect(passiveFeatureData)]
+			[h:pm.a5e.ExecutePassiveEffect(passiveFeatureData,a5e.CallingInstance)]
 		}
 	]
 }]

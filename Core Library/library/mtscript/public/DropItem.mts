@@ -6,7 +6,8 @@
 [h:DropLocation = json.get(DropItemData,"Location")]
 [h:isLeaveToken = json.get(DropItemData,"LeaveToken")]
 
-[h:ItemData = json.path.read(getProperty("a5e.stat.Inventory"),"\$[*][?(@.ItemID == '"+DroppedItem+"')]")]
+[h:OldInventory = getProperty("a5e.stat.Inventory")]
+[h:ItemData = json.path.read(OldInventory,"\$[*][?(@.ItemID == '"+DroppedItem+"')]")]
 [h,if(json.isEmpty(ItemData)):
 	return(0);
 	ItemData = json.get(ItemData,0)
@@ -19,9 +20,10 @@
 ]
 [h:NewInventoryNumber = CurrentItemNumber - FinalDroppedNumber]
 [h,if(NewInventoryNumber == 0):
-	NewInventory = json.path.delete(getProperty("a5e.stat.Inventory"),"\$[*][?(@.ItemID == '"+DroppedItem+"')]");
-	NewInventory = json.path.set(getProperty("a5e.stat.Inventory"),"\$[*][?(@.ItemID == '"+DroppedItem+"')]['Number']",NewInventoryNumber)
+	NewInventory = json.path.delete(OldInventory,"\$[*][?(@.ItemID == '"+DroppedItem+"')]");
+	NewInventory = json.path.set(OldInventory,"\$[*][?(@.ItemID == '"+DroppedItem+"')]['Number']",NewInventoryNumber)
 ]
+[h:ItemData = json.set(ItemData,"Number",FinalDroppedNumber)]
 
 [h:ContainerID = json.get(ItemData,"StoredIn")]
 [h,if(ContainerID != ""),CODE:{
@@ -38,8 +40,22 @@
 	};{}]
 };{}]
 
+[h:thisContainerContents = json.get(ItemData,"Contents")]
+[h:thisItemIndex = json.indexOf(OldInventory,ItemData) + 1]
+[h:allDroppedItems = json.append("",ItemData)]
+[h,while(!json.isEmpty(thisContainerContents)),CODE:{
+	[h:thisInventoryItem = json.get(OldInventory,thisItemIndex)]
+	[h:lastContainerID = json.get(thisContainerContents,-1,-1)]
+	[h,while(json.get(thisInventoryItem,"ItemID") != lastContainerID),CODE:{
+		[h:allDroppedItems = json.append(allDroppedItems,thisInventoryItem)]
+		[h:NewInventory = json.path.delete(NewInventory,"\$[*][?(@.ItemID == '"+json.get(thisInventoryItem,"ItemID")+"')]")]
+		[h:thisItemIndex = thisItemIndex + 1]
+		[h:thisInventoryItem = json.get(OldInventory,thisItemIndex)]
+	}]
+	[h:thisContainerContents = json.get(thisInventoryItem,"Contents")]
+}]
+
 [h:setProperty("a5e.stat.Inventory",NewInventory)]
-[h:ItemData = json.set(ItemData,"Number",FinalDroppedNumber)]
 
 [h,if(getProperty("a5e.stat.EquippedArmor") == DroppedItem): setProperty("a5e.stat.EquippedArmor","")]
 [h:NewHeldItems = getProperty("a5e.stat.HeldItems")]
@@ -49,7 +65,7 @@
 [h:setProperty("a5e.stat.HeldItems",NewHeldItems)]
 
 [h,if(isLeaveToken),CODE:{
-	[h,MACRO("GenerateObjectToken@Lib:pm.a5e.Core"): json.set(ItemData,"Location",DropLocation)]
+	[h,MACRO("GenerateObjectToken@Lib:pm.a5e.Core"): json.set("","Items",allDroppedItems,"Location",DropLocation)]
 };{
 	[h:RestorationData = json.set("",
 		"ItemChoice",ItemData,

@@ -4,17 +4,22 @@
 [h:objectData = json.set(objectData,"Name",ObjectName)]
 [h:objectType = json.get(objectData,"Type")]
 [h:newTemplateTest = 0]
+[h:objectData = json.set(objectData,
+	"Class","Item",
+	"Subclass","",
+	"Level",0
+)]
 
-[h,if(json.contains(objectData,"isNewTemplate")),CODE:{
+[h,if(json.contains(objectData,"isNewTemplate"+objectType)),CODE:{
 	[h:newTemplateTest = 1]
-	[h:newTemplateDisplayName = json.get(objectData,"NewTypeName")]
+	[h:newTemplateDisplayName = json.get(objectData,"NewTypeName"+objectType)]
 	[h:newTemplateName = pm.RemoveSpecial(newTemplateDisplayName)]
 	[h:objectData = json.set(objectData,objectType+"Type",newTemplateName)]
-	[h:objectData = json.remove(objectData,"NewTypeName")]
-	[h:objectData = json.remove(objectData,"isNewTemplate")]
+	[h:objectData = json.remove(objectData,"NewTypeName"+objectType)]
+	[h:objectData = json.remove(objectData,"isNewTemplate"+objectType)]
 };{
-	[h,if(json.get(objectData,objectType+"Type")=="@@NewType"): objectData = json.set(objectData,objectType+"Type",pm.RemoveSpecial(json.get(objectData,"NewTypeName")))]
-	[h:objectData = json.remove(objectData,"NewTypeName")]
+	[h,if(json.get(objectData,objectType+"Type")=="@@NewType"): objectData = json.set(objectData,objectType+"Type",pm.RemoveSpecial(json.get(objectData,"NewTypeName"+objectType)))]
+	[h:objectData = json.remove(objectData,"NewTypeName"+objectType)]
 }]
 
 [h,if(objectType == "Wondrous"),CODE:{
@@ -32,6 +37,8 @@
 
 [h,if(json.contains(objectData,"isImprovisedWeapon")),CODE:{
 	[h:objectData = ct.a5e.WeaponDataProcessing(objectData)]
+	[h:objectData = json.set(objectData,"WeaponType","Improvised")]
+	[h:objectData = json.set(objectData,"WeaponClass","Improvised")]
 };{}]
 
 [h,if(objectType=="Ammunition"),CODE:{
@@ -166,11 +173,16 @@
 	]
 };{}]
 
+[h:objectData = json.set(objectData,"isMagical",json.contains(objectData,"isMagical"))]
+[h,if(json.get(objectData,"isMagical")),CODE:{
+	[h:objectData = json.set(objectData,"isCursed",json.contains(objectData,"isCursed"))]
+};{}]
+
 [h:lightData = "{}"]
-[h,if(objectType=="Light"),CODE:{
+[h,if(objectType=="LightSource"),CODE:{
 	[h:objectData = ct.a5e.LightDataProcessing(objectData,"Type")]
 	[h:lightData = json.get(objectData,"Light")]
-	[h:objectData = json.remove(lightData,"Light")]
+	[h:objectData = json.remove(objectData,"Light")]
 
 	[h,switch(json.get(objectData,"LightFuel")),CODE:
 		case "Oil":{
@@ -192,15 +204,20 @@
 	[h,MACRO("InputDurationProcessing@Lib:pm.a5e.Core"): json.set("","InputData",objectData,"Prefix","LightDuration")]
 	[h:lightDurationData = macro.return]
 	[h:objectData = json.get(lightDurationData,"OutputData")]
+	[h:lightDurationData = json.get(lightDurationData,"DurationInfo")]
 	[h:lightTimeResource = json.set("",json.get(lightDurationData,"Units"),json.get(lightDurationData,"Value"))]
 	[h:objectData = json.set(objectData,"TimeResourceMax",lightTimeResource,"TimeResource",lightTimeResource,"TimeResourceActive",0)]
 	[h:objectData = json.set(objectData,"CallLights",json.set("","Context","Lights","Effects",json.append("",lightData)))]
+	[h:objectData = json.set(objectData,"isPassiveFunction",1)]
 	[h:lightActivationEffect = json.set("",
+		"EffectDisplayName","Light "+json.get(objectData,"DisplayName"),
 		"UseTime",json.set("","Value",1,"Units","interaction"),
 		"Duration","{}",
 		"isConcentration",0,
+		"ValidActivationState",0,
 		"Subeffects",json.append("",json.set("",
 			"RangeType","Touch",
+			"isActivateItem","Activate",
 			"UseResource",json.set("",
 				"TimeResource",json.set("",
 					"isTimeActive",1,
@@ -214,7 +231,30 @@
 			)
 		))
 	)]
-	[h:lightDeactivationEffect = json.path.set(lightActivationEffect,"\$['Subeffects'][0]['UseResource']['TimeResource']['isTimeActive']",0)]
+	[h:lightDeactivationEffect = json.set("",
+		"EffectDisplayName","Extinguish "+json.get(objectData,"DisplayName"),
+		"UseTime",json.set("","Value",1,"Units","interaction"),
+		"Duration","{}",
+		"isConcentration",0,
+		"ValidActivationState",1,
+		"Subeffects",json.append("",json.set("",
+			"RangeType","Touch",
+			"isActivateItem","Deactivate",
+			"UseResource",json.set("",
+				"TimeResource",json.set("",
+					"isTimeActive",0,
+					"Resource",json.set("",
+						"Name",ObjectName,
+						"Class","Item",
+						"Subclass","",
+						"ResourceSource","Item"
+					)
+				)
+			)
+		))
+	)]
+
+	[h,if(!json.get(objectData,"isMagical")): objectData = json.set(objectData,"tempLightEffects",json.append("",lightActivationEffect,lightDeactivationEffect))]
 };{
 	[h:lightActivationEffect = ""]
 	[h:lightDeactivationEffect = ""]
@@ -238,11 +278,6 @@
 		[h:objectData = json.remove(objectData,"NewToolTypeDisplayName")]
 		[h:objectData = json.remove(objectData,"isNewToolSubtypeTemplate")]
 	}]
-};{}]
-
-[h:objectData = json.set(objectData,"isMagical",json.contains(objectData,"isMagical"))]
-[h,if(json.get(objectData,"isMagical")),CODE:{
-	[h:objectData = json.set(objectData,"isCursed",json.contains(objectData,"isCursed"))]
 };{}]
 
 [h,switch(json.get(objectData,"isAttunement")),CODE:
@@ -339,12 +374,17 @@
 		case "Both": objectData = json.set(objectData,"ActivationVerbalComponent",1,"ActivationSomaticComponent",1)
 	]
 	[h:objectData = json.remove(objectData,"ActivationComponents")]
-	
-	[h,if(lightActivationEffect != ""): objectData = json.set(objectData,"ActivationEffects",json.append("",lightActivationEffect))]
-	[h,if(lightDeactivationEffect != ""): objectData = json.set(objectData,"DeactivationEffects",json.append("",lightDeactivationEffect))]
+
+	[h,if(json.get(objectData,"isMagical")),CODE:{
+		[h:"<!-- TODO: Merge any already present activation effects here, if there's a light also. -->"]
+		[h,if(lightActivationEffect != ""): objectData = json.set(objectData,"ActivationEffects",json.append("",lightActivationEffect))]
+		[h,if(lightDeactivationEffect != ""): objectData = json.set(objectData,"DeactivationEffects",json.append("",lightDeactivationEffect))]
+	};{}]
 };{
-	[h,if(lightActivationEffect != ""): objectData = json.set(objectData,"ActivationEffects",json.append("",lightActivationEffect))]
-	[h,if(lightDeactivationEffect != ""): objectData = json.set(objectData,"DeactivationEffects",json.append("",lightDeactivationEffect))]
+	[h,if(json.get(objectData,"isMagical")),CODE:{
+		[h,if(lightActivationEffect != ""): objectData = json.set(objectData,"ActivationEffects",json.append("",lightActivationEffect))]
+		[h,if(lightDeactivationEffect != ""): objectData = json.set(objectData,"DeactivationEffects",json.append("",lightDeactivationEffect))]
+	};{}]
 }]
 
 [h,switch(json.get(objectData,"isCharges")),CODE:
@@ -552,8 +592,13 @@
 
 [h:"<!-- TODO: Make isWeaponEffect lead into creating a subeffect if present, for effects that specifically occur after weapon attacks. Route this to a key WeaponEffects, then change the result of HasActiveEffects back to the Effects key for weapons (for effects that can be activated independently of making attacks) -->"]
 [h:objectData = json.remove(objectData,"isWeaponEffect")]
-
 [h,if(!json.contains(objectData,"HasPassiveEffects") && !json.contains(objectData,"HasActiveEffects")),CODE:{
+	[h,if(json.get(objectData,"tempLightEffects")!=""),CODE:{
+		[h:objectData = json.set(objectData,"Effects",json.get(objectData,"tempLightEffects"))]
+		[h:objectData = json.set(objectData,"EffectChoiceMethod","ItemActivationState")]
+		[h:objectData = json.remove(objectData,"tempLightEffects")]
+	};{}]
+
 	[h,if(newTemplateTest),CODE:{
 		[h:setLibProperty("sb."+objectType+"Types",json.append(getLibProperty("sb."+objectType+"Types","Lib:"+json.get(objectData,"Library")),objectData),"Lib:"+json.get(objectData,"Library"))]
 	};{}]
@@ -561,12 +606,8 @@
 	[h:setLibProperty("sb.Objects",json.append(getLibProperty("sb.Objects","Lib:"+json.get(objectData,"Library")),objectData),"Lib:"+json.get(objectData,"Library"))]
 
 	[h:broadcast("Object "+json.get(objectData,"DisplayName")+" has been created.")]
+	[h,MACRO("Gather Sourcebook Information@Lib:pm.a5e.Core"):""]
 };{
-	[h:objectData = json.set(objectData,
-		"Class","Item",
-		"Subclass","",
-		"Level",0
-	)]
 	[h,if(json.contains(objectData,"HasPassiveEffects")),CODE:{
 		[h:objectData = json.remove(objectData,"HasPassiveEffects")]
 		[h:objectData = json.set(objectData,"isPassiveFunction",1)]
@@ -595,6 +636,10 @@
 			"EffectType","Object"
 		)]
 	};{
+		[h,if(json.get(objectData,"tempLightEffects")!=""): objectData = json.set(objectData,"Effects",json.get(objectData,"tempLightEffects"))]
+		[h,if(json.get(objectData,"tempLightEffects")!=""): objectData = json.set(objectData,"EffectChoiceMethod","ItemActivationState")]
+		[h:objectData = json.remove(objectData,"tempLightEffects")]
+
 		[h:"<!-- Copied here instead of just putting both after the if because eventually will need another solution once FeatureCore is made into a frame5 -->"]
 
 		[h,if(newTemplateTest): setLibProperty("sb."+objectType+"Types",json.append(getLibProperty("sb."+objectType+"Types","Lib:"+json.get(objectData,"Library")),objectData),"Lib:"+json.get(objectData,"Library"))]

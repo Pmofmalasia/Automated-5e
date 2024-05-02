@@ -17,3 +17,8 @@ input[type=submit].theme-fix-submit:disabled {
 	border-width: var(--mt-theme-color-disabled-border-size);
 	border-color: var(--mt-theme-color-disabled-border-color);
 }
+
+input[type=number].theme-fix-submit {
+	background-color: var(--mt-theme-color-text-input-background);
+	color: var(--mt-theme-color-text-input-foreground);
+}

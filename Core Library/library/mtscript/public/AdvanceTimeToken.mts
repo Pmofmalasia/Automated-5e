@@ -76,21 +76,26 @@
 	))]
 
 	[h:TimeResourcesExpired = "[]"]
-	[h:"<!-- Advance time from items with a TimeResource that is active -->"]
-	[h:TimeResourceInventory = json.path.read(getProperty("a5e.stat.Inventory"),"\$[*][?(@.TimeResource != null && @.TimeResourceActive != 0 && @.TimeResourceActive != null)]","DEFAULT_PATH_LEAF_TO_NULL")]
-	[h,foreach(item,TimeResourceInventory),CODE:{
-		[h:newDuration = pm.a5e.AdvanceTime(json.set(TimeAdvancedData,"Duration",json.get(item,"TimeResource")))]
+	[h:"<!-- Advance time from features with a TimeResource that is active -->"]
+	[h:TimeResourceFeatures = json.path.read(getProperty("a5e.stat.AllFeatures"),"\$[*][?(@.TimeResource != null && @.TimeResourceActive != 0 && @.TimeResourceActive != null)]","DEFAULT_PATH_LEAF_TO_NULL")]
+	[h,foreach(feature,TimeResourceFeatures),CODE:{
+		[h:newDuration = pm.a5e.AdvanceTime(json.set(TimeAdvancedData,"Duration",json.get(feature,"TimeResource")))]
 		[h:ExpiredTest = json.get(newDuration,"Expired") == 1]
-		[h,if(ExpiredTest): setProperty("a5e.stat.Inventory",json.path.set(getProperty("a5e.stat.Inventory"),"\$[*][?(@.ItemID=='"+json.get(item,"ItemID")+"')]['IsActive']",0))]
-		[h,if(ExpiredTest): TimeResourcesExpired = json.append(TimeResourcesExpired,item)]
+		[h:thisFeaturePath = pm.a5e.PathFeatureFilter(feature)]
+		[h:setProperty("a5e.stat.AllFeatures",json.path.set(getProperty("a5e.stat.AllFeatures"),"\$[*][?("+thisFeaturePath+")]['TimeResource']",newDuration))]
+		[h,if(ExpiredTest): setProperty("a5e.stat.AllFeatures",json.path.set(getProperty("a5e.stat.AllFeatures"),"\$[*][?("+thisFeaturePath+")]['TimeResourceActive']",0))]
+		[h,if(ExpiredTest): setProperty("a5e.stat.AllFeatures",json.path.set(getProperty("a5e.stat.AllFeatures"),"\$[*][?("+thisFeaturePath+")]['IsActive']",0))]
+		[h,if(ExpiredTest): TimeResourcesExpired = json.append(TimeResourcesExpired,feature)]
 	}]
 
 	[h:"<!-- Advance time from items with a TimeResource that is active -->"]
-	[h:TimeResourceFeature = json.path.read(getProperty("a5e.stat.AllFeatures"),"\$[*][?(@.TimeResource != null && @.TimeResourceActive != 0 && @.TimeResourceActive != null)]","DEFAULT_PATH_LEAF_TO_NULL")]
-	[h,foreach(feature,TimeResourceFeature),CODE:{
-		[h:newDuration = pm.a5e.AdvanceTime(json.set(TimeAdvancedData,"Duration",json.get(feature,"TimeResource")))]
+	[h:TimeResourceItem = json.path.read(getProperty("a5e.stat.Inventory"),"\$[*][?(@.TimeResource != null && @.TimeResourceActive != 0 && @.TimeResourceActive != null)]","DEFAULT_PATH_LEAF_TO_NULL")]
+	[h,foreach(item,TimeResourceItem),CODE:{
+		[h:newDuration = pm.a5e.AdvanceTime(json.set(TimeAdvancedData,"Duration",json.get(item,"TimeResource")))]
 		[h:ExpiredTest = json.get(newDuration,"Expired") == 1]
-		[h,if(ExpiredTest): setProperty("a5e.stat.AllFeatures",json.path.set(getProperty("a5e.stat.AllFeatures"),"\$[*][?(@.ItemID=='"+json.get(item,"ItemID")+"')]['IsActive']",0))]
+		[h:setProperty("a5e.stat.Inventory",json.path.set(getProperty("a5e.stat.Inventory"),"\$[*][?(@.ItemID=='"+json.get(item,"ItemID")+"')]['TimeResource']",newDuration))]
+		[h,if(ExpiredTest): setProperty("a5e.stat.Inventory",json.path.set(getProperty("a5e.stat.Inventory"),"\$[*][?(@.ItemID=='"+json.get(item,"ItemID")+"')]['TimeResourceActive']",0))]
+		[h,if(ExpiredTest): setProperty("a5e.stat.Inventory",json.path.set(getProperty("a5e.stat.Inventory"),"\$[*][?(@.ItemID=='"+json.get(item,"ItemID")+"')]['IsActive']",0))]
 		[h,if(ExpiredTest): TimeResourcesExpired = json.append(TimeResourcesExpired,item)]
 	}]
 

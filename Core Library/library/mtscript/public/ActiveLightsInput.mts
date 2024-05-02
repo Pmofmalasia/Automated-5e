@@ -32,8 +32,9 @@
 		lightAngle = "90";
 		lightAngle = ""
 	]
+
 	[h:lightTypeDisplay = lightDisplayName + ": " + lightDistanceDisplay + if(lightSecondaryDistance != "","/"+lightSecondaryDistanceDisplay,"") + " " + lightUnits + if(lightAngle != ""," Cone","")]
-	[h:lightName = lightType+lightDistance+if(lightAngle=="","","Angle"+lightAngle)]
+	[h:lightName = if(lightType=="BrightDim","Bright/Dim",lightType)+" - "+lightDistance+if(lightAngle=="","","Angle"+lightAngle)]
 
 	[h:"<!-- Need to look up and add syntax for secondary distance -->"]
 
@@ -41,26 +42,45 @@
 	[h:CoverableLightInput = listAppend(CoverableLightInput," choice"+roll.count+" | "+json.contains(ActiveLights,lightName)+" | "+lightTypeDisplay+" | CHECK "," ## ")]
 }]
 
-[h,if(CoverableLightInput != ""): CoverableLightInput = " junkVar | ------------ Available Coverable Lights ------------ |  | LABEL | SPAN=TRUE ## " + CoverableLightInput]
+[h,if(CoverableLightInput != ""): CoverableLightInput = " junkVar | ------ Available Coverable Lights ------ |  | LABEL | SPAN=TRUE ## " + CoverableLightInput]
 
 [h:PermanentLightInput = ""]
 [h:PermanentLightNames = "[]"]
 [h,foreach(light,PermanentLights),CODE:{
+	[h:lightDisplayName = json.get(light,"DisplayName")]
 	[h:lightType = json.get(light,"LightType")]
-	[h:lightDistance = json.get(light,"Distance")]
-	[h:lightAngle = json.get(light,"Angle")]
-	[h:lightTypeDisplay = ]
-	[h:lightName = lightType+lightDistance+if(lightAngle=="","","Angle"+lightAngle)]
+	[h:lightUnits = pm.StandardRange(json.get(light,"Units"))]
+	[h:lightDistanceDisplay = json.get(light,"Value")]
+	[h:lightSecondaryDistanceDisplay = json.get(light,"SecondaryValue")]
+
+	[h,if(lightUnits == "Miles"),CODE:{
+		[h:lightDistance = lightDistanceDisplay * 5280]
+		[h,if(lightSecondaryDistance != ""):
+			lightSecondaryDistance = lightSecondaryDistanceDisplay * 5280;
+			lightSecondaryDistance = ""
+		]
+	};{
+		[h:lightDistance = lightDistanceDisplay]
+		[h:lightSecondaryDistance = lightSecondaryDistanceDisplay]
+	}]
+
+	[h,if(json.contains(light,"isLightCone")):
+		lightAngle = "90";
+		lightAngle = ""
+	]
+
+	[h:lightTypeDisplay = lightDisplayName + ": " + lightDistanceDisplay + if(lightSecondaryDistance != "","/"+lightSecondaryDistanceDisplay,"") + " " + lightUnits + if(lightAngle != ""," Cone","")]
+	[h:lightName = if(lightType=="BrightDim","Bright/Dim",lightType)+" - "+lightDistance+if(lightAngle=="","","Angle"+lightAngle)]
 
 	[h:PermanentLightNames = json.append(PermanentLightNames,lightName)]
-	[h:PermanentLightInput = listAppend(" junkVar | "+lightTypeDisplay+" |  | LABEL | SPAN=TRUE "," ## ")]
+	[h:PermanentLightInput = listAppend(PermanentLightInput," junkVar | "+lightTypeDisplay+" |  | LABEL | SPAN=TRUE "," ## ")]
 }]
 
-[h,if(PermanentLightInput != ""): PermanentLightInput = " junkVar | ------------ Current Permanent Lights ------------ |  | LABEL | SPAN=TRUE ## " + PermanentLightInput]
+[h,if(PermanentLightInput != ""): PermanentLightInput = " junkVar | ------ Current Permanent Lights ------ |  | LABEL | SPAN=TRUE ## " + PermanentLightInput]
 
 [h,if(PermanentLightInput == ""),CODE:{
 	[h,if(CoverableLightInput == ""):
-		assert(0,"There are currently no lights active on this token!");
+		FinalLightInput = " junkVar | ------ No Active Lights ------ |  | LABEL | SPAN=TRUE";
 		FinalLightInput = CoverableLightInput
 	]
 };{

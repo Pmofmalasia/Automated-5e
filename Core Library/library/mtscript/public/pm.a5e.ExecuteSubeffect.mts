@@ -283,7 +283,7 @@
 	[h,switch(subeffect.ActivateItem):
 		case "Activate": finalActivationState = 1;
 		case "Deactivate": finalActivationState = 0;
-		case "Toggle": finalActivationState = json.contains(json.path.read(getProperty("a5e.stat.Inventory",ParentToken),"\$[*][?(@.ItemID == '"+subeffect.ItemID+"')]['IsActive']"),0);
+		case "Toggle": finalActivationState = json.get(json.path.read(getProperty("a5e.stat.Inventory",ParentToken),"\$[*][?(@.ItemID == '"+subeffect.ItemID+"')]['IsActive']"),0)
 	]
 
 	[h:setProperty("a5e.stat.Inventory",json.path.set(getProperty("a5e.stat.Inventory",ParentToken),"\$[*][?(@.ItemID == '"+subeffect.ItemID+"')]['IsActive']",finalActivationState),ParentToken)]

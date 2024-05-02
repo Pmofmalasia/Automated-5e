@@ -7,11 +7,7 @@
 [h,if(EffectsNumber==1),CODE:{
 	[h:ChosenEffect = json.get(ItemEffects,0)]
 };{
-	[h,if(json.get(UseItemData,"isEffectRandom")==1),CODE:{
-	};{
-	}]
-
-	[h,switch(json.get(subeffectData,"EffectsChoiceMethod")),CODE:
+	[h,switch(json.get(UseItemData,"EffectChoiceMethod")),CODE:
 		case "Random":{
 			[h:ChosenEffectIndex = eval("1d"+EffectsNumber) - 1]
 			[h:ChosenEffect = json.get(ItemEffects,ChosenEffectIndex)]
@@ -29,19 +25,21 @@
 
 		};
 		case "ItemActivationState":{
-			[h:ValidActivationState = json.get(subeffectData,"ValidActivationState")]
-			[h,if(ValidActivationState): ItemEffects = json.path.read(ItemEffects,"\$[*][?(@.ValidActivationState == '"+json.get(UseItemData,"IsActive")+"')]")]
+			[h:ItemEffects = json.path.read(ItemEffects,"\$[*][?(@.ValidActivationState == '"+json.get(UseItemData,"IsActive")+"')]")]
 		};
 		default: {}
 	]
 
-	[h,if(json.get(subeffectData,"EffectsChoiceMethod") != "Random"),CODE:{
+	[h,if(json.get(UseItemData,"EffectChoiceMethod") != "Random"),CODE:{
 		[h:EffectOptions = ""]
 		[h,foreach(tempEffect,ItemEffects): EffectOptions = json.append(EffectOptions,json.get(tempEffect,"DisplayName"))]
 		[h,if(EffectOptions == ""): assert(0,"There are no usable item effects!")]
-		[h:abort(input(
-			" ChosenEffectIndex | "+EffectOptions+" | Choose an Effect | LIST | DELIMITER=JSON "
-		))]
+		[h,if(json.length(EffectOptions) == 1):
+			ChosenEffectIndex = 0;
+			abort(input(
+				" ChosenEffectIndex | "+EffectOptions+" | Choose an Effect | LIST | DELIMITER=JSON "
+			))
+		]
 		[h:ChosenEffect = json.get(ItemEffects,ChosenEffectIndex)]
 	};{}]
 }]

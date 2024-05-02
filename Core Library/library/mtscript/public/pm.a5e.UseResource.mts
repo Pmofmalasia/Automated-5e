@@ -2,52 +2,6 @@
 [h:IsTooltip = arg(1)]
 [h:abilityTable = "[]"]
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-[h:"<!-- Need to add new resource types linked to features/etc, as well as how these things would be expended/restored/accessed/etc.
-
-Add an key to feature obj which is an array of all time resources currently active-->"]
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 [h:pm.FeatureResourceData = json.get(pm.ResourceInfo,"Feature")]
 [h:pm.FeatureBackupResourceData = json.get(pm.ResourceInfo,"FeatureBackup")]
 [h:pm.SpellSlotData = json.get(pm.ResourceInfo,"SpellSlots")]
@@ -110,7 +64,7 @@ Add an key to feature obj which is an array of all time resources currently acti
 [h:ResourceInfo = "[]"]
 [h:BackupResourceOptions = "[]"]
 [h:BackupResourceInfo = "[]"]
-[h:resourcesAsSpellSlot = json.path.read(getProperty("a5e.stat.AllFeatures"),"[*][?(@.ResourceAsSpellSlot==1)]")]
+[h:resourcesAsSpellSlot = json.path.read(getProperty("a5e.stat.AllFeatures"),"\$[*][?(@.ResourceAsSpellSlot==1)]")]
 
 [h,switch((pm.FeatureResource!="")+""+json.type(pm.FeatureResource)),CODE:
 	case "1UNKNOWN":{
@@ -480,12 +434,12 @@ Add an key to feature obj which is an array of all time resources currently acti
 	}
 ]
 
-[h:enoughResourceInfo = json.path.read(ResourceInfo,"[*][?(@.TempEnoughResource==1)]")]
-[h:enoughBackupResourceInfo = json.path.read(BackupResourceInfo,"[*][?(@.TempEnoughResource==1)]")]
-[h:ResourceOptions = json.path.read(enoughResourceInfo,"[*]['TempResourceDisplayName']")]
-[h:BackupResourceOptions = json.path.read(enoughBackupResourceInfo,"[*]['TempResourceDisplayName']")]
-[h:ResourceTypes = json.unique(json.path.read(enoughResourceInfo,"[*]['TempResourceType']"))]
-[h:BackupResourceTypes = json.unique(json.path.read(enoughBackupResourceInfo,"[*]['TempResourceType']"))]
+[h:enoughResourceInfo = json.path.read(ResourceInfo,"\$[*][?(@.TempEnoughResource==1)]")]
+[h:enoughBackupResourceInfo = json.path.read(BackupResourceInfo,"\$[*][?(@.TempEnoughResource==1)]")]
+[h:ResourceOptions = json.path.read(enoughResourceInfo,"\$[*]['TempResourceDisplayName']")]
+[h:BackupResourceOptions = json.path.read(enoughBackupResourceInfo,"\$[*]['TempResourceDisplayName']")]
+[h:ResourceTypes = json.unique(json.path.read(enoughResourceInfo,"\$[*]['TempResourceType']"))]
+[h:BackupResourceTypes = json.unique(json.path.read(enoughBackupResourceInfo,"\$[*]['TempResourceType']"))]
 
 [h:BackupResourceMax = -1]
 [h,if(json.contains(BackupResourceTypes,"HitDice")): BackupResourceMax = max(BackupResourceMax,pm.BackupHitDiceUsedMaxFinal)]
@@ -503,9 +457,9 @@ Add an key to feature obj which is an array of all time resources currently acti
 
 [h,if(IsTooltip && json.isEmpty(enoughResourceInfo) && !json.isEmpty(BackupResourceInfo)),CODE:{
 	[h:resourceToDisplay = ""]
-	[h,if(json.path.read(BackupResourceInfo,"[*][?(@.TempResourceType=='Spell Slots')]")!="[]"): resourceToDisplay = "Spell Slots"]
-	[h,if(json.path.read(BackupResourceInfo,"[*][?(@.TempResourceType=='Hit Dice')]")!="[]"): resourceToDisplay = "Hit Dice"]
-	[h,if(json.path.read(BackupResourceInfo,"[*][?(@.TempResourceType=='Feature')]")!="[]"): resourceToDisplay = "Feature"]
+	[h,if(json.path.read(BackupResourceInfo,"\$[*][?(@.TempResourceType=='Spell Slots')]")!="[]"): resourceToDisplay = "Spell Slots"]
+	[h,if(json.path.read(BackupResourceInfo,"\$[*][?(@.TempResourceType=='Hit Dice')]")!="[]"): resourceToDisplay = "Hit Dice"]
+	[h,if(json.path.read(BackupResourceInfo,"\$[*][?(@.TempResourceType=='Feature')]")!="[]"): resourceToDisplay = "Feature"]
 	
 	[h:featureBackupResourceTable = "[]"]
 	[h,foreach(resource,BackupResourceInfo),CODE:{
@@ -575,9 +529,9 @@ Add an key to feature obj which is an array of all time resources currently acti
 
 [h,if(IsTooltip),CODE:{
 	[h:resourceToDisplay = ""]
-	[h,if(json.path.read(ResourceInfo,"[*][?(@.TempResourceType=='Spell Slots')]")!="[]"): resourceToDisplay = "Spell Slots"]
-	[h,if(json.path.read(ResourceInfo,"[*][?(@.TempResourceType=='Hit Dice')]")!="[]"): resourceToDisplay = "Hit Dice"]
-	[h,if(json.path.read(ResourceInfo,"[*][?(@.TempResourceType=='Feature')]")!="[]"): resourceToDisplay = "Feature"]
+	[h,if(json.path.read(ResourceInfo,"\$[*][?(@.TempResourceType=='Spell Slots')]")!="[]"): resourceToDisplay = "Spell Slots"]
+	[h,if(json.path.read(ResourceInfo,"\$[*][?(@.TempResourceType=='Hit Dice')]")!="[]"): resourceToDisplay = "Hit Dice"]
+	[h,if(json.path.read(ResourceInfo,"\$[*][?(@.TempResourceType=='Feature')]")!="[]"): resourceToDisplay = "Feature"]
 	
 	[h:featureResourceTable = "[]"]
 	[h,foreach(resource,ResourceInfo),CODE:{
@@ -708,7 +662,14 @@ Add an key to feature obj which is an array of all time resources currently acti
 		}]
 	};
 	case "11":{
-		[h,if(json.isEmpty(BackupResourceInfo)): ResourceSelected = json.get(ResourceInfo,0); ResourceSelected = json.get(BackupResourceInfo,0)]
+		[h:noMainResourceTest = (json.isEmpty(BackupResourceInfo) && json.isEmpty(ResourceInfo))]
+		[h,if(noMainResourceTest),CODE:{
+			[h:"<!-- Most likely scenario for this route is if only a TimeResource is used - other possibilities may arise in the future. -->"]
+			[h:ResourceSelected = "{}"]
+		};{
+			[h,if(json.isEmpty(BackupResourceInfo)): ResourceSelected = json.get(ResourceInfo,0); ResourceSelected = json.get(BackupResourceInfo,0)]
+		}]
+
 	}
 ]
 
@@ -758,7 +719,7 @@ Add an key to feature obj which is an array of all time resources currently acti
 	case "FeatureSpell":{
 		[h,if(json.get(ResourceSelected,"TempResourceKey")==""),CODE:{
 			[h:ResourceAmount = max(json.get(ResourceSelected,"Resource") - 1,0)]
-			[h:setProperty("a5e.stat.AllFeatures",json.path.set(getProperty("a5e.stat.AllFeatures"),"[*][?(@.Name=='"+json.get(ResourceSelected,"Name")+"' && @.Class=='"+json.get(ResourceSelected,"Class")+"' && @.Subclass=='"+json.get(ResourceSelected,"Subclass")+"')]['Resource']",ResourceAmount))]
+			[h:setProperty("a5e.stat.AllFeatures",json.path.set(getProperty("a5e.stat.AllFeatures"),"\$[*][?(@.Name=='"+json.get(ResourceSelected,"Name")+"' && @.Class=='"+json.get(ResourceSelected,"Class")+"' && @.Subclass=='"+json.get(ResourceSelected,"Subclass")+"')]['Resource']",ResourceAmount))]
 
 			[h:abilityTable = json.append(abilityTable,json.set("",
 				"ShowIfCondensed",1,
@@ -778,7 +739,7 @@ Add an key to feature obj which is an array of all time resources currently acti
 			)]
 		};{
 			[h:ResourceAmount = max(json.get(json.get(ResourceSelected,"Resource"),json.get(ResourceSelected,"TempResourceKey")) - 1,0)]
-			[h:setProperty("a5e.stat.AllFeatures",json.path.set(getProperty("a5e.stat.AllFeatures"),"[*][?(@.Name=='"+json.get(ResourceSelected,"Name")+"' && @.Class=='"+json.get(ResourceSelected,"Class")+"' && @.Subclass=='"+json.get(ResourceSelected,"Subclass")+"')]['Resource']['"+json.get(ResourceSelected,"TempResourceKey")+"']",ResourceAmount))]
+			[h:setProperty("a5e.stat.AllFeatures",json.path.set(getProperty("a5e.stat.AllFeatures"),"\$[*][?(@.Name=='"+json.get(ResourceSelected,"Name")+"' && @.Class=='"+json.get(ResourceSelected,"Class")+"' && @.Subclass=='"+json.get(ResourceSelected,"Subclass")+"')]['Resource']['"+json.get(ResourceSelected,"TempResourceKey")+"']",ResourceAmount))]
 
 			[h:abilityTable = json.append(abilityTable,json.set("",
 				"ShowIfCondensed",1,
@@ -869,7 +830,8 @@ Add an key to feature obj which is an array of all time resources currently acti
 		"TimeResourceName",pm.RemoveSpecial(json.get(pm.TimeResourceData,"Name")),
 		"isTimeActive",isTimeActive
 	)]
-	[h:timeResourceSourceData = pm.a5e.ResourceSourceData(json.get(pm.TimeResourceData,"ResourceSource"),pm.TimeResourceData)]
+	[h:timeResourcePathData = json.get(pm.TimeResourceData,"Resource")]
+	[h:timeResourceSourceData = pm.a5e.ResourceSourceData(json.get(timeResourcePathData,"ResourceSource"),timeResourcePathData)]
 	[h:timeSourceProperty = json.get(timeResourceSourceData,"Property")]
 	[h:timeSourcePath = json.get(timeResourceSourceData,"Path")]
 	[h:updatedTimeResourceInfo = getProperty(timeSourceProperty)]

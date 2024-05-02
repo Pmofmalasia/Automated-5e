@@ -762,10 +762,13 @@ async function createCastSpellsRows(tableID){
 	}
 }
 
-function createImprovisedWeaponRows(tableID){
+async function createImprovisedWeaponRows(tableID){
 	if(document.getElementById("isImprovisedWeapon").checked){
-		createWeaponTableRows(tableID,"rowIsImprovisedWeapon");
-		document.getElementById("WeaponClass").value = "Improvised";
+		await createWeaponTableRows(tableID,"rowIsImprovisedWeapon");
+		document.getElementById("rowWeaponType").remove();
+		document.getElementById("rowNewTypeNameWeapon").remove();
+		document.getElementById("rowIsNewTemplateWeapon").remove();
+		document.getElementById("rowWeaponClass").remove();
 	}
 	else{
 		clearUnusedTable(tableID,"rowIsImprovisedWeapon","rowIsStackable");

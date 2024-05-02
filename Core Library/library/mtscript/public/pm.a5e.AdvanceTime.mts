@@ -4,7 +4,7 @@
 [h,if(ParentToken!=""): switchToken(ParentToken)]
 [h:currentDuration = json.get(arg(0),"Duration")]
 
-[h:currentRounds = (json.get(currentDuration,"year")*10*60*24*365)+(json.get(currentDuration,"day")*10*60*24)+(json.get(currentDuration,"hour")*10*60)+(json.get(currentDuration,"minute")*10)+json.get(currentDuration,"round")]
+[h:currentRounds = (number(json.get(currentDuration,"year"))*10*60*24*365)+(number(json.get(currentDuration,"day"))*10*60*24)+(number(json.get(currentDuration,"hour"))*10*60)+(number(json.get(currentDuration,"minute"))*10)+number(json.get(currentDuration,"round"))]
 
 [h,switch(timeAdvancedUnits):
   case "year": roundsAdvanced = timeAdvanced*10*60*24*365;

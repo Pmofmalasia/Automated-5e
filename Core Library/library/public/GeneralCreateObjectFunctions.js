@@ -1,8 +1,8 @@
 function createNewTemplateRows(tableID,nextRowIndex,ObjectType){
-	addTableRow(tableID,nextRowIndex,"rowNewTypeName","<th><label for='NewTypeName'>New "+ObjectType+" Type Name:</label></th><td><input type='text' id='NewTypeName' name='NewTypeName'></td>");
+	addTableRow(tableID,nextRowIndex,"rowNewTypeName"+ObjectType,"<th><label for='NewTypeName"+ObjectType+"'>New "+ObjectType+" Type Name:</label></th><td><input type='text' id='NewTypeName"+ObjectType+"' name='NewTypeName"+ObjectType+"'></td>");
 	nextRowIndex++;
 	
-	addTableRow(tableID,nextRowIndex,"rowIsNewTemplate","<th><label for='isNewTemplate'>Add New "+ObjectType+" as Template:</label></th><td><input type='checkbox' id='isNewTemplate' name='isNewTemplate' value=1></td>");
+	addTableRow(tableID,nextRowIndex,"rowIsNewTemplate"+ObjectType,"<th><label for='isNewTemplate"+ObjectType+"'>Add New "+ObjectType+" as Template:</label></th><td><input type='checkbox' id='isNewTemplate"+ObjectType+"' name='isNewTemplate"+ObjectType+"' value=1></td>");
 	nextRowIndex++;
 }
 

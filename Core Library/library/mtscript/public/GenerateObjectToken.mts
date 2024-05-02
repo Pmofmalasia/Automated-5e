@@ -1,5 +1,9 @@
 
-[h:objectData = macro.args]
+[h:GenerateObjectData = macro.args]
+[h:allObjectData = json.get(GenerateObjectData,"Items")]
+[h:NewObjectLocation = json.get(GenerateObjectData,"Location")]
+
+[h:objectData = json.get(allObjectData,0)]
 [h,if(json.get(objectData,"FalseName")==""),CODE:{
 	[h:NewObjectTokenName = json.get(objectData,"DisplayName")]
 	[h:NewObjectGMName = ""]
@@ -25,7 +29,6 @@
 	[h,if(NewObjectImage == ""): NewObjectImage = "asset://cae048d4f31ef38cac5ba0df1378c67d"]
 }]
 
-[h:NewObjectLocation = json.get(objectData,"Location")]
 [h:NewObjectXCoord = json.get(NewObjectLocation,"X")]
 [h:NewObjectYCoord = json.get(NewObjectLocation,"Y")]
 [h,if(NewObjectYCoord == "" || NewObjectXCoord == ""),CODE:{
@@ -48,7 +51,7 @@
 [h,if(NewObjectGMName != ""): setGMName(NewObjectGMName)]
 [h:setProperty("a5e.stat.Name",json.get(objectData,"Name"))]
 [h:setProperty("a5e.stat.ItemID",json.get(objectData,"ItemID"))]
-[h:setProperty("a5e.stat.Inventory",json.append("",objectData))]
+[h:setProperty("a5e.stat.Inventory",allObjectData)]
 
 [h:objectSize = json.get(objectData,"Size")]
 [h:setSize(objectSize)]

@@ -41,19 +41,13 @@
 };{}]
 
 [h:thisContainerContents = json.get(ItemData,"Contents")]
-[h:thisItemIndex = json.indexOf(OldInventory,ItemData) + 1]
 [h:allDroppedItems = json.append("",ItemData)]
-[h,while(!json.isEmpty(thisContainerContents)),CODE:{
-	[h:thisInventoryItem = json.get(OldInventory,thisItemIndex)]
-	[h:lastContainerID = json.get(thisContainerContents,-1,-1)]
-	[h,while(json.get(thisInventoryItem,"ItemID") != lastContainerID),CODE:{
-		[h:allDroppedItems = json.append(allDroppedItems,thisInventoryItem)]
-		[h:NewInventory = json.path.delete(NewInventory,"\$[*][?(@.ItemID == '"+json.get(thisInventoryItem,"ItemID")+"')]")]
-		[h:thisItemIndex = thisItemIndex + 1]
-		[h:thisInventoryItem = json.get(OldInventory,thisItemIndex)]
-	}]
-	[h:thisContainerContents = json.get(thisInventoryItem,"Contents")]
-}]
+[h,if(!json.isEmpty(thisContainerContents)),CODE:{
+	[h:startingIndex = json.indexOf(OldInventory,ItemData)]
+	[h:DroppedContainerData = pm.a5e.DropContainerContents(ItemData,startingIndex,NewInventory)]
+	[h:NewInventory = json.get(DroppedContainerData,"NewInventory")]
+	[h:allDroppedItems = json.merge(allDroppedItems,json.get(DroppedContainerData,"DroppedItems"))]
+};{}]
 
 [h:setProperty("a5e.stat.Inventory",NewInventory)]
 

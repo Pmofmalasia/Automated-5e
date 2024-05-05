@@ -48,80 +48,10 @@
 	[h:abilityTable = json.merge(abilityTable,json.get(subeffect.ResourceData,"Table"))]
 };{}]
 
-[h:"<!-- TODO:AoE Temporary while AOE is being fully implemented (in MT, not by me) -->"]
-[h,if(json.contains(SubeffectData,"AoE")),CODE:{
-	[h:subeffect.AoEData = json.get(SubeffectData,"AoE")]
-	[h,switch(json.get(subeffect.AoEData,"Shape")),CODE:
-		case "Cone":{
-			[h:temp.RangeBonus = json.get(subeffect.AoEData,"SizeValue")]
-		};
-		case "Cube":{
-			[h:temp.RangeBonus = json.get(subeffect.AoEData,"SizeValue")]
-		};
-		case "Cylinder":{
-			[h:temp.RangeBonus = max(json.get(subeffect.AoEData,"RadiusValue"),json.get(subeffect.AoEData,"HeightValue"))]
-		};
-		case "HalfSphere":{
-			[h:temp.RangeBonus = json.get(subeffect.AoEData,"SizeValue")]
-		};
-		case "Line":{
-			[h:temp.RangeBonus = max(json.get(subeffect.AoEData,"LengthValue"),json.get(subeffect.AoEData,"WidthValue"))]
-		};
-		case "Panels":{
-
-		};
-		case "Sphere":{
-			[h:temp.RangeBonus = json.get(subeffect.AoEData,"SizeValue")]
-		};
-		case "Wall":{
-			[h:temp.RangeBonus = max(json.get(subeffect.AoEData,"LengthValue"),json.get(subeffect.AoEData,"WidthValue"),json.get(subeffect.AoEData,"HeightValue"))]
-		};
-		default:{
-			[h:temp.RangeBonus = 0]
-		}
-	]
-};{
-	[h:temp.RangeBonus = 0]
-}]
-
-[h:subeffect.RangeData = json.get(SubeffectData,"Range")]
-[h:subeffect.RangeType = json.get(SubeffectData,"RangeType")]
-[h,if(subeffect.RangeType == "SelfRanged" || subeffect.RangeType == "Ranged"),CODE:{
-	[h,if(json.get(subeffect.RangeData,"AHLScaling")>0):
-		subeffect.AHLRange = json.get(subeffect.RangeData,"AHLValue") * floor(AHLTier / json.get(subeffect.RangeData,"AHLScaling"));
-		subeffect.AHLRange = 0
-	]
-	[h:subeffect.RangeData = json.set(subeffect.RangeData,"Value",json.get(subeffect.RangeData,"Value") + subeffect.AHLRange + temp.RangeBonus)]
-
-	[h,if(subeffect.RangeType == "SelfRanged"):
-		subeffect.RangeDisplay = "Self ("+json.get(subeffect.RangeData,"Value")+" "+json.get(subeffect.RangeData,"Units")+")";
-		subeffect.RangeDisplay = "Range "+json.get(subeffect.RangeData,"Value")+" "+json.get(subeffect.RangeData,"Units")
-	]
-};{
-	[h,if(subeffect.RangeType == "Touch"),CODE:{
-		[h:subeffect.RangeData = json.set(subeffect.RangeData,"Value",5 + temp.RangeBonus,"Units","Feet")]
-		[h:subeffect.RangeDisplay = "Touch"]
-	};{
-		[h:subeffect.RangeData = "{}"]
-		[h:subeffect.RangeDisplay = "Prior Target"]
-	}]
-
-	[h,if(subeffect.RangeType == "Self"),CODE:{
-		[h:subeffect.RangeData = json.set(subeffect.RangeData,"Value",0 + temp.RangeBonus,"Units","Feet")]
-		[h:subeffect.RangeDisplay = "Self"]
-	};{}]
-}]
-
-[h:"<!-- TODO: Add AOE display to this line. May need to rethink using subeffect.RangeData as the indicator for adding this line when done. -->"]
-[h,if(!json.isEmpty(subeffect.RangeData)): abilityTable = json.append(abilityTable,json.set("",
-	"ShowIfCondensed",0,
-	"Header","Range",
-	"FalseHeader","",
-	"FullContents","",
-	"RulesContents",subeffect.RangeDisplay,
-	"RollContents","",
-	"DisplayOrder","['Rules','Roll','Full']"
-))]
+[h:subeffect.RangeExecution = pm.a5e.ExecuteSubeffectRange(SubeffectData,AHLTier)]
+[h:subeffect.RangeData = json.get(subeffect.RangeExecution,"Data")]
+[h:rangeTableLine = json.get(subeffect.RangeExecution,"Table")]
+[h,if(rangeTableLine != ""): abilityTable = json.append(abilityTable,rangeTableLine)]
 
 [h,if(json.contains(SubeffectData,"isTargetNumberUnlimited")),CODE:{
 	[h:subeffect.TargetNumber = 99999999999]

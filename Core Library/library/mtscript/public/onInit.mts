@@ -73,6 +73,7 @@
 
 [h:"<!-- Functions for Equipment -->"]
 [h:defineFunction("pm.a5e.CalculateShieldAC","pm.a5e.CalculateShieldAC@Lib:pm.a5e.Core")]
+[h:defineFunction("pm.a5e.DropContainerContents","pm.a5e.DropContainerContents@Lib:pm.a5e.Core")]
 
 [h:"<!-- Functions for Abilities -->"]
 [h:defineFunction("ability.json.get","ability.json.get@Lib:pm.a5e.Core")]
@@ -280,6 +281,9 @@
 [h:defineFunction("pm.a5e.AttackRoll","pm.a5e.AttackRoll@Lib:pm.a5e.Core",0,0)]
 [h:defineFunction("pm.a5e.ExecuteSubeffect","pm.a5e.ExecuteSubeffect@Lib:pm.a5e.Core",0,0)]
 [h:defineFunction("pm.a5e.ExecuteSubeffectMissilesLoop","pm.a5e.ExecuteSubeffectMissilesLoop@Lib:pm.a5e.Core",0,0)]
+[h:defineFunction("pm.a5e.ExecuteSubeffectRange","pm.a5e.ExecuteSubeffectRange@Lib:pm.a5e.Core")]
+[h:defineFunction("pm.a5e.GenerateFeatureTooltip","pm.a5e.GenerateFeatureTooltip@Lib:pm.a5e.Core")]
+[h:defineFunction("pm.a5e.GenerateSubeffectTooltip","pm.a5e.GenerateSubeffectTooltip@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.a5e.ItemSpellcastingPrimeStat","pm.a5e.ItemSpellcastingPrimeStat@Lib:pm.a5e.Core",0,0)]
 
 [h:"<!-- Functions for Checks and Saves -->"]

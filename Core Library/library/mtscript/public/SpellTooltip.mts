@@ -29,51 +29,6 @@
 	"DisplayOrder","['Rules','Roll','Full']"
 ))]
 
-[h:UniqueCastTimes = json.unique(json.path.read(SpellData,"['Effects'][*]['UseTime']"))]
-[h:UniqueCastTimeStrings = "[]"]
-[h,foreach(tempTime,UniqueCastTimes): UniqueCastTimeStrings = json.append(UniqueCastTimeStrings,json.get(tempTime,"Value")+" "+json.get(tempTime,"Units")+if(json.get(tempTime,"Value")==1,"","s"))]
-[h:CastTimeDisplay = pm.a5e.CreateDisplayList(UniqueCastTimeStrings,"or")]
-[h:abilityTable = json.append(abilityTable,json.set("",
-	"ShowIfCondensed",1,
-	"Header","Casting Time",
-	"FalseHeader","",
-	"FullContents","",
-	"RulesContents",CastTimeDisplay,
-	"RollContents","",
-	"DisplayOrder","['Rules','Roll','Full']"
-))]
-
-[h:UniqueReactionDescriptions = json.unique(json.path.read(SpellData,"['Effects'][*]['ReactionDescription']"))]
-[h:UniqueReactionDescriptionStrings = "[]"]
-[h,foreach(tempTrigger,UniqueReactionDescriptions): UniqueReactionDescriptionStrings = json.append(UniqueReactionDescriptionStrings,base64.decode(tempTrigger))]
-[h:ReactionDescriptionDisplay = upper(pm.a5e.CreateDisplayList(UniqueReactionDescriptionStrings,"or"),1)]
-[h,if(ReactionDescriptionDisplay != ""): abilityTable = json.append(abilityTable,json.set("",
-	"ShowIfCondensed",1,
-	"Header","Reaction Trigger",
-	"FalseHeader","",
-	"FullContents","",
-	"RulesContents",ReactionDescriptionDisplay,
-	"RollContents","",
-	"DisplayOrder","['Rules','Roll','Full']"
-))]
-
-[h:isConcentrationTest = json.contains(json.path.read(SpellData,"['Effects'][*]['isConcentration']"),1)]
-[h:ConcentrationLost = json.path.read(SpellData,"['Effects'][*]['ConcentrationLost']")]
-[h,if(!json.isEmpty(ConcentrationLost)): 
-    ConcentrationLostString = ", no longer required at level "+json.get(ConcentrationLost,0);
-    ConcentrationLostString = ""
-]
-[h:abilityTable = json.append(abilityTable,json.set("",
-	"ShowIfCondensed",1,
-	"Header","Requires Concentration",
-	"FalseHeader","",
-	"FullContents","",
-	"RulesContents",if(isConcentrationTest,"Yes","No")+ConcentrationLostString,
-	"RollContents","",
-	"DisplayOrder","['Rules','Roll','Full']"
-))]
-
-
 [h:sComp = json.contains(SpellData,"sComp")]
 [h:vComp = json.contains(SpellData,"vComp")]
 [h:mComp = json.contains(SpellData,"mComp")]
@@ -117,20 +72,7 @@
 	"DisplayOrder","['Rules','Roll','Full']"
 ))]
 
-[h:UniqueDurations = json.unique(json.path.read(SpellData,"['Effects'][*]['Duration']"))]
-[h:UniqueDurationStrings = ""]
-[h,foreach(tempTime,UniqueDurations): UniqueDurationStrings = json.append(UniqueDurationStrings,if(json.isEmpty(tempTime),"Instantaneous",json.get(tempTime,"Value")+" "+json.get(tempTime,"Units")+if(json.get(tempTime,"Value")==1,"","s")))]
-[h:DurationDisplay = pm.a5e.CreateDisplayList(UniqueDurationStrings,"or")]
-
-[h:abilityTable = json.append(abilityTable,json.set("",
-	"ShowIfCondensed",1,
-	"Header","Duration",
-	"FalseHeader","",
-	"FullContents","",
-	"RulesContents",DurationDisplay,
-	"RollContents","",
-	"DisplayOrder","['Rules','Roll','Full']"
-))]
+[h:abilityTable = json.merge(abilityTable,pm.a5e.GenerateFeatureTooltip(SpellData,0))]
 
 [h:SpellDescription = base64.decode(json.get(SpellData,"Description"))]
 [h:SpellAHLDescription = base64.decode(json.get(SpellData,"AHLDescription"))]

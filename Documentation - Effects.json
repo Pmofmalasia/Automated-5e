@@ -29,7 +29,8 @@
 			"AutoCrit":"Bool; Does attack AutoCrit",
 			"AutoCritFail":"Bool; does attack auto fail",
 			"CritTest":"Bool; did attack crit",
-			"CritFailTest":"Bool; did attack crit fail"
+			"CritFailTest":"Bool; did attack crit fail",
+			"AdditionalAttackResolution":"Array of tokenIDs which need to resolve some sort of on hit/miss effect before the attack finishes"
 		},
 		"Damage":[{
 			"(Not a Key)":"Array of objects, each their own instance of damage.",
@@ -94,6 +95,84 @@
 			"ResourceName":"String; Name of resource",
 			"ResourceType":"String; Type of resource (e.g. Feature, SpellSlot, HitDie)",
 			"Used":"Number; Amount of resource used"
+		}
+	},
+	"WeaponData":{
+		"DisplayName": "String DisplayName of weapon (not including attack portion)",
+		"Name": "String Name of weapon (not including attack portion)",
+		"FalseName": "String FalseName of weapon (not including attack portion)",
+		"Type": "String type of item",
+		"WeaponType": "String type of weapon",
+		"WeaponClass": "String class of weapon (e.g. Simple, Martial, Improvised, etc.)",
+		"Hand": "Number; Hand in which weapon is held (index of hands array; -1 means natural weapon not held)",
+		"WeaponMeleeRanged": "String Melee/Ranged - inherent type of weapon, not the type of attack made (e.g. always Melee for a dagger, even if it is thrown)",
+		"ThrowWeapon": "Bool; If weapon is being thrown",
+		"MeleeRangedAttack": "String; Melee/Ranged - if attack itself is melee vs. ranged (e.g. thrown dagger = ranged)",
+		"Reach": "Number; value for reach in feet (melee)",
+		"Range": "Number; value for Range in feet (ranged)",
+		"LongRange": "Number; value for Long Range in feet (ranged with Disadvantage)",
+		"TwoWeaponFighting": "Bool; If Two-Weapon Fighting rules are being used",
+		"WeaponProperties": [
+			"Array of Strings; Name of properties on weapon (e.g. Finesse)"
+		],
+		"WeaponDamage": [
+			{
+				"(Not a Key)":"Array of objects, each their own instance of base weapon damage.",
+				"DamageType": "String; Damage type of this instance",
+				"DamageDieNumber": "Number; Base number of dice rolled",
+				"DamageDieSize": "Number; Base size of dice rolled",
+				"DamageFlatBonus": "Number; Base flat bonus to damage",
+				"IsModBonus": "Bool; if PrimeStat is added to damage"
+			}
+		],
+		"PrimeStat": "String of Name of primary stat for damage modifier",
+		"MagicBonus": "Number; value for bonus to attack roll and damage roll",
+		"CritThresh": "Number; Number over which a critical hit occurs",
+		"WeaponCritDiceMethod": "String; Add/Multiply - how to apply the number in the 'WeaponCritDice' key",
+		"WeaponCritDice": "Number; Additional dice to add/multiply on crit (based on above key)",
+		"Size": "String; Size of item",
+		"Rarity": "String; Rarity of item",
+		"Cost": "Number; Value for cost of item",
+		"CostUnits": "String; Type of currency 'Cost' key uses",
+		"Weight": "Number; Weight of item in pounds",
+		"isWearable": "Bool; If item can be worn outside of being held/donned (armor)",
+		"Coating": "String; Name of material coating the item",
+		"Integrity": "String; Resilient/Fragile",
+		"StateOfMatter": "String; Solid/Liquid/Gas/Plasma",
+		"Library": "String; Abbreviation of library containing item info",
+		"WeaponTags": [
+			"Array of Strings; Name of tags for weapon (no direct mechanical correlate to actual rules, but for marking things as Polearms, etc.)"
+		],
+		"isMagical": "Bool; If weapon is magical",
+		"Materials": [
+			"Array of Strings; Name of materials that make up weapon"
+		],
+		"MainMaterial": "Strings; Name of materials that makes up majority of weapon",
+		"isFlammable": "Bool; If weapon is flammable",
+		"isMagnetic": "Bool; If weapon is magnetic",
+		"isStackable": "Bool; If weapon stacks in inventory",
+		"isConsumable": "Bool; If weapon is consumed when used",
+		"ObjectTags": [
+			"Array of Strings; Name of tags for weapon (but more general tags that could apply to any object, weapon-specific above)"
+		],
+		"ObjectID": "String; Unique ID associated with Object",
+		"DonTime": {
+			"Value": "Number; Value for time to equip weapon",
+			"Units": "String; Units for time to equip weapon"
+		},
+		"DoffTime": {
+			"Value": "Number; Value for time to stow weapon",
+			"Units": "String; Units for time to stow weapon"
+		},
+		"DropTime": {
+			"Value": "Number; Value for time to drop weapon",
+			"Units": "String; Units for time to drop weapon"
+		},
+		"IsActive": "Bool; If weapon effects are active",
+		"ItemID": "String; Unique identifier of item (NOT shared among other objects that are the same)",
+		"Number": "Number; Number of items in stack",
+		"Location": {
+			"Token": "6E3DA1C530CC42A8AD0D9900FB187089"
 		}
 	}
 }

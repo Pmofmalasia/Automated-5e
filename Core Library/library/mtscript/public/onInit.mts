@@ -284,6 +284,9 @@
 [h:defineFunction("pm.a5e.ExecuteSubeffectRange","pm.a5e.ExecuteSubeffectRange@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.a5e.GenerateFeatureTooltip","pm.a5e.GenerateFeatureTooltip@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.a5e.GenerateSubeffectTooltip","pm.a5e.GenerateSubeffectTooltip@Lib:pm.a5e.Core")]
+[h:defineFunction("pm.a5e.CreatureFilteringDisplay","pm.a5e.CreatureFilteringDisplay@Lib:pm.a5e.Core")]
+[h:defineFunction("pm.a5e.ObjectFilteringDisplay","pm.a5e.ObjectFilteringDisplay@Lib:pm.a5e.Core")]
+[h:defineFunction("pm.a5e.TypeFilteringDisplay","pm.a5e.TypeFilteringDisplay@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.a5e.ItemSpellcastingPrimeStat","pm.a5e.ItemSpellcastingPrimeStat@Lib:pm.a5e.Core",0,0)]
 
 [h:"<!-- Functions for Checks and Saves -->"]

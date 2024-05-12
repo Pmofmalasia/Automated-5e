@@ -14,24 +14,26 @@
 
 [h,if(json.contains(SubeffectData,"Damage")),CODE:{
 	[h:allDamageData = json.get(SubeffectData,"Damage")]
-	[h:DamageTypeOptionNum = json.length(json.path.read(allDamageData,"[*][?(@.DamageTypeOptions != null)]","DEFAULT_PATH_LEAF_TO_NULL"))]
+	[h:DamageTypeOptionNum = json.length(json.path.read(allDamageData,"\$[*][?(@.DamageTypeOptions != null)]","DEFAULT_PATH_LEAF_TO_NULL"))]
 
 	[h,if(DamageTypeOptionNum>1):
 		DamageTypeSelectInput = "junkVar |  | --------------- Damage Type Options --------------- | LABEL | SPAN=TRUE ";
 		DamageTypeSelectInput = ""
 	]
 
+	[h:safeInstanceNumber = 0]
 	[h,foreach(tempDamageType,allDamageData),CODE:{
 		[h:thisInstanceDamageOptions = "[]"]
 		[h,foreach(tempDamageOption,json.get(tempDamageType,"DamageTypeOptions")): thisInstanceDamageOptions = json.append(thisInstanceDamageOptions,pm.GetDisplayName(tempDamageOption,"sb.DamageTypes"))]
-		[h,if(!json.isEmpty(thisInstanceDamageOptions)): DamageTypeSelectInput = listAppend(DamageTypeSelectInput," DamageTypeSelection"+roll.count+" | Choose a Damage Type | "+thisInstanceDamageOptions+" | LIST | DELIMITER=JSON VALUE=STRING "," ## ")]
+		[h,if(!json.isEmpty(thisInstanceDamageOptions)): DamageTypeSelectInput = listAppend(DamageTypeSelectInput," DamageTypeSelection"+safeInstanceNumber+" | "+thisInstanceDamageOptions+" | Choose a Damage Type | LIST | DELIMITER=JSON VALUE=STRING "," ## ")]
+		[h:safeInstanceNumber = safeInstanceNumber + 1]
 	}]
 
 	[h:abort(input(DamageTypeSelectInput))]
 
 	[h,foreach(tempDamageType,allDamageData),CODE:{
 		[h:typeOptionTest = json.contains(json.get(allDamageData,roll.count),"DamageTypeOptions")]
-		[h,if(typeOptionTest): allDamageData = json.path.set(allDamageData,"["+roll.count+"]['DamageType']",pm.RemoveSpecial(eval("DamageTypeSelection"+roll.count)))]
+		[h,if(typeOptionTest): allDamageData = json.path.put(allDamageData,"\$["+roll.count+"]","DamageType",pm.RemoveSpecial(eval("DamageTypeSelection"+roll.count)))]
 	}]
 }]
 
@@ -64,7 +66,6 @@
 	[h:"<!-- Note: May need to filter subeffect.ThisMissileTargets somehow to remove non-token options, as they will likely not play well with attacks. -->"]
 	[h:subeffect.RerollData = json.get(NonSubeffectData,"RerollData")]
 	[h,if(subeffect.RerollData == ""): subeffect.RerollData = "{}"]
-
 	[h:thisAttackData = json.merge(subeffect.RerollData,subeffect.AttackData)]
 	[h,if(json.length(subeffect.ThisMissileTargets)>1):
 		subeffect.AttackData = pm.a5e.AttackRoll(thisAttackData,SubeffectFunctionPrefixes);
@@ -73,9 +74,10 @@
 	[h:attack.CritTest = json.get(subeffect.AttackData,"CritTest")]
 	[h:attack.CritFailTest = json.get(subeffect.AttackData,"CritFailTest")]
 
-	[h:subeffect.AdvRerollLink = macroLinkText("AttackReroll@Lib:pm.a5e.Core","self-gm",subeffect.RerollData,ParentToken)]
-	[h:subeffect.DisRerollLink = macroLinkText("AttackReroll@Lib:pm.a5e.Core","self-gm",subeffect.RerollData,ParentToken)]
-[h:"<!-- TODO: Will need to reorganize reroll link positioning to collect all info -->"]
+[h:"<!-- TODO: Will need to reorganize reroll link positioning to collect all info, especially damage -->"]
+	[h:subeffect.AttackReroll = json.set(subeffect.AttackData,"TestType","Attack","Target",subeffect.ThisMissileTargets,"PreviousDamage","{}","AttackNum",-1,"ID",json.get(thisEffectData,"ID"),"ParentToken",ParentToken)]
+	[h:subeffect.AdvRerollLink = macroLinkText("Modifyd20TestBorder@Lib:pm.a5e.Core","self-gm",json.set(subeffect.AttackReroll,"RerollData",json.set("","Advantage",1,"Disadvantage",0,"ForcedAdvantage",1)),ParentToken)]
+	[h:subeffect.DisRerollLink = macroLinkText("Modifyd20TestBorder@Lib:pm.a5e.Core","self-gm",json.set(subeffect.AttackReroll,"RerollData",json.set("","Advantage",0,"Disadvantage",1,"ForcedAdvantage",1)),ParentToken)]
 
 	[h:ToHitTableLine = json.set("",
 		"ShowIfCondensed",1,
@@ -84,19 +86,21 @@
 		"FullContents","<span style='"+if(attack.CritTest,"font-size:2em; color:%{CritTextColor}",if(attack.CritFailTest,"font-size:2em; color:%{CritFailTextColor}","font-size:1.5em"))+"'>"+json.get(subeffect.AttackData,"Value")+"</span>",
 		"RulesContents",json.get(subeffect.AttackData,"FormulaPrefix")+json.get(subeffect.AttackData,"Formula")+" = ",
 		"RollContents",json.get(subeffect.AttackData,"FinalRoll")+json.get(subeffect.AttackData,"RollString")+" = ",
-		"DisplayOrder","['Rules','Roll','Full']"
+		"DisplayOrder","['Rules','Roll','Full']",
+		"BonusSectionNum",1,
+		"BonusSectionType1","Rules"
 	)]
 
 	[h,if(json.get(subeffect.AttackData,"AdvantageBalance")==0):
 		ToHitTableLine = json.set(ToHitTableLine,"BonusBody1","Reroll: <a href = '"+subeffect.AdvRerollLink+"'><span style = 'color:%{LinkTextColor}'>Adv.</span></a> / <a href = '"+subeffect.DisRerollLink+"'><span style = 'color:%{LinkTextColor}'>Dis.</span></a>");
-		ToHitTableLine = json.set(ToHitTableLine,"BonusBody1","(Roll #1: "+(roll1+thisAttackToHit-if(thisAttackAdvDis==1,max(roll1,roll2),min(roll1,roll2)))+" / Roll #2: "+(roll2+thisAttackToHit-if(thisAttackAdvDis==1,max(roll1,roll2),min(roll1,roll2)))+")")
+		ToHitTableLine = json.set(ToHitTableLine,"BonusBody1","(Roll #1: "+(roll1+json.get(subeffect.AttackData,"Value")-if(json.get(subeffect.AttackData,"AdvantageBalance")==1,max(roll1,roll2),min(roll1,roll2)))+" / Roll #2: "+(roll2+json.get(subeffect.AttackData,"Value")-if(json.get(subeffect.AttackData,"AdvantageBalance")==1,max(roll1,roll2),min(roll1,roll2)))+")")
 	]
 	
 	[h:abilityTable = json.append(abilityTable,ToHitTableLine)]
 	[h:thisEffectData = json.set(thisEffectData,"Attack",subeffect.AttackData)]
 };{
 	[h,if(UseParentCrit),CODE:{
-		[h:attack.CritTest = json.path.read(subeffect.ParentEffectData,"['Attack']['CritTest']")]
+		[h:attack.CritTest = json.path.read(subeffect.ParentEffectData,"\$['Attack']['CritTest']")]
 		[h:thisEffectData = json.set(thisEffectData,"ParentCrit",attack.CritTest)]
 	};{
 		[h:attack.CritTest = 0]
@@ -187,14 +191,14 @@
 	}]
 
 	[h:subeffect.Conditions = pm.a5e.ChooseCondition(json.get(tempConditionInfo,"Conditions"),subeffect.ConditionChoiceNumber)]
-	[h:subeffect.Conditions = json.path.set(subeffect.Conditions,"[*][?(@.HasTiers == 1)]['Level']",AHLTier + 1)]
+	[h:subeffect.Conditions = json.path.set(subeffect.Conditions,"\$[*][?(@.HasTiers == 1)]['Level']",AHLTier + 1)]
 
 	[h:subeffect.ConditionEndInfo = json.get(tempConditionInfo,"EndInfo")]
 	[h,if(json.get(subeffect.ConditionEndInfo,"UseMainDuration") == 1): subeffect.ConditionEndInfo = json.set(subeffect.ConditionEndInfo,"Duration",DurationValue,"DurationUnits",lower(DurationUnits))]
 	[h:subeffect.ConditionEndInfo = json.remove(subeffect.ConditionEndInfo,"UseMainDuration")]
 
 	[h:"<!-- TODO: Should make sure that the following path is always null if there are no EndTriggers with a save - need to see if this is due to messy data or flaws in json.path -->"]
-	[h:hasSaveDCTest = json.path.read(subeffect.ConditionEndInfo,"[*][?(@.EndTriggers.*.SaveType!=null && @.EndTriggers.*.SaveType!='')]","DEFAULT_PATH_LEAF_TO_NULL")]
+	[h:hasSaveDCTest = json.path.read(subeffect.ConditionEndInfo,"\$[*][?(@.EndTriggers.*.SaveType!=null && @.EndTriggers.*.SaveType!='')]","DEFAULT_PATH_LEAF_TO_NULL")]
 	[h:hasSaveDCTest = json.difference(hasSaveDCTest,json.append("","{}"))]
 	[h:hasSaveDCTest = !json.isEmpty(hasSaveDCTest)]
 
@@ -203,7 +207,7 @@
 		[h:pm.PassiveFunction("SpellSaveDC")]
 	};{}]
 	
-	[h,if(hasSaveDCTest): subeffect.ConditionEndInfo = json.path.put(subeffect.ConditionEndInfo,"['EndTriggers'][*][?(@.SaveType!=null)]","DC",subeffect.SaveDC)]
+	[h,if(hasSaveDCTest): subeffect.ConditionEndInfo = json.path.put(subeffect.ConditionEndInfo,"\$['EndTriggers'][*][?(@.SaveType!=null)]","DC",subeffect.SaveDC)]
 
 	[h:"<!-- TODO: Fix to allow selection of AdvancePoint manually; Temporary solution for now -->"]
 	[h,if(json.get(subeffect.ConditionEndInfo,"DurationUnits")=="round"):
@@ -216,7 +220,7 @@
 
 	[h:thisEffectData = json.set(thisEffectData,"ConditionInfo",json.set("","Conditions",subeffect.Conditions,"EndInfo",subeffect.ConditionEndInfo,"Aura",subeffect.AuraInfo))]
 
-	[h:subeffect.ConditionNames = pm.a5e.CreateDisplayList(json.path.read(subeffect.Conditions,"[*]['DisplayName']"),"and")]
+	[h:subeffect.ConditionNames = pm.a5e.CreateDisplayList(json.path.read(subeffect.Conditions,"\$[*]['DisplayName']"),"and")]
 	[h:abilityTable = json.append(abilityTable,json.set("",
 		"ShowIfCondensed",1,
 		"Header","Conditions Applied",

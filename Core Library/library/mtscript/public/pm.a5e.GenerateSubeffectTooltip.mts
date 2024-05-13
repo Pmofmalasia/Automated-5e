@@ -68,10 +68,43 @@
 	
 };{}]
 
-[h,if(json.contains(SubeffectData,"Damage")),CODE:{
-	[h,foreach(damageInstance,json.contains(SubeffectData,"Damage")),CODE:{
-		
+[h,foreach(damageInstance,json.get(SubeffectData,"Damage")),CODE:{
+	[h,if(json.get(damageInstance,"DamageTypeOptions") != ""),CODE:{
+		[h:damageOptionsDisplayNames = "[]"]
+		[h,foreach(damageType,json.get(damageInstance,"DamageTypeOptions")): damageOptionsDisplayNames = json.append(damageOptionsDisplayNames,pm.GetDisplayName(damageType,"DamageTypes"))]
+		[h:damageTypeOptionsDisplay = "; choice of "+pm.a5e.CreateDisplayList(damageOptionsDisplayNames,"or")+ "damage"]
+		[h:damageLineHeader = "Damage"]
+	};{
+		[h:damageType = json.get(damageInstance,"DamageType")]
+		[h:damageLineHeader = pm.GetDisplayName(damageType,"DamageTypes") + if(or(damageType == "Healing",damageType=="TempHP"),""," Damage")]
+		[h:damageTypeOptionsDisplay = ""]
 	}]
-};{}]
+
+	[h,if(json.contains(damageInstance,"PriorDamagePercent")),CODE:{
+		[h:damagePercent = json.get(damageInstance,"PriorDamagePercent")]
+			
+		[h,switch(damagePercent):
+			case 1: damageFormula = "Equal to Prior Damage";
+			case 0: damageFormula = "";
+			case "0.5": damageFormula = "Half of Prior Damage";
+			case "0.25": damageFormula = "Quarter of Prior Damage";
+			default: damageFormula = (damagePercent * 100)+"% of Prior Damage"
+		]
+	};{
+		[h:damageFormula = json.get(damageInstance,"DieNum") + "d" + json.get(damageInstance,"DieSize") + pm.PlusMinus(number(json.get(damageInstance,"FlatBonus")),0) + if(json.get(damageInstance,"IsModBonus") == 1," + Modifier","")]
+	}]
+
+	[h:damageDisplayFinal = damageFormula + damageTypeOptionsDisplay]
+
+	[h:abilityTable = json.append(abilityTable,json.set("",
+		"ShowIfCondensed",1,
+		"Header",damageLineHeader,
+		"FalseHeader","",
+		"FullContents","",
+		"RulesContents",damageDisplayFinal,
+		"RollContents","",
+		"DisplayOrder","['Rules','Roll','Full']"
+	))]
+}]
 
 [h:return(0,abilityTable)]

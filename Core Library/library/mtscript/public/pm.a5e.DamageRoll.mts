@@ -85,7 +85,7 @@
 	[h:damage.PriorCritPercentBonus = floor(damage.PriorPercent * damage.ParentCritDamage)]
 
 	[h,switch(damage.PriorPercent):
-		case 1: damage.PriorPercentRules = "Prior Damage";
+		case 1: damage.PriorPercentRules = "Equal to Prior Damage";
 		case 0: damage.PriorPercentRules = "";
 		case "0.5": damage.PriorPercentRules = "Half of Prior Damage";
 		case "0.25": damage.PriorPercentRules = "Quarter of Prior Damage";

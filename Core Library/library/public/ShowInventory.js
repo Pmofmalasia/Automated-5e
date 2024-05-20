@@ -473,6 +473,13 @@ async function castSpell(ItemID){
 	let resultingInventory = await request.json();
 }
 
+async function showRules(ItemID){
+	let thisItemData = getItemData(ItemID);
+	thisItemData.ParentToken = ParentToken;
+
+	await fetch("macro:FeatureTooltipBorder@Lib:pm.a5e.Core",{method: "POST", body: JSON.stringify(thisItemData)});
+}
+
 function getItemData(ItemID){
 	let itemData = Inventory.filter(function(Inventory){
 		return Inventory.ItemID == ItemID;

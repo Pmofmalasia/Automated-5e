@@ -6,22 +6,18 @@
 [h:DropLocation = json.get(DropItemData,"Location")]
 [h:isLeaveToken = json.get(DropItemData,"LeaveToken")]
 
-[h:OldInventory = getProperty("a5e.stat.Inventory")]
-[h:ItemData = json.path.read(OldInventory,"\$[*][?(@.ItemID == '"+DroppedItem+"')]")]
+[h:NewInventory = getProperty("a5e.stat.Inventory")]
+[h:ItemData = json.path.read(NewInventory,"\$[*][?(@.ItemID == '"+DroppedItem+"')]")]
 [h,if(json.isEmpty(ItemData)):
 	return(0);
 	ItemData = json.get(ItemData,0)
 ]
 
+[h:OldItemData = ItemData]
 [h:CurrentItemNumber = json.get(ItemData,"Number")]
 [h,if(DroppedNumber > CurrentItemNumber):
 	FinalDroppedNumber = CurrentItemNumber;
 	FinalDroppedNumber = DroppedNumber
-]
-[h:NewInventoryNumber = CurrentItemNumber - FinalDroppedNumber]
-[h,if(NewInventoryNumber == 0):
-	NewInventory = json.path.delete(OldInventory,"\$[*][?(@.ItemID == '"+DroppedItem+"')]");
-	NewInventory = json.path.set(OldInventory,"\$[*][?(@.ItemID == '"+DroppedItem+"')]['Number']",NewInventoryNumber)
 ]
 [h:ItemData = json.set(ItemData,"Number",FinalDroppedNumber)]
 
@@ -42,13 +38,19 @@
 
 [h:thisContainerContents = json.get(ItemData,"Contents")]
 [h:allDroppedItems = json.append("",ItemData)]
+[h:allDroppedItemIDs = "[]"]
 [h,if(!json.isEmpty(thisContainerContents)),CODE:{
-	[h:startingIndex = json.indexOf(OldInventory,ItemData)]
-	[h:DroppedContainerData = pm.a5e.DropContainerContents(ItemData,startingIndex,NewInventory)]
-	[h:NewInventory = json.get(DroppedContainerData,"NewInventory")]
-	[h:allDroppedItems = json.merge(allDroppedItems,json.get(DroppedContainerData,"DroppedItems"))]
+	[h:DroppedContainerData = pm.a5e.GetContainerContents(OldItemData,NewInventory)]
+	[h:allDroppedItems = json.merge(allDroppedItems,json.get(DroppedContainerData,"Items"))]
+	[h:allDroppedItemIDs = json.merge(allDroppedItemIDs,json.get(DroppedContainerData,"ItemIDs"))]
 };{}]
 
+[h:NewInventoryNumber = CurrentItemNumber - FinalDroppedNumber]
+[h,if(NewInventoryNumber == 0):
+	NewInventory = json.path.delete(NewInventory,"\$[*][?(@.ItemID == '"+DroppedItem+"')]");
+	NewInventory = json.path.set(NewInventory,"\$[*][?(@.ItemID == '"+DroppedItem+"')]['Number']",NewInventoryNumber)
+]
+[h:NewInventory = json.path.delete(NewInventory,"\$[*][?(@.ItemID in "+allDroppedItemIDs+")]")]
 [h:setProperty("a5e.stat.Inventory",NewInventory)]
 
 [h,if(getProperty("a5e.stat.EquippedArmor") == DroppedItem): setProperty("a5e.stat.EquippedArmor","")]
@@ -61,14 +63,19 @@
 [h,if(isLeaveToken),CODE:{
 	[h,MACRO("GenerateObjectToken@Lib:pm.a5e.Core"): json.set("","Items",allDroppedItems,"Location",DropLocation)]
 };{
-	[h:RestorationData = json.set("",
-		"ItemChoice",ItemData,
-		"NumberAdded",json.get(ItemData,"Number"),
-		"ParentToken",ParentToken
-	)]
-
-	[h:restoreItemLink = macroLinkText("AddItemProcessing@Lib:pm.a5e.Core","gm",RestorationData,ParentToken)]
-	[h:broadcast("<a href='"+restoreItemLink+"'>Return Item to "+getName(ParentToken)+"?</a>","gm")]
+	[h:isFromObjectToken = and(getPropertyType() == "A5EObject",getProperty("a5e.stat.ItemID") == DroppedItem)]
+	[h,if(isFromObjectToken),CODE:{
+		[h:RemoveObjectOnMapTest = and(NewInventoryNumber == 0,isFromObjectToken)]
+		[h,if(RemoveObjectOnMapTest): removeToken(ParentToken)]
+	};{
+		[h:RestorationData = json.set("",
+			"Item",allDroppedItems,
+			"Number",json.get(ItemData,"Number"),
+			"GiveTo",ParentToken
+		)]
+		[h:restoreItemLink = macroLinkText("TradeItem@Lib:pm.a5e.Core","gm",RestorationData,ParentToken)]
+		[h:broadcast("<a href='"+restoreItemLink+"'>Return Item to "+getName(ParentToken)+"?</a>","gm")]		
+	}]
 }]
 
-[h:macro.return = json.set("","ItemID",DroppedItem,"ItemRemaining",NewInventoryNumber)]
+[h:return(0,json.set("","Item",ItemData,"ItemRemaining",NewInventoryNumber))]

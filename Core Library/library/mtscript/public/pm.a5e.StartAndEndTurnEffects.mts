@@ -12,19 +12,19 @@
 
 [h:pm.PassiveFunction(StartorEnd+"Turn")]
 
-[h:validAbilities = json.path.read(getProperty("a5e.stat.AllFeatures"),"[*][?(@.Duration.AdvancePoint=='"+StartorEnd+"ofTurn')]")]
-[h,foreach(ability,validAbilities): setProperty("a5e.stat.AllFeatures",json.path.set(getProperty("a5e.stat.AllFeatures"),"[*][?(@.Name=='"+json.get(ability,"Name")+"' && @.Class=='"+json.get(ability,"Class")+"' && @.Subclass=='"+json.get(ability,"Subclass")+"')]['Duration']",pm.a5e.AdvanceTime(json.set("","Duration",json.get(ability,"Duration"),"Time",1,"TimeUnits","round","ParentToken",ParentToken))))]
+[h:validAbilities = json.path.read(getProperty("a5e.stat.AllFeatures"),"\$[*][?(@.Duration.AdvancePoint=='"+StartorEnd+"ofTurn')]")]
+[h,foreach(ability,validAbilities): setProperty("a5e.stat.AllFeatures",json.path.set(getProperty("a5e.stat.AllFeatures"),"\$[*][?(@.Name=='"+json.get(ability,"Name")+"' && @.Class=='"+json.get(ability,"Class")+"' && @.Subclass=='"+json.get(ability,"Subclass")+"')]['Duration']",pm.a5e.AdvanceTime(json.set("","Duration",json.get(ability,"Duration"),"Time",1,"TimeUnits","round","ParentToken",ParentToken))))]
 
-[h:validConditions = json.path.read(getProperty("a5e.stat.ConditionGroups"),"[*][?(@.Duration.AdvancePoint=='"+StartorEnd+"ofTurn')]")]
+[h:validConditions = json.path.read(getProperty("a5e.stat.ConditionGroups"),"\$[*][?(@.Duration.AdvancePoint=='"+StartorEnd+"ofTurn')]")]
 [h,foreach(condition,validConditions),CODE:{
 	[h:newDuration = pm.a5e.AdvanceTime(json.set("","Duration",json.get(condition,"Duration"),"Time",1,"TimeUnits","round","ParentToken",ParentToken))]
-	[h:setProperty("a5e.stat.ConditionGroups",json.path.set(getProperty("a5e.stat.ConditionGroups"),"[*][?(@.GroupID=='"+json.get(condition,"GroupID")+"')]['Duration']",newDuration))]
-	[h:setProperty("a5e.stat.ConditionList",json.path.set(getProperty("a5e.stat.ConditionList"),"[*][?(@.GroupID=='"+json.get(condition,"GroupID")+"')]['Duration']",newDuration))]
+	[h:setProperty("a5e.stat.ConditionGroups",json.path.set(getProperty("a5e.stat.ConditionGroups"),"\$[*][?(@.GroupID=='"+json.get(condition,"GroupID")+"')]['Duration']",newDuration))]
+	[h:setProperty("a5e.stat.ConditionList",json.path.set(getProperty("a5e.stat.ConditionList"),"\$[*][?(@.GroupID=='"+json.get(condition,"GroupID")+"')]['Duration']",newDuration))]
 }]
 
-[h:pm.ConditionsExpired = json.unique(json.path.read(getProperty("a5e.stat.ConditionList"),"[*][?(@.Duration.Expired==1)]['GroupID']"))]
-[h:validConditionEndTriggers = json.path.read(getProperty("a5e.stat.ConditionGroups"),"[*][?(@.EndTriggers!='')]","DEFAULT_PATH_LEAF_TO_NULL")]
-[h:validConditionEndTriggers = json.path.read(validConditionEndTriggers,"[*][?(@.EndTriggers."+StartorEnd+"Turn!=null)]","DEFAULT_PATH_LEAF_TO_NULL")]
+[h:pm.ConditionsExpired = json.unique(json.path.read(getProperty("a5e.stat.ConditionList"),"\$[*][?(@.Duration.Expired==1)]['GroupID']"))]
+[h:validConditionEndTriggers = json.path.read(getProperty("a5e.stat.ConditionGroups"),"\$[*][?(@.EndTriggers!='')]","DEFAULT_PATH_LEAF_TO_NULL")]
+[h:validConditionEndTriggers = json.path.read(validConditionEndTriggers,"\$[*][?(@.EndTriggers."+StartorEnd+"Turn!=null)]","DEFAULT_PATH_LEAF_TO_NULL")]
 
 [h,foreach(tempConditionGroup,validConditionEndTriggers),CODE:{
 	[h:tempEndTriggers = json.get(json.get(tempConditionGroup,"EndTriggers"),StartorEnd+"Turn")]
@@ -55,15 +55,15 @@
 }]
 
 [h:targetsAffected = ""]
-[h:validConditionsSet = json.path.read(getProperty("a5e.stat.ConditionsSet"),"[*][?(@.Duration.AdvancePoint=='"+StartorEnd+"ofSetByTurn')]")]
+[h:validConditionsSet = json.path.read(getProperty("a5e.stat.ConditionsSet"),"\$[*][?(@.Duration.AdvancePoint=='"+StartorEnd+"ofSetByTurn')]")]
 [h,foreach(condition,validConditionsSet),CODE:{
 	[h:newDuration = pm.a5e.AdvanceTime(json.set("","Duration",json.get(condition,"Duration"),"Time",1,"TimeUnits","round","ParentToken",ParentToken))]
 	[h:thisGroupID = json.get(condition,"GroupID")]
-	[h:setProperty("a5e.stat.ConditionsSet",json.path.set(getProperty("a5e.stat.ConditionsSet"),"[*][?(@.GroupID=='"+thisGroupID+"')]['Duration']",newDuration))]
+	[h:setProperty("a5e.stat.ConditionsSet",json.path.set(getProperty("a5e.stat.ConditionsSet"),"\$[*][?(@.GroupID=='"+thisGroupID+"')]['Duration']",newDuration))]
 	[h,foreach(target,json.get(condition,"Targets")),CODE:{
 		[h:switchToken(target)]
-		[h:setProperty("a5e.stat.ConditionGroups",json.path.set(getProperty("a5e.stat.ConditionGroups"),"[*][?(@.GroupID=='"+thisGroupID+"')]['Duration']",newDuration))]
-		[h:setProperty("a5e.stat.ConditionList",json.path.set(getProperty("a5e.stat.ConditionList"),"[*][?(@.GroupID=='"+thisGroupID+"')]['Duration']",newDuration))]
+		[h:setProperty("a5e.stat.ConditionGroups",json.path.set(getProperty("a5e.stat.ConditionGroups"),"\$[*][?(@.GroupID=='"+thisGroupID+"')]['Duration']",newDuration))]
+		[h:setProperty("a5e.stat.ConditionList",json.path.set(getProperty("a5e.stat.ConditionList"),"\$[*][?(@.GroupID=='"+thisGroupID+"')]['Duration']",newDuration))]
 		[h:targetsAffected = json.append(targetsAffected,target)]
 	}]
 	[h:switchToken(ParentToken)]
@@ -75,14 +75,14 @@
 [h:targetsAffected = json.unique(targetsAffected)]
 [h,foreach(target,targetsAffected),CODE:{
 	[h:switchToken(target)]
-	[h:pm.ConditionsExpired = json.unique(json.path.read(getProperty("a5e.stat.ConditionList"),"[*][?(@.Duration.Expired==1)]['GroupID']"))]
+	[h:pm.ConditionsExpired = json.unique(json.path.read(getProperty("a5e.stat.ConditionList"),"\$[*][?(@.Duration.Expired==1)]['GroupID']"))]
 	[h,if(json.isEmpty(pm.ConditionsExpired)),CODE:{};{
 		[h,MACRO("EndCondition@Lib:pm.a5e.Core"): json.set("","GroupID",pm.ConditionsExpired,"Target",target)]
 		[h:setConditionsRemoved = json.merge(setConditionsRemoved,json.get(macro.return,"Removed"))]
 	}]
 }]
 
-[h:setConditionsRemoved = json.unique(json.path.read(setConditionsRemoved,"[*]['DisplayName']"))]
+[h:setConditionsRemoved = json.unique(json.path.read(setConditionsRemoved,"\$[*]['DisplayName']"))]
 [h,if(!json.isEmpty(setConditionsRemoved)): abilityTable = json.append(abilityTable,json.set("",
 	"ShowIfCondensed",1,
 	"Header","Conditions on Other Creatures Ending",

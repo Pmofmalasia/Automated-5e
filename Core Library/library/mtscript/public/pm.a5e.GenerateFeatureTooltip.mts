@@ -1,6 +1,9 @@
 [h:FeatureData = arg(0)]
 [h:needsNoneffectData = arg(1)]
 
+[h:"<!-- Test for using 'Tier' vs. 'Level' in AHL display - Non-spells and cantrips use 'Tier' -->"]
+[h:displayTier = if(json.get(FeatureData,"Class") == "Spell",if(json.get(FeatureData,"Level") == 0,"Tier","Level"),"Tier")]
+
 [h:abilityTable = "[]"]
 [h,if(needsNoneffectData),CODE:{
 	[h:"<!-- Add meta-info here -->"]
@@ -14,7 +17,7 @@
 	[h,if(effectsNumber > 1),CODE:{			
 		[h:abilityTable = json.append(abilityTable,json.set("",
 			"ShowIfCondensed",1,
-			"Header",json.get(effect,"DisplayName"),
+			"Header",json.get(effect,"EffectDisplayName"),
 			"FalseHeader","",
 			"FullContents","",
 			"RulesContents","",
@@ -27,14 +30,14 @@
 	[h:UseTimeDisplay = json.get(effectUseTime,"Value")+" "+json.get(effectUseTime,"Units")+if(json.get(effectUseTime,"Value")==1,"","s")]
 	[h:abilityTable = json.append(abilityTable,json.set("",
 		"ShowIfCondensed",1,
-		"Header",if(json.get(FeatureData,"School") != "","Casting","Usage")+" Time",
+		"Header",if(json.get(FeatureData,"Class") == "Spell","Casting","Usage")+" Time",
 		"FalseHeader","",
 		"FullContents","",
 		"RulesContents",UseTimeDisplay,
 		"RollContents","",
 		"DisplayOrder","['Rules','Roll','Full']"
 	))]
-		
+
 	[h:reactionDescription = json.get(effect,"ReactionDescription")]
 	[h,if(reactionDescription != ""),CODE:{
 		[h:reactionDescription = upper(base64.decode(reactionDescription),1)]
@@ -81,7 +84,7 @@
 	[h:thisEffectSubeffects = json.get(effect,"Subeffects")]
 	[h:subeffectsNum = json.length(thisEffectSubeffects)]
 	[h,foreach(subeffect,thisEffectSubeffects),CODE:{
-		[h:abilityTable = json.merge(abilityTable,pm.a5e.GenerateSubeffectTooltip(subeffect))]
+		[h:abilityTable = json.merge(abilityTable,pm.a5e.GenerateSubeffectTooltip(subeffect,FeatureData))]
 	}]
 }]
 

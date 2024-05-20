@@ -498,12 +498,19 @@
 	[h:currentFeatureResourceSpentName = ""]
 
 	[h,if(pm.TimeResourceData != ""),CODE:{
+		[h:timeResourcePathData = json.get(pm.TimeResourceData,"Resource")]
+		[h:timeResourceSourceData = pm.a5e.ResourceSourceData(json.get(timeResourcePathData,"ResourceSource"),timeResourcePathData)]
+		[h:timeSourceProperty = json.get(timeResourceSourceData,"Property")]
+		[h:timeSourcePath = json.get(timeResourceSourceData,"Path")]
+		[h:timeResourceAmount = json.get(json.path.read(getProperty(timeSourceProperty),timeSourcePath+"['TimeResource']"),0)]
+		[h:timeResourceDisplay = pm.a5e.GenerateTimeDisplay(timeResourceAmount)]
+
 		[h:timeResourceLine = json.set("",
 			"ShowIfCondensed",1,
 			"Header","Uses Time as a Resource",
 			"FalseHeader","",
 			"FullContents","",
-			"RulesContents",if(json.get(pm.TimeResourceData,"isTimeActive") == 1,"Toggle On","Toggle Off"),
+			"RulesContents",if(json.get(pm.TimeResourceData,"isTimeActive") == 1,"Toggle On","Toggle Off")+"; "+timeResourceDisplay+" remaining.",
 			"RollContents","",
 			"DisplayOrder","['Rules','Roll','Full']"
 		)]
@@ -570,12 +577,19 @@
 	[h:currentFeatureResourceSpentName = ""]
 
 	[h,if(pm.TimeResourceData != ""),CODE:{
+		[h:timeResourcePathData = json.get(pm.TimeResourceData,"Resource")]
+		[h:timeResourceSourceData = pm.a5e.ResourceSourceData(json.get(timeResourcePathData,"ResourceSource"),timeResourcePathData)]
+		[h:timeSourceProperty = json.get(timeResourceSourceData,"Property")]
+		[h:timeSourcePath = json.get(timeResourceSourceData,"Path")]
+		[h:timeResourceAmount = json.get(json.path.read(getProperty(timeSourceProperty),timeSourcePath+"['TimeResource']"),0)]
+		[h:timeResourceDisplay = pm.a5e.GenerateTimeDisplay(timeResourceAmount)]
+
 		[h:timeResourceLine = json.set("",
 			"ShowIfCondensed",1,
 			"Header","Uses Time as a Resource",
 			"FalseHeader","",
 			"FullContents","",
-			"RulesContents",if(json.get(pm.TimeResourceData,"isTimeActive") == 1,"Toggle On","Toggle Off"),
+			"RulesContents",if(json.get(pm.TimeResourceData,"isTimeActive") == 1,"Toggle On","Toggle Off")+"; "+timeResourceDisplay+" remaining.",
 			"RollContents","",
 			"DisplayOrder","['Rules','Roll','Full']"
 		)]

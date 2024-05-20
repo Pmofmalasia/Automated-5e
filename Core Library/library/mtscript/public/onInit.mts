@@ -73,7 +73,9 @@
 
 [h:"<!-- Functions for Equipment -->"]
 [h:defineFunction("pm.a5e.CalculateShieldAC","pm.a5e.CalculateShieldAC@Lib:pm.a5e.Core")]
-[h:defineFunction("pm.a5e.DropContainerContents","pm.a5e.DropContainerContents@Lib:pm.a5e.Core")]
+[h:defineFunction("pm.a5e.GetContainerContents","pm.a5e.GetContainerContents@Lib:pm.a5e.Core")]
+[h:defineFunction("pm.a5e.GetEquivalentItem","pm.a5e.GetEquivalentItem@Lib:pm.a5e.Core")]
+[h:defineFunction("pm.a5e.TransferItemAdjustments","pm.a5e.TransferItemAdjustments@Lib:pm.a5e.Core")]
 
 [h:"<!-- Functions for Abilities -->"]
 [h:defineFunction("ability.json.get","ability.json.get@Lib:pm.a5e.Core")]
@@ -287,6 +289,7 @@
 [h:defineFunction("pm.a5e.CreatureFilteringDisplay","pm.a5e.CreatureFilteringDisplay@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.a5e.ObjectFilteringDisplay","pm.a5e.ObjectFilteringDisplay@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.a5e.TypeFilteringDisplay","pm.a5e.TypeFilteringDisplay@Lib:pm.a5e.Core")]
+[h:defineFunction("pm.a5e.GenerateTimeDisplay","pm.a5e.GenerateTimeDisplay@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.a5e.ItemSpellcastingPrimeStat","pm.a5e.ItemSpellcastingPrimeStat@Lib:pm.a5e.Core",0,0)]
 
 [h:"<!-- Functions for Checks and Saves -->"]

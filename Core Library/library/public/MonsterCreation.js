@@ -1,6 +1,29 @@
 async function creatureTypeSelectionChanges(){
-    let table = document.getElementById("MonsterCreationTable");
+    let table = document.getElementById("rowCreatureType").closest("table");
     let nextRowIndex = document.getElementById("rowCreatureType").rowIndex + 1;
+	let currentCreatureType = document.getElementById("CreatureType").value;
+
+    let requestRaces = await fetch("macro:pm.GetRaces@lib:pm.a5e.Core", {method: "POST", body: ""});
+    let PCRaces = await requestRaces.json();
+
+	let finalPCRaces = [];
+	for(let race of PCRaces){
+		if(race.CreatureType == currentCreatureType){
+			finalPCRaces.push(race);
+		}
+	}
+
+    let request = await fetch("macro:pm.a5e.GetCreatureSubtypes@lib:pm.a5e.Core", {method: "POST", body: "['"+currentCreatureType+"']"});
+    let NPCRaces = await request.json();
+
+	for(let race of NPCRaces){
+		finalPCRaces.push(race);
+	}
+
+	finalPCRaces.sort();
+	let NPCRaceSelect = "<option value=''>None</option>"+createHTMLSelectOptions(finalPCRaces);
+
+	document.getElementById("CreatureSubtype").innerHTML = NPCRaceSelect;
 }
 
 async function createArmorChoiceRows(){

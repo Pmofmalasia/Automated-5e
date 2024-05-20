@@ -30,7 +30,7 @@
 [h:pm.a5e.OutputVariables(finalTooltipSettings,1)]
 [h:isTooltipFrame = json.get(finalTooltipSettings,"isTooltipFrame")]
 [h:isTooltipMouseover = json.get(finalTooltipSettings,"isTooltipMouseover")]
-[h:TooltipPermission = or(isGM(),isOwner())]
+[h:TooltipPermission = or(isGM(),isOwner(getPlayerName(),ParentToken))]
 
 [h:GMOutput = "<html>"+GMOutput+"</html>"]
 [h:PlayerOutput = "<html>"+PlayerOutput+"</html>"]

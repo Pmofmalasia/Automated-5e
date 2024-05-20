@@ -4,7 +4,6 @@
 [h:ChatSettingsData = data.getData("addon:","pm.a5e.core","ChatSettings")]
 [h:allBorderColors = json.get(ChatSettingsData,"BorderColors")]
 [h:allTitleColors = json.get(ChatSettingsData,"TitleColors")]
-
 [h:FinalBorderColor = ""]
 [h:FinalTitleColor = ""]
 

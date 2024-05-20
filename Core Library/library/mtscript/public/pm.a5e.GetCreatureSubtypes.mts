@@ -8,8 +8,8 @@
 
 [h,if(argCount() > 2): pm.Delim = if(pm.KeyChoice=="","json",arg(2)); pm.Delim = if(pm.KeyChoice=="","json",",")]
 [h,if(pm.Delim == "json"),CODE:{
-	[h,if(pm.KeyChoice==""): macro.return = json.sort(pm.CreatureSubtypes,"a","DisplayName"); macro.return = json.sort(pm.CreatureSubtypes,"a")]
+	[h,if(pm.KeyChoice==""): return(0,json.sort(pm.CreatureSubtypes,"a","DisplayName")); return(0,json.sort(pm.CreatureSubtypes,"a"))]
 };{
 	[h:pm.CreatureSubtypes=listSort(json.toList(pm.CreatureSubtypes,pm.Delim),"A+",pm.Delim)]
-	[h:macro.return = pm.CreatureSubtypes]
+	[h:return(0,pm.CreatureSubtypes)]
 }]

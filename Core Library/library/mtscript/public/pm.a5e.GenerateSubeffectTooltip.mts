@@ -1,6 +1,10 @@
 [h:SubeffectData = arg(0)]
+[h:FeatureData = arg(1)]
 [h:IsTooltip = 1]
 [h:abilityTable = "[]"]
+
+[h:"<!-- Test for using 'Tier' vs. 'Level' in AHL display - Non-spells and cantrips use 'Tier' -->"]
+[h:displayTier = if(json.get(FeatureData,"Class") == "Spell",if(json.get(FeatureData,"Level") == 0,"Tier","Level"),"Tier")]
 
 [h,if(json.contains(SubeffectData,"UseResource")),CODE:{
 	[h:subeffect.ResourceData = pm.a5e.UseResource(json.get(SubeffectData,"UseResource"),IsTooltip)]
@@ -14,6 +18,7 @@
 [h,if(rangeTableLine != ""): abilityTable = json.append(abilityTable,rangeTableLine)]
 
 [h:subeffect.TargetingData = json.get(SubeffectData,"TargetLimits")]
+[h,if(subeffect.TargetingData == ""): subeffect.TargetingData = "{}"]
 [h:finalTargetingDisplayArray = "[]"]
 [h:subeffect.CreatureTargetingData = json.get(subeffect.TargetingData,"Creature")]
 [h,if(!json.isEmpty(subeffect.CreatureTargetingData)),CODE:{
@@ -47,14 +52,20 @@
 };{}]
 
 [h:MissileCount = number(json.get(SubeffectData,"MissileNumber"))]
-[h,if(MissileCount > 1),CODE:{
+[h:AHLMissileCount = number(json.get(SubeffectData,"MissileNumberAHL"))]
+[h,if(MissileCount > 1 || AHLMissileCount > 0),CODE:{
+	[h:MissileCount = max(1,MissileCount)]
+	[h,if(AHLMissileCount > 0):
+		displayAHLMissiles = " + "+AHLMissileCount+" per "+displayTier;
+		displayAHLMissiles = ""
+	]
 	[h:attackTest = json.get(SubeffectData,"Attack") != ""]
 	[h:abilityTable = json.append(abilityTable,json.set("",
 		"ShowIfCondensed",1,
 		"Header","Number of "+if(attackTest,"Attacks","Missiles"),
 		"FalseHeader","",
 		"FullContents","",
-		"RulesContents",MissileCount,
+		"RulesContents",MissileCount+displayAHLMissiles,
 		"RollContents","",
 		"DisplayOrder","['Rules','Roll','Full']"
 	))]
@@ -71,12 +82,12 @@
 [h,foreach(damageInstance,json.get(SubeffectData,"Damage")),CODE:{
 	[h,if(json.get(damageInstance,"DamageTypeOptions") != ""),CODE:{
 		[h:damageOptionsDisplayNames = "[]"]
-		[h,foreach(damageType,json.get(damageInstance,"DamageTypeOptions")): damageOptionsDisplayNames = json.append(damageOptionsDisplayNames,pm.GetDisplayName(damageType,"DamageTypes"))]
-		[h:damageTypeOptionsDisplay = "; choice of "+pm.a5e.CreateDisplayList(damageOptionsDisplayNames,"or")+ "damage"]
+		[h,foreach(damageType,json.get(damageInstance,"DamageTypeOptions")): damageOptionsDisplayNames = json.append(damageOptionsDisplayNames,pm.GetDisplayName(damageType,"sb.DamageTypes"))]
+		[h:damageTypeOptionsDisplay = "; choice of "+pm.a5e.CreateDisplayList(damageOptionsDisplayNames,"or")+ " damage"]
 		[h:damageLineHeader = "Damage"]
 	};{
 		[h:damageType = json.get(damageInstance,"DamageType")]
-		[h:damageLineHeader = pm.GetDisplayName(damageType,"DamageTypes") + if(or(damageType == "Healing",damageType=="TempHP"),""," Damage")]
+		[h:damageLineHeader = pm.GetDisplayName(damageType,"sb.DamageTypes") + if(or(damageType == "Healing",damageType=="TempHP"),""," Damage")]
 		[h:damageTypeOptionsDisplay = ""]
 	}]
 
@@ -91,7 +102,7 @@
 			default: damageFormula = (damagePercent * 100)+"% of Prior Damage"
 		]
 	};{
-		[h:damageFormula = json.get(damageInstance,"DieNum") + "d" + json.get(damageInstance,"DieSize") + pm.PlusMinus(number(json.get(damageInstance,"FlatBonus")),0) + if(json.get(damageInstance,"IsModBonus") == 1," + Modifier","")]
+		[h:damageFormula = json.get(damageInstance,"DamageDieNumber") + "d" + json.get(damageInstance,"DamageDieSize") + pm.PlusMinus(number(json.get(damageInstance,"FlatBonus")),0) + if(json.get(damageInstance,"IsModBonus") == 1," + Modifier","")]
 	}]
 
 	[h:damageDisplayFinal = damageFormula + damageTypeOptionsDisplay]
@@ -106,5 +117,9 @@
 		"DisplayOrder","['Rules','Roll','Full']"
 	))]
 }]
+
+[h,if(json.contains(SubeffectData,"ConditionInfo")),CODE:{
+	
+};{}]
 
 [h:return(0,abilityTable)]

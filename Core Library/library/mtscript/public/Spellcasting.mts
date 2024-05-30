@@ -7,7 +7,6 @@
 [h:ForcedClass = json.get(NonSpellData,"ForcedClass")]
 [h:ForcedLevel = json.get(NonSpellData,"ForcedLevel")]
 [h:FreeCasting = json.get(NonSpellData,"FreeCasting")]
-[h:SpellSource = json.get(NonSpellData,"SpellSource")]
 [h:ForcedSummonName = json.get(NonSpellData,"ForcedSummonName")]
 [h:ForcedImage = json.get(NonSpellData,"ForcedImage")]
 [h:ForcedPortrait = json.get(NonSpellData,"ForcedPortrait")]
@@ -392,11 +391,13 @@
 ))]
 
 [h:pm.a5e.EffectData = "[]"]
-[h:SpellDataWithSelections = json.set(SpellData,
-	"sClassSelect",sClassSelect,
-	"Class","Spell",
+[h:FinalSpellData = json.set(FinalSpellData,
 	"Source",sSource,
 	"PrimeStat",PrimeStat,
+	"sClassSelect",sClassSelect
+)]
+[h:SpellDataWithSelections = json.set(FinalSpellData,
+	"Class","Spell",
 	"DisplayClass","zzSpell",
 	"ColorSubtype",json.set("","Source",sSource,"Level",eLevel)
 )]
@@ -410,7 +411,7 @@
 			[h,if(FreeCasting!=1): setProperty("a5e.stat.SpellSlots",json.set(getProperty("a5e.stat.SpellSlots"),eLevel,json.get(getProperty("a5e.stat.SpellSlots"),eLevel)-1))]
 		};
 		case "FeatureSpell":{
-			[h,if(FreeCasting!=1): setProperty("a5e.stat.AllFeatures",json.path.set(getProperty("a5e.stat.AllFeatures"),"[*][?(@.Name=='"+json.get(sLevelSelectData,"Name")+"' && @.Class=='"+json.get(sLevelSelectData,"Class")+"' && @.Subclass=='"+json.get(sLevelSelectData,"Subclass")+"')]['Resource']",json.get(sLevelSelectData,"Resource")-1))]
+			[h,if(FreeCasting!=1): setProperty("a5e.stat.AllFeatures",json.path.set(getProperty("a5e.stat.AllFeatures"),"\$[*][?(@.Name=='"+json.get(sLevelSelectData,"Name")+"' && @.Class=='"+json.get(sLevelSelectData,"Class")+"' && @.Subclass=='"+json.get(sLevelSelectData,"Subclass")+"')]['Resource']",json.get(sLevelSelectData,"Resource")-1))]
 		};
 		default:{
 		}
@@ -428,5 +429,5 @@
 [h:sDescriptionAllLink = macroLinkText("FullDescription@Lib:pm.a5e.Core",if(needsSplitGMOutput,"gm","all"),json.set(SpellDescriptionData,"OutputTargets","all"),ParentToken)]
 [h:SpellDescriptionFinal = if(sRulesShow==0,"Show full spell text to: <a style='color:%{LinkTextColor};' href='"+sDescriptionLink+"'>Self</a> <a style='color:%{LinkTextColor};' href='"+sDescriptionAllLink+"'>Everyone</a>",CompleteSpellDescription)]
 
-[h:ReturnData = json.set(NonSpellData,"SpellData",json.append("",FinalSpellData),"Slot",if(IsCantrip,0,eLevel),"Source",sSource,"Class",sClassSelect,"Effect",pm.a5e.EffectData,"Table",abilityTable,"Description",SpellDescriptionFinal,"ShowFullRules",sRulesShow)]
+[h:ReturnData = json.set(NonSpellData,"SpellData",FinalSpellData,"Slot",if(IsCantrip,0,eLevel),"Source",sSource,"Class",sClassSelect,"Effect",pm.a5e.EffectData,"Table",abilityTable,"Description",SpellDescriptionFinal,"ShowFullRules",sRulesShow)]
 [h:macro.return = ReturnData]

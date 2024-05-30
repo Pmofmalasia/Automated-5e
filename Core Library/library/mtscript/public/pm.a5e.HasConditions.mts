@@ -6,11 +6,11 @@
 
 [h,if(json.type(ConditionNames) == "UNKNOWN"): ConditionNames = json.append("",ConditionNames)]
 
-[h:CurrentConditions = json.path.read(getProperty("a5e.stat.ConditionList"),"[*]['Name']")]
+[h:CurrentConditions = json.path.read(getProperty("a5e.stat.ConditionList"),"\$[*]['Name']")]
 
 [h,if(AllorOne=="All"):
     HasCondition = json.isSubset(CurrentConditions,ConditionNames);
     HasCondition = !json.isEmpty(json.intersection(ConditionNames,CurrentConditions))
 ]
 
-[h:macro.return = HasCondition]
+[h:return(0,HasCondition)]

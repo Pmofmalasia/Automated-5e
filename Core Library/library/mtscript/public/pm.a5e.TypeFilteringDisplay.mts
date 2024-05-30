@@ -4,7 +4,7 @@
 [h,if(json.type(typeFilterData) == "UNKNOWN"),CODE:{
 	[h,if(typeFilterData == "" || typeFilterData == "Any"):
 		filterDisplay = "";
-		filterDisplay = typeFilterData+"s"
+		filterDisplay = typeFilterData
 	]
 };{
 	[h:filterDisplay = pm.a5e.CreateDisplayList(typeFilterData,"or")]

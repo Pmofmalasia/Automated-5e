@@ -448,6 +448,9 @@ async function createCreatureTargetTable(tableID,startRowID,selectionID,IDSuffix
 	rowTargetSenses.innerHTML = "<th><label for='targetCanSee"+IDSuffixText+"'>Senses Required by Target:</th><td><input type='checkbox' name='targetCanSee"+IDSuffixText+"' id='targetCanSee"+IDSuffixText+"'><label for='targetCanSee"+IDSuffixText+"'>Target Must See Caster</label><br><input type='checkbox' name='targetCanHear"+IDSuffixText+"' id='targetCanHear"+IDSuffixText+"'><label for='targetCanHear"+IDSuffixText+"'>Target Must Hear Caster</label><br><input type='checkbox' name='targetCanUnderstand"+IDSuffixText+"' id='targetCanUnderstand"+IDSuffixText+"'><label for='targetCanUnderstand"+IDSuffixText+"'>Target Must Understand Caster</label></td>";
 	nextRowIndex++;
 
+	addTableRow(table.id,nextRowIndex,"rowTargetCreatureHP"+IDSuffixText,"<th><label for='targetCreatureHPType"+IDSuffixText+"'>Health Requirements on Target:</label></th><td><select id='targetCreatureHPType"+IDSuffixText+"' name='targetCreatureHPType"+IDSuffixText+"' onchange='createTargetHPTable("+'"'+IDSuffixText+'"'+")'><option value=''>No Requirement</option><option value='AtMaximumHP'>At Maximum HP</option><option value='Damaged'>Below Maximum HP</option><option value='OverHalfHP'>Over Half HP</option><option value='BelowHalfHP'>Below Half HP</option><option value='NoHP'>No HP Remaining</option><option value='HasHP'>Has at Least 1 HP</option><option value='Comparison'>Other Comparison</option></select></td>");
+	nextRowIndex++;
+
 	let rowTargetCondition = table.insertRow(nextRowIndex);
 	rowTargetCondition.id = "rowTargetCondition"+IDSuffixText;
 	rowTargetCondition.innerHTML = "<th><label for='isTargetCondition"+IDSuffixText+"'>Condition Requirements on Target:</th><td><select name='isTargetCondition"+IDSuffixText+"' id='isTargetCondition"+IDSuffixText+"' onchange='createTargetConditionTable("+'"'+tableID+'","'+IDSuffixText+'"'+")'><option value='None'>None</option><option value='Inclusive'>Must Have Certain Conditions</option><option value='Exclusive'>Cannot Have Certain Conditions</option><option value='Mixture'>Mixture of Both Above</option></select></td>";
@@ -545,6 +548,38 @@ function createCreatureTargetSizes(tableID,IDSuffix){
 
 		addTableRow(tableID,nextRowIndex,"rowTargetCreatureSizes"+targetSizeSelection+IDSuffix,"<th>"+sizeHeader+"</th><td><div class='check-multiple' style='width:100%'>"+sizeOptions+"</div></td>");
 		nextRowIndex++;
+	}
+}
+
+function createTargetHPTable(IDSuffix){
+	let tableID = document.getElementById("rowTargetCreatureHP"+IDSuffix).closest("table").id;
+
+	let HPRequirementChoice = document.getElementById("targetCreatureHPType"+IDSuffix).value;
+	if(HPRequirementChoice != "Comparison"){
+		let endRowID;
+		if(document.getElementById("rowTargetCreatureHPComparison"+IDSuffix) == null){
+			endRowID = document.getElementById("rowTargetCreatureHP"+IDSuffix).nextElementSibling.id;
+		}
+		else{
+			endRowID = document.getElementById("rowTargetCreatureHPComparison"+IDSuffix).nextElementSibling.id;
+		}
+
+		clearUnusedTable(tableID,"rowTargetCreatureHP"+IDSuffix,endRowID);
+	}
+	else{
+		let nextRowIndex = document.getElementById("rowTargetCreatureHP"+IDSuffix).rowIndex + 1;
+		addTableRow(tableID,nextRowIndex,"rowTargetCreatureHPComparison"+IDSuffix,"<th><label for='targetCreatureHPComparitor"+IDSuffix+"'>HP Must Be:</label></th><td><select id='targetCreatureHPComparitor"+IDSuffix+"' name='targetCreatureHPComparitor"+IDSuffix+"'><option value='LessEqual'><=</option><option value='Less'><</option><option value='Equal'>=</option><option value='Greater'>></option><option value='GreaterEqual'>>=</option></select><select id='targetCreatureHPTargetType"+IDSuffix+"' name='targetCreatureHPTargetType"+IDSuffix+"' onchange='toggleTargetHPTargetType("+'"'+IDSuffix+'"'+")'><option value='Value'>A Fixed Value</option><option value='Token'>Another Token</option></select>: <span id='targetCreatureHPTargetBoundary"+IDSuffix+"'><input type='number' id='targetCreatureHPTarget"+IDSuffix+"' name='targetCreatureHPTarget"+IDSuffix+"' style='width:30px' value=100></span></td>");
+	}
+}
+
+function toggleTargetHPTargetType(IDSuffix){
+	let targetType = document.getElementById("targetCreatureHPTargetType"+IDSuffix).value;
+
+	if(targetType == "Value"){
+		document.getElementById("targetCreatureHPTargetBoundary"+IDSuffix).innerHTML = "<input type='number' id='targetCreatureHPTarget"+IDSuffix+"' name='targetCreatureHPTarget"+IDSuffix+"' width='30px' value=100>";
+	}
+	else if(targetType == "Token"){
+		document.getElementById("targetCreatureHPTargetBoundary"+IDSuffix).innerHTML = "<select id='targetCreatureHPTarget"+IDSuffix+"' name='targetCreatureHPTarget"+IDSuffix+"'><option value='User'>User of Feature</option><option value='Targets'>Other Targets</option><option value=''>Other Token</option></select>";
 	}
 }
 

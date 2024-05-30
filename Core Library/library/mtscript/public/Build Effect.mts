@@ -2,16 +2,19 @@
 [h:currentEffectData = json.get(allEffectData,"CurrentEffects")]
 [h:baseEffectData = json.get(allEffectData,"BaseEffect")]
 [h:effectsToMerge = json.get(allEffectData,"ToMerge")]
-[h:whichEffect = json.get(allEffectData,"WhichEffect")]
-[h,if(whichEffect == ""): whichEffect = 0]
+[h:whichEffectRaw = json.get(allEffectData,"WhichEffect")]
+[h,if(whichEffectRaw == ""): whichEffectRaw = 0]
 [h:"<!-- whichEffect array allows for choosing effects to merge with in a non-sequential order -->"]
+
 [h,foreach(effect,effectsToMerge),CODE:{
-    [h,if(json.type(whichEffect) == "ARRAY"),CODE:{
-        [h,if((roll.count+1)>json.length(whichEffect)):
+    [h,if(json.type(whichEffectRaw) == "ARRAY"),CODE:{
+        [h,if((roll.count+1)>json.length(whichEffectRaw)):
             whichEffect = json.length(currentEffectData);
-            whichEffect = json.get(whichEffect,roll.count)
+            whichEffect = json.get(whichEffectRaw,roll.count)
         ]
-    };{}]
+    };{
+		[h:whichEffect = whichEffectRaw]
+	}]
 
     [h:newID =  json.get(effect,"ID")]
     [h,if(newID == ""): newID = pm.a5e.GenerateEffectID()]
@@ -36,9 +39,12 @@
     [h:effectMovementData = json.get(effect,"Movement")]
 
     [h:effectWeaponData = json.get(effect,"WeaponData")]
+    [h:effectSpellData = json.get(effect,"SpellData")]
+
+	[h:"<!-- Note: I'm not sure why I repeatedly got thisEffect in each block instead of setting it once at the start. Will look and potentially change. -->"]
 
     [h,if(parentTokenData!=""),CODE:{
-        [h,if(whichEffect >= json.length(currentEffectData)): thisEffect = json.path.set(baseEffectData,".ID",newID); thisEffect = json.get(currentEffectData,whichEffect)]
+        [h,if(whichEffect >= json.length(currentEffectData)): thisEffect = json.path.set(baseEffectData,"\$.ID",newID); thisEffect = json.get(currentEffectData,whichEffect)]
 
         [h:thisEffect = json.set(thisEffect,"ParentToken",parentTokenData)]
 
@@ -46,7 +52,7 @@
     };{}]
 
 	[h,if(ParentSubeffect!=""),CODE:{
-        [h,if(whichEffect >= json.length(currentEffectData)): thisEffect = json.path.set(baseEffectData,".ID",newID); thisEffect = json.get(currentEffectData,whichEffect)]
+        [h,if(whichEffect >= json.length(currentEffectData)): thisEffect = json.path.set(baseEffectData,"\$.ID",newID); thisEffect = json.get(currentEffectData,whichEffect)]
 
         [h:thisEffect = json.set(thisEffect,
 			"ParentSubeffect",ParentSubeffect,
@@ -59,7 +65,7 @@
 	};{}]
     
     [h,if(checkDCData!=""),CODE:{
-        [h,if(whichEffect >= json.length(currentEffectData)): thisEffect = json.path.set(baseEffectData,".ID",newID); thisEffect = json.get(currentEffectData,whichEffect)]
+        [h,if(whichEffect >= json.length(currentEffectData)): thisEffect = json.path.set(baseEffectData,"\$.ID",newID); thisEffect = json.get(currentEffectData,whichEffect)]
 
         [h:thisEffect = json.set(thisEffect,"ToResolve",json.set(json.get(thisEffect,"ToResolve"),"CheckDC",checkDCData))]
 
@@ -68,7 +74,7 @@
     
     [h,if(saveDCData!=""),CODE:{
         [h,if(whichEffect==""): whichEffect = 0]
-        [h,if(whichEffect >= json.length(currentEffectData)): thisEffect = json.path.set(baseEffectData,".ID",newID); thisEffect = json.get(currentEffectData,whichEffect)]
+        [h,if(whichEffect >= json.length(currentEffectData)): thisEffect = json.path.set(baseEffectData,"\$.ID",newID); thisEffect = json.get(currentEffectData,whichEffect)]
         
         [h:thisEffect = json.set(thisEffect,"ToResolve",json.set(json.get(thisEffect,"ToResolve"),"SaveDC",saveDCData))]
 
@@ -76,7 +82,7 @@
     };{}]
     
     [h,if(attackData!=""),CODE:{
-        [h,if(whichEffect >= json.length(currentEffectData)): thisEffect = json.path.set(baseEffectData,".ID",newID); thisEffect = json.get(currentEffectData,whichEffect)]
+        [h,if(whichEffect >= json.length(currentEffectData)): thisEffect = json.path.set(baseEffectData,"\$.ID",newID); thisEffect = json.get(currentEffectData,whichEffect)]
 
         [h:thisEffect = json.set(thisEffect,"ToResolve",json.set(json.get(thisEffect,"ToResolve"),"Attack",attackData))]
         
@@ -84,7 +90,7 @@
     };{}]
     
     [h,if(targetData!=""),CODE:{
-        [h,if(whichEffect >= json.length(currentEffectData)): thisEffect = json.path.set(baseEffectData,".ID",newID); thisEffect = json.get(currentEffectData,whichEffect)]
+        [h,if(whichEffect >= json.length(currentEffectData)): thisEffect = json.path.set(baseEffectData,"\$.ID",newID); thisEffect = json.get(currentEffectData,whichEffect)]
 
         [h,if(json.get(thisEffect,"Targets")==""):
             thisEffect = json.set(thisEffect,"Targets",targetData);
@@ -96,7 +102,7 @@
     };{}]
     
     [h,if(targetOptionData!=""),CODE:{
-        [h,if(whichEffect >= json.length(currentEffectData)): thisEffect = json.path.set(baseEffectData,".ID",newID); thisEffect = json.get(currentEffectData,whichEffect)]
+        [h,if(whichEffect >= json.length(currentEffectData)): thisEffect = json.path.set(baseEffectData,"\$.ID",newID); thisEffect = json.get(currentEffectData,whichEffect)]
 
         [h,if(json.get(thisEffect,"TargetOptions")==""):
             thisEffect = json.set(thisEffect,"TargetOptions",targetOptionData);
@@ -107,7 +113,7 @@
     };{}]
     
     [h,if(damageData!=""),CODE:{
-        [h,if(whichEffect >= json.length(currentEffectData)): thisEffect = json.path.set(baseEffectData,".ID",newID); thisEffect = json.get(currentEffectData,whichEffect)]
+        [h,if(whichEffect >= json.length(currentEffectData)): thisEffect = json.path.set(baseEffectData,"\$.ID",newID); thisEffect = json.get(currentEffectData,whichEffect)]
         
         [h:tempToResolve = if(json.get(thisEffect,"ToResolve")=="","{}",json.get(thisEffect,"ToResolve"))]
 
@@ -121,7 +127,7 @@
     };{}]
     
     [h,if(rollData!=""),CODE:{
-        [h,if(whichEffect >= json.length(currentEffectData)): thisEffect = json.path.set(baseEffectData,".ID",newID); thisEffect = json.get(currentEffectData,whichEffect)]
+        [h,if(whichEffect >= json.length(currentEffectData)): thisEffect = json.path.set(baseEffectData,"\$.ID",newID); thisEffect = json.get(currentEffectData,whichEffect)]
 
         [h:thisEffect = json.set(thisEffect,"Roll",rollData)]
 
@@ -129,7 +135,7 @@
     };{}]
     
     [h,if(rangeData!=""),CODE:{
-        [h,if(whichEffect >= json.length(currentEffectData)): thisEffect = json.path.set(baseEffectData,".ID",newID); thisEffect = json.get(currentEffectData,whichEffect)]
+        [h,if(whichEffect >= json.length(currentEffectData)): thisEffect = json.path.set(baseEffectData,"\$.ID",newID); thisEffect = json.get(currentEffectData,whichEffect)]
         
         [h:thisEffect = json.set(thisEffect,"Range",rangeData)]
     
@@ -137,7 +143,7 @@
     };{}]
     
     [h,if(durationData!=""),CODE:{
-        [h,if(whichEffect >= json.length(currentEffectData)): thisEffect = json.path.set(baseEffectData,".ID",newID); thisEffect = json.get(currentEffectData,whichEffect)]
+        [h,if(whichEffect >= json.length(currentEffectData)): thisEffect = json.path.set(baseEffectData,"\$.ID",newID); thisEffect = json.get(currentEffectData,whichEffect)]
         
         [h:thisEffect = json.set(thisEffect,"Duration",durationData)]
     
@@ -145,7 +151,7 @@
     };{}]
     
     [h,if(usageData!=""),CODE:{
-        [h,if(whichEffect >= json.length(currentEffectData)): thisEffect = json.path.set(baseEffectData,".ID",newID); thisEffect = json.get(currentEffectData,whichEffect)]
+        [h,if(whichEffect >= json.length(currentEffectData)): thisEffect = json.path.set(baseEffectData,"\$.ID",newID); thisEffect = json.get(currentEffectData,whichEffect)]
         
         [h:thisEffect = json.set(thisEffect,"UseTime",usageData)]
     
@@ -153,7 +159,7 @@
     };{}]
     
     [h,if(resourceData!=""),CODE:{
-        [h,if(whichEffect >= json.length(currentEffectData)): thisEffect = json.path.set(baseEffectData,".ID",newID); thisEffect = json.get(currentEffectData,whichEffect)]
+        [h,if(whichEffect >= json.length(currentEffectData)): thisEffect = json.path.set(baseEffectData,"\$.ID",newID); thisEffect = json.get(currentEffectData,whichEffect)]
         
         [h:thisEffect = json.set(thisEffect,"Resource",resourceData)]
     
@@ -161,7 +167,7 @@
     };{}]
     
     [h,if(conditionData!=""),CODE:{
-		[h,if(whichEffect >= json.length(currentEffectData)): thisEffect = json.path.set(baseEffectData,".ID",newID); thisEffect = json.get(currentEffectData,whichEffect)]
+		[h,if(whichEffect >= json.length(currentEffectData)): thisEffect = json.path.set(baseEffectData,"\$.ID",newID); thisEffect = json.get(currentEffectData,whichEffect)]
 		
         [h:tempToResolve = json.get(thisEffect,"ToResolve")]
 		[h,if(tempToResolve==""):
@@ -180,7 +186,7 @@
     };{}]
     
     [h,if(conditionModificationData!=""),CODE:{
-		[h,if(whichEffect >= json.length(currentEffectData)): thisEffect = json.path.set(baseEffectData,".ID",newID); thisEffect = json.get(currentEffectData,whichEffect)]
+		[h,if(whichEffect >= json.length(currentEffectData)): thisEffect = json.path.set(baseEffectData,"\$.ID",newID); thisEffect = json.get(currentEffectData,whichEffect)]
 
 		[h:"<!-- TODO: Consider merging instead of overriding multiple datasets. Check old effect resolution vs. new one. If the same, combine effects. If Prolong vs. Shorten, subtract effects and correct method appropriately. -->"]
 		
@@ -192,7 +198,7 @@
     };{}]
     
     [h,if(targetedConditionsData!=""),CODE:{
-		[h,if(whichEffect >= json.length(currentEffectData)): thisEffect = json.path.set(baseEffectData,".ID",newID); thisEffect = json.get(currentEffectData,whichEffect)]
+		[h,if(whichEffect >= json.length(currentEffectData)): thisEffect = json.path.set(baseEffectData,"\$.ID",newID); thisEffect = json.get(currentEffectData,whichEffect)]
 
 		[h:"<!-- The following first combines conditions on the same target, then adds conditions not already on currentTargetedConditions to it. -->"]
 
@@ -210,7 +216,7 @@
     };{}]
 
     [h,if(effectTargetData!=""),CODE:{
-        [h,if(whichEffect >= json.length(currentEffectData)): thisEffect = json.path.set(baseEffectData,".ID",newID); thisEffect = json.get(currentEffectData,whichEffect)]
+        [h,if(whichEffect >= json.length(currentEffectData)): thisEffect = json.path.set(baseEffectData,"\$.ID",newID); thisEffect = json.get(currentEffectData,whichEffect)]
 
         [h,if(json.get(thisEffect,"TargetedEffects")==""):
             thisEffect = json.set(thisEffect,"TargetedEffects",effectTargetData);
@@ -221,7 +227,7 @@
     };{}]
     
     [h,if(effectTargetOptionData!=""),CODE:{
-        [h,if(whichEffect >= json.length(currentEffectData)): thisEffect = json.path.set(baseEffectData,".ID",newID); thisEffect = json.get(currentEffectData,whichEffect)]
+        [h,if(whichEffect >= json.length(currentEffectData)): thisEffect = json.path.set(baseEffectData,"\$.ID",newID); thisEffect = json.get(currentEffectData,whichEffect)]
 
         [h,if(json.get(thisEffect,"TargetedEffectOptions")==""):
             thisEffect = json.set(thisEffect,"TargetedEffectOptions",effectTargetOptionData);
@@ -232,7 +238,7 @@
     };{}]
     
     [h,if(effectMovementData!=""),CODE:{
-        [h,if(whichEffect >= json.length(currentEffectData)): thisEffect = json.path.set(baseEffectData,".ID",newID); thisEffect = json.get(currentEffectData,whichEffect)]
+        [h,if(whichEffect >= json.length(currentEffectData)): thisEffect = json.path.set(baseEffectData,"\$.ID",newID); thisEffect = json.get(currentEffectData,whichEffect)]
 
         [h:thisEffect = json.set(thisEffect,"Movement",effectMovementData)]
 
@@ -240,14 +246,22 @@
     };{}]
     
     [h,if(effectWeaponData!=""),CODE:{
-        [h,if(whichEffect >= json.length(currentEffectData)): thisEffect = json.path.set(baseEffectData,".ID",newID); thisEffect = json.get(currentEffectData,whichEffect)]
+        [h,if(whichEffect >= json.length(currentEffectData)): thisEffect = json.path.set(baseEffectData,"\$.ID",newID); thisEffect = json.get(currentEffectData,whichEffect)]
 
         [h:thisEffect = json.set(thisEffect,"WeaponData",effectWeaponData)]
 
         [h,if(whichEffect >= json.length(currentEffectData)): currentEffectData = json.append(currentEffectData,thisEffect); currentEffectData = json.set(currentEffectData,whichEffect,thisEffect)]
     };{}]
     
-    [h,if(json.type(whichEffect) == "UNKNOWN"): whichEffect = whichEffect+1]
+    [h,if(effectSpellData!=""),CODE:{
+        [h,if(whichEffect >= json.length(currentEffectData)): thisEffect = json.path.set(baseEffectData,"\$.ID",newID); thisEffect = json.get(currentEffectData,whichEffect)]
+
+        [h:thisEffect = json.set(thisEffect,"SpellData",effectSpellData)]
+
+        [h,if(whichEffect >= json.length(currentEffectData)): currentEffectData = json.append(currentEffectData,thisEffect); currentEffectData = json.set(currentEffectData,whichEffect,thisEffect)]
+    };{}]
+    
+    [h,if(json.type(whichEffectRaw) == "UNKNOWN"): whichEffectRaw = whichEffectRaw+1]
 }]
 
 [h:macro.return = currentEffectData]

@@ -25,7 +25,7 @@
 )]
 
 [h:sh.TargetingFilters = json.set("",
-	"SizeMax",pm.a5e.GetSizeChange(getSize(ParentToken),1,1)
+	"SizeMax",pm.a5e.GetSizeChange(getSize(ParentToken),1)
 )]
 
 [h:sh.TargetOptions = pm.a5e.TargetCreatureFiltering(sh.TargetingData,sh.TargetingFilters)]

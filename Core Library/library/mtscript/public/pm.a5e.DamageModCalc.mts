@@ -1,7 +1,6 @@
 [h:hp.Data = arg(0)]
 [h:Flavor = json.get(hp.Data,"Flavor")]
 [h:ParentToken = json.get(hp.Data,"ParentToken")]
-[h:hp.Source = json.get(hp.Data,"SourceType")]
 [h:hp.DamageDealt = json.get(hp.Data,"DamageDealt")]
 [h:switchToken(ParentToken)]
 

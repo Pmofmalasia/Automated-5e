@@ -73,6 +73,25 @@
     [h:subeffectData = json.remove(subeffectData,"targetCanUnderstand"+dataKeySuffix)]
 }]
 
+[h,switch(json.get(subeffectData,"targetCreatureHPType"+dataKeySuffix)),CODE:
+	case "":{};
+	case "Comparison":{
+		[h:creatureHPTargetData = json.set("",
+			"Type","Comparison",
+			"Target",json.get(subeffectData,"targetCreatureHPTarget"+dataKeySuffix),
+			"Comparitor",json.get(subeffectData,"targetCreatureHPComparitor"+dataKeySuffix)
+		)]
+		[h:subeffectData = json.remove(subeffectData,"targetCreatureHPTarget"+dataKeySuffix)]
+		[h:subeffectData = json.remove(subeffectData,"targetCreatureHPComparitor"+dataKeySuffix)]
+		[h:subeffectData = json.remove(subeffectData,"targetCreatureHPTargetType"+dataKeySuffix)]
+		[h:creatureTargetData = json.set(creatureTargetData,"HP",creatureHPTargetData)]
+	};
+	default:{
+		[h:creatureTargetData = json.set(creatureTargetData,"HP",json.set("","Type",json.get(subeffectData,"targetCreatureHPType"+dataKeySuffix)))]
+	}
+]
+[h:subeffectData = json.remove(subeffectData,"targetCreatureHPType"+dataKeySuffix)]
+
 [h,if(json.get(subeffectData,"isTargetCondition"+dataKeySuffix) != "None"),CODE:{
     [h:baseConditionList = pm.a5e.GetBaseConditions("Name","json")]
     [h:inclusiveConditions = "[]"]
@@ -83,8 +102,8 @@
         [h:subeffectData = json.remove(subeffectData,"InclusiveConditions"+dataKeySuffix+tempCondition)]
         [h:subeffectData = json.remove(subeffectData,"ExclusiveConditions"+dataKeySuffix+tempCondition)]
     }]
-    [h,if(!json.isEmpty(inclusiveConditions)): creatureTargetData = json.set(creatureTargetData,"TargetConditionsInclusive",inclusiveConditions)]
-    [h,if(!json.isEmpty(exclusiveConditions)): creatureTargetData = json.set(creatureTargetData,"TargetConditionsExclusive",exclusiveConditions)]
+    [h,if(!json.isEmpty(inclusiveConditions)): creatureTargetData = json.set(creatureTargetData,"ConditionsInclusive",inclusiveConditions)]
+    [h,if(!json.isEmpty(exclusiveConditions)): creatureTargetData = json.set(creatureTargetData,"ConditionsExclusive",exclusiveConditions)]
 }]
 [h:subeffectData = json.remove(subeffectData,"isTargetCondition"+dataKeySuffix)]
 
@@ -114,7 +133,7 @@
         "ChaoticGood",json.contains(subeffectData,"alignmentChaoticGood"+dataKeySuffix),
         "ChaoticNeutral",json.contains(subeffectData,"alignmentChaoticNeutral"+dataKeySuffix),
         "ChaoticEvil",json.contains(subeffectData,"alignmentChaoticEvil"+dataKeySuffix),
-        "Unaligned",json.contains(subeffectData,"alignmentUnaligned"+dataKeySuffix)
+        "UnalignedUnaligned",json.contains(subeffectData,"alignmentUnaligned"+dataKeySuffix)
     )]
     [h:creatureTargetData = json.set(creatureTargetData,"Alignment",AlignmentsAllowed)]
     [h:subeffectData = json.remove(subeffectData,"isAlignment"+dataKeySuffix)]

@@ -407,7 +407,7 @@
 		[h,if(json.contains(subeffectData,"AlwaysAdded"+tempConditionName)): conditionsAlwaysAdded = json.append(conditionsAlwaysAdded,json.set("","Name",tempConditionName,"DisplayName",json.get(tempCondition,"DisplayName"),"Class","Condition","AlwaysAdded",1))]
 		[h:subeffectData = json.remove(subeffectData,"AlwaysAdded"+tempConditionName)]
 	}]
-	
+
 	[h,switch(json.contains(subeffectData,"AlwaysAddedEffectSpecific")+""+json.contains(subeffectData,"isEffectSpecificAlwaysAddedMultiple")),CODE:
 		case "10":{
 			[h:conditionsAlwaysAdded = json.append(conditionsAlwaysAdded,json.set(ConditionIdentificationInfo,"Name",FeatureName,"DisplayName",FeatureDisplayName))]

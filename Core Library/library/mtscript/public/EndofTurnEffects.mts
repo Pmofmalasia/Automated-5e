@@ -5,6 +5,7 @@
 [h:pm.a5e.EffectData = "[]"]
 [h:effectsToMerge = "[]"]
 [h:abilityTable = "[]"]
+[h:whichEffect = 0]
 [h:pm.a5e.OverarchingContext = "EndTurn"]
 
 [h:pm.a5e.BaseEffectData = json.set("",

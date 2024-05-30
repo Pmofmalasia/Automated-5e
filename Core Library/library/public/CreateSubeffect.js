@@ -720,118 +720,163 @@ async function conditionAlternateDuration(){
 }
 
 async function createConditionNonDurationEnd(){
-	let table = document.getElementById("CreateSubeffectTable");
+	let table = document.getElementById("rowIsConditionNonDurationEnd").closest("table");
+	let tableID = table.id;
 	let hasOtherEndOptions = document.getElementById("isConditionNonDurationEnd").checked;
 	let nextRowIndex = document.getElementById("rowIsConditionNonDurationEnd").rowIndex + 1;
 
 	if(hasOtherEndOptions){
-		let endConditionOptions = "<option value='No'>No</option><option value='Conditional'>Conditional</option><option value='Always'>Always</option>";
-
-		let request = await fetch("macro:pm.GetAttributes@lib:pm.a5e.Core", {method: "POST", body: ""});
-		let attributeList = await request.json();
-
-		let i = 1;
-		let saveOptions = "<option value='None'>Without Save</option>";
-		for(let tempAttribute of attributeList){
-			let abilityScoreName = tempAttribute.Name;
-			let abilityScoreDisplayName = tempAttribute.DisplayName;
-			saveOptions = saveOptions + "<option value='"+abilityScoreName+"'>"+abilityScoreDisplayName+" Save</option>";
-		}
-
-		let rowEndConditionInstancesLabel = table.insertRow(nextRowIndex);
-		rowEndConditionInstancesLabel.id = "rowEndConditionInstancesLabel";
-		rowEndConditionInstancesLabel.innerHTML = "<th colspan=2 text-align='center'>Instances When Condition Can End</th>";
+		addTableRow(tableID,nextRowIndex,"rowEndConditionInstancesLabel","<th colspan=2 text-align='center'>Instances When Condition Can End</th>");
 		nextRowIndex++;
 
-		addTableRow("CreateSubeffectTable",nextRowIndex,"rowEndConditionAsAction","<th><label for='isEndConditionAction'>With Use of an Action:</label></th><select id='isEndConditionAction' name='isEndConditionAction' onchange='endConditionConditions("+'"'+"Action"+'"'+")'>"+endConditionOptions+"</select><select id='isEndConditionActionSave' name='isEndConditionActionSave'>"+saveOptions+"</select></td>");
+		addTableRow(tableID,nextRowIndex,"rowConditionNonDurationEndButtons","<th colspan=2><input type='button' value='Add Instance' onclick='addConditionEndInstanceRow()'><input type='button' value='Remove Instance' onclick='removeConditionEndInstanceRow()'><input='hidden' id='conditionEndInstanceNumber' name='conditionEndInstanceNumber' value=0></th>");
 		nextRowIndex++;
 
-		let rowEndConditionStartTurn = table.insertRow(nextRowIndex);
-		rowEndConditionStartTurn.id = "rowEndConditionStartTurn";
-		rowEndConditionStartTurn.innerHTML = "<th><label for='isEndConditionStartTurn'>Start of Turn:</label></th><select id='isEndConditionStartTurn' name='isEndConditionStartTurn' onchange='endConditionConditions("+'"'+"StartTurn"+'"'+")'>"+endConditionOptions+"</select><select id='isEndConditionStartTurnSave' name='isEndConditionStartTurnSave'>"+saveOptions+"</select></td>";
-		nextRowIndex++;
-
-		let rowEndConditionEndTurn = table.insertRow(nextRowIndex);
-		rowEndConditionEndTurn.id = "rowEndConditionEndTurn";
-		rowEndConditionEndTurn.innerHTML = "<th><label for='isEndConditionEndTurn'>End of Turn:</label></th><select id='isEndConditionEndTurn' name='isEndConditionEndTurn' onchange='endConditionConditions("+'"'+"EndTurn"+'"'+")'>"+endConditionOptions+"</select><select id='isEndConditionEndTurnSave' name='isEndConditionEndTurnSave'>"+saveOptions+"</select></td>";
-		nextRowIndex++;
-
-		let rowEndConditionTempHPLost = table.insertRow(nextRowIndex);
-		rowEndConditionTempHPLost.id = "rowEndConditionTempHPLost";
-		rowEndConditionTempHPLost.innerHTML = "<th><label for='isEndConditionTempHPLost'>When Temp HP is Lost:</label></th><input type='checkbox' id='isEndConditionTempHPLost' name='isEndConditionTempHPLost'></td>";
-		nextRowIndex++;
-
-		let rowEndConditionAfterAttack = table.insertRow(nextRowIndex);
-		rowEndConditionAfterAttack.id = "rowEndConditionAfterAttack";
-		rowEndConditionAfterAttack.innerHTML = "<th><label for='isEndConditionAfterAttack'>After Attacking:</label></th><select id='isEndConditionAfterAttack' name='isEndConditionAfterAttack' onchange='endConditionConditions("+'"'+"AfterAttack"+'"'+")'>"+endConditionOptions+"</select><select id='isEndConditionAfterAttackSave' name='isEndConditionAfterAttackSave'>"+saveOptions+"</select></td>";
-		nextRowIndex++;
-
-		let rowEndConditionAfterSpell = table.insertRow(nextRowIndex);
-		rowEndConditionAfterSpell.id = "rowEndConditionAfterSpell";
-		rowEndConditionAfterSpell.innerHTML = "<th><label for='isEndConditionAfterSpell'>Casting a Spell:</label></th><select id='isEndConditionAfterSpell' name='isEndConditionAfterSpell' onchange='endConditionConditions("+'"'+"AfterSpell"+'"'+")'>"+endConditionOptions+"</select><select id='isEndConditionAfterSpellSave' name='isEndConditionAfterSpellSave'>"+saveOptions+"</select></td>";
-		nextRowIndex++;
-
-		let rowEndConditionAfterForceSave = table.insertRow(nextRowIndex);
-		rowEndConditionAfterForceSave.id = "rowEndConditionAfterForceSave";
-		rowEndConditionAfterForceSave.innerHTML = "<th><label for='isEndConditionAfterForceSave'>After Forcing a Save:</label></th><select id='isEndConditionAfterForceSave' name='isEndConditionAfterForceSave' onchange='endConditionConditions("+'"'+"AfterForceSave"+'"'+")'>"+endConditionOptions+"</select><select id='isEndConditionAfterForceSaveSave' name='isEndConditionAfterForceSaveSave'>"+saveOptions+"</select></td>";
-		nextRowIndex++;
-
-		let rowEndConditionAfterDamage = table.insertRow(nextRowIndex);
-		rowEndConditionAfterDamage.id = "rowEndConditionAfterDamage";
-		rowEndConditionAfterDamage.innerHTML = "<th><label for='isEndConditionAfterDamage'>After Dealing Damage:</label></th><select id='isEndConditionAfterDamage' name='isEndConditionAfterDamage' onchange='endConditionConditions("+'"'+"AfterDamage"+'"'+")'>"+endConditionOptions+"</select><select id='isEndConditionAfterDamageSave' name='isEndConditionAfterDamageSave'>"+saveOptions+"</select></td>";
-		nextRowIndex++;
-
-		let rowEndConditionAfterMoving = table.insertRow(nextRowIndex);
-		rowEndConditionAfterMoving.id = "rowEndConditionAfterMoving";
-		rowEndConditionAfterMoving.innerHTML = "<th><label for='isEndConditionAfterMoving'>After Moving:</label></th><select id='isEndConditionAfterMoving' name='isEndConditionAfterMoving' onchange='endConditionConditions("+'"'+"AfterMoving"+'"'+")'>"+endConditionOptions+"</select><select id='isEndConditionAfterMovingSave' name='isEndConditionAfterMovingSave'>"+saveOptions+"</select></td>";
-		nextRowIndex++;
-
-		let rowEndConditionAfterAttacked = table.insertRow(nextRowIndex);
-		rowEndConditionAfterAttacked.id = "rowEndConditionAfterAttacked";
-		rowEndConditionAfterAttacked.innerHTML = "<th><label for='isEndConditionAfterAttacked'>After Being Attacked:</label></th><select id='isEndConditionAfterAttacked' name='isEndConditionAfterAttacked' onchange='endConditionConditions("+'"'+"AfterAttacked"+'"'+")'>"+endConditionOptions+"</select><select id='isEndConditionAfterAttackedSave' name='isEndConditionAfterAttackedSave'>"+saveOptions+"</select></td>";
-		nextRowIndex++;
-
-		let rowEndConditionAfterDamaged = table.insertRow(nextRowIndex);
-		rowEndConditionAfterDamaged.id = "rowEndConditionAfterDamaged";
-		rowEndConditionAfterDamaged.innerHTML = "<th><label for='isEndConditionAfterDamaged'>After Being Damaged:</label></th><select id='isEndConditionAfterDamaged' name='isEndConditionAfterDamaged' onchange='endConditionConditions("+'"'+"AfterDamaged"+'"'+")'>"+endConditionOptions+"</select><select id='isEndConditionAfterDamagedSave' name='isEndConditionAfterDamagedSave'>"+saveOptions+"</select></td>";
-		nextRowIndex++;
-
-		let rowEndConditionAfterShortRest = table.insertRow(nextRowIndex);
-		rowEndConditionAfterShortRest.id = "rowEndConditionAfterShortRest";
-		rowEndConditionAfterShortRest.innerHTML = "<th><label for='isEndConditionAfterShortRest'>After Short Resting:</label></th><select id='isEndConditionAfterShortRest' name='isEndConditionAfterShortRest' onchange='endConditionConditions("+'"'+"AfterShortRest"+'"'+")'>"+endConditionOptions+"</select><select id='isEndConditionAfterShortRestSave' name='isEndConditionAfterShortRestSave'>"+saveOptions+"</select></td>";
-		nextRowIndex++;
-
-		let rowEndConditionAfterLongRest = table.insertRow(nextRowIndex);
-		rowEndConditionAfterLongRest.id = "rowEndConditionAfterLongRest";
-		rowEndConditionAfterLongRest.innerHTML = "<th><label for='isEndConditionAfterLongRest'>After Long Resting:</label></th><select id='isEndConditionAfterLongRest' name='isEndConditionAfterLongRest' onchange='endConditionConditions("+'"'+"AfterLongRest"+'"'+")'>"+endConditionOptions+"</select><select id='isEndConditionAfterLongRestSave' name='isEndConditionAfterLongRestSave'>"+saveOptions+"</select></td>";
-		nextRowIndex++;
-
-		let rowEndConditionAfterGainCondition = table.insertRow(nextRowIndex);
-		rowEndConditionAfterGainCondition.id = "rowEndConditionAfterGainCondition";
-		rowEndConditionAfterGainCondition.innerHTML = "<th><label for='isEndConditionAfterGainCondition'>After Gaining Another Condition:</label></th><select id='isEndConditionAfterGainCondition' name='isEndConditionAfterGainCondition' onchange='endConditionConditions("+'"'+"AfterGainCondition"+'"'+")'>"+endConditionOptions+"</select><select id='isEndConditionAfterGainConditionSave' name='isEndConditionAfterGainConditionSave'>"+saveOptions+"</select></td>";
-		nextRowIndex++;
-
-		let rowEndConditionAfterEndCondition = table.insertRow(nextRowIndex);
-		rowEndConditionAfterEndCondition.id = "rowEndConditionAfterEndCondition";
-		rowEndConditionAfterEndCondition.innerHTML = "<th><label for='isEndConditionAfterEndCondition'>After Ending Another Condition:</label></th><select id='isEndConditionAfterEndCondition' name='isEndConditionAfterEndCondition' onchange='endConditionConditions("+'"'+"AfterEndCondition"+'"'+")'>"+endConditionOptions+"</select><select id='isEndConditionAfterEndConditionSave' name='isEndConditionAfterEndConditionSave'>"+saveOptions+"</select></td>";
-		nextRowIndex++;
-
-		let rowEndConditionAfterChangeEquipment = table.insertRow(nextRowIndex);
-		rowEndConditionAfterChangeEquipment.id = "rowEndConditionAfterChangeEquipment";
-		rowEndConditionAfterChangeEquipment.innerHTML = "<th><label for='isEndConditionAfterChangeEquipment'>After Changing Equipment:</label></th><select id='isEndConditionAfterChangeEquipment' name='isEndConditionAfterChangeEquipment' onchange='endConditionConditions("+'"'+"AfterChangeEquipment"+'"'+")'>"+endConditionOptions+"</select><select id='isEndConditionAfterChangeEquipmentSave' name='isEndConditionAfterChangeEquipmentSave'>"+saveOptions+"</select></td>";
-		nextRowIndex++;
+		addConditionEndInstanceRow();
 	}
 	else{
-		let endRowID = "";
+		let endRowID = document.getElementById("rowConditionNonDurationEndButtons").nextElementSibling.id;
 
-		if(document.getElementById("howMitigate").value == "Save"){
-			endRowID = "rowConditionSave";
+		clearUnusedTable(tableID,"rowIsConditionNonDurationEnd",endRowID)
+	}
+}
+
+async function createConditionEndInstanceResolutionType(whichInstance){
+	let ResolutionType = document.getElementById("conditionEndInstanceSuccessRequired"+whichInstance).value;
+
+	if(ResolutionType == ""){
+		document.getElementById("conditionEndInstanceDetails"+whichInstance).innerHTML = "";
+	}
+	else if(ResolutionType == "Check"){
+		let requestAttr = await fetch("macro:pm.GetAttributes@lib:pm.a5e.Core", {method: "POST", body: ""});
+		let attributeList = await requestAttr.json();
+
+		let request = await fetch("macro:pm.GetSkills@lib:pm.a5e.Core", {method: "POST", body: ""});
+		let checkList = await request.json();
+
+		let checkOptions = createHTMLSelectOptions(checkList) + "<option value='AthleticsAcrobatics'>Athletics or Acrobatics</option>" + createHTMLSelectOptions(attributeList);
+		
+		let checkInput = "<select id='conditionEndInstanceResolution"+whichInstance+"' name='conditionEndInstanceResolution"+whichInstance+"'>"+checkOptions+"</select>";
+		document.getElementById("conditionEndInstanceDetails"+whichInstance).innerHTML = checkInput;
+	}
+	else if(ResolutionType == "Save"){
+		let request = await fetch("macro:pm.GetAttributes@lib:pm.a5e.Core", {method: "POST", body: ""});
+		let attributeList = await request.json();
+		let saveOptions = createHTMLSelectOptions(attributeList);
+		
+		let saveInput = "<select id='conditionEndInstanceResolution"+whichInstance+"' name='conditionEndInstanceResolution"+whichInstance+"'>"+saveOptions+"</select>";
+		document.getElementById("conditionEndInstanceDetails"+whichInstance).innerHTML = saveInput;
+	}
+}
+
+function addConditionEndInstanceRow(){
+	let tableID = document.getElementById("rowConditionNonDurationEndButtons").closest("table").id;
+	let nextRowIndex = document.getElementById("rowConditionNonDurationEndButtons").rowIndex;
+	let currentInstanceNumber = document.getElementById("conditionEndInstanceNumber").value;
+
+	if(typeof currentInstanceNumber === "undefined"){
+		currentInstanceNumber = 0;
+	}
+	else{
+		currentInstanceNumber = Number(currentInstanceNumber);
+	}
+
+	let instanceOptionsArray = [
+		{
+			"Name":"Action",
+			"DisplayName":"Using a Dedicated Action"
+		},
+		{
+			"Name":"StartTurn",
+			"DisplayName":"Start of Turn"
+		},
+		{
+			"Name":"EndTurn",
+			"DisplayName":"End of Turn"
+		},
+		{
+			"Name":"AfterAttack",
+			"DisplayName":"Attacking"
+		},
+		{
+			"Name":"AfterSpell",
+			"DisplayName":"Casting a Spell"
+		},
+		{
+			"Name":"AfterForceSave",
+			"DisplayName":"Forcing a Saving Throw"
+		},
+		{
+			"Name":"AfterDamage",
+			"DisplayName":"Dealing Damage"
+		},
+		{
+			"Name":"AfterMoving",
+			"DisplayName":"Movement"
+		},
+		{
+			"Name":"AfterAttacked",
+			"DisplayName":"Being Attacked"
+		},
+		{
+			"Name":"AfterDamaged",
+			"DisplayName":"Being Damaged"
+		},
+		{
+			"Name":"TempHPLost",
+			"DisplayName":"Losing all Temp HP"
+		},
+		{
+			"Name":"AfterShortRest",
+			"DisplayName":"Short Rest"
+		},
+		{
+			"Name":"AfterLongRest",
+			"DisplayName":"Long Rest"
+		},
+		{
+			"Name":"AfterGainCondition",
+			"DisplayName":"Gaining Another Condition"
+		},
+		{
+			"Name":"AfterEndCondition",
+			"DisplayName":"Ending Another Condition"
+		},
+		{
+			"Name":"AfterChangeEquipment",
+			"DisplayName":"Changing Equipment"
 		}
-		else{
-			endRowID = "rowSummons";
+	]
+	let instanceOptions = createHTMLSelectOptions(instanceOptionsArray);
+
+	let endConditionOptions = "<option value='Conditional'>Conditionally</option><option value='Always'>Always</option>";
+
+	addTableRow(tableID,nextRowIndex,"rowConditionNonDurationEndInstance"+currentInstanceNumber,"<th colspan=2>On <select id='conditionNonDurationEndInstance"+currentInstanceNumber+"' name='conditionNonDurationEndInstance"+currentInstanceNumber+"'>"+instanceOptions+"</select><select id='isConditionEndInstanceConditional"+currentInstanceNumber+"' name='isConditionEndInstanceConditional"+currentInstanceNumber+"' onchange='createConditionEndInstanceConditions("+currentInstanceNumber+")'>"+endConditionOptions+"</select><select id='conditionEndInstanceSuccessRequired"+currentInstanceNumber+"' name='conditionEndInstanceSuccessRequired"+currentInstanceNumber+"' onchange='createConditionEndInstanceResolutionType("+'"'+currentInstanceNumber+'"'+")'><option value=''>Automatically</option><option value='Save'>On Save</option><option value='Check'>On Check</option></select><span id='conditionEndInstanceDetails"+currentInstanceNumber+"'></span></th>");
+	nextRowIndex++;
+
+	document.getElementById("conditionEndInstanceNumber").value = currentInstanceNumber + 1;
+}
+
+function removeConditionEndInstanceRow(){
+	let currentInstanceNumber = Number(document.getElementById("conditionEndInstanceNumber").value);
+	console.log("Number: "+currentInstanceNumber);
+
+	if(currentInstanceNumber > 0){
+		let buttonsRow = document.getElementById("rowConditionNonDurationEndButtons");
+		let currentRowID = buttonsRow.id;
+		let newInstanceNumber = currentInstanceNumber - 1;
+
+		let targetRowID = "rowConditionNonDurationEndInstance"+newInstanceNumber;
+
+		console.log("currentID pre-loop: "+currentRowID);
+		console.log("target: "+targetRowID);
+		while(currentRowID != targetRowID){
+			currentRowID = buttonsRow.previousElementSibling.id;
+			buttonsRow.previousElementSibling.remove();
+			console.log("currentID: "+currentRowID);
 		}
 
-		clearUnusedTable("CreateSubeffectTable","rowIsConditionNonDurationEnd",endRowID)
+		document.getElementById("conditionEndInstanceNumber").value = currentInstanceNumber - 1;
 	}
 }
 

@@ -444,7 +444,7 @@
 
 	[h:"<!-- TODO: Temporary bypass to not deal damage to held items. Will decide to change or keep. -->"]
 	[h,if(thisTokenDamageDealt!="" && json.type(tempTarget) == "UNKNOWN"),CODE:{
-		[h,MACRO("ChangeHP@Lib:pm.a5e.Core"): json.set("","DamageDealt",thisTokenDamageDealt,"IsCrit",attackCrit,"ParentToken",targetToken,"SourceToken",ParentToken)]
+		[h,MACRO("ChangeHP@Lib:pm.a5e.Core"): json.set("","DamageDealt",thisTokenDamageDealt,"IsCrit",attackCrit,"ParentToken",targetToken,"SourceToken",ParentToken,"SourceID",effID)]
 		[h:abilityTable = json.merge(abilityTable,json.get(macro.return,"Table"))]
 		[h:DamageDealt = json.get(macro.return,"Damage")]
 	};{}]

@@ -171,6 +171,7 @@
 [h:defineFunction("pm.a5e.EffectMeetsPrereqs","pm.a5e.EffectMeetsPrereqs@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.a5e.EffectForcedSavePrereqs","pm.a5e.EffectForcedSavePrereqs@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.a5e.EffectGeneralPrereqs","pm.a5e.EffectGeneralPrereqs@Lib:pm.a5e.Core")]
+[h:defineFunction("pm.a5e.CreaturePrereqs","pm.a5e.CreaturePrereqs@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.a5e.ParentSubeffectInitialPrereqs","pm.a5e.ParentSubeffectInitialPrereqs@Lib:pm.a5e.Core")]
 
 [h:"<!-- Functions for getting information about a token -->"]
@@ -223,6 +224,7 @@
 [h:defineFunction("pm.StandardDuration","pm.StandardDuration@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.a5e.PathFeatureFilter","pm.a5e.PathFeatureFilter@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.a5e.ResourceSourceData","pm.a5e.ResourceSourceData@Lib:pm.a5e.Core")]
+[h:defineFunction("pm.a5e.ComparitorForEval","pm.a5e.ComparitorForEval@Lib:pm.a5e.Core")]
 [h:defineFunction("ut.a5e.GenerateSelectionHTML","ut.a5e.GenerateSelectionHTML@Lib:pm.a5e.Core")]
 
 [h:"<!-- Functions for Leveling -->"]

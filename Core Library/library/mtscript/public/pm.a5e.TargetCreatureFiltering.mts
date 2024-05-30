@@ -37,21 +37,8 @@
 	[h:pm.AoEUnits2 = ""]
 }]
 
-[h:pm.TargetAllegiance = if(json.get(arg(1),"Allegiance")=="",json.set("","Any",1),json.get(arg(1),"Allegiance"))]
-[h:pm.TargetSize = json.get(arg(1),"Size")]
-[h:pm.TargetSizeMax = json.get(arg(1),"SizeMax")]
-[h:pm.TargetSizeMin = json.get(arg(1),"SizeMin")]
-[h:pm.TargetTypeInclusive = json.get(arg(1),"TypeInclusive")]
-[h:pm.TargetSubtypeInclusive = json.get(arg(1),"SubtypeInclusive")]
-[h:pm.TargetCreatureNameInclusive = json.get(arg(1),"CreatureNameInclusive")]
-[h:pm.TargetTypeExclusive = json.get(arg(1),"TypeExclusive")]
-[h:pm.TargetSubtypeExclusive = json.get(arg(1),"SubtypeExclusive")]
-[h:pm.TargetCreatureNameExclusive = json.get(arg(1),"CreatureNameExclusive")]
-[h:pm.TargetSight = if(json.get(arg(1),"Sight")=="",0,json.get(arg(1),"Sight"))]
-[h:pm.TargetHearing = if(json.get(arg(1),"Hearing")=="",0,json.get(arg(1),"Hearing"))]
-[h:pm.TargetUnderstand = if(json.get(arg(1),"Understand")=="",0,json.get(arg(1),"Understand"))]
-[h:pm.TargetIntMin = if(json.get(arg(1),"IntMin")=="",0,json.get(arg(1),"IntMin"))]
-[h:pm.TargetIntMax = if(json.get(arg(1),"IntMax")=="",999999,json.get(arg(1),"IntMax"))]
+[h:targetFilteringData = arg(1)]
+[h:pm.TargetAllegiance = if(json.get(targetFilteringData,"Allegiance")=="",json.set("","Any",1),json.get(targetFilteringData,"Allegiance"))]
 
 [h,if(ProvidedList == ""),CODE:{
 	[h,switch(pm.RangeNumFinal):
@@ -85,73 +72,12 @@
 
 [h:pm.ValidTargets = "[]"]
 [h,foreach(target,pm.TargetsInRange),CODE:{
-	[h,if(json.get(pm.TargetAllegiance,"Any")==1 || json.get(pm.TargetAllegiance,"NotSelf")==1),CODE:{
-		[h,if(json.get(pm.TargetAllegiance,"NotSelf")==1 && json.get(pm.TargetAllegiance,"Any")!=1): pm.AllegianceTest = target != ParentToken; pm.AllegianceTest = 1]
-	};{
-		[h:pm.AllegianceTest = 0]
-		[h,if(json.get(pm.TargetAllegiance,"Neutral")==1): pm.AllegianceTest = if(getProperty("a5e.stat.whichTeam",target) == 0,1,pm.AllegianceTest)]
-		[h,if(json.get(pm.TargetAllegiance,"Ally")==1): pm.AllegianceTest = if(getProperty("a5e.stat.whichTeam",target) == getProperty("a5e.stat.whichTeam"),1,pm.AllegianceTest)]
-		[h,if(json.get(pm.TargetAllegiance,"Foe")==1): pm.AllegianceTest = if(and(getProperty("a5e.stat.whichTeam",target) != getProperty("a5e.stat.whichTeam"),getProperty("a5e.stat.whichTeam",target) != 0),1,pm.AllegianceTest)]
-	}]
-	
-	[h,if(json.type(pm.TargetSize) == "UNKNOWN"):
-		pm.SizeTest = if(or(pm.TargetSize=="",pm.TargetSize==getSize(target)),1,0);
-		pm.SizeTest = json.contains(pm.SizeTest,getSize(target))
-	]
-    
-	[h,if(pm.TargetSizeMax != ""):
-		pm.SizeTest = if(pm.a5e.CompareSizes(pm.TargetSizeMax,getSize(target)) < 0, 0, pm.SizeTest)
-	]
-	
-	[h,if(pm.TargetSizeMin != ""):
-		pm.SizeTest = if(pm.a5e.CompareSizes(pm.TargetSizeMin,getSize(target)) > 0, 0, pm.SizeTest)
-	]
-
-	[h,if(json.type(pm.TargetTypeInclusive) == "UNKNOWN"):
-		pm.TypeTest = if(or(pm.TargetTypeInclusive==getProperty("a5e.stat.CreatureType",target),pm.TargetTypeInclusive=="Any",pm.TargetTypeInclusive==""),1,0);
-		pm.TypeTest = if(json.contains(pm.TargetTypeInclusive,getProperty("a5e.stat.CreatureType",target)),1,0)
-	]
-	
-	[h,if(json.type(pm.TargetSubtypeInclusive) == "UNKNOWN"):
-		pm.SubtypeTest = if(or(pm.TargetSubtypeInclusive==getProperty("a5e.stat.Race",target),pm.TargetSubtypeInclusive=="Any",pm.TargetSubtypeInclusive==""),1,0);
-		pm.SubtypeTest = if(json.contains(pm.TargetSubtypeInclusive,pm.RemoveSpecial(getProperty("a5e.stat.Race",target))),1,0)
-	]
-	
-	[h,if(json.type(pm.TargetCreatureNameInclusive) == "UNKNOWN"):
-		pm.CreatureNameTest = or(
-			pm.TargetCreatureNameInclusive==getProperty("a5e.stat.CreatureName",target),pm.TargetCreatureNameInclusive=="Any",
-			pm.TargetCreatureNameInclusive=="");
-		pm.CreatureNameTest = json.contains(pm.TargetCreatureNameInclusive,getProperty("a5e.stat.CreatureName",target))
-	]
-	 
-	[h,if(json.type(pm.TargetTypeExclusive) == "UNKNOWN"):
-		pm.TypeTest = if(or(pm.TargetTypeExclusive!=getProperty("a5e.stat.CreatureType",target),pm.TargetTypeExclusive==""),pm.TypeTest,0);
-		pm.TypeTest = if(json.contains(pm.TargetTypeExclusive,getProperty("a5e.stat.CreatureType",target)),0,pm.TypeTest)
-	]
-	
-	[h,if(json.type(pm.TargetSubtypeExclusive) == "UNKNOWN"):
-		pm.SubtypeTest = if(or(pm.TargetSubtypeExclusive!=getProperty("a5e.stat.Race",target),pm.TargetSubtypeExclusive==""),pm.SubtypeTest,0);
-		pm.SubtypeTest = if(json.contains(pm.TargetSubtypeExclusive,pm.RemoveSpecial(getProperty("a5e.stat.Race",target))),0,pm.SubtypeTest)
-	]
-	
-	[h,if(json.type(pm.TargetCreatureNameExclusive) == "UNKNOWN"):
-		pm.CreatureNameTest = min(or(
-			pm.TargetCreatureNameExclusive!=getProperty("a5e.stat.CreatureName",target),
-			pm.TargetCreatureNameExclusive==""),
-		pm.CreatureNameTest);
-		pm.CreatureNameTest = min(!json.contains(pm.TargetCreatureNameExclusive,getProperty("a5e.stat.CreatureName",target)),pm.CreatureNameTest)
-	]
-
-	[h:"<!-- BUGFIX: CRITICAL: Any attempt to use Int as a parameter for auras (or, in the future, other properties calculated via UnifiedAbilities) will cause crashes on ALL tokens if that aura is active. Only solution I can think of currently is swapping getProperty() for a5e.AttributeCalc(target,pm.a5e.GatherThisTokenFeatures(target,0)) - but this would outright prevent intelligence calculations from taking auras into account for ALL targeting (not just aura targeting). -->"]
-	[h,if(and(pm.TargetIntMax == 999999,pm.TargetIntMin == 0)):
-		pm.IntTest = 1;
-		pm.IntTest = if(and(json.get(getProperty("a5e.stat.Attributes",target),"Intelligence")>pm.TargetIntMin,json.get(getProperty("a5e.stat.Attributes",target),"Intelligence")<pm.TargetIntMax),1,0)
-	]
+	[h:isTargetValid = pm.a5e.CreaturePrereqs(target,targetFilteringData,ParentToken)]
    
 	[h:"<!-- TODO: Move the CanSeeTest to targeting functions unless sight is required, because it shouldn't prevent valid unseen targets from being on the list for AoEs and similar effects which do not have to worry about players seeing the targets in an input -->"]
 	[h:AmountTargetIsVisible = canSeeToken(target,pm.TargetOrigin)]
 	[h:CanSeeTest = !json.isEmpty(AmountTargetIsVisible)]
-	[h,if(CanSeeTest): pm.ValidTargets = if(and(pm.AllegianceTest,pm.TypeTest,pm.SubtypeTest,pm.CreatureNameTest,pm.IntTest,pm.SizeTest),json.append(pm.ValidTargets,target),pm.ValidTargets)]
+	[h,if(CanSeeTest && isTargetValid): pm.ValidTargets = json.append(pm.ValidTargets,target)]
 }]
 
 [h:macro.return = json.set("","ValidTargets",pm.ValidTargets,"SelfOnly",0)]

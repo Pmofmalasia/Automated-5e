@@ -15,6 +15,7 @@
 [h:SpellSlot = json.get(macro.return,"Slot")]
 [h:ShowFullRules = json.get(macro.return,"ShowFullRules")]
 [h:SpellDescription = json.get(macro.return,"Description")]
+[h:FinalSpellData = json.get(macro.return,"SpellData")]
 
 [h:pm.a5e.BaseEffectData = json.set("",
     "Class","Spell",
@@ -23,6 +24,7 @@
     "ColorSubtype",json.set("","Source",SpellSource,"Level",SpellSlot),
     "FalseName","Spellcasting",
 	"Type","Spell",
+	"SpellData",FinalSpellData,
 	"ID",pm.a5e.GenerateEffectID(),
 	"ParentToken",ParentToken
 )]

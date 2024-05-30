@@ -8,20 +8,13 @@
 [h:pm.a5e.OverarchingContext = "Damage"]
 
 [h:hp.DamageDealt = json.get(hp.Data,"DamageDealt")]
-[h:hp.Source = json.get(hp.Data,"SourceType")]
-[h:hp.IsCrit = json.get(hp.Data,"IsCrit")]
-[h:hp.IsCrit = if(hp.IsCrit=="",0,hp.IsCrit)]
-[h,if(json.get(hp.Data,"BypassConc")==""): 
-	hp.BypassConc = 0;
-	hp.BypassConc = json.get(hp.Data,"BypassConc")
-]
-[h,if(json.get(hp.Data,"ConcSaveBonus")==""): 
-	hp.ConcSaveBonus = 0;
-	hp.ConcSaveBonus = json.get(hp.Data,"ConcSaveBonus")
-]
+[h:hp.SourceID = json.get(hp.Data,"SourceID")]
+[h:hp.IsCrit = number(json.get(hp.Data,"IsCrit"))]
+[h:hp.BypassConc = number(json.get(hp.Data,"BypassConc"))]
+[h:hp.ConcSaveBonus = number(json.get(hp.Data,"ConcSaveBonus"))]
 
 [h:"<!-- Not sure why the intersection with all damage types is required but there must have been a reason? -->"]
-[h:hp.TypesDealt = json.intersection(json.append(pm.GetDamageTypes("Name","json"),"None","Healing","TempHP"),json.unique(json.path.read(hp.DamageDealt,"[*]['DamageType']")))]
+[h:hp.TypesDealt = json.intersection(json.append(pm.GetDamageTypes("Name","json"),"None","Healing","TempHP"),json.unique(json.path.read(hp.DamageDealt,"\$[*]['DamageType']")))]
 [h:hp.DmgModData = pm.a5e.DamageModCalc(hp.Data)]
 
 [h:hp.FinalDamageDealt = json.set("","Healing",0)]

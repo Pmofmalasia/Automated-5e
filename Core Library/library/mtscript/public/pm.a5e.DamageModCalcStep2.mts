@@ -1,7 +1,10 @@
 [h:hp.Data = arg(0)]
 [h:modifierInstance = arg(1)]
-[h:hp.Source = json.get(hp.Data,"SourceType")]
-[h:switchToken(json.get(hp.Data,"ParentToken"))]
+[h:SourceID = json.get(hp.Data,"SourceID")]
+[h:SourceEffect = json.path.read(data.getData("addon:","pm.a5e.core","gd.Effects"),"\$[*][?(@.ID == '"+SourceID+"')]")]
+[h,if(json.isEmpty(SourceEffect)): SourceEffect = "{}"; SourceEffect = json.get(SourceEffect,0)]
+[h:ParentToken = json.get(hp.Data,"ParentToken")]
+[h:switchToken(ParentToken)]
 
 [h:modifierDamageTypes = json.get(modifierInstance,"DamageTypes")]
 [h,if(json.contains(modifierDamageTypes,"All")),CODE:{
@@ -18,51 +21,46 @@
 [h,if(AllSourcesTest),CODE:{
 	[h:return(0,modifierDamageTypes)]
 };{
-	[h:hp.TempDmgModTest = 1]
+	[h:isDamageModApplicable = 1]
 	[h:tempSourceToken = json.get(hp.Data,"SourceToken")]
+	
+	[h,if(json.get(modifierInstance,"Creature") != ""): isDamageModApplicable = pm.a5e.CreaturePrereqs(tempSourceToken,json.get(modifierInstance,"Creature"),ParentToken)]
+	[h:return(isDamageModApplicable,"[]")]
 
-	[h,if(json.get(modifierInstance,"SourceToken")!=""): hp.TempDmgModTest = if(tempSourceToken=="",0,json.contains(json.get(modifierInstance,"SourceToken"),tempSourceToken))]
-	[h,if(json.get(modifierInstance,"ExcludeSourceToken")!=""): hp.TempDmgModTest = if(tempSourceToken=="",1,!json.contains(json.get(modifierInstance,"ExcludeSourceToken"),tempSourceToken))]
+	[h:weaponInfo = json.get(SourceEffect,"WeaponData")]
+	[h:spellInfo = json.get(SourceEffect,"SpellData")]
+	[h:affectsMagical = json.get(modifierInstance,"Magical")]
+	[h:affectsPhysical = json.get(modifierInstance,"Physical")]
+	[h,if(affectsMagical == 1 || affectsPhysical == 1),CODE:{
+		[h:isMagical = 0]
+		[h,if(spellInfo != ""): isMagical = 1]
+		[h,if(weaponInfo != ""): isMagical = max(json.get(weaponInfo,"isMagical"),isMagical)]
+		
+		[h,if(affectsMagical == 1): isDamageModApplicable = min(isDamageModApplicable,isMagical)]
+		[h,if(affectsPhysical == 1): isDamageModApplicable = min(isDamageModApplicable,!isMagical)]
+	};{}]
+	[h:return(isDamageModApplicable,"[]")]
 
-	[h,if(json.get(modifierInstance,"IncludeCreatureType")!=""): hp.TempDmgModTest = if(tempSourceToken=="",0,json.contains(json.get(modifierInstance,"IncludeCreatureType"),getProperty("a5e.stat.CreatureType",tempSourceToken)))]
-	[h,if(json.get(modifierInstance,"ExcludeCreatureType")!=""): hp.TempDmgModTest = if(tempSourceToken=="",1,!json.contains(json.get(modifierInstance,"ExcludeCreatureType"),getProperty("a5e.stat.CreatureType",tempSourceToken)))]
+	[h,if(!json.isEmpty(weaponInfo)),CODE:{
+		[h:"<!-- TODO: Effect Refactor: MeleeRangedAttack data should be in the 'Attack' portion of ToResolve so it can be tested for spells/features alike -->"]
+		[h,if(json.get(modifierInstance,"MeleeRanged")!=""): isDamageModApplicable = min(isDamageModApplicable,json.get(modifierInstance,"MeleeRanged") != json.get(weaponInfo,"MeleeRanged"))]
+		[h,if(json.get(modifierInstance,"MeleeRangedAttack")!=""): isDamageModApplicable = min(isDamageModApplicable,json.get(modifierInstance,"MeleeRangedAttack") != json.get(weaponInfo,"MeleeRangedAttack"))]
 
-	[h,switch(json.get(modifierInstance,"Allegiance")):
-		case "Ally": hp.TempDmgModTest = (getProperty("a5e.stat.WhichTeam") == getProperty("a5e.stat.WhichTeam",tempSourceToken));
-		case "Foe": hp.TempDmgModTest = (getProperty("a5e.stat.WhichTeam") != getProperty("a5e.stat.WhichTeam",tempSourceToken));
-		case "Self": hp.TempDmgModTest = (currentToken() == tempSourceToken);
-		case "NotSelf": hp.TempDmgModTest = (currentToken() != tempSourceToken);
-		default: ""
-	]
+		[h:allWeaponMaterials = json.get(weaponInfo,"Materials")]
+		[h,if(json.get(weaponInfo,"Coating") != ""): allWeaponMaterials = json.append(allWeaponMaterials,json.get(weaponInfo,"Coating"))]
 
-	[h,if(json.get(modifierInstance,"HasCondition")!=""): hp.TempDmgModTest = if(tempSourceToken=="",0,!json.isEmpty(json.intersection(json.get(modifierInstance,"HasCondition"),json.path.read(getProperty("a5e.stat.ConditionList",tempSourceToken),"[*]['Name']"))))]
+		[h,if(json.get(modifierInstance,"IncludeMaterial")!=""): isDamageModApplicable = min(isDamageModApplicable,json.contains(json.get(modifierInstance,"IncludeMaterial"),allWeaponMaterials))]
+		[h,if(json.get(modifierInstance,"ExcludeMaterial")!=""): isDamageModApplicable = min(isDamageModApplicable,!json.contains(json.get(modifierInstance,"ExcludeMaterial"),allWeaponMaterials))]
+	};{}]
+	[h:return(isDamageModApplicable,"[]")]
 
-	[h,if(json.get(modifierInstance,"IncludeMorality")!=""): hp.TempDmgModTest = if(tempSourceToken=="",0,json.contains(json.get(modifierInstance,"IncludeMorality"),json.get(getProperty("a5e.stat.Alignment",tempSourceToken),"Morality")))]
-	[h,if(json.get(modifierInstance,"ExcludeMorality")!=""): hp.TempDmgModTest = if(tempSourceToken=="",1,!json.contains(json.get(modifierInstance,"ExcludeMorality"),json.get(getProperty("a5e.stat.Alignment",tempSourceToken),"Morality")))]
+	[h,if(!json.isEmpty(spellInfo)),CODE:{
+		[h,if(json.get(modifierInstance,"IncludeSpellName") != ""): isDamageModApplicable = min(isDamageModApplicable,!json.contains(json.get(modifierInstance,"IncludeSpellName"),json.get(spellData,"Name")))]
+		[h,if(json.get(modifierInstance,"IncludeSchool")!=""): isDamageModApplicable = json.contains(json.get(modifierInstance,"IncludeSchool"),json.get(spellData,"School"))]
+		[h,if(json.get(modifierInstance,"ExcludeSchool")!=""): isDamageModApplicable = !json.contains(json.get(modifierInstance,"ExcludeSchool"),json.get(spellData,"School"))]
+	};{}]
 
-	[h,if(json.get(modifierInstance,"IncludeOrder")!=""): hp.TempDmgModTest = if(tempSourceToken=="",0,json.contains(json.get(modifierInstance,"IncludeOrder"),json.get(getProperty("a5e.stat.Alignment",tempSourceToken),"Order")))]
-	[h,if(json.get(modifierInstance,"ExcludeOrder")!=""): hp.TempDmgModTest = if(tempSourceToken=="",1,!json.contains(json.get(modifierInstance,"ExcludeOrder"),json.get(getProperty("a5e.stat.Alignment",tempSourceToken),"Order")))]
-
-	[h,switch(hp.Source),CODE:
-		case "Spell":{
-			[h:hp.TempDmgModTest = if(json.get(modifierInstance,"Magical")==0,0,1)]
-			[h,if(json.get(modifierInstance,"IncludeSchool")!=""): hp.TempDmgModTest = json.contains(json.get(modifierInstance,"IncludeSchool"),json.get(hp.Data,"School"))]
-			[h,if(json.get(modifierInstance,"ExcludeSchool")!=""): hp.TempDmgModTest = !json.contains(json.get(modifierInstance,"ExcludeSchool"),json.get(hp.Data,"School"))]
-			
-		};
-		case "Weapon":{
-			[h:hp.TempDmgModTest = or(json.get(modifierInstance,"MeleeRanged")=="",json.get(modifierInstance,"MeleeRanged") == json.get(hp.Data,"MeleeRanged"))]
-			[h:hp.TempDmgModTest = or(json.get(modifierInstance,"Magical")=="",json.get(modifierInstance,"Magical") == json.get(hp.Data,"Magical"))]
-			[h,if(json.get(modifierInstance,"IncludeMaterial")!=""): hp.TempDmgModTest = json.contains(json.get(modifierInstance,"IncludeMaterial"),json.get(hp.Data,"Material"))]
-			[h,if(json.get(modifierInstance,"ExcludeMaterial")!=""): hp.TempDmgModTest = !json.contains(json.get(modifierInstance,"ExcludeMaterial"),json.get(hp.Data,"Material"))]
-		};
-		default:{
-			[h:hp.TempDmgModTest = or(json.get(modifierInstance,"MeleeRanged")=="",json.get(modifierInstance,"MeleeRanged") == json.get(hp.Data,"MeleeRanged"))]
-			[h:hp.TempDmgModTest = or(json.get(modifierInstance,"Magical")=="",json.get(modifierInstance,"Magical") == json.get(hp.Data,"Magical"))]
-		}
-	]
-
-	[h,if(hp.TempDmgModTest):
+	[h,if(isDamageModApplicable):
 		return(0,modifierDamageTypes);
 		return(0,"[]")
 	]

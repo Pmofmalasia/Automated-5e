@@ -3,8 +3,7 @@
 [h:Effects = json.get(arg(0),"Effects")]
 [h,if(Effects == ""): Effects = "[]"]
 [h:switchToken(ParentToken)]
-[h:broadcast("HI")]
-[h:broadcast('[h:FeatureData = json.get(json.path.read(getProperty("a5e.stat.AllFeatures"),"\$[*][?(@.Name=='+"'bleh'"+' && @.Class=='+"'hueh'"+' && @.Subclass=='+"'plueh'"+')]['+"'Effects'"+']"),0)]')]
+
 [h,foreach(ability,pm.AbilityList),CODE:{
 	[h:pm.CastTimeNote = if(or(json.get(ability,"UseTime")=="",lower(json.get(ability,"UseTime"))=="action"),""," <b>("+json.get(ability,"UseTime")+")</b>")]
 	[h:pm.NewMacroLabel = json.get(ability,"DisplayName")+if(json.get(ability,"Marker")=="",""," "+json.get(ability,"Marker"))+pm.CastTimeNote]
@@ -14,10 +13,10 @@
 		[h:pm.NewMacroCommand = '[MACRO("'+json.get(ability,"Name")+" ### "+json.get(ability,"Class")+if(json.get(ability,"Subclass")=="",""," ### "+json.get(ability,"Subclass"))+"@Lib:"+json.get(ability,"Library")+'"): json.set("","ParentToken",currentToken(),"IsTooltip",0)]']
 		[h:pm.NewMacroTooltip = '[MACRO("'+json.get(ability,"Name")+" ### "+json.get(ability,"Class")+if(json.get(ability,"Subclass")=="",""," ### "+json.get(ability,"Subclass"))+"@Lib:"+json.get(ability,"Library")+'"): json.set("","ParentToken",currentToken(),"IsTooltip",1)]']	
 	};{
-		[h:pm.NewMacroCommand = '[h:FeatureData = json.get(json.path.read(getProperty("a5e.stat.AllFeatures"),"\$[*][?(@.Name=='+"'"+json.get(ability,"Name")+"'"+' && @.Class=='+"'"+json.get(ability,"Class")+"'"+' && @.Subclass=='+"'"+json.get(ability,"Subclass")+"'"+')]['+"'Effects'"+']"),0)]
+		[h:pm.NewMacroCommand = '[h:FeatureData = json.get(json.path.read(getProperty("a5e.stat.AllFeatures"),"\\\$[*][?(@.Name=='+"'"+json.get(ability,"Name")+"'"+' && @.Class=='+"'"+json.get(ability,"Class")+"'"+' && @.Subclass=='+"'"+json.get(ability,"Subclass")+"'"+')]['+"'Effects'"+']"),0)]
 [h:FeatureEffect = json.get(FeatureData,'+roll.count+')]
 [MACRO("ExecuteEffectBorder@Lib:pm.a5e.Core"): json.set("","ParentToken",currentToken(),"IsTooltip",0,"Effect",FeatureEffect,"DisplayName","'+json.get(ability,"DisplayName")+'","Class","'+json.get(ability,"Class")+'")]']
-		[h:pm.NewMacroTooltip = '[h:FeatureData = json.get(json.path.read(getProperty("a5e.stat.AllFeatures"),"\$[*][?(@.Name=='+"'"+json.get(ability,"Name")+"'"+' && @.Class=='+"'"+json.get(ability,"Class")+"'"+' && @.Subclass=='+"'"+json.get(ability,"Subclass")+"'"+')]"),0)][r,MACRO("FeatureTooltipBorder@Lib:pm.a5e.Core"): json.set(FeatureData,"ParentToken",currentToken())]']
+		[h:pm.NewMacroTooltip = '[h:FeatureData = json.get(json.path.read(getProperty("a5e.stat.AllFeatures"),"\\\$[*][?(@.Name=='+"'"+json.get(ability,"Name")+"'"+' && @.Class=='+"'"+json.get(ability,"Class")+"'"+' && @.Subclass=='+"'"+json.get(ability,"Subclass")+"'"+')]"),0)][r,MACRO("FeatureTooltipBorder@Lib:pm.a5e.Core"): json.set(FeatureData,"ParentToken",currentToken())]']
 	}]
 
 	[h:ButtonColorData = pm.a5e.BorderColors(json.get(ability,"Class"),"",ParentToken)]

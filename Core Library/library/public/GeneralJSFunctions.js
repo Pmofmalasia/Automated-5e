@@ -39,7 +39,6 @@ function toggleFieldEnabled(toDisable,checkboxID){
 			document.getElementById(thisDisableID).removeAttribute("disabled","");
 		}
 	}
-
 }
 
 function createHTMLSelectOptions(inputData,valueKey,idKey,idPrefix){

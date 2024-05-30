@@ -17,6 +17,7 @@
 };{
     [h,MACRO("Spellcasting@Lib:pm.a5e.Core"): pm.SpellData]
     [h:ReturnData = macro.return]
+	[h:pm.a5e.BaseEffectData = json.set(pm.a5e.BaseEffectData,"SpellData",json.get(ReturnData,"SpellData"))]
 
     [h:spellDataTable = json.get(ReturnData,"Table")]
     [h,if(FeatureDescription!=""): spellDataTable = json.append(spellDataTable,pm.a5e.CreateBasicTableLine(json.get(currentFeatureInfo,"DisplayName"),FeatureDescription))]

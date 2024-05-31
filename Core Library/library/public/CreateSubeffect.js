@@ -859,7 +859,6 @@ function addConditionEndInstanceRow(){
 
 function removeConditionEndInstanceRow(){
 	let currentInstanceNumber = Number(document.getElementById("conditionEndInstanceNumber").value);
-	console.log("Number: "+currentInstanceNumber);
 
 	if(currentInstanceNumber > 0){
 		let buttonsRow = document.getElementById("rowConditionNonDurationEndButtons");
@@ -868,12 +867,9 @@ function removeConditionEndInstanceRow(){
 
 		let targetRowID = "rowConditionNonDurationEndInstance"+newInstanceNumber;
 
-		console.log("currentID pre-loop: "+currentRowID);
-		console.log("target: "+targetRowID);
 		while(currentRowID != targetRowID){
 			currentRowID = buttonsRow.previousElementSibling.id;
 			buttonsRow.previousElementSibling.remove();
-			console.log("currentID: "+currentRowID);
 		}
 
 		document.getElementById("conditionEndInstanceNumber").value = currentInstanceNumber - 1;

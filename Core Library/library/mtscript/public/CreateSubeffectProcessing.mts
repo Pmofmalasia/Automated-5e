@@ -463,12 +463,16 @@
 		[h:conditionEndInfo = json.set("","Duration",json.get(ReturnDurationData,"DurationInfo"))]
 	}]
 
+	[h,if(json.contains(subeffectData,"isConditionNonDurationEnd")),CODE:{
+		[h:conditionEndInfoProcessingData = ct.a5e.ConditionEndTriggerInputProcessing(subeffectData)]
+		[h:subeffectData = json.get(conditionEndInfoProcessingData,"Subeffect")]
+		[h:conditionEndInfo = json.get(conditionEndInfoProcessingData,"EndInfo")]
+	};{
+		[h:conditionEndInfo = "{}"]
+	}]
+
 	[h:subeffectData = json.remove(subeffectData,"isConditionNonDurationEnd")]
-	[h,if(json.contains(subeffectData,"isEndConditionTempHPLost")): ConditionEndTriggers = json.set("","TempHPLost",1); ConditionEndTriggers = "{}"]
-	[h:subeffectData = json.remove(subeffectData,"TempHPLost")]
-	[h:"<!-- TODO: Note - The below loop will likely be temporary, as the 'conditional' portion will likely need to be customized to each instance once completed. But for now, it's easier to just loop it. -->"]
-	[h:conditionEndInstances = json.append("","Action","StartTurn","EndTurn","AfterAttack","AfterSpell","AfterForceSave","AfterDamage","AfterMoving","AfterAttacked","AfterDamaged","AfterShortRest","AfterLongRest","AfterGainCondition","AfterEndCondition","AfterChangeEquipment")]
-	[h,foreach(tempInstance,conditionEndInstances): ct.a5e.ConditionEndTriggerInputProcessing(tempInstance)]
+	[h,foreach(tempInstance,conditionEndInstances): ]
 	[h:conditionEndInfo = json.set(conditionEndInfo,"EndTriggers",ConditionEndTriggers)]
 
 	[h:allConditionInfo = json.set("",

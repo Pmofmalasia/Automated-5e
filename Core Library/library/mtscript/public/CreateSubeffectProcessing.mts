@@ -470,10 +470,7 @@
 	};{
 		[h:conditionEndInfo = "{}"]
 	}]
-
 	[h:subeffectData = json.remove(subeffectData,"isConditionNonDurationEnd")]
-	[h,foreach(tempInstance,conditionEndInstances): ]
-	[h:conditionEndInfo = json.set(conditionEndInfo,"EndTriggers",ConditionEndTriggers)]
 
 	[h:allConditionInfo = json.set("",
 		"Conditions",json.merge(conditionsAlwaysAdded,conditionOptions),

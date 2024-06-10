@@ -27,9 +27,9 @@
 	[h,count(NumberOfEntries),CODE:{
 		[h:TempAddedItem = json.set(AddedItem,"Number",NumberAdded)]
 		[h,MACRO("ChangeItemID@Lib:pm.a5e.Core"): TempAddedItem]
-		[h:TempAddedItem = macro.return]
+		[h:FinalAddedItem = macro.return]
 
-		[h:PriorInventory = json.append(PriorInventory,TempAddedItem)]
+		[h:PriorInventory = json.append(PriorInventory,FinalAddedItem)]
 	}]
 
 	[h:NewInventory = PriorInventory]

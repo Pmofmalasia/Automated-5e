@@ -212,6 +212,7 @@
 [h:defineFunction("pm.a5e.StartAndEndTurnEffects","pm.a5e.StartAndEndTurnEffects@Lib:pm.a5e.Core",0,0)]
 [h:defineFunction("pm.a5e.GenerateEffectDisplay","pm.a5e.GenerateEffectDisplay@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.a5e.TriggerConditionEnd","pm.a5e.TriggerConditionEnd@Lib:pm.a5e.Core")]
+[h:defineFunction("pm.a5e.TriggerConditionEndResolutionData","pm.a5e.TriggerConditionEndResolutionData@Lib:pm.a5e.Core",0,0)]
 
 [h:"<!-- Functions for general use -->"]
 [h:defineFunction("pm.DieRoller","pm.DieRoller@Lib:pm.a5e.Core")]
@@ -222,6 +223,7 @@
 [h:defineFunction("pm.RemoveSpecial","pm.RemoveSpecial@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.StandardRange","pm.StandardRange@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.StandardDuration","pm.StandardDuration@Lib:pm.a5e.Core")]
+[h:defineFunction("pm.a5e.GetBonusValue","pm.a5e.GetBonusValue@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.a5e.PathFeatureFilter","pm.a5e.PathFeatureFilter@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.a5e.ResourceSourceData","pm.a5e.ResourceSourceData@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.a5e.ComparitorForEval","pm.a5e.ComparitorForEval@Lib:pm.a5e.Core")]

@@ -24,31 +24,11 @@
 }]
 
 [h:pm.ConditionsExpired = json.unique(json.path.read(getProperty("a5e.stat.ConditionList"),"\$[*][?(@.Duration.Expired==1)]['GroupID']"))]
-[h:validConditionEndTriggers = json.path.read(getProperty("a5e.stat.ConditionGroups"),"\$[*][?(@.EndTriggers!='')]","DEFAULT_PATH_LEAF_TO_NULL")]
-[h:validConditionEndTriggers = json.path.read(validConditionEndTriggers,"\$[*][?(@.EndTriggers."+StartorEnd+"Turn!=null)]","DEFAULT_PATH_LEAF_TO_NULL")]
-
-[h,foreach(tempConditionGroup,validConditionEndTriggers),CODE:{
-	[h:tempEndTriggers = json.get(json.get(tempConditionGroup,"EndTriggers"),StartorEnd+"Turn")]
-	[h,switch(json.type(tempEndTriggers)),CODE:
-		case "UNKNOWN":{ 
-			[h,if(tempEndTriggers==1): pm.ConditionsExpired = json.append(pm.ConditionsExpired,json.get(tempConditionGroup,"GroupID"))]
-		};
-		case "OBJECT":{ 
-			[h:needsResolutionTest = if(json.get(tempEndTriggers,"SaveType")!="",1,0)]
-			[h,if(needsResolutionTest): effectsToMerge = json.append(effectsToMerge,json.set("",
-				"SaveDC",json.set("",
-					"SaveType",json.get(tempEndTriggers,"SaveType"),
-					"DC",json.get(tempEndTriggers,"DC"),
-					"ConditionModification",json.set("","Success",1)),
-				"ConditionModificationInfo",json.set("","Method","End"),
-				"TargetedConditions",json.set("",ParentToken,json.get(tempConditionGroup,"GroupID")),
-				"Targets",json.append("",ParentToken),
-				"ParentToken",json.get(tempConditionGroup,"SetBy")
-			))]
-		};
-		default:{}
-	]
-}]
+[h:conditionsRemovedTurnChange = pm.a5e.TriggerConditionEnd(StartorEnd+"Turn",ParentToken)]
+[h:condition = json.get(conditionsRemovedTurnChange,"Removed")]
+[h:abilityTable = json.merge(abilityTable,json.get(conditionsRemovedTurnChange,"Table"))]
+[h:conditionEndEffects = json.get(conditionsRemovedTurnChange,"Effects")]
+[h:effectsToMerge = json.merge(effectsToMerge,conditionEndEffects)]
 
 [h,if(json.isEmpty(pm.ConditionsExpired)),CODE:{};{
 	[h,MACRO("EndCondition@Lib:pm.a5e.Core"): json.set("","GroupID",pm.ConditionsExpired,"Target",ParentToken)]

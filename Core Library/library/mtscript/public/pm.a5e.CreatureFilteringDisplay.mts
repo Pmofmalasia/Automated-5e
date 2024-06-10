@@ -2,7 +2,7 @@
 
 [h,if(json.get(creatureFilteringData,"Allegiance") ==""):
 	targetAllegiance = "{}";
-	json.get(creatureFilteringData,"Allegiance")
+	targetAllegiance = json.get(creatureFilteringData,"Allegiance")
 ]
 [h:targetSize = json.get(creatureFilteringData,"Size")]
 [h:targetSizeMax = json.get(creatureFilteringData,"SizeMax")]

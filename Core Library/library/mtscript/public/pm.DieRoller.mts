@@ -9,7 +9,7 @@
 [h:pm.AllDice = "[]"]
 [h,count(pm.DieNumber): pm.AllDice = json.append(pm.AllDice,pm.DieSize)]
 
-[h:macro.return = json.set("",
+[h:return(0,json.set("",
     "Array",pm.RollArray,
     "Total",pm.Roll,
     "String",pm.RollStr,
@@ -17,4 +17,4 @@
     "Dice",pm.AllDice,
     "Bonus",pm.Bonus,
     "Formula",(pm.DieNumber+"d"+pm.DieSize)+pm.PlusMinus(pm.Bonus,0)
-)]
+))]

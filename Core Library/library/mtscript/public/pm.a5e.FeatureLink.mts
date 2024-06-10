@@ -1,8 +1,8 @@
 [h:currentFeatureEffect = arg(1)]
 [h,if(argcount()>2): extraInfo = arg(2); extraInfo = json.set("","ExtraData","{}")]
+[h:pm.a5e.FeatureComponentStdVars(arg(0))]
 [h:currentFeatureAltName = json.get(extraInfo,"AltName")]
 [h:currentFeatureExtraData = json.get(extraInfo,"ExtraData")]
-[h:pm.a5e.FeatureComponentStdVars(arg(0))]
 
 [h:currentFeatureExtraData = json.merge(currentFeatureExtraData,currentFeatureInfo)]
 [h:currentFeatureLibrary = json.get(currentFeatureInfo,"Library")]
@@ -10,7 +10,7 @@
 [h:currentFeatureContext = json.get(currentFeatureInfo,"Context")]
 [h:ShowFullRules = json.get(currentFeatureInfo,"FullRules")]
 
-[h:currentFeatureLink = macroLinkText(if(currentFeatureAltName=="",currentFeatureName,pm.RemoveSpecial(currentFeatureAltName))+" ### "+currentFeatureClass+" ### "+if(currentFeatureSubclass=="","",currentFeatureSubclass+" ### ")+if(currentFeatureType=="Feature","",currentFeatureType+" ### ")+"Link@Lib:"+currentFeatureLibrary,"gm-self",json.set(currentFeatureExtraData,"ParentToken",ParentToken,"IsTooltip",0,"Context",currentFeatureContext,"OverarchingContext",pm.a5e.OverarchingContext),ParentToken)]
+[h:currentFeatureLink = macroLinkText(if(currentFeatureAltName=="",currentFeatureName,pm.RemoveSpecial(currentFeatureAltName))+" ### "+currentFeatureClass+" ### "+if(currentFeatureSubclass=="","",currentFeatureSubclass+" ### ")+if(currentFeatureType=="Feature","",currentFeatureType+" ### ")+"Link@Lib:"+currentFeatureLibrary,"gm-self",json.set(currentFeatureExtraData,"ParentToken",ParentToken,"IsTooltip",0,"Context",currentFeatureContext,"OverarchingContext",pm.a5e.OverarchingContext,"CallingFeature",json.set("","Name",currentFeatureName,"Class",currentFeatureClass,"Subclass",currentFeatureSubclass)),ParentToken)]
 [h:currentFeatureTooltipLink = macroLinkText(if(currentFeatureAltName=="",currentFeatureName,pm.RemoveSpecial(currentFeatureAltName))+" ### "+currentFeatureClass+" ### "+if(currentFeatureSubclass=="","",currentFeatureSubclass+" ### ")+if(currentFeatureType=="Feature","",currentFeatureType+" ### ")+"Link@Lib:"+currentFeatureLibrary,"gm-self",json.set(currentFeatureExtraData,"ParentToken",ParentToken,"IsTooltip",1,"Context",currentFeatureContext,"OverarchingContext",pm.a5e.OverarchingContext),ParentToken)]
 [h,if(IsTooltip),CODE:{
 	[h:abilityTable = json.append(abilityTable,pm.a5e.CreateBasicTableLine(

@@ -50,8 +50,19 @@
 	[h:AmountConsumed = 1]
 	[h:ItemID = json.get(UseItemData,"ItemID")]
 	[h:NewNumber = json.get(UseItemData,"Number") - AmountConsumed]
-	[h:NewInventory = json.path.set(getProperty("a5e.stat.Inventory"),"\$[*][?(@.ItemID == '"+ItemID+"')]['Number']",NewNumber)]
-	[h:setProperty("a5e.stat.Inventory",NewInventory)]
+
+	[h,if(NewNumber == 0),CODE:{
+		[h,MACRO("DropItem@Lib:pm.a5e.Core"): json.set("",
+			"ItemID",ItemID,
+			"Number",AmountConsumed,
+			"Location",json.set("","Token",ParentToken),
+			"ParentToken",ParentToken,
+			"LeaveToken",0
+		)]
+	};{
+		[h:NewInventory = json.path.set(getProperty("a5e.stat.Inventory"),"\$[*][?(@.ItemID == '"+ItemID+"')]['Number']",NewNumber)]
+		[h:setProperty("a5e.stat.Inventory",NewInventory)]		
+	}]
 
 	[h,if(json.get(UseItemData,"ContainerLeftBehind") != ""),CODE:{
 		[h,MACRO("AddItemProcessing@Lib:pm.a5e.Core"): json.set("",

@@ -57,7 +57,7 @@ __SPELLS__:__________
 a5e.stat.SpellSlots:{"1":0,"2":0,"3":0,"4":0,"5":0,"6":0,"7":0,"8":0,"9":0}
 a5e.stat.MaxSpellSlots:{"1":0,"2":0,"3":0,"4":0,"5":0,"6":0,"7":0,"8":0,"9":0}
 a5e.stat.Concentration
-a5e.stat.ActiveSpells:[]
+a5e.stat.ActiveEffects:[]
 __DISPLAY__:__________
 *dInspiration (Inspiration):[r,if(stat.a5e.DisplayStatTest()): if(getProperty('a5e.stat.Inspiration')!=0,getProperty('a5e.stat.Inspiration'),"")]
 dLevel (Race and Class):[r,if(stat.a5e.DisplayStatTest()): getProperty('a5e.stat.Race')+" | Will insert class levels later | "+getProperty('a5e.stat.Experience')+" XP"]

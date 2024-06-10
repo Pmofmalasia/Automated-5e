@@ -18,8 +18,6 @@
 	"Value",""
 ))]
 
-[h:setProperty("stat.Concentration","")]
-
 [h:pm.a5e.EventResourceRestoration("ShortRest")]
 
 [h:pm.PassiveFunction("ShortRest")]

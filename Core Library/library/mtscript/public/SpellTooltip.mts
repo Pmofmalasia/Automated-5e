@@ -78,4 +78,4 @@
 [h:SpellAHLDescription = base64.decode(json.get(SpellData,"AHLDescription"))]
 [h:CompleteSpellDescription = SpellDescription+if(SpellAHLDescription=="","","<br><br>"+if(IsCantrip,"","<b><i>At Higher Levels.</b></i> "))+SpellAHLDescription]
 
-[h:macro.return = json.set("","Table",abilityTable,"Source","Arcane","Description",CompleteSpellDescription,"DisplayName",SpellTitle)]
+[h:macro.return = json.set("","Table",abilityTable,"Source","Arcane","Description",CompleteSpellDescription,"FullDescription",CompleteSpellDescription,"AbridgedDescription",CompleteSpellDescription,"DisplayName",SpellTitle)]

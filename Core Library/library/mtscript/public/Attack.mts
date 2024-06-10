@@ -428,7 +428,7 @@
 		[h,if(thisWeaponIsLight): thisWeaponLink = macroLinkText("SingleAttack@Lib:pm.a5e.Core","self-gm",json.set("","Hand",thisWeaponHand,"ParentToken",ParentToken,"AttackNum",-1,"IsTooltip",0,"TwoWeaponFighting",1),ParentToken)]
 		[h,if(thisWeaponIsLight): TwoHandedLinks = listAppend(TwoHandedLinks,"<a href = '"+thisWeaponLink+"'><span style = 'color:%{LinkTextColor}'>"+json.get(weapon,"DisplayName")+"</span></a>", " / ")]
 	}]
-				
+
 	[h,if(TwoHandedLinks != ""): abilityTable = json.append(abilityTable,json.set("",
 		"ShowIfCondensed",1,
 		"Header","Two Weapon Fighting",
@@ -445,8 +445,10 @@
 [h:pm.PassiveFunction("AfterAttackTargeted",json.set("","ParentToken",thisAttackTarget))]
 [h:pm.PassiveFunction("AfterWeaponAttackTargeted",json.set("","ParentToken",thisAttackTarget))]
 
-[h:EndConditionAfterAttack = pm.a5e.TriggerConditionEnd("AfterAttack",pm.a5e.EffectData,ParentToken)]
+[h:EndConditionAfterAttack = pm.a5e.TriggerConditionEnd("AfterAttack",ParentToken)]
 [h:ConditionsRemovedAfterAttack = json.get(EndConditionAfterAttack,"Removed")]
 [h:abilityTable = json.merge(abilityTable,json.get(EndConditionAfterAttack,"Table"))]
+[h:conditionEndEffects = json.get(EndConditionAfterAttack,"Effects")]
+[h:pm.a5e.EffectData = json.merge(pm.a5e.EffectData,conditionEndEffects)]
 
 [h:macro.return = json.set("","Table",abilityTable,"Effect",pm.a5e.EffectData)]

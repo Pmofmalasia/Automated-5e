@@ -429,5 +429,5 @@
 [h:sDescriptionAllLink = macroLinkText("FullDescription@Lib:pm.a5e.Core",if(needsSplitGMOutput,"gm","all"),json.set(SpellDescriptionData,"OutputTargets","all"),ParentToken)]
 [h:SpellDescriptionFinal = if(sRulesShow==0,"Show full spell text to: <a style='color:%{LinkTextColor};' href='"+sDescriptionLink+"'>Self</a> <a style='color:%{LinkTextColor};' href='"+sDescriptionAllLink+"'>Everyone</a>",CompleteSpellDescription)]
 
-[h:ReturnData = json.set(NonSpellData,"SpellData",FinalSpellData,"Slot",if(IsCantrip,0,eLevel),"Source",sSource,"Class",sClassSelect,"Effect",pm.a5e.EffectData,"Table",abilityTable,"Description",SpellDescriptionFinal,"ShowFullRules",sRulesShow)]
+[h:ReturnData = json.set(NonSpellData,"SpellData",FinalSpellData,"Slot",if(IsCantrip,0,eLevel),"Source",sSource,"Class",sClassSelect,"Effect",pm.a5e.EffectData,"Table",abilityTable,"FullDescription",CompleteSpellDescription,"Description",SpellDescriptionFinal,"AbridgedDescription",SpellDescriptionFinal,"ShowFullRules",sRulesShow)]
 [h:macro.return = ReturnData]

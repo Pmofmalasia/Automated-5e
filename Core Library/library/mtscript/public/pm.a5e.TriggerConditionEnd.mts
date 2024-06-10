@@ -1,15 +1,42 @@
 [h:EndInstance = arg(0)]
-[h:InstanceData = arg(1)]
-[h:ParentToken = arg(2)]
+[h:ParentToken = arg(1)]
+[h:switchToken(ParentToken)]
 
-[h:AlwaysRemovedConditions = json.path.read(getProperty("a5e.stat.ConditionGroups"),"\$[*][?(@.EndTriggers."+EndInstance+" != null && @.EndTriggers."+EndInstance+" == 1)]","DEFAULT_PATH_LEAF_TO_NULL")]
+[h:thisInstanceConditions = json.path.read(getProperty("a5e.stat.ConditionGroups"),"\$[*][?(@.EndTriggers."+EndInstance+" != null && @.EndTriggers != null && @.EndTriggers != '')]","DEFAULT_PATH_LEAF_TO_NULL")]
+[h:alwaysRemovedConditions = json.path.read(thisInstanceConditions,"\$[*][?(@.EndTriggers."+EndInstance+" == 1)]","DEFAULT_PATH_LEAF_TO_NULL")]
+[h:possiblyRemovedConditions = json.difference(thisInstanceConditions,alwaysRemovedConditions)]
 
-[h:ConditionallyRemovedConditions = json.path.read(getProperty("a5e.stat.ConditionGroups"),"\$[*][?(@.EndTriggers."+EndInstance+" != null && @.EndTriggers."+EndInstance+" != 1 && @.EndTriggers."+EndInstance+" != 0)]","DEFAULT_PATH_LEAF_TO_NULL")]
+[h:abilityTable = "[]"]
+[h:conditionEndEffects = "[]"]
+[h:RemovedConditions = alwaysRemovedConditions]
+[h,foreach(conditionGroup,possiblyRemovedConditions),CODE:{
+	[h:thisConditionEndInfo = json.get(json.get(conditionGroup,"EndTriggers"),EndInstance)]
+	[h:thisConditionEndEffect = json.set("",
+		"ConditionModificationInfo",json.set("","Method","End"),
+		"TargetedConditions",json.set("",ParentToken,json.get(conditionGroup,"GroupID")),
+		"Targets",json.append("",ParentToken),
+		"ParentToken",json.get(conditionGroup,"SetBy")
+	)]
 
-[h:RemovedConditions = AlwaysRemovedConditions]
+	[h:isPrereqMet = 0]
+	[h,if(json.get(thisConditionEndInfo,"Prereqs") != ""),CODE:{
+		[h:"<!-- TODO: Add prerequisite checking here -->"]
+	};{
+		[h:isPrereqMet = 1]
+	}]
 
-[h,foreach(condition,ConditionallyRemovedConditions),CODE:{
+	[h:needsResolutionTest = 0]
+	[h:thisConditionSaveInfo = json.get(thisConditionEndInfo,"SaveType")]
+	[h:thisConditionCheckInfo = json.get(thisConditionEndInfo,"CheckType")]
+	[h,if(isPrereqMet),CODE:{
+		[h:pm.a5e.TriggerConditionEndResolutionData()]
 
+		[h:needsResolutionTest = or(thisConditionCheckInfo != "",thisConditionSaveInfo != "")]
+		[h,if(needsResolutionTest):
+			conditionEndEffects = json.append(conditionEndEffects,thisConditionEndEffect);
+			RemovedConditions = json.append(RemovedConditions,conditionGroup)
+		]
+	};{}]
 }]
 
 [h,if(!json.isEmpty(RemovedConditions)),CODE:{
@@ -20,9 +47,10 @@
 	[h:abilityTable = json.get(macro.return,"Table")]
 };{
 	[h:RemovedConditionData = json.set("",
-		"Table","[]",
+		"Table",abilityTable,
 		"Removed","[]"
 	)]
 }]
+[h:RemovedConditionData = json.set(RemovedConditionData,"Effects",conditionEndEffects)]
 
 [h:macro.return = RemovedConditionData]

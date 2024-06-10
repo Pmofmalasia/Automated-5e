@@ -1,6 +1,7 @@
 [h:ChangedItem = macro.args]
 [h:hasOldID = json.contains(ChangedItem,"ItemID")]
 [h:NewItemID = eval("1d10000") + "a5e" + json.get(getInfo("client"),"timeInMs")]
+[h:ChangedItem = json.set(ChangedItem,"ItemID",NewItemID)]
 
 [h:"<!-- If the item has a subeffect that uses its own resource, put the NewItemID into the subeffect -->"]
 [h,if(hasOldID),CODE:{

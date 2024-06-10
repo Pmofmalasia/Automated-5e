@@ -729,7 +729,7 @@ async function createConditionNonDurationEnd(){
 		addTableRow(tableID,nextRowIndex,"rowEndConditionInstancesLabel","<th colspan=2 text-align='center'>Instances When Condition Can End</th>");
 		nextRowIndex++;
 
-		addTableRow(tableID,nextRowIndex,"rowConditionNonDurationEndButtons","<th colspan=2><input type='button' value='Add Instance' onclick='addConditionEndInstanceRow()'><input type='button' value='Remove Instance' onclick='removeConditionEndInstanceRow()'><input='hidden' id='conditionEndInstanceNumber' name='conditionEndInstanceNumber' value=0></th>");
+		addTableRow(tableID,nextRowIndex,"rowConditionNonDurationEndButtons","<th colspan=2><input type='button' value='Add Instance' onclick='addConditionEndInstanceRow()'><input type='button' value='Remove Instance' onclick='removeConditionEndInstanceRow()'><input type='hidden' id='conditionEndInstanceNumber' name='conditionEndInstanceNumber' value=0></th>");
 		nextRowIndex++;
 
 		addConditionEndInstanceRow();
@@ -772,27 +772,24 @@ async function createConditionEndInstanceResolutionType(whichInstance){
 function addConditionEndInstanceRow(){
 	let tableID = document.getElementById("rowConditionNonDurationEndButtons").closest("table").id;
 	let nextRowIndex = document.getElementById("rowConditionNonDurationEndButtons").rowIndex;
-	let currentInstanceNumber = document.getElementById("conditionEndInstanceNumber").value;
-
-	if(typeof currentInstanceNumber === "undefined"){
-		currentInstanceNumber = 0;
-	}
-	else{
-		currentInstanceNumber = Number(currentInstanceNumber);
-	}
+	let currentInstanceNumber = Number(document.getElementById("conditionEndInstanceNumber").value);
 
 	let instanceOptionsArray = [
 		{
-			"Name":"Action",
-			"DisplayName":"Using a Dedicated Action"
+			"Name":"EndTurn",
+			"DisplayName":"End of Turn"
 		},
 		{
 			"Name":"StartTurn",
 			"DisplayName":"Start of Turn"
 		},
 		{
-			"Name":"EndTurn",
-			"DisplayName":"End of Turn"
+			"Name":"Action",
+			"DisplayName":"Using a Dedicated Action"
+		},
+		{
+			"Name":"ActionOther",
+			"DisplayName":"Other Creature Uses Action"
 		},
 		{
 			"Name":"AfterAttack",
@@ -849,9 +846,9 @@ function addConditionEndInstanceRow(){
 	]
 	let instanceOptions = createHTMLSelectOptions(instanceOptionsArray);
 
-	let endConditionOptions = "<option value='Conditional'>Conditionally</option><option value='Always'>Always</option>";
+	let endConditionOptions = "<option value='0'>Always</option><option value='1'>Conditionally</option>";
 
-	addTableRow(tableID,nextRowIndex,"rowConditionNonDurationEndInstance"+currentInstanceNumber,"<th colspan=2>On <select id='conditionNonDurationEndInstance"+currentInstanceNumber+"' name='conditionNonDurationEndInstance"+currentInstanceNumber+"'>"+instanceOptions+"</select><select id='isConditionEndInstanceConditional"+currentInstanceNumber+"' name='isConditionEndInstanceConditional"+currentInstanceNumber+"' onchange='createConditionEndInstanceConditions("+currentInstanceNumber+")'>"+endConditionOptions+"</select><select id='conditionEndInstanceSuccessRequired"+currentInstanceNumber+"' name='conditionEndInstanceSuccessRequired"+currentInstanceNumber+"' onchange='createConditionEndInstanceResolutionType("+'"'+currentInstanceNumber+'"'+")'><option value=''>Automatically</option><option value='Save'>On Save</option><option value='Check'>On Check</option></select><span id='conditionEndInstanceDetails"+currentInstanceNumber+"'></span></th>");
+	addTableRow(tableID,nextRowIndex,"rowConditionNonDurationEndInstance"+currentInstanceNumber,"<th colspan=2>On <select id='conditionNonDurationEndInstance"+currentInstanceNumber+"' name='conditionNonDurationEndInstance"+currentInstanceNumber+"'>"+instanceOptions+"</select><select id='isConditionEndInstanceConditional"+currentInstanceNumber+"' name='isConditionEndInstanceConditional"+currentInstanceNumber+"' onchange='createConditionEndInstanceConditions("+currentInstanceNumber+")'>"+endConditionOptions+"</select> Ends <select id='conditionEndInstanceSuccessRequired"+currentInstanceNumber+"' name='conditionEndInstanceSuccessRequired"+currentInstanceNumber+"' onchange='createConditionEndInstanceResolutionType("+'"'+currentInstanceNumber+'"'+")'><option value=''>Automatically</option><option value='Save'>With Save</option><option value='Check'>With Check</option></select><span id='conditionEndInstanceDetails"+currentInstanceNumber+"'></span></th>");
 	nextRowIndex++;
 
 	document.getElementById("conditionEndInstanceNumber").value = currentInstanceNumber + 1;

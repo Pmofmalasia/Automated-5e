@@ -213,7 +213,7 @@
 				[h:MeetsPrereqTest = getProperty("a5e.stat.HP") == 0]
 			};
 			case "HasHP":{
-				[h:MeetsPrereqTest = getProperty("a5e.stat.HP") != 0]
+				[h:MeetsPrereqTest = getProperty("a5e.stat.HP") >= 1]
 			};
 			case "Comparison":{
 				[h:Comparitor = json.get(thisComparisonInfo,"Comparitor")]

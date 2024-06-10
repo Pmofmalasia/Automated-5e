@@ -9,7 +9,7 @@
 	[h:pm.RangeNum = json.get(json.get(arg(0),"Range"),"Value")]
 	[h:pm.RangeUnits = pm.StandardRange(json.get(json.get(arg(0),"Range"),"Units"))]
 };{
-	[h:pm.RangeNum = ""]
+	[h:pm.RangeNum = rangeData]
 	[h:pm.RangeUnits = ""]
 }]
 [h,switch(pm.RangeNum):

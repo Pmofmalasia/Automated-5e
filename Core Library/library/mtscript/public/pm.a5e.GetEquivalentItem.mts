@@ -4,7 +4,9 @@
 [h:Item = json.remove(Item,"ItemID")]
 [h:Item = json.remove(Item,"Number")]
 
-[h:RelatedObjects = json.path.delete(Inventory,"\$[*][?(@.ObjectID != '"+json.get(Item,"ItemID")+"')]")]
+[h:"<!-- Note: Safe is used because json.path.delete changes RelatedObjects even though it's not told to -->"]
+[h:RelatedObjectsSafe = json.path.read(Inventory,"\$[*][?(@.ObjectID == '"+json.get(Item,"ObjectID")+"')]")]
+[h:RelatedObjects = json.path.read(Inventory,"\$[*][?(@.ObjectID == '"+json.get(Item,"ObjectID")+"')]")]
 
 [h:RelatedObjectsComparable = json.path.delete(RelatedObjects,"\$[*]['ItemID']")]
 [h:RelatedObjectsComparable = json.path.delete(RelatedObjectsComparable,"\$[*]['Number']")]
@@ -13,12 +15,10 @@
 [h,if(json.isEmpty(hasItemTest)),CODE:{
 	[h:return(0,"{}")]
 };{
-	[h,if(json.length(hasItemTest) == json.length(RelatedObjectsComparable)): return(0,json.get(RelatedObjects,0))]
-	
-	[h,foreach(tempItem,RelatedObjects),CODE:{
-		[h:comparableItem = json.remove(tempItem,"ItemID")]
-		[h:comparableItem = json.remove(comparableItem,"Number")]
-		[h,if(json.equals(Item,comparableItem)): return(0,json.get(RelatedObjects,roll.count))]
+	[h,if(json.length(hasItemTest) == json.length(RelatedObjectsComparable)): return(0,json.get(RelatedObjectsSafe,0))]
+
+	[h,foreach(tempItem,RelatedObjectsComparable),CODE:{
+		[h,if(json.equals(Item,tempItem)): return(0,json.get(RelatedObjectsSafe,roll.count))]
 	}]
 
 	[h:return(0,"{}")]

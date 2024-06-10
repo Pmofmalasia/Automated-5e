@@ -1,10 +1,9 @@
 [h:abilityName = pm.RemoveSpecial(abilityName)]
 [h:abilitySubclass = pm.RemoveSpecial(abilitySubclass)]
 [h:abilityPriorData = arg(0)]
-[h:ParentToken=json.get(abilityPriorData,"ParentToken")]
+[h:ParentToken = json.get(abilityPriorData,"ParentToken")]
 
-[h:abilityInfo = abilityPriorData]
-
+[h:abilityInfo = json.path.read(getProperty("a5e.stat.ConditionList"),"\$[*][?("+pm.a5e.PathFeatureFilter(json.get(abilityPriorData,"CallingFeature"))+")]")]
 [h,if(json.isEmpty(abilityInfo)):
 	assert(0,"Condition "+abilityDisplayName+" not found on "+getName(ParentToken)+"!");
 	abilityInfo = json.get(abilityInfo,0)

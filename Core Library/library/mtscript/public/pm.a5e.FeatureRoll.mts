@@ -16,8 +16,6 @@
 	[h:pm.PassiveFunction("DieSize",json.set("","SpecificFeature",json.get(pm.baseDieSize,"Name")+json.get(pm.baseDieSize,"Class")+json.get(pm.baseDieSize,"Subclass"),"ParentToken",ParentToken))]
 };{}]
 
-[h:"<!-- TODO: Re-add magic item changing die size here -->"]
-
 [h:DieSizeFinal = pm.baseDieSize]
 
 [h,if(IsTooltip),CODE:{
@@ -50,7 +48,7 @@
 		)]
 
 		[h:pm.AllRollData = json.append(pm.AllRollData,pm.MiscRoll)]
-		[h:pm.AllRollTotals = json.path.read(pm.AllRollData,"[*]['Total']")]
+		[h:pm.AllRollTotals = json.path.read(pm.AllRollData,"\$[*]['Total']")]
 
 		[h:highestTotalIndex = if(json.get(pm.MiscRoll,"Total") > math.arrayMax(pm.AllRollTotals),roll.count,highestTotalIndex)]
 		[h:lowestTotalIndex = if(json.get(pm.MiscRoll,"Total") < math.arrayMin(pm.AllRollTotals),roll.count,lowestTotalIndex)]
@@ -63,7 +61,7 @@
 	]
 
 	[h:finalRollTotal = json.get(json.get(pm.AllRollData,finalIndex),"Total")]
-	[h:tempAllIndividualRolls = json.path.read(pm.AllRollData,"[*]['Array']")]
+	[h:tempAllIndividualRolls = json.path.read(pm.AllRollData,"\$[*]['Array']")]
 	[h:allIndividualRolls= "[]"]
 	[h,foreach(roll,tempAllIndividualRolls): allIndividualRolls = json.merge(allIndividualRolls,roll)]
 

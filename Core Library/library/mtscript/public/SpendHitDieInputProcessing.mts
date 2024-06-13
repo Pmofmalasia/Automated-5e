@@ -14,12 +14,12 @@
 [h:closeDialog("SpendHitDieInput")]
 [h:ExpendHitDieData = json.set("",
 	"ParentToken",ParentToken,
-	"SpentHitDice",spentHitDice,
+	"SpentHitDie",spentHitDice,
 	"Bonus",json.set("","Type","AtrMod","Attribute","Constitution"),
 	"PassiveInstanceSuffixes",json.append("","Healing")
 )]
 [h,MACRO("ExpendHitDieHealing@Lib:pm.a5e.Core"): ExpendHitDieData]
-[h:abilityTable = json.merge(abilityTable,json.get(macro.return,"Table"))]
+[h:abilityTable = json.get(macro.return,"Table")]
 
 [h:BorderData = json.set("",
 	"Flavor","",
@@ -27,7 +27,7 @@
 	"DisplayName","Spend Hit Dice",
 	"FalseName","",
 	"DisplayClass","zzChangeHP",
-	"ColorSubtype",if(IsDamage,"Damage","Healing")
+	"ColorSubtype","Healing"
 )]
 [h:AllOutputComponents = json.set("",
 	"ParentToken",ParentToken,

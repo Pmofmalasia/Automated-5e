@@ -89,10 +89,15 @@
 	[h:ClassOptions = json.append(ClassOptions,"None")]
 };{
 	[h:ClassOptionsArray = json.append("",ForcedClass)]
-	[h,if(json.type(ForcedClass) == "UNKNOWN"): 
-		ClassOptions = json.append("",pm.GetDisplayName(ForcedClass,"sb.Classes"));
-		ClassOptions = json.append("",pm.GetDisplayName(json.get(ForcedClass,"Class"),"sb.Classes"))
-	]
+	[h,if(json.type(ForcedClass) == "UNKNOWN"),CODE:{
+		[h:ClassOptions = json.append("",pm.GetDisplayName(ForcedClass,"sb.Classes"))]
+	};{		
+		[h:isClassTest = json.contains(classList,json.get(ForcedClass,"Class"))]
+		[h,if(isClassTest):
+			ClassOptions = json.append("",pm.GetDisplayName(json.get(ForcedClass,"Class"),"sb.Classes"));
+			ClassOptions = if(json.get(ForcedClass,"Class")=="Monster",json.append("","Monster"),json.append("",json.get(ForcedClass,"DisplayName")))
+		]
+	}]
 	[h:"<!-- Note: removed line here that set ClassOptionsArray equal to ForcedClass if ForcedClass != '' (always). Not sure what it did but come here if something breaks. -->"]
 }]
 

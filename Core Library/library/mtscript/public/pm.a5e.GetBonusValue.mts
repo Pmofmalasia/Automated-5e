@@ -84,7 +84,7 @@
 
 			[h:isDividingTest = (Modifier < 0)]
 			[h,if(isDividingTest): Modifier = (1/Modifier)]
-			[h:FinalBonusRules = FinalBonusRules + if(isDividingTest,"/","x") + Modifier]
+			[h:FinalBonusRules = FinalBonusRules + if(isDividingTest,"/"," x") + Modifier]
 		};{}]
 
 		[h:maxBonus = json.get(BonusInfo,"Maximum")]

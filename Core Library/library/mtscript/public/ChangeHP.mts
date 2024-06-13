@@ -40,8 +40,8 @@
 
 		[h:tempDamageDealt = 0]
 		[h,foreach(damageInstance,thisDamageTypeInfo): tempDamageDealt = tempDamageDealt + if(json.get(damageInstance,"NoModification")==0,json.get(damageInstance,if(hp.IsCrit,"Crit","")+"Total")*json.get(damageInstance,"Modifier"),0)]
-		[h:tempDamageDealt = floor(tempDamageDealt) - hp.DRTest]
 
+		[h:tempDamageDealt = floor(tempDamageDealt) - hp.DRTest]
 		[h:tempDamageType = damagetype]
 		[h,switch(hp.ModType):
 			case "Absorption": tempDamageType = "Healing";
@@ -293,4 +293,4 @@
 
 [h:pm.PassiveFunction("AfterDamaged")]
 [h:"<!-- Things Still Needed: Shapechange break (later); Temp HP if there is a condition attached to the lesser value (new or old); return damage dealt by type -->"]
-[h:macro.return = json.set("","Table",abilityTable,"Damage",hp.FinalDamageDealt)]
+[h:return(0,json.set("","Table",abilityTable,"Damage",hp.FinalDamageDealt))]

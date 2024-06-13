@@ -15,7 +15,7 @@
 	[h:isDefaultOne = and(json.length(validHitDieSizes) == 1,thisDieSizeNum != 0)]
 	[h:spendOptions = "<option value=0>0</option>"]
 	[h,count(thisDieSizeNum): spendOptions = spendOptions + "<option value="+(roll.count+1)+">"+(roll.count+1)+"</option>"]
-	[h:thisRow = "<tr id='rowSpend"+dieSize+"'><th><label for='"+dieSize+"Num'>"+substring(dieSize,1)+"s Spent:</label></th><td><select value='"+if(isDefaultOne,"1","")+"'>"+spendOptions+"</select></td></tr>"]
+	[h:thisRow = "<tr id='rowSpend"+dieSize+"'><th><label for='"+dieSize+"Num'>"+substring(dieSize,1)+"s Spent:</label></th><td><select value='"+if(isDefaultOne,"1","")+"' name='"+dieSize+"Num' id='"+dieSize+"Num'>"+spendOptions+"</select></td></tr>"]
 
 	[h:HitDieInput = HitDieInput + thisRow]
 }]

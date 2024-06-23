@@ -34,18 +34,18 @@
 			lightSecondaryDistance = ""
 		]
 
-		[h,if(json.get(configuration,"Shape") == "Cone"):
-			lightAngle = "90";
-			lightAngle = ""
+		[h,if(json.get(configuration,"LightShape") == "Sphere"):
+			displayShape = "";
+			displayShape = json.get(configuration,"LightShape")
 		]
 
 		[h,if(lightType == "Covered"):
 			lightTypeDisplay = "Covered";
-			lightTypeDisplay = lightDistanceDisplay + if(lightSecondaryDistance != "","/"+lightSecondaryDistanceDisplay,"") + " " + lightUnits + if(lightAngle != ""," Cone","")
+			lightTypeDisplay = lightDistanceDisplay + if(lightSecondaryDistance != "","/"+lightSecondaryDistanceDisplay,"") + " " + lightUnits + if(displayShape != ""," "+displayShape,"")
 		]
 		[h,if(lightType == "Covered"):
 			lightName = "Covered";
-			lightName = if(lightType=="BrightDim","Bright/Dim",lightType)+" - "+lightDistance+if(lightAngle=="","","Angle"+lightAngle)
+			lightName = if(lightType=="BrightDim","Bright/Dim",lightType)+" - "+lightDistance+if(displayShape != ""," "+displayShape,"")
 		]
 
 		[h:thisLightOptions = json.append(thisLightOptions,lightTypeDisplay)]

@@ -2,7 +2,7 @@
 [h:resourceUsed = arg(1)]
 [h:resourceSource = arg(2)]
 
-[h:ResourceSourceData = pm.a5e.ResourceSourceData(resourceSource,json.set("","Name",resourceName))]
+[h:ResourceSourceData = pm.a5e.FeatureSourceData(resourceSource,json.set("","Name",resourceName))]
 [h:sourceProperty = json.get(ResourceSourceData,"Property")]
 [h:sourcePath = json.get(ResourceSourceData,"Path")]
 [h:allMatchingFeatures = json.path.read(getProperty(sourceProperty),"[*][?(@.ResourceName=='"+resourceName+"' || (@.Name=='"+resourceName+"' && @.ResourceName==null))]","DEFAULT_PATH_LEAF_TO_NULL")]

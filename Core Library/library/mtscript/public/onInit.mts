@@ -226,7 +226,7 @@
 [h:defineFunction("pm.StandardDuration","pm.StandardDuration@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.a5e.GetBonusValue","pm.a5e.GetBonusValue@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.a5e.PathFeatureFilter","pm.a5e.PathFeatureFilter@Lib:pm.a5e.Core")]
-[h:defineFunction("pm.a5e.ResourceSourceData","pm.a5e.ResourceSourceData@Lib:pm.a5e.Core")]
+[h:defineFunction("pm.a5e.FeatureSourceData","pm.a5e.FeatureSourceData@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.a5e.ComparitorForEval","pm.a5e.ComparitorForEval@Lib:pm.a5e.Core")]
 [h:defineFunction("ut.a5e.GenerateSelectionHTML","ut.a5e.GenerateSelectionHTML@Lib:pm.a5e.Core")]
 

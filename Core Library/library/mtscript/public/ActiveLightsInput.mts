@@ -89,7 +89,7 @@
 	[h:whichConfiguration = json.get(json.get(ConfigurableLightNames,roll.count),configurationIndex)]
 	[h,if(whichConfiguration != "Covered"): lightsToActivate = json.append(lightsToActivate,whichConfiguration)]
 
-	[h:updatePropertyData = pm.a5e.ResourceSourceData(json.get(configurableLight,"AbilityType"),configurableLight)]
+	[h:updatePropertyData = pm.a5e.FeatureSourceData(json.get(configurableLight,"AbilityType"),configurableLight)]
 	[h:lightSourceProperty = json.get(updatePropertyData,"Property")]
 	[h:lightSourcePath = json.get(updatePropertyData,"Path")]
 	[h:oldProperty = getProperty(lightSourceProperty)]

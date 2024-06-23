@@ -5,7 +5,7 @@
 [h:RestorationAmount = json.get(RestorationModifiers,"Amount")]
 [h:ResourceKey = json.get(RestorationModifiers,"Key")]
 
-[h:ResourceSourceData = pm.a5e.ResourceSourceData(json.get(FeatureToRestore,"ResourceSource"),FeatureToRestore)]
+[h:ResourceSourceData = pm.a5e.FeatureSourceData(json.get(FeatureToRestore,"ResourceSource"),FeatureToRestore)]
 [h:sourceProperty = json.get(ResourceSourceData,"Property")]
 [h:sourcePath = json.get(ResourceSourceData,"Path")]
 

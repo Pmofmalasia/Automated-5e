@@ -611,9 +611,7 @@ async function createConditionTable(){
 			document.getElementById("rowIsAuraEnd").setAttribute("hidden","");
 			nextRowIndex++;
 
-			let rowConditionSameDuration = table.insertRow(nextRowIndex);
-			rowConditionSameDuration.id = "rowConditionSameDuration";
-			rowConditionSameDuration.innerHTML = "<th><label for='isConditionSameDuration'>Duration is Same as Spell's?</label></th><input type='checkbox' id='isConditionSameDuration' name='isConditionSameDuration' onchange='conditionAlternateDuration()' checked></td>";
+			addTableRow(tableID,nextRowIndex,"rowConditionSameDuration","<th><label for='isConditionSameDuration'>Duration is Same as Spell's?</label></th><input type='checkbox' id='isConditionSameDuration' name='isConditionSameDuration' onchange='conditionAlternateDuration()' checked></td>");
 			nextRowIndex++;
 
 			if(checkEffectType()!="Spell"){
@@ -622,9 +620,10 @@ async function createConditionTable(){
 				nextRowIndex++;
 			}
 
-			let rowIsConditionNonDurationEnd = table.insertRow(nextRowIndex);
-			rowIsConditionNonDurationEnd.id = "rowIsConditionNonDurationEnd";
-			rowIsConditionNonDurationEnd.innerHTML = "<th><label for='isConditionNonDurationEnd'>May End Separate from Duration?</label></th><input type='checkbox' id='isConditionNonDurationEnd' name='isConditionNonDurationEnd' onchange='createConditionNonDurationEnd()'></td>";
+			addTableRow(tableID,nextRowIndex,"rowConditionAdvancePoint","<th><label for='ConditionAdvancePoint'>When Duration Advances:</label></th><select id='ConditionAdvancePoint' name='ConditionAdvancePoint'><option value='EndofTurn'>End of Target's Turn</option><option value='StartofTurn'>Start of Target's Turn</option><option value='EndofSetByTurn'>End of User's Turn</option><option value='StartofSetByTurn'>Start of User's Turn</option><option value='StartofSetByTurn'>Not Specified</option></select></td>");
+			nextRowIndex++;
+
+			addTableRow(tableID,nextRowIndex,"rowIsConditionNonDurationEnd","<th><label for='isConditionNonDurationEnd'>May End Separate from Duration?</label></th><input type='checkbox' id='isConditionNonDurationEnd' name='isConditionNonDurationEnd' onchange='createConditionNonDurationEnd()'></td>");
 			nextRowIndex++;
 		}
 
@@ -706,7 +705,7 @@ async function conditionAlternateDuration(){
 	}
 
 	if(isSameDuration){
-		clearUnusedTable("CreateSubeffectTable","rowConditionSameDuration","rowIsConditionNonDurationEnd");
+		clearUnusedTable("CreateSubeffectTable","rowConditionSameDuration","rowConditionAdvancePoint");
 	}
 	else{
 		let durationOptionsArray = ["Instantaneous","1 Round","1 Minute","10 Minutes","1 Hour","8 Hours","24 Hours","10 Days","Until Dispelled","Custom"];
@@ -715,7 +714,7 @@ async function conditionAlternateDuration(){
 			durationOptions = durationOptions + "<option value='"+option+"'>"+option+"</option>";
 		}
 
-		addTableRow("CreateSubeffectTable",nextRowIndex,"rowConditionDuration","<th><label for='ConditionDuration'>Condition Duration:</label></th><select id='ConditionDuration' name='ConditionDuration' onchange='createCustomDurationRows("+'"CreateSubeffectTable","ConditionDuration","rowIsConditionNonDurationEnd"'+")'>"+durationOptions+"</select></td>");
+		addTableRow("CreateSubeffectTable",nextRowIndex,"rowConditionDuration","<th><label for='ConditionDuration'>Condition Duration:</label></th><select id='ConditionDuration' name='ConditionDuration' onchange='createCustomDurationRows("+'"CreateSubeffectTable","ConditionDuration","rowConditionAdvancePoint"'+")'>"+durationOptions+"</select></td>");
 	}
 }
 
@@ -1171,7 +1170,7 @@ async function createUncommonEffectsRows(){
 		addTableRow("CreateSubeffectTable",nextRowIndex,"rowAffectSpell","<th><label for='isAffectSpell'>Affects Spell Effects?</label></th><td><select id='isAffectSpell' name='isAffectSpell' onchange='createAffectSpellRows()'><option value='No'>No Effect</option><option value='End'>End Spells</option><option value='Suppress'>Suppress Spells</option><option value='Shorten'>Shorten Spells</option><option value='Prolong'>Prolong Spells</option></select></td>");
 		nextRowIndex++;
 
-		addTableRow("CreateSubeffectTable",nextRowIndex,"rowLightType","<th><label for='lightType'>Creates a Light or Darkness?</label></th><td><select id='lightType' name='lightType' onchange='createLightTable("+'"rowIsMoveTarget"'+")'><option value=''>No Light</option><option value='Dim'>Dim Light</option><option value='Bright'>Bright Light</option><option value='BrightDim'>Bright + Dim Light</option><option value='Darkness'>Darkness</option><option value='Obscure'>Heavily Obscure</option></select></td>");
+		addTableRow("CreateSubeffectTable",nextRowIndex,"rowIsLight","<th><label for='isLight'>Creates a Light or Darkness?</label></th><td><input type='checkbox' id='isLight' name='isLight' onchange='toggleLightTable("+'"rowIsLight","rowIsMoveTarget"'+")'></td>");
 		nextRowIndex++;
 
 		addTableRow("CreateSubeffectTable",nextRowIndex,"rowIsMoveTarget","<th><label for='isMoveTarget'>Moves the Target?</label></th><td><input type='checkbox' id='isMoveTarget' name='isMoveTarget' value=1 onchange='createMoveTargetTable()'></td>");

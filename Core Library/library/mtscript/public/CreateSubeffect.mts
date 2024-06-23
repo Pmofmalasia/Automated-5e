@@ -42,7 +42,7 @@
 		}
 	]
 
-	[h:UseTimeOptions = json.append("","Action","Bonus Action","Reaction","1 Minute","10 Minutes","1 Hour","8 Hours","12 Hours","24 Hours","Custom")]
+	[h:UseTimeOptions = json.append("","Action","Bonus Action","Reaction","Item Interaction","Free","1 Minute","10 Minutes","1 Hour","8 Hours","12 Hours","24 Hours","Custom")]
 	[h,if(isPersistentEffect): UseTimeOptions = json.merge(json.append("","No Cost"),UseTimeOptions)]
 	[h:listUseTime = ""]
 	[h,foreach(tempUseTime,UseTimeOptions): listUseTime = listUseTime + "<option value='"+tempUseTime+"'>"+tempUseTime+"</option>"]

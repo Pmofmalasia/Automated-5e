@@ -133,7 +133,7 @@
 	
 		[h,if(json.type(thisComparisonInfo) == "UNKNOWN"):
 			sizeTest = thisComparisonInfo == tokenSize;
-			sizeTest = json.contains(sizeTest,tokenSize)
+			sizeTest = json.contains(thisComparisonInfo,tokenSize)
 		]
 
 		[h:return(sizeTest,0)]

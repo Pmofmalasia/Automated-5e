@@ -1,6 +1,3 @@
-[h,if(data.getData("addon:","pm.a5e.core","ct.NewFeature")==""): setLibProperty("ct.NewFeature","{}","Lib:pm.a5e.Core")]
-[h:setLibProperty("ct.NewFeature",json.remove(data.getData("addon:","pm.a5e.core","ct.NewFeature"),getPlayerName()),"Lib:pm.a5e.Core")]
-
 [h:list1through20 = ""]
 [h,c(20): list1through20 = list1through20 + "<option value="+(roll.count+1)+">"+(roll.count+1)+"</option>"]
 
@@ -10,9 +7,9 @@
 
 [h:"<!-- createFeatureTypeSpecificRows() is executed in JS to make those lines there -->"]
 
-[h:CreateFeatureHTML = CreateFeatureHTML + "<tr><th><label for='School'>Feature School:</label></th><td><select id='School' name='School'>"+listSchools+"</select></td></tr>"]
+[h:CreateFeatureHTML = CreateFeatureHTML + "<tr id='rowLevel'><th><label for='Level'>Level Gained:</label></th><td><select id='Level' name='Level'><option value=''>None</option>"+list1through20+"</select></td></tr>"]
 
-[h:CreateFeatureHTML = CreateFeatureHTML + "<tr id='rowEffectsNumber'><th><label for='EffectsNumber'>Number of Distinct Effects:</label></th><td><input type='number' id='EffectsNumber' name='EffectsNumber' min='1' value='1' style='width:25px'> <input type='checkbox' id='RandomEffect' name='RandomEffect'> Chosen Randomly?</td></tr>"]
+[h:CreateFeatureHTML = CreateFeatureHTML + "<tr id='rowIsOnLevel'><th><label for='isOnLevel'><span title='Uncheck if must be chosen to be gained, e.g. Eldritch Invocations, Feats'>Gained Automatically on Level Up:</span></label></th><td><input type='checkbox' id='isOnLevel' name='isOnLevel' checked></td></tr>"]
 
 [h:allSourcebooks = pm.GetBookInfo()]
 [h:sourcebookOptions = ""]
@@ -30,4 +27,10 @@
 
 [h:CreateFeatureHTML = CreateFeatureHTML + "<tr><th text-align='center' colspan='2'><input type='submit' class='theme-fix-submit' id='submitButton' value='Submit'></th></tr>"]
 
-[h:html.dialog5("Feature Creation","lib://pm.a5e.core/CreateFeature.html?cachelib=false","value="+base64.encode(CreateFeatureHTML)+"; closebutton=0; width=675; height=1050")]
+[h:createFeatureData = json.set("",
+	"Input",CreateFeatureHTML,
+	"ParentToken",currentToken(),
+	"PriorData","{}"
+)]
+
+[h:html.dialog5("Feature Creation","lib://pm.a5e.core/CreateFeature.html?cachelib=false","value="+base64.encode(createFeatureData)+"; closebutton=0; width=675; height=1050")]

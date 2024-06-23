@@ -178,11 +178,11 @@
 	[h:objectData = json.set(objectData,"isCursed",json.contains(objectData,"isCursed"))]
 };{}]
 
-[h:lightData = "{}"]
 [h,if(objectType=="LightSource"),CODE:{
-	[h:objectData = ct.a5e.LightDataProcessing(objectData,"Type")]
-	[h:lightData = json.get(objectData,"Light")]
-	[h:objectData = json.remove(objectData,"Light")]
+	[h:returnLightData = ct.a5e.LightDataProcessing(objectData,"Type")]
+	[h:lightData = json.get(returnLightData,"Light")]
+	[h:objectData = json.get(returnLightData,"Subeffect")]
+	[h:objectData = json.set(objectData,"CallLights",lightData)]
 
 	[h,switch(json.get(objectData,"LightFuel")),CODE:
 		case "Oil":{
@@ -207,7 +207,7 @@
 	[h:lightDurationData = json.get(lightDurationData,"DurationInfo")]
 	[h:lightTimeResource = json.set("",json.get(lightDurationData,"Units"),json.get(lightDurationData,"Value"))]
 	[h:objectData = json.set(objectData,"TimeResourceMax",lightTimeResource,"TimeResource",lightTimeResource,"TimeResourceActive",0)]
-	[h:objectData = json.set(objectData,"CallLights",json.set("","Context","Lights","Effects",json.append("",lightData)))]
+
 	[h:objectData = json.set(objectData,"isPassiveFunction",1)]
 	[h:lightActivationEffect = json.set("",
 		"EffectDisplayName","Light "+json.get(objectData,"DisplayName"),

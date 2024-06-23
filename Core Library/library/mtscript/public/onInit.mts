@@ -29,6 +29,7 @@
 [h:defineFunction("pm.WeaponSelectionInput","pm.WeaponSelectionInput@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.WeaponSelectionPreset","pm.WeaponSelectionPreset@Lib:pm.a5e.Core")]
 [h:defineFunction("ct.a5e.AoEDataProcessing","ct.a5e.AoEDataProcessing@Lib:pm.a5e.Core",0,0)]
+[h:defineFunction("ct.a5e.UseTimeProcessing","ct.a5e.UseTimeProcessing@Lib:pm.a5e.Core")]
 [h:defineFunction("ct.a5e.ConditionEndTriggerInputProcessing","ct.a5e.ConditionEndTriggerInputProcessing@Lib:pm.a5e.Core")]
 [h:defineFunction("ct.a5e.GeneralTargetingProcessing","ct.a5e.GeneralTargetingProcessing@Lib:pm.a5e.Core")]
 [h:defineFunction("ct.a5e.AllTargetingOptionsProcessing","ct.a5e.AllTargetingOptionsProcessing@Lib:pm.a5e.Core")]

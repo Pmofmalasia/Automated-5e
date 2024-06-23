@@ -51,7 +51,7 @@
 
 <tr id='rowIsStackable'><th><label for='isStackable'>Object Stacks with Others in Inventory?</label></th><td><input type='checkbox' id='isStackable' name='isStackable'></td></tr>
 
-<tr id='rowMaterials'><th>Materials Used:</th><td><div class='check-multiple' style='width:100%'>"+ObjectMaterialMultiselection+"</div></td></tr>
+<tr id='rowMaterials'><th>Materials Used:</th><td><div class='check-multiple' style='width:100%; text-align:left'>"+ObjectMaterialMultiselection+"</div></td></tr>
 
 <tr id='rowCoating'><th><label for='Coating'>Object Coating:</label></th><td><select id='Coating' name='Coating'><option value=''>None</option>"+ObjectMaterialSelection+"</select></td></tr>
 
@@ -67,7 +67,7 @@
 
 <tr id='rowIsMagnetic'><th><label for='isMagnetic'>Object is Magnetic:</label></th><td><input type='checkbox' id='isMagnetic' name='isMagnetic'></td></tr>
 
-<tr id='rowObjectTags'><th>General Object Tags:</th><td><div class='check-multiple' style='width:100%'>"+ObjectMaterialTagMultiselection+"</div></td></tr>
+<tr id='rowObjectTags'><th>General Object Tags:</th><td><div class='check-multiple' style='width:100%; text-align:left'>"+ObjectMaterialTagMultiselection+"</div></td></tr>
 
 <tr id='rowHasPassiveEffects'><th><label for='HasPassiveEffects'>Object Has Passive Effects:</label></th><td><input type='checkbox' id='HasPassiveEffects' name='HasPassiveEffects'></td></tr>
 
@@ -75,8 +75,8 @@
 
 <tr id='rowSourcebook'><th><label for='Library'>Object Sourcebook:</label></th><td><select id='Library' name='Library'>"+sourcebookOptions+"</select></td></tr>
 
-<tr id='rowDescription'><th text-align='center' colspan='2'><label for='Description'>Full Item Description:</label></th colspan='2'></th></tr><tr id='rowItemTextArea'><th><textarea id='Description' name='Description' rows='10' style='width:155%'></textarea></th>
+<tr id='rowDescription'><th style='text-align:center' colspan='2'><label for='Description'>Full Item Description:</label></th colspan='2'></th></tr><tr id='rowItemTextArea'><th style='text-align:center'><textarea id='Description' name='Description' rows='10' style='width:155%'></textarea></th>
 
-<tr><th text-align='center' colspan='2'><input type='submit' class='theme-fix-submit' id='submitButton' value='Submit'></th></tr>"]
+<tr><th style='text-align:center' colspan='2'><input type='submit' class='theme-fix-submit' id='submitButton' value='Submit'></th></tr>"]
 
 [h:html.dialog5("ObjectCreation","lib://pm.a5e.core/CreateObject.html?cachelib=false","value="+base64.encode(ObjectHTML)+"; closebutton=0; height=800; width=600")]

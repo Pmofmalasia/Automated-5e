@@ -25,8 +25,7 @@
 
 [h,switch(execPassiveContext),CODE:
 	case "Lights":{
-		[h:allAddableLights = json.path.read(initialPassiveAbilityInfo,"\$.PassiveEffects.Effects")]
-		[h:pass.a5e.ExecutePassiveLights(execPassiveAbilityInfo,allAddableLights)]
+		[h:pass.a5e.ExecutePassiveLights(execPassiveAbilityInfo)]
 	};
 	default:{}
 ]

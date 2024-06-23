@@ -1,16 +1,45 @@
-function createFeatureTypeRows(tableID,nextRowIndex,idSuffix,validTypes){
-	let ClassOptions;
-	if(arguments.length > 3){
-		if(typeof(validTypes) == "string"){
-			validTypes = [validTypes];
+function createFeatureTypeRows(tableID,nextRowIndex,extraData){
+	let ClassOptions = "<option value='Class'>Class</option><option value='Race'>Race</option><option value='Feat'>Feat</option><option value='Condition'>Condition</option><option value='Item'>Item</option><option value='Background'>Background</option>";
+	let idSuffix = "";
+	let hideTest = false;
+	let multiTest = false;
+	let stopPoint = "";
+
+	if(arguments.length > 2){
+		let validOptions = extraData.ValidOptions;
+		if(validOptions != null){
+			ClassOptions = "";
+
+			if(typeof(validOptions) == "string"){
+				validOptions = [validOptions];
+				hideTest = true;
+			}
+
+			if(validOptions.length < 2){
+				hideTest = true;
+			}
+
+			for(let featureType of validOptions){
+				ClassOptions = ClassOptions + "<option value='"+featureType+"'>"+featureType+"</option>";
+			}			
 		}
-		//TODO: May want to hide this line if there is only one option allowed (e.g. must be a class, so no point in showing this line). May want to do the same for next round of selection also, would need a new argument to this function
-		for(let featureType of validTypes){
-			ClassOptions = ClassOptions + "<option value='"+featureType+"'>"+featureType+"</option>";
+		else{
+
 		}
-	}
-	else{
-		ClassOptions = "<option value='Class'>Class</option><option value='Race'>Race</option><option value='Feat'>Feat</option><option value='Condition'>Condition</option><option value='Item'>Item</option><option value='Background'>Background</option>";
+
+		if(extraData.idSuffix != null){
+			idSuffix = extraData.idSuffix;
+		}
+
+		if(extraData.StopPoint != null){
+			stopPoint = extraData.StopPoint;
+		}
+
+		if(extraData.MultiSelect != null){
+			if(extraData.MultiSelect == 1){
+				multiTest = true;
+			}
+		}
 	}
 
 	let finalIDSuffix = "";
@@ -21,6 +50,10 @@ function createFeatureTypeRows(tableID,nextRowIndex,idSuffix,validTypes){
 
 	addTableRow(tableID,nextRowIndex,"rowFeatureType"+finalIDSuffix,"<th><label for='FeatureType"+finalIDSuffix+"'>Feature Type:</label></th><td><select id='FeatureType"+finalIDSuffix+"' name='FeatureType"+finalIDSuffix+"' onchange='createFeatureClassRows("+'"'+tableID+'","'+finalIDSuffix+'"'+")'>"+ClassOptions+"</select></td>");
 	nextRowIndex++;
+
+	if(hideTest){
+		document.getElementById("rowFeatureType"+finalIDSuffix).setAttribute("hidden","");
+	};
 
 	addTableRow(tableID,nextRowIndex,"rowFeatureTypeEnd"+finalIDSuffix,"");
 	document.getElementById("rowFeatureTypeEnd"+finalIDSuffix).setAttribute("hidden","");

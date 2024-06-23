@@ -19,8 +19,15 @@
 [h:ConditionSetBy = json.get(macro.args,"SetBy")]
 [h:abilityTable = "[]"]
 
-[h:ConditionDuration = json.get(a5e.EndConditionInfo,"Duration")]
-[h:ConditionDurationUnits = json.get(a5e.EndConditionInfo,"DurationUnits")]
+[h:"<!-- TODO: This is like this because I screwed up and didn't standardize how the data was stored. Could go in and standardize it in the future, the object method is better. -->"]
+[h:DurationStorageType = json.type(json.get(a5e.EndConditionInfo,"Duration"))]
+[h,if(DurationStorageType == "OBJECT"):
+	DurationData = json.get(a5e.EndConditionInfo,"Duration");
+	DurationData = a5e.EndConditionInfo
+]
+[h:ConditionDuration = json.get(DurationData,"Duration")]
+[h:ConditionDurationUnits = json.get(DurationData,"DurationUnits")]
+
 [h:ConditionAdvancePoint = json.get(a5e.EndConditionInfo,"AdvancePoint")]
 [h:ConditionEndTriggers = json.get(a5e.EndConditionInfo,"EndTriggers")]
 

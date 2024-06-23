@@ -321,6 +321,10 @@ async function createAoETable(tableID,whichShape,IDSuffix){
 			}
 		}
 	}
+
+	if(typeof applyUseAOELightOption === "function"){
+		applyUseAOELightOption(IDSuffix);
+	}
 }
 
 async function createTargetNumberToggle(tableID,IDSuffix){

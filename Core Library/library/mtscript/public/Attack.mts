@@ -403,6 +403,7 @@
 		"InstancePrefixes",json.append("","Attack","WeaponAttack"),
 		"RerollData",wa.Data
 	)]
+
 	[h,foreach(tempSubeffect,json.get(wa.WeaponUsed,"Subeffects")): pm.a5e.ExecuteSubeffect(tempSubeffect,json.set("","BaseData",wa.Data))]
 
 	[h:WhichAttack = WhichAttack + 1]

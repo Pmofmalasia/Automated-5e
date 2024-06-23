@@ -209,11 +209,13 @@
 	
 	[h,if(hasSaveDCTest): subeffect.ConditionEndInfo = json.path.put(subeffect.ConditionEndInfo,"\$['EndTriggers'][*][?(@.SaveType!=null)]","DC",subeffect.SaveDC)]
 
-	[h:"<!-- TODO: Fix to allow selection of AdvancePoint manually; Temporary solution for now -->"]
-	[h,if(json.get(subeffect.ConditionEndInfo,"DurationUnits")=="round"):
-		subeffect.ConditionEndInfo = json.set(subeffect.ConditionEndInfo,"AdvancePoint","StartofTurn");
-		subeffect.ConditionEndInfo = json.set(subeffect.ConditionEndInfo,"AdvancePoint","EndofTurn")
-	]
+	[h,if(json.get(subeffect.ConditionEndInfo,"AdvancePoint") == ""),CODE:{
+		[h:"<!-- Leftover code from when I was dumb and didn't put AdvancePoint in the input for some reason. Can be removed if/when features are updated to all include an AdvancePoint. -->"]
+		[h,if(json.get(subeffect.ConditionEndInfo,"DurationUnits")=="round"):
+			subeffect.ConditionEndInfo = json.set(subeffect.ConditionEndInfo,"AdvancePoint","StartofTurn");
+			subeffect.ConditionEndInfo = json.set(subeffect.ConditionEndInfo,"AdvancePoint","EndofTurn")
+		]
+	};{}]
 
 	[h:"<!-- TODO: Add in any modification needed to be done to aura range/valid targets/etc. here -->"]
 	[h:subeffect.AuraInfo = json.get(tempConditionInfo,"Aura")]

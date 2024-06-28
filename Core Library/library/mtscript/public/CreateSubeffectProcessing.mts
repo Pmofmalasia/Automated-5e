@@ -376,8 +376,8 @@
 		};
 		case "11":{
 			[h:conditionNames = json.fromList(encode(json.get(subeffectData,"AlwaysAddedEffectSpecificNames")),"%0A")]
-			[h,foreach(tempCondition,conditionNames): conditionsAlwaysAdded = json.append(conditionsAlwaysAdded,json.set(ConditionIdentificationInfo,"Name",pm.RemoveSpecial(tempCondition),"DisplayName",tempCondition))]
-			[h,foreach(tempCondition,conditionNames): EffectSpecificConditions = json.append(EffectSpecificConditions,json.set(ConditionIdentificationInfo,"Name",pm.RemoveSpecial(tempCondition),"DisplayName",tempCondition))]
+			[h,foreach(tempCondition,conditionNames): conditionsAlwaysAdded = json.append(conditionsAlwaysAdded,json.set(ConditionIdentificationInfo,"Name",pm.RemoveSpecial(pm.EvilChars(decode(tempCondition))),"DisplayName",decode(tempCondition)))]
+			[h,foreach(tempCondition,conditionNames): EffectSpecificConditions = json.append(EffectSpecificConditions,json.set(ConditionIdentificationInfo,"Name",pm.RemoveSpecial(tempCondition),"DisplayName",decode(tempCondition)))]
 			[h:subeffectData = json.remove(subeffectData,"isEffectSpecificAlwaysAddedMultiple")]
 			[h:subeffectData = json.remove(subeffectData,"AlwaysAddedEffectSpecificNames")]
 		};
@@ -401,8 +401,8 @@
 		};
 		case "11":{
 			[h:conditionNames = json.fromList(encode(json.get(subeffectData,"ConditionOptionEffectSpecificNames")),"%0A")]
-			[h,foreach(tempCondition,conditionNames): conditionOptions = json.append(conditionOptions,json.set(ConditionIdentificationInfo,"Name",pm.RemoveSpecial(tempCondition),"DisplayName",tempCondition))]
-			[h,foreach(tempCondition,conditionNames): EffectSpecificConditions = json.append(EffectSpecificConditions,json.set(ConditionIdentificationInfo,"Name",pm.RemoveSpecial(tempCondition),"DisplayName",tempCondition))]
+			[h,foreach(tempCondition,conditionNames): conditionOptions = json.append(conditionOptions,json.set(ConditionIdentificationInfo,"Name",pm.RemoveSpecial(pm.EvilChars(decode(tempCondition))),"DisplayName",decode(tempCondition)))]
+			[h,foreach(tempCondition,conditionNames): EffectSpecificConditions = json.append(EffectSpecificConditions,json.set(ConditionIdentificationInfo,"Name",pm.RemoveSpecial(pm.EvilChars(decode(tempCondition))),"DisplayName",decode(tempCondition)))]
 			[h:subeffectData = json.remove(subeffectData,"isEffectSpecificConditionOptionMultiple")]
 			[h:subeffectData = json.remove(subeffectData,"ConditionOptionEffectSpecificNames")]
 		};
@@ -498,7 +498,9 @@
 			[h:subeffectData = json.remove(subeffectData,"singleSummon")]
 		};
 		case "Options":{
-			[h:SummonOptions = json.fromList(encode(json.get(subeffectData,"summonOptions")),"%0A")]
+			[h:tempSummonOptions = json.fromList(encode(json.get(subeffectData,"summonOptions")),"%0A")]
+			[h:SummonOptions = "[]"]
+			[h,foreach(summonOption,tempSummonOptions): SummonOptions = json.append(SummonOptions,pm.EvilChars(decode(summonOption)))]
 			[h:SummonData = json.set("",
 				"SummonOptions",SummonOptions
 			)]

@@ -130,9 +130,10 @@
 	
 	[h,if(BackupTest>0),CODE:{
 		[h:lu.BackupSkillChoice = json.set(json.get(json.get(ability,"Skills"),"Backup"),"ChoiceText","Choose "+BackupTest+" of the following","ChoiceNum",BackupTest)]
-		[h,if(json.get(ability,"SkillOptions")!=""): lu.NewAbilities = 
-	json.path.set(lu.NewAbilities,"\$[?(@.Name == '"+json.get(ability,"Name")+"' && @.Class == '"+json.get(ability,"Class")+"' && @.Subclass == '"+json.get(ability,"Subclass")+"')]['SkillOptions']",json.merge(json.get(ability,"SkillOptions"),lu.BackupSkillChoice)); 
-	lu.NewAbilities = json.path.put(lu.NewAbilities,"\$[?(@.Name == '"+json.get(ability,"Name")+"' && @.Class == '"+json.get(ability,"Class")+"' && @.Subclass == '"+json.get(ability,"Subclass")+"')]","SkillOptions",lu.BackupSkillChoice)]
+		[h,if(json.get(ability,"SkillOptions")!=""):
+			lu.NewAbilities = json.path.set(lu.NewAbilities,"\$[?(@.Name == '"+json.get(ability,"Name")+"' && @.Class == '"+json.get(ability,"Class")+"' && @.Subclass == '"+json.get(ability,"Subclass")+"')]['SkillOptions']",json.merge(json.get(ability,"SkillOptions"),lu.BackupSkillChoice)); 
+			lu.NewAbilities = json.path.put(lu.NewAbilities,"\$[?(@.Name == '"+json.get(ability,"Name")+"' && @.Class == '"+json.get(ability,"Class")+"' && @.Subclass == '"+json.get(ability,"Subclass")+"')]","SkillOptions",lu.BackupSkillChoice)
+		]
 	};{}]
 }]
 
@@ -156,8 +157,7 @@
 	[h,if(json.get(ability,"Skills")!=""),CODE:{
 		[h:lu.NewSkillProficiencies = json.merge(json.get(ability,"Skills"),json.get(macro.return,"Skills"))]
 		[h:lu.AllNewSkillProficiencies = json.merge(lu.AllNewSkillProficiencies,lu.NewSkillProficiencies)]
-		[h:lu.NewAbilities = 
-	json.path.set(lu.NewAbilities,"\$[?(@.Name == '"+json.get(ability,"Name")+"' && @.Class == '"+json.get(ability,"Class")+"' && @.Subclass == '"+json.get(ability,"Subclass")+"')]['Skills']",lu.NewSkillProficiencies)]
+		[h:lu.NewAbilities = json.path.set(lu.NewAbilities,"\$[?(@.Name == '"+json.get(ability,"Name")+"' && @.Class == '"+json.get(ability,"Class")+"' && @.Subclass == '"+json.get(ability,"Subclass")+"')]['Skills']",lu.NewSkillProficiencies)]
 	};{
 		[h:lu.AllNewSkillProficiencies = json.merge(lu.AllNewSkillProficiencies,json.get(macro.return,"Skills"))]
 		[h:lu.NewAbilities = json.path.put(lu.NewAbilities,"\$[?(@.Name == '"+json.get(ability,"Name")+"' && @.Class == '"+json.get(ability,"Class")+"' && @.Subclass == '"+json.get(ability,"Subclass")+"')]","Skills",json.get(macro.return,"Skills"))]

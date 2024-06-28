@@ -66,8 +66,8 @@
 	[h,foreach(roll,tempAllIndividualRolls): allIndividualRolls = json.merge(allIndividualRolls,roll)]
 
 	[h:finalRollData = json.set("",
-		"FinalTotal",finalRollTotal,
-		"AllRolls",allIndividualRolls,
+		"Total",finalRollTotal,
+		"Rolls",allIndividualRolls,
 		"RollData",pm.AllRollData
 	)]
 

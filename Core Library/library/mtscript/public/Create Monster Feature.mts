@@ -80,6 +80,8 @@
 		"ParentToken",currentToken(),
 		"ExtraData",json.set("","FeatureType","MonsterFeature","UniqueMonsterFeature",ab.IsUnique)
 	)]
+
+	[h,MACRO("CreateFeatureEnd@Lib:pm.a5e.Core"): macro.return]
 };{
 	[h:setProperty("a5e.stat.AllFeatures",json.append(getProperty("a5e.stat.AllFeatures"),json.set(ab.Final,"IsActive",1)))]
 	[r:ab.DisplayName+" monster feature from the sourcebook "+ab.Source+" created."]

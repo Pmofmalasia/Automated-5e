@@ -27,7 +27,7 @@
 	};{}]
 
 	[h:effectUseTime = json.get(effect,"UseTime")]
-	[h:UseTimeDisplay = json.get(effectUseTime,"Value")+" "+json.get(effectUseTime,"Units")+if(json.get(effectUseTime,"Value")==1,"","s")]
+	[h:UseTimeDisplay = json.get(effectUseTime,"Value")+" "+json.get(effectUseTime,"Units")+if(json.get(effectUseTime,"Value")==1,"","s")+if(json.get(effect,"isRitual") == 1,", or plus 10 minutes as a ritual.","")]
 	[h:abilityTable = json.append(abilityTable,json.set("",
 		"ShowIfCondensed",1,
 		"Header",if(json.get(FeatureData,"Class") == "Spell","Casting","Usage")+" Time",

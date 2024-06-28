@@ -19,13 +19,13 @@
 [h:sh.TargetingData = json.set("",
 	"ParentToken",ParentToken,
 	"Number",1,
-	"Allegiance",json.set("","NotSelf",1),
 	"Origin",ParentToken,
 	"Range",json.set("","Value",5,"Units","Feet")
 )]
 
 [h:sh.TargetingFilters = json.set("",
-	"SizeMax",pm.a5e.GetSizeChange(getSize(ParentToken),1)
+	"Allegiance",json.set("","NotSelf",1),
+	"SizeMax",1
 )]
 
 [h:sh.TargetOptions = pm.a5e.TargetCreatureFiltering(sh.TargetingData,sh.TargetingFilters)]

@@ -69,7 +69,8 @@
 	]
 
 	[h:UseTimeData = ct.a5e.UseTimeProcessing(subeffectData,"")]
-	[h:subeffectData = json.set(json.get(UseTimeData,"Subeffect"),"UseTime",json.get(UseTimeData,"UseTime"))]
+	[h:subeffectData = json.get(UseTimeData,"Subeffect")]
+	[h:currentEffectData = json.set(currentEffectData,"UseTime",json.get(UseTimeData,"UseTime"))]
 
 	[h,MACRO("InputDurationProcessing@Lib:pm.a5e.Core"): json.set("","InputData",subeffectData,"Prefix","Duration")]
 	[h:ReturnDurationData = macro.return]
@@ -968,6 +969,7 @@
 	[h:closeDialog("SubeffectCreation")]
 	[h,if(lastEffectTest && !MainNeedsNewSubeffect && !needsPersistentEffect),CODE:{
 		[h,MACRO("CreateFeatureCoreFinalInput@Lib:pm.a5e.Core"): json.set("","EffectType",EffectType,"ExtraData",extraData,"ParentToken",ParentToken)]
+		[h:return(0,macro.return)]
 	};{
 		[h,MACRO("CreateSubeffect@Lib:pm.a5e.Core"): baseFeatureData]
 	}]

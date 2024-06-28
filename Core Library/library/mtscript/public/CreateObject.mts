@@ -41,7 +41,7 @@
 
 <tr id='rowIsCharges'><th><label for='isCharges'>Object has Charges?</label></th><td><select id='isCharges' name='isCharges' onchange='createChargesRows("+'"CreateObjectTable"'+")'><option value='None'>None</option><option value='One'>Single Type</option><option value='Multiple'>Multiple Types</option></select></td></tr>
 
-<tr id='rowObjectDuration'><th><label for='isDuration'>Usable for Limited Time?</label></th><td><input type='checkbox' id='isDuration' name='isDuration' onchange='createDurationRows("+'"CreateObjectTable","rowIsSpellcastingFocus"'+")'><input type='hidden' id='ObjectDuration' value='Custom'></td></tr>
+<tr id='rowObjectDuration'><th><label for='isDuration'>Perishable/Usable for Limited Time?</label></th><td><input type='checkbox' id='isDuration' name='isDuration' onchange='createDurationRows("+'"CreateObjectTable","rowIsSpellcastingFocus"'+")'><input type='hidden' id='ObjectDuration' value='Custom'></td></tr>
 
 <tr id='rowIsSpellcastingFocus'><th><label for='isSpellcastingFocus'>Acts as Spellcasting Focus?</label></th><td><input type='checkbox' id='isSpellcastingFocus' name='isSpellcastingFocus' onchange='createSpellcastingFocusRows("+'"CreateObjectTable","rowIsCastSpells"'+")'></td></tr>
 

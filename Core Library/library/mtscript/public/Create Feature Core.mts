@@ -486,6 +486,7 @@
 	" ab.EffectResolveTargeted | 0 | Effect triggers after effect resolved on you | CHECK ",
 	" junkVar | --------------------------------------------------------------------------------------------------------------------- | 0 | LABEL | SPAN=TRUE ",
 	" ab.Damaged | 0 | Effect triggers when damaged | CHECK ",
+	" ab.DamageDealt | 0 | Effect triggers when dealing damage | CHECK ",
 	" ab.CondGain | 0 | Effect triggers when gaining a condition | CHECK ",
 	" ab.CondEnd | 0 | Effect triggers when ending a condition | CHECK ",
 	" ab.Rest | 0 | Effect triggers during or after rests | CHECK ",
@@ -1090,6 +1091,8 @@
 	[h,if(ab.AfterDamaged): ab.Final = json.set(ab.Final,"CallAfterDamaged",ab.AfterDamaged)]
 	[h,if(ab.TempHPLost): ab.Final = json.set(ab.Final,"CallTempHPLost",ab.TempHPLost)]
 };{}]
+
+[h,if(ab.DamageDealt): ab.Final = json.set(ab.Final,"CallAfterDamageDealt",ab.DamageDealt)]
 
 [h,if(ab.Rest),CODE:{
 	[h:abort(input(

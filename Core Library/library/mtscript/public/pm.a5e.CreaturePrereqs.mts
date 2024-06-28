@@ -147,7 +147,7 @@
 		};{
 			[h:maximumSize = thisComparisonInfo]
 		}]
-		[h:sizeTest = pm.a5e.CompareSizes(maximumSize,getSize()) =< 0]
+		[h:sizeTest = pm.a5e.CompareSizes(maximumSize,getSize()) >= 0]
 
 		[h:return(sizeTest,0)]
 	};
@@ -160,7 +160,7 @@
 		};{
 			[h:minimumSize = thisComparisonInfo]
 		}]
-		[h:sizeTest = pm.a5e.CompareSizes(minimumSize,getSize()) >= 0]
+		[h:sizeTest = pm.a5e.CompareSizes(minimumSize,getSize()) <= 0]
 
 		[h:return(sizeTest,0)]
 	};
@@ -173,7 +173,7 @@
 		};{
 			[h:maximumSize = thisComparisonInfo]
 		}]
-		[h:sizeTest = pm.a5e.CompareSizes(maximumSize,getSize()) =< 0]
+		[h:sizeTest = pm.a5e.CompareSizes(maximumSize,getSize()) >= 0]
 
 		[h:return(sizeTest,0)]
 	};
@@ -186,7 +186,7 @@
 		};{
 			[h:minimumSize = thisComparisonInfo]
 		}]
-		[h:sizeTest = pm.a5e.CompareSizes(minimumSize,getSize()) >= 0]
+		[h:sizeTest = pm.a5e.CompareSizes(minimumSize,getSize()) <= 0]
 
 		[h:return(sizeTest,0)]
 	};

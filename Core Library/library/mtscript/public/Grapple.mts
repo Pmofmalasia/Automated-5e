@@ -19,13 +19,13 @@
 [h:gr.TargetingData = json.set("",
 	"ParentToken",ParentToken,
 	"Number",1,
-	"Allegiance",json.set("","NotSelf",1),
 	"Origin",ParentToken,
 	"Range",json.set("","Value",5,"Units","Feet")
 )]
 
 [h:gr.TargetingFilters = json.set("",
-	"SizeMax",pm.a5e.GetSizeChange(getSize(ParentToken),1)
+	"SizeMax",1,
+	"Allegiance",json.set("","NotSelf",1)
 )]
 
 [h:gr.TargetOptions = pm.a5e.TargetCreatureFiltering(gr.TargetingData,gr.TargetingFilters)]

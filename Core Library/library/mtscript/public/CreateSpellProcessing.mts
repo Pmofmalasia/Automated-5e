@@ -53,3 +53,5 @@
 		"SpellLevel",json.get(SpellCoreData,"Level"),
 		"SpellName",json.get(SpellCoreData,"Name"))
 )]
+
+[h,MACRO("CreateSpellEnd@Lib:pm.a5e.Core"): macro.return]

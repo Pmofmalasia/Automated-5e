@@ -9,9 +9,13 @@
 
 [h:hp.DamageDealt = json.get(hp.Data,"DamageDealt")]
 [h:hp.SourceID = json.get(hp.Data,"SourceID")]
+[h:hp.SourceToken = json.get(hp.Data,"SourceToken")]
 [h:hp.IsCrit = number(json.get(hp.Data,"IsCrit"))]
 [h:hp.BypassConc = number(json.get(hp.Data,"BypassConc"))]
 [h:hp.ConcSaveBonus = number(json.get(hp.Data,"ConcSaveBonus"))]
+
+[h:hp.SourceEffect = json.path.read(data.getData("addon:","pm.a5e.core","gd.Effects"),"\$[*][?(@.ID == '"+hp.SourceID+"')]")]
+[h,if(json.isEmpty(hp.SourceEffect)): hp.SourceEffect = "{}"; hp.SourceEffect = json.get(hp.SourceEffect,0)]
 
 [h:"<!-- Not sure why the intersection with all damage types is required but there must have been a reason? -->"]
 [h:hp.TypesDealt = json.intersection(json.append(pm.GetDamageTypes("Name","json"),"None","Healing","TempHP"),json.unique(json.path.read(hp.DamageDealt,"\$[*]['DamageType']")))]
@@ -129,12 +133,20 @@
 		)]
 		[h,MACRO("ApplyCondition@Lib:pm.a5e.Core"): DyingConditionInfo]
 		[h:NoHPConditionTable = json.get(macro.return,"Table")]
-	};{}]
 
-	[h,if(!hp.AlreadyDying && !hp.DeadTest),CODE:{
-		[h:"<!-- Note: This allows Unconscious to be separate from Dying, so that effects that stabilize creatures but leave them unconscious can still function (e.g. Spare the Dying, Healer's Kit, etc.). -->"]
+		[h:"<!-- Note: This allows Unconscious, to be separate from Dying, so that effects that stabilize creatures but leave them unconscious can still function (e.g. Spare the Dying, Healer's Kit, etc.). -->"]
 		[h:DyingConditionInfo = json.set("",
 			"Conditions",json.append("",pm.a5e.GetSpecificCondition("Unconscious","Condition")),
+			"EndInfo","{}",
+			"GroupID",pm.a5e.CreateConditionID(ParentToken),
+			"Target",ParentToken,
+			"SetBy",""
+		)]
+		[h,MACRO("ApplyCondition@Lib:pm.a5e.Core"): DyingConditionInfo]
+
+		[h:"<!-- Same as above for prone. -->"]
+		[h:DyingConditionInfo = json.set("",
+			"Conditions",json.append("",pm.a5e.GetSpecificCondition("Prone","Condition")),
 			"EndInfo","{}",
 			"GroupID",pm.a5e.CreateConditionID(ParentToken),
 			"Target",ParentToken,
@@ -292,5 +304,6 @@
 };{}]
 
 [h:pm.PassiveFunction("AfterDamaged")]
+[h,if(hp.SourceToken != ""): pm.PassiveFunction("AfterDamageDealt",json.set("","ParentToken",hp.SourceToken))]
 [h:"<!-- Things Still Needed: Shapechange break (later); Temp HP if there is a condition attached to the lesser value (new or old); return damage dealt by type -->"]
 [h:return(0,json.set("","Table",abilityTable,"Damage",hp.FinalDamageDealt))]

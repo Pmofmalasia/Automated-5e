@@ -635,6 +635,8 @@
 			"EffectChoiceMethod",json.get(objectData,"EffectChoiceMethod"),
 			"EffectType","Object"
 		)]
+
+		[h,MACRO("CreateObjectEnd@Lib:pm.a5e.Core"): macro.return]
 	};{
 		[h,if(json.get(objectData,"tempLightEffects")!=""): objectData = json.set(objectData,"Effects",json.get(objectData,"tempLightEffects"))]
 		[h,if(json.get(objectData,"tempLightEffects")!=""): objectData = json.set(objectData,"EffectChoiceMethod","ItemActivationState")]

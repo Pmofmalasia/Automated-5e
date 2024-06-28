@@ -15,7 +15,7 @@
 ]
 
 [h,if(json.length(UniqueConditions)<=1),CODE:{
-    [h,MACRO("Create"+EffectType+"End@Lib:pm.a5e.Core"): json.set(json.get(FeatureInfo,"ExtraData"),"ParentToken",json.get(FeatureInfo,"ParentToken"))]
+	[h:return(0,json.set(json.get(FeatureInfo,"ExtraData"),"ParentToken",json.get(FeatureInfo,"ParentToken")))]
 };{
     [h:"<!-- TODO: Test to see if more input is needed above, if yes then come here, otherwise just go to the end. Only thing now is if multiple unique conditions are made, must designate separate names (if needed) -->"]
 }]

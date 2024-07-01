@@ -577,7 +577,6 @@ async function loadUserData(){
 	Inventory = userdata.Inventory;
 	maxColumnDepth = 1;
 	extraRowNum = 2;
-	debug = false;
 	
 	createInventoryTable();
 

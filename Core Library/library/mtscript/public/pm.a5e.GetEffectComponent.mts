@@ -115,12 +115,12 @@
 		[h,if(isCrit != ""),CODE:{
 			[h,if(json.isEmpty(validDamageInstances)):
 				returnedDamageFinal = 0;
-				returnedDamageFinal = math.arraySum(json.path.read(validDamageInstances,"[*]['"+if(isCrit,"Crit","")+"Total']"))
+				returnedDamageFinal = math.arraySum(json.path.read(validDamageInstances,"\$[*]['"+if(isCrit,"Crit","")+"Total']"))
 			]
 		};{
 			[h,if(json.isEmpty(validDamageInstances)): return(0,json.set("","Total",0,"CritTotal",0))]
-			[h:returnedDamage = math.arraySum(json.path.read(validDamageInstances,"[*]['Total']"))]
-			[h:returnedCritDamage = math.arraySum(json.path.read(validDamageInstances,"[*]['CritTotal']"))]
+			[h:returnedDamage = math.arraySum(json.path.read(validDamageInstances,"\$[*]['Total']"))]
+			[h:returnedCritDamage = math.arraySum(json.path.read(validDamageInstances,"\$[*]['CritTotal']"))]
 			[h:returnedDamageFinal = json.set("","Total",returnedDamage,"CritTotal",returnedCritDamage)]
 		}]
 

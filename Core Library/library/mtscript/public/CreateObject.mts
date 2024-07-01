@@ -75,7 +75,7 @@
 
 <tr id='rowSourcebook'><th><label for='Library'>Object Sourcebook:</label></th><td><select id='Library' name='Library'>"+sourcebookOptions+"</select></td></tr>
 
-<tr id='rowDescription'><th style='text-align:center' colspan='2'><label for='Description'>Full Item Description:</label></th colspan='2'></th></tr><tr id='rowItemTextArea'><th style='text-align:center'><textarea id='Description' name='Description' rows='10' style='width:155%'></textarea></th>
+<tr id='rowDescription'><th style='text-align:center' colspan='2'><label for='Description'>Full Item Description:</label></th></tr><tr id='rowItemTextArea'><th style='text-align:center' colspan='2'><textarea id='Description' name='Description' rows='10' style='width:100%'></textarea></th>
 
 <tr><th style='text-align:center' colspan='2'><input type='submit' class='theme-fix-submit' id='submitButton' value='Submit'></th></tr>"]
 

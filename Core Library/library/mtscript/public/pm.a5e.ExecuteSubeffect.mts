@@ -180,7 +180,9 @@
 	[h:subeffect.MultiTypeTargetingData = json.set("",
 		"ValidTargets",subeffect.MultipleTargetTypeTargets,
 		"TargetingInstances",MissileCount,
-		"TargetNumber",subeffect.TargetNumber
+		"TargetNumber",subeffect.TargetNumber,
+		"ParentToken",ParentToken,
+		"Origin",subeffect.TargetOrigin
 	)]
 	[h,MACRO("MixedTypeTargeting@Lib:pm.a5e.Core"): subeffect.MultiTypeTargetingData]
 	[h:subeffect.AllTargets = macro.return]

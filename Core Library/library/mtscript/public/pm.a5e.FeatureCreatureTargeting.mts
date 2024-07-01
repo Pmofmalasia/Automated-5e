@@ -11,7 +11,14 @@
 	[h,if(SelfOnlyTest || MustTargetAll),CODE:{
 		[h:pm.FeatureTargets = FeatureTargetOptions]
 	};{
-		[h:pm.FeatureTargets = pm.a5e.TargetCreatureTargeting(FeatureTargetOptions,json.get(basicTargetData,"Number"))]
+		[h:pm.FeatureTargets = pm.a5e.TargetCreatureTargeting(json.set("",
+			"ValidTargets",FeatureTargetOptions,
+			"TargetNumber",json.get(basicTargetData,"Number"),
+			"ParentToken",ParentToken,
+			"Origin",if(json.get(basicTargetData,"Origin") == "",ParentToken,json.get(basicTargetData,"Origin"))
+		))]
+
+		[h,if(json.get(basicTargetData,"Number") == 1): pm.FeatureTargets = json.get(pm.FeatureTargets,0)]
 	}]
 	
 	[h:effectsToMerge = json.append("",json.set("","Targets",pm.FeatureTargets))]

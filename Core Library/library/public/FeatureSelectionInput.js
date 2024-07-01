@@ -1,5 +1,5 @@
 function createFeatureTypeRows(tableID,nextRowIndex,extraData){
-	let ClassOptions = "<option value='Class'>Class</option><option value='Race'>Race</option><option value='Feat'>Feat</option><option value='Condition'>Condition</option><option value='Item'>Item</option><option value='Background'>Background</option>";
+	let ClassOptions = "<option value='Class'>Class</option><option value='Race'>Race</option><option value='Feat'>Feat</option><option value='Condition'>Condition</option><option value='Item'>Item</option><option value='Background'>Background</option><option value='FightingStyle'>Fighting Style</option><option value='MonsterFeature'>NPC Feature</option>";
 	let idSuffix = "";
 	let hideTest = false;
 	let multiTest = false;
@@ -23,9 +23,6 @@ function createFeatureTypeRows(tableID,nextRowIndex,extraData){
 				ClassOptions = ClassOptions + "<option value='"+featureType+"'>"+featureType+"</option>";
 			}			
 		}
-		else{
-
-		}
 
 		if(extraData.idSuffix != null){
 			idSuffix = extraData.idSuffix;
@@ -42,28 +39,25 @@ function createFeatureTypeRows(tableID,nextRowIndex,extraData){
 		}
 	}
 
-	let finalIDSuffix = "";
-
-	if(arguments.length > 2){
-		finalIDSuffix = idSuffix;
-	}
-
-	addTableRow(tableID,nextRowIndex,"rowFeatureType"+finalIDSuffix,"<th><label for='FeatureType"+finalIDSuffix+"'>Feature Type:</label></th><td><select id='FeatureType"+finalIDSuffix+"' name='FeatureType"+finalIDSuffix+"' onchange='createFeatureClassRows("+'"'+tableID+'","'+finalIDSuffix+'"'+")'>"+ClassOptions+"</select></td>");
+	addTableRow(tableID,nextRowIndex,"rowFeatureType"+idSuffix,"<th><label for='FeatureType"+idSuffix+"'>Feature Type:</label></th><td><select id='FeatureType"+idSuffix+"' name='FeatureType"+idSuffix+"' onchange='createFeatureClassRows("+'"'+tableID+'","'+idSuffix+'"'+")'>"+ClassOptions+"</select></td>");
 	nextRowIndex++;
 
 	if(hideTest){
-		document.getElementById("rowFeatureType"+finalIDSuffix).setAttribute("hidden","");
+		document.getElementById("rowFeatureType"+idSuffix).setAttribute("hidden","");
 	};
 
-	addTableRow(tableID,nextRowIndex,"rowFeatureTypeEnd"+finalIDSuffix,"");
-	document.getElementById("rowFeatureTypeEnd"+finalIDSuffix).setAttribute("hidden","");
+	addTableRow(tableID,nextRowIndex,"rowFeatureTypeEnd"+idSuffix,"");
+	document.getElementById("rowFeatureTypeEnd"+idSuffix).setAttribute("hidden","");
 
-	createFeatureClassRows(tableID,finalIDSuffix);
+	createFeatureClassRows(tableID,idSuffix);
 }
 
 async function createFeatureClassRows(tableID,idSuffix,secondaryType){
 	let selectOptions = "";
 	let selectTitle = "";
+	if(arguments.length == 1){
+		idSuffix = "";
+	}
 
 	let finalSecondaryType = "";
 	if(arguments.length > 2){
@@ -172,20 +166,17 @@ async function createFeatureSubclassRows(tableID,idSuffix){
 		addTableRow(tableID,nextRowIndex,"rowFeatureSubclass"+idSuffix,"<input type='hidden' id='FeatureSubclass"+idSuffix+"' name='FeatureSubclass"+idSuffix+"' value=''>");
 		nextRowIndex++;
 		document.getElementById("rowFeatureSubclass"+idSuffix).setAttribute("hidden","");
-
-		createFeatureSelectionRows(tableID,idSuffix);
-		return;
 	}
+	else{
+		subclassOptions = subclassOptions + "<option value='Any'>Any</option>";
 
-	subclassOptions = subclassOptions + "<option value='Any'>Any</option>";
-
-	addTableRow(tableID,nextRowIndex,"rowFeatureSubclass"+idSuffix,"<th><label for='FeatureSubclass"+idSuffix+"'>"+subclassTitle+":</label></th><td><select id='FeatureSubclass"+idSuffix+"' name='FeatureSubclass"+idSuffix+"' onchange='createFeatureSelectionRows("+'"'+tableID+'","'+idSuffix+'"'+")'>"+subclassOptions+"</select></td>");
-	nextRowIndex++;
-
-	createFeatureSelectionRows(tableID,idSuffix);
+		addTableRow(tableID,nextRowIndex,"rowFeatureSubclass"+idSuffix,"<th><label for='FeatureSubclass"+idSuffix+"'>"+subclassTitle+":</label></th><td><select id='FeatureSubclass"+idSuffix+"' name='FeatureSubclass"+idSuffix+"'>"+subclassOptions+"</select></td>");
+		nextRowIndex++;		
+	}
 }
 
 async function createFeatureSelectionRows(tableID,idSuffix){
+	//Currently stopping at subclass selection
 	let typeSelection = document.getElementById("FeatureType"+idSuffix).value;
 	let classSelection = document.getElementById("FeatureClass"+idSuffix).value;
 	let subclassSelection = document.getElementById("FeatureSubclass"+idSuffix).value;
@@ -259,14 +250,113 @@ async function createFeatureSelectionRows(tableID,idSuffix){
 	addTableRow(tableID,nextRowIndex,"rowFeatureSelection"+idSuffix,"<th><label for='FeatureSelection"+idSuffix+"'>"+featureTitle+":</label></th><td><select id='FeatureSelection"+idSuffix+"' name='FeatureSelection"+idSuffix+"'>"+featureOptions+"</select></td>");
 }
 
-setTimeout(createFeatureTypeRows,1,"FeatureSelectionTestTable",0);
+async function createFeatureInputRow(startRowID,idPrefix,Header,FeatureType){
+	let startRow = document.getElementById(startRowID);
+	let tableID = startRow.closest("table").id;
+	let nextRowIndex = startRow.rowIndex + 1;
 
-//TODO: Should have options to cut off selections at any point - e.g. only select a class, class + subclass, class + subclass + feature, etc.
+	let allFeatureOptions = [];
+	let finalFeatureOptions = [];
+	if(arguments.length < 4){
+		let featureProperties = ["sb.Abilities","sb.Feats","sb.Conditions","sb.Objects","sb.MonsterFeatures"];
+		for(let property of featureProperties){
+			let request = await fetch("macro:pm.a5e.GetCoreData@lib:pm.a5e.Core", {method: "POST", body: '["'+property+'"]'});
+			allFeatureOptions = allFeatureOptions.concat(await request.json());
+		}
+		
+		for(let feature of allFeatureOptions){
+			finalFeatureOptions.push(feature.DisplayName);
+		}
+	}
+	else{
+		let propertyName = "sb.Abilities";
+		if(FeatureType == "Feat"){
+			propertyName = "sb.Feats";
+		}
+		else if(FeatureType == "Condition"){
+			propertyName = "sb.Conditions";
+		}
+		else if(FeatureType == "Item"){
+			propertyName = "sb.Objects";
+		}
+		else if(FeatureType == "MonsterFeature"){
+			propertyName = "sb.MonsterFeatures";
+		}
 
-//TODO: Should also add an option for multiselect on whatever the final step is. May want to have the final argument of the initial function be an object since this is a lot of options that may not be required.
+		let request = await fetch("macro:pm.a5e.GetCoreData@lib:pm.a5e.Core", {method: "POST", body: '["'+propertyName+'"]'});
+		allFeatureOptions = await request.json();
 
-//Following notes will probably be for general feature stuff - should limit feature selection stuff to its own file as it will be used in many different places 
+		if(FeatureType == "Class"){
+			let requestClass = await fetch("macro:pm.GetClasses@lib:pm.a5e.Core", {method: "POST", body: '["Name","json"]'});
+			let allClasses = await requestClass.json();
 
-//Check if has a resource, remove if no MaxResource key. If no valid features, replace select options with 'No Valid Features' (or any other key using SearchKey arg)
+			for(let feature of allFeatureOptions){
+				if(allClasses.includes(feature['Class'])){
+					finalFeatureOptions.push(feature.DisplayName);
+				}
+			}
+		}
+		else if(FeatureType == "Race"){
+			let requestRace = await fetch("macro:pm.GetRaces@lib:pm.a5e.Core", {method: "POST", body: '["Name","json"]'});
+			let allRaces = await requestRace.json();
+
+			for(let feature of allFeatureOptions){
+				if(allRaces.includes(feature['Class'])){
+					finalFeatureOptions.push(feature.DisplayName);
+				}
+			}
+		}
+		else if(FeatureType == "FightingStyle"){
+			for(let feature of allFeatureOptions){
+				if(feature['Class'] == "FightingStyle"){
+					finalFeatureOptions.push(feature.DisplayName);
+				}
+			}
+		}
+		else if(FeatureType == "Background"){
+			for(let feature of allFeatureOptions){
+				if(feature['Subclass'] == "Background"){
+					finalFeatureOptions.push(feature.DisplayName);
+				}
+			}
+		}
+		else{
+			for(let feature of allFeatureOptions){
+				finalFeatureOptions.push(feature.DisplayName);
+			}
+		}		
+	}
+
+	addTableRow(tableID,nextRowIndex,"row"+idPrefix+"Feature","<th><label for='"+idPrefix+"Feature'>"+Header+":</label></th><td class='autocomplete-table'><input type='text' id='"+idPrefix+"Feature' name='"+idPrefix+"Feature'><span id='"+idPrefix+"FeatureValidationSpan'></span></td>");
+
+	document.getElementById(idPrefix+"Feature").addEventListener("change",function(e){
+		validateFeatureAutocomplete(idPrefix+"Feature",btoa(JSON.stringify(allFeatureOptions)));
+	});
+
+	autocomplete(document.getElementById(idPrefix+"Feature"),finalFeatureOptions);
+}
+
+async function createSpellInputRow(startRowID,idPrefix,Header){
+	let startRow = document.getElementById(startRowID);
+	let tableID = startRow.closest("table").id;
+	let nextRowIndex = startRow.rowIndex + 1;
+
+	let allSpellOptionsDisplay = [];
+	let request = await fetch("macro:pm.a5e.GetSpells@lib:pm.a5e.Core", {method: "POST", body: ""});
+	let allSpellOptions = await request.json();
+	for(let spell of allSpellOptions){
+		allSpellOptionsDisplay.push(spell.DisplayName);
+	}
+
+	addTableRow(tableID,nextRowIndex,"row"+idPrefix+"Spell","<th><label for='"+idPrefix+"Spell'>"+Header+":</label></th><td class='autocomplete-table'><input type='text' id='"+idPrefix+"Spell' name='"+idPrefix+"Spell'><span id='"+idPrefix+"SpellValidationSpan'></span></td>");
+
+	document.getElementById(idPrefix+"Spell").addEventListener("change",function(e){
+		validateFeatureAutocomplete(idPrefix+"Spell",btoa(JSON.stringify(allSpellOptions)));
+	});
+
+	autocomplete(document.getElementById(idPrefix+"Spell"),allSpellOptionsDisplay);
+}
+
+//TODO: Add check if has a resource, remove if no MaxResource key. If no valid features, replace select options with 'No Valid Features' (or any other key using SearchKey arg)
 
 //For resource selection purproses, will also need an option to just select the current thing you're making OR use the name only and not the class/subclass info (for things like Channel Divinity)

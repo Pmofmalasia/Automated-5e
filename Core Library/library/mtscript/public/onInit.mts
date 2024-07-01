@@ -199,6 +199,7 @@
 [h:defineFunction("pm.a5e.d20TestRerollDataProcessing","pm.a5e.d20TestRerollDataProcessing@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.a5e.TargetEffectFiltering","pm.a5e.TargetEffectFiltering@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.a5e.TargetEffectTargeting","pm.a5e.TargetEffectTargeting@Lib:pm.a5e.Core")]
+[h:defineFunction("pm.a5e.SetGMTargets","pm.a5e.SetGMTargets@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.a5e.BuildEffectMergeConditions","pm.a5e.BuildEffectMergeConditions@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.a5e.BuildEffectMergeConditionsRemoved","pm.a5e.BuildEffectMergeConditionsRemoved@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.a5e.BuildEffectMergeDamage","pm.a5e.BuildEffectMergeDamage@Lib:pm.a5e.Core")]

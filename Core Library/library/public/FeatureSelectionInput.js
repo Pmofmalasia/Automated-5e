@@ -39,7 +39,7 @@ function createFeatureTypeRows(tableID,nextRowIndex,extraData){
 		}
 	}
 
-	addTableRow(tableID,nextRowIndex,"rowFeatureType"+idSuffix,"<th><label for='FeatureType"+idSuffix+"'>Feature Type:</label></th><td><select id='FeatureType"+idSuffix+"' name='FeatureType"+idSuffix+"' onchange='createFeatureClassRows("+'"'+tableID+'","'+idSuffix+'"'+")'>"+ClassOptions+"</select></td>");
+	addTableRow(tableID,nextRowIndex,"rowFeatureType"+idSuffix,"<th><label for='FeatureType"+idSuffix+"'>Feature Type:</label></th><td><select id='FeatureType"+idSuffix+"' name='FeatureType"+idSuffix+"' onchange='createFeatureClassRows("+'"'+idSuffix+'"'+")'>"+ClassOptions+"</select></td>");
 	nextRowIndex++;
 
 	if(hideTest){
@@ -49,31 +49,34 @@ function createFeatureTypeRows(tableID,nextRowIndex,extraData){
 	addTableRow(tableID,nextRowIndex,"rowFeatureTypeEnd"+idSuffix,"");
 	document.getElementById("rowFeatureTypeEnd"+idSuffix).setAttribute("hidden","");
 
-	createFeatureClassRows(tableID,idSuffix);
+	createFeatureClassRows(idSuffix);
 }
 
-async function createFeatureClassRows(tableID,idSuffix,secondaryType){
+async function createFeatureClassRows(idSuffix,secondaryType){
 	let selectOptions = "";
 	let selectTitle = "";
-	if(arguments.length == 1){
+	if(arguments.length == 0){
 		idSuffix = "";
 	}
-
+	
 	let finalSecondaryType = "";
-	if(arguments.length > 2){
+	if(arguments.length > 1){
 		finalSecondaryType = secondaryType;
 	}
 	let typeSelection = document.getElementById("FeatureType"+finalSecondaryType+idSuffix).value;
-
+	let tableID = document.getElementById("FeatureType"+finalSecondaryType+idSuffix).closest("table").id;
+	
 	if(finalSecondaryType == "Condition" && document.getElementById("rowFeatureTypeCondition") != null){
 		clearUnusedTable(tableID,"rowFeatureTypeCondition"+idSuffix,"rowFeatureTypeEnd"+idSuffix);
 	}
 	else{
 		clearUnusedTable(tableID,"rowFeatureType"+idSuffix,"rowFeatureTypeEnd"+idSuffix);
 	}
-
+	
 	let nextRowIndex = document.getElementById("rowFeatureType"+finalSecondaryType+idSuffix).rowIndex + 1;
-
+	let noInputTest = false;
+	let predeterminedClass = "";
+	
 	if(typeSelection == "Class"){
 		let request = await fetch("macro:pm.GetClasses@lib:pm.a5e.Core", {method: "POST", body: ""});
 		let allClasses = await request.json();
@@ -88,20 +91,13 @@ async function createFeatureClassRows(tableID,idSuffix,secondaryType){
 		selectTitle = "Race";
 		selectOptions = createHTMLSelectOptions(allRaces);
 	}
-	else if(typeSelection == "Feat"){
-		let request = await fetch("macro:pm.GetFeats@lib:pm.a5e.Core", {method: "POST", body: ""});
-		let allFeats = await request.json();
-
-		selectTitle = "Feat";
-		selectOptions = createHTMLSelectOptions(allFeats);
-	}
 	else if(typeSelection == "Condition"){
 		//Note: Conditions can be associated with any of the other options, so they need to go another round of selections.
 
-		addTableRow(tableID,nextRowIndex,"rowFeatureTypeCondition"+idSuffix,"<th><label for='FeatureTypeCondition"+idSuffix+"'>Associated With:</label></th><td><select id='FeatureTypeCondition"+idSuffix+"' name='FeatureTypeCondition"+idSuffix+"' onchange='createFeatureClassRows("+'"'+tableID+'","'+idSuffix+'","Condition"'+")'><option value='BaseCondition'>Base Condition</option><option value='Class'>Class</option><option value='Race'>Race</option><option value='Feat'>Feat</option><option value='Item'>Item</option><option value='Background'>Background</option></select></td>");
+		addTableRow(tableID,nextRowIndex,"rowFeatureTypeCondition"+idSuffix,"<th><label for='FeatureTypeCondition"+idSuffix+"'>Associated With:</label></th><td><select id='FeatureTypeCondition"+idSuffix+"' name='FeatureTypeCondition"+idSuffix+"' onchange='createFeatureClassRows("+'"'+idSuffix+'","Condition"'+")'><option value='BaseCondition'>Base Condition</option><option value='Class'>Class</option><option value='Race'>Race</option><option value='Feat'>Feat</option><option value='Item'>Item</option><option value='Background'>Background</option></select></td>");
 		nextRowIndex++;
 
-		createFeatureClassRows(tableID,idSuffix,"Condition");
+		createFeatureClassRows(idSuffix,"Condition");
 	}
 	else if(typeSelection == "BaseCondition"){
 		let request = await fetch("macro:pm.a5e.GetBaseConditions@lib:pm.a5e.Core", {method: "POST", body: ""});
@@ -110,17 +106,31 @@ async function createFeatureClassRows(tableID,idSuffix,secondaryType){
 		selectTitle = "Condition";
 		selectOptions = createHTMLSelectOptions(allConditions);
 	}
-	else if(typeSelection == "Background"){
-		let request = await fetch("macro:pm.GetBackgrounds@lib:pm.a5e.Core", {method: "POST", body: ""});
-		let allBackgrounds = await request.json();
-
-		selectTitle = "Background";
-		selectOptions = createHTMLSelectOptions(allBackgrounds);
+	else{
+		noInputTest = true;
+		if(typeSelection == "Feat"){
+			predeterminedClass = "Feat";
+		}
+		else if(typeSelection == "MonsterFeature"){
+			predeterminedClass = "Monster";
+		}
+		else if(typeSelection == "FightingStyle"){
+			predeterminedClass = "FightingStyle";
+		}
+		else if(typeSelection == "Background"){
+			predeterminedClass = "Background";
+		}
 	}
-
+	
 	if(typeSelection != "Condition"){
-		addTableRow(tableID,nextRowIndex,"rowFeatureClass"+idSuffix,"<th><label for='FeatureClass"+idSuffix+"'>"+selectTitle+":</label></th><td><select id='FeatureClass"+idSuffix+"' name='FeatureClass"+idSuffix+"' onchange='createFeatureSubclassRows("+'"'+tableID+'","'+idSuffix+'"'+")'>"+selectOptions+"</select></td>");
-		nextRowIndex++;
+		if(noInputTest){
+			addTableRow(tableID,nextRowIndex,"rowFeatureClass"+idSuffix,"<input type='hidden' id='FeatureClass"+idSuffix+"' name='FeatureClass"+idSuffix+"' value='"+predeterminedClass+"'>");
+			nextRowIndex++;			
+		}
+		else{
+			addTableRow(tableID,nextRowIndex,"rowFeatureClass"+idSuffix,"<th><label for='FeatureClass"+idSuffix+"'>"+selectTitle+":</label></th><td><select id='FeatureClass"+idSuffix+"' name='FeatureClass"+idSuffix+"' onchange='createFeatureSubclassRows("+'"'+tableID+'","'+idSuffix+'"'+")'>"+selectOptions+"</select></td>");
+			nextRowIndex++;			
+		}
 
 		createFeatureSubclassRows(tableID,idSuffix);
 	}
@@ -140,7 +150,6 @@ async function createFeatureSubclassRows(tableID,idSuffix){
 	let subclassOptions = "<option value=''>None</option>";
 	let noInputTest = true;
 
-	//TODO: May want to add in item rarity just so the list isn't overwhelming
 	if(typeSelection == "Class"){
 		let request = await fetch("macro:pm.GetSubclasses@lib:pm.a5e.Core", {method: "POST", body: "['"+classSelection+"']"});
 		let allSubclasses = await request.json();
@@ -161,6 +170,16 @@ async function createFeatureSubclassRows(tableID,idSuffix){
 		subclassTitle = "Subrace";
 		subclassOptions = subclassOptions + createHTMLSelectOptions(allSubclasses);
 	}
+	else if(typeSelection == "Background"){
+		let request = await fetch("macro:pm.GetBackgrounds@lib:pm.a5e.Core", {method: "POST", body: ""});
+		let allBackgrounds = await request.json();
+
+		if(allBackgrounds.length > 0){
+			noInputTest = false;
+		}
+		subclassTitle = "Background";
+		subclassOptions = createHTMLSelectOptions(allBackgrounds);
+	}
 	
 	if(noInputTest){
 		addTableRow(tableID,nextRowIndex,"rowFeatureSubclass"+idSuffix,"<input type='hidden' id='FeatureSubclass"+idSuffix+"' name='FeatureSubclass"+idSuffix+"' value=''>");
@@ -168,8 +187,6 @@ async function createFeatureSubclassRows(tableID,idSuffix){
 		document.getElementById("rowFeatureSubclass"+idSuffix).setAttribute("hidden","");
 	}
 	else{
-		subclassOptions = subclassOptions + "<option value='Any'>Any</option>";
-
 		addTableRow(tableID,nextRowIndex,"rowFeatureSubclass"+idSuffix,"<th><label for='FeatureSubclass"+idSuffix+"'>"+subclassTitle+":</label></th><td><select id='FeatureSubclass"+idSuffix+"' name='FeatureSubclass"+idSuffix+"'>"+subclassOptions+"</select></td>");
 		nextRowIndex++;		
 	}

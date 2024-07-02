@@ -39,6 +39,7 @@
 [h:defineFunction("ct.a5e.WeaponDataProcessing","ct.a5e.WeaponDataProcessing@Lib:pm.a5e.Core")]
 [h:defineFunction("ct.a5e.AttributeOptionProcessing","ct.a5e.AttributeOptionProcessing@Lib:pm.a5e.Core")]
 [h:defineFunction("ct.a5e.LanguageOptionProcessing","ct.a5e.LanguageOptionProcessing@Lib:pm.a5e.Core")]
+[h:defineFunction("ct.a5e.AutocompletedFeatureProcessing","ct.a5e.AutocompletedFeatureProcessing@Lib:pm.a5e.Core")]
 [h:defineFunction("ct.a5e.VisionProcessing","ct.a5e.VisionProcessing@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.a5e.KeyStringsToNumbers","pm.a5e.KeyStringsToNumbers@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.a5e.PruneIDSuffix","pm.a5e.PruneIDSuffix@Lib:pm.a5e.Core")]

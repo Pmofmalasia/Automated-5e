@@ -317,7 +317,7 @@
 			"AHLDieNum",number(json.get(subeffectData,"AHLDieNum"+whichType)),
 			"AHLFlatBonus",number(json.get(subeffectData,"AHLFlatBonus"+whichType))
 	)]
-	
+
 	[h:"<!-- TODO: This will introduce a disconnect between the input and what happens in the code - need to create the ability to apply DamageHalved to each individual type? As it stands now a spell that halves one type and completely reduces another on save will just have all damage types that are reduced completely nullified. Super low priority because why would you do that anyway. -->"]
 	[h,if(howMitigate == "Save"),CODE:{
 		[h,if(json.get(SaveDamageModifier,"DamageHalved")==""):

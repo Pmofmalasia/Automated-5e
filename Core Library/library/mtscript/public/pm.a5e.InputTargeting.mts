@@ -15,10 +15,7 @@
 		[h,if(CanSeeTest): pm.TargetOptions = json.append(pm.TargetOptions,getName(target)+" "+getTokenImage("",target))]
 		[h,if(CanSeeTest): finalValidTargets = json.append(finalValidTargets,target)]
 	}]
-	[h,if(!isGMAdjustTarget): 
-		pm.TargetOptions = json.append(pm.TargetOptions,"No Target");
-		pm.TargetOptions = json.append(pm.TargetOptions,"Target Not on List")
-	]
+	[h:pm.TargetOptions = json.append(pm.TargetOptions,"Target Not on List")]
 
 	[h:sameTarget = 1]
 	[h:tInput = if(pm.TargetingInstances==1,""," sameTarget | 1 | Use First Target for All Attacks | CHECK ")]
@@ -34,7 +31,7 @@
 		[h,if(CanSeeTest): finalValidTargets = json.append(finalValidTargets,target)]
 	}]
 
-	[h,if(!isGMAdjustTarget): tInput = listAppend(tInput," choiceUnseen |  | Target(s) Not on List | CHECK ","##")]
+	[h:tInput = listAppend(tInput," choiceUnseen |  | Target(s) Not on List | CHECK ","##")]
 }]
 
 [h:abort(input(tInput))]
@@ -44,7 +41,7 @@
 	[h,count(pm.TargetingInstances),CODE:{
 		[h:tempChoice = eval("pm.TargetChoice"+if(sameTarget,"0",roll.count))]
 		[h,if(tempChoice >= json.length(finalValidTargets)):
-			allTargets = json.append(allTargets,json.append("",if(isGMAdjustTarget,"","x")));
+			allTargets = json.append(allTargets,json.append("","x"));
 			allTargets = json.append(allTargets,json.append("",json.get(finalValidTargets,tempChoice)))
 		]
 	}]

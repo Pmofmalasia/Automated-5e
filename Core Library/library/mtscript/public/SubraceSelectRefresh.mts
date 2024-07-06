@@ -8,7 +8,9 @@
     [h:subraceData = json.set("","isReadonly",1,"Options",subraceOptions)]
 };{
     [h:subraceOptions = ""]
-    [h:tempSubraceOptions = json.path.read(SubraceArray,"[*].DisplayName")]
+	[h:subraceAddedLaterTest = json.get(tempRaceData,"hasSubrace") == 0]
+	[h,if(subraceAddedLaterTest): subraceOptions = subraceOptions + "<option value='Base'>Base "+json.get(tempRaceData,"DisplayName")+"</option>"]
+    [h:tempSubraceOptions = json.path.read(SubraceArray,"\$[*].DisplayName")]
     [h,foreach(tempSubrace,tempSubraceOptions): subraceOptions = subraceOptions + "<option value='"+roll.count+"'>"+tempSubrace+"</option>"]
 
     [h:subraceData = json.set("","isReadonly",0,"Options",subraceOptions)]

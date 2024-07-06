@@ -27,5 +27,28 @@
 .equipment-button button{
 	height: 54px;
 	width: 54px;
+	border: 2px solid #000000;
+	border-radius: 8px;
+	padding: 0px;
+}
+
+.equipment-button img{
+	height: 50px;
+	width: 50px;
 	border: 0px;
+}
+
+.equipment-button div{
+	position: fixed;
+	bottom: 10px;
+	width: 100%;
+}
+
+.equipment-button button:active{
+	border: 2px solid #FFFFFF;
+	transform: translateY(2px);
+}
+
+.equipment-button button:hover{
+	border: 2px solid #777777;
 }

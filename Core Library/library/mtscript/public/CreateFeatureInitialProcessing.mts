@@ -46,6 +46,68 @@
 	[h:newFeatureData = json.merge(newFeatureData,finalAssociatedFeature)]
 
 	[h,if(json.get(featureInputData,"ConditionCountsAs") != ""): newFeatureData = json.set(newFeatureData,"CountsAs",json.get(featureInputData,"ConditionCountsAs"))]
+
+	[h,if(json.contains(featureInputData,"NewConditionTag")),CODE:{
+		[h:conditionTagDisplayName = pm.EvilChars(json.get(featureInputData,"NewConditionTag"))]
+		[h:conditionTagName = pm.RemoveSpecial(conditionTagDisplayName)]
+		[h:conditionTagData = json.set("",
+			"DisplayName",conditionTagDisplayName,
+			"Name",conditionTagName,
+			"Library",FeatureLib
+		)]
+
+		[h:setLibProperty("sb.ConditionTags",json.append(getLibProperty("sb.ConditionTags","Lib:"+sourcebookLib),conditionTagData),"Lib:"+sourcebookLib)]
+		[h:broadcast("Condition Tag "+conditionTagDisplayName+" created.")]
+		[h,MACRO("Gather Sourcebook Information@Lib:pm.a5e.Core"): ""]
+	};{}]
+};{}]
+
+[h,if(FeatureType == "FightingStyle"),CODE:{
+	[h:FSGroups = json.path.read(data.getData("addon:","pm.a5e.core","sb.Abilities"),"\$[*][?(@.FightingStyleList!=null && @.CreatedForMerging!=1)]","DEFAULT_PATH_LEAF_TO_NULL")]
+	[h:validFightingStyles = "[]"]
+	[h,foreach(tempGroup,FSGroups),CODE:{
+		[h:CanUseFSTest = json.contains(featureInputData,"isFightingStyle"+json.get(tempGroup,"Name")+json.get(tempGroup,"Class")+json.get(tempGroup,"Subclass"))]
+		[h:tempFeatureData = json.set("",
+			"Name",json.get(tempGroup,"Name"),
+			"Class",json.get(tempGroup,"Class"),
+			"Subclass",json.get(tempGroup,"Subclass"),
+			"Library",json.get(tempGroup,"Library")
+		)]
+		[h,if(CanUseFSTest): validFightingStyles = json.append(validFightingStyles,tempFeatureData)]
+	}]
+	[h,if(!json.isEmpty(validFightingStyles)): newFeatureData = json.set(newFeatureData,"tempValidFightingStyles",validFightingStyles)]
+};{}]
+
+
+
+
+
+
+	
+
+
+
+
+
+
+
+
+
+[h:"<!-- For fighting styles: Will defer this to the end of creation so things that aren't fully made don't get added -->"]
+[h,if(0),CODE:{
+	[h:LibHasPreviousData = !json.isEmpty(json.path.read(getLibProperty("sb.Abilities","Lib:"+FeatureLib),"\$[*][?(@.Name=='"+json.get(tempGroup,"Name")+"' && @.Class=='"+json.get(tempGroup,"Class")+"' && @.Subclass=='"+json.get(tempGroup,"Subclass")+"')]['FightingStyleList']"))]
+	[h,switch(CanUseFSTest+""+LibHasPreviousData),CODE:
+		case "11":{
+			[h:newFSList = json.append(json.get(json.path.read(getLibProperty("sb.Abilities","Lib:"+ab.SourceLib),"\$[*][?(@.Name=='"+json.get(TempFSGroup,"Name")+"' && @.Class=='"+json.get(TempFSGroup,"Class")+"' && @.Subclass=='"+json.get(TempFSGroup,"Subclass")+"')]['FightingStyleList']"),0),ab.Name)]
+			[h:setLibProperty("sb.Abilities",json.path.set(getLibProperty("sb.Abilities","Lib:"+ab.SourceLib),"[*][?(@.Name=='"+json.get(TempFSGroup,"Name")+"' && @.Class=='"+json.get(TempFSGroup,"Class")+"' && @.Subclass=='"+json.get(TempFSGroup,"Subclass")+"')]['FightingStyleList']",newFSList),"Lib:"+ab.SourceLib)]
+		};
+		case "10":{
+			[h:newFSList = json.append("",ab.Name)]
+			[h:newFSGroupObj = json.set(json.get(json.path.read(getLibProperty("sb.Abilities","Lib:"+json.get(TempFSGroup,"Library")),"\$[*][?(@.Name=='"+json.get(TempFSGroup,"Name")+"' && @.Class=='"+json.get(TempFSGroup,"Class")+"' && @.Subclass=='"+json.get(TempFSGroup,"Subclass")+"')]"),0),"FightingStyleList",newFSList,"Library",ab.SourceLib,"CreatedForMerging",1)]
+			[h:setLibProperty("sb.Abilities",json.append(getLibProperty("sb.Abilities","Lib:"+ab.SourceLib),newFSGroupObj),"Lib:"+ab.SourceLib)]
+		};
+		default:{}
+	]
 };{}]
 
 [h,if(json.contains(featureInputData,"isReplaceFeature")),CODE:{
@@ -204,3 +266,4 @@
 [h:newFeatureData = json.set(newFeatureData,"Description",Description,"AbridgedDescription",AbridgedDescription)]
 
 [h:closeDialog("CreateFeatureInitial")]
+[h,macro("CreateFeatureCore@Lib:pm.a5e.Core"): newFeatureData]

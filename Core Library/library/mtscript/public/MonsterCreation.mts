@@ -60,7 +60,7 @@
 
 [h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowIsConditionImmun'><th><label for='IsConditionImmun'>Has Condition Immunities:</label></th><td><input type='checkbox' id='IsConditionImmun' name='IsConditionImmun' onchange='createConditionRows()'></td></tr>"]
 
-[h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowIsVision'><th><label for='isVision'>Gives Special Vision:</label></th><td><input type='checkbox' id='isVision' name='isVision' onchange='createVisionRows("+'"MonsterCreationTable","rowLanguageOptions"'+")'></td></tr>"]
+[h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowIsVision'><th><label for='isVision'>Gives Special Vision:</label></th><td><input type='checkbox' id='isVision' name='isVision' onchange='createVisionRows("+'"rowLanguageOptions"'+")'></td></tr>"]
 
 [h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowLanguageOptions'><th><label for='LanguageOptions'>Chosen Languages:</label></th><td><input type='number' id='LanguageOptions' name='LanguageOptions' value=1 min=0 style='width:25px'></td></tr>"]
 
@@ -68,7 +68,7 @@
 [h:LanguageOptions = ut.a5e.GenerateSelectionHTML(AllLanguages)]
 [h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowLanguageKnown0'><th><label for='LanguageKnown0'>Known Language #1:</label></th><td><select id='LanguageKnown0' name='LanguageKnown0' value=1 min=0>"+LanguageOptions+"</select></td></tr>"]
 
-[h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowLanguageKnownButtons'><th text-align='center' colspan='2'><input type='button' id='addLanguageKnown' value='New Language Known' onclick='addLanguageKnownRow("+'"MonsterCreationTable"'+")'>  <input type='button' id='removeLanguageKnown' value='Remove Language Known' onclick='removeLanguageKnownRow("+'"MonsterCreationTable"'+")'><input type='hidden' id='LanguageKnownNumber' name='LanguageKnownNumber' value=0></th></tr>"]
+[h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowLanguageKnownButtons'><th text-align='center' colspan='2'><input type='button' id='addLanguageKnown' value='New Language Known' onclick='addLanguageKnownRow()'>  <input type='button' id='removeLanguageKnown' value='Remove Language Known' onclick='removeLanguageKnownRow()'><input type='hidden' id='LanguageKnownNumber' name='LanguageKnownNumber' value=0></th></tr>"]
 
 [h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowProficiency'><th><label for='Proficiency'>Proficiency Bonus:</label></th><td><input type='number' id='Proficiency' name='Proficiency' min='1' style='width:25px' value='2'></td></tr>"]
 

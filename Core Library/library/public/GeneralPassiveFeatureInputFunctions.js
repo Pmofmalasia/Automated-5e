@@ -19,8 +19,12 @@ function createChooseSizeRows(tableID,endRowID){
 	}
 }
 
-function createAttributeSelectionRows(tableID,endRowID){
+async function createAttributeSelectionRows(endRowID,idSuffix){
+	if(arguments.length == 1){
+		idSuffix = "";
+	}
 	let AttributeMethod = document.getElementById("AttributeAllocationMethod").value;
+	let tableID = document.getElementById("AttributeAllocationMethod").closest("table").id;
 
 	if(AttributeMethod == "Preset"){
 		let previouslyMixed = document.getElementById("rowPresetAttributesAll") != null;
@@ -28,28 +32,56 @@ function createAttributeSelectionRows(tableID,endRowID){
 			clearUnusedTable(tableID,"rowEndPresetAttributes",endRowID);
 		}
 		else{
-			createPresetAttributeRows(tableID);
+			await createPresetAttributeRows();
 		}
 	}
 	else if(AttributeMethod == "Mixed"){
-		let nextRowIndex = document.getElementById("rowAttributeAllocationMethod").rowIndex + 1;
-
-		addTableRow(tableID,nextRowIndex,"rowChosenAttributeButtons","<th text-align='center' colspan='2'><input type='button' id='addAttributeChoice' value='New Attribute Bonus' onclick='addAttributeChoiceRow("+'"'+tableID+'"'+")'>  <input type='button' id='removeAttributeChoice' value='Remove Attribute Bonus' onclick='removeAttributeChoiceRow("+'"'+tableID+'"'+")'><input type='hidden' id='AttributeChoiceNumber' name='AttributeChoiceNumber' value=0></th>");
-		nextRowIndex++;
-
-		addAttributeChoiceRow(tableID);
-
+		let nextRowIndex;
 		let needsPresetOptions = document.getElementById("rowPresetAttributesAll") == null;
 		if(needsPresetOptions){
-			createPresetAttributeRows(tableID);
+			nextRowIndex = document.getElementById("rowAttributeAllocationMethod").rowIndex + 1;
+		}
+		else{
+			nextRowIndex = document.getElementById("rowEndPresetAttributes").rowIndex + 1;
+		}
+
+		addTableRow(tableID,nextRowIndex,"rowChosenAttributeButtons","<th text-align='center' colspan='2'><input type='button' id='addAttributeChoice' value='New Attribute Bonus' onclick='addAttributeChoiceRow()'>  <input type='button' id='removeAttributeChoice' value='Remove Attribute Bonus' onclick='removeAttributeChoiceRow()'><input type='hidden' id='AttributeChoiceNumber' name='AttributeChoiceNumber' value=0></th>");
+		nextRowIndex++;
+
+		addAttributeChoiceRow();
+		if(needsPresetOptions){
+			await createPresetAttributeRows();
+		}
+	}
+	else if(AttributeMethod == "Choice"){
+		let nextRowIndex = document.getElementById("rowAttributeAllocationMethod").rowIndex;
+		let previouslyMixed = document.getElementById("rowChosenAttributeButtons") != null;
+		if(previouslyMixed){
+			if(document.getElementById("rowAttributeChoice0") != null){
+				clearUnusedTable(tableID,"rowAttributeAllocationMethod","rowChosenAttribute0");	
+			}
+			else{
+				clearUnusedTable(tableID,"rowAttributeAllocationMethod","rowChosenAttributeButtons");	
+			}
+		}
+		else{
+			addTableRow(tableID,nextRowIndex,"rowChosenAttributeButtons","<th text-align='center' colspan='2'><input type='button' id='addAttributeChoice' value='New Attribute Bonus' onclick='addAttributeChoiceRow()'>  <input type='button' id='removeAttributeChoice' value='Remove Attribute Bonus' onclick='removeAttributeChoiceRow()'><input type='hidden' id='AttributeChoiceNumber' name='AttributeChoiceNumber' value=0></th>");
+			nextRowIndex++;
+	
+			addAttributeChoiceRow();
+			if(needsPresetOptions){
+				await createPresetAttributeRows();
+			}
 		}
 	}
 	else{
 		clearUnusedTable(tableID,"rowAttributeAllocationMethod",endRowID);
 	}
+	return "not gonna work";
 }
 
-async function addAttributeChoiceRow(tableID){
+async function addAttributeChoiceRow(){
+	let tableID = document.getElementById("rowChosenAttributeButtons").closest("table").id;
 	let currentAttributeChoiceNumber = document.getElementById("AttributeChoiceNumber").value;
 	let nextRowIndex = document.getElementById("rowChosenAttributeButtons").rowIndex;
 
@@ -81,7 +113,8 @@ async function createAttributeChoiceInput(whichChoice){
 	}
 }
 
-function removeAttributeChoiceRow(tableID){
+function removeAttributeChoiceRow(){
+	let tableID = document.getElementById("rowChosenAttributeButtons").closest("table").id;
 	let currentAttributeChoiceNumber = Number(document.getElementById("AttributeChoiceNumber").value) - 1;
 	
 	let table = document.getElementById(tableID);
@@ -90,7 +123,8 @@ function removeAttributeChoiceRow(tableID){
 	document.getElementById("AttributeChoiceNumber").value = currentAttributeChoiceNumber;
 }
 
-async function createPresetAttributeRows(tableID){
+async function createPresetAttributeRows(){
+	let tableID = document.getElementById("rowAttributeAllocationMethod").closest("table").id;
 	let nextRowIndex = document.getElementById("rowAttributeAllocationMethod").rowIndex + 1;
 
 	addTableRow(tableID,nextRowIndex,"rowPresetAttributesAll","<th>Bonus to All Attributes:</th><td><input type='number' id='PresetAttributesAll' name='PresetAttributesAll' value=0 style='width:25px'></td>");
@@ -109,7 +143,8 @@ async function createPresetAttributeRows(tableID){
 	document.getElementById("rowEndPresetAttributes").setAttribute("hidden","");
 }
 
-async function createVisionRows(tableID,endRowID){
+async function createVisionRows(endRowID){
+	let tableID = document.getElementById("rowIsVision").closest("table").id;
 	if(document.getElementById("isVision").checked){
 		let nextRowIndex = document.getElementById("rowIsVision").rowIndex + 1;
 
@@ -129,23 +164,25 @@ async function createVisionRows(tableID,endRowID){
 	}
 }
 
-async function addLanguageKnownRow(tableID){
+async function addLanguageKnownRow(){
 	let currentLanguageNumber = Number(document.getElementById("LanguageKnownNumber").value) + 1;
 	document.getElementById("LanguageKnownNumber").value = currentLanguageNumber;
+	let tableID = document.getElementById("rowLanguageKnownButtons").closest("table").id;
 
 	let request = await fetch("macro:pm.a5e.GetCoreData@lib:pm.a5e.Core",{method: "POST", body: "['sb.Languages']"});
 	let AllLanguages = await request.json();
 	let LanguageOptions = createHTMLSelectOptions(AllLanguages);
 
 	let nextRowIndex = document.getElementById("rowLanguageKnownButtons").rowIndex;
-	addTableRow(tableID,nextRowIndex,"rowLanguageKnown"+currentLanguageNumber,"<th><label for='LanguageKnown"+currentLanguageNumber+"'>Known Language #"+(currentLanguageNumber+1)+":</label></th><td><select id='LanguageKnown"+currentLanguageNumber+"' name='LanguageKnown"+currentLanguageNumber+"' value=1 min=0>"+LanguageOptions+"</select></td>");
+	addTableRow(tableID,nextRowIndex,"rowLanguageKnown"+currentLanguageNumber,"<th><label for='LanguageKnown"+currentLanguageNumber+"'>Known Language #"+(currentLanguageNumber+1)+":</label></th><td><select id='LanguageKnown"+currentLanguageNumber+"' name='LanguageKnown"+currentLanguageNumber+"'>"+LanguageOptions+"</select></td>");
 }
 
-function removeLanguageKnownRow(tableID){
+function removeLanguageKnownRow(){
 	let currentLanguageKnownNumber = Number(document.getElementById("LanguageKnownNumber").value);
-	
-	let table = document.getElementById(tableID);
-	table.deleteRow(document.getElementById("rowLanguageKnown"+currentLanguageKnownNumber).rowIndex);
+	let buttonsPriorRow = document.getElementById("rowLanguageKnownButtons").previousElementSibling;
+	if(buttonsPriorRow.id.substring(0,16) === "rowLanguageKnown"){
+		buttonsPriorRow.remove();
+	}
 
 	document.getElementById("LanguageKnownNumber").value = currentLanguageKnownNumber - 1;
 }

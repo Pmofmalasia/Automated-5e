@@ -1,7 +1,7 @@
 [h:ParentToken = macro.args]
 [h:switchToken(ParentToken)]
 [h:bg.Array = data.getData("addon:","pm.a5e.core","sb.Backgrounds")]
-[h:bg.Options = listSort(json.toList(json.path.read(bg.Array,"[*].DisplayName")),"A+")]
+[h:bg.Options = listSort(json.toList(json.path.read(bg.Array,"\$[*].DisplayName")),"A+")]
 [h:abort(input(
 	" bg.Choice | Choose Two Proficiencies,"+bg.Options+" | Choose a background | RADIO "
 ))]

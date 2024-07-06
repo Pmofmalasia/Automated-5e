@@ -51,8 +51,6 @@
         "ParentToken",currentToken(),
 		"ExtraData",json.set("","WeaponSpecialEffectChoice",json.get(MonsterWeaponData,"SpecialEffects"))
     )]
-
-	[h,MACRO("CreateWeaponEnd@Lib:pm.a5e.Core"): macro.return]
 };{
 	[h:MonsterWeaponData = json.remove(MonsterWeaponData,"ParentToken")]
 	[h:MonsterWeaponData = json.remove(MonsterWeaponData,"SpecialEffects")]

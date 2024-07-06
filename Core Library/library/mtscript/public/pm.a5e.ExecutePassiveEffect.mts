@@ -25,7 +25,16 @@
 
 [h,switch(execPassiveContext),CODE:
 	case "Lights":{
-		[h:pass.a5e.ExecutePassiveLights(execPassiveAbilityInfo)]
+		[h:pass.a5e.Lights(execPassiveAbilityInfo)]
+	};
+	case "Vision":{
+		[h:pass.a5e.VisionBonus(execPassiveAbilityInfo,json.get(execPassiveAbilityInfo,"CallVision"))]
+	};
+	case "Speed":{
+		[h:pass.a5e.SpeedBonus(execPassiveAbilityInfo,json.get(execPassiveAbilityInfo,"CallSpeed"))]
+	};
+	case "Lifespan":{
+		[h:pass.a5e.LifespanBonus(execPassiveAbilityInfo,json.get(execPassiveAbilityInfo,"CallLifespan"))]
 	};
 	default:{}
 ]

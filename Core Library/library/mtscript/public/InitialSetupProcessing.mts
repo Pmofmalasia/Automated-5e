@@ -18,16 +18,22 @@
 [h:setSize(sizeChoice)]
 
 [h:setProperty("a5e.stat.Race",json.get(RaceSelection,"DisplayName"))]
-[h:lu.NewAbilities = json.append("",json.set(json.get(RaceSelection,"Traits"),"Size",sizeChoice))]
-[h:setProperty("a5e.stat.CreatureType",json.get(RaceSelection,"CreatureType"))]
 
 [h:SubraceArray = pm.GetSubraces(json.get(RaceSelection,"Name"))]
 [h,if(json.isEmpty(SubraceArray)),CODE:{
+	[h:lu.NewAbilities = json.append("",json.set(json.get(RaceSelection,"Traits"),"Size",sizeChoice))]
+	[h:setProperty("a5e.stat.CreatureType",json.get(RaceSelection,"CreatureType"))]
     [h:setProperty("a5e.stat.Subrace","")]
 };{
     [h:SubraceSelection = json.get(newCharData,"subraceChoice")]
-    [h:chosenSubrace = json.get(SubraceArray,SubraceSelection)]
-    [h:lu.NewAbilities = json.append(lu.NewAbilities,json.get(chosenSubrace,"Traits"))]
+	[h,if(SubraceSelection == "Base"),CODE:{
+		[h:chosenSubrace = ""]
+		[h:lu.NewAbilities = json.append("",json.set(json.get(RaceSelection,"Traits"),"Size",sizeChoice))]
+	};{
+		[h:chosenSubrace = json.get(SubraceArray,SubraceSelection)]
+		[h:lu.NewAbilities = json.append("",json.set(json.get(chosenSubrace,"Traits"),"Size",sizeChoice))]		
+	}]
+
     [h:setProperty("a5e.stat.Subrace",json.get(chosenSubrace,"DisplayName"))]
 }]
 

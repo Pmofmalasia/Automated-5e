@@ -32,6 +32,19 @@
 	[h:CreateFeatureHTML = CreateFeatureHTML + "<tr id='rowConditionTags'><th>Condition Tags:</label></th><td><div class='check-multiple' style='width:100%'>"+ConditionTagOptions+"</div></td></tr>"]	
 };{}]
 
+[h,if(FeatureType == "FightingStyle"),CODE:{
+	[h:FSGroups = json.path.read(data.getData("addon:","pm.a5e.core","sb.Abilities"),"\$[*][?(@.FightingStyleList!=null && @.CreatedForMerging!=1)]","DEFAULT_PATH_LEAF_TO_NULL")]
+	[h:FSOptions = ""]
+	[h,foreach(tempGroup,FSGroups),CODE:{
+		[h:tempSubclassDisplay = pm.GetDisplayName(json.get(tempGroup,"Subclass"),"sb.Subclasses")]
+		[h:tempClassDisplay = pm.GetDisplayName(json.get(tempGroup,"Class"),"sb.Classes")]
+		[h:tempIdentifier = json.get(tempGroup,"Name")+json.get(tempGroup,"Class")+json.get(tempGroup,"Subclass")]
+		[h:FSOptions = FSOptions + "<label><input type='checkbox' id='isFightingStyle"+tempIdentifier+"' name='isFightingStyle"+tempIdentifier+"'><span>"+tempSubclassDisplay+" "+tempClassDisplay+": "+json.get(tempGroup,"DisplayName")+"</span></label>"]
+
+		[h:CreateFeatureHTML = CreateFeatureHTML + "<tr id='rowFightingStyleFeatures'><th>Features That Can Choose Fighting Style:</label></th><td><div class='check-multiple' style='width:100%'>"+ConditionTagOptions+"</div></td></tr>"]	
+	}]
+};{}]
+
 [h:levelingRelevantTypes = json.append("","Class","Race","Background","")]
 [h,if(json.contains(levelingRelevantTypes,FeatureType)),CODE:{
 	[h:CreateFeatureHTML = CreateFeatureHTML + "<tr id='rowLevel'><th><span title='For features chosen to be gained, e.g. Eldritch Invocations and Maneuvers, set any level prerequisites under "+'"Additional Prerequisites"'+"'><label for='Level'>Automatically Gained at Level:</label></span></th><td><select id='Level' name='Level'><option value=''>Not Automatic</option>"+list1through20+"</select></td></tr>"]

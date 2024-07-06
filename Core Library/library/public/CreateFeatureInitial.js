@@ -47,6 +47,19 @@ async function initializeConditionAssociatedFeature(){
 	autocomplete(document.getElementById("ConditionAssociatedFeature"),finalFeatureOptions);
 }
 
+function createNewConditionTagRows(){
+	let isCreateNewConditionTag = document.getElementById("isCreateNewConditionTag").checked;
+	let startRow = document.getElementById("rowConditionTags");
+	let nextRowIndex = startRow.rowIndex + 1;
+	let tableID = startRow.closest("table").id;
+	if(isCreateNewConditionTag){
+		addTableRow(tableID,nextRowIndex,"rowNewConditionTag","<th><label for='NewConditionTag'>New Condition Tag Name:</span></label></th><td><input type='text' id='NewConditionTag' name='NewConditionTag'></td>");
+	}
+	else{
+		startRow.nextElementSibling.remove();
+	}
+}
+
 async function createFeaturePrereqsRow(){
 	let startRow = document.getElementById("rowIsFeaturePrereqs");
 	let endRow = document.getElementById("rowFeaturePrereqsEnd");

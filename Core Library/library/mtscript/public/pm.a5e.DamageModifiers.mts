@@ -11,7 +11,7 @@
 }]
 [h:pm.a5e.OverarchingContext = "Stats"]
 [h:IsTooltip = 0]
-[h:"<!-- This macro is used for the statsheet. There is another macro, pm.a5e.DamageModCalc, which is used for change HP. This macro provides the instances that provide damage. The other macro takes these instances and checks to see if they apply to a particular set of damage. This macro will remain to be used in other functions. -->"]
+[h:"<!-- This macro is only used for gathering the instances of damage resistance. DamageModCalc actually applies these resistances to damage dealt. -->"]
 
 [h:mod.Vuln = "[]"]
 [h:mod.Res = "[]"]
@@ -21,4 +21,4 @@
 
 [h:pm.PassiveFunction("DamageMod")]
 
-[h:macro.return = json.set("","Vulnerability",mod.Vuln,"Resistance",mod.Res,"Immunity",mod.Immun,"Absorption",mod.Absorb,"DR",mod.DR)]
+[h:return(0,json.set("","Vulnerability",mod.Vuln,"Resistance",mod.Res,"Immunity",mod.Immun,"Absorption",mod.Absorb,"DR",mod.DR))]

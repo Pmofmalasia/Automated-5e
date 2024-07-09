@@ -22,6 +22,34 @@ function addTableRow(tableID,rowIndex,rowAttributes,rowHTML){
     newRow.innerHTML = rowHTML;
 }
 
+function createTableRow(referenceRow,rowAttributes,rowHTML,options){
+	let insertDirection = "afterend";
+	if(arguments.length > 3){
+		if(options.InsertDirection === "before"){
+			insertDirection = "beforebegin";
+		}
+		else if(options.InsertDirection != undefined){
+			insertDirection = options.InsertDirection;
+		}
+	}
+
+	let newRow = document.createElement("tr");
+	if (typeof rowAttributes == "object"){
+		for(let key of Object.keys(rowAttributes)){
+			newRow.setAttribute(key,rowAttributes[key]);
+		}
+	}
+	else{
+		newRow.id = rowAttributes;
+	}
+
+	newRow.innerHTML = rowHTML;
+
+	referenceRow.insertAdjacentElement(insertDirection,newRow);
+
+	return newRow;
+}
+
 function toggleFieldEnabled(toDisable,checkboxID){
 	let toDisableIDs = toDisable;
 	if(typeof toDisable != "object"){
@@ -105,6 +133,12 @@ async function MTFunction(functionName,functionArgs){
 	let request = await fetch("macro:js.a5e.MaptoolFunction@Lib:pm.a5e.Core", {method: "POST", body: "["+functionName+","+JSON.stringify(functionArgs)+"]"});
 	let result = await request.json();
 	return result[0];
+}
+
+async function mtSetProperty(property,value,token){
+	let request = await fetch("macro:js.setProperty@Lib:pm.a5e.Core", {method: "POST", body: "["+property+","+value+","+token+"]"});
+	let result = await request.json();
+	return result;
 }
 
 async function submitData(formName,nextMacroName){

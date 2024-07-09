@@ -266,14 +266,14 @@
 	[h:DamageTypeArray = pm.GetDamageTypes()]
 	[h,if(DmgAllTest),CODE:{
 		[h:lu.DamageOptions = DamageTypeArray]
-		[h:lu.DamageOptionsList = json.path.read(lu.DamageOptions,"\$.DisplayName")]
+		[h:lu.DamageOptionsList = json.path.read(lu.DamageOptions,"\$.*.DisplayName")]
 	};{
 		[h:DamageTypeInclusive = json.get(json.get(ability,"DamageOptions"),"Inclusive")]
 		[h,if(DamageTypeInclusive): 
 			lu.DamageOptions = json.path.read(DamageTypeArray,"\$[*][?(@.Name in "+json.get(json.get(ability,"DamageOptions"),"DamageTypes")+")]");
 			lu.DamageOptions = json.path.read(DamageTypeArray,"\$[*][?(@.Name nin "+json.get(json.get(ability,"DamageOptions"),"DamageTypes")+")]")
 		]
-		[h:lu.DamageOptionsList = json.path.read(lu.DamageOptions,"\$.DisplayName")]
+		[h:lu.DamageOptionsList = json.path.read(lu.DamageOptions,"\$.*.DisplayName")]
 	}]
 	
 	[h:abort(input(

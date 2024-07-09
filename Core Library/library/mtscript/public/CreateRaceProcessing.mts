@@ -77,7 +77,7 @@
 	[h:AttributeChoiceNumber = json.get(RaceData,"AttributeChoiceNumber")]
 	[h:RaceData = json.remove(RaceData,"AttributeChoiceNumber")]
 	[h:AllAttributeChoices = ""]
-	[h,count(AttributeChoiceNumber+1),CODE:{
+	[h,count(AttributeChoiceNumber),CODE:{
 		[h:tempRaceData = ct.a5e.AttributeOptionProcessing(RaceData,roll.count)]
 		[h:RaceData = json.get(tempRaceData,"MainData")]
 		[h:AllAttributeChoices = json.append(AllAttributeChoices,json.get(tempRaceData,"Choices"))]
@@ -102,9 +102,13 @@
 
 [h:RaceData = ct.a5e.VisionProcessing(RaceData)]
 
+[h:RaceData = json.remove(RaceData,"Name")]
+[h:RaceData = json.remove(RaceData,"DisplayName")]
+[h:RaceData = json.remove(RaceData,"Class")]
+[h:RaceData = json.remove(RaceData,"Subclass")]
 [h:RaceTraitsFeature = json.set("",
-	"Name",RaceName+"Traits",
-	"DisplayName",RaceDisplayName+" Traits",
+	"Name",RaceName+if(RaceOrSubrace == "Subrace",associatedRace,"")+"Traits",
+	"DisplayName",RaceDisplayName+if(RaceOrSubrace == "Subrace"," "+associatedRace,"")+" Traits",
 	"Class",if(RaceOrSubrace == "Race",RaceName,associatedRace),
 	"Subclass",if(RaceOrSubrace == "Race","",RaceName),
 	"Level",1,
@@ -124,5 +128,5 @@
 [h:setLibProperty(sourceProperty,json.append(getLibProperty(sourceProperty,"Lib:"+Library),BaseRaceData),"Lib:"+Library)]
 
 [h:SourcebookName = json.get(json.path.read(data.getData("addon:","pm.a5e.core","ms.Sources"),"\$[*][?(@.Library=='"+Library+"')]['DisplayName']"),0)]
-[h:broadcast(RaceDisplayName+" "+lower(RaceOrSubrace)+" from the sourcebook "+SourcebookName+" created.")]
+[h:broadcast(RaceDisplayName+if(RaceOrSubrace == "Subrace"," "+associatedRace,"")+" "+lower(RaceOrSubrace)+" from the sourcebook "+SourcebookName+" created.")]
 [h,MACRO("Gather Sourcebook Information@Lib:pm.a5e.Core"):""]

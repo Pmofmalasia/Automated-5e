@@ -77,7 +77,7 @@ async function setRaceDefaults(){
 
 			if(attributeChoices[i].AllAttributes === 1){
 				document.getElementById("AttributeChoiceMethod"+i).value = "Any";
-				document.getElementById("AttributeChoiceMethod"+i).dispatchEvent(new Event("change"));
+				await createAttributeChoiceInput(i);
 			}
 			else{
 				if(attributeChoices[i].Inclusive === 1){
@@ -86,15 +86,15 @@ async function setRaceDefaults(){
 				else{
 					document.getElementById("AttributeChoiceMethod"+i).value = "Exclusive";
 				}
-				document.getElementById("AttributeChoiceMethod"+i).dispatchEvent(new Event("change"));
+				await createAttributeChoiceInput(i);
 
 
 				for(let attribute of allAttributes){
-					if(attributeChoices[i].attribute){
-						document.getElementById("AttributeChoice"+i+attribute).setAttribute("checked","");
+					if(attributeChoices[i][attribute.Name] == 1){
+						document.getElementById("AttributeChoice"+i+attribute.Name).setAttribute("checked","");
 					}
 					else{
-						document.getElementById("AttributeChoice"+i+attribute).removeAttribute("checked","");
+						document.getElementById("AttributeChoice"+i+attribute.Name).removeAttribute("checked","");
 					}
 				}
 			}
@@ -149,22 +149,19 @@ async function setRaceDefaults(){
 
 		if(!document.getElementById("isVision").checked){
 			document.getElementById("isVision").setAttribute("checked","");
-			document.getElementById("isVision").dispatchEvent(new Event("change"));			
+			await createVisionRows("rowLanguageOptions");			
 		}
 
 		let anySpecialTest = false;
 		let thisRaceVision = thisRaceTraits.CallVision;
 		for(let visionType of specialVisionTypes){
-			console.log(visionType);
 			if(thisRaceVision[visionType] != undefined){
-				console.log(thisRaceVision[visionType]);
 				anySpecialTest = true;
 				if(thisRaceVision[visionType].Unlimited === 1){
 					document.getElementById("isVision"+visionType+"Unlimited").setAttribute("checked","");
 					document.getElementById("isVision"+visionType+"Unlimited").dispatchEvent(new Event("change"));
 				}
 				else{
-					console.log("limited special vision");
 					document.getElementById("isVision"+visionType+"Unlimited").removeAttribute("checked","");
 					document.getElementById("isVision"+visionType+"Unlimited").dispatchEvent(new Event("change"));
 
@@ -172,7 +169,6 @@ async function setRaceDefaults(){
 				}
 			}
 			else{
-				console.log("no special vision");
 				document.getElementById("isVision"+visionType+"Unlimited").removeAttribute("checked","");
 				document.getElementById("isVision"+visionType+"Unlimited").dispatchEvent(new Event("change"));
 
@@ -181,9 +177,7 @@ async function setRaceDefaults(){
 		}
 
 		if(anySpecialTest){
-			console.log("special");
 			if(thisRaceVision.NormalSight != undefined){
-				console.log("normal vision present");
 				if(thisRaceVision["NormalSight"].Unlimited === 1){
 					document.getElementById("isVisionNormalSightUnlimited").setAttribute("checked","");
 					document.getElementById("isVisionNormalSightUnlimited").dispatchEvent(new Event("change"));
@@ -203,15 +197,12 @@ async function setRaceDefaults(){
 			}
 		}
 		else{
-			console.log("no special");
 			if(thisRaceVision.NormalSight != undefined){
 				if(thisRaceVision.NormalSight.Unlimited === 1){
-					console.log("Unlimited");
 					document.getElementById("isVision").removeAttribute("checked","");
 					document.getElementById("isVision").dispatchEvent(new Event("change"));
 				}
 				else{
-					console.log("limted normal");
 					document.getElementById("isVisionNormalSightUnlimited").removeAttribute("checked","");
 					document.getElementById("isVisionNormalSightUnlimited").dispatchEvent(new Event("change"));
 
@@ -219,7 +210,6 @@ async function setRaceDefaults(){
 				}		
 			}
 			else{
-				console.log("no vision");
 				document.getElementById("isVisionNormalSightUnlimited").removeAttribute("checked","");
 				document.getElementById("isVisionNormalSightUnlimited").dispatchEvent(new Event("change"));
 

@@ -36,5 +36,11 @@
 	case "Lifespan":{
 		[h:pass.a5e.LifespanBonus(execPassiveAbilityInfo,json.get(execPassiveAbilityInfo,"CallLifespan"))]
 	};
+	case "DamageMod":{
+		[h:pass.a5e.DamageModifiers(execPassiveAbilityInfo)]
+	};
+	case "CondImmun":{
+		[h:pass.a5e.ConditionImmunities(execPassiveAbilityInfo)]
+	};
 	default:{}
 ]

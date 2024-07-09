@@ -359,6 +359,7 @@
 
 [h:isCondition = json.get(subeffectData,"isCondition")]
 [h:subeffectData = json.remove(subeffectData,"isCondition")]
+
 [h:allBaseConditions = pm.a5e.GetBaseConditions()]
 [h:conditionsAlwaysAdded = "[]"]
 [h:EffectSpecificConditions = "[]"]
@@ -440,6 +441,20 @@
 		"Conditions",json.merge(conditionsAlwaysAdded,conditionOptions),
 		"EndInfo",conditionEndInfo
 	)]
+
+	[h,if(json.contains(subeffectData,"isConditionTiered")),CODE:{
+		[h:conditionTierData = json.set("","Tier",json.get(subeffectData,"ConditionTier"))]
+		[h:conditionAHLScaling = number(json.get(subeffectData,"ConditionTierAHLScaling"))]
+		[h,if(conditionAHLScaling != 0):
+			conditionTierData = json.set(conditionTierData,"AHL",json.get(subeffectData,"ConditionTierAHL"),"AHLScaling",conditionAHLScaling);
+			conditionTierData = json.set(conditionTierData,"AHL",0,"AHLScaling",0)
+		]
+		[h:subeffectData = json.remove(subeffectData,"ConditionTier")]
+		[h:subeffectData = json.remove(subeffectData,"ConditionTierAHL")]
+		[h:subeffectData = json.remove(subeffectData,"ConditionTierAHLScaling")]
+
+		[h:allConditionInfo = json.set(allConditionInfo,"Tier",conditionTierData)]
+	}]
 
 	[h,if(json.contains(subeffectData,"isAura")),CODE:{
 		[h:GeneralTargetingReturn = ct.a5e.GeneralTargetingProcessing(subeffectData,"Aura")]

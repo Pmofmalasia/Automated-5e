@@ -11,4 +11,4 @@
 [h:ConditionImmunityInstances = "[]"]
 [h:pm.PassiveFunction("CondImmun")]
 
-[h:macro.return = ConditionImmunityInstances]
+[h:return(0,ConditionImmunityInstances)]

@@ -3,6 +3,7 @@
 [h:a5e.AuraInfo = json.get(macro.args,"Aura")]
 [h:a5e.GroupID = json.get(macro.args,"GroupID")]
 [h:TargetData = json.get(macro.args,"Target")]
+[h:SourceID = json.get(macro.args,"SourceID")]
 [h,if(json.type(TargetData) == "OBJECT"),CODE:{
 	[h:ParentToken = json.get(TargetData,"HeldBy")]
 	[h:TargetType = "Item"]
@@ -37,24 +38,21 @@
 	DurationFinal = json.set(DurationBase,ConditionDurationUnits,ConditionDuration,"AdvancePoint",ConditionAdvancePoint)
 ]
 
-[h:ConditionImmunities = pm.a5e.ConditionImmunityCalc(json.set("","ParentToken",ParentToken,"SetBy",ConditionSetBy,"SourceType","{}"))]
+[h:ConditionImmunities = pm.a5e.ConditionImmunityCalc(json.set("","ParentToken",ParentToken,"SetBy",ConditionSetBy,"SourceID",SourceID))]
 [h:a5e.ConditionsTemp = json.path.delete(a5e.ConditionsTemp,"\$[*][?(@.Name in "+json.get(ConditionImmunities,"Conditions")+" || @.CountsAs in "+json.get(ConditionImmunities,"Conditions")+")]")]
 
+[h:"<!-- Note: Condition Type immunities are done this way because json.path filters can't check for any overlap, just subset. -->"]
 [h:AllConditionsImmunType = "[]"]
 [h,foreach(tempCondition,a5e.ConditionsTemp),CODE:{
 	[h:ImmunTypeTest = !json.isEmpty(json.intersection(json.get(tempCondition,"ConditionType"),json.get(ConditionImmunities,"ConditionTypes")))]
 	[h,if(ImmunTypeTest): AllConditionsImmunType = json.append(AllConditionsImmunType,json.get(tempCondition,"Name"))]
 }]
-
 [h:a5e.ConditionsTemp = json.path.delete(a5e.ConditionsTemp,"\$[*][?(@.Name in "+AllConditionsImmunType+")]")]
 
 [h:"<!-- The purpose of looping here is to catch any chain reactions - e.g. Condition A is associated with Condition B, which in turn is associated with Condition C. -->"]
-[h:a5e.Conditions = a5e.ConditionsTemp]
-[h:FirstLoopTest = 1]
-
-[h,while(!json.equals(a5e.Conditions,a5e.ConditionsTemp) || FirstLoopTest),CODE:{
+[h:a5e.Conditions = "[]"]
+[h,while(!json.equals(a5e.Conditions,a5e.ConditionsTemp)),CODE:{
 	[h:a5e.Conditions = a5e.ConditionsTemp]
-	[h:FirstLoopTest = 0]
 
 	[h:AssociatedConditionsTemp = json.path.read(a5e.ConditionsTemp,"\$[*]['AssociatedConditions']")]
 	[h:AssociatedConditions = "[]"]
@@ -82,10 +80,10 @@
 [h:"<!-- The following line sets any previously set conditions of the same name as inactive. The reasoning is based on PHB 205: effects of the same spell cast multiple times don't combine, and the most potent effect applies while they overlap - OR, if equally potent, the most recent effect applies. In lieu of being able to calculate which is more 'potent' ahead of time (which, at times, can be abstract), the latter method is the one used at all times instead. Will continue to think of ways to enforce the more 'potent' effect when possible. For now, the current method should cover the majority of cases, and should add an option to change which is active in the Condition Management macro to cover edge cases. Note: There is a similar ruling on PHB 290 for base conditions, so this is not limited to spells. -->"]
 [h,switch(TargetType),CODE:
 	case "Token":{
-		[h,foreach(tempCondition,a5e.Conditions): setProperty("a5e.stat.ConditionList",json.path.set(getProperty("a5e.stat.ConditionList"),"\$[*][?(@.Name=='"+json.get(tempCondition,"Name")+"')]['IsActive']",0))]
+		[h,foreach(tempCondition,a5e.Conditions): setProperty("a5e.stat.ConditionList",json.path.set(getProperty("a5e.stat.ConditionList"),"\$[*][?(@.Name=='"+json.get(tempCondition,"Name")+"' && @.MultiFeature != 1)]['IsActive']",0))]
 	};
 	case "Item":{
-		[h,foreach(tempCondition,a5e.Conditions): setProperty("a5e.stat.Inventory",json.path.set(getProperty("a5e.stat.Inventory"),"\$[*][?(@.ItemConditions.Name=='"+json.get(tempCondition,"Name")+"')]['IsActive']",0))]
+		[h,foreach(tempCondition,a5e.Conditions): setProperty("a5e.stat.Inventory",json.path.set(getProperty("a5e.stat.Inventory"),"\$[*][?(@.ItemConditions.Name=='"+json.get(tempCondition,"Name")+"' && @.MultiFeature != 1)]['IsActive']",0))]
 	}
 ]
 
@@ -134,7 +132,7 @@
 	case "Item":{
 		[h:TargetItem = json.get(json.path.read(getProperty("a5e.stat.Inventory"),"\$[*][?(@.ItemID == '"+TargetID+"')]"),0)]
 		[h:TargetItemConditions = json.get(TargetItem,"ItemConditions")]
-		[h:a5e.Conditions = json.path.put(a5e.Conditions,"[*]","ItemID",TargetID)]
+		[h:a5e.Conditions = json.path.put(a5e.Conditions,"\$[*]","ItemID",TargetID)]
 		[h:TargetItemConditions = json.merge(TargetItemConditions,a5e.Conditions)]
 		[h:TargetItem = json.set(TargetItem,"ItemConditions",TargetItemConditions)]
 		[h:setProperty("a5e.stat.Inventory",json.path.set(getProperty("a5e.stat.Inventory"),"\$[*][?(@.ItemID == '"+TargetID+"')]",TargetItem))]

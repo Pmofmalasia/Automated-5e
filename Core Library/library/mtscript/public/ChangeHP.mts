@@ -129,7 +129,8 @@
 			"EndInfo","{}",
 			"GroupID",pm.a5e.CreateConditionID(ParentToken),
 			"Target",ParentToken,
-			"SetBy",""
+			"SetBy",hp.SourceToken,
+			"SourceID",hp.SourceID
 		)]
 		[h,MACRO("ApplyCondition@Lib:pm.a5e.Core"): DyingConditionInfo]
 		[h:NoHPConditionTable = json.get(macro.return,"Table")]
@@ -140,7 +141,8 @@
 			"EndInfo","{}",
 			"GroupID",pm.a5e.CreateConditionID(ParentToken),
 			"Target",ParentToken,
-			"SetBy",""
+			"SetBy",hp.SourceToken,
+			"SourceID",hp.SourceID
 		)]
 		[h,MACRO("ApplyCondition@Lib:pm.a5e.Core"): DyingConditionInfo]
 
@@ -150,7 +152,8 @@
 			"EndInfo","{}",
 			"GroupID",pm.a5e.CreateConditionID(ParentToken),
 			"Target",ParentToken,
-			"SetBy",""
+			"SetBy",hp.SourceToken,
+			"SourceID",hp.SourceID
 		)]
 		[h,MACRO("ApplyCondition@Lib:pm.a5e.Core"): DyingConditionInfo]
 	};{}]
@@ -161,7 +164,8 @@
 			"EndInfo","{}",
 			"GroupID",pm.a5e.CreateConditionID(ParentToken),
 			"Target",ParentToken,
-			"SetBy",""
+			"SetBy",hp.SourceToken,
+			"SourceID",hp.SourceID
 		)]
 		[h,MACRO("ApplyCondition@Lib:pm.a5e.Core"): DeadConditionInfo]
 		[h:NoHPConditionTable = json.get(macro.return,"Table")]

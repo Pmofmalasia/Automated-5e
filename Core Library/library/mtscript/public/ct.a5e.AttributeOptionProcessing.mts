@@ -4,6 +4,10 @@
 [h:pointAllocationData = json.set("","Points",json.get(inputData,"AttributeChoicePoints"+whichChoice))]
 [h:inputData = json.remove(inputData,"AttributeChoicePoints"+whichChoice)]
 
+[h:AttributeChoicesUnique = json.contains(inputData,"AttributeChoicesUnique")]
+[h,if(AttributeChoicesUnique): pointAllocationData = json.set(pointAllocationData,"isUnique",1)]
+[h,if(whichChoice >= json.get(inputData,"AttributeChoiceNumber") - 1): json.remove(inputData,"AttributeChoicesUnique")]
+
 [h:AttributeChoiceMethod = json.get(inputData,"AttributeChoiceMethod"+whichChoice)]
 [h:inputData = json.remove(inputData,"AttributeChoiceMethod"+whichChoice)]
 [h,if(AttributeChoiceMethod == "Any"),CODE:{

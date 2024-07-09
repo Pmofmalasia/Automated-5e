@@ -39,7 +39,7 @@
 
 [h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowHitDie'><th><label for='HitDieNum'>Total Hit Dice:</label></th><td><input type='number' id='HitDieNum' name='HitDieNum' min='1' style='width:25px'> d <input type='number' id='HitDieSize' name='HitDieSize' min='1' style='width:25px'> + <input type='number' id='HitDieBonus' name='HitDieBonus' min='0' style='width:25px'></td></tr>"]
 
-[h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowSpeedWalking'><th><label for='SpeedWalking'>Walking Speed:</label></th><td><input type='number' id='SpeedWalking' name='SpeedWalking' min='0' style='width:25px' value='30'></td></tr>"]
+[h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowSpeed'><th><label for='Speed'>Walking Speed:</label></th><td><input type='number' id='Speed' name='Speed' min='0' style='width:25px' value='30'></td></tr>"]
 
 [h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowSpeedBurrow'><th><label for='SpeedBurrow'>Burrowing Speed:</label></th><td><input type='number' id='SpeedBurrow' name='SpeedBurrow' min='0' style='width:25px' value='0'></td></tr>"]
 
@@ -52,13 +52,17 @@
 [h:AttributeList = pm.GetAttributes()]
 [h,foreach(tempAttribute,AttributeList): monsterCreationHTML = monsterCreationHTML + "<tr id='rowAttribute"+json.get(tempAttribute,"Name")+"'><th><label for='Attribute"+json.get(tempAttribute,"Name")+"'>"+json.get(tempAttribute,"DisplayName")+" Score:</label></th><td><input type='number' id='Attribute"+json.get(tempAttribute,"Name")+"' name='Attribute"+json.get(tempAttribute,"Name")+"' min='1' style='width:25px'></td></tr>"]
 
-[h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowIsVulnerability'><th><label for='IsVulnerability'>Has Vulnerabilities:</label></th><td><input type='checkbox' id='IsVulnerability' name='IsVulnerability' onchange='createDamageTypeRows("+'"Vulnerability"'+")'></td></tr>"]
+[h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowIsVulnerability'><th><label for='IsVulnerability'>Has Damage Vulnerabilities:</label></th><td><input type='checkbox' id='IsVulnerability' name='IsVulnerability' onchange='createDamageTypeRows("+'"Vulnerability"'+")'></td></tr>"]
 
-[h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowIsResistance'><th><label for='IsResistance'>Has Resistances:</label></th><td><input type='checkbox' id='IsResistance' name='IsResistance' onchange='createDamageTypeRows("+'"Resistance"'+")'></td></tr>"]
+[h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowIsResistance'><th><label for='IsResistance'>Has Damage Resistances:</label></th><td><input type='checkbox' id='IsResistance' name='IsResistance' onchange='createDamageTypeRows("+'"Resistance"'+")'></td></tr>"]
 
-[h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowIsImmunity'><th><label for='IsImmunity'>Has Immunities:</label></th><td><input type='checkbox' id='IsImmunity' name='IsImmunity' onchange='createDamageTypeRows("+'"Immunity"'+")'></td></tr>"]
+[h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowIsImmunity'><th><label for='IsImmunity'>Has Damage Immunities:</label></th><td><input type='checkbox' id='IsImmunity' name='IsImmunity' onchange='createDamageTypeRows("+'"Immunity"'+")'></td></tr>"]
 
-[h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowIsConditionImmun'><th><label for='IsConditionImmun'>Has Condition Immunities:</label></th><td><input type='checkbox' id='IsConditionImmun' name='IsConditionImmun' onchange='createConditionRows()'></td></tr>"]
+[h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowIsAbsorb'><th><label for='IsAbsorb'>Has Damage Absorption:</label></th><td><input type='checkbox' id='IsAbsorb' name='IsAbsorb' onchange='createDamageTypeRows("+'"Absorb"'+")'></td></tr>"]
+
+[h:allConditions = pm.a5e.GetBaseConditions()]
+[h:baseConditionOptions = ut.a5e.GenerateSelectionHTML(allConditions,1,"ConditionImmunity")]
+[h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowConditionImmunities'><th>Has Condition Immunities:</th><td><div class='check-multiple' id='ConditionImmunities' style='width:100%; height='100px'>"+baseConditionOptions+"</div></td></tr>"]
 
 [h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowIsVision'><th><label for='isVision'>Gives Special Vision:</label></th><td><input type='checkbox' id='isVision' name='isVision' onchange='createVisionRows("+'"rowLanguageOptions"'+")'></td></tr>"]
 
@@ -77,6 +81,16 @@
 [h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowXP'><th><label for='XP'>XP:</label></th><td><input type='number' id='XP' name='XP' min='0' style='width:35px'></td></tr>"]
 
 [h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowAllegiance'><th><label for='Allegiance'>Allegiance to Party:</label></th><td><select id='Allegiance' name='Allegiance'><option value='Enemy'>Enemy</option><option value='Ally'>Ally</option><option value='Neutral'>Neutral</option></td></tr>"]
+
+[h:allSourcebooks = pm.GetBookInfo()]
+[h:sourcebookOptions = ""]
+[h,foreach(tempBook,allSourcebooks),CODE:{
+	[h:tempBookDisplayName = json.get(tempBook,"DisplayName")]
+	[h,if(length(tempBookDisplayName) > 22): tempBookDisplayName = substring(tempBookDisplayName,0,20)+"..."]
+	[h:sourcebookOptions = sourcebookOptions + "<option value='"+json.get(tempBook,"Library")+"'>"+tempBookDisplayName+"</option>"]
+}]
+
+[h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowLibrary'><th><label for='Library'>Monster Sourcebook:</label></th><td><select id='Library' name='Library'>"+sourcebookOptions+"</select></td></tr>"]
 
 [h:monsterCreationHTML = monsterCreationHTML + "<tr><th text-align='center' colspan='2'><input type='submit' class='theme-fix-submit' id='submitButton' value='Submit'></th></tr>"]
 

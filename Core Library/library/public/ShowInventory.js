@@ -32,13 +32,13 @@ async function createInventoryTable(){
 		let displayWeight = Math.round(TotalWeight);
 	if(debug){console.log("2");}
 	
-		let ResourceData = await MTFunction("evalMacro",[Item.MaxResource]);
-		if(debug){console.log("3");}
 		let NumberDisplay = "";
-		if (ResourceData == ""){
+		if(Item.MaxResource == undefined){
 			NumberDisplay = ItemNumber;
 		}
 		else{
+			let ResourceData = await MTFunction("evalMacro",[Item.MaxResource]);
+			if(debug){console.log("3");}
 			if(typeof ResourceData == "number"){
 				NumberDisplay = Item.Resource+"<b>/</b>"+ResourceData;
 			}
@@ -56,7 +56,7 @@ async function createInventoryTable(){
 					}
 					NumberDisplay = NumberDisplay + resourceDisplayNames[tempResourceName]+": " + Item.Resource[tempResourceName] + "<b>/</b>" + ResourceData[tempResourceName];
 				}
-			}			
+			}
 		}
 		if(debug){console.log("4");}
 
@@ -532,7 +532,7 @@ function rearrangeInventory(oldIndex,newIndex,itemsMovedNum){
 }
 
 async function updateInventory(){
-	evaluateMacro("[r:setProperty('a5e.stat.Inventory','"+JSON.stringify(Inventory)+"','"+ParentToken+"')]");
+	mtSetProperty("a5e.stat.Inventory",JSON.stringify(Inventory),ParentToken);
 }
 
 function getNextUnstoredRow(originRow,exitAllContainers){

@@ -191,7 +191,17 @@
 	}]
 
 	[h:subeffect.Conditions = pm.a5e.ChooseCondition(json.get(tempConditionInfo,"Conditions"),subeffect.ConditionChoiceNumber)]
-	[h:subeffect.Conditions = json.path.set(subeffect.Conditions,"\$[*][?(@.HasTiers == 1)]['Level']",AHLTier + 1)]
+
+	[h,if(json.contains(tempConditionInfo,"Tier")),CODE:{
+		[h:conditionTierData = json.get(tempConditionInfo,"Tier")]
+		[h:baseConditionTier = json.get(conditionTierData,"Tier")]
+		[h:conditionAHLTier = json.get(conditionTierData,"AHL")]
+		[h:conditionAHLTierScaling = json.get(conditionTierData,"AHLScaling")]
+
+		[h:finalConditionTier = baseConditionTier + (conditionAHLTier * floor(AHLTier/conditionAHLTierScaling))]
+		[h:subeffect.Conditions = json.path.set(subeffect.Conditions,"\$[*][?(@.HasTiers == 1)]['Level']",finalConditionTier)]
+	};{}]
+	
 
 	[h:subeffect.ConditionEndInfo = json.get(tempConditionInfo,"EndInfo")]
 	[h,if(json.get(subeffect.ConditionEndInfo,"UseMainDuration") == 1): subeffect.ConditionEndInfo = json.set(subeffect.ConditionEndInfo,"Duration",DurationValue,"DurationUnits",lower(DurationUnits))]

@@ -44,7 +44,7 @@
 				[h:broadcast("This feature does not exist yet!")]
 			};
 			case 2:{
-				[h:setLibProperty("gd.Effects",json.remove(incompleteEffects,em.Choice),"Lib:pm.a5e.Core")]
+				[h:data.setData("addon:","pm.a5e.core","gd.Effects",json.remove(incompleteEffects,em.Choice))]
 				[h:broadcast("Effect "+json.get(em.Options,em.Choice)+" removed.","gm")]
 			}
 		]
@@ -55,6 +55,6 @@
 		}]
 	};
 	case 2:{
-		[h:setLibProperty("gd.Effects","[]","Lib:pm.a5e.Core")]
+		[h:data.setData("addon:","pm.a5e.core","gd.Effects","[]")]
 	}
 ]

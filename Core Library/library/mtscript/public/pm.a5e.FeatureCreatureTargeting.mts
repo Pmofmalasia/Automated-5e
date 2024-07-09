@@ -23,7 +23,13 @@
 	
 	[h:effectsToMerge = json.append("",json.set("","Targets",pm.FeatureTargets))]
 
-	[h,MACRO("Build Effect@Lib:pm.a5e.Core"): json.set("","CurrentEffects",pm.a5e.EffectData,"ToMerge",effectsToMerge,"BaseEffect",pm.a5e.BaseEffectData,"WhichEffect",whichEffect)]
+	[h,if(json.get(currentFeatureInfo,"isEffectResolving") == 1),CODE:{
+		[h,MACRO("Build Effect@Lib:pm.a5e.Core"): json.set("","CurrentEffects",json.append("",effFull),"ToMerge",effectsToMerge,"BaseEffect","{}","WhichEffect",0)]
 
-	[h:pm.a5e.EffectData = macro.return]
+		[h:effFull = json.get(macro.return,0)]
+	};{
+		[h,MACRO("Build Effect@Lib:pm.a5e.Core"): json.set("","CurrentEffects",pm.a5e.EffectData,"ToMerge",effectsToMerge,"BaseEffect",pm.a5e.BaseEffectData,"WhichEffect",whichEffect)]
+
+		[h:pm.a5e.EffectData = macro.return]
+	}]
 }]

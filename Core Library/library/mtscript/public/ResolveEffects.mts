@@ -81,8 +81,8 @@
 		[h:"<!-- TODO: Will need to add further info for resolving LinkedEffects of LinkedEffects that do not meet reqs, likely in the form of making a UDF that covers for here and later in ResolveEffects. -->"]
 
 		[h,if(!json.isEmpty(remainingTargetsList)):
-			setLibProperty("gd.Effects",json.path.set(data.getData("addon:","pm.a5e.core","gd.Effects"),"\$[*][?(@.ID=='"+effID+"')]",effFull),"Lib:pm.a5e.Core");
-			setLibProperty("gd.Effects",json.path.delete(data.getData("addon:","pm.a5e.core","gd.Effects"),"\$[*][?(@.ID=='"+effID+"')]"),"Lib:pm.a5e.Core")
+			data.setData("addon:","pm.a5e.core","gd.Effects",json.path.set(data.getData("addon:","pm.a5e.core","gd.Effects"),"\$[*][?(@.ID=='"+effID+"')]",effFull));
+			data.setData("addon:","pm.a5e.core","gd.Effects",json.path.delete(data.getData("addon:","pm.a5e.core","gd.Effects"),"\$[*][?(@.ID=='"+effID+"')]"))
 		]
 
 		[h:return(0,json.set("","Table","[]","OutputComponents",AllOutputComponents,"Targets",effTargets))]
@@ -453,7 +453,8 @@
 		[h,MACRO("ApplyCondition@Lib:pm.a5e.Core"): json.set(conditionSet,
 			"GroupID",effConditionGroupID,
 			"Target",tempTarget,
-			"SetBy",ParentToken
+			"SetBy",ParentToken,
+			"SourceID",effID
 		)]
 		[h:abilityTable = json.merge(abilityTable,json.get(macro.return,"Table"))]
 		[h:ConditionsSet = json.get(macro.return,"Conditions")]
@@ -520,9 +521,9 @@
 	)]
 	[h:effFull = json.remove(effFull,"SpecificTargets")]
 	
-	[h:setLibProperty("gd.Effects",json.path.set(data.getData("addon:","pm.a5e.core","gd.Effects"),"\$[*][?(@.ID=='"+effID+"')]",effFull),"Lib:pm.a5e.Core")]
+	[h:data.setData("addon:","pm.a5e.core","gd.Effects",json.path.set(data.getData("addon:","pm.a5e.core","gd.Effects"),"\$[*][?(@.ID=='"+effID+"')]",effFull))]
 };{
-	[h:setLibProperty("gd.Effects",json.path.delete(data.getData("addon:","pm.a5e.core","gd.Effects"),"\$[*][?(@.ID=='"+effID+"')]"),"Lib:pm.a5e.Core")]
+	[h:data.setData("addon:","pm.a5e.core","gd.Effects",json.path.delete(data.getData("addon:","pm.a5e.core","gd.Effects"),"\$[*][?(@.ID=='"+effID+"')]"))]
 }]
 
 [h,MACRO("BuildEffectsFrame@Lib:pm.a5e.Core"): ""]

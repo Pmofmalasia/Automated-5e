@@ -54,7 +54,7 @@ async function createAttributeSelectionRows(endRowID,idSuffix){
 		}
 	}
 	else if(AttributeMethod == "Choice"){
-		let nextRowIndex = document.getElementById("rowAttributeAllocationMethod").rowIndex;
+		let nextRowIndex = document.getElementById("rowAttributeAllocationMethod").rowIndex + 1;
 		let previouslyMixed = document.getElementById("rowChosenAttributeButtons") != null;
 		if(previouslyMixed){
 			if(document.getElementById("rowAttributeChoice0") != null){
@@ -65,13 +65,14 @@ async function createAttributeSelectionRows(endRowID,idSuffix){
 			}
 		}
 		else{
+			if(document.getElementById("rowPresetAttributesAll") != null){
+				clearUnusedTable(tableID,"rowAttributeAllocationMethod",endRowID);
+			}
+
 			addTableRow(tableID,nextRowIndex,"rowChosenAttributeButtons","<th text-align='center' colspan='2'><input type='button' id='addAttributeChoice' value='New Attribute Bonus' onclick='addAttributeChoiceRow()'>  <input type='button' id='removeAttributeChoice' value='Remove Attribute Bonus' onclick='removeAttributeChoiceRow()'><input type='hidden' id='AttributeChoiceNumber' name='AttributeChoiceNumber' value=0></th>");
 			nextRowIndex++;
 	
 			addAttributeChoiceRow();
-			if(needsPresetOptions){
-				await createPresetAttributeRows();
-			}
 		}
 	}
 	else{
@@ -88,7 +89,12 @@ async function addAttributeChoiceRow(){
 	addTableRow(tableID,nextRowIndex,"rowAttributeChoice"+currentAttributeChoiceNumber,"<td style='text-align: center' colspan='2'>Allocate <input type='number' id='AttributeChoicePoints"+currentAttributeChoiceNumber+"' name='AttributeChoicePoints"+currentAttributeChoiceNumber+"' value=1 style='width:25px'> point(s) to <select id='AttributeChoiceMethod"+currentAttributeChoiceNumber+"' name='AttributeChoiceMethod"+currentAttributeChoiceNumber+"' onchange='createAttributeChoiceInput("+currentAttributeChoiceNumber+")'><option value='Any'>Any Attribute</option><option value='Inclusive'>Include Choices</option><option value='Exclusive'>Exclude Choices</option></select><span id='AttributeChoiceInput"+currentAttributeChoiceNumber+"' hidden></span></td>");
 	nextRowIndex++;
 
-	document.getElementById("AttributeChoiceNumber").value = Number(currentAttributeChoiceNumber) + 1;
+	let newChoiceNumber = Number(currentAttributeChoiceNumber) + 1;
+	document.getElementById("AttributeChoiceNumber").value = newChoiceNumber;
+	if(newChoiceNumber > 1 && document.getElementById("rowAttributeChoicesUnique") == null){
+		addTableRow(tableID,nextRowIndex,"rowAttributeChoicesUnique","<th><label for='AttributeChoicesUnique'>Must be Different Ability Scores:</label></th><td><input type='checkbox' id='AttributeChoicesUnique' name='AttributeChoicesUnique'></td>");
+		nextRowIndex++;
+	}
 }
 
 async function createAttributeChoiceInput(whichChoice){
@@ -121,6 +127,9 @@ function removeAttributeChoiceRow(){
 	table.deleteRow(document.getElementById("rowAttributeChoice"+currentAttributeChoiceNumber).rowIndex);
 
 	document.getElementById("AttributeChoiceNumber").value = currentAttributeChoiceNumber;
+	if(currentAttributeChoiceNumber < 2 && document.getElementById("rowAttributeChoicesUnique") != null){
+		document.getElementById("rowAttributeChoicesUnique").remove();
+	}
 }
 
 async function createPresetAttributeRows(){

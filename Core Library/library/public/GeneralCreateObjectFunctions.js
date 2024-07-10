@@ -6,7 +6,7 @@ function createNewTemplateRows(tableID,nextRowIndex,ObjectType){
 	nextRowIndex++;
 }
 
-function updateWithTemplateData(tableID,TemplateData){
+async function updateWithTemplateData(tableID,TemplateData){
 	if(TemplateData.Size != null && document.getElementById("Size") != null){document.getElementById("Size").value = TemplateData.Size;}
 
 	if(TemplateData.Rarity != null && document.getElementById("Rarity") != null){document.getElementById("Rarity").value = TemplateData.Rarity;}
@@ -93,18 +93,24 @@ function updateWithTemplateData(tableID,TemplateData){
 		}
 	}
 
+	let requestMaterialsData = await fetch("macro:pm.a5e.GetCoreData@lib:pm.a5e.Core", {method: "POST", body: "['sb.ObjectMaterials','Name','json']"});
+	let allMaterials = await requestMaterialsData.json();
 	let TemplateMaterials = TemplateData.Materials;
-	let TemplateHasMaterial = 0;
-	if(TemplateData.Materials != null && document.getElementById("objectMaterialIron") != null){
-		for(let tempMaterial of TemplateMaterials){
-			document.getElementById("objectMaterial"+tempMaterial).setAttribute("checked","");
-			TemplateHasMaterial = 1;
+	let materialNumber = 0;
+	for(let material of allMaterials){
+		if(TemplateMaterials.includes(material)){
+			document.getElementById("objectMaterial"+material).setAttribute("checked","");
+			materialNumber++;
 		}
-		createChooseMainMaterialRows(tableID);
-		if(TemplateHasMaterial == 1){
-			if(TemplateData.MainMaterial != "@@Variable"){
-				document.getElementById("MainMaterial").value = TemplateData.MainMaterial;
-			}
+		else{
+			document.getElementById("objectMaterial"+material).removeAttribute("checked","");
+		}
+	}
+
+	await createChooseMainMaterialRows(tableID);
+	if(materialNumber > 1){
+		if(TemplateData.MainMaterial != "@@Variable"){
+			document.getElementById("MainMaterial").value = TemplateData.MainMaterial;
 		}
 	}
 
@@ -126,6 +132,25 @@ function updateWithTemplateData(tableID,TemplateData){
 
 	if(TemplateData.isMagnetic != null && document.getElementById("isMagnetic") != null){
 		document.getElementById("isMagnetic").value = TemplateData.isMagnetic;
+	}
+
+	let requestObjectTagsData = await fetch("macro:pm.a5e.GetCoreData@lib:pm.a5e.Core", {method: "POST", body: "['sb.ObjectTags','Name','json']"});
+	let allObjectTags = await requestObjectTagsData.json();
+	
+	let requestMaterialTagsData = await fetch("macro:pm.a5e.GetCoreData@lib:pm.a5e.Core", {method: "POST", body: "['sb.MaterialTags','Name','json']"});
+	let allMaterialTags = await requestMaterialTagsData.json();
+
+	let finalObjectTags = allObjectTags.concat(allMaterialTags);
+	let TemplateObjectTags = TemplateData.ObjectTags;
+	let ignoredTags = ["AdventuringGear","StandardWeapon","StandardArmor","StandardTool"];
+	for(let tag of finalObjectTags){
+		//certain tags ignored so they don't appear in the default shops
+		if(TemplateObjectTags.includes(tag) && !ignoredTags.includes(tag)){
+			document.getElementById("objectMaterialTag"+tag).setAttribute("checked","");
+		}
+		else{
+			document.getElementById("objectMaterialTag"+tag).removeAttribute("checked","");
+		}
 	}
 }
 

@@ -88,10 +88,10 @@ async function createObjectSubtypeRows(tableID,IDSuffix){
 			nextRowIndex++;
 		}
 
-		addTableRow(tableID,nextRowIndex,"rowAmmunitionDamageHeader","<th text-align='center' colspan='2'>Additional Damage:<input type='hidden' id='AmmunitionDamageInstanceNumber' name='AmmunitionDamageInstanceNumber' value=0></th>");
+		addTableRow(tableID,nextRowIndex,"rowAmmunitionDamageHeader","<th style='text-align:center' colspan='2'>Additional Damage:<input type='hidden' id='AmmunitionDamageInstanceNumber' name='AmmunitionDamageInstanceNumber' value=0></th>");
 		nextRowIndex++;
 
-		addTableRow(tableID,nextRowIndex,"rowAmmunitionAddDamageInstanceButtons","<th text-align='center' colspan='2'><input type='button' id='addDamageType' name='addDamageType' value='Add Type' onclick='addDamageTypeRows("+'tableID,"Ammunition"'+")'>  <input type='button' id='removeDamageType' name='removeDamageType' value='Remove Type' onclick='removeDamageTypeRows("+'tableID,"Ammunition"'+")'></th>");
+		addTableRow(tableID,nextRowIndex,"rowAmmunitionDamageInstanceButtons","<th style='text-align:center' colspan='2'><input type='button' id='addDamageType' name='addDamageType' value='Add Type' onclick='addDamageTypeRows("+'"'+tableID+'","Ammunition"'+")'> <input type='button' id='removeDamageType' name='removeDamageType' value='Remove Type' onclick='removeDamageTypeRows("+'"Ammunition"'+")'></th>");
 		nextRowIndex++;
 
 		addTableRow(tableID,nextRowIndex,"rowMagicBonus","<th><label for='MagicBonus'>Magic Bonus:</label></th><td>+ <input type='number' id='MagicBonus' name='MagicBonus' min='0' value='0' style='width:25px' onchange='MagicBonusChanges()'></td>");
@@ -259,7 +259,7 @@ async function createAmmunitionTypeRows(){
 		}
 
 		if(AmmunitionTypeData.AmmunitionDamage != null){
-			clearUnusedTable("CreateObjectTable","rowAmmunitionDamageHeader","rowAmmunitionAddDamageInstanceButtons");
+			clearUnusedTable("CreateObjectTable","rowAmmunitionDamageHeader","rowAmmunitionDamageInstanceButtons");
 			document.getElementById("AmmunitionDamageInstanceNumber").value = 0;
 			let i = 0;
 
@@ -618,10 +618,10 @@ function createChargesRows(tableID){
 			nextRowIndex++;
 		}
 		else{
-			addTableRow(tableID,nextRowIndex,"rowMultiResource0","<th text-align='center' colspan='2'><input type='hidden' id='MultiResourceNumber' name='MultiResourceNumber' value='0'><label for='ResourceDisplayName0'>Resource #1 Name:</label><input type='text' id='ResourceDisplayName0' name='ResourceDisplayName0'> Maximum Charges:<input type='number' id='MaxResource0' name='MaxResource0' min='0' value='0' style='width:35px'></th>");
+			addTableRow(tableID,nextRowIndex,"rowMultiResource0","<th style='text-align:center' colspan='2'><input type='hidden' id='MultiResourceNumber' name='MultiResourceNumber' value='0'><label for='ResourceDisplayName0'>Resource #1 Name:</label><input type='text' id='ResourceDisplayName0' name='ResourceDisplayName0'> Maximum Charges:<input type='number' id='MaxResource0' name='MaxResource0' min='0' value='0' style='width:35px'></th>");
 			nextRowIndex++;
 			
-			addTableRow(tableID,nextRowIndex,"rowMultiResourceButtons","<th text-align='center' colspan='2'><input type='button' value='Add Resource' onclick='addMultiResourceRows("+'"'+tableID+'"'+")'>  <input type='button' value='Remove Resource' onclick='removeMultiResourceRows("+'"'+tableID+'"'+")'></th>");
+			addTableRow(tableID,nextRowIndex,"rowMultiResourceButtons","<th style='text-align:center' colspan='2'><input type='button' value='Add Resource' onclick='addMultiResourceRows("+'"'+tableID+'"'+")'>  <input type='button' value='Remove Resource' onclick='removeMultiResourceRows("+'"'+tableID+'"'+")'></th>");
 			nextRowIndex++;
 		}
 
@@ -668,7 +668,7 @@ function addMultiResourceRows(tableID){
 	let nextRowIndex = document.getElementById("rowMultiResource"+(NewResourceNumber - 1)).rowIndex + 1;
 	document.getElementById("MultiResourceNumber").value = NewResourceNumber;
 	
-	addTableRow(tableID,nextRowIndex,"rowMultiResource"+NewResourceNumber,"<th text-align='center' colspan='2'><label for='ResourceDisplayName"+NewResourceNumber+"'>Resource #"+(NewResourceNumber+1)+" Name:</label> <input type='text' id='ResourceDisplayName"+NewResourceNumber+"' name='ResourceDisplayName"+NewResourceNumber+"'> Maximum Charges:<input type='number' id='MaxResource"+NewResourceNumber+"' name='MaxResource"+NewResourceNumber+"' min='0' value='0' style='width:35px'></th>");
+	addTableRow(tableID,nextRowIndex,"rowMultiResource"+NewResourceNumber,"<th style='text-align:center' colspan='2'><label for='ResourceDisplayName"+NewResourceNumber+"'>Resource #"+(NewResourceNumber+1)+" Name:</label> <input type='text' id='ResourceDisplayName"+NewResourceNumber+"' name='ResourceDisplayName"+NewResourceNumber+"'> Maximum Charges:<input type='number' id='MaxResource"+NewResourceNumber+"' name='MaxResource"+NewResourceNumber+"' min='0' value='0' style='width:35px'></th>");
 	nextRowIndex++;
 
 	//TODO: Needs addition of resource types: Dice, Time, and Spell Slot
@@ -746,7 +746,7 @@ async function createCastSpellsRows(tableID){
 	let nextRowIndex = document.getElementById("rowIsCastSpells").rowIndex + 1;
 
 	if(document.getElementById("isCastSpells").checked){
-		addTableRow(tableID,nextRowIndex,"rowSpellButtons","<th text-align='center' colspan='2'><input type='button' value='Add Spell' onclick='addSpellSelectionRows("+'"'+tableID+'"'+")'>  <input type='button' value='Remove Spell' onclick='removeSpellSelectionRows("+'"'+tableID+'"'+")'></th>");
+		addTableRow(tableID,nextRowIndex,"rowSpellButtons","<th style='text-align:center' colspan='2'><input type='button' value='Add Spell' onclick='addSpellSelectionRows("+'"'+tableID+'"'+")'>  <input type='button' value='Remove Spell' onclick='removeSpellSelectionRows("+'"'+tableID+'"'+")'></th>");
 		nextRowIndex++;
 
 		addSpellSelectionRows(tableID);
@@ -801,7 +801,7 @@ async function addSpellSelectionRows(tableID){
 	levelInput = levelInput + "</span>";
 	AHLInput = AHLInput + "</span>";
 
-	addTableRow(tableID,nextRowIndex,"rowCastSpell"+SpellNumber+"","<th text-align='center' colspan='2' id='headerCastSpell"+SpellNumber+"'>Cast <select id='CastSpellName"+SpellNumber+"' name='CastSpellName"+SpellNumber+"' onchange='adjustSpellLevelOptions("+SpellNumber+")'>"+allSpellOptions+"</select>"+levelInput+"</th>");
+	addTableRow(tableID,nextRowIndex,"rowCastSpell"+SpellNumber+"","<th style='text-align:center' colspan='2' id='headerCastSpell"+SpellNumber+"'>Cast <select id='CastSpellName"+SpellNumber+"' name='CastSpellName"+SpellNumber+"' onchange='adjustSpellLevelOptions("+SpellNumber+")'>"+allSpellOptions+"</select>"+levelInput+"</th>");
 	nextRowIndex++;
 
 	if(document.getElementById("isCharges").value!="None"){
@@ -821,7 +821,7 @@ async function addSpellSelectionRows(tableID){
 		}
 		ChargesInput = ChargesInput + "</span>";
 
-		addTableRow(tableID,nextRowIndex,"rowCastSpellResource"+SpellNumber+"","<th text-align='center' colspan='2' id='headerCastSpellResource"+SpellNumber+"'>Uses <input type='number' id='CastSpellResource"+SpellNumber+"' name='CastSpellResource"+SpellNumber+"' style='width:25px' value=1> "+ChargesInput+AHLInput+"</th>");
+		addTableRow(tableID,nextRowIndex,"rowCastSpellResource"+SpellNumber+"","<th style='text-align:center' colspan='2' id='headerCastSpellResource"+SpellNumber+"'>Uses <input type='number' id='CastSpellResource"+SpellNumber+"' name='CastSpellResource"+SpellNumber+"' style='width:25px' value=1> "+ChargesInput+AHLInput+"</th>");
 		nextRowIndex++;		
 	}
 

@@ -83,11 +83,12 @@ async function createWeaponTableRows(tableID,startRowID){
 }
 
 async function createWeaponTypeRows(tableID){
-	let nextRowIndex = document.getElementById("rowWeaponType").rowIndex + 1;
+	let referenceRow = document.getElementById("rowWeaponType");
+	let nextRowIndex = referenceRow.rowIndex + 1;
 
 	if(document.getElementById("WeaponType").value == "@@NewType"){
 		//In GeneralCreateObjectFunctions
-		createNewTemplateRows(tableID,nextRowIndex,"Weapon");
+		createNewTemplateRows(referenceRow,"Weapon");
 	}
 	else{
 		clearUnusedTable(tableID,"rowWeaponType","rowWeaponClass");
@@ -242,7 +243,7 @@ async function createWeaponTypeRows(tableID){
 			document.getElementById("WeaponCritThreshMethod").value = "Set";
 		}
 
-		updateWithTemplateData(tableID,WeaponTypeData);
+		updateGenericObjectTemplate(WeaponTypeData);
 	}
 }
 

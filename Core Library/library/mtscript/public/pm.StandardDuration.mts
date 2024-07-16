@@ -2,6 +2,9 @@
 [h,switch(tempDuration):
     case "p": finalDuration = "passive";
     case "f": finalDuration = "free";
+	case "instant": finalDuration = "instantaneous";
+	case "inst": finalDuration = "instantaneous";
+	case "": finalDuration = "instantaneous";
     case "a": finalDuration = "action";
     case "actions": finalDuration = "action";
     case "b": finalDuration = "bonus";

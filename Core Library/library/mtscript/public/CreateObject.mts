@@ -19,7 +19,7 @@
 
 <tr id='rowFalseName'><th><label for='FalseName'>False Name:</label></th><td><input type='text' id='FalseName' name='FalseName'></td></tr>
 
-<tr id='rowObjectType'><th><label for='Type'>Object Type:</label></th><td><select id='Type' name='Type' onchange='createObjectSubtypeRows("+'"CreateObjectTable","Type"'+")'>"+ObjectTypeSelection+"</select></td></tr>
+<tr id='rowObjectType'><th><label for='Type'>Object Type:</label></th><td><select id='Type' name='Type' onchange='createObjectSubtypeRows("+'"CreateObjectTable"'+")'>"+ObjectTypeSelection+"</select></td></tr>
 
 <tr id='rowSize'><th><label for='Size'>Object Size:</label></th><td><select id='Size' name='Size'><option value='Diminutive'>Diminutive</option><option value='Tiny' select>Tiny</option><option value='Small'>Small</option><option value='Medium'>Medium</option><option value='Large'>Large</option><option value='Huge'>Huge</option><option value='Gargantuan'>Gargantuan</option><option value='Colossal'>Colossal</option></select></td></tr>
 

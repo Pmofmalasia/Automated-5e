@@ -1,71 +1,31 @@
 async function createObjectSubtypeRows(tableID,IDSuffix){
+	if(arguments.length === 1){IDSuffix = "";}
 	//Reset selections
-	clearUnusedTable(tableID,"rowObject"+IDSuffix,"rowSize");
+	clearUnusedTable(tableID,"rowObjectType"+IDSuffix,"rowSize");
 	let improvisedWeaponSelection = document.getElementById("isImprovisedWeapon");
 	improvisedWeaponSelection.removeAttribute("disabled","");
 	document.getElementById("isSpellcastingFocus").checked = false;
 	document.getElementById("isSpellcastingFocus").dispatchEvent(new Event("change"));
 
-	let nextRowIndex = document.getElementById("rowObject"+IDSuffix).rowIndex+1;
-	let ObjectType = document.getElementById(IDSuffix).value;
+	let nextRowIndex = document.getElementById("rowObjectType"+IDSuffix).rowIndex+1;
+	let ObjectType = document.getElementById("Type"+IDSuffix).value;
 
 	if(ObjectType == "Weapon"){
-		createWeaponTableRows(tableID,"rowObject"+IDSuffix);
+		createWeaponTableRows(tableID,"rowObjectType"+IDSuffix);
 		improvisedWeaponSelection.checked = false;
 		improvisedWeaponSelection.dispatchEvent(new Event("change"));
 		improvisedWeaponSelection.setAttribute("disabled","");
 	}
 	else if(ObjectType == "Armor" || ObjectType == "Shield"){
-		document.getElementById("isWearable").checked = true;
-
-		let allArmorTypes = "";
+		let ArmorOrShield;
 		if(ObjectType == "Armor"){
-			addTableRow(tableID,nextRowIndex,"rowArmorTier","<th><label for='ArmorTier'>Armor Tier:</label></th><td><select id='ArmorTier' name='ArmorTier' onchange='armorTierSelectionChanges()'><option value='Light'>Light</option><option value='Medium'>Medium</option><option value='Heavy'>Heavy</option></select></td>");
-			nextRowIndex++;
-
-			let request = await fetch("macro:pm.a5e.GetCoreData@lib:pm.a5e.Core", {method: "POST", body: "['sb.ArmorTypes']"});
-			allArmorTypes = await request.json();
+			ArmorOrShield = "Armor";
 		}
 		else{
-			let request = await fetch("macro:pm.a5e.GetCoreData@lib:pm.a5e.Core", {method: "POST", body: "['sb.ShieldTypes']"});
-			allArmorTypes = await request.json();
+			ArmorOrShield = "Shield";
 		}
-
-		let ArmorTypeOptions = "";
-		for(let tempArmorType of allArmorTypes){
-			ArmorTypeOptions = ArmorTypeOptions + "<option value='"+tempArmorType.Name+"'>"+tempArmorType.DisplayName+"</option>";
-		}
-
-		addTableRow(tableID,nextRowIndex,"rowArmorType","<th><label for='ArmorType'>Armor Type:</label></th><td><select id='ArmorType' name='ArmorType' onchange='createArmorTypeRows("+'"'+ObjectType+'"'+")'>"+ArmorTypeOptions+"<option value='@@NewType'>New Type</option></select></td>");
-		nextRowIndex++;
-
-		if(document.getElementById("ArmorType").value == "@@NewType"){
-			createArmorTypeRows(ObjectType);
-			nextRowIndex++;
-			nextRowIndex++;
-		}
-
-		let StartingAC;
-		if(ObjectType == "Armor"){
-			StartingAC = 11;
-		}
-		else{
-			StartingAC = 2;
-		}
-		addTableRow(tableID,nextRowIndex,"rowArmorBaseAC","<th><label for='ArmorBaseAC'>Base AC:</label></th><td><input type='number' id='ArmorBaseAC' name='ArmorBaseAC' min='0' value='"+StartingAC+"' style='width:25px'></td>");
-		nextRowIndex++;
-
-		addTableRow(tableID,nextRowIndex,"rowArmorIsDexterityBonus","<th><label for='ArmorIsDexterityBonus'>Allows Dexterity Bonus:</label></th><td><input type='checkbox' id='ArmorIsDexterityBonus' name='ArmorIsDexterityBonus' onchange='createArmorDexterityRows()'></td>");
-		nextRowIndex++;
-
-		addTableRow(tableID,nextRowIndex,"rowArmorStrengthReq","<th><label for='ArmorStrengthReq'>Strength Requirement:</label></th><td><input type='number' id='ArmorStrengthReq' name='ArmorStrengthReq' min='0' value='13' style='width:25px' disabled><input type='checkbox' id='ArmorNoStrengthReq' name='ArmorNoStrengthReq' onchange='toggleFieldEnabled("+'"ArmorStrengthReq","ArmorNoStrengthReq"'+")' checked><label for='ArmorNoStrengthReq'> No Requirement?</label></td>");
-		nextRowIndex++;
-
-		addTableRow(tableID,nextRowIndex,"rowArmorStealthDisadvantage","<th><label for='ArmorStealthDisadvantage'>Causes Stealth Disadvantage:</label></th><td><input type='checkbox' id='ArmorStealthDisadvantage' name='ArmorStealthDisadvantage'></td>");
-		nextRowIndex++;
-
-		addTableRow(tableID,nextRowIndex,"rowMagicBonus","<th><label for='MagicBonus'>Magic Bonus:</label></th><td>+ <input type='number' id='MagicBonus' name='MagicBonus' min='0' value='0' style='width:25px' onchange='MagicBonusChanges()'></td>");
-		nextRowIndex++;
+		
+		createArmorRows(ArmorOrShield,IDSuffix);
 	}
 	else if(ObjectType == "Ammunition"){
 		document.getElementById("isWearable").checked = true;
@@ -142,7 +102,7 @@ async function createObjectSubtypeRows(tableID,IDSuffix){
 		addTableRow(tableID,nextRowIndex,"rowLightFuel","<th><label for='LightFuel'>Light Can be Refueled:</label></th><td><select id='LightFuel' name='LightFuel'><option value=''>None</option><option value='Oil'>Oil Flask</option><option value='Other'>Other Fuel</option></select></td>");
 		nextRowIndex++;
 
-		createLightTable("rowObject"+IDSuffix,"rowLightFuel",IDSuffix);
+		createLightTable("rowObjectType"+IDSuffix,"rowLightFuel",IDSuffix);
 
 		createCustomDurationRows(tableID,"LightDuration","rowSize");
 		nextRowIndex++;
@@ -233,16 +193,16 @@ async function createObjectSubtypeRows(tableID,IDSuffix){
 		let ObjectTypeSelection = createHTMLSelectOptions(nonWondrousTypes);
 		ObjectTypeSelection = "<option value=''>No Other</option>" + ObjectTypeSelection;
 
-		addTableRow(tableID,nextRowIndex,"rowObjectWondrousType","<th><label for='WondrousType'>Wondrous Object Type:</label></th><td><select id='WondrousType' name='WondrousType' onchange='createObjectSubtypeRows("+'"CreateObjectTable","WondrousType"'+")'>"+ObjectTypeSelection+"</select></td>");
+		addTableRow(tableID,nextRowIndex,"rowObjectWondrousType","<th><label for='WondrousType'>Wondrous Object Type:</label></th><td><select id='WondrousType' name='WondrousType' onchange='createObjectSubtypeRows("+'"CreateObjectTable","Wondrous"'+")'>"+ObjectTypeSelection+"</select></td>");
 		nextRowIndex++;
 	}
 }
 
 async function createAmmunitionTypeRows(){
-	let nextRowIndex = document.getElementById("rowAmmunitionType").rowIndex + 1;
+	let referenceRow = document.getElementById("rowAmmunitionType");
 
 	if(document.getElementById("AmmunitionType").value == "@@NewType"){
-		createNewTemplateRows("CreateObjectTable",nextRowIndex,"Ammunition");
+		createNewTemplateRows(referenceRow,"Ammunition");
 	}
 	else{
 		clearUnusedTable("CreateObjectTable","rowAmmunitionType","rowAmmunitionDamageHeader");
@@ -274,82 +234,11 @@ async function createAmmunitionTypeRows(){
 			}
 		}
 
-		if(AmmunitionTypeData.MagicBonus != null){
+		if(AmmunitionTypeData.MagicBonus != undefined){
 			document.getElementById("MagicBonus").value = AmmunitionTypeData.MagicBonus;
 		}
 
-		updateWithTemplateData("CreateObjectTable",AmmunitionTypeData);
-	}
-}
-
-async function createArmorTypeRows(ArmorOrShield){
-	let nextRowIndex = document.getElementById("rowArmorType").rowIndex + 1;
-
-	if(document.getElementById("ArmorType").value == "@@NewType"){
-		createNewTemplateRows("CreateObjectTable",nextRowIndex,ArmorOrShield);
-	}
-	else{
-		clearUnusedTable("CreateObjectTable","rowArmorType","rowArmorBaseAC");
-		
-		let request = await fetch("macro:pm.a5e.GetCoreData@lib:pm.a5e.Core", {method: "POST", body: "['sb."+ArmorOrShield+"Types']"});
-		let allArmorTypes = await request.json();
-
-		let ArmorTypeData;
-		let ArmorTypeChoice = document.getElementById("ArmorType").value;
-		for(let tempArmorType of allArmorTypes){
-			if(tempArmorType.Name == ArmorTypeChoice){
-				ArmorTypeData = tempArmorType;
-			}
-		}
-
-		if(ArmorOrShield == "Armor"){
-			if(ArmorTypeData.ArmorTier != null){
-				document.getElementById("ArmorTier").value = ArmorTypeData.ArmorTier;
-			}
-		}
-
-		if(ArmorTypeData.BaseAC != null){
-			document.getElementById("ArmorBaseAC").value = ArmorTypeData.BaseAC;
-		}
-
-		if(ArmorTypeData.isDexterityCap != null){
-			if(ArmorTypeData.isDexterityCap == 1){
-				document.getElementById("ArmorNoDexCap").removeAttribute("checked","");
-				document.getElementById("ArmorNoDexCap").dispatchEvent(new Event('change'));
-				document.getElementById("ArmorDexCap").value = ArmorTypeData.DexterityCap;
-			}
-			else{
-				document.getElementById("ArmorNoDexCap").setAttribute("checked","");
-				document.getElementById("ArmorNoDexCap").dispatchEvent(new Event('change'));
-			}
-		}
-
-		if(ArmorTypeData.isStrengthRequirement != null){
-			if(ArmorTypeData.isStrengthRequirement == 1){
-				document.getElementById("ArmorNoStrengthReq").removeAttribute("checked","");
-				document.getElementById("ArmorNoStrengthReq").dispatchEvent(new Event('change'));
-				document.getElementById("ArmorStrengthReq").value = ArmorTypeData.StrengthRequirement;
-			}
-			else{
-				document.getElementById("ArmorNoStrengthReq").setAttribute("checked","");
-				document.getElementById("ArmorNoStrengthReq").dispatchEvent(new Event('change'));
-			}
-		}
-
-		if(ArmorTypeData.isStealthDisadvantage != null){
-			if(ArmorTypeData.isStealthDisadvantage == 1){
-				document.getElementById("ArmorStealthDisadvantage").setAttribute("checked","");
-			}
-			else{
-				document.getElementById("ArmorStealthDisadvantage").removeAttribute("checked","");
-			}
-		}
-
-		if(ArmorTypeData.MagicBonus != null){
-			document.getElementById("MagicBonus").value = ArmorTypeData.MagicBonus;
-		}
-
-		updateWithTemplateData("CreateObjectTable",ArmorTypeData);
+		updateGenericObjectTemplate(AmmunitionTypeData);
 	}
 }
 
@@ -388,48 +277,36 @@ function createConsumableRows(tableID){
 	}
 }
 
-function createArmorDexterityRows(tableID){
-	if(document.getElementById("ArmorIsDexterityBonus").checked){
-		let nextRowIndex = document.getElementById("rowArmorIsDexterityBonus").rowIndex + 1;
-
-		addTableRow(tableID,nextRowIndex,"rowArmorDexCap","<th><label for='ArmorDexCap'>Maximum Dexterity Bonus:</label></th><td><input type='number' id='ArmorDexCap' name='ArmorDexCap' min='0' value='2' style='width:25px' disabled><input type='checkbox' id='ArmorNoDexCap' name='ArmorNoDexCap' onchange='toggleFieldEnabled("+'"ArmorDexCap","ArmorNoDexCap"'+")' checked><label for='ArmorNoDexCap'> Unlimited?</label></td>");
-		nextRowIndex++;
-	}
-	else{
-		document.getElementById(tableID).deleteRow(document.getElementById("rowArmorDexCap").rowIndex);	
-	}
-}
-
 function toggleLightDuration(){
 	toggleFieldEnabled(["customLightDurationValue","customLightDurationUnits"],"isLightDurationUnlimited");
 	
 	activationTimeResourceRow();
 }
 
-function createNonstandardEquipRows(tableID){
-	let nextRowIndex = document.getElementById("rowIsNonstandardEquip").rowIndex + 1;
+function createNonstandardEquipRows(){
+	let referenceRow = document.getElementById("rowIsNonstandardEquip");
 
-	if(document.getElementById("isNonstandardEquip").value == "Custom"){
-		let UseTimeOptionsArray = ["Free","Item Interaction","Action","Bonus Action","Reaction","1 Minute","10 Minutes","1 Hour","8 Hours","12 Hours","24 Hours"];
+	if(document.getElementById("isNonstandardEquip").value == "Custom" && document.getElementById("rowDonTime") == null){
+		let UseTimeOptionsArray = ["Free","Item Interaction","Action","Bonus Action","Reaction","1 Minute","5 Minutes","10 Minutes","1 Hour","8 Hours","12 Hours","24 Hours"];
 		let UseTimeOptions = "";
 		for(let tempOption of UseTimeOptionsArray){
 			UseTimeOptions = UseTimeOptions + "<option value='"+tempOption+"'>"+tempOption+"</option>";
 		}
 
-		addTableRow(tableID,nextRowIndex,"rowDonTime","<th><label for='DonTime'>Don Time:</label></th><td><select id='DonTime' name='DonTime'>"+UseTimeOptions+"</select></td>");
+		referenceRow = createTableRow(referenceRow,"rowDonTime","<th><label for='DonTime'>Don Time:</label></th><td><select id='DonTime' name='DonTime'>"+UseTimeOptions+"</select></td>");
 		document.getElementById("DonTime").value = "Item Interaction";
-		nextRowIndex++;
 
-		addTableRow(tableID,nextRowIndex,"rowDoffTime","<th><label for='DoffTime'>Doff Time:</label></th><td><select id='DoffTime' name='DoffTime'>"+UseTimeOptions+"</select></td>");
+		referenceRow = createTableRow(referenceRow,"rowDoffTime","<th><label for='DoffTime'>Doff Time:</label></th><td><select id='DoffTime' name='DoffTime'>"+UseTimeOptions+"</select></td>");
 		document.getElementById("DoffTime").value = "Item Interaction";
-		nextRowIndex++;
 
-		addTableRow(tableID,nextRowIndex,"rowDropTime","<th><label for='DropTime'>Drop Time:</label></th><td><select id='DropTime' name='DropTime'>"+UseTimeOptions+"</select></td>");
+		referenceRow = createTableRow(referenceRow,"rowDropTime","<th><label for='DropTime'>Drop Time:</label></th><td><select id='DropTime' name='DropTime'>"+UseTimeOptions+"</select></td>");
 		document.getElementById("DropTime").value = "Free";
-		nextRowIndex++;
+
+		referenceRow = createTableRow(referenceRow,"rowNonstandardEquipEnd","<th></th><td></td>");
+		referenceRow.classList.add("section-end");
 	}
-	else{
-		clearUnusedTable("CreateObjectTable","rowIsNonstandardEquip","rowIsConsumable");
+	else if(document.getElementById("isNonstandardEquip").value !== "Custom" && document.getElementById("rowNonstandardEquipEnd") !== null){
+		deleteInterveningElements(referenceRow,document.getElementById("rowNonstandardEquipEnd").nextElementSibling);
 	}
 }
 

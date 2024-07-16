@@ -115,6 +115,41 @@ function createHTMLMultiselectOptions(inputData,prefix,changeFunction,extraArgum
 	return finalOptions;
 }
 
+function timeDisplay(timeData){
+	let timeDisplay = "";
+	if(!["free","interaction","action","bonus","reaction"].includes(timeData.Units)){
+		timeDisplay += timeData.Value + " "+ capitalize(timeData.Units);
+		if(timeData.Value != 1){
+			timeDisplay += "s";
+		}
+	}
+	else{
+		if(timeData.Units === "action"){
+			timeDisplay = "Action";
+		}
+		else if(timeData.Units === "bonus"){
+			timeDisplay = "Bonus Action";
+		}
+		else if(timeData.Value === "reaction"){
+			timeDisplay = "Reaction";
+		}
+		else if(timeData.Value === "free"){
+			timeDisplay = "Free";
+		}
+		else if(timeData.Value === "interaction"){
+			timeDisplay = "Item Interaction";
+		}
+	}
+
+	return timeDisplay;
+}
+
+function capitalize(string)
+{
+	if(string === ""){return string}
+    return string[0].toUpperCase() + string.slice(1);
+}
+
 async function evaluateMacro(macro){
 	try {
 		let uri = "macro:EvaluateMacro@lib:pm.a5e.Core";

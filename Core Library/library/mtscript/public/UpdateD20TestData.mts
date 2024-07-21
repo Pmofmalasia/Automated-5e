@@ -8,18 +8,18 @@
 	[h,switch(d20TestType),CODE:
 		case "Check":{
 			[h,if(json.get(TestData,"Contested")==1):
-				rerollEffectPath = "[*][?(@.ID=='"+effectID+"')]['ToResolve']['CheckDC']['DC']";
-				rerollEffectPath = "[*][?(@.ID=='"+effectID+"')]['ToResolve']['CheckDC']['ChecksMade']['"+ParentToken+"']"
+				rerollEffectPath = "\$[*][?(@.ID=='"+effectID+"')]['ToResolve']['CheckDC']['DC']";
+				rerollEffectPath = "\$[*][?(@.ID=='"+effectID+"')]['ToResolve']['CheckDC']['ChecksMade']['"+ParentToken+"']"
 			]
 		};
 		case "Save":{
-			[h:rerollEffectPath = "[*][?(@.ID=='"+effectID+"')]['ToResolve']['SaveDC']['SavesMade']['"+ParentToken+"']"]
+			[h:rerollEffectPath = "\$[*][?(@.ID=='"+effectID+"')]['ToResolve']['SaveDC']['SavesMade']['"+ParentToken+"']"]
 		};
 		case "Attack":{
-			[h:rerollEffectPath = "[*][?(@.ID=='"+effectID+"')]['ToResolve']['Attack']"]
+			[h:rerollEffectPath = "\$[*][?(@.ID=='"+effectID+"')]['ToResolve']['Attack']"]
 		}
 	]
 
 	[h:rerolledEffect = json.path.set(data.getData("addon:","pm.a5e.core","gd.Effects"),rerollEffectPath,json.remove(TestData,"ID"))]
-	[h:setLibProperty("gd.Effects",rerolledEffect,"Lib:pm.a5e.Core")]
+	[h:data.setData("addon:","pm.a5e.core","gd.Effects",rerolledEffect)]
 }]

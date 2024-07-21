@@ -1,7 +1,7 @@
 [h:TokenToCheck = arg(0)]
 [h:ActivationPrerequisites = arg(1)]
 [h,if(argCount() > 2): ComparisonToken = arg(2); ComparisonToken = ""]
-[h:switchToken(TokenToCheck)]
+[h,if(json.type(TokenToCheck) == "OBJECT"): TokenToCheck = json.get(TokenToCheck,"ComparisonProperties")]
 
 [h:MeetsPrereqTest = 1]
 [h:prereqsToCheck = json.fields(ActivationPrerequisites,"json")]
@@ -12,12 +12,12 @@
 
 		[h:allegianceTest = 0]
 		[h,if(TokenToCheck == ComparisonToken),CODE:{
-			[h,if(json.get(thisComparisonInfo,"Self")==1): allegianceTest = if(TokenToCheck == ComparisonToken,1,allegianceTest)]
+			[h,if(json.get(thisComparisonInfo,"Self")==1): allegianceTest = 1]
 			[h,if(json.get(thisComparisonInfo,"NotSelf")==1): allegianceTest = 0]					
 		};{
-			[h,if(json.get(thisComparisonInfo,"Neutral")==1): allegianceTest = if(getProperty("a5e.stat.whichTeam",TokenToCheck) == 0,1,allegianceTest)]
-			[h,if(json.get(thisComparisonInfo,"Ally")==1): allegianceTest = if(getProperty("a5e.stat.whichTeam",TokenToCheck) == getProperty("a5e.stat.whichTeam",ComparisonToken),1,allegianceTest)]
-			[h,if(json.get(thisComparisonInfo,"Foe")==1): allegianceTest = if(and(getProperty("a5e.stat.whichTeam",TokenToCheck) != getProperty("a5e.stat.whichTeam",ComparisonToken),getProperty("a5e.stat.whichTeam",TokenToCheck) != 0),1,allegianceTest)]
+			[h,if(json.get(thisComparisonInfo,"Neutral")==1): allegianceTest = if(getPropertyFlexible("a5e.stat.whichTeam",TokenToCheck) == 0,1,allegianceTest)]
+			[h,if(json.get(thisComparisonInfo,"Ally")==1): allegianceTest = if(getPropertyFlexible("a5e.stat.whichTeam",TokenToCheck) == getProperty("a5e.stat.whichTeam",ComparisonToken),1,allegianceTest)]
+			[h,if(json.get(thisComparisonInfo,"Foe")==1): allegianceTest = if(and(getPropertyFlexible("a5e.stat.whichTeam",TokenToCheck) != getProperty("a5e.stat.whichTeam",ComparisonToken),getPropertyFlexible("a5e.stat.whichTeam",TokenToCheck) != 0),1,allegianceTest)]
 			[h,if(json.get(thisComparisonInfo,"NotSelf")==1): allegianceTest = 1]
 		}]
 		
@@ -26,48 +26,48 @@
 	case "TypeInclusive":{
 		[h:thisComparisonInfo = json.get(ActivationPrerequisites,prereq)]
 		[h,if(json.type(thisComparisonInfo) == "UNKNOWN"):
-			MeetsPrereqTest = or(thisComparisonInfo==getProperty("a5e.stat.CreatureType"),thisComparisonInfo=="Any");
-			MeetsPrereqTest = json.contains(thisComparisonInfo,getProperty("a5e.stat.CreatureType"))
+			MeetsPrereqTest = or(thisComparisonInfo==getPropertyFlexible("a5e.stat.CreatureType",TokenToCheck),thisComparisonInfo=="Any");
+			MeetsPrereqTest = json.contains(thisComparisonInfo,getPropertyFlexible("a5e.stat.CreatureType",TokenToCheck))
 		]
 		[h:return(MeetsPrereqTest,0)]
 	};
 	case "TypeExclusive":{
 		[h:thisComparisonInfo = json.get(ActivationPrerequisites,prereq)]
 		[h,if(json.type(thisComparisonInfo) == "UNKNOWN"):
-			MeetsPrereqTest = thisComparisonInfo != getProperty("a5e.stat.CreatureType");
-			MeetsPrereqTest = !json.contains(thisComparisonInfo,getProperty("a5e.stat.CreatureType"))
+			MeetsPrereqTest = thisComparisonInfo != getPropertyFlexible("a5e.stat.CreatureType",TokenToCheck);
+			MeetsPrereqTest = !json.contains(thisComparisonInfo,getPropertyFlexible("a5e.stat.CreatureType",TokenToCheck))
 		]
 		[h:return(MeetsPrereqTest,0)]
 	};
 	case "SubtypeInclusive":{
 		[h:thisComparisonInfo = json.get(ActivationPrerequisites,prereq)]
 		[h,if(json.type(thisComparisonInfo) == "UNKNOWN"):
-			MeetsPrereqTest = or(thisComparisonInfo==getProperty("a5e.stat.Race"),thisComparisonInfo=="Any");
-			MeetsPrereqTest = json.contains(thisComparisonInfo,getProperty("a5e.stat.Race"))
+			MeetsPrereqTest = or(thisComparisonInfo==getPropertyFlexible("a5e.stat.Race",TokenToCheck),thisComparisonInfo=="Any");
+			MeetsPrereqTest = json.contains(thisComparisonInfo,getPropertyFlexible("a5e.stat.Race",TokenToCheck))
 		]
 		[h:return(MeetsPrereqTest,0)]
 	};
 	case "SubtypeExclusive":{
 		[h:thisComparisonInfo = json.get(ActivationPrerequisites,prereq)]
 		[h,if(json.type(thisComparisonInfo) == "UNKNOWN"):
-			MeetsPrereqTest = thisComparisonInfo != getProperty("a5e.stat.Race");
-			MeetsPrereqTest = !json.contains(thisComparisonInfo,getProperty("a5e.stat.Race"))
+			MeetsPrereqTest = thisComparisonInfo != getPropertyFlexible("a5e.stat.Race",TokenToCheck);
+			MeetsPrereqTest = !json.contains(thisComparisonInfo,getPropertyFlexible("a5e.stat.Race",TokenToCheck))
 		]
 		[h:return(MeetsPrereqTest,0)]
 	};
 	case "CreatureNameInclusive":{
 		[h:thisComparisonInfo = json.get(ActivationPrerequisites,prereq)]
 		[h,if(json.type(thisComparisonInfo) == "UNKNOWN"):
-			MeetsPrereqTest = or(thisComparisonInfo==getProperty("a5e.stat.CreatureName"),thisComparisonInfo=="Any");
-			MeetsPrereqTest = json.contains(thisComparisonInfo,getProperty("a5e.stat.CreatureName"))
+			MeetsPrereqTest = or(thisComparisonInfo==getPropertyFlexible("a5e.stat.CreatureName",TokenToCheck),thisComparisonInfo=="Any");
+			MeetsPrereqTest = json.contains(thisComparisonInfo,getPropertyFlexible("a5e.stat.CreatureName",TokenToCheck))
 		]
 		[h:return(MeetsPrereqTest,0)]
 	};
 	case "CreatureNameExclusive":{
 		[h:thisComparisonInfo = json.get(ActivationPrerequisites,prereq)]
 		[h,if(json.type(thisComparisonInfo) == "UNKNOWN"):
-			MeetsPrereqTest = thisComparisonInfo != getProperty("a5e.stat.CreatureName");
-			MeetsPrereqTest = !json.contains(thisComparisonInfo,getProperty("a5e.stat.CreatureName"))
+			MeetsPrereqTest = thisComparisonInfo != getPropertyFlexible("a5e.stat.CreatureName");
+			MeetsPrereqTest = !json.contains(thisComparisonInfo,getPropertyFlexible("a5e.stat.CreatureName"))
 		]
 		[h:return(MeetsPrereqTest,0)]
 	};
@@ -119,21 +119,53 @@
 		[h:thisComparisonInfo = json.get(ActivationPrerequisites,prereq)]
 	};
 	case "Alignment":{
-		[h:"<!-- Note: There is no included/excluded for alignment because there is no "]
+		[h:"<!-- Note: There is no included/excluded for alignment, might be good to add -->"]
 		[h:thisComparisonInfo = json.get(ActivationPrerequisites,prereq)]
-		[h:thisTokenAlignment = getProperty("a5e.stat.Alignment")]
+		[h:thisTokenAlignment = getPropertyFlexible("a5e.stat.Alignment",TokenToCheck)]
 		[h:alignmentFinal = json.get(thisTokenAlignment,"Order")+json.get(thisTokenAlignment,"Morality")]
 
 		[h:alignmentTest = json.get(thisComparisonInfo,alignmentFinal) == 1]
 		[h:return(alignmentTest,0)]
 	};
 	case "Size":{
+		[h:"<!-- Legacy code for when SizeInclusive was just Size -->"]
 		[h:thisComparisonInfo = json.get(ActivationPrerequisites,prereq)]
-		[h:tokenSize = getSize()]
+		[h,if(json.type(TokenToCheck) == "UNKNOWN"):
+			tokenSize = getSize();
+			tokenSize = getPropertyFlexible("a5e.stat.Size",TokenToCheck)	
+		]
 	
 		[h,if(json.type(thisComparisonInfo) == "UNKNOWN"):
 			sizeTest = thisComparisonInfo == tokenSize;
-			sizeTest = json.contains(sizeTest,tokenSize)
+			sizeTest = json.contains(thisComparisonInfo,tokenSize)
+		]
+
+		[h:return(sizeTest,0)]
+	};
+	case "SizeInclusive":{
+		[h:thisComparisonInfo = json.get(ActivationPrerequisites,prereq)]
+		[h,if(json.type(TokenToCheck) == "UNKNOWN"):
+			tokenSize = getSize();
+			tokenSize = getPropertyFlexible("a5e.stat.Size",TokenToCheck)	
+		]
+	
+		[h,if(json.type(thisComparisonInfo) == "UNKNOWN"):
+			sizeTest = thisComparisonInfo == tokenSize;
+			sizeTest = json.contains(thisComparisonInfo,tokenSize)
+		]
+
+		[h:return(sizeTest,0)]
+	};
+	case "SizeExclusive":{
+		[h:thisComparisonInfo = json.get(ActivationPrerequisites,prereq)]
+		[h,if(json.type(TokenToCheck) == "UNKNOWN"):
+			tokenSize = getSize();
+			tokenSize = getPropertyFlexible("a5e.stat.Size",TokenToCheck)	
+		]
+	
+		[h,if(json.type(thisComparisonInfo) == "UNKNOWN"):
+			sizeTest = thisComparisonInfo != tokenSize;
+			sizeTest = !json.contains(thisComparisonInfo,tokenSize)
 		]
 
 		[h:return(sizeTest,0)]
@@ -147,7 +179,12 @@
 		};{
 			[h:maximumSize = thisComparisonInfo]
 		}]
-		[h:sizeTest = pm.a5e.CompareSizes(maximumSize,getSize()) =< 0]
+
+		[h,if(json.type(TokenToCheck) == "UNKNOWN"):
+			tokenSize = getSize();
+			tokenSize = getPropertyFlexible("a5e.stat.Size",TokenToCheck)	
+		]
+		[h:sizeTest = pm.a5e.CompareSizes(maximumSize,tokenSize) >= 0]
 
 		[h:return(sizeTest,0)]
 	};
@@ -160,7 +197,12 @@
 		};{
 			[h:minimumSize = thisComparisonInfo]
 		}]
-		[h:sizeTest = pm.a5e.CompareSizes(minimumSize,getSize()) >= 0]
+
+		[h,if(json.type(TokenToCheck) == "UNKNOWN"):
+			tokenSize = getSize();
+			tokenSize = getPropertyFlexible("a5e.stat.Size",TokenToCheck)	
+		]
+		[h:sizeTest = pm.a5e.CompareSizes(minimumSize,tokenSize) <= 0]
 
 		[h:return(sizeTest,0)]
 	};
@@ -173,7 +215,12 @@
 		};{
 			[h:maximumSize = thisComparisonInfo]
 		}]
-		[h:sizeTest = pm.a5e.CompareSizes(maximumSize,getSize()) =< 0]
+
+		[h,if(json.type(TokenToCheck) == "UNKNOWN"):
+			tokenSize = getSize();
+			tokenSize = getPropertyFlexible("a5e.stat.Size",TokenToCheck)	
+		]
+		[h:sizeTest = pm.a5e.CompareSizes(maximumSize,tokenSize) >= 0]
 
 		[h:return(sizeTest,0)]
 	};
@@ -186,7 +233,12 @@
 		};{
 			[h:minimumSize = thisComparisonInfo]
 		}]
-		[h:sizeTest = pm.a5e.CompareSizes(minimumSize,getSize()) >= 0]
+
+		[h,if(json.type(TokenToCheck) == "UNKNOWN"):
+			tokenSize = getSize();
+			tokenSize = getPropertyFlexible("a5e.stat.Size",TokenToCheck)	
+		]
+		[h:sizeTest = pm.a5e.CompareSizes(minimumSize,tokenSize) <= 0]
 
 		[h:return(sizeTest,0)]
 	};
@@ -196,24 +248,24 @@
 
 		[h,switch(PrerequisiteType),CODE:
 			case "AtMaximumHP":{
-				[h:MeetsPrereqTest = getProperty("a5e.stat.HP") == getProperty("a5e.stat.MaxHP")]
+				[h:MeetsPrereqTest = getPropertyFlexible("a5e.stat.HP",TokenToCheck) == getPropertyFlexible("a5e.stat.MaxHP",TokenToCheck)]
 			};
 			case "Damaged":{
-				[h:MeetsPrereqTest = getProperty("a5e.stat.HP") < getProperty("a5e.stat.MaxHP")]
+				[h:MeetsPrereqTest = getPropertyFlexible("a5e.stat.HP",TokenToCheck) < getPropertyFlexible("a5e.stat.MaxHP",TokenToCheck)]
 			};
 			case "OverHalfHP":{
 				[h:"<!-- TODO: Could put further option here to include/exclude exactly half as being valid -->"]
-				[h:MeetsPrereqTest = getProperty("a5e.stat.HP")/getProperty("a5e.stat.MaxHP") > (1/2)]
+				[h:MeetsPrereqTest = getPropertyFlexible("a5e.stat.HP",TokenToCheck)/getPropertyFlexible("a5e.stat.MaxHP",TokenToCheck) > (1/2)]
 			};
 			case "BelowHalfHP":{
 				[h:"<!-- TODO: Could put further option here to include/exclude exactly half as being valid -->"]
-				[h:MeetsPrereqTest = getProperty("a5e.stat.HP")/getProperty("a5e.stat.MaxHP") < (1/2)]
+				[h:MeetsPrereqTest = getPropertyFlexible("a5e.stat.HP",TokenToCheck)/getPropertyFlexible("a5e.stat.MaxHP",TokenToCheck) < (1/2)]
 			};
 			case "NoHP":{
-				[h:MeetsPrereqTest = getProperty("a5e.stat.HP") == 0]
+				[h:MeetsPrereqTest = getPropertyFlexible("a5e.stat.HP",TokenToCheck) == 0]
 			};
 			case "HasHP":{
-				[h:MeetsPrereqTest = getProperty("a5e.stat.HP") >= 1]
+				[h:MeetsPrereqTest = getPropertyFlexible("a5e.stat.HP",TokenToCheck) >= 1]
 			};
 			case "Comparison":{
 				[h:Comparitor = json.get(thisComparisonInfo,"Comparitor")]
@@ -222,8 +274,8 @@
 				[h:"<!-- Possible different method: switch(HPTarget), where HPTarget is either one of many strings corresponding to some token (user, all other targets (lowest HP target?), etc.) OR is just a number (default)-->"]
 				[h:HPTarget = json.get(thisComparisonInfo,"Target")]
 				[h:targetIsTokenTest = json.contains(getTokens("json"),HPTarget)]
-				[h,if(targetIsTokenTest): HPTarget = getProperty("a5e.stat.HP",HPTarget)]
-				[h:MeetsPrereqTest = eval(getProperty("a5e.stat.HP")+Comparitor+HPTarget)]
+				[h,if(targetIsTokenTest): HPTarget = getPropertyFlexible("a5e.stat.HP",HPTarget)]
+				[h:MeetsPrereqTest = eval(getPropertyFlexible("a5e.stat.HP",TokenToCheck)+Comparitor+HPTarget)]
 			}
 		]
 
@@ -243,14 +295,14 @@
 		[h:return(MeetsPrereqTest,0)]
 	};
 	case "Attribute":{
-		[h:"<!-- BUGFIX: CRITICAL: Any attempt to use Int as a parameter for auras (or, in the future, other properties calculated via UnifiedAbilities) will cause crashes on ALL tokens if that aura is active. Only solution I can think of currently is swapping getProperty() for a5e.AttributeCalc(target,pm.a5e.GatherThisTokenFeatures(target,0)) - but this would outright prevent intelligence calculations from taking auras into account for ALL targeting (not just aura targeting). -->"]
+		[h:"<!-- BUGFIX: CRITICAL: Any attempt to use Int as a parameter for auras (or, in the future, other properties calculated via UnifiedAbilities) will cause crashes on ALL tokens if that aura is active. Only solution I can think of currently is swapping getPropertyFlexible() for a5e.AttributeCalc(target,pm.a5e.GatherThisTokenFeatures(target,0)) - but this would outright prevent intelligence calculations from taking auras into account for ALL targeting (not just aura targeting). -->"]
 	
 		[h:thisComparisonInfo = json.get(ActivationPrerequisites,prereq)]
 		[h:attributeMaximum = json.get(thisComparisonInfo,"Maximum")]
 		[h:attributeMinimum = json.get(thisComparisonInfo,"Minimum")]
 		[h:whichAttribute = json.get(thisComparisonInfo,"Attribute")]
 
-		[h:tokenStat = json.get(getProperty("a5e.stat.Attributes"),whichAttribute)]
+		[h:tokenStat = json.get(getPropertyFlexible("a5e.stat.Attributes",TokenToCheck),whichAttribute)]
 		[h:"<!-- Setting min/max to a tokenID compares against the stat of that token -->"]
 		[h,if(json.contains(getTokens("json"),attributeMaximum)): attributeMaximum = json.get(getProperty("a5e.stat.Attribute",attributeMaximum),whichAttribute)]
 		[h,if(json.contains(getTokens("json"),attributeMinimum)): attributeMinimum = json.get(getProperty("a5e.stat.Attribute",attributeMinimum),whichAttribute)]
@@ -264,17 +316,31 @@
 	case "MaxCover":{
 		
 	};
+	case "CRMaximum":{
+		[h:thisComparisonInfo = json.get(ActivationPrerequisites,prereq)]
+
+		[h:CRTest = thisComparisonInfo >= getPropertyFlexible("a5e.stat.CR",TokenToCheck)]
+
+		[h:return(CRTest,0)]
+	};
+	case "CRMinimum":{
+		[h:thisComparisonInfo = json.get(ActivationPrerequisites,prereq)]
+
+		[h:CRTest = thisComparisonInfo <= getPropertyFlexible("a5e.stat.CR",TokenToCheck)]
+
+		[h:return(CRTest,0)]
+	};
 	default:{
 		[h:thisComparisonInfo = json.get(ActivationPrerequisites,prereq)]
 		[h:Comparitor = json.get(thisComparisonInfo,"Comparitor")]
 		[h:StatTarget = json.get(thisComparisonInfo,"Target")]
-		[h:tokenStat = getProperty("a5e.stat."+prereq)]
+		[h:tokenStat = getPropertyFlexible("a5e.stat."+prereq,TokenToCheck)]
 		[h,if(json.type(tokenStat) == "UNKNOWN"),CODE:{
-			[h,if(json.contains(getTokens("json"),StatTarget)): StatTarget = getProperty("a5e.stat."+prereq,StatTarget)]
+			[h,if(json.contains(getTokens("json"),StatTarget)): StatTarget = getPropertyFlexible("a5e.stat."+prereq,StatTarget)]
 		};{
 			[h:StatKey = json.get(thisComparisonInfo,"Key")]
 			[h:tokenStat = json.get(tokenStat,StatKey)]
-			[h,if(json.contains(getTokens("json"),StatTarget)): StatTarget = json.get(getProperty("a5e.stat."+prereq,StatTarget),StatKey)]
+			[h,if(json.contains(getTokens("json"),StatTarget)): StatTarget = json.get(getPropertyFlexible("a5e.stat."+prereq,StatTarget),StatKey)]
 		}]
 
 		[h:MeetsPrereqTest = eval(tokenStat+Comparitor+StatTarget)]

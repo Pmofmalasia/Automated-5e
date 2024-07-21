@@ -58,7 +58,7 @@
 	[h:"<!-- TODO: Need to add additional info here for conditions gained/damage/healing. Would be easier on this end to have creation input list all possible effects (from ParentSubeffect) and store as just an array of required effects. However, may prove difficult for effects with choice, which would require the current Any/All option. Also need to add ConditionNotApplied, I think something uses this but forget what. -->"]
 
 	[h,if(!ParentSubeffectRequirementsMet),CODE:{
-		[h,if(json.length(effTargets)==1): titleAddon = " on "+getName(json.get(effTargets,0)); titleAddon = ""]
+		[h,if(json.length(effTargets)==1): titleAddon = " on "+if(getVisible(json.get(effTargets,0)),getName(json.get(effTargets,0)),"Unknown Creature"); titleAddon = ""]
 
 		[h:BorderData = json.set("",
 			"DisplayName","Resolve Effects"+titleAddon,
@@ -81,8 +81,8 @@
 		[h:"<!-- TODO: Will need to add further info for resolving LinkedEffects of LinkedEffects that do not meet reqs, likely in the form of making a UDF that covers for here and later in ResolveEffects. -->"]
 
 		[h,if(!json.isEmpty(remainingTargetsList)):
-			setLibProperty("gd.Effects",json.path.set(data.getData("addon:","pm.a5e.core","gd.Effects"),"\$[*][?(@.ID=='"+effID+"')]",effFull),"Lib:pm.a5e.Core");
-			setLibProperty("gd.Effects",json.path.delete(data.getData("addon:","pm.a5e.core","gd.Effects"),"\$[*][?(@.ID=='"+effID+"')]"),"Lib:pm.a5e.Core")
+			data.setData("addon:","pm.a5e.core","gd.Effects",json.path.set(data.getData("addon:","pm.a5e.core","gd.Effects"),"\$[*][?(@.ID=='"+effID+"')]",effFull));
+			data.setData("addon:","pm.a5e.core","gd.Effects",json.path.delete(data.getData("addon:","pm.a5e.core","gd.Effects"),"\$[*][?(@.ID=='"+effID+"')]"))
 		]
 
 		[h:return(0,json.set("","Table","[]","OutputComponents",AllOutputComponents,"Targets",effTargets))]
@@ -106,6 +106,7 @@
 [h:effAttackData = json.get(effToResolve,"Attack")]
 [h:effCheckDCData = json.get(effToResolve,"CheckDC")]
 [h:effSaveDCData = json.get(effToResolve,"SaveDC")]
+[h:effSummonData = json.get(effToResolve,"Summon")]
 
 [h:effAllConditionIdentifiers = ""]
 [h,foreach(conditionSet,effConditionInfo),CODE:{
@@ -124,7 +125,7 @@
 [h,foreach(tempTarget,effTargets),CODE:{
 	[h,if(json.type(tempTarget) == "OBJECT"),CODE:{
 		[h,if(json.get(tempTarget,"HeldBy") != ""): targetToken = json.get(tempTarget,"HeldBy")]
-		[h,if(json.get(tempTarget,"HeldBy") != ""): thisTokenDisplayName = getName(targetToken)+"'s "+json.get(tempTarget,"DisplayName")]
+		[h,if(json.get(tempTarget,"HeldBy") != ""): thisTokenDisplayName = if(getVisible(targetToken),getName(targetToken)+"'s "+json.get(tempTarget,"DisplayName"),"Unknown Creature's Item")]
 		[h:targetDataKey = json.get(tempTarget,"ItemID") + "" + targetToken]
 	};{
 		[h:targetToken = tempTarget]
@@ -453,7 +454,8 @@
 		[h,MACRO("ApplyCondition@Lib:pm.a5e.Core"): json.set(conditionSet,
 			"GroupID",effConditionGroupID,
 			"Target",tempTarget,
-			"SetBy",ParentToken
+			"SetBy",ParentToken,
+			"SourceID",effID
 		)]
 		[h:abilityTable = json.merge(abilityTable,json.get(macro.return,"Table"))]
 		[h:ConditionsSet = json.get(macro.return,"Conditions")]
@@ -465,7 +467,7 @@
 	}]
 
 	[h,if(!needsFurtherResolution),CODE:{
-		[h,if(0): thisTargetLinkedEffects = json.path.read(LinkedEffects,"[*][?(@.RemainingTargets.[*] == '"+targetToken+"')]")]
+		[h,if(0): thisTargetLinkedEffects = json.path.read(LinkedEffects,"\$[*][?(@.RemainingTargets.[*] == '"+targetToken+"')]")]
 		[h:"<!-- BUGFIX json.path: Above statement or similar can replace below loop once json.paths are fixed -->"]
 
 		[h:thisTargetLinkedEffects = "[]"]
@@ -520,9 +522,14 @@
 	)]
 	[h:effFull = json.remove(effFull,"SpecificTargets")]
 	
-	[h:setLibProperty("gd.Effects",json.path.set(data.getData("addon:","pm.a5e.core","gd.Effects"),"[*][?(@.ID=='"+effID+"')]",effFull),"Lib:pm.a5e.Core")]
+	[h:data.setData("addon:","pm.a5e.core","gd.Effects",json.path.set(data.getData("addon:","pm.a5e.core","gd.Effects"),"\$[*][?(@.ID=='"+effID+"')]",effFull))]
 };{
-	[h:setLibProperty("gd.Effects",json.path.delete(data.getData("addon:","pm.a5e.core","gd.Effects"),"[*][?(@.ID=='"+effID+"')]"),"Lib:pm.a5e.Core")]
+	[h,if(!json.isEmpty(effSummonData)),CODE:{
+		[h,MACRO("SummonCreature@Lib:pm.a5e.Core"): effSummonData]
+		[h:abilityTable = json.merge(abilityTable,json.get(macro.return,"Table"))]
+	};{}]
+
+	[h:data.setData("addon:","pm.a5e.core","gd.Effects",json.path.delete(data.getData("addon:","pm.a5e.core","gd.Effects"),"\$[*][?(@.ID=='"+effID+"')]"))]
 }]
 
 [h,MACRO("BuildEffectsFrame@Lib:pm.a5e.Core"): ""]
@@ -534,11 +541,11 @@
 
 	[h,if(json.type(onlyTarget) == "OBJECT"),CODE:{
 		[h,if(json.get(onlyTarget,"HeldBy") != ""): targetToken = json.get(onlyTarget,"HeldBy")]
-		[h,if(json.get(onlyTarget,"HeldBy") != ""): onlyTokenDisplayName = getName(targetToken)+"'s "+json.get(onlyTarget,"DisplayName")]
+		[h,if(json.get(onlyTarget,"HeldBy") != ""): onlyTokenDisplayName = if(getVisible(targetToken),getName(targetToken)+"'s "+json.get(onlyTarget,"DisplayName"),"Unknown Creature's Item")]
 		[h,if(json.get(onlyTarget,"HeldBy") != ""): BorderParentToken = json.get(onlyTarget,"HeldBy")]
 	};{
 		[h:targetToken = onlyTarget]
-		[h:onlyTokenDisplayName = getName(targetToken)]
+		[h:onlyTokenDisplayName = if(getVisible(targetToken),getName(targetToken),"Unknown Creature")]
 		[h:BorderParentToken = targetToken]
 	}]
 

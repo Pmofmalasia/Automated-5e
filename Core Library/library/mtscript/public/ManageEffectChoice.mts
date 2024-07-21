@@ -8,15 +8,15 @@
 	case 0:{
 		[h,switch(resolveHow),CODE:
 			case "NoMod":{
-				[h:jsonPATH = "[*][?(@.ID=='"+chosenEffect+"')]"]
+				[h:jsonPATH = "\$[*][?(@.ID=='"+chosenEffect+"')]"]
 				[h,MACRO("ResolveEffectsBorder@Lib:pm.a5e.Core"): json.get(json.path.read(incompleteEffects,jsonPATH),0)]
 			};
 			case "Mods":{
 				[h:broadcast("This feature does not exist yet!")]
 			};
 			case "Remove":{
-				[h:jsonPATH = "[*][?(@.ID=='"+chosenEffect+"' || @.ParentSubeffect=='"+chosenEffect+"')]"]
-				[h:setLibProperty("gd.Effects",json.path.delete(incompleteEffects,jsonPATH),"Lib:pm.a5e.Core")]
+				[h:jsonPATH = "\$[*][?(@.ID=='"+chosenEffect+"' || @.ParentSubeffect=='"+chosenEffect+"')]"]
+				[h:data.setData("addon:","pm.a5e.core","gd.Effects",json.path.delete(incompleteEffects,jsonPATH))]
 				[h,MACRO("BuildEffectsFrame@Lib:pm.a5e.Core"): ""]
 				[h:broadcast("Effect "+EffectDisplay+" removed.","gm")]
 			}
@@ -28,7 +28,7 @@
 		}]
 	};
 	case 2:{
-		[h:setLibProperty("gd.Effects","[]","Lib:pm.a5e.Core")]
+		[h:data.setData("addon:","pm.a5e.core","gd.Effects","[]")]
 		[h,MACRO("BuildEffectsFrame@Lib:pm.a5e.Core"): ""]
 	}
 ]

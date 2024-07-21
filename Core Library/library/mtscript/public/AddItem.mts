@@ -3,7 +3,7 @@
 
 [h,if(json.get(AddItemData,"Type")==""),CODE:{
 	[h:ObjectTypeMultiselection = ut.a5e.GenerateSelectionHTML(pm.a5e.GetCoreData("sb.ObjectTypes"),1,"objectTypeFilter","adjustItemTypeFilters")]
-	[h:ItemHTML = "<tr id='rowItemTypes'><th>Item Types to Select From:</th><td><div class='check-multiple' style='width:100%'>"+ObjectTypeMultiselection+"</td></tr>"]
+	[h:ItemHTML = "<tr id='rowItemTypes'><th>Item Types to Select From:</th><td><div class='check-multiple' style='width:100%'>"+ObjectTypeMultiselection+"</div></td></tr>"]
 };{
 	[h:ItemHTML = "<input type='hidden' name='TypeFilterOverride' id='TypeFilterOverride' value='"+json.get(AddItemData,"Type")+"'>"]
 }]

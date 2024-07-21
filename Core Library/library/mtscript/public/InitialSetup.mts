@@ -1,7 +1,7 @@
 [macro("ResetToDefault@Lib:pm.a5e.Core"):""]
 [macro("AddBasicMacros@Lib:pm.a5e.Core"):""]
 [h:RaceArray = pm.GetRaces()]
-[h:RaceOptions = json.path.read(RaceArray,"[*].DisplayName")]
+[h:RaceOptions = json.path.read(RaceArray,"\$[*].DisplayName")]
 
 [h:charCreationHTML = "<tr><th><label for='charName'>Character Name:</label></th><td><input type='text' id='charName' name='charName' autofocus></td></tr>
 <tr><th text-align='center' colspan='2'><label>Ability Score Selection</label></th></tr>"]
@@ -22,7 +22,9 @@
 };{
     [h:charCreationHTML = charCreationHTML + "<tr><th><label for='subraceChoice'>Subrace:</label></th><td>
     <select id='subraceChoice' name='subraceChoice'>"]
-    [h:SubraceOptions = json.path.read(SubraceArray,"[*].DisplayName")]
+	[h:subraceAddedLaterTest = json.get(json.get(RaceArray,0),"hasSubrace") == 0]
+    [h:SubraceOptions = json.path.read(SubraceArray,"\$[*].DisplayName")]
+	[h,if(subraceAddedLaterTest): charCreationHTML = charCreationHTML + "<option value='Base'>Base "+json.get(json.get(RaceArray,0),"DisplayName")+"</option>"]
     [h,foreach(tempSubrace,SubraceOptions): charCreationHTML = charCreationHTML + "<option value='"+roll.count+"'>"+tempSubrace+"</option>"]
     [h:charCreationHTML = charCreationHTML + "</select></td></tr>"]
 }]

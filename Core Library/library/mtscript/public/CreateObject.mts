@@ -19,7 +19,7 @@
 
 <tr id='rowFalseName'><th><label for='FalseName'>False Name:</label></th><td><input type='text' id='FalseName' name='FalseName'></td></tr>
 
-<tr id='rowObjectType'><th><label for='Type'>Object Type:</label></th><td><select id='Type' name='Type' onchange='createObjectSubtypeRows("+'"CreateObjectTable","Type"'+")'>"+ObjectTypeSelection+"</select></td></tr>
+<tr id='rowObjectType'><th><label for='Type'>Object Type:</label></th><td><select id='Type' name='Type' onchange='createObjectSubtypeRows("+'"CreateObjectTable"'+")'>"+ObjectTypeSelection+"</select></td></tr>
 
 <tr id='rowSize'><th><label for='Size'>Object Size:</label></th><td><select id='Size' name='Size'><option value='Diminutive'>Diminutive</option><option value='Tiny' select>Tiny</option><option value='Small'>Small</option><option value='Medium'>Medium</option><option value='Large'>Large</option><option value='Huge'>Huge</option><option value='Gargantuan'>Gargantuan</option><option value='Colossal'>Colossal</option></select></td></tr>
 
@@ -41,7 +41,7 @@
 
 <tr id='rowIsCharges'><th><label for='isCharges'>Object has Charges?</label></th><td><select id='isCharges' name='isCharges' onchange='createChargesRows("+'"CreateObjectTable"'+")'><option value='None'>None</option><option value='One'>Single Type</option><option value='Multiple'>Multiple Types</option></select></td></tr>
 
-<tr id='rowObjectDuration'><th><label for='isDuration'>Usable for Limited Time?</label></th><td><input type='checkbox' id='isDuration' name='isDuration' onchange='createDurationRows("+'"CreateObjectTable","rowIsSpellcastingFocus"'+")'><input type='hidden' id='ObjectDuration' value='Custom'></td></tr>
+<tr id='rowObjectDuration'><th><label for='isDuration'>Perishable/Usable for Limited Time?</label></th><td><input type='checkbox' id='isDuration' name='isDuration' onchange='createDurationRows("+'"CreateObjectTable","rowIsSpellcastingFocus"'+")'><input type='hidden' id='ObjectDuration' value='Custom'></td></tr>
 
 <tr id='rowIsSpellcastingFocus'><th><label for='isSpellcastingFocus'>Acts as Spellcasting Focus?</label></th><td><input type='checkbox' id='isSpellcastingFocus' name='isSpellcastingFocus' onchange='createSpellcastingFocusRows("+'"CreateObjectTable","rowIsCastSpells"'+")'></td></tr>
 
@@ -51,7 +51,7 @@
 
 <tr id='rowIsStackable'><th><label for='isStackable'>Object Stacks with Others in Inventory?</label></th><td><input type='checkbox' id='isStackable' name='isStackable'></td></tr>
 
-<tr id='rowMaterials'><th>Materials Used:</th><td><div class='check-multiple' style='width:100%'>"+ObjectMaterialMultiselection+"</div></td></tr>
+<tr id='rowMaterials'><th>Materials Used:</th><td><div class='check-multiple' style='width:100%; text-align:left'>"+ObjectMaterialMultiselection+"</div></td></tr>
 
 <tr id='rowCoating'><th><label for='Coating'>Object Coating:</label></th><td><select id='Coating' name='Coating'><option value=''>None</option>"+ObjectMaterialSelection+"</select></td></tr>
 
@@ -67,7 +67,7 @@
 
 <tr id='rowIsMagnetic'><th><label for='isMagnetic'>Object is Magnetic:</label></th><td><input type='checkbox' id='isMagnetic' name='isMagnetic'></td></tr>
 
-<tr id='rowObjectTags'><th>General Object Tags:</th><td><div class='check-multiple' style='width:100%'>"+ObjectMaterialTagMultiselection+"</div></td></tr>
+<tr id='rowObjectTags'><th>General Object Tags:</th><td><div class='check-multiple' style='width:100%; text-align:left'>"+ObjectMaterialTagMultiselection+"</div></td></tr>
 
 <tr id='rowHasPassiveEffects'><th><label for='HasPassiveEffects'>Object Has Passive Effects:</label></th><td><input type='checkbox' id='HasPassiveEffects' name='HasPassiveEffects'></td></tr>
 
@@ -75,8 +75,8 @@
 
 <tr id='rowSourcebook'><th><label for='Library'>Object Sourcebook:</label></th><td><select id='Library' name='Library'>"+sourcebookOptions+"</select></td></tr>
 
-<tr id='rowDescription'><th text-align='center' colspan='2'><label for='Description'>Full Item Description:</label></th colspan='2'></th></tr><tr id='rowItemTextArea'><th><textarea id='Description' name='Description' rows='10' style='width:155%'></textarea></th>
+<tr id='rowDescription'><th style='text-align:center' colspan='2'><label for='Description'>Full Item Description:</label></th></tr><tr id='rowItemTextArea'><th style='text-align:center' colspan='2'><textarea id='Description' name='Description' rows='10' style='width:100%'></textarea></th>
 
-<tr><th text-align='center' colspan='2'><input type='submit' class='theme-fix-submit' id='submitButton' value='Submit'></th></tr>"]
+<tr><th style='text-align:center' colspan='2'><input type='submit' class='theme-fix-submit' id='submitButton' value='Submit'></th></tr>"]
 
 [h:html.dialog5("ObjectCreation","lib://pm.a5e.core/CreateObject.html?cachelib=false","value="+base64.encode(ObjectHTML)+"; closebutton=0; height=800; width=600")]

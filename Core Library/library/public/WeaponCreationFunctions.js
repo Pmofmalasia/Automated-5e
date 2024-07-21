@@ -54,14 +54,13 @@ async function createWeaponTableRows(tableID,startRowID){
 	addTableRow(tableID,nextRowIndex,"rowWeaponProperties","<th>Weapon Properties:</th><td><div class='check-multiple' style='width:100%'>"+WeaponPropertyOptions+"</div></td>");
 	nextRowIndex++;
 
-	addTableRow(tableID,nextRowIndex,"rowWeaponDamageHeader","<th text-align='center' colspan='2'>Weapon Damage:<input type='hidden' id='WeaponDamageInstanceNumber' name='WeaponDamageInstanceNumber' value=0></th>");
+	addTableRow(tableID,nextRowIndex,"rowWeaponDamageHeader","<th style='text-align:center' colspan='2'>Weapon Damage:<input type='hidden' id='WeaponDamageInstanceNumber' name='WeaponDamageInstanceNumber' value=0></th>");
 	nextRowIndex++;
+
+	addTableRow(tableID,nextRowIndex,"rowWeaponDamageInstanceButtons","<th style='text-align:center' colspan='2'><input type='button' id='addDamageType' name='addDamageType' value='Add Type' onclick='addDamageTypeRows("+'"'+tableID+'","Weapon"'+")'>  <input type='button' id='removeDamageType' name='removeDamageType' value='Remove Type' onclick='removeDamageTypeRows("+'"Weapon"'+")'></th>");
 
 	await addDamageTypeRows(tableID,"Weapon");
-	nextRowIndex++;
-
-	addTableRow(tableID,nextRowIndex,"rowWeaponAddDamageInstanceButtons","<th text-align='center' colspan='2'><input type='button' id='addDamageType' name='addDamageType' value='Add Type' onclick='addDamageTypeRows("+'"'+tableID+'","Weapon"'+")'>  <input type='button' id='removeDamageType' name='removeDamageType' value='Remove Type' onclick='removeDamageTypeRows("+'"'+tableID+'","Weapon"'+")'></th>");
-	nextRowIndex++;
+	nextRowIndex = document.getElementById("rowWeaponDamageInstanceButtons").rowIndex + 1;
 
 	addTableRow(tableID,nextRowIndex,"rowMagicBonus","<th><label for='MagicBonus'>Magic Bonus:</label></th><td>+ <input type='number' id='MagicBonus' name='MagicBonus' value='0' style='width:25px' onchange='MagicBonusChanges()'></td>");
 	nextRowIndex++;
@@ -84,11 +83,12 @@ async function createWeaponTableRows(tableID,startRowID){
 }
 
 async function createWeaponTypeRows(tableID){
-	let nextRowIndex = document.getElementById("rowWeaponType").rowIndex + 1;
+	let referenceRow = document.getElementById("rowWeaponType");
+	let nextRowIndex = referenceRow.rowIndex + 1;
 
 	if(document.getElementById("WeaponType").value == "@@NewType"){
 		//In GeneralCreateObjectFunctions
-		createNewTemplateRows(tableID,nextRowIndex,"Weapon");
+		createNewTemplateRows(referenceRow,"Weapon");
 	}
 	else{
 		clearUnusedTable(tableID,"rowWeaponType","rowWeaponClass");
@@ -117,9 +117,22 @@ async function createWeaponTypeRows(tableID){
 
 		if(WeaponTypeData.WeaponClass != null){document.getElementById("WeaponClass").value = WeaponTypeData.WeaponClass;}
 
+		let requestWeaponTagsData = await fetch("macro:pm.a5e.GetCoreData@lib:pm.a5e.Core", {method: "POST", body: "['sb.WeaponTags']"});
+		let allWeaponTags = await requestWeaponTagsData.json();
 		if(WeaponTypeData.WeaponTags != null){
-			for(let tempTag of WeaponTypeData.WeaponTags){
-				document.getElementById("weaponTag"+tempTag).setAttribute("checked","");
+			for(let tempTag of allWeaponTags){
+				let thisWeaponTag = tempTag.Name;
+				if(WeaponTypeData.WeaponTags.includes(thisWeaponTag)){
+					document.getElementById("weaponTag"+thisWeaponTag).setAttribute("checked","");
+				}
+				else{
+					document.getElementById("weaponTag"+thisWeaponTag).removeAttribute("checked","");
+				}
+			}
+		}
+		else{
+			for(let tempTag of allWeaponTags){
+				document.getElementById("weaponTag"+tempTag.Name).removeAttribute("checked","");
 			}
 		}
 
@@ -128,8 +141,8 @@ async function createWeaponTypeRows(tableID){
 			document.getElementById("WeaponMeleeRanged").dispatchEvent(new Event('change'));
 		}
 
+		clearUnusedTable(tableID,"rowWeaponDamageHeader","rowWeaponDamageInstanceButtons");
 		if(WeaponTypeData.WeaponDamage != null){
-			clearUnusedTable(tableID,"rowWeaponDamageHeader","rowWeaponAddDamageInstanceButtons");
 			document.getElementById("WeaponDamageInstanceNumber").value = 0;
 			let i = 0;
 
@@ -143,10 +156,61 @@ async function createWeaponTypeRows(tableID){
 				i++;
 			}
 		}
-//TODO: Currently only selects weapon properties and does not set the values for any selections, will need to add
+
+		let requestWeaponPropertiesData = await fetch("macro:pm.a5e.GetCoreData@lib:pm.a5e.Core", {method: "POST", body: "['sb.WeaponProperties']"});
+		let allWeaponProperties = await requestWeaponPropertiesData.json();
 		if(WeaponTypeData.WeaponProperties != null){
-			for(let tempProperty of WeaponTypeData.WeaponProperties){
-				document.getElementById("weaponProperty"+tempProperty).setAttribute("checked","");
+			for(let tempPropertyData of allWeaponProperties){
+				let tempProperty = tempPropertyData.Name;
+				if(WeaponTypeData.WeaponProperties.includes(tempProperty)){
+					document.getElementById("weaponProperty"+tempProperty).setAttribute("checked","");
+					await createWeaponPropertyRows(tempProperty,tableID);
+
+					if(tempProperty == "Versatile"){
+						//Remove automatically created rows
+						clearUnusedTable(tableID,"rowVersatileDamageHeader","rowVersatileDamageInstanceButtons");
+						document.getElementById("VersatileDamageInstanceNumber").value = 0;
+						let i = 0;
+						for(let tempInstance of WeaponTypeData.VersatileDamage){
+							await addDamageTypeRows(tableID,"Versatile");
+							document.getElementById("VersatileDamageType"+i).value = tempInstance.DamageType;
+							document.getElementById("VersatileDamageDieNumber"+i).value = tempInstance.DamageDieNumber;
+							document.getElementById("VersatileDamageDieSize"+i).value = tempInstance.DamageDieSize;
+							document.getElementById("VersatileDamageBonus"+i).value = tempInstance.DamageFlatBonus;
+							document.getElementById("VersatileAddDmgMod"+i).value = tempInstance.IsModBonus;
+							i++;
+						}
+					}
+					else if(tempProperty == "Ammunition"){
+						let request = await fetch("macro:pm.a5e.GetCoreData@lib:pm.a5e.Core", {method: "POST", body: "['sb.AmmunitionTypes','Name','json']"});
+						let allAmmunitionTypes = await request.json();
+
+						for(let ammoType of allAmmunitionTypes){
+							if(typeof WeaponTypeData.CompatibleAmmunition != "object"){
+								document.getElementById("validWeaponAmmunition"+ammoType).removeAttribute("checked","");
+							}
+							else{
+								if(WeaponTypeData.CompatibleAmmunition.includes(ammoType)){
+									document.getElementById("validWeaponAmmunition"+ammoType).setAttribute("checked","");
+								}
+								else{
+									document.getElementById("validWeaponAmmunition"+ammoType).removeAttribute("checked","");
+								}								
+							}
+
+						}
+					}		
+				}
+				else{
+					document.getElementById("weaponProperty"+tempProperty).removeAttribute("checked","");
+					document.getElementById("weaponProperty"+tempProperty).dispatchEvent(new Event('change'));
+				}
+			}
+		}
+		else{
+			for(let tempPropertyData of allWeaponProperties){
+				let tempProperty = tempPropertyData.Name;
+				document.getElementById("weaponProperty"+tempProperty).removeAttribute("checked","");
 				document.getElementById("weaponProperty"+tempProperty).dispatchEvent(new Event('change'));
 			}
 		}
@@ -160,6 +224,9 @@ async function createWeaponTypeRows(tableID){
 		if(WeaponTypeData.MagicBonus != null){
 			document.getElementById("MagicBonus").value = WeaponTypeData.MagicBonus;
 		}
+		else{
+			document.getElementById("MagicBonus").value = 0;
+		}
 
 		if(WeaponTypeData.CritThresh != null){
 			document.getElementById("WeaponCritThresh").value = WeaponTypeData.CritThresh;
@@ -170,47 +237,38 @@ async function createWeaponTypeRows(tableID){
 			document.getElementById("WeaponCritThresh").value = WeaponTypeData.CritThreshReduction;
 			document.getElementById("WeaponCritThreshMethod").value = "Reduce";
 		}
+		
+		if(WeaponTypeData.CritThreshReduction == null && WeaponTypeData.CritThreshReduction == null){
+			document.getElementById("WeaponCritThresh").value = 0;
+			document.getElementById("WeaponCritThreshMethod").value = "Set";
+		}
 
-		updateWithTemplateData(tableID,WeaponTypeData);
+		updateGenericObjectTemplate(WeaponTypeData);
 	}
 }
 
 async function addDamageTypeRows(tableID,rowPrefix){
 	let currentInstanceNumber = Number(document.getElementById(rowPrefix+"DamageInstanceNumber").value);
-	let nextRowIndex = document.getElementById("row"+rowPrefix+"DamageHeader").rowIndex + 1 + currentInstanceNumber;
+	let endRow = document.getElementById("row"+rowPrefix+"DamageInstanceButtons");
 
 	let requestDamageData = await fetch("macro:pm.GetDamageTypes@lib:pm.a5e.Core", {method: "POST", body: ""});
-	let allDamageData = JSON.stringify(await requestDamageData.json());
-	let requestDamageHTML = await fetch("macro:ut.a5e.GenerateSelectionHTML@lib:pm.a5e.Core", {method: "POST", body: "["+allDamageData+"]"});
-	let DamageTypeOptions = await requestDamageHTML.text();
+	let allDamageData = await requestDamageData.json();
+	let DamageTypeOptions = createHTMLSelectOptions(allDamageData);
 
-	addTableRow(tableID,nextRowIndex,"row"+rowPrefix+"Damage"+currentInstanceNumber,"<th text-align='center' colspan='2'><input type='number' id='"+rowPrefix+"DamageDieNumber"+currentInstanceNumber+"' name='"+rowPrefix+"DamageDieNumber"+currentInstanceNumber+"' min=0 value=1 style='width:25px'> d <input type='number' id='"+rowPrefix+"DamageDieSize"+currentInstanceNumber+"' name='"+rowPrefix+"DamageDieSize"+currentInstanceNumber+"' min=0 value=6 style='width:25px'> + <input type='number' id='"+rowPrefix+"DamageBonus"+currentInstanceNumber+"' name='"+rowPrefix+"DamageBonus"+currentInstanceNumber+"' value=0 style='width:25px'> + <select id='"+rowPrefix+"AddDmgMod"+currentInstanceNumber+"' name='"+rowPrefix+"AddDmgMod"+currentInstanceNumber+"'><option value=1>Modifier</option><option value=0>No Modifier</option></select><select id='"+rowPrefix+"DamageType"+currentInstanceNumber+"' name='"+rowPrefix+"DamageType"+currentInstanceNumber+"'>"+DamageTypeOptions+"</select></th>");
-	nextRowIndex++;
-
-	if(rowPrefix=="Weapon" && document.getElementById("weaponPropertyVersatile") != null){
-		if(document.getElementById("weaponPropertyVersatile").checked){
-			addDamageTypeRows(tableID,"Versatile");
-		}
-	}
+	addTableRow(tableID,endRow.rowIndex,"row"+rowPrefix+"Damage"+currentInstanceNumber,"<th style='text-align:center' colspan='2'><input type='number' id='"+rowPrefix+"DamageDieNumber"+currentInstanceNumber+"' name='"+rowPrefix+"DamageDieNumber"+currentInstanceNumber+"' min=0 value=1 style='width:25px'> d <input type='number' id='"+rowPrefix+"DamageDieSize"+currentInstanceNumber+"' name='"+rowPrefix+"DamageDieSize"+currentInstanceNumber+"' min=0 value=6 style='width:25px'> + <input type='number' id='"+rowPrefix+"DamageBonus"+currentInstanceNumber+"' name='"+rowPrefix+"DamageBonus"+currentInstanceNumber+"' value=0 style='width:25px'> + <select id='"+rowPrefix+"AddDmgMod"+currentInstanceNumber+"' name='"+rowPrefix+"AddDmgMod"+currentInstanceNumber+"'><option value=1>Modifier</option><option value=0>No Modifier</option></select><select id='"+rowPrefix+"DamageType"+currentInstanceNumber+"' name='"+rowPrefix+"DamageType"+currentInstanceNumber+"'>"+DamageTypeOptions+"</select></th>");
 
 	currentInstanceNumber++;
 	document.getElementById(rowPrefix+"DamageInstanceNumber").value = currentInstanceNumber;
 }
 
-function removeDamageTypeRows(tableID,rowPrefix){
+function removeDamageTypeRows(rowPrefix){
 	let currentInstanceNumber = document.getElementById(rowPrefix+"DamageInstanceNumber").value;
 	currentInstanceNumber--;
 	document.getElementById(rowPrefix+"DamageInstanceNumber").value = currentInstanceNumber;
 
-	let table = document.getElementById(tableID);
-	let currentInstanceRowIndex = document.getElementById("row"+rowPrefix+"Damage"+currentInstanceNumber).rowIndex;
-
-	table.deleteRow(currentInstanceRowIndex);
-
-	if(rowPrefix=="Weapon" && document.getElementById("weaponPropertyVersatile") != null){
-		if(document.getElementById("weaponPropertyVersatile").checked){
-			removeDamageTypeRows(tableID,"Versatile");
-		}
+	let endRow = document.getElementById("row"+rowPrefix+"DamageInstanceButtons");
+	if(endRow.previousElementSibling.id != "row"+rowPrefix+"DamageHeader"){
+		endRow.previousElementSibling.remove();
 	}
 }
 
@@ -250,34 +308,41 @@ async function createWeaponPropertyRows(toggledProperty,tableID){
 	let table = document.getElementById(tableID);
 
 	if(toggledProperty == "Ammunition"){
-		let request = await fetch("macro:pm.a5e.GetCoreData@lib:pm.a5e.Core", {method: "POST", body: "['sb.AmmunitionTypes']"});
-		let allAmmunitionTypes = await request.json();
-
-		let WeaponAmmunitionTypeOptions = createHTMLMultiselectOptions(allAmmunitionTypes,"validWeaponAmmunition");
-
-		if(document.getElementById("weaponProperty"+toggledProperty).checked){
+		if(!document.getElementById("weaponProperty"+toggledProperty).checked){
+			table.deleteRow(document.getElementById("rowWeaponUsableAmmunition").rowIndex);
+		}
+		else if(document.getElementById("rowWeaponUsableAmmunition") == null){
+			let request = await fetch("macro:pm.a5e.GetCoreData@lib:pm.a5e.Core", {method: "POST", body: "['sb.AmmunitionTypes']"});
+			let allAmmunitionTypes = await request.json();
+	
+			let WeaponAmmunitionTypeOptions = createHTMLMultiselectOptions(allAmmunitionTypes,"validWeaponAmmunition");
+	
 			addTableRow(tableID,nextRowIndex,"rowWeaponUsableAmmunition","<th>Usable Ammunition:</th><td><div class='check-multiple' style='width:100%'>"+WeaponAmmunitionTypeOptions+"</div></td>");
 			nextRowIndex++;
 		}
-		else{
-			table.deleteRow(document.getElementById("rowWeaponUsableAmmunition").rowIndex);
-		}
 	}
 	else if(toggledProperty == "Thrown"){
-		if(document.getElementById("weaponProperty"+toggledProperty).checked){
-			createWeaponRangeReachRows(tableID,"rowWeaponProperties");
-		}
-		else{
+		if(!document.getElementById("weaponProperty"+toggledProperty).checked){
 			table.deleteRow(document.getElementById("rowWeaponThrownRange").rowIndex);
+		}
+		else if(document.getElementById("rowWeaponThrownRange") == null){
+			createWeaponRangeReachRows(tableID,"rowWeaponProperties");
 		}
 	}
 	else if(toggledProperty == "Versatile"){
-		nextRowIndex = document.getElementById("rowWeaponAddDamageInstanceButtons").rowIndex + 1;
-		if(document.getElementById("weaponProperty"+toggledProperty).checked){
+		endRow = document.getElementById("rowWeaponDamageInstanceButtons").nextElementSibling;
+		if(!document.getElementById("weaponProperty"+toggledProperty).checked){
+			clearUnusedTable(tableID,"rowWeaponDamageInstanceButtons",document.getElementById("rowVersatileDamageInstanceButtons").nextElementSibling.id);
+		}
+		else if(document.getElementById("rowVersatileDamageHeader") == null){
 			let weaponDamageInstanceNumber = Number(document.getElementById("WeaponDamageInstanceNumber").value);
-			addTableRow(tableID,nextRowIndex,"rowVersatileDamageHeader","<th text-align='center' colspan='2'>Versatile Damage:<input type='hidden' id='VersatileDamageInstanceNumber' name='VersatileDamageInstanceNumber' value=0></th>");
+			addTableRow(tableID,endRow.rowIndex,"rowVersatileDamageHeader","<th style='text-align:center' colspan='2'>Versatile Damage:<input type='hidden' id='VersatileDamageInstanceNumber' name='VersatileDamageInstanceNumber' value=0></th>");
 			nextRowIndex++;
 
+			addTableRow(tableID,endRow.rowIndex,"rowVersatileDamageInstanceButtons","<th style='text-align:center' colspan='2'><input type='button' id='addDamageType' name='addDamageType' value='Add Type' onclick='addDamageTypeRows("+'"'+tableID+'","Versatile"'+")'>  <input type='button' id='removeDamageType' name='removeDamageType' value='Remove Type' onclick='removeDamageTypeRows("+'"Versatile"'+")'></th>");
+			nextRowIndex++;
+
+			//Sets default values and number of instances equal to main damage dice, for convenience
 			for(let i = 0; i < weaponDamageInstanceNumber; i++){
 				await addDamageTypeRows(tableID,"Versatile");
 				nextRowIndex++;
@@ -288,12 +353,6 @@ async function createWeaponPropertyRows(toggledProperty,tableID){
 				document.getElementById("VersatileAddDmgMod"+i).value = document.getElementById("WeaponAddDmgMod"+i).value;
 				document.getElementById("VersatileDamageType"+i).value = document.getElementById("WeaponDamageType"+i).value;
 			}
-
-			addTableRow(tableID,nextRowIndex,"rowVersatileAddDamageInstanceButtons","<th text-align='center' colspan='2'><input type='button' id='addDamageType' name='addDamageType' value='Add Type' onclick='addDamageTypeRows("+'"'+tableID+'","Versatile"'+")'>  <input type='button' id='removeDamageType' name='removeDamageType' value='Remove Type' onclick='removeDamageTypeRows("+'"'+tableID+'","Versatile"'+")'></th>");
-			nextRowIndex++;
-		}
-		else{
-			clearUnusedTable(tableID,"rowWeaponAddDamageInstanceButtons","rowMagicBonus")
 		}
 	}
 }

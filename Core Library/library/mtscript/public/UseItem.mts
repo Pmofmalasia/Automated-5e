@@ -3,11 +3,17 @@
 [h:ParentToken = json.get(UseItemData,"ParentToken")]
 [h:EffectsNumber = json.length(ItemEffects)]
 [h:switchToken(ParentToken)]
+[h:allItemData = json.path.read(getProperty("a5e.stat.Inventory"),"\$[*][?(@.ItemID == '"+json.get(UseItemData,"ItemID")+"')]")]
+[h:assert(!json.isEmpty(allItemData),"This item is no longer in the inventory!")]
+[h:thisItemData = json.set(json.get(allItemData,0),
+	"ParentToken",ParentToken,
+	"IsTooltip",json.get(UseItemData,"IsTooltip")
+)]
 
 [h,if(EffectsNumber==1),CODE:{
 	[h:ChosenEffect = json.get(ItemEffects,0)]
 };{
-	[h,switch(json.get(UseItemData,"EffectChoiceMethod")),CODE:
+	[h,switch(json.get(thisItemData,"EffectChoiceMethod")),CODE:
 		case "Random":{
 			[h:ChosenEffectIndex = eval("1d"+EffectsNumber) - 1]
 			[h:ChosenEffect = json.get(ItemEffects,ChosenEffectIndex)]
@@ -25,12 +31,12 @@
 
 		};
 		case "ItemActivationState":{
-			[h:ItemEffects = json.path.read(ItemEffects,"\$[*][?(@.ValidActivationState == '"+json.get(UseItemData,"IsActive")+"')]")]
+			[h:ItemEffects = json.path.read(ItemEffects,"\$[*][?(@.ValidActivationState == '"+json.get(thisItemData,"IsActive")+"')]")]
 		};
 		default: {}
 	]
 
-	[h,if(json.get(UseItemData,"EffectChoiceMethod") != "Random"),CODE:{
+	[h,if(json.get(thisItemData,"EffectChoiceMethod") != "Random"),CODE:{
 		[h:EffectOptions = ""]
 		[h,foreach(tempEffect,ItemEffects): EffectOptions = json.append(EffectOptions,json.get(tempEffect,"DisplayName"))]
 		[h,if(EffectOptions == ""): assert(0,"There are no usable item effects!")]
@@ -44,12 +50,12 @@
 	};{}]
 }]
 
-[h,MACRO("ExecuteEffectBorder@Lib:pm.a5e.Core"): json.set(UseItemData,"Effect",ChosenEffect)]
+[h,MACRO("ExecuteEffectBorder@Lib:pm.a5e.Core"): json.set(thisItemData,"Effect",ChosenEffect)]
 
-[h,if(json.get(UseItemData,"isConsumable")),CODE:{
+[h,if(json.get(thisItemData,"isConsumable")),CODE:{
 	[h:AmountConsumed = 1]
-	[h:ItemID = json.get(UseItemData,"ItemID")]
-	[h:NewNumber = json.get(UseItemData,"Number") - AmountConsumed]
+	[h:ItemID = json.get(thisItemData,"ItemID")]
+	[h:NewNumber = json.get(thisItemData,"Number") - AmountConsumed]
 
 	[h,if(NewNumber == 0),CODE:{
 		[h,MACRO("DropItem@Lib:pm.a5e.Core"): json.set("",
@@ -64,10 +70,10 @@
 		[h:setProperty("a5e.stat.Inventory",NewInventory)]		
 	}]
 
-	[h,if(json.get(UseItemData,"ContainerLeftBehind") != ""),CODE:{
+	[h,if(json.get(thisItemData,"ContainerLeftBehind") != ""),CODE:{
 		[h,MACRO("AddItemProcessing@Lib:pm.a5e.Core"): json.set("",
-			"ParentToken",json.get(UseItemData,"ParentToken"),
-			"ItemChoice",json.get(UseItemData,"ContainerLeftBehind"),
+			"ParentToken",json.get(thisItemData,"ParentToken"),
+			"ItemChoice",json.get(thisItemData,"ContainerLeftBehind"),
 			"NumberAdded",AmountConsumed
 		)]
 	}]
@@ -76,4 +82,4 @@
 [h:"<!-- TODO: Add method for comparing returned and prior inventory in js, then update the changed rows (and add new row for new items) -->"]
 [h:return(0,getProperty("a5e.stat.Inventory"))]
 
-[h,MACRO("ShowInventory@Lib:pm.a5e.Core"): json.set("","ParentToken",json.get(UseItemData,"ParentToken"))]
+[h,MACRO("ShowInventory@Lib:pm.a5e.Core"): json.set("","ParentToken",json.get(thisItemData,"ParentToken"))]

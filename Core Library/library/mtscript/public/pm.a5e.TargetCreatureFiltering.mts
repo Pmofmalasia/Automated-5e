@@ -77,7 +77,7 @@
 	[h:"<!-- TODO: Move the CanSeeTest to targeting functions unless sight is required, because it shouldn't prevent valid unseen targets from being on the list for AoEs and similar effects which do not have to worry about players seeing the targets in an input -->"]
 	[h:AmountTargetIsVisible = canSeeToken(target,pm.TargetOrigin)]
 	[h:CanSeeTest = !json.isEmpty(AmountTargetIsVisible)]
-	[h,if(CanSeeTest && isTargetValid): pm.ValidTargets = json.append(pm.ValidTargets,target)]
+	[h,if(isTargetValid): pm.ValidTargets = json.append(pm.ValidTargets,target)]
 }]
 
 [h:macro.return = json.set("","ValidTargets",pm.ValidTargets,"SelfOnly",0)]

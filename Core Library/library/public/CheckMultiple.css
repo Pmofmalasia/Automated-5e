@@ -3,6 +3,7 @@
   height: 60px;
   overflow-y: scroll;
   border: 1px solid gray;
+  text-align: left;
 }
 .check-multiple input {
   display: none;

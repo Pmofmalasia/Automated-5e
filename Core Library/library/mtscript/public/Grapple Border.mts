@@ -21,7 +21,7 @@
 
 [h,MACRO("Build Effect@Lib:pm.a5e.Core"): json.set("","CurrentEffects",pm.a5e.EffectData,"ToMerge",effectsToMerge,"BaseEffect",pm.a5e.BaseEffectData)]
 [h:pm.a5e.EffectData = macro.return]
-[h,if(!json.isEmpty(pm.a5e.EffectData)): setLibProperty("gd.Effects",json.merge(data.getData("addon:","pm.a5e.core","gd.Effects"),pm.a5e.EffectData),"Lib:pm.a5e.Core")]
+[h,if(!json.isEmpty(pm.a5e.EffectData)): data.setData("addon:","pm.a5e.core","gd.Effects",json.merge(data.getData("addon:","pm.a5e.core","gd.Effects"),pm.a5e.EffectData))]
 [h,MACRO("BuildEffectsFrame@Lib:pm.a5e.Core"): ""]
 
 [h:BorderData = json.set("",

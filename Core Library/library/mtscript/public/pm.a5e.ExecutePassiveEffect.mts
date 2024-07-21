@@ -25,8 +25,22 @@
 
 [h,switch(execPassiveContext),CODE:
 	case "Lights":{
-		[h:allAddableLights = json.path.read(initialPassiveAbilityInfo,"\$.PassiveEffects.Effects")]
-		[h:pass.a5e.ExecutePassiveLights(execPassiveAbilityInfo,allAddableLights)]
+		[h:pass.a5e.Lights(execPassiveAbilityInfo)]
+	};
+	case "Vision":{
+		[h:pass.a5e.VisionBonus(execPassiveAbilityInfo,json.get(execPassiveAbilityInfo,"CallVision"))]
+	};
+	case "Speed":{
+		[h:pass.a5e.SpeedBonus(execPassiveAbilityInfo,json.get(execPassiveAbilityInfo,"CallSpeed"))]
+	};
+	case "Lifespan":{
+		[h:pass.a5e.LifespanBonus(execPassiveAbilityInfo,json.get(execPassiveAbilityInfo,"CallLifespan"))]
+	};
+	case "DamageMod":{
+		[h:pass.a5e.DamageModifiers(execPassiveAbilityInfo)]
+	};
+	case "CondImmun":{
+		[h:pass.a5e.ConditionImmunities(execPassiveAbilityInfo)]
 	};
 	default:{}
 ]

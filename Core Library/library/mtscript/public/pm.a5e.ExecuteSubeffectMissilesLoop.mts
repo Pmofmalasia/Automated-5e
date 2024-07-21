@@ -191,7 +191,17 @@
 	}]
 
 	[h:subeffect.Conditions = pm.a5e.ChooseCondition(json.get(tempConditionInfo,"Conditions"),subeffect.ConditionChoiceNumber)]
-	[h:subeffect.Conditions = json.path.set(subeffect.Conditions,"\$[*][?(@.HasTiers == 1)]['Level']",AHLTier + 1)]
+
+	[h,if(json.contains(tempConditionInfo,"Tier")),CODE:{
+		[h:conditionTierData = json.get(tempConditionInfo,"Tier")]
+		[h:baseConditionTier = json.get(conditionTierData,"Tier")]
+		[h:conditionAHLTier = json.get(conditionTierData,"AHL")]
+		[h:conditionAHLTierScaling = json.get(conditionTierData,"AHLScaling")]
+
+		[h:finalConditionTier = baseConditionTier + (conditionAHLTier * floor(AHLTier/conditionAHLTierScaling))]
+		[h:subeffect.Conditions = json.path.set(subeffect.Conditions,"\$[*][?(@.HasTiers == 1)]['Level']",finalConditionTier)]
+	};{}]
+	
 
 	[h:subeffect.ConditionEndInfo = json.get(tempConditionInfo,"EndInfo")]
 	[h,if(json.get(subeffect.ConditionEndInfo,"UseMainDuration") == 1): subeffect.ConditionEndInfo = json.set(subeffect.ConditionEndInfo,"Duration",DurationValue,"DurationUnits",lower(DurationUnits))]
@@ -209,11 +219,13 @@
 	
 	[h,if(hasSaveDCTest): subeffect.ConditionEndInfo = json.path.put(subeffect.ConditionEndInfo,"\$['EndTriggers'][*][?(@.SaveType!=null)]","DC",subeffect.SaveDC)]
 
-	[h:"<!-- TODO: Fix to allow selection of AdvancePoint manually; Temporary solution for now -->"]
-	[h,if(json.get(subeffect.ConditionEndInfo,"DurationUnits")=="round"):
-		subeffect.ConditionEndInfo = json.set(subeffect.ConditionEndInfo,"AdvancePoint","StartofTurn");
-		subeffect.ConditionEndInfo = json.set(subeffect.ConditionEndInfo,"AdvancePoint","EndofTurn")
-	]
+	[h,if(json.get(subeffect.ConditionEndInfo,"AdvancePoint") == ""),CODE:{
+		[h:"<!-- Leftover code from when I was dumb and didn't put AdvancePoint in the input for some reason. Can be removed if/when features are updated to all include an AdvancePoint. -->"]
+		[h,if(json.get(subeffect.ConditionEndInfo,"DurationUnits")=="round"):
+			subeffect.ConditionEndInfo = json.set(subeffect.ConditionEndInfo,"AdvancePoint","StartofTurn");
+			subeffect.ConditionEndInfo = json.set(subeffect.ConditionEndInfo,"AdvancePoint","EndofTurn")
+		]
+	};{}]
 
 	[h:"<!-- TODO: Add in any modification needed to be done to aura range/valid targets/etc. here -->"]
 	[h:subeffect.AuraInfo = json.get(tempConditionInfo,"Aura")]
@@ -250,57 +262,10 @@
 };{}]
 
 [h,if(json.contains(SubeffectData,"Summon")),CODE:{
-	[h:subeffect.SummonData = json.get(SubeffectData,"Summon")]
-	
-	[h:subeffect.SummonCRMax = json.get(subeffect.SummonData,"SummonCRMax")]
-	[h:subeffect.SummonCRMaxAHLScaling = json.get(subeffect.SummonData,"SummonCRMaxAHLScaling")]
-	[h,if(subeffect.SummonCRMaxAHLScaling==""): subeffect.SummonCRMaxAHLScaling = 0]
+	[h:SummonData = pm.a5e.ExecuteSummon(json.get(SubeffectData,"Summon"),json.set("","AHLTier",AHLTier,"ParentToken",ParentToken))]
 
-	[h,if(subeffect.SummonCRMaxAHLScaling > 0),CODE:{
-		[h:subeffect.SummonCRMaxAHL = json.get(subeffect.SummonData,"SummonCRMaxAHL")]
-		[h:subeffect.SummonCRMaxAHLScalingMethod = json.get(subeffect.SummonData,"SummonCRMaxAHLScalingMethod")]
-		[h,if(subeffect.SummonCRMaxAHLScalingMethod=="Add"):
-			subeffect.SummonCRMax = subeffect.SummonCRMax + (subeffect.SummonCRMaxAHL * floor(AHLTier/subeffect.SummonCRMaxAHLScaling));
-			subeffect.SummonCRMax = subeffect.SummonCRMax * (subeffect.SummonCRMaxAHL + floor(AHLTier/subeffect.SummonCRMaxAHLScaling))
-		]
-	}]
-	
-	[h:subeffect.SummonNumber = json.get(subeffect.SummonData,"SummonNumber")]
-	[h:subeffect.SummonNumberAHLScaling = json.get(subeffect.SummonData,"SummonNumberAHLScaling")]
-	[h,if(subeffect.SummonNumberAHLScaling==""): subeffect.SummonNumberAHLScaling = 0]
-	[h:subeffect.SummonNumberMultiplierAHL = 1]
-	[h:subeffect.SummonNumberBonusAHL = 0]
-
-	[h,if(subeffect.SummonNumberAHLScaling > 0),CODE:{
-		[h:subeffect.SummonNumberAHL = json.get(subeffect.SummonData,"SummonNumberAHL")]
-		[h:subeffect.SummonNumberAHLScalingMethod = json.get(subeffect.SummonData,"SummonNumberAHLScalingMethod")]
-
-		[h,if(subeffect.SummonNumberAHLScalingMethod=="Add"):
-			subeffect.SummonNumberBonusAHL = subeffect.SummonNumberAHL * floor(AHLTier/subeffect.SummonNumberAHLScaling);
-			subeffect.SummonNumberMultiplierAHL = subeffect.SummonNumberAHL + floor(AHLTier/subeffect.SummonNumberAHLScaling)
-		]
-	}]
-
-	[h:subeffect.SummonData = json.set("",
-		"SummonName",json.get(subeffect.SummonData,"SummonName"),
-		"SummonOptions",json.get(subeffect.SummonData,"SummonOptions"),
-		"SummonCRMax",subeffect.SummonCRMax,
-		"SummonNumberCRBased",json.get(subeffect.SummonData,"SummonNumberCRBased"),
-		"SummonNumber",json.get(subeffect.SummonData,"SummonNumber"),
-		"SummonNumberMultiplier",subeffect.SummonNumberMultiplierAHL,
-		"SummonNumberBonus",subeffect.SummonNumberBonusAHL,
-		"SummonCreatureType",json.get(subeffect.SummonData,"SummonCreatureType"),
-		"ParentToken",ParentToken
-	)]
-
-	[h:SummonCustomization = json.set("",
-		"ForcedName",ForcedSummonName,
-		"ForcedImage",ForcedImage,
-		"ForcedPortrait",ForcedPortrait,
-		"ForcedHandout",ForcedHandout
-	)]
-	
-	[h:pm.Summons(subeffect.SummonData,SummonCustomization)]
+	[h:thisEffectData = json.set(thisEffectData,"Summon",json.get(SummonData,"Summon"))]
+	[h:abilityTable = json.merge(abilityTable,json.get(SummonData,"Table"))]
 }]
 
 [h,if(json.contains(SubeffectData,"Movement")),CODE:{

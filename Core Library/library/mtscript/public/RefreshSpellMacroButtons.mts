@@ -8,6 +8,14 @@
 [h,if(OldSpells==""): OldSpells = "[]"]
 [h,if(MagicSource==""): MagicSource = "Arcane"]
 
+[h:SpellPreparationIndex = getMacroIndexes("Spell Preparation","json")]
+[h,if(json.isEmpty(SpellPreparationIndex)),CODE:{
+	[h:macroGroup = "02. Spells"]
+};{
+	[h:SpellPreparationMacroData = getMacroProps(json.get(SpellPreparationIndex,0),"json")]
+	[h:macroGroup = json.get(SpellPreparationMacroData,"group")]
+}]
+
 [h,foreach(tempSpell,NewSpells),CODE:{
 	[h:SpellData = pm.a5e.GetSpecificSpell(tempSpell)]
 
@@ -94,7 +102,7 @@
 		"fontColor",TextColor,
 		"fontSize","1.00em",
 		"includeLabel",0,
-		"group","Current Spells",
+		"group",macroGroup,
 		"sortBy",json.get(SpellData,"Level"),
 		"label",pm.NewMacroLabel,
 		"maxWidth","",

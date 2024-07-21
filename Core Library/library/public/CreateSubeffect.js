@@ -328,7 +328,7 @@ async function createSaveDCMethodRow(tableID){
 	}
 } 
 
-async function createAHLSelect(ahlSelectID){
+function createAHLSelect(ahlSelectID){
 	let ahlSelectHTML = "";
 	if(document.getElementById("ExtraDataSpellLevel")!=null){
 		if(document.getElementById("ExtraDataSpellLevel").value == "0"){
@@ -587,7 +587,7 @@ async function createConditionTable(){
 				let ConditionOptionsHTML = "<th><label  for='ConditionOptionsNumber'>Number of Options to Choose:</label></th><td><input type='number' id='ConditionOptionsNumber' name='ConditionOptionsNumber' min=1 value=1 style='width:25px'>";
 
 				if(checkEffectType()=="Spell"){
-					let conditionAHLScalingSelect = await createAHLSelect("ConditionOptionsNumberAHLScaling");                   
+					let conditionAHLScalingSelect = createAHLSelect("ConditionOptionsNumberAHLScaling");                   
 					ConditionOptionsHTML = ConditionOptionsHTML + " + <input type='number' id='ConditionOptionsNumberAHL' name='ConditionOptionsNumberAHL' min=0 value=0 style='width:25px'>"+conditionAHLScalingSelect;
 				}
 
@@ -611,9 +611,10 @@ async function createConditionTable(){
 			document.getElementById("rowIsAuraEnd").setAttribute("hidden","");
 			nextRowIndex++;
 
-			let rowConditionSameDuration = table.insertRow(nextRowIndex);
-			rowConditionSameDuration.id = "rowConditionSameDuration";
-			rowConditionSameDuration.innerHTML = "<th><label for='isConditionSameDuration'>Duration is Same as Spell's?</label></th><input type='checkbox' id='isConditionSameDuration' name='isConditionSameDuration' onchange='conditionAlternateDuration()' checked></td>";
+			createTableRow(document.getElementById("rowIsAuraEnd"),"rowIsConditionTiered","<th><label for='isConditionTiered'>Can Set Condition at Tier Over 1:</label></th><input type='checkbox' id='isConditionTiered' name='isConditionTiered' onchange='createConditionTierRows()'></td>");
+			nextRowIndex++;
+
+			addTableRow(tableID,nextRowIndex,"rowConditionSameDuration","<th><label for='isConditionSameDuration'>Duration is Same as Spell's?</label></th><input type='checkbox' id='isConditionSameDuration' name='isConditionSameDuration' onchange='conditionAlternateDuration()' checked></td>");
 			nextRowIndex++;
 
 			if(checkEffectType()!="Spell"){
@@ -622,9 +623,10 @@ async function createConditionTable(){
 				nextRowIndex++;
 			}
 
-			let rowIsConditionNonDurationEnd = table.insertRow(nextRowIndex);
-			rowIsConditionNonDurationEnd.id = "rowIsConditionNonDurationEnd";
-			rowIsConditionNonDurationEnd.innerHTML = "<th><label for='isConditionNonDurationEnd'>May End Separate from Duration?</label></th><input type='checkbox' id='isConditionNonDurationEnd' name='isConditionNonDurationEnd' onchange='createConditionNonDurationEnd()'></td>";
+			addTableRow(tableID,nextRowIndex,"rowConditionAdvancePoint","<th><label for='ConditionAdvancePoint'>When Duration Advances:</label></th><select id='ConditionAdvancePoint' name='ConditionAdvancePoint'><option value='EndofTurn'>End of Target's Turn</option><option value='StartofTurn'>Start of Target's Turn</option><option value='EndofSetByTurn'>End of User's Turn</option><option value='StartofSetByTurn'>Start of User's Turn</option><option value='StartofSetByTurn'>Not Specified</option></select></td>");
+			nextRowIndex++;
+
+			addTableRow(tableID,nextRowIndex,"rowIsConditionNonDurationEnd","<th><label for='isConditionNonDurationEnd'>May End Separate from Duration?</label></th><input type='checkbox' id='isConditionNonDurationEnd' name='isConditionNonDurationEnd' onchange='createConditionNonDurationEnd()'></td>");
 			nextRowIndex++;
 		}
 
@@ -706,7 +708,7 @@ async function conditionAlternateDuration(){
 	}
 
 	if(isSameDuration){
-		clearUnusedTable("CreateSubeffectTable","rowConditionSameDuration","rowIsConditionNonDurationEnd");
+		clearUnusedTable("CreateSubeffectTable","rowConditionSameDuration","rowConditionAdvancePoint");
 	}
 	else{
 		let durationOptionsArray = ["Instantaneous","1 Round","1 Minute","10 Minutes","1 Hour","8 Hours","24 Hours","10 Days","Until Dispelled","Custom"];
@@ -715,7 +717,7 @@ async function conditionAlternateDuration(){
 			durationOptions = durationOptions + "<option value='"+option+"'>"+option+"</option>";
 		}
 
-		addTableRow("CreateSubeffectTable",nextRowIndex,"rowConditionDuration","<th><label for='ConditionDuration'>Condition Duration:</label></th><select id='ConditionDuration' name='ConditionDuration' onchange='createCustomDurationRows("+'"CreateSubeffectTable","ConditionDuration","rowIsConditionNonDurationEnd"'+")'>"+durationOptions+"</select></td>");
+		addTableRow("CreateSubeffectTable",nextRowIndex,"rowConditionDuration","<th><label for='ConditionDuration'>Condition Duration:</label></th><select id='ConditionDuration' name='ConditionDuration' onchange='createCustomDurationRows("+'"CreateSubeffectTable","ConditionDuration","rowConditionAdvancePoint"'+")'>"+durationOptions+"</select></td>");
 	}
 }
 
@@ -897,6 +899,20 @@ async function createAuraRows(){
 	}
 }
 
+function createConditionTierRows(){
+	let isConditionTiered = document.getElementById("isConditionTiered").checked;
+	if(isConditionTiered){
+		createTableRow(document.getElementById("rowIsConditionTiered"),"rowConditionTier","<th><label for='ConditionTier'>Condition Tier:</label></th><td><input type='number' id='ConditionTier' name='ConditionTier' value=1 min=1 style='width:25px'><span id='ConditionTierAHLSpan'></span></td>");
+		if(checkEffectType() == "Spell"){
+			let tierAHLSelect = createAHLSelect("ConditionTierAHLScaling");
+			document.getElementById("ConditionTierAHLSpan").innerHTML = " + <input type='number' id='ConditionTierAHL' name='ConditionTierAHL' value=1 min=1 style='width:25px'>"+tierAHLSelect;
+		}
+	}
+	else{
+		document.getElementById("rowConditionTier").remove();
+	}
+}
+
 async function createConditionSaveTable(){
 	if(document.getElementById("howMitigate").value != "Save"){
 		return;
@@ -1004,7 +1020,7 @@ async function createSummonTable(){
 			nextRowIndex++;
 
 			if(checkEffectType()=="Spell"){
-				let summonCrMaxAHLScalingSelect = await createAHLSelect("summonCrMaxAHLScaling");
+				let summonCrMaxAHLScalingSelect = createAHLSelect("summonCrMaxAHLScaling");
 
 				let rowSummonCrAHL = table.insertRow(nextRowIndex);
 				rowSummonCrAHL.id = "rowSummonCrAHL";
@@ -1019,7 +1035,7 @@ async function createSummonTable(){
 			for(let tempType of allCreatureTypes){
 				creatureTypeOptions = creatureTypeOptions + "<label><input type='checkbox' id='summonCreatureType"+tempType.Name+"' name='summonCreatureType"+tempType.Name+"' value=1 onchange='createSummonCreatureSubtypeTable("+'"'+tempType.Name+'"'+")'><span>"+tempType.DisplayName+"</span></label>";
 			}
-			
+
 			let rowSummonCreatureType = table.insertRow(nextRowIndex);
 			rowSummonCreatureType.id = "rowSummonCreatureType";
 			rowSummonCreatureType.innerHTML = "<th><label for='summonCreatureType'>Creature Type Required:</th><td><div class='check-multiple' style='width:100%'>"+creatureTypeOptions+"</div></td>";
@@ -1048,7 +1064,7 @@ async function createSummonTable(){
 			nextRowIndex++;
 
 			if(checkEffectType()=="Spell"){
-				let summonNumberAHLScalingSelect = await createAHLSelect("summonNumberAHLScaling");
+				let summonNumberAHLScalingSelect = createAHLSelect("summonNumberAHLScaling");
 
 				let rowSummonNumberAHL = table.insertRow(nextRowIndex);
 				rowSummonNumberAHL.id = "rowSummonNumberAHL";
@@ -1066,10 +1082,6 @@ async function toggleSummonNumber(){
 	else{
 		document.getElementById("summonNumber").removeAttribute('disabled','');
 	}
-}
-
-async function createSummonCreatureSubtypeTable(thisCreatureType){
-
 }
 
 function createUseResourceRows(){
@@ -1171,7 +1183,7 @@ async function createUncommonEffectsRows(){
 		addTableRow("CreateSubeffectTable",nextRowIndex,"rowAffectSpell","<th><label for='isAffectSpell'>Affects Spell Effects?</label></th><td><select id='isAffectSpell' name='isAffectSpell' onchange='createAffectSpellRows()'><option value='No'>No Effect</option><option value='End'>End Spells</option><option value='Suppress'>Suppress Spells</option><option value='Shorten'>Shorten Spells</option><option value='Prolong'>Prolong Spells</option></select></td>");
 		nextRowIndex++;
 
-		addTableRow("CreateSubeffectTable",nextRowIndex,"rowLightType","<th><label for='lightType'>Creates a Light or Darkness?</label></th><td><select id='lightType' name='lightType' onchange='createLightTable("+'"rowIsMoveTarget"'+")'><option value=''>No Light</option><option value='Dim'>Dim Light</option><option value='Bright'>Bright Light</option><option value='BrightDim'>Bright + Dim Light</option><option value='Darkness'>Darkness</option><option value='Obscure'>Heavily Obscure</option></select></td>");
+		addTableRow("CreateSubeffectTable",nextRowIndex,"rowIsLight","<th><label for='isLight'>Creates a Light or Darkness?</label></th><td><input type='checkbox' id='isLight' name='isLight' onchange='toggleLightTable("+'"rowIsLight","rowIsMoveTarget"'+")'></td>");
 		nextRowIndex++;
 
 		addTableRow("CreateSubeffectTable",nextRowIndex,"rowIsMoveTarget","<th><label for='isMoveTarget'>Moves the Target?</label></th><td><input type='checkbox' id='isMoveTarget' name='isMoveTarget' value=1 onchange='createMoveTargetTable()'></td>");
@@ -1216,7 +1228,7 @@ async function createModifyD20Rows(){
 		nextRowIndex++;
 
 		if(checkEffectType()=="Spell"){
-			let affectEffectNumberAHLScalingSelect = await createAHLSelect("affectEffectNumberAHLScaling");
+			let affectEffectNumberAHLScalingSelect = createAHLSelect("affectEffectNumberAHLScaling");
 
 			addTableRow("CreateSubeffectTable",nextRowIndex,"rowModifyD20NumberAHL","<th><label for='affectEffectNumberAHL'>Number Affected Increase AHL:</th><td><input type='number' id='affectEffectNumberAHL' name='affectEffectNumberAHL' min=0 value=0 style='width:25px'>"+affectEffectNumberAHLScalingSelect+"</td>");
 			nextRowIndex++;
@@ -1262,7 +1274,7 @@ async function createAffectConditionRows(){
 		nextRowIndex++;
 
 		if(checkEffectType()=="Spell"){
-			let affectConditionNumberAHLScalingSelect = await createAHLSelect("affectConditionNumberAHLScaling");
+			let affectConditionNumberAHLScalingSelect = createAHLSelect("affectConditionNumberAHLScaling");
 
 			addTableRow("CreateSubeffectTable",nextRowIndex,"rowAffectConditionNumberAHL","<th><label for='affectConditionNumberAHL'>Number Affected Increase AHL:</th><td><input type='number' id='affectConditionNumberAHL' name='affectConditionNumberAHL' min=0 value=0 style='width:25px'>"+affectConditionNumberAHLScalingSelect+"</td>");
 			nextRowIndex++;
@@ -1431,7 +1443,7 @@ async function createAffectSpellRows(){
 		nextRowIndex++;
 
 		if(checkEffectType()=="Spell"){
-			let affectSpellNumberAHLScalingSelect = await createAHLSelect("affectSpellNumberAHLScaling");
+			let affectSpellNumberAHLScalingSelect = createAHLSelect("affectSpellNumberAHLScaling");
 
 			addTableRow("CreateSubeffectTable",nextRowIndex,"rowAffectSpellNumberAHL","<th><label for='affectSpellNumberAHL'>Number Affected Increase AHL:</th><td><input type='number' id='affectSpellNumberAHL' name='affectSpellNumberAHL' min=0 value=0 style='width:25px'>"+affectSpellNumberAHLScalingSelect+"</td>");
 			nextRowIndex++;
@@ -1588,7 +1600,7 @@ async function createMoveTargetTable(){
 		nextRowIndex++;
 
 		if(checkEffectType()=="Spell"){
-			let moveTargetAHLScalingSelect = await createAHLSelect("moveTargetAHLScaling");
+			let moveTargetAHLScalingSelect = createAHLSelect("moveTargetAHLScaling");
 
 			let rowMoveTargetAHLInfo = table.insertRow(nextRowIndex);
 			rowMoveTargetAHLInfo.id = "rowMoveTargetAHLInfo";

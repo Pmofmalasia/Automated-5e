@@ -91,6 +91,7 @@
 [h:data.setData("addon:","pm.a5e.core","sb.Spells",'[]')]
 [h:data.setData("addon:","pm.a5e.core","sb.SpellLists",'{}')]
 [h:data.setData("addon:","pm.a5e.core","sb.MonsterFeatures",'[]')]
+[h:data.setData("addon:","pm.a5e.core","sb.Bestiary",'[]')]
 [h:data.setData("addon:","pm.a5e.core","sb.CreatureSubtypes",'[]')]
 
 [h:data.setData("addon:","pm.a5e.core","LanguageOptions",'{"Standard":1,"Exotic":1,"Monstrous":0,"Secret":0}')]
@@ -99,6 +100,7 @@
 [h:data.setData("addon:","pm.a5e.core","BackgroundSourcebooks",'{}')]
 
 [h:data.setData("addon:","pm.a5e.core","gd.Effects",'[]')]
+[h:data.setData("addon:","pm.a5e.core","gd.ExperienceTable",json.append("",0,300,900,2700,6500,14000,23000,34000,48000,64000,85000,100000,120000,140000,165000,195000,225000,265000,305000,355000))]
 
 [broadcast("First-time setup complete.")]
 [h:"<!-- TODO: Add link to Gather Sourcebook Effects here since it cannot be called in on(First)Init in an addon -->"]

@@ -24,11 +24,11 @@
 
 [h,if(objectType == "Wondrous"),CODE:{
 	[h:objectData = json.set(objectData,"isWondrous",1)]
-	[h,if(json.get(objectData,"WondrousType") != ""),CODE:{
-		[h:objectType = json.get(objectData,"WondrousType")]
+	[h,if(json.get(objectData,"TypeWondrous") != ""),CODE:{
+		[h:objectType = json.get(objectData,"TypeWondrous")]
 		[h:objectData = json.set(objectData,"Type",objectType)]
 	};{}]
-	[h:objectData = json.remove(objectData,"WondrousType")]
+	[h:objectData = json.remove(objectData,"TypeWondrous")]
 }]
 
 [h,if(objectType=="Weapon"),CODE:{
@@ -134,7 +134,7 @@
 		};
 		case "Custom":{
 			[h,switch(json.get(objectData,"StorageAddToTime")):
-				case "Free": addToStorageTimeData = json.set("","Value","","Units","instant");
+				case "Free": addToStorageTimeData = json.set("","Value","","Units","free");
 				case "Item Interaction": addToStorageTimeData = json.set("","Value",1,"Units","interaction");
 				case "Action": addToStorageTimeData = json.set("","Value",1,"Units","action");
 				case "Bonus Action": addToStorageTimeData = json.set("","Value",1,"Units","bonus");
@@ -150,7 +150,7 @@
 			[h:objectData = json.remove(objectData,"StorageCannotAddTo")]
 			
 			[h,switch(json.get(objectData,"StorageRemovalTime")):
-				case "Free": removeFromStorageTimeData = json.set("","Value","","Units","instant");
+				case "Free": removeFromStorageTimeData = json.set("","Value","","Units","free");
 				case "Item Interaction": removeFromStorageTimeData = json.set("","Value",1,"Units","interaction");
 				case "Action": removeFromStorageTimeData = json.set("","Value",1,"Units","action");
 				case "Bonus Action": removeFromStorageTimeData = json.set("","Value",1,"Units","bonus");
@@ -178,11 +178,11 @@
 	[h:objectData = json.set(objectData,"isCursed",json.contains(objectData,"isCursed"))]
 };{}]
 
-[h:lightData = "{}"]
 [h,if(objectType=="LightSource"),CODE:{
-	[h:objectData = ct.a5e.LightDataProcessing(objectData,"Type")]
-	[h:lightData = json.get(objectData,"Light")]
-	[h:objectData = json.remove(objectData,"Light")]
+	[h:returnLightData = ct.a5e.LightDataProcessing(objectData,"Type")]
+	[h:lightData = json.get(returnLightData,"Light")]
+	[h:objectData = json.get(returnLightData,"Subeffect")]
+	[h:objectData = json.set(objectData,"CallLights",lightData)]
 
 	[h,switch(json.get(objectData,"LightFuel")),CODE:
 		case "Oil":{
@@ -207,7 +207,7 @@
 	[h:lightDurationData = json.get(lightDurationData,"DurationInfo")]
 	[h:lightTimeResource = json.set("",json.get(lightDurationData,"Units"),json.get(lightDurationData,"Value"))]
 	[h:objectData = json.set(objectData,"TimeResourceMax",lightTimeResource,"TimeResource",lightTimeResource,"TimeResourceActive",0)]
-	[h:objectData = json.set(objectData,"CallLights",json.set("","Context","Lights","Effects",json.append("",lightData)))]
+
 	[h:objectData = json.set(objectData,"isPassiveFunction",1)]
 	[h:lightActivationEffect = json.set("",
 		"EffectDisplayName","Light "+json.get(objectData,"DisplayName"),
@@ -320,14 +320,14 @@
 		[h:objectData = json.set(objectData,
 			"DonTime",json.set("","Value",1,"Units","interaction"),
 			"DoffTime",json.set("","Value",1,"Units","interaction"),
-			"DropTime",json.set("","Value","","Units","instant")
+			"DropTime",json.set("","Value","","Units","free")
 		)]
 	};
 	case "Custom":{
 		[h:tempEquipTypeArray = json.append("","Don","Doff","Drop")]
 		[h,foreach(equipType,tempEquipTypeArray),CODE:{
 			[h,switch(json.get(objectData,equipType+"Time")):
-				case "Free": thisEquipTypeData = json.set("","Value","","Units","instant");
+				case "Free": thisEquipTypeData = json.set("","Value","","Units","free");
 				case "Item Interaction": thisEquipTypeData = json.set("","Value",1,"Units","interaction");
 				case "Action": thisEquipTypeData = json.set("","Value",1,"Units","action");
 				case "Bonus Action": thisEquipTypeData = json.set("","Value",1,"Units","bonus");

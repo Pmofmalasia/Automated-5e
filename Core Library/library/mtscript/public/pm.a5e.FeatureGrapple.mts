@@ -12,15 +12,15 @@
     [h:gr.Data = json.set(gr.Data,"Advantage",gr.Adv,"Bonus",gr.Bonus)]
     [h:GrappleReturnInfo = pm.a5e.FeatureCheck(currentFeatureInfo,gr.Data)]
 
-	[h:grappleTable = json.get(GrappleReturnInfo,"Table")]
-    [h:tableLinetoEdit = json.get(grappleTable,0)]
+	[h:tableLength = json.length(abilityTable)]
+    [h:tableLinetoEdit = json.get(abilityTable,json.length(abilityTable) - 1)]
     [h:tableLinetoEdit = json.set(tableLinetoEdit,
         "Header","Grapple",
         "FullContents","Athletics or Acrobatics",
         "RulesContents"," vs. "+json.get(tableLinetoEdit,"RulesContents"),
         "DisplayOrder","['Full','Rules','Roll']"
     )]
-    [h:abilityTable = json.merge(abilityTable,json.set(grappleTable,0,tableLinetoEdit))]
+    [h:abilityTable = json.set(abilityTable,tableLength-1,tableLinetoEdit)]
 };{
     [h,MACRO("Grapple@Lib:pm.a5e.Core"): json.set(gr.Data,"ParentToken",ParentToken)]
     [h:GrappleInfo = macro.return]

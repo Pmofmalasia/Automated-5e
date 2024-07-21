@@ -1,12 +1,10 @@
-function createNewTemplateRows(tableID,nextRowIndex,ObjectType){
-	addTableRow(tableID,nextRowIndex,"rowNewTypeName"+ObjectType,"<th><label for='NewTypeName"+ObjectType+"'>New "+ObjectType+" Type Name:</label></th><td><input type='text' id='NewTypeName"+ObjectType+"' name='NewTypeName"+ObjectType+"'></td>");
-	nextRowIndex++;
+function createNewTemplateRows(referenceRow,ObjectType){
+	createTableRow(referenceRow,"rowNewTypeName"+ObjectType,"<th><label for='NewTypeName"+ObjectType+"'>New "+ObjectType+" Type Name:</label></th><td><input type='text' id='NewTypeName"+ObjectType+"' name='NewTypeName"+ObjectType+"'></td>");
 	
-	addTableRow(tableID,nextRowIndex,"rowIsNewTemplate"+ObjectType,"<th><label for='isNewTemplate"+ObjectType+"'>Add New "+ObjectType+" as Template:</label></th><td><input type='checkbox' id='isNewTemplate"+ObjectType+"' name='isNewTemplate"+ObjectType+"' value=1></td>");
-	nextRowIndex++;
+	createTableRow(referenceRow,"rowIsNewTemplate"+ObjectType,"<th><label for='isNewTemplate"+ObjectType+"'>Add New "+ObjectType+" as Template:</label></th><td><input type='checkbox' id='isNewTemplate"+ObjectType+"' name='isNewTemplate"+ObjectType+"' value=1></td>");
 }
 
-function updateWithTemplateData(tableID,TemplateData){
+async function updateGenericObjectTemplate(TemplateData){
 	if(TemplateData.Size != null && document.getElementById("Size") != null){document.getElementById("Size").value = TemplateData.Size;}
 
 	if(TemplateData.Rarity != null && document.getElementById("Rarity") != null){document.getElementById("Rarity").value = TemplateData.Rarity;}
@@ -93,18 +91,52 @@ function updateWithTemplateData(tableID,TemplateData){
 		}
 	}
 
+	let requestMaterialsData = await fetch("macro:pm.a5e.GetCoreData@lib:pm.a5e.Core", {method: "POST", body: "['sb.ObjectMaterials','Name','json']"});
+	let allMaterials = await requestMaterialsData.json();
 	let TemplateMaterials = TemplateData.Materials;
-	let TemplateHasMaterial = 0;
-	if(TemplateData.Materials != null && document.getElementById("objectMaterialIron") != null){
-		for(let tempMaterial of TemplateMaterials){
-			document.getElementById("objectMaterial"+tempMaterial).setAttribute("checked","");
-			TemplateHasMaterial = 1;
+	let materialNumber = 0;
+	for(let material of allMaterials){
+		if(TemplateMaterials.includes(material)){
+			document.getElementById("objectMaterial"+material).setAttribute("checked","");
+			materialNumber++;
 		}
-		createChooseMainMaterialRows(tableID);
-		if(TemplateHasMaterial == 1){
-			if(TemplateData.MainMaterial != "@@Variable"){
-				document.getElementById("MainMaterial").value = TemplateData.MainMaterial;
-			}
+		else{
+			document.getElementById("objectMaterial"+material).removeAttribute("checked","");
+		}
+	}
+
+	await createChooseMainMaterialRows();
+	if(materialNumber > 1){
+		if(TemplateData.MainMaterial != "@@Variable"){
+			document.getElementById("MainMaterial").value = TemplateData.MainMaterial;
+		}
+	}
+
+	if(TemplateData.isNotDoffable === 1){
+		document.getElementById("isNonstandardEquip").value = "CannotDrop";
+		document.getElementById("isNonstandardEquip").dispatchEvent(new Event("change"));
+	}
+	else{
+		let DonTime = TemplateData.DonTime;
+		let DoffTime = TemplateData.DoffTime;
+		let DropTime = TemplateData.DropTime;
+		let standardEquipTest = ((DonTime.Value === 1 && DonTime.Units === "interaction") && (DoffTime.Value === 1 && DoffTime.Units === "interaction") && (DropTime.Value === "" && DropTime.Units === "free"));
+
+		if(standardEquipTest){
+			document.getElementById("isNonstandardEquip").value = "";
+			document.getElementById("isNonstandardEquip").dispatchEvent(new Event("change"));
+		}
+		else{
+			document.getElementById("isNonstandardEquip").value = "Custom";
+			createNonstandardEquipRows();
+
+			let DonDisplay = timeDisplay(DonTime);
+			let DoffDisplay = timeDisplay(DoffTime);
+			let DropDisplay = timeDisplay(DropTime);
+
+			document.getElementById("DonTime").value = DonDisplay;
+			document.getElementById("DoffTime").value = DoffDisplay;
+			document.getElementById("DropDisplay").value = DropDisplay;
 		}
 	}
 
@@ -126,6 +158,25 @@ function updateWithTemplateData(tableID,TemplateData){
 
 	if(TemplateData.isMagnetic != null && document.getElementById("isMagnetic") != null){
 		document.getElementById("isMagnetic").value = TemplateData.isMagnetic;
+	}
+
+	let requestObjectTagsData = await fetch("macro:pm.a5e.GetCoreData@lib:pm.a5e.Core", {method: "POST", body: "['sb.ObjectTags','Name','json']"});
+	let allObjectTags = await requestObjectTagsData.json();
+	
+	let requestMaterialTagsData = await fetch("macro:pm.a5e.GetCoreData@lib:pm.a5e.Core", {method: "POST", body: "['sb.MaterialTags','Name','json']"});
+	let allMaterialTags = await requestMaterialTagsData.json();
+
+	let finalObjectTags = allObjectTags.concat(allMaterialTags);
+	let TemplateObjectTags = TemplateData.ObjectTags;
+	let ignoredTags = ["AdventuringGear","StandardWeapon","StandardArmor","StandardTool"];
+	for(let tag of finalObjectTags){
+		//certain tags ignored so they don't appear in the default shops
+		if(TemplateObjectTags.includes(tag) && !ignoredTags.includes(tag)){
+			document.getElementById("objectMaterialTag"+tag).setAttribute("checked","");
+		}
+		else{
+			document.getElementById("objectMaterialTag"+tag).removeAttribute("checked","");
+		}
 	}
 }
 
@@ -205,8 +256,9 @@ function createSentientItemRows(tableID){
 	}
 }
 
-async function createChooseMainMaterialRows(thisChosenMaterial,tableID){
-	let nextRowIndex = document.getElementById("rowMaterials").rowIndex+1;
+async function createChooseMainMaterialRows(thisChosenMaterial){
+	//TODO: thisChosenMaterial could be used to automatically add tags based on the material, if applicable (e.g. Metal for Iron) - needs an if arguments > 0 because not always needed
+	let referenceRow = document.getElementById("rowMaterials");
 	let request = await fetch("macro:pm.a5e.GetCoreData@lib:pm.a5e.Core", {method: "POST", body: "['sb.ObjectMaterials']"});
 	let allMaterials = await request.json();
 
@@ -229,8 +281,7 @@ async function createChooseMainMaterialRows(thisChosenMaterial,tableID){
 		}
 
 		if(document.getElementById("rowMainMaterial") == null){
-			addTableRow(tableID,nextRowIndex,"rowMainMaterial","<th><label for='MainMaterial'>Main Material:</label></th><td><select id='MainMaterial' name='MainMaterial'>"+mainMaterialOptions+"</select></td>");
-			nextRowIndex++;
+			referenceRow = createTableRow(referenceRow,"rowMainMaterial","<th><label for='MainMaterial'>Main Material:</label></th><td><select id='MainMaterial' name='MainMaterial'>"+mainMaterialOptions+"</select></td>");
 		}
 		else{
 			let priorSelection = document.getElementById("MainMaterial").value;
@@ -240,7 +291,7 @@ async function createChooseMainMaterialRows(thisChosenMaterial,tableID){
 	}
 	else{
 		if(document.getElementById("rowMainMaterial") != null){
-			document.getElementById(tableID).deleteRow(nextRowIndex);
+			document.getElementById("rowMainMaterial").remove();
 		}
 	}
 }

@@ -60,11 +60,24 @@
 	[h:lu.NewAbilities = json.append(lu.NewAbilities,macro.return)]
 };{}]
 
+[h:tokenSubrace = pm.RemoveSpecial(getProperty("a5e.stat.Subrace"))]
+[h,if(tokenSubrace != ""),CODE:{
+	[h:"<!-- SubraceIgnoredFeatures specifically removes features from the base race that the subrace does not get (usually when a race that formerly did not have a subrace is given one later) -->"]
+	[h:subraceData = json.get(json.path.read(data.getData("addon:","pm.a5e.core","sb.Subraces"),"\$[*][?(@.Name == '"+tokenSubrace+"')]"),0)]
+	[h:subraceIgnoredFeatures = json.get(subraceData,"IgnoredFeatures")]
+	[h,if(subraceIgnoredFeatures != ""),CODE:{
+		[h:subraceIgnoredFeaturesPath = "!(@.Name in "+subraceIgnoredFeatures+" && @.Class == '"+pm.RemoveSpecial(getProperty("a5e.stat.Race"))+"' && @.Subclass == '') && "]
+	};{
+		[h:subraceIgnoredFeaturesPath = ""]
+	}]
+};{
+	[h:subraceIgnoredFeaturesPath = ""]
+}]
 [h:lu.NewClassIDPath = "(@.Class == '"+lu.Class+"' && (@.Subclass == null || @.Subclass == '' || @.Subclass == '"+pm.RemoveSpecial(json.get(getProperty("a5e.stat.Subclasses"),lu.Class))+"'))"]
-[h:lu.RaceIDPath = "(@.Class=='"+pm.RemoveSpecial(getProperty("a5e.stat.Race"))+"' && (@.Subclass=='"+pm.RemoveSpecial(getProperty("a5e.stat.Subrace"))+"' || @.Subclass==''))"]
+[h:lu.RaceIDPath = subraceIgnoredFeaturesPath+"(@.Class=='"+pm.RemoveSpecial(getProperty("a5e.stat.Race"))+"' && (@.Subclass=='"+pm.RemoveSpecial(getProperty("a5e.stat.Subrace"))+"' || @.Subclass==''))"]
+[h:lu.RaceIDPathOld = "(@.Class=='"+pm.RemoveSpecial(getProperty("a5e.stat.Race"))+"' && (@.Subclass=='"+pm.RemoveSpecial(getProperty("a5e.stat.Subrace"))+"' || @.Subclass==''))"]
 
 [h:"<!-- Adds abilities based on class, race, and background that are gained on level up, separately since race and background go off of total level -->"]
-
 [h:tempNewAbilities = json.path.read(data.getData("addon:","pm.a5e.core","sb.Abilities"),"\$[*][?("+lu.RaceIDPath+" && @.Level=="+(getProperty("a5e.stat.Level")+1)+" && @.GainOnLevel==1)]")]
 
 [h:tempNewAbilities = json.merge(tempNewAbilities,json.path.read(data.getData("addon:","pm.a5e.core","sb.Abilities"),"\$[*][?(@.Class=='Background' && @.Subclass=='"+pm.RemoveSpecial(getProperty("a5e.stat.Background"))+"' && @.Level=="+(getProperty("a5e.stat.Level")+1)+" && @.GainOnLevel==1)]"))]

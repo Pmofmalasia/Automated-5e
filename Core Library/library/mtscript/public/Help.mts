@@ -43,7 +43,13 @@
 	json.set("",
 		"Allegiance",HelpAllegiance)
 )]
-[h:HelpTargets = pm.a5e.TargetCreatureTargeting(json.get(HelpTargetOptions,"ValidTargets"),HelpTargetNum)]
+[h:HelpTargets = pm.a5e.TargetCreatureTargeting(json.set("",
+	"ValidTargets",json.get(HelpTargetOptions,"ValidTargets"),
+	"TargetNumber",HelpTargetNum,
+	"ParentToken",ParentToken,
+	"Origin",HelpOrigin
+))]
+[h:HelpTargets = json.get(HelpTargets,0)]
 
 [h:HelpConditionInfo = pm.a5e.GetSpecificCondition(HelpType,"Condition")]
 

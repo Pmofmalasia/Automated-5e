@@ -1,1 +1,0 @@
-[h,if(IsTooltip): abilityTable = json.append(abilityTable,json.get(SummonInfo,"Table"))]

@@ -6,7 +6,7 @@
 	resourceSource = "Feature";
 	resourceSource = json.get(resourceInfo,"ResourceSource")
 ]
-[h:ResourceSourceData = pm.a5e.ResourceSourceData(resourceSource,resourceInfo)]
+[h:ResourceSourceData = pm.a5e.FeatureSourceData(resourceSource,resourceInfo)]
 [h:sourceProperty = json.get(ResourceSourceData,"Property")]
 [h:sourcePath = json.get(ResourceSourceData,"Path")]
 [h:matchingFeature = json.get(json.path.read(getProperty(sourceProperty),sourcePath),0)]

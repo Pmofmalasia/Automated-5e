@@ -1,7 +1,7 @@
 [h:subeffectData = arg(0)]
 [h:instanceNumber = json.get(subeffectData,"conditionEndInstanceNumber")]
 [h:subeffectData = json.remove(subeffectData,"conditionEndInstanceNumber")]
-[h:endInfo = "{}"]
+[h:endTriggers = "{}"]
 
 [h:currentInstanceNumber = 0]
 [h,count(instanceNumber),CODE:{
@@ -33,7 +33,7 @@
 
 	[h,if(json.isEmpty(resolutionInfo)): resolutionInfo = 1]
 
-	[h:endInfo = json.set(endInfo,
+	[h:endTriggers = json.set(endTriggers,
 		thisInstanceType,resolutionInfo
 	)]
 
@@ -47,6 +47,6 @@
 
 [h:finalData = json.set("",
 	"Subeffect",subeffectData,
-	"EndInfo",endInfo
+	"EndTriggers",endTriggers
 )]
 [h:return(0,finalData)]

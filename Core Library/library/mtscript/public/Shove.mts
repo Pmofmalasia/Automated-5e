@@ -19,18 +19,23 @@
 [h:sh.TargetingData = json.set("",
 	"ParentToken",ParentToken,
 	"Number",1,
-	"Allegiance",json.set("","NotSelf",1),
 	"Origin",ParentToken,
 	"Range",json.set("","Value",5,"Units","Feet")
 )]
 
 [h:sh.TargetingFilters = json.set("",
-	"SizeMax",pm.a5e.GetSizeChange(getSize(ParentToken),1)
+	"Allegiance",json.set("","NotSelf",1),
+	"SizeMax",1
 )]
 
 [h:sh.TargetOptions = pm.a5e.TargetCreatureFiltering(sh.TargetingData,sh.TargetingFilters)]
-[h:sh.Target = pm.a5e.TargetCreatureTargeting(json.get(sh.TargetOptions,"ValidTargets"),1)]
-
+[h:sh.Target = pm.a5e.TargetCreatureTargeting(json.set("",
+	"ValidTargets",json.get(sh.TargetOptions,"ValidTargets"),
+	"TargetNumber",1,
+	"ParentToken",ParentToken,
+	"Origin",ParentToken
+))]
+[h:sh.Target = json.get(sh.Target,0)]
 [h:sh.thisEffect = json.set(sh.thisEffect,"Targets",sh.Target)]
 
 [h:abort(input(
@@ -53,8 +58,7 @@
 		[h:sh.thisEffect = json.set(sh.thisEffect,
 			"ConditionInfo",json.set("",
 				"Conditions",sh.Condition,
-				"EndInfo",sh.EndInfo
-			)
+				"EndInfo",sh.EndInfo)
 		)]
 	}
 ]

@@ -1,7 +1,5 @@
 <head>
     <title>Inventory</title>
-    <script type="text/javascript"  src="lib://pm.a5e.core/GeneralJSFunctions.js?cachelib=false"></script>
-    <script type="text/javascript"  src="lib://pm.a5e.core/ShowInventory.js?cachelib=false" async=false></script>
 	<link rel="stylesheet" href="lib://net.rptools.maptool/css/mt-theme.css">
     <link rel="stylesheet" href="lib://pm.a5e.core/ContextButton.css?cachelib=false">
     <link rel="stylesheet" href="lib://pm.a5e.core/InventoryList.css?cachelib=false">
@@ -24,8 +22,8 @@
 			border-collapse: collapse;
 		}
 		.footer{
-			position: fixed;
-			bottom: 0;
+			position: sticky;
+			bottom: 10px;
 			width: 100%;
 		}
     </style>
@@ -36,9 +34,11 @@
 		<table id="InventoryTable">
 			
 		</table>
-	</div>
-	<div class="equipment-button" id="generalEquipmentButtons">
-	  
+		<div class="equipment-button" id="EquipmentButtons">
+			
+		</div>
 	</div>
     </form>
+    <script type="text/javascript"  src="lib://pm.a5e.core/GeneralJSFunctions.js?cachelib=false"></script>
+    <script type="text/javascript"  src="lib://pm.a5e.core/ShowInventory.js?cachelib=false" async=false></script>
 </body>

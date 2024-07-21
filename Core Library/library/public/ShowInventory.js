@@ -32,13 +32,13 @@ async function createInventoryTable(){
 		let displayWeight = Math.round(TotalWeight);
 	if(debug){console.log("2");}
 	
-		let ResourceData = await MTFunction("evalMacro",[Item.MaxResource]);
-		if(debug){console.log("3");}
 		let NumberDisplay = "";
-		if (ResourceData == ""){
+		if(Item.MaxResource == undefined){
 			NumberDisplay = ItemNumber;
 		}
 		else{
+			let ResourceData = await MTFunction("evalMacro",[Item.MaxResource]);
+			if(debug){console.log("3");}
 			if(typeof ResourceData == "number"){
 				NumberDisplay = Item.Resource+"<b>/</b>"+ResourceData;
 			}
@@ -56,7 +56,7 @@ async function createInventoryTable(){
 					}
 					NumberDisplay = NumberDisplay + resourceDisplayNames[tempResourceName]+": " + Item.Resource[tempResourceName] + "<b>/</b>" + ResourceData[tempResourceName];
 				}
-			}			
+			}
 		}
 		if(debug){console.log("4");}
 
@@ -532,7 +532,7 @@ function rearrangeInventory(oldIndex,newIndex,itemsMovedNum){
 }
 
 async function updateInventory(){
-	evaluateMacro("[r:setProperty('a5e.stat.Inventory','"+JSON.stringify(Inventory)+"','"+ParentToken+"')]");
+	mtSetProperty("a5e.stat.Inventory",JSON.stringify(Inventory),ParentToken);
 }
 
 function getNextUnstoredRow(originRow,exitAllContainers){
@@ -569,6 +569,78 @@ function getContainer(containedRow){
 	}
 }
 
+function createGeneralEquipButtons(){
+	let buttonDIV = document.getElementById("EquipmentButtons");
+
+	let GiveItemButton = document.createElement("button");
+	GiveItemButton.className = "equipment-button";
+	GiveItemButton.innerHTML = "<span title='Click to select an item, or drag and drop an item from the list to give that item.'><img src='lib://pm.a5e.core/InterfaceImages/Give.png'></span>";
+	GiveItemButton.addEventListener("click",async function(){
+		await fetch("macro:GiveItemInput@Lib:pm.a5e.Core",{method: "POST", body:JSON.stringify({"ParentToken":ParentToken})});
+	});
+	buttonDIV.insertAdjacentElement("beforeend",GiveItemButton);
+
+	let TakeItemButton = document.createElement("button");
+	TakeItemButton.className = "equipment-button";
+	TakeItemButton.innerHTML = "<span title='Click to pick up an item from the ground.'><img src='lib://pm.a5e.core/InterfaceImages/Take.png'></span>";
+	TakeItemButton.addEventListener("click",async function(){
+		await fetch("macro:PickUpItem@Lib:pm.a5e.Core",{method: "POST", body:JSON.stringify({"ParentToken":ParentToken})});
+	});
+	buttonDIV.insertAdjacentElement("beforeend",TakeItemButton);
+
+	let SplitItemButton = document.createElement("button");
+	SplitItemButton.className = "equipment-button";
+	SplitItemButton.innerHTML = "<span title='Drag an item over to split it into two separate stacks.'><img src='lib://pm.a5e.core/InterfaceImages/Split.png'></span>";
+	SplitItemButton.addEventListener("click",function(){
+		
+	});
+	buttonDIV.insertAdjacentElement("beforeend",SplitItemButton);
+
+	let ThrowItemButton = document.createElement("button");
+	ThrowItemButton.className = "equipment-button";
+	ThrowItemButton.innerHTML = "<span title='Click to throw any item, or drag an item over to throw that specific item.'><img src='lib://pm.a5e.core/InterfaceImages/Throw.png'></span>";
+	ThrowItemButton.addEventListener("click",function(){
+
+	});
+	buttonDIV.insertAdjacentElement("beforeend",ThrowItemButton);
+
+	let EquipItemButton = document.createElement("button");
+	EquipItemButton.className = "equipment-button";
+	EquipItemButton.innerHTML = "<span title='Click to equip armor, or drag and drop to wear or take off a specific set of armor.'><img src='lib://pm.a5e.core/InterfaceImages/Equip_Armor.png'></span>";
+	EquipItemButton.addEventListener("click",function(){
+
+	});
+	buttonDIV.insertAdjacentElement("beforeend",EquipItemButton);
+
+	let HoldItemButton = document.createElement("button");
+	HoldItemButton.className = "equipment-button";
+	HoldItemButton.innerHTML = "<span title='Click to adjust all held items, or drag and drop to hold or stow a specific item.'><img src='lib://pm.a5e.core/InterfaceImages/Hold.png'></span>";
+	HoldItemButton.addEventListener("click",function(){
+
+	});
+	buttonDIV.insertAdjacentElement("beforeend",HoldItemButton);
+
+	let WearItemButton = document.createElement("button");
+	WearItemButton.className = "equipment-button";
+	WearItemButton.innerHTML = "<span title='Click to adjust all worn items, or drag and drop to wear or take off a specific item.'><img src='lib://pm.a5e.core/InterfaceImages/Wear.png'></span>";
+	WearItemButton.addEventListener("click",function(){
+
+	});
+	buttonDIV.insertAdjacentElement("beforeend",WearItemButton);
+
+	let AttunementItemButton = document.createElement("button");
+	AttunementItemButton.className = "equipment-button";
+	AttunementItemButton.innerHTML = "<span title='Click to adjust all attunement slots, or drag and drop to attune to a specific item.'><img src='lib://pm.a5e.core/InterfaceImages/Attunement.png'></span>";
+	AttunementItemButton.addEventListener("click",function(){
+
+	});
+	AttunementItemButton.addEventListener("drop",function(){
+
+	});
+	AttunementItemButton.addEventListener("dragover",allowDrop(e));
+	buttonDIV.insertAdjacentElement("beforeend",AttunementItemButton);
+}
+
 async function loadUserData(){
 	let userdata = atob(await MapTool.getUserData());
 	userdata = JSON.parse(userdata);
@@ -580,7 +652,7 @@ async function loadUserData(){
 	debug = false;
 	
 	createInventoryTable();
-
+	createGeneralEquipButtons();
 	document.title = "Inventory: "+userdata.TokenName;
 }
 

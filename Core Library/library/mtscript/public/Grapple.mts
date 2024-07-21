@@ -19,18 +19,23 @@
 [h:gr.TargetingData = json.set("",
 	"ParentToken",ParentToken,
 	"Number",1,
-	"Allegiance",json.set("","NotSelf",1),
 	"Origin",ParentToken,
 	"Range",json.set("","Value",5,"Units","Feet")
 )]
 
 [h:gr.TargetingFilters = json.set("",
-	"SizeMax",pm.a5e.GetSizeChange(getSize(ParentToken),1)
+	"SizeMax",1,
+	"Allegiance",json.set("","NotSelf",1)
 )]
 
 [h:gr.TargetOptions = pm.a5e.TargetCreatureFiltering(gr.TargetingData,gr.TargetingFilters)]
-[h:gr.Target = pm.a5e.TargetCreatureTargeting(json.get(gr.TargetOptions,"ValidTargets"),1)]
-
+[h:gr.Target = pm.a5e.TargetCreatureTargeting(json.set("",
+	"ValidTargets",json.get(gr.TargetOptions,"ValidTargets"),
+	"TargetNumber",1,
+	"ParentToken",ParentToken,
+	"Origin",ParentToken
+),1)]
+[h:gr.Target = json.get(gr.Target,0)]
 [h:gr.thisEffect = json.set(gr.thisEffect,"Targets",gr.Target)]
 
 [h:"<!-- TODO: Needs EndInfo: 

@@ -14,4 +14,4 @@
 )]
 [h:pm.PassiveFunction("Limbs")]
 
-[h:macro.return = UsableLimbs]
+[h:return(0,UsableLimbs)]

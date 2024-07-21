@@ -11,12 +11,25 @@
 	[h,if(SelfOnlyTest || MustTargetAll),CODE:{
 		[h:pm.FeatureTargets = FeatureTargetOptions]
 	};{
-		[h:pm.FeatureTargets = pm.a5e.TargetCreatureTargeting(FeatureTargetOptions,json.get(basicTargetData,"Number"))]
+		[h:pm.FeatureTargets = pm.a5e.TargetCreatureTargeting(json.set("",
+			"ValidTargets",FeatureTargetOptions,
+			"TargetNumber",json.get(basicTargetData,"Number"),
+			"ParentToken",ParentToken,
+			"Origin",if(json.get(basicTargetData,"Origin") == "",ParentToken,json.get(basicTargetData,"Origin"))
+		))]
+
+		[h,if(json.get(basicTargetData,"Number") == 1): pm.FeatureTargets = json.get(pm.FeatureTargets,0)]
 	}]
 	
 	[h:effectsToMerge = json.append("",json.set("","Targets",pm.FeatureTargets))]
 
-	[h,MACRO("Build Effect@Lib:pm.a5e.Core"): json.set("","CurrentEffects",pm.a5e.EffectData,"ToMerge",effectsToMerge,"BaseEffect",pm.a5e.BaseEffectData,"WhichEffect",whichEffect)]
+	[h,if(json.get(currentFeatureInfo,"isEffectResolving") == 1),CODE:{
+		[h,MACRO("Build Effect@Lib:pm.a5e.Core"): json.set("","CurrentEffects",json.append("",effFull),"ToMerge",effectsToMerge,"BaseEffect","{}","WhichEffect",0)]
 
-	[h:pm.a5e.EffectData = macro.return]
+		[h:effFull = json.get(macro.return,0)]
+	};{
+		[h,MACRO("Build Effect@Lib:pm.a5e.Core"): json.set("","CurrentEffects",pm.a5e.EffectData,"ToMerge",effectsToMerge,"BaseEffect",pm.a5e.BaseEffectData,"WhichEffect",whichEffect)]
+
+		[h:pm.a5e.EffectData = macro.return]
+	}]
 }]

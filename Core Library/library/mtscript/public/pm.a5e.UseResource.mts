@@ -499,7 +499,7 @@
 
 	[h,if(pm.TimeResourceData != ""),CODE:{
 		[h:timeResourcePathData = json.get(pm.TimeResourceData,"Resource")]
-		[h:timeResourceSourceData = pm.a5e.ResourceSourceData(json.get(timeResourcePathData,"ResourceSource"),timeResourcePathData)]
+		[h:timeResourceSourceData = pm.a5e.FeatureSourceData(json.get(timeResourcePathData,"ResourceSource"),timeResourcePathData)]
 		[h:timeSourceProperty = json.get(timeResourceSourceData,"Property")]
 		[h:timeSourcePath = json.get(timeResourceSourceData,"Path")]
 		[h:timeResourceAmount = json.get(json.path.read(getProperty(timeSourceProperty),timeSourcePath+"['TimeResource']"),0)]
@@ -578,7 +578,7 @@
 
 	[h,if(pm.TimeResourceData != ""),CODE:{
 		[h:timeResourcePathData = json.get(pm.TimeResourceData,"Resource")]
-		[h:timeResourceSourceData = pm.a5e.ResourceSourceData(json.get(timeResourcePathData,"ResourceSource"),timeResourcePathData)]
+		[h:timeResourceSourceData = pm.a5e.FeatureSourceData(json.get(timeResourcePathData,"ResourceSource"),timeResourcePathData)]
 		[h:timeSourceProperty = json.get(timeResourceSourceData,"Property")]
 		[h:timeSourcePath = json.get(timeResourceSourceData,"Path")]
 		[h:timeResourceAmount = json.get(json.path.read(getProperty(timeSourceProperty),timeSourcePath+"['TimeResource']"),0)]
@@ -776,7 +776,7 @@
 	case "Feature":{
 		[h:"<!-- Note: Default is for feature resources, but covers features, conditions, and items. -->"]
 
-		[h:ResourceSourceData = pm.a5e.ResourceSourceData(json.get(ResourceSelected,"TempResourceSource"),ResourceSelected)]
+		[h:ResourceSourceData = pm.a5e.FeatureSourceData(json.get(ResourceSelected,"TempResourceSource"),ResourceSelected)]
 		[h:sourceProperty = json.get(ResourceSourceData,"Property")]
 		[h:sourcePath = json.get(ResourceSourceData,"Path")]
 
@@ -845,7 +845,7 @@
 		"isTimeActive",isTimeActive
 	)]
 	[h:timeResourcePathData = json.get(pm.TimeResourceData,"Resource")]
-	[h:timeResourceSourceData = pm.a5e.ResourceSourceData(json.get(timeResourcePathData,"ResourceSource"),timeResourcePathData)]
+	[h:timeResourceSourceData = pm.a5e.FeatureSourceData(json.get(timeResourcePathData,"ResourceSource"),timeResourcePathData)]
 	[h:timeSourceProperty = json.get(timeResourceSourceData,"Property")]
 	[h:timeSourcePath = json.get(timeResourceSourceData,"Path")]
 	[h:updatedTimeResourceInfo = getProperty(timeSourceProperty)]

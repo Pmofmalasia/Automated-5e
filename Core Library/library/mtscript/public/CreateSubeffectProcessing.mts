@@ -68,48 +68,9 @@
 		}
 	]
 
-	[h,switch(json.get(subeffectData,"UseTime")),CODE:
-		case "Action":{
-			[h:castTimeInfo = json.set("","Value",1,"Units","action")]
-		};
-		case "Bonus Action":{
-			[h:castTimeInfo = json.set("","Value",1,"Units","bonus")]
-		};
-		case "Reaction":{
-			[h:castTimeInfo = json.set("","Value",1,"Units","reaction")]
-		};
-		case "1 Minute":{
-			[h:castTimeInfo = json.set("","Value",1,"Units","minute")]
-		};
-		case "10 Minutes":{
-			[h:castTimeInfo = json.set("","Value",10,"Units","minute")]
-		};
-		case "1 Hour":{
-			[h:castTimeInfo = json.set("","Value",1,"Units","hour")]
-		};
-		case "8 Hours":{
-			[h:castTimeInfo = json.set("","Value",8,"Units","hour")]
-		};
-		case "12 Hours":{
-			[h:castTimeInfo = json.set("","Value",12,"Units","hour")]
-		};
-		case "24 Hours":{
-			[h:castTimeInfo = json.set("","Value",24,"Units","hour")]
-		};
-		case "Custom":{
-			[h:castTimeInfo = json.set("","Value",json.get(subeffectData,"customUseTimeValue"),"Units",pm.StandardDuration(json.get(subeffectData,"customUseTimeUnits")))]
-			[h:subeffectData = json.remove(subeffectData,"customUseTimeValue")]
-			[h:subeffectData = json.remove(subeffectData,"customUseTimeUnits")]
-		};
-		default:{
-			[h:castTimeInfo = "{}"]
-		}
-	]
-	[h:currentEffectData = json.set(currentEffectData,"UseTime",castTimeInfo)]
-	[h:subeffectData = json.remove(subeffectData,"UseTime")]
-
-	[h,if(json.contains(subeffectData,"UseTimeReactionDescription")): subeffectData = json.set(subeffectData,"ReactionDescription",base64.encode(pm.EvilChars(json.get(subeffectData,"ReactionDescription"))))]
-	[h:subeffectData = json.remove(subeffectData,"UseTimeReactionDescription")]
+	[h:UseTimeData = ct.a5e.UseTimeProcessing(subeffectData,"")]
+	[h:subeffectData = json.get(UseTimeData,"Subeffect")]
+	[h:currentEffectData = json.set(currentEffectData,"UseTime",json.get(UseTimeData,"UseTime"))]
 
 	[h,MACRO("InputDurationProcessing@Lib:pm.a5e.Core"): json.set("","InputData",subeffectData,"Prefix","Duration")]
 	[h:ReturnDurationData = macro.return]
@@ -138,7 +99,7 @@
 		[h,count(AHLDurationCountAmount): subeffectData = json.remove(subeffectData,"AHLDurationLevel"+roll.count)]
 	}]
 
-	[h:currentEffectData = json.set(currentEffectData,"isConcentration",json.contains(currentEffectData,"isConcentration"))]
+	[h:currentEffectData = json.set(currentEffectData,"isConcentration",json.contains(subeffectData,"isConcentration"))]
 	[h:subeffectData = json.remove(subeffectData,"isConcentration")]
 
 	[h,if(json.contains(subeffectData,"isConcentrationLost")),CODE:{
@@ -356,7 +317,7 @@
 			"AHLDieNum",number(json.get(subeffectData,"AHLDieNum"+whichType)),
 			"AHLFlatBonus",number(json.get(subeffectData,"AHLFlatBonus"+whichType))
 	)]
-	
+
 	[h:"<!-- TODO: This will introduce a disconnect between the input and what happens in the code - need to create the ability to apply DamageHalved to each individual type? As it stands now a spell that halves one type and completely reduces another on save will just have all damage types that are reduced completely nullified. Super low priority because why would you do that anyway. -->"]
 	[h,if(howMitigate == "Save"),CODE:{
 		[h,if(json.get(SaveDamageModifier,"DamageHalved")==""):
@@ -398,6 +359,7 @@
 
 [h:isCondition = json.get(subeffectData,"isCondition")]
 [h:subeffectData = json.remove(subeffectData,"isCondition")]
+
 [h:allBaseConditions = pm.a5e.GetBaseConditions()]
 [h:conditionsAlwaysAdded = "[]"]
 [h:EffectSpecificConditions = "[]"]
@@ -415,8 +377,8 @@
 		};
 		case "11":{
 			[h:conditionNames = json.fromList(encode(json.get(subeffectData,"AlwaysAddedEffectSpecificNames")),"%0A")]
-			[h,foreach(tempCondition,conditionNames): conditionsAlwaysAdded = json.append(conditionsAlwaysAdded,json.set(ConditionIdentificationInfo,"Name",pm.RemoveSpecial(tempCondition),"DisplayName",tempCondition))]
-			[h,foreach(tempCondition,conditionNames): EffectSpecificConditions = json.append(EffectSpecificConditions,json.set(ConditionIdentificationInfo,"Name",pm.RemoveSpecial(tempCondition),"DisplayName",tempCondition))]
+			[h,foreach(tempCondition,conditionNames): conditionsAlwaysAdded = json.append(conditionsAlwaysAdded,json.set(ConditionIdentificationInfo,"Name",pm.RemoveSpecial(pm.EvilChars(decode(tempCondition))),"DisplayName",decode(tempCondition)))]
+			[h,foreach(tempCondition,conditionNames): EffectSpecificConditions = json.append(EffectSpecificConditions,json.set(ConditionIdentificationInfo,"Name",pm.RemoveSpecial(tempCondition),"DisplayName",decode(tempCondition)))]
 			[h:subeffectData = json.remove(subeffectData,"isEffectSpecificAlwaysAddedMultiple")]
 			[h:subeffectData = json.remove(subeffectData,"AlwaysAddedEffectSpecificNames")]
 		};
@@ -440,8 +402,8 @@
 		};
 		case "11":{
 			[h:conditionNames = json.fromList(encode(json.get(subeffectData,"ConditionOptionEffectSpecificNames")),"%0A")]
-			[h,foreach(tempCondition,conditionNames): conditionOptions = json.append(conditionOptions,json.set(ConditionIdentificationInfo,"Name",pm.RemoveSpecial(tempCondition),"DisplayName",tempCondition))]
-			[h,foreach(tempCondition,conditionNames): EffectSpecificConditions = json.append(EffectSpecificConditions,json.set(ConditionIdentificationInfo,"Name",pm.RemoveSpecial(tempCondition),"DisplayName",tempCondition))]
+			[h,foreach(tempCondition,conditionNames): conditionOptions = json.append(conditionOptions,json.set(ConditionIdentificationInfo,"Name",pm.RemoveSpecial(pm.EvilChars(decode(tempCondition))),"DisplayName",decode(tempCondition)))]
+			[h,foreach(tempCondition,conditionNames): EffectSpecificConditions = json.append(EffectSpecificConditions,json.set(ConditionIdentificationInfo,"Name",pm.RemoveSpecial(pm.EvilChars(decode(tempCondition))),"DisplayName",decode(tempCondition)))]
 			[h:subeffectData = json.remove(subeffectData,"isEffectSpecificConditionOptionMultiple")]
 			[h:subeffectData = json.remove(subeffectData,"ConditionOptionEffectSpecificNames")]
 		};
@@ -454,28 +416,46 @@
 	[h,if(json.contains(subeffectData,"isConditionSameDuration")),CODE:{
 		[h:conditionEndInfo = json.set("","UseMainDuration",1)]
 		[h:subeffectData = json.remove(subeffectData,"isConditionSameDuration")]
+		[h:mainDuration = json.get(currentEffectData,"Duration")]
+		[h,if(!json.isEmpty(mainDuration)): conditionEndInfo = json.set(conditionEndInfo,"AdvancePoint",json.get(subeffectData,"ConditionAdvancePoint"))]
 	};{
 		[h:"<!-- Note: Alternate duration works as the 'main' duration for things that apply conditions but don't have another 'main' duration -->"]
 
 		[h,MACRO("InputDurationProcessing@Lib:pm.a5e.Core"): json.set("","InputData",subeffectData,"Prefix","ConditionDuration")]
 		[h:ReturnDurationData = macro.return]
 		[h:subeffectData = json.get(ReturnDurationData,"OutputData")]
-		[h:conditionEndInfo = json.set("","Duration",json.get(ReturnDurationData,"DurationInfo"))]
+		[h:conditionDurationInfo = json.get(ReturnDurationData,"DurationInfo")]
+		[h:conditionEndInfo = json.set("","Duration",conditionDurationInfo)]
+		[h,if(!json.isEmpty(conditionDurationInfo)): conditionEndInfo = json.set(conditionEndInfo,"AdvancePoint",json.get(subeffectData,"ConditionAdvancePoint"))]
 	}]
+	[h:subeffectData = json.remove(subeffectData,"ConditionAdvancePoint")]
 
 	[h,if(json.contains(subeffectData,"isConditionNonDurationEnd")),CODE:{
 		[h:conditionEndInfoProcessingData = ct.a5e.ConditionEndTriggerInputProcessing(subeffectData)]
 		[h:subeffectData = json.get(conditionEndInfoProcessingData,"Subeffect")]
-		[h:conditionEndInfo = json.get(conditionEndInfoProcessingData,"EndInfo")]
-	};{
-		[h:conditionEndInfo = "{}"]
-	}]
+		[h:conditionEndInfo = json.set(conditionEndInfo,"EndTriggers",json.get(conditionEndInfoProcessingData,"EndTriggers"))]
+	};{}]
 	[h:subeffectData = json.remove(subeffectData,"isConditionNonDurationEnd")]
 
 	[h:allConditionInfo = json.set("",
 		"Conditions",json.merge(conditionsAlwaysAdded,conditionOptions),
 		"EndInfo",conditionEndInfo
 	)]
+
+	[h,if(json.contains(subeffectData,"isConditionTiered")),CODE:{
+		[h:conditionTierData = json.set("","Tier",json.get(subeffectData,"ConditionTier"))]
+		[h:conditionAHLScaling = number(json.get(subeffectData,"ConditionTierAHLScaling"))]
+		[h,if(conditionAHLScaling != 0):
+			conditionTierData = json.set(conditionTierData,"AHL",json.get(subeffectData,"ConditionTierAHL"),"AHLScaling",conditionAHLScaling);
+			conditionTierData = json.set(conditionTierData,"AHL",0,"AHLScaling",0)
+		]
+		[h:subeffectData = json.remove(subeffectData,"ConditionTier")]
+		[h:subeffectData = json.remove(subeffectData,"ConditionTierAHL")]
+		[h:subeffectData = json.remove(subeffectData,"ConditionTierAHLScaling")]
+		[h:subeffectData = json.remove(subeffectData,"isConditionTiered")]
+
+		[h:allConditionInfo = json.set(allConditionInfo,"Tier",conditionTierData)]
+	}]
 
 	[h,if(json.contains(subeffectData,"isAura")),CODE:{
 		[h:GeneralTargetingReturn = ct.a5e.GeneralTargetingProcessing(subeffectData,"Aura")]
@@ -518,73 +498,14 @@
 [h:subeffectData = json.remove(subeffectData,"conditionSaveEffect")]
 
 [h:isSummons = json.get(subeffectData,"isSummons")]
-[h:subeffectData = json.remove(subeffectData,"isSummons")]
 [h,if(isSummons != "No"),CODE:{
-	[h,switch(isSummons),CODE:
-		case "UniqueEffect":{
-			[h:SummonData = json.set("",
-				"SummonName",FeatureName
-			)]
-		};
-		case "Single":{
-			[h:SummonData = json.set("",
-				"SummonName",json.get(subeffectData,"singleSummon")
-			)]
-			[h:subeffectData = json.remove(subeffectData,"singleSummon")]
-			[h:subeffectData = json.remove(subeffectData,"singleSummon")]
-		};
-		case "Options":{
-			[h:SummonOptions = json.fromList(encode(json.get(subeffectData,"summonOptions")),"%0A")]
-			[h:SummonData = json.set("",
-				"SummonOptions",SummonOptions
-			)]
-			[h:subeffectData = json.remove(subeffectData,"summonOptions")]
-		};
-		case "Criteria":{
-			[h:CreatureTypeNameArray = pm.GetCreatureTypes("Name","json")]
-			[h:summonCreatureTypesAllowed = ""]
-			[h,foreach(tempCreatureType,CreatureTypeNameArray): summonCreatureTypesAllowed = if(json.contains(subeffectData,"summonCreatureType"+tempCreatureType),json.append(summonCreatureTypesAllowed,tempCreatureType),summonCreatureTypesAllowed)]
-
-			[h:"<!-- TODO: Add processing of creature subtypes when finished -->"]
-
-			[h:SummonData = json.set("",
-				"SummonCRMax",json.get(subeffectData,"summonCrMax"),
-				"SummonCreatureType",summonCreatureTypesAllowed
-			)]
-
-			[h,if(json.contains(subeffectData,"summonCrMaxAHLNum")): SummonData = json.set(SummonData,
-				"SummonCRMaxAHL",json.get(subeffectData,"summonCrMaxAHLNum"),
-				"SummonCRMaxAHLScaling",json.get(subeffectData,"summonCrMaxAHLScaling"),
-				"SummonCRMaxAHLScalingMethod",json.get(subeffectData,"summonCrMaxAHLScaleHow")
-			)]
-
-			[h,foreach(tempCreatureType,CreatureTypeNameArray): subeffectData = json.remove(subeffectData,"summonCreatureType"+tempCreatureType)]
-			[h:subeffectData = json.remove(subeffectData,"summonCrMax")]
-			[h:subeffectData = json.remove(subeffectData,"summonCrMaxAHLNum")]
-			[h:subeffectData = json.remove(subeffectData,"summonCrMaxAHLScaling")]
-			[h:subeffectData = json.remove(subeffectData,"summonCrMaxAHLScaleHow")]
-		};
-		default:{[h:SummonData = "{}"]}
-	]
-
-	[h,if(json.contains(subeffectData,"summonNumber")):
-		SummonData = json.set(SummonData,"SummonNumber",json.get(subeffectData,"summonNumber"));
-		SummonData = json.set(SummonData,"SummonNumberCRBased",1)
-	]
-	[h:subeffectData = json.remove(subeffectData,"summonNumber")]
-	[h:subeffectData = json.remove(subeffectData,"summonNumberCRBased")]
-
-	[h,if(json.contains(subeffectData,"summonNumberAHL")): SummonData = json.set(SummonData,
-		"SummonNumberAHL",json.get(subeffectData,"summonNumberAHL"),
-		"SummonNumberAHLScaling",json.get(subeffectData,"summonNumberAHLScaling"),
-		"SummonNumberScalingMethod",json.get(subeffectData,"summonNumberAHLScaleHow")
-	)]
-	[h:subeffectData = json.remove(subeffectData,"summonNumberAHL")]
-	[h:subeffectData = json.remove(subeffectData,"summonNumberAHLScaling")]
-	[h:subeffectData = json.remove(subeffectData,"summonNumberAHLScaleHow")]
+	[h:summonReturnData = ct.a5e.SummonsInputProcessing(subeffectData)]
+	[h:subeffectData = json.get(summonReturnData,"Subeffect")]
+	[h:SummonData = json.get(summonReturnData,"Summon")]
 
 	[h:subeffectData = json.set(subeffectData,"Summon",SummonData)]
 };{}]
+[h:subeffectData = json.remove(subeffectData,"isSummons")]
 
 [h,if(json.contains(subeffectData,"isUseResource")),CODE:{
 	[h:ResourceData = "{}"]
@@ -777,10 +698,16 @@
 [h,if(TargetConditionData != ""): subeffectData = json.set(subeffectData,"TargetConditionLimits",TargetConditionData)]
 [h,if(ConditionModificationData != ""): subeffectData = json.set(subeffectData,"ConditionModificationInfo",ConditionModificationData)]
 
-[h:"<!-- TODO: Add this stuff here -->"]
+[h:"<!-- TODO: Add affect spell stuff -->"]
 [h:subeffectData = json.remove(subeffectData,"isAffectSpell")]
 
-[h:subeffectData = ct.a5e.LightDataProcessing(subeffectData,"")]
+[h,if(json.contains(subeffectData,"isLight")),CODE:{
+	[h:returnLightData = ct.a5e.LightDataProcessing(subeffectData,"Type")]
+	[h:lightData = json.get(returnLightData,"Light")]
+	[h:subeffectData = json.get(returnLightData,"Subeffect")]
+	[h:subeffectData = json.set(subeffectData,"Lights",lightData)]
+};{}]
+[h:subeffectData = json.remove(subeffectData,"isLight")]
 
 [h,if(json.contains(subeffectData,"isMoveTarget")),CODE:{
 	[h,if(json.get(subeffectData,"moveTargetUnits")=="Unlimited"):
@@ -999,6 +926,7 @@
 	[h:closeDialog("SubeffectCreation")]
 	[h,if(lastEffectTest && !MainNeedsNewSubeffect && !needsPersistentEffect),CODE:{
 		[h,MACRO("CreateFeatureCoreFinalInput@Lib:pm.a5e.Core"): json.set("","EffectType",EffectType,"ExtraData",extraData,"ParentToken",ParentToken)]
+		[h:return(0,macro.return)]
 	};{
 		[h,MACRO("CreateSubeffect@Lib:pm.a5e.Core"): baseFeatureData]
 	}]

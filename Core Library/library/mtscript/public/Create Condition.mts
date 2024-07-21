@@ -29,7 +29,7 @@
 [h,foreach(tempTag,ConditionTags): ConditionTagsChosen = if(eval("choice"+json.get(tempTag,"Name")),json.append(ConditionTagsChosen,json.get(tempTag,"Name")),ConditionTagsChosen)]
 
 [h,if(otherConditionTag),CODE:{
-	[h:MACRO("CreateConditionTag@Lib:pm.a5e.Core"): ""]
+	[h,MACRO("CreateConditionTag@Lib:pm.a5e.Core"): ""]
 	[h:ConditionTagsChosen = json.append(ConditionTagsChosen,macro.return)]
 };{}]
 

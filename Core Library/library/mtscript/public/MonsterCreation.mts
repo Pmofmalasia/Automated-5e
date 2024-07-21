@@ -39,7 +39,7 @@
 
 [h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowHitDie'><th><label for='HitDieNum'>Total Hit Dice:</label></th><td><input type='number' id='HitDieNum' name='HitDieNum' min='1' style='width:25px'> d <input type='number' id='HitDieSize' name='HitDieSize' min='1' style='width:25px'> + <input type='number' id='HitDieBonus' name='HitDieBonus' min='0' style='width:25px'></td></tr>"]
 
-[h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowSpeedWalking'><th><label for='SpeedWalking'>Walking Speed:</label></th><td><input type='number' id='SpeedWalking' name='SpeedWalking' min='0' style='width:25px' value='30'></td></tr>"]
+[h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowSpeed'><th><label for='Speed'>Walking Speed:</label></th><td><input type='number' id='Speed' name='Speed' min='0' style='width:25px' value='30'></td></tr>"]
 
 [h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowSpeedBurrow'><th><label for='SpeedBurrow'>Burrowing Speed:</label></th><td><input type='number' id='SpeedBurrow' name='SpeedBurrow' min='0' style='width:25px' value='0'></td></tr>"]
 
@@ -52,15 +52,21 @@
 [h:AttributeList = pm.GetAttributes()]
 [h,foreach(tempAttribute,AttributeList): monsterCreationHTML = monsterCreationHTML + "<tr id='rowAttribute"+json.get(tempAttribute,"Name")+"'><th><label for='Attribute"+json.get(tempAttribute,"Name")+"'>"+json.get(tempAttribute,"DisplayName")+" Score:</label></th><td><input type='number' id='Attribute"+json.get(tempAttribute,"Name")+"' name='Attribute"+json.get(tempAttribute,"Name")+"' min='1' style='width:25px'></td></tr>"]
 
-[h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowIsVulnerability'><th><label for='IsVulnerability'>Has Vulnerabilities:</label></th><td><input type='checkbox' id='IsVulnerability' name='IsVulnerability' onchange='createDamageTypeRows("+'"Vulnerability"'+")'></td></tr>"]
+[h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowIsVulnerability'><th><label for='IsVulnerability'>Has Damage Vulnerabilities:</label></th><td><input type='checkbox' id='IsVulnerability' name='IsVulnerability' onchange='createDamageTypeRows("+'"Vulnerability"'+")'></td></tr>"]
 
-[h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowIsResistance'><th><label for='IsResistance'>Has Resistances:</label></th><td><input type='checkbox' id='IsResistance' name='IsResistance' onchange='createDamageTypeRows("+'"Resistance"'+")'></td></tr>"]
+[h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowIsResistance'><th><label for='IsResistance'>Has Damage Resistances:</label></th><td><input type='checkbox' id='IsResistance' name='IsResistance' onchange='createDamageTypeRows("+'"Resistance"'+")'></td></tr>"]
 
-[h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowIsImmunity'><th><label for='IsImmunity'>Has Immunities:</label></th><td><input type='checkbox' id='IsImmunity' name='IsImmunity' onchange='createDamageTypeRows("+'"Immunity"'+")'></td></tr>"]
+[h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowIsImmunity'><th><label for='IsImmunity'>Has Damage Immunities:</label></th><td><input type='checkbox' id='IsImmunity' name='IsImmunity' onchange='createDamageTypeRows("+'"Immunity"'+")'></td></tr>"]
 
-[h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowIsConditionImmun'><th><label for='IsConditionImmun'>Has Condition Immunities:</label></th><td><input type='checkbox' id='IsConditionImmun' name='IsConditionImmun' onchange='createConditionRows()'></td></tr>"]
+[h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowIsAbsorb'><th><label for='IsAbsorb'>Has Damage Absorption:</label></th><td><input type='checkbox' id='IsAbsorb' name='IsAbsorb' onchange='createDamageTypeRows("+'"Absorb"'+")'></td></tr>"]
 
-[h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowIsVision'><th><label for='isVision'>Gives Special Vision:</label></th><td><input type='checkbox' id='isVision' name='isVision' onchange='createVisionRows("+'"MonsterCreationTable","rowLanguageOptions"'+")'></td></tr>"]
+[h:allConditions = pm.a5e.GetBaseConditions()]
+[h:baseConditionOptions = ut.a5e.GenerateSelectionHTML(allConditions,1,"ConditionImmunity")]
+[h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowConditionImmunities'><th>Condition Immunities:</th><td><div class='check-multiple' id='ConditionImmunities' style='width:100%; height='100px'>"+baseConditionOptions+"</div></td></tr>"]
+
+[h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowLimbs'><th><label for='Limbs'>Limb Configuration:</label></th><td><select id='Limbs' name='Limbs'><option value='Biped'>Bipedal (2 Arms)</option><option value='Quadriped'>Quadripedal</option><option value='Custom'>Other Configuration</option></select></td></tr>"]
+
+[h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowIsVision'><th><label for='isVision'>Gives Special Vision:</label></th><td><input type='checkbox' id='isVision' name='isVision' onchange='createVisionRows("+'"rowLanguageOptions"'+")'></td></tr>"]
 
 [h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowLanguageOptions'><th><label for='LanguageOptions'>Chosen Languages:</label></th><td><input type='number' id='LanguageOptions' name='LanguageOptions' value=1 min=0 style='width:25px'></td></tr>"]
 
@@ -68,7 +74,7 @@
 [h:LanguageOptions = ut.a5e.GenerateSelectionHTML(AllLanguages)]
 [h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowLanguageKnown0'><th><label for='LanguageKnown0'>Known Language #1:</label></th><td><select id='LanguageKnown0' name='LanguageKnown0' value=1 min=0>"+LanguageOptions+"</select></td></tr>"]
 
-[h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowLanguageKnownButtons'><th text-align='center' colspan='2'><input type='button' id='addLanguageKnown' value='New Language Known' onclick='addLanguageKnownRow("+'"MonsterCreationTable"'+")'>  <input type='button' id='removeLanguageKnown' value='Remove Language Known' onclick='removeLanguageKnownRow("+'"MonsterCreationTable"'+")'><input type='hidden' id='LanguageKnownNumber' name='LanguageKnownNumber' value=0></th></tr>"]
+[h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowLanguageKnownButtons'><th text-align='center' colspan='2'><input type='button' id='addLanguageKnown' value='New Language Known' onclick='addLanguageKnownRow()'>  <input type='button' id='removeLanguageKnown' value='Remove Language Known' onclick='removeLanguageKnownRow()'><input type='hidden' id='LanguageKnownNumber' name='LanguageKnownNumber' value=0></th></tr>"]
 
 [h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowProficiency'><th><label for='Proficiency'>Proficiency Bonus:</label></th><td><input type='number' id='Proficiency' name='Proficiency' min='1' style='width:25px' value='2'></td></tr>"]
 
@@ -77,6 +83,20 @@
 [h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowXP'><th><label for='XP'>XP:</label></th><td><input type='number' id='XP' name='XP' min='0' style='width:35px'></td></tr>"]
 
 [h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowAllegiance'><th><label for='Allegiance'>Allegiance to Party:</label></th><td><select id='Allegiance' name='Allegiance'><option value='Enemy'>Enemy</option><option value='Ally'>Ally</option><option value='Neutral'>Neutral</option></td></tr>"]
+
+[h:allEnvironments = pm.a5e.GetCoreData("sb.Environments")]
+[h:EnvironmentOptions = ut.a5e.GenerateSelectionHTML(allEnvironments,1,"isEnvironment")]
+[h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowEnvironments'><th>Environments:</th><td><div class='check-multiple' id='Environments' style='width:100%; height='100px'>"+EnvironmentOptions+"</div></td></tr>"]
+
+[h:allSourcebooks = pm.GetBookInfo()]
+[h:sourcebookOptions = ""]
+[h,foreach(tempBook,allSourcebooks),CODE:{
+	[h:tempBookDisplayName = json.get(tempBook,"DisplayName")]
+	[h,if(length(tempBookDisplayName) > 22): tempBookDisplayName = substring(tempBookDisplayName,0,20)+"..."]
+	[h:sourcebookOptions = sourcebookOptions + "<option value='"+json.get(tempBook,"Library")+"'>"+tempBookDisplayName+"</option>"]
+}]
+
+[h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowLibrary'><th><label for='Library'>Monster Sourcebook:</label></th><td><select id='Library' name='Library'>"+sourcebookOptions+"</select></td></tr>"]
 
 [h:monsterCreationHTML = monsterCreationHTML + "<tr><th text-align='center' colspan='2'><input type='submit' class='theme-fix-submit' id='submitButton' value='Submit'></th></tr>"]
 

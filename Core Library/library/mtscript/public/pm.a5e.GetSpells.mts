@@ -2,7 +2,7 @@
 [h,if(pm.KeyChoice==""),CODE:{
 	[h:pm.Spells = data.getData("addon:","pm.a5e.core","sb.Spells")]
 };{
-	[h:pm.Spells = json.path.read(data.getData("addon:","pm.a5e.core","sb.Spells"),"."+pm.KeyChoice)]
+	[h:pm.Spells = json.path.read(data.getData("addon:","pm.a5e.core","sb.Spells"),"\$."+pm.KeyChoice)]
 }]
 
 [h,if(argCount()>1): pm.Delim = arg(1) ; pm.Delim = if(pm.KeyChoice=="","json",",")]

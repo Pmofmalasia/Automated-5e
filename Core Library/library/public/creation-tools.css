@@ -1,0 +1,4 @@
+.section-end{
+	border-bottom-style: dashed;
+	border-bottom-color: var(--mt-theme-color-actions-blue);
+}

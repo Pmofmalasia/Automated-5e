@@ -27,16 +27,19 @@
 	};{}]
 
 	[h:effectUseTime = json.get(effect,"UseTime")]
-	[h:UseTimeDisplay = json.get(effectUseTime,"Value")+" "+json.get(effectUseTime,"Units")+if(json.get(effectUseTime,"Value")==1,"","s")+if(json.get(effect,"isRitual") == 1,", or plus 10 minutes as a ritual.","")]
-	[h:abilityTable = json.append(abilityTable,json.set("",
-		"ShowIfCondensed",1,
-		"Header",if(json.get(FeatureData,"Class") == "Spell","Casting","Usage")+" Time",
-		"FalseHeader","",
-		"FullContents","",
-		"RulesContents",UseTimeDisplay,
-		"RollContents","",
-		"DisplayOrder","['Rules','Roll','Full']"
-	))]
+	[h,if(!json.isEmpty(effectUseTime)),CODE:{
+		[h:UseTimeDisplay = json.get(effectUseTime,"Value")+" "+json.get(effectUseTime,"Units")+if(json.get(effectUseTime,"Value")==1,"","s")+if(json.get(effect,"isRitual") == 1,", or plus 10 minutes as a ritual.","")]
+		[h:abilityTable = json.append(abilityTable,json.set("",
+			"ShowIfCondensed",1,
+			"Header",if(json.get(FeatureData,"Class") == "Spell","Casting","Usage")+" Time",
+			"FalseHeader","",
+			"FullContents","",
+			"RulesContents",UseTimeDisplay,
+			"RollContents","",
+			"DisplayOrder","['Rules','Roll','Full']"
+		))]		
+	};{}]
+
 
 	[h:reactionDescription = json.get(effect,"ReactionDescription")]
 	[h,if(reactionDescription != ""),CODE:{
@@ -52,7 +55,7 @@
 		))]
 	}]
 
-	[h:isConcentrationTest = json.get(effect,"isConcentration")]
+	[h:isConcentrationTest = number(json.get(effect,"isConcentration"))]
 	[h:ConcentrationLost = json.get(effect,"ConcentrationLostLevel")]
 	[h,if(ConcentrationLost != ""): 
 		ConcentrationLostString = ", no longer required at level "+ConcentrationLost;

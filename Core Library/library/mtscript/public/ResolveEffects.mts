@@ -106,6 +106,7 @@
 [h:effAttackData = json.get(effToResolve,"Attack")]
 [h:effCheckDCData = json.get(effToResolve,"CheckDC")]
 [h:effSaveDCData = json.get(effToResolve,"SaveDC")]
+[h:effSummonData = json.get(effToResolve,"Summon")]
 
 [h:effAllConditionIdentifiers = ""]
 [h,foreach(conditionSet,effConditionInfo),CODE:{
@@ -523,6 +524,11 @@
 	
 	[h:data.setData("addon:","pm.a5e.core","gd.Effects",json.path.set(data.getData("addon:","pm.a5e.core","gd.Effects"),"\$[*][?(@.ID=='"+effID+"')]",effFull))]
 };{
+	[h,if(!json.isEmpty(effSummonData)),CODE:{
+		[h,MACRO("SummonCreature@Lib:pm.a5e.Core"): effSummonData]
+		[h:abilityTable = json.merge(abilityTable,json.get(macro.return,"Table"))]
+	};{}]
+
 	[h:data.setData("addon:","pm.a5e.core","gd.Effects",json.path.delete(data.getData("addon:","pm.a5e.core","gd.Effects"),"\$[*][?(@.ID=='"+effID+"')]"))]
 }]
 

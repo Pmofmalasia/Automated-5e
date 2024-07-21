@@ -1,11 +1,12 @@
 [h:RemovedTokens = getSelected()]
 [h:RemovedTokensDisplay = ""]
-[h,foreach(tempToken,RemovedTokens): RemovedTokensDisplay = listAppend(RemovedTokensDisplay," junkVar | "+getImage(tempToken)+" | "+getName(tempToken)+" | LABEL | ICON=TRUE ","##")]
+[h,foreach(tempToken,RemovedTokens): RemovedTokensDisplay = listAppend(RemovedTokensDisplay," junkVar | | "+getName(tempToken)+" "+getImage(tempToken)+" | LABEL | ICON=TRUE SPAN=TRUE ","##")]
 [h:abort(input(
 	" junkVar | Click OK to confirm. | The following tokens will be deleted | LABEL ",
 	RemovedTokensDisplay
 ))]
 
+[h:XPCount = 0]
 [h,foreach(tempToken,RemovedTokens),CODE:{
 	[h:"<!-- Remove set conditions -->"]
 	[h:"<!-- TODO: Remove set ItemConditions also -->"]
@@ -20,5 +21,10 @@
 		[h:setProperty("a5e.stat.ConditionsSet",prunedConditionsSet,conditionSettingToken)]
 	}]
 
+	[h:XPCount = XPCount + getProperty("a5e.stat.XP",tempToken)]
+
 	[h:removeToken(tempToken)]
 }]
+
+[h:addXPLink = macroLinkText("AddExperienceBorder@Lib:pm.a5e.Core","all",json.set("","XP",XPCount))]
+[h:broadcast("Tokens Removed. <a href='"+addXPLink+"'>Click here to give their experience to selected tokens.</a>","gm")]

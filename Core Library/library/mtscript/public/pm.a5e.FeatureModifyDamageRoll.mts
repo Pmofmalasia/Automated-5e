@@ -92,7 +92,7 @@
 		]
 	};
 	case "Instances":{
-		[h:macro.return = ModifiedDamage]
+		[h:return(0,ModifiedDamage)]
 	};
 	default:{
 		[h,switch(HasToResolveTest+""+HasDamageTest):

@@ -62,7 +62,9 @@
 
 [h:allConditions = pm.a5e.GetBaseConditions()]
 [h:baseConditionOptions = ut.a5e.GenerateSelectionHTML(allConditions,1,"ConditionImmunity")]
-[h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowConditionImmunities'><th>Has Condition Immunities:</th><td><div class='check-multiple' id='ConditionImmunities' style='width:100%; height='100px'>"+baseConditionOptions+"</div></td></tr>"]
+[h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowConditionImmunities'><th>Condition Immunities:</th><td><div class='check-multiple' id='ConditionImmunities' style='width:100%; height='100px'>"+baseConditionOptions+"</div></td></tr>"]
+
+[h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowLimbs'><th><label for='Limbs'>Limb Configuration:</label></th><td><select id='Limbs' name='Limbs'><option value='Biped'>Bipedal (2 Arms)</option><option value='Quadriped'>Quadripedal</option><option value='Custom'>Other Configuration</option></select></td></tr>"]
 
 [h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowIsVision'><th><label for='isVision'>Gives Special Vision:</label></th><td><input type='checkbox' id='isVision' name='isVision' onchange='createVisionRows("+'"rowLanguageOptions"'+")'></td></tr>"]
 
@@ -81,6 +83,10 @@
 [h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowXP'><th><label for='XP'>XP:</label></th><td><input type='number' id='XP' name='XP' min='0' style='width:35px'></td></tr>"]
 
 [h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowAllegiance'><th><label for='Allegiance'>Allegiance to Party:</label></th><td><select id='Allegiance' name='Allegiance'><option value='Enemy'>Enemy</option><option value='Ally'>Ally</option><option value='Neutral'>Neutral</option></td></tr>"]
+
+[h:allEnvironments = pm.a5e.GetCoreData("sb.Environments")]
+[h:EnvironmentOptions = ut.a5e.GenerateSelectionHTML(allEnvironments,1,"isEnvironment")]
+[h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowEnvironments'><th>Environments:</th><td><div class='check-multiple' id='Environments' style='width:100%; height='100px'>"+EnvironmentOptions+"</div></td></tr>"]
 
 [h:allSourcebooks = pm.GetBookInfo()]
 [h:sourcebookOptions = ""]

@@ -119,6 +119,7 @@
 
 [h:allSameSpeed = json.length(json.unique(allSpeedsArray)) == 1]
 [h,if(allSameSpeed): SpeedBonuses = json.set("","All",json.set("","Base",json.get(allSpeedsArray,0)))]
+[h,if(json.contains(MonsterData,"isHover")): SpeedBonuses = json.set(SpeedBonuses,"Fly",json.set(json.get(SpeedBonuses,"Fly"),"Hover",1))]
 
 [h:MonsterTraitsFeature = json.set(MonsterTraitsFeature,"CallSpeed",SpeedBonuses)]
 
@@ -219,6 +220,8 @@
 }]
 [h,if(ConditionImmunityList != ""): MonsterTraitsFeature = json.set(MonsterTraitsFeature,"CallCondImmun",json.append("",json.set("","Conditions",ConditionImmunityList)))]
 
+[h:MonsterData = ct.a5e.LimbsProcessing(MonsterData)]
+
 [h:MonsterData = ct.a5e.LanguageOptionProcessing(MonsterData)]
 [h,if(json.contains(MonsterData,"LanguageOptions")): MonsterTraitsFeature = json.set(MonsterTraitsFeature,"LanguageOptions",json.get(MonsterData,"LanguageOptions"))]
 [h,if(json.contains(MonsterData,"Languages")): MonsterTraitsFeature = json.set(MonsterTraitsFeature,"Languages",json.get(MonsterData,"Languages"))]
@@ -240,5 +243,11 @@
 	case "Ally": setProperty("a5e.stat.WhichTeam",1);
 	default: setProperty("a5e.stat.WhichTeam",0)
 ]
+
+[h:MonsterEnvironments = "[]"]
+[h:allEnvironments = pm.a5e.GetCoreData("sb.Environments","Name","json")]
+[h,foreach(environment,allEnvironments),if(json.contains(MonsterData,"isEnvironment"+environment)): MonsterEnvironments = json.append(MonsterEnvironments,environment)]
+[h:setProperty("a5e.stat.Environments",MonsterEnvironments)]
+
 [h:closeDialog("Monster Creation")]
 [h,MACRO("BaseSkillSelection@Lib:pm.a5e.Core"): json.set("","ParentToken",ParentToken)]

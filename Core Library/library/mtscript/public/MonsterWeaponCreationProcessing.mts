@@ -82,6 +82,6 @@
 
 		[h:createMacro(NewWeaponMacroProps)]		
 	};{
-		[h:setProperty("a5e.stat.Inventory",json.append(getProperty("a5e.stat.Inventory"),MonsterWeaponData))]
+		[h,MACRO:("AddItemToken@Lib:pm.a5e.Core"): json.set("","Item",MonsterWeaponData,"ParentToken",ParentToken,"NumberAdded",1)]
 	}]
 }]

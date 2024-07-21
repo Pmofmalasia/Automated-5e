@@ -187,6 +187,7 @@
 	[h,MACRO("MixedTypeTargeting@Lib:pm.a5e.Core"): subeffect.MultiTypeTargetingData]
 	[h:subeffect.AllTargets = macro.return]
 };{
+	[h:"<!-- Note: As above, only true if PriorTargets are involved (allowing for targeting point in range, etc.) -->"]
 	[h,if(cancelSubeffectTest): return(0)]
 }]
 

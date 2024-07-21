@@ -37,6 +37,7 @@
     [h:effectTargetData = json.get(effect,"TargetedEffects")]
     [h:effectTargetOptionData = json.get(effect,"TargetedEffectOptions")]
     [h:effectMovementData = json.get(effect,"Movement")]
+    [h:effectSummonData = json.get(effect,"Summon")]
 
     [h:effectWeaponData = json.get(effect,"WeaponData")]
     [h:effectSpellData = json.get(effect,"SpellData")]
@@ -241,6 +242,21 @@
         [h,if(whichEffect >= json.length(currentEffectData)): thisEffect = json.path.set(baseEffectData,"\$.ID",newID); thisEffect = json.get(currentEffectData,whichEffect)]
 
         [h:thisEffect = json.set(thisEffect,"Movement",effectMovementData)]
+
+        [h,if(whichEffect >= json.length(currentEffectData)): currentEffectData = json.append(currentEffectData,thisEffect); currentEffectData = json.set(currentEffectData,whichEffect,thisEffect)]
+    };{}]
+    
+    [h,if(effectSummonData!=""),CODE:{
+        [h,if(whichEffect >= json.length(currentEffectData)): thisEffect = json.path.set(baseEffectData,"\$.ID",newID); thisEffect = json.get(currentEffectData,whichEffect)]
+
+		[h:thisEffectToResolve = json.get(thisEffect,"ToResolve")]
+		[h,if(json.isEmpty(thisEffectToResolve)): thisEffectToResolve = "{}"]
+
+        [h,if(json.get(thisEffectToResolve,"Summon")==""):
+            thisEffectToResolve = json.set(thisEffectToResolve,"Summon",effectSummonData);
+            thisEffectToResolve = json.set(thisEffectToResolve,"Summon",json.merge(json.get(thisEffectToResolve,"Summon"),effectSummonData))
+        ]
+		[h:thisEffect = json.set(thisEffect,"ToResolve",thisEffectToResolve)]
 
         [h,if(whichEffect >= json.length(currentEffectData)): currentEffectData = json.append(currentEffectData,thisEffect); currentEffectData = json.set(currentEffectData,whichEffect,thisEffect)]
     };{}]

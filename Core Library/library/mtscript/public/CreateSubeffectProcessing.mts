@@ -99,7 +99,7 @@
 		[h,count(AHLDurationCountAmount): subeffectData = json.remove(subeffectData,"AHLDurationLevel"+roll.count)]
 	}]
 
-	[h:currentEffectData = json.set(currentEffectData,"isConcentration",json.contains(currentEffectData,"isConcentration"))]
+	[h:currentEffectData = json.set(currentEffectData,"isConcentration",json.contains(subeffectData,"isConcentration"))]
 	[h:subeffectData = json.remove(subeffectData,"isConcentration")]
 
 	[h,if(json.contains(subeffectData,"isConcentrationLost")),CODE:{
@@ -452,6 +452,7 @@
 		[h:subeffectData = json.remove(subeffectData,"ConditionTier")]
 		[h:subeffectData = json.remove(subeffectData,"ConditionTierAHL")]
 		[h:subeffectData = json.remove(subeffectData,"ConditionTierAHLScaling")]
+		[h:subeffectData = json.remove(subeffectData,"isConditionTiered")]
 
 		[h:allConditionInfo = json.set(allConditionInfo,"Tier",conditionTierData)]
 	}]
@@ -497,75 +498,14 @@
 [h:subeffectData = json.remove(subeffectData,"conditionSaveEffect")]
 
 [h:isSummons = json.get(subeffectData,"isSummons")]
-[h:subeffectData = json.remove(subeffectData,"isSummons")]
 [h,if(isSummons != "No"),CODE:{
-	[h,switch(isSummons),CODE:
-		case "UniqueEffect":{
-			[h:SummonData = json.set("",
-				"SummonName",FeatureName
-			)]
-		};
-		case "Single":{
-			[h:SummonData = json.set("",
-				"SummonName",json.get(subeffectData,"singleSummon")
-			)]
-			[h:subeffectData = json.remove(subeffectData,"singleSummon")]
-			[h:subeffectData = json.remove(subeffectData,"singleSummon")]
-		};
-		case "Options":{
-			[h:tempSummonOptions = json.fromList(encode(json.get(subeffectData,"summonOptions")),"%0A")]
-			[h:SummonOptions = "[]"]
-			[h,foreach(summonOption,tempSummonOptions): SummonOptions = json.append(SummonOptions,pm.EvilChars(decode(summonOption)))]
-			[h:SummonData = json.set("",
-				"SummonOptions",SummonOptions
-			)]
-			[h:subeffectData = json.remove(subeffectData,"summonOptions")]
-		};
-		case "Criteria":{
-			[h:CreatureTypeNameArray = pm.GetCreatureTypes("Name","json")]
-			[h:summonCreatureTypesAllowed = ""]
-			[h,foreach(tempCreatureType,CreatureTypeNameArray): summonCreatureTypesAllowed = if(json.contains(subeffectData,"summonCreatureType"+tempCreatureType),json.append(summonCreatureTypesAllowed,tempCreatureType),summonCreatureTypesAllowed)]
-
-			[h:"<!-- TODO: Add processing of creature subtypes when finished -->"]
-
-			[h:SummonData = json.set("",
-				"SummonCRMax",json.get(subeffectData,"summonCrMax"),
-				"SummonCreatureType",summonCreatureTypesAllowed
-			)]
-
-			[h,if(json.contains(subeffectData,"summonCrMaxAHLNum")): SummonData = json.set(SummonData,
-				"SummonCRMaxAHL",json.get(subeffectData,"summonCrMaxAHLNum"),
-				"SummonCRMaxAHLScaling",json.get(subeffectData,"summonCrMaxAHLScaling"),
-				"SummonCRMaxAHLScalingMethod",json.get(subeffectData,"summonCrMaxAHLScaleHow")
-			)]
-
-			[h,foreach(tempCreatureType,CreatureTypeNameArray): subeffectData = json.remove(subeffectData,"summonCreatureType"+tempCreatureType)]
-			[h:subeffectData = json.remove(subeffectData,"summonCrMax")]
-			[h:subeffectData = json.remove(subeffectData,"summonCrMaxAHLNum")]
-			[h:subeffectData = json.remove(subeffectData,"summonCrMaxAHLScaling")]
-			[h:subeffectData = json.remove(subeffectData,"summonCrMaxAHLScaleHow")]
-		};
-		default:{[h:SummonData = "{}"]}
-	]
-
-	[h,if(json.contains(subeffectData,"summonNumber")):
-		SummonData = json.set(SummonData,"SummonNumber",json.get(subeffectData,"summonNumber"));
-		SummonData = json.set(SummonData,"SummonNumberCRBased",1)
-	]
-	[h:subeffectData = json.remove(subeffectData,"summonNumber")]
-	[h:subeffectData = json.remove(subeffectData,"summonNumberCRBased")]
-
-	[h,if(json.contains(subeffectData,"summonNumberAHL")): SummonData = json.set(SummonData,
-		"SummonNumberAHL",json.get(subeffectData,"summonNumberAHL"),
-		"SummonNumberAHLScaling",json.get(subeffectData,"summonNumberAHLScaling"),
-		"SummonNumberScalingMethod",json.get(subeffectData,"summonNumberAHLScaleHow")
-	)]
-	[h:subeffectData = json.remove(subeffectData,"summonNumberAHL")]
-	[h:subeffectData = json.remove(subeffectData,"summonNumberAHLScaling")]
-	[h:subeffectData = json.remove(subeffectData,"summonNumberAHLScaleHow")]
+	[h:summonReturnData = ct.a5e.SummonsInputProcessing(subeffectData)]
+	[h:subeffectData = json.get(summonReturnData,"Subeffect")]
+	[h:SummonData = json.get(summonReturnData,"Summon")]
 
 	[h:subeffectData = json.set(subeffectData,"Summon",SummonData)]
 };{}]
+[h:subeffectData = json.remove(subeffectData,"isSummons")]
 
 [h,if(json.contains(subeffectData,"isUseResource")),CODE:{
 	[h:ResourceData = "{}"]

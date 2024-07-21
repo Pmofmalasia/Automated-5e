@@ -13,8 +13,18 @@
 	[h:UniqueTitleColors = ""]
 };{
 	[h:DisplayClass = if(tempDisplayClass == pm.RemoveSpecial(getProperty("a5e.stat.Race",ParentToken)),"Innate",tempDisplayClass)]
-	[h:UniqueBorderColors = json.get(getProperty("a5e.stat.BorderColors",ParentToken),DisplayClass)]
-	[h:UniqueTitleColors = json.get(getProperty("a5e.stat.TitleColors",ParentToken),DisplayClass)]
+	
+	[h:allUniqueBorderColors = getProperty("a5e.stat.BorderColors",ParentToken)]
+	[h,if(json.isEmpty(allUniqueBorderColors)):
+		UniqueBorderColors = "";
+		UniqueBorderColors = json.get(allUniqueBorderColors,DisplayClass)
+	]
+
+	[h:allUniqueTitleColors = getProperty("a5e.stat.TitleColors",ParentToken)]
+	[h,if(json.isEmpty(allUniqueBorderColors)):
+		UniqueTitleColors = "";
+		UniqueTitleColors = json.get(allUniqueTitleColors,DisplayClass)
+	]
 }]
 [h:hasUniqueBorderColor = UniqueBorderColors != ""]
 [h:hasUniqueTitleColor = UniqueTitleColors != ""]

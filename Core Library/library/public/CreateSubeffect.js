@@ -1035,7 +1035,7 @@ async function createSummonTable(){
 			for(let tempType of allCreatureTypes){
 				creatureTypeOptions = creatureTypeOptions + "<label><input type='checkbox' id='summonCreatureType"+tempType.Name+"' name='summonCreatureType"+tempType.Name+"' value=1 onchange='createSummonCreatureSubtypeTable("+'"'+tempType.Name+'"'+")'><span>"+tempType.DisplayName+"</span></label>";
 			}
-			
+
 			let rowSummonCreatureType = table.insertRow(nextRowIndex);
 			rowSummonCreatureType.id = "rowSummonCreatureType";
 			rowSummonCreatureType.innerHTML = "<th><label for='summonCreatureType'>Creature Type Required:</th><td><div class='check-multiple' style='width:100%'>"+creatureTypeOptions+"</div></td>";
@@ -1082,10 +1082,6 @@ async function toggleSummonNumber(){
 	else{
 		document.getElementById("summonNumber").removeAttribute('disabled','');
 	}
-}
-
-async function createSummonCreatureSubtypeTable(thisCreatureType){
-
 }
 
 function createUseResourceRows(){

@@ -98,6 +98,8 @@
 	[h:RaceData = json.set(RaceData,"Attributes",PresetAttributeBonuses)]
 };{}]
 
+[h:RaceData = ct.a5e.LimbsProcessing(RaceData)]
+
 [h:RaceData = ct.a5e.LanguageOptionProcessing(RaceData)]
 
 [h:RaceData = ct.a5e.VisionProcessing(RaceData)]

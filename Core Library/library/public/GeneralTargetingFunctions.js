@@ -93,7 +93,7 @@ async function createRangeTable(tableID,IDSuffix){
 			nextRowIndex++;
 
 			if(checkEffectType()=="Spell"){
-				let RangeScalingAHLSelect = await createAHLSelect("RangeScalingAHL"+IDSuffix);
+				let RangeScalingAHLSelect = createAHLSelect("RangeScalingAHL"+IDSuffix);
 				addTableRow(tableID,nextRowIndex,"rowRangeDistanceAHL"+IDSuffix,"<th>Range Increase AHL:</th><td><input type='number' id='RangeValueAHL"+IDSuffix+"' name='RangeValueAHL"+IDSuffix+"' min=0 style='width:25px' value=0>"+RangeScalingAHLSelect+"</td>");
 				nextRowIndex++;              
 			}
@@ -414,7 +414,7 @@ function createTargetTable(tableID,startRowID,selectionID,tempIDSuffix,tempNextA
 	
 		//removes Point option
 		let secondaryTargetSelection = document.getElementById("secondaryTargetType"+IDSuffix);
-		secondaryTargetSelection = document.getElementById("secondaryTargetType"+IDSuffix).remove(document.getElementById("secondaryTargetType"+IDSuffix).options.length - 1);
+		secondaryTargetSelection.remove(document.getElementById("secondaryTargetType"+IDSuffix).options.length - 1);
 	}
 }
 

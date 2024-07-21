@@ -262,57 +262,10 @@
 };{}]
 
 [h,if(json.contains(SubeffectData,"Summon")),CODE:{
-	[h:subeffect.SummonData = json.get(SubeffectData,"Summon")]
-	
-	[h:subeffect.SummonCRMax = json.get(subeffect.SummonData,"SummonCRMax")]
-	[h:subeffect.SummonCRMaxAHLScaling = json.get(subeffect.SummonData,"SummonCRMaxAHLScaling")]
-	[h,if(subeffect.SummonCRMaxAHLScaling==""): subeffect.SummonCRMaxAHLScaling = 0]
+	[h:SummonData = pm.a5e.ExecuteSummon(json.get(SubeffectData,"Summon"),json.set("","AHLTier",AHLTier,"ParentToken",ParentToken))]
 
-	[h,if(subeffect.SummonCRMaxAHLScaling > 0),CODE:{
-		[h:subeffect.SummonCRMaxAHL = json.get(subeffect.SummonData,"SummonCRMaxAHL")]
-		[h:subeffect.SummonCRMaxAHLScalingMethod = json.get(subeffect.SummonData,"SummonCRMaxAHLScalingMethod")]
-		[h,if(subeffect.SummonCRMaxAHLScalingMethod=="Add"):
-			subeffect.SummonCRMax = subeffect.SummonCRMax + (subeffect.SummonCRMaxAHL * floor(AHLTier/subeffect.SummonCRMaxAHLScaling));
-			subeffect.SummonCRMax = subeffect.SummonCRMax * (subeffect.SummonCRMaxAHL + floor(AHLTier/subeffect.SummonCRMaxAHLScaling))
-		]
-	}]
-	
-	[h:subeffect.SummonNumber = json.get(subeffect.SummonData,"SummonNumber")]
-	[h:subeffect.SummonNumberAHLScaling = json.get(subeffect.SummonData,"SummonNumberAHLScaling")]
-	[h,if(subeffect.SummonNumberAHLScaling==""): subeffect.SummonNumberAHLScaling = 0]
-	[h:subeffect.SummonNumberMultiplierAHL = 1]
-	[h:subeffect.SummonNumberBonusAHL = 0]
-
-	[h,if(subeffect.SummonNumberAHLScaling > 0),CODE:{
-		[h:subeffect.SummonNumberAHL = json.get(subeffect.SummonData,"SummonNumberAHL")]
-		[h:subeffect.SummonNumberAHLScalingMethod = json.get(subeffect.SummonData,"SummonNumberAHLScalingMethod")]
-
-		[h,if(subeffect.SummonNumberAHLScalingMethod=="Add"):
-			subeffect.SummonNumberBonusAHL = subeffect.SummonNumberAHL * floor(AHLTier/subeffect.SummonNumberAHLScaling);
-			subeffect.SummonNumberMultiplierAHL = subeffect.SummonNumberAHL + floor(AHLTier/subeffect.SummonNumberAHLScaling)
-		]
-	}]
-
-	[h:subeffect.SummonData = json.set("",
-		"SummonName",json.get(subeffect.SummonData,"SummonName"),
-		"SummonOptions",json.get(subeffect.SummonData,"SummonOptions"),
-		"SummonCRMax",subeffect.SummonCRMax,
-		"SummonNumberCRBased",json.get(subeffect.SummonData,"SummonNumberCRBased"),
-		"SummonNumber",json.get(subeffect.SummonData,"SummonNumber"),
-		"SummonNumberMultiplier",subeffect.SummonNumberMultiplierAHL,
-		"SummonNumberBonus",subeffect.SummonNumberBonusAHL,
-		"SummonCreatureType",json.get(subeffect.SummonData,"SummonCreatureType"),
-		"ParentToken",ParentToken
-	)]
-
-	[h:SummonCustomization = json.set("",
-		"ForcedName",ForcedSummonName,
-		"ForcedImage",ForcedImage,
-		"ForcedPortrait",ForcedPortrait,
-		"ForcedHandout",ForcedHandout
-	)]
-	
-	[h:pm.Summons(subeffect.SummonData,SummonCustomization)]
+	[h:thisEffectData = json.set(thisEffectData,"Summon",json.get(SummonData,"Summon"))]
+	[h:abilityTable = json.merge(abilityTable,json.get(SummonData,"Table"))]
 }]
 
 [h,if(json.contains(SubeffectData,"Movement")),CODE:{

@@ -8,6 +8,12 @@ function clearUnusedTable(tableID,startRowID,endRowID){
     }
 }
 
+function deleteInterveningElements(startRow,endRow){
+    while(startRow.nextElementSibling != endRow){
+        startRow.nextElementSibling.remove();
+    }
+}
+
 function addTableRow(tableID,rowIndex,rowAttributes,rowHTML){
     let table = document.getElementById(tableID);
     let newRow = table.insertRow(rowIndex);
@@ -48,6 +54,25 @@ function createTableRow(referenceRow,rowAttributes,rowHTML,options){
 	referenceRow.insertAdjacentElement(insertDirection,newRow);
 
 	return newRow;
+}
+
+function appendIDToChildren(element,IDSuffix){
+	let referenceElement = element.firstElementChild;
+	while(referenceElement !== null){
+		if(referenceElement.id !== undefined){
+			referenceElement.id += IDSuffix;
+		}
+		
+		if(referenceElement.name !== undefined){
+			referenceElement.name += IDSuffix;
+		}
+
+		if(referenceElement.firstElementChild !== null){
+			appendIDToChildren(referenceElement,IDSuffix);
+		}
+
+		referenceElement = referenceElement.nextElementSibling;
+	}
 }
 
 function toggleFieldEnabled(toDisable,checkboxID){
@@ -144,10 +169,61 @@ function timeDisplay(timeData){
 	return timeDisplay;
 }
 
-function capitalize(string)
-{
-	if(string === ""){return string}
+function capitalize(string){
+	if(string === ""){return string;}
     return string[0].toUpperCase() + string.slice(1);
+}
+
+function createMultiRowButtonsInput(baseName,referenceRow,rowContents,buttonName,listeners){
+	if(arguments.length < 5){listeners = [];}
+
+	referenceRow = createTableRow(referenceRow,"row"+baseName+"Buttons","<th colspan=2 style='text-align:center'><input type='button' id='Add"+baseName+"Button' value='Add "+buttonName+"'><input type='button' id='Remove"+baseName+"Button' value='Remove "+buttonName+"'><input type='hidden' id='"+baseName+"Number' name='"+baseName+"Number' value=0></th>");
+
+	document.getElementById("Add"+baseName+"Button").addEventListener("click",function(){
+		let referenceRow = document.getElementById("row"+baseName+"Buttons").previousElementSibling;
+		let instanceNumber = Number(document.getElementById(baseName+"Number").value);
+		document.getElementById(baseName+"Number").value = instanceNumber + 1;
+
+		referenceRow = createTableRow(referenceRow,"row"+baseName+instanceNumber,rowContents);
+
+		appendIDToChildren(referenceRow,instanceNumber);
+		
+		for(let func of listeners){
+			document.getElementById(func.elementID + instanceNumber).addEventListener(func.listener,function(){
+				window[func.functionName](instanceNumber,func.functionArgs);
+			});
+		}
+
+		return instanceNumber;
+	});
+
+	document.getElementById("Remove"+baseName+"Button").addEventListener("click",function(){
+		let instanceNumber = Number(document.getElementById(baseName+"Number").value);
+
+		if(instanceNumber > 0){
+			let referenceRow = document.getElementById("row"+baseName+instanceNumber);
+			
+			deleteInterveningElements(referenceRow.previousElementSibling,document.getElementById("row"+baseName+"Buttons"))
+
+			document.getElementById(baseName+"Number").value = instanceNumber - 1;			
+		}
+
+		return instanceNumber;
+	});
+
+	document.getElementById("Add"+baseName+"Button").dispatchEvent("click");
+}
+
+function sortData(data){
+	return data.sort(function(a,b){
+		if ( a.Name < b.Name ){
+			return -1;
+		}
+		if ( a.Name > b.Name ){
+			return 1;
+		}
+			return 0;
+	});
 }
 
 async function evaluateMacro(macro){

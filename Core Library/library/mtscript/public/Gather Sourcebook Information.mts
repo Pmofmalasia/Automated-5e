@@ -11,6 +11,8 @@
 [h:pm.ConditionTags = "[]"]
 [h:pm.AbilityUpdates = "[]"]
 [h:pm.MonsterFeatures = "[]"]
+[h:pm.Bestiary = "[]"]
+[h:pm.Environments = "[]"]
 [h:pm.Subclasses = "[]"]
 [h:pm.Subraces = "[]"]
 [h:pm.CreatureTypes = "[]"]
@@ -40,7 +42,6 @@
 [h:pm.ArmorProperties = "[]"]
 [h:pm.VisionTypes = "[]"]
 [h:pm.SpellLists = "{}"]
-[h:pm.Bestiary = "[]"]
 
 [h:"<!-- Since languages may be setting specific, may want to add a function for DMs to exclude languages from certain sourcebooks. Can use this macro as the gate for blocking those books. -->"]
 [h,foreach(book,pm.SourcebookLibs),CODE:{
@@ -84,6 +85,7 @@
 	[h,if(getLibProperty("sb.ArmorProperties","Lib:"+book)!=""): pm.ArmorProperties = json.merge(pm.ArmorProperties,getLibProperty("sb.ArmorProperties","Lib:"+book))]
 	[h,if(getLibProperty("sb.VisionTypes","Lib:"+book)!=""): pm.VisionTypes = json.merge(pm.VisionTypes,getLibProperty("sb.VisionTypes","Lib:"+book))]
 	[h,if(getLibProperty("sb.Bestiary","Lib:"+book)!=""): pm.Bestiary = json.merge(pm.Bestiary,getLibProperty("sb.Bestiary","Lib:"+book))]
+	[h,if(getLibProperty("sb.Environments","Lib:"+book)!=""): pm.Environments = json.merge(pm.Environments,getLibProperty("sb.Environments","Lib:"+book))]
 	
 	[h,if(getLibProperty("sb.ArmorTags","Lib:"+book)!=""): pm.ArmorTags = json.merge(pm.ArmorTags,getLibProperty("sb.ArmorTags","Lib:"+book))]
 	[h:thisBookSpellLists = getLibProperty("sb.SpellLists","Lib:"+book)]
@@ -139,6 +141,7 @@
 [h:data.setData("addon:","pm.a5e.core","sb.SpellcastingFocusTypes",json.sort(pm.SpellcastingFocusTypes,"a","DisplayName"))]
 [h:data.setData("addon:","pm.a5e.core","sb.ArmorProperties",json.sort(pm.ArmorProperties,"a","DisplayName"))]
 [h:data.setData("addon:","pm.a5e.core","sb.Bestiary",json.sort(pm.Bestiary,"a","Name"))]
+[h:data.setData("addon:","pm.a5e.core","sb.Environments",json.sort(pm.Environments,"a","DisplayName"))]
 [h:data.setData("addon:","pm.a5e.core","sb.VisionTypes",pm.VisionTypes)]
 [h:data.setData("addon:","pm.a5e.core","sb.SpellLists",pm.SpellLists)]
 

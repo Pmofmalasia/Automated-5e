@@ -18,12 +18,12 @@
     [h:PreviousSpellsSelected = json.get(tempFeature,"SpellsSelected")]
     [h:thisFeaturePriorSpellSelections = "[]"]
     [h,if(json.contains(tempFeature,"SpellsSelected")),CODE:{
-        [h:setProperty("a5e.stat.AllFeatures",json.path.set(getProperty("a5e.stat.AllFeatures"),"[*][?(@.Name == '"+json.get(tempFeature,"Name")+"' && @.Class == '"+json.get(tempFeature,"Class")+"' && @.Subclass == '"+json.get(tempFeature,"Subclass")+"')]['SpellsSelected']",thisFeatureSpellsChosen))]
+        [h:setProperty("a5e.stat.AllFeatures",json.path.set(getProperty("a5e.stat.AllFeatures"),"\$[*][?(@.Name == '"+json.get(tempFeature,"Name")+"' && @.Class == '"+json.get(tempFeature,"Class")+"' && @.Subclass == '"+json.get(tempFeature,"Subclass")+"')]['SpellsSelected']",thisFeatureSpellsChosen))]
         
         [h,if(PreviousSpellsSelected==""): PreviousSpellsSelected = "[]"]
         [h,foreach(spellInstance,PreviousSpellsSelected): thisFeaturePriorSpellSelections = json.merge(thisFeaturePriorSpellSelections,spellInstance)]
     };{
-        [h:setProperty("a5e.stat.AllFeatures",json.path.put(getProperty("a5e.stat.AllFeatures"),"[*][?(@.Name == '"+json.get(tempFeature,"Name")+"' && @.Class == '"+json.get(tempFeature,"Class")+"' && @.Subclass == '"+json.get(tempFeature,"Subclass")+"')]","SpellsSelected",thisFeatureSpellsChosen))]
+        [h:setProperty("a5e.stat.AllFeatures",json.path.put(getProperty("a5e.stat.AllFeatures"),"\$[*][?(@.Name == '"+json.get(tempFeature,"Name")+"' && @.Class == '"+json.get(tempFeature,"Class")+"' && @.Subclass == '"+json.get(tempFeature,"Subclass")+"')]","SpellsSelected",thisFeatureSpellsChosen))]
         [h:PreviousSpellsSelected = "[]"]
     }]
     

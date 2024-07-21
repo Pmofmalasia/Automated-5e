@@ -180,6 +180,12 @@
 )]
 
 [h:createMacro(json.set(VisionButtonProps,
+	"label","Active Lights",
+	"sortBy","4",
+	"command",'[h,macro("ActiveLightsInput@Lib:pm.a5e.Core"): json.set("","ParentToken",currentToken())]'
+))]
+
+[h:createMacro(json.set(VisionButtonProps,
 	"label","Active Vision",
 	"sortBy","4",
 	"command",'[h,macro("ActiveVision@Lib:pm.a5e.Core"): json.set("","ParentToken",currentToken())]'

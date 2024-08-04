@@ -85,6 +85,12 @@
 
 [h,if(allowConditionModification!=1): thisTokenConditionModificationInfo = "{}"]
 
+[h:isDropItemsResisted = number(json.get(DCData,"DropItemsResisted"))]
+[h,if(isDropItemsResisted && json.get(thisTokenModifiableComponents,"isDropItems") && (DCResult == "Success")): isDropItemsFinal = 0; isDropItemsFinal = json.get(thisTokenModifiableComponents,"isDropItems")]
+
+[h:Transformation = json.get(thisTokenModifiableComponents,"Transform")]
+[h,if(DCResult == "Success" && json.get(DCData,"TransformResisted") == 1): Transformation = ""]
+
  [h:"<!-- Note: Target specific effect stuff will now be merged in ResolveEffects. -->"]
 
 [h:macro.return = json.set("",
@@ -92,6 +98,8 @@
     "Damage",thisTokenDamageDealt,
     "ConditionModification",thisTokenConditionModificationInfo,
     "ConditionsApplied",thisTokenConditionsApplied,
+	"isDropItems",isDropItemsFinal,
+	"Transform",Transformation,
 	"NeedsAdditionalResolution",AdditionalDCResolution,
 	"Table",abilityTable
 )]

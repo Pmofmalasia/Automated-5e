@@ -119,9 +119,18 @@ function createSummonRows(idSuffix){
 				createSummonOriginRows();
 			});
 
-			referenceRow = createTableRow(referenceRow,"rowSummonsEnd","<th></th><td></td>");
+			referenceRow = createTableRow(referenceRow,"rowSummonsEnd","<th colspan=2></th>");
 			referenceRow.classList.add("section-end");
 		}
+	}
+}
+
+function toggleSummonNumber(){
+	if(document.getElementById("summonNumberCRBased").checked){
+		document.getElementById("summonNumber").setAttribute('disabled','');
+	}
+	else{
+		document.getElementById("summonNumber").removeAttribute('disabled','');
 	}
 }
 

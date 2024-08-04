@@ -10,6 +10,8 @@
 	"Type",sp.Type
 )]
 
-[h:sp.SourcebookLib = json.get(json.path.read(data.getData("addon:","pm.a5e.core","ms.Sources"),"[?(@.Name=='"+pm.RemoveSpecial(sp.Source)+"')]['Library']"),0)]
+[h:sp.SourcebookLib = json.get(json.path.read(data.getData("addon:","pm.a5e.core","ms.Sources"),"\$[*][?(@.Name=='"+pm.RemoveSpecial(sp.Source)+"')]['Library']"),0)]
 [h:setLibProperty("sb.Attributes",json.append(getLibProperty("sb.Attributes","Lib:"+sp.SourcebookLib),AbilityScoreObject),"Lib:"+sp.SourcebookLib)]
-[h,MACRO("Gather Sourcebook Information@Lib:pm.a5e.Core"):""]
+
+[h:broadcast("Attribute "+sp.Name+" from sourcebook "+sp.Source+" created.")]
+[h,MACRO("Gather Sourcebook Information@Lib:pm.a5e.Core"): ""]

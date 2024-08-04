@@ -29,3 +29,4 @@
 [h:setLibProperty("ct.NewSpell",json.remove(data.getData("addon:","pm.a5e.core","ct.NewSpell"),getPlayerName()),"Lib:pm.a5e.Core")]
 
 [h:broadcast("Spell "+json.get(thisSpellData,"DisplayName")+" created.")]
+[h,MACRO("Gather Sourcebook Information@Lib:pm.a5e.Core"): ""]

@@ -248,7 +248,7 @@
 	[h:TargetConditionLimitsData = json.get(subeffectData,"TargetConditionLimits")]
 
 	[h:subeffect.TargetConditionOptions = pm.a5e.TargetConditionFiltering(subeffect.ThisMissileTargets,TargetConditionLimitsData)]
-	
+
 	[h,if(json.get(TargetConditionLimitsData,"Number")=="" && json.get(TargetConditionLimitsData,"MustTargetAll")==1):
 		subeffect.ConditionTargets = subeffect.TargetConditionOptions;
 		subeffect.ConditionTargets = pm.a5e.TargetConditionTargeting(subeffect.TargetConditionOptions,json.get(TargetConditionLimitsData,"Number"))
@@ -326,5 +326,16 @@
 		"DisplayOrder","['Rules','Roll','Full']"
 	))]
 };{}]
+
+[h,if(json.get(SubeffectData,"Transform") != ""),CODE:{
+	[h:TransformData = pm.a5e.ExecuteTransform(json.get(SubeffectData,"Transform"),json.set("","AHLTier",AHLTier,"ParentToken",ParentToken,"Targets",subeffect.ThisMissileTargets,"Duration",json.set("","Value",DurationValue,"Units",lower(DurationUnits))))]
+
+	[h:thisEffectData = json.set(thisEffectData,"Transform",json.get(TransformData,"Transform"))]
+	[h:abilityTable = json.merge(abilityTable,json.get(TransformData,"Table"))]
+};{}]
+
+[h,if(json.get(SubeffectData,"isDropItems") == 1),CODE:{
+	[h:thisEffectData = json.set(thisEffectData,"isDropItems",1)]
+}]
 
 [h:pm.a5e.EffectData = json.append(pm.a5e.EffectData,thisEffectData)]

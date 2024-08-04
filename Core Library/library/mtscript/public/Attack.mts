@@ -45,6 +45,7 @@
 [h:"<!-- TODO: Switch out name with false name if needed -->"]
 [h:wa.Name = json.get(wa.WeaponUsed,"DisplayName")]
 [h:wa.ItemID = json.get(wa.WeaponUsed,"ItemID")]
+[h:wa.ToHitBonus = number(json.get(wa.WeaponUsed,"ToHitBonus"))]
 [h:wa.MagicBonus = json.get(wa.WeaponUsed,"MagicBonus")]
 [h:wa.WeaponType = json.get(wa.WeaponUsed,"WeaponType")]
 [h:wa.Class = json.get(wa.WeaponUsed,"WeaponClass")]
@@ -105,7 +106,7 @@
 [h:pm.PassiveFunction("AttackProps")]
 [h:pm.PassiveFunction("WeaponAttackProps")]
 
-[h:attack.ToHitBonus = wa.MagicBonus]
+[h:attack.ToHitBonus = wa.MagicBonus + wa.ToHitBonus]
 [h,if(!json.isEmpty(wa.DamageData)),CODE:{
 	[h:FirstInstance = json.get(wa.DamageData,0)]
 	[h:FirstInstance = json.set(FirstInstance,"DamageFlatBonus",json.get(FirstInstance,"DamageFlatBonus") + wa.MagicBonus)]

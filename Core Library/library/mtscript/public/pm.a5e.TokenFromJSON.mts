@@ -35,7 +35,7 @@
 [h:setPropertyType(json.get(MTProperties,"PropertyType"))]
 
 [h:allProperties = json.get(TokenJSON,"Properties")]
-[h:propertyNames = json.fields(allProperties,"json")]
+[h:propertyNames = json.get(TokenJSON,"RawPropertyNames")]
 [h,foreach(property,propertyNames): setProperty(property,json.get(allProperties,property))]
 
 [h:allMacros = json.get(TokenJSON,"Macros")]

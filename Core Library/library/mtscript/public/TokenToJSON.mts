@@ -6,20 +6,21 @@
 
 	[h:thisTokenProperties = "{}"]
 	[h:currentProperties = getPropertyNamesRaw("json",token)]
+	[h:changedProperties = "[]"]
 	[h,foreach(prop,currentProperties),CODE:{
 		[h,if(getRawProperty(prop,token) != ""): thisTokenProperties = json.set(thisTokenProperties,prop,getRawProperty(prop,token))]
+		[h,if(getRawProperty(prop,token) != ""): changedProperties = json.append(changedProperties,prop)]
 	}]
-	[h:thisTokenJSON = json.set(thisTokenJSON,"Properties",thisTokenProperties)]
+	[h:thisTokenProperties = json.remove(thisTokenProperties,"a5e.stat.DisplaySheetStats")]
+	[h:thisTokenJSON = json.set(thisTokenJSON,"RawPropertyNames",changedProperties)]
 
-	[h:ComparisonProperties = json.append("","Attributes","Level","ClassLevels","Subclasses","Proficiency","Alignment","CreatureType","CreatureName","Race","Subrace","Size","Background","Languages","HP","MaxHP","MaxHitDice","AllSpeeds","AC","Saves","Skills","Tools","WeaponProficiencies","ArmorProficiencies","MaxSpellSlots","CR","XP","whichTeam","Allegiance","Environments")]
-	[h:thisTokenComparisonProperties = "{}"]
-	[h,foreach(prop,ComparisonProperties): thisTokenComparisonProperties = json.set(thisTokenProperties,"a5e.stat."+prop,getProperty("a5e.stat."+prop,token))]
-	[h:thisTokenJSON = json.set(thisTokenJSON,"ComparisonProperties",thisTokenComparisonProperties)]
+	[h,MACRO("ComparisonPropsToJSON@Lib:pm.a5e.Core"): json.set("","Token",token,"OldProps",thisTokenProperties)]
+	[h:thisTokenJSON = json.set(thisTokenJSON,"Properties",macro.return)]
 
 	[h:thisTokenMacros = "[]"]
 	[h:currentMacroNames = getMacros("json",token)]
 	[h,foreach(macroName,currentMacroNames),CODE:{
-		[h:thisMacroIndex = getMacroIndexes(macroName,"json")]
+		[h:thisMacroIndex = getMacroIndexes(macroName,"json",token)]
 		[h,foreach(index,thisMacroIndex): thisTokenMacros = json.append(thisTokenMacros,getMacroProps(index,"json",token))]
 	}]
 	[h:thisTokenJSON = json.set(thisTokenJSON,"Macros",thisTokenMacros)]

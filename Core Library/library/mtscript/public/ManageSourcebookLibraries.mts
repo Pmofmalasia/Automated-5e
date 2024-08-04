@@ -8,16 +8,36 @@
 				" libDisplayName |  | Input the name of the sourcebook - must be unique "
 				))]
 			[h:libName = pm.RemoveSpecial(libDisplayName)]
-			[h:data.setData("addon:","pm.a5e.core","ms.Sources",json.append(data.getData("addon:","pm.a5e.core","ms.Sources"),json.set("","DisplayName",libDisplayName,"Name",libName,"Library",libName,"Banned",0)))]
+			[h:libData = json.set("","DisplayName",libDisplayName,"Name",libName,"Library",libName)]
+			[h:data.setData("addon:","pm.a5e.core","ms.Sources",json.append(data.getData("addon:","pm.a5e.core","ms.Sources"),json.set(libData,"Banned",0)))]
 			[h:newLibTokenData = json.set("",
 				"name","Lib:"+libName,
-				"tokenImage",getTokenImage("","Lib:SRD"),
+				"tokenImage","lib://pm.a5e.core/ObjectImages/default_soucebook.png",
 				"x","17",
 				"y","7",
 				"propertyType","SourcebookData"
 			)]
-			[h:createToken(newLibTokenData)]
-			[h:setSize("Huge","Lib:"+libName)]
+			[h:newLibToken = createToken(newLibTokenData)]
+			[h,if(getCurrentMapName() != "z.0 Library"): moveTokenToMap(newLibToken,"z.0 Library",17,7)]
+			[h:setSize("Huge","Lib:"+libName,"z.0 Library")]
+			[h:setLibProperty("sb.SourcebookData",libData,"Lib:"+libName)]
+			[h:setPC("Lib:"+libName)]
+
+			[h:macroData = json.set("",
+				"autoExecute", true,
+				"color", "black",
+				"fontColor", "white",
+				"group", " Sourcebook Management",
+				"sortBy", "0",
+				"label", "Add to Sourcebook List",
+				"fontSize", "1.00em",
+				"minWidth", "192",
+				"playerEditable", false,
+				"command", '[h,MACRO("AddThisSourcebook@Lib:pm.a5e.Core"): "'+libName+'"]',
+				"tooltip", "For adding libraries shared by other users."
+			)]
+			[h:createMacro(macroData,"Lib:"+libName,"z.0 Library")]
+
 			[h:broadcast("Sourcebook "+libDisplayName+" has been added.")]
 		};
 	case 1: {

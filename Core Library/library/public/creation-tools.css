@@ -1,4 +1,11 @@
 .section-end{
-	border-bottom-style: dashed;
-	border-bottom-color: var(--mt-theme-color-actions-blue);
+	background-color: var(--mt-theme-color-actions-blue);
+}
+
+.small-number{
+	width: 25px;
+}
+
+.large-number{
+	width: 35px;
 }

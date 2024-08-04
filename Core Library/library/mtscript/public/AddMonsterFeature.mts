@@ -17,5 +17,6 @@
 )]
 
 [h,MACRO("CreatePlayerClassMacro@Lib:pm.a5e.Core"): MacroCreationData]
+[h,foreach(macro,macro.return): setMacroProps(macro,json.set("","group","03. Features"))]
 
 [h:broadcast("Added "+json.get(SharedMonsterFeatureList,FeatureChoice)+" feature to "+getName()+".")]

@@ -16,8 +16,8 @@
 [h:JSMethodWorking = 0]
 [h,if(JSMethodWorking),CODE:{
 	[h:NewObjectImage = "ObjectImages/"+NewObjectTokenType+"/"+json.get(objectData,NewObjectTokenType+"Type")+".png"]
-	[h:ImagePresentTest = js.evalURI("isAssetPresent","lib://pm.a5e.core/isAssetPresent.js",NewObjectImage)]
-	[h,if(!ImagePresentTest): NewObjectImage = "asset://cae048d4f31ef38cac5ba0df1378c67d"]	
+	[h:ImagePresentTest = js.a5e.isAssetPresent(NewObjectImage)]
+	[h,if(!ImagePresentTest): NewObjectImage = "lib://pm.a5e.core/ObjectImages/default_item.png"]	
 };{
 	[h:NewObjectImage = ""]
 	[h:AllAddonFiles = library.getContents("pm.a5e.core")]
@@ -26,7 +26,7 @@
 		[h:tempObjectImage = "ObjectImages/"+NewObjectTokenType+"/"+json.get(objectData,NewObjectTokenType+"Type")+filetype]
 		[h,if(json.contains(AllAddonFiles,"public/"+tempObjectImage)): NewObjectImage = "lib://pm.a5e.core/"+tempObjectImage]
 	}]
-	[h,if(NewObjectImage == ""): NewObjectImage = "asset://cae048d4f31ef38cac5ba0df1378c67d"]
+	[h,if(NewObjectImage == ""): NewObjectImage = "lib://pm.a5e.core/ObjectImages/default_item.png"]
 }]
 
 [h:NewObjectXCoord = json.get(NewObjectLocation,"X")]

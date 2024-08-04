@@ -19,12 +19,14 @@ async function createArmorRows(ArmorOrShield,IDSuffix){
 
 	let ArmorTypeOptions = createHTMLSelectOptions(allArmorTypes);
 
-	referenceRow = createTableRow(referenceRow,"rowArmorType","<th><label for='ArmorType'>Armor Type:</label></th><td><select id='ArmorType' name='ArmorType' onchange='armorTemplateUpdate("+'"'+ArmorOrShield+'"'+")'><option value='@@NewType'>New Type</option>"+ArmorTypeOptions+"</select></td>");
-
-	if(document.getElementById("ArmorType").value == "@@NewType"){
-		createNewTemplateRows(referenceRow,ArmorOrShield);
-		referenceRow = document.getElementById("rowIsNewTemplate"+ArmorOrShield);
+	if(ArmorOrShield == "Armor"){
+		ArmorTypeOptions = "<option value='@@NewType'>New Type</option>"+ArmorTypeOptions;
 	}
+	else{
+		ArmorTypeOptions += "<option value='@@NewType'>New Type</option>";
+	}
+
+	referenceRow = createTableRow(referenceRow,"rowArmorType","<th><label for='ArmorType'>Armor Type:</label></th><td><select id='ArmorType' name='ArmorType' onchange='armorTemplateUpdate("+'"'+ArmorOrShield+'"'+")'><option value='@@NewType'>New Type</option>"+ArmorTypeOptions+"</select></td>");
 
 	let StartingAC;
 	if(ArmorOrShield == "Armor"){
@@ -51,6 +53,13 @@ async function armorTemplateUpdate(ArmorOrShield){
 
 	if(document.getElementById("ArmorType").value == "@@NewType"){
 		createNewTemplateRows(referenceRow,ArmorOrShield);
+		
+		if(ArmorOrShield == "Armor"){
+			StartingAC = 11;
+		}
+		else{
+			StartingAC = 2;
+		}
 	}
 	else{
 		clearUnusedTable("CreateObjectTable","rowArmorType","rowArmorBaseAC");

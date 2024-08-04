@@ -16,4 +16,4 @@
 	[h,if(json.isEmpty(TempToolProfs)): pm.FinalProfs = json.set(pm.FinalProfs,tool,0); pm.FinalProfs = json.set(pm.FinalProfs,tool,if(and(math.arrayMean(TempToolProfs)>1,or(json.length(TempToolProfs)>1,json.get(TempToolProfs,0)==2)),2,if(math.arrayMean(TempToolProfs)==0,0,1)))]
 }]
 
-[h:macro.return = pm.FinalProfs]
+[h:return(0,pm.FinalProfs)]

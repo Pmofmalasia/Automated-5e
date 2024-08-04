@@ -31,9 +31,11 @@
 [h:defineFunction("ct.a5e.AoEDataProcessing","ct.a5e.AoEDataProcessing@Lib:pm.a5e.Core",0,0)]
 [h:defineFunction("ct.a5e.UseTimeProcessing","ct.a5e.UseTimeProcessing@Lib:pm.a5e.Core")]
 [h:defineFunction("ct.a5e.SummonsInputProcessing","ct.a5e.SummonsInputProcessing@Lib:pm.a5e.Core")]
+[h:defineFunction("ct.a5e.TransformInputProcessing","ct.a5e.TransformInputProcessing@Lib:pm.a5e.Core")]
 [h:defineFunction("ct.a5e.CreatureTypeLimitsProcessing","ct.a5e.CreatureTypeLimitsProcessing@Lib:pm.a5e.Core")]
 [h:defineFunction("ct.a5e.CreatureSubtypeLimitsProcessing","ct.a5e.CreatureSubtypeLimitsProcessing@Lib:pm.a5e.Core")]
 [h:defineFunction("ct.a5e.SizePrerequisiteProcessing","ct.a5e.SizePrerequisiteProcessing@Lib:pm.a5e.Core")]
+[h:defineFunction("ct.a5e.SpeedPrerequisiteProcessing","ct.a5e.SpeedPrerequisiteProcessing@Lib:pm.a5e.Core")]
 [h:defineFunction("ct.a5e.ConditionEndTriggerInputProcessing","ct.a5e.ConditionEndTriggerInputProcessing@Lib:pm.a5e.Core")]
 [h:defineFunction("ct.a5e.GeneralTargetingProcessing","ct.a5e.GeneralTargetingProcessing@Lib:pm.a5e.Core")]
 [h:defineFunction("ct.a5e.AllTargetingOptionsProcessing","ct.a5e.AllTargetingOptionsProcessing@Lib:pm.a5e.Core")]
@@ -84,6 +86,7 @@
 [h:defineFunction("pm.a5e.TransferItemAdjustments","pm.a5e.TransferItemAdjustments@Lib:pm.a5e.Core")]
 
 [h:"<!-- Functions for Abilities -->"]
+[h:defineFunction("pm.a5e.MergeTieredConditions","pm.a5e.MergeTieredConditions@Lib:pm.a5e.Core")]
 [h:defineFunction("ability.json.get","ability.json.get@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.a5e.FeatureAddSpell","pm.a5e.FeatureAddSpell@Lib:pm.a5e.Core",0,0)]
 [h:defineFunction("pm.AbilityAddSpellInput","pm.AbilityAddSpellInput@Lib:pm.a5e.Core",0,0)]
@@ -146,6 +149,7 @@
 [h:defineFunction("pm.a5e.GatherThisTokenFeatures","pm.a5e.GatherThisTokenFeatures@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.Summons","pm.Summons@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.a5e.ExecuteSummon","pm.a5e.ExecuteSummon@Lib:pm.a5e.Core")]
+[h:defineFunction("pm.a5e.ExecuteTransform","pm.a5e.ExecuteTransform@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.a5e.FeatureSummons","pm.a5e.FeatureSummons@Lib:pm.a5e.Core",0,0)]
 [h:defineFunction("pm.a5e.FeatureCheck","pm.a5e.FeatureCheck@Lib:pm.a5e.Core",0,0)]
 [h:defineFunction("pm.a5e.FeatureCheckDC","pm.a5e.FeatureCheckDC@Lib:pm.a5e.Core",0,0)]
@@ -320,4 +324,10 @@
 [h:defineFunction("getPropertyFlexible","getPropertyFlexible@Lib:pm.a5e.Core")]
 [h:defineFunction("js.a5e.MaptoolFunction","js.a5e.MaptoolFunction@Lib:pm.a5e.Core")]
 [h:defineFunction("js.setProperty","js.setProperty@Lib:pm.a5e.Core")]
+
+[h:"<!-- GraalVM Functions -->"]
+[h:js.evalURI("pm.a5e.core","lib://pm.a5e.core/GraalVM/FilterCreatures.js")]
+[h:js.evalURI("pm.a5e.core","lib://pm.a5e.core/GraalVM/isAssetPresent.js")]
+[h:js.evalURI("pm.a5e.core","lib://pm.a5e.core/GraalVM/RevertTransformation.js")]
+
 [h:broadcast("Startup Initialization Complete.")]

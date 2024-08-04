@@ -1,7 +1,7 @@
 [h:TokenToCheck = arg(0)]
 [h:ActivationPrerequisites = arg(1)]
 [h,if(argCount() > 2): ComparisonToken = arg(2); ComparisonToken = ""]
-[h,if(json.type(TokenToCheck) == "OBJECT"): TokenToCheck = json.get(TokenToCheck,"ComparisonProperties")]
+[h,if(json.type(TokenToCheck) == "OBJECT"): TokenToCheck = json.get(TokenToCheck,"Properties")]
 
 [h:MeetsPrereqTest = 1]
 [h:prereqsToCheck = json.fields(ActivationPrerequisites,"json")]

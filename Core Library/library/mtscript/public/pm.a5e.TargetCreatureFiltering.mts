@@ -69,14 +69,11 @@
 };{
 	[h:pm.TargetSelf = 0]
 }]
-
+   
+[h:"<!-- TODO: May want to include options for which prereqs to apply now and which to apply after targeting, to allow things to fizzle (e.g. things the user might not know, like creature type). Would allow these to be changed based on user preference in settings. Maybe include a 'deferredPrereqs' key or something. -->"]
 [h:pm.ValidTargets = "[]"]
 [h,foreach(target,pm.TargetsInRange),CODE:{
 	[h:isTargetValid = pm.a5e.CreaturePrereqs(target,targetFilteringData,ParentToken)]
-   
-	[h:"<!-- TODO: Move the CanSeeTest to targeting functions unless sight is required, because it shouldn't prevent valid unseen targets from being on the list for AoEs and similar effects which do not have to worry about players seeing the targets in an input -->"]
-	[h:AmountTargetIsVisible = canSeeToken(target,pm.TargetOrigin)]
-	[h:CanSeeTest = !json.isEmpty(AmountTargetIsVisible)]
 	[h,if(isTargetValid): pm.ValidTargets = json.append(pm.ValidTargets,target)]
 }]
 

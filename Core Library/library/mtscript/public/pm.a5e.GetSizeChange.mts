@@ -12,4 +12,4 @@
 	[h,if(newIndex > json.length(sizeArray)-1): finalSize = "Colossal"; finalSize = json.get(sizeArray,newIndex)]
 }]
 
-[h:return(0,json.get(sizeArray,newIndex))]
+[h:return(0,finalSize)]

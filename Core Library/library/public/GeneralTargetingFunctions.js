@@ -1,6 +1,4 @@
-//Note: This depends on some functions in CreateSubeffect.js
-
-async function createTargetingRows(tableID,startRowID,IDSuffix){
+function createTargetingRows(tableID,startRowID,IDSuffix){
 	let nextRowIndex = document.getElementById(startRowID).rowIndex;
 
 	addTableRow(tableID,nextRowIndex,"Range"+IDSuffix,"<th><label for='RangeType"+IDSuffix+"'>Range Type:</label></th><td><select id='RangeType"+IDSuffix+"' name='RangeType"+IDSuffix+"' onchange='createRangeTable("+'"'+tableID+'","'+IDSuffix+'"'+")'><option value='Self'>Self</option><option value='SelfRanged'>Self with Range</option><option value='Touch'>Touch</option><option value='Ranged'>Ranged</option><option value='UnlimitedRange'>Unlimited Range</option></td>");
@@ -13,7 +11,7 @@ async function createTargetingRows(tableID,startRowID,IDSuffix){
 	nextRowIndex++;
 
 	if(checkEffectType()=="Spell"){
-		let TargetNumberAHLScalingSelect = await createAHLSelect("TargetNumberAHLScaling"+IDSuffix);
+		let TargetNumberAHLScalingSelect = createAHLSelect("TargetNumberAHLScaling"+IDSuffix);
 
 		addTableRow(tableID,nextRowIndex,"rowTargetNumberAHL"+IDSuffix,"<th><label for='TargetNumberAHL"+IDSuffix+"'>Increased Target Number AHL:</label></th><td><input type='number' id='TargetNumberAHL"+IDSuffix+"' name='TargetNumberAHL"+IDSuffix+"' value=0 min=0 style='width:25px'>"+TargetNumberAHLScalingSelect+"</td>");
 		nextRowIndex++;		
@@ -84,7 +82,7 @@ function createPriorTargetsNewFilter(tableID,callingType,tempIDSuffix){
 	}
 }
 
-async function createRangeTable(tableID,IDSuffix){
+function createRangeTable(tableID,IDSuffix){
 	let nextRowIndex = document.getElementById("Range"+IDSuffix).rowIndex + 1;
 
 	if(document.getElementById("RangeType"+IDSuffix).value == "SelfRanged" || document.getElementById("RangeType"+IDSuffix).value == "Ranged"){
@@ -105,7 +103,7 @@ async function createRangeTable(tableID,IDSuffix){
 	}
 }
 
-async function createAoETable(tableID,whichShape,IDSuffix){
+function createAoETable(tableID,whichShape,IDSuffix){
 	let table = document.getElementById(tableID);
 	let nextRowIndex = document.getElementById("AoE"+IDSuffix).rowIndex + 1;
 	let shapesArray = ["Cone","Cube","Cylinder","Half Sphere","Line","Panels","Sphere","Wall"];
@@ -122,7 +120,7 @@ async function createAoETable(tableID,whichShape,IDSuffix){
 		if(document.getElementById("rowAoENum"+IDSuffix) == null){
 			let rowAoEHTML = "<th><label for='AoENum"+IDSuffix+"'>Number of AoEs:</label></th><td><input type='number' id='AoENum"+IDSuffix+"' name='AoENum"+IDSuffix+"' min=1 value=1 style='width:25px'>";
 			if(checkEffectType()=="Spell"){
-				let AoENumAHLScalingSelect = await createAHLSelect("AoENumAHLScaling"+IDSuffix);
+				let AoENumAHLScalingSelect = createAHLSelect("AoENumAHLScaling"+IDSuffix);
 
 				rowAoEHTML = rowAoEHTML + " + <input type='number' id='AoENumAHL"+IDSuffix+"' name='AoENumAHL"+IDSuffix+"' min=0 value=0 style='width:25px'>"+AoENumAHLScalingSelect;
 			}
@@ -206,7 +204,7 @@ async function createAoETable(tableID,whichShape,IDSuffix){
 			nextRowIndex++;
 
 			if(checkEffectType()=="Spell"){
-				let coneSizeAHLScalingSelect = await createAHLSelect("coneSizeAHLScaling"+IDSuffix);
+				let coneSizeAHLScalingSelect = createAHLSelect("coneSizeAHLScaling"+IDSuffix);
 
 				let rowConeDimensionsAHL = table.insertRow(nextRowIndex);
 				rowConeDimensionsAHL.id = "rowConeDimensionsAHL"+IDSuffix;
@@ -221,7 +219,7 @@ async function createAoETable(tableID,whichShape,IDSuffix){
 			nextRowIndex++;
 
 			if(checkEffectType()=="Spell"){
-				let cubeSizeAHLScalingSelect = await createAHLSelect("cubeSizeAHLScaling"+IDSuffix);
+				let cubeSizeAHLScalingSelect = createAHLSelect("cubeSizeAHLScaling"+IDSuffix);
 
 				let rowCubeDimensionsAHL = table.insertRow(nextRowIndex);
 				rowCubeDimensionsAHL.id = "rowCubeDimensionsAHL"+IDSuffix;
@@ -236,7 +234,7 @@ async function createAoETable(tableID,whichShape,IDSuffix){
 			nextRowIndex++;
 
 			if(checkEffectType()=="Spell"){
-				let cylinderSizeAHLScalingSelect = await createAHLSelect("cylinderSizeAHLScaling"+IDSuffix);
+				let cylinderSizeAHLScalingSelect = createAHLSelect("cylinderSizeAHLScaling"+IDSuffix);
 
 				let rowCylinderDimensionsAHL = table.insertRow(nextRowIndex);
 				rowCylinderDimensionsAHL.id = "rowCylinderDimensionsAHL"+IDSuffix;
@@ -251,7 +249,7 @@ async function createAoETable(tableID,whichShape,IDSuffix){
 			nextRowIndex++;
 
 			if(checkEffectType()=="Spell"){
-				let halfSphereSizeAHLScalingSelect = await createAHLSelect("halfSphereSizeAHLScaling"+IDSuffix);
+				let halfSphereSizeAHLScalingSelect = createAHLSelect("halfSphereSizeAHLScaling"+IDSuffix);
 
 				let rowHalfSphereDimensionsAHL = table.insertRow(nextRowIndex);
 				rowHalfSphereDimensionsAHL.id = "rowHalfSphereDimensionsAHL"+IDSuffix;
@@ -267,7 +265,7 @@ async function createAoETable(tableID,whichShape,IDSuffix){
 			nextRowIndex++;
 
 			if(checkEffectType()=="Spell"){
-				let lineSizeAHLScalingSelect = await createAHLSelect("lineSizeAHLScaling"+IDSuffix);
+				let lineSizeAHLScalingSelect = createAHLSelect("lineSizeAHLScaling"+IDSuffix);
 
 				let rowLineDimensionsAHL = table.insertRow(nextRowIndex);
 				rowLineDimensionsAHL.id = "rowLineDimensionsAHL"+IDSuffix;
@@ -282,7 +280,7 @@ async function createAoETable(tableID,whichShape,IDSuffix){
 			nextRowIndex++;
 
 			if(checkEffectType()=="Spell"){
-				let panelsNumberAHLScalingSelect = await createAHLSelect("panelsNumberAHLScaling"+IDSuffix);
+				let panelsNumberAHLScalingSelect = createAHLSelect("panelsNumberAHLScaling"+IDSuffix);
 
 				let rowPanelsDimensionsAHL = table.insertRow(nextRowIndex);
 				rowPanelsDimensionsAHL.id = "rowPanelsDimensionsAHL"+IDSuffix;
@@ -297,7 +295,7 @@ async function createAoETable(tableID,whichShape,IDSuffix){
 			nextRowIndex++;
 
 			if(checkEffectType()=="Spell"){
-				let sphereSizeAHLScalingSelect = await createAHLSelect("sphereSizeAHLScaling"+IDSuffix);
+				let sphereSizeAHLScalingSelect = createAHLSelect("sphereSizeAHLScaling"+IDSuffix);
 
 				let rowSphereDimensionsAHL = table.insertRow(nextRowIndex);
 				rowSphereDimensionsAHL.id = "rowSphereDimensionsAHL"+IDSuffix;
@@ -312,7 +310,7 @@ async function createAoETable(tableID,whichShape,IDSuffix){
 			nextRowIndex++;
 
 			if(checkEffectType()=="Spell"){
-				let wallSizeAHLScalingSelect = await createAHLSelect("wallSizeAHLScaling"+IDSuffix);
+				let wallSizeAHLScalingSelect = createAHLSelect("wallSizeAHLScaling"+IDSuffix);
 
 				let rowWallDimensionsAHL = table.insertRow(nextRowIndex);
 				rowWallDimensionsAHL.id = "rowWallDimensionsAHL"+IDSuffix;
@@ -327,7 +325,7 @@ async function createAoETable(tableID,whichShape,IDSuffix){
 	}
 }
 
-async function createTargetNumberToggle(tableID,IDSuffix){
+function createTargetNumberToggle(tableID,IDSuffix){
 	let table = document.getElementById(tableID);
 
 	if(document.getElementById("isTargetNumberUnlimited"+IDSuffix).checked){
@@ -339,7 +337,7 @@ async function createTargetNumberToggle(tableID,IDSuffix){
 	}
 	else{
 		if(checkEffectType()=="Spell"){
-			let TargetNumberAHLScalingSelect = await createAHLSelect("TargetNumberAHLScaling"+IDSuffix);
+			let TargetNumberAHLScalingSelect = createAHLSelect("TargetNumberAHLScaling"+IDSuffix);
 
 			let rowTargetNumberAHL = table.insertRow(document.getElementById("rowTargetNumber"+IDSuffix).rowIndex + 1);
 			rowTargetNumberAHL.id = "rowTargetNumberAHL"+IDSuffix;
@@ -350,7 +348,7 @@ async function createTargetNumberToggle(tableID,IDSuffix){
 	}
 }
 
-async function createMissilesRows(tableID,IDSuffix){
+function createMissilesRows(tableID,IDSuffix){
 	if(document.getElementById("isMissiles"+IDSuffix).checked){
 		let nextRowIndex = document.getElementById("rowMissiles"+IDSuffix).rowIndex + 1;
 
@@ -358,7 +356,7 @@ async function createMissilesRows(tableID,IDSuffix){
 		nextRowIndex++;
 
 		if(checkEffectType()=="Spell"){
-			let MissilesAHLSelect = await createAHLSelect("MissilesAHLScaling"+IDSuffix);
+			let MissilesAHLSelect = createAHLSelect("MissilesAHLScaling"+IDSuffix);
 			addTableRow(tableID,nextRowIndex,"rowMissilesAHL"+IDSuffix,"<th><label for='MissileNumberAHL"+IDSuffix+"'>Additional Missiles At Higher Levels:</label></th><td><input type='number' id='MissileNumberAHL"+IDSuffix+"' name='MissileNumberAHL"+IDSuffix+"' value=1 min=0 style='width:25px'>"+MissilesAHLSelect+"</td>");
 			nextRowIndex++;
 		}
@@ -374,7 +372,7 @@ async function createMissilesRows(tableID,IDSuffix){
 function createTargetTable(tableID,startRowID,selectionID,tempIDSuffix,tempNextAnchorRow){
 	let IDSuffix = "";
 	if (arguments.length > 3){
-		IDSuffix = tempIDSuffix
+		IDSuffix = tempIDSuffix;
 	}
 	let currentTargetTypeSelection = document.getElementById(selectionID).value;
 	let nextRowIndex = document.getElementById(startRowID).rowIndex + 1;
@@ -418,7 +416,7 @@ function createTargetTable(tableID,startRowID,selectionID,tempIDSuffix,tempNextA
 	}
 }
 
-async function createCreatureTargetTable(tableID,startRowID,selectionID,IDSuffix,tempNextAnchorRow){
+function createCreatureTargetTable(tableID,startRowID,selectionID,IDSuffix,tempNextAnchorRow){
 	let IDSuffixText = "";
 	if(arguments.length > 3){
 		IDSuffixText = IDSuffix;

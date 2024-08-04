@@ -110,6 +110,30 @@
 	]
 };{}]
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 [h,if(json.contains(featureInputData,"isReplaceFeature")),CODE:{
 	[h:ReplaceFeatureData = ct.a5e.AutocompletedFeatureProcessing(featureInputData,"Replace")]
 	[h:newFeatureData = json.set(newFeatureData,"Replace",json.get(ReplaceFeatureData,"Feature"))]

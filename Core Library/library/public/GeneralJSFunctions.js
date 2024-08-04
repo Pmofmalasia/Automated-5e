@@ -255,6 +255,11 @@ async function mtSetProperty(property,value,token){
 async function submitData(formName,nextMacroName){
     let form = document.getElementById(formName);
     let submitData = Object.fromEntries(new FormData(form));
-    let request = fetch("macro:"+nextMacroName+"@Lib:pm.a5e.Core", {method: "POST", body: JSON.stringify(submitData)});
+	try {
+		let request = fetch("macro:"+nextMacroName+"@Lib:pm.a5e.Core", {method: "POST", body: JSON.stringify(submitData)});		
+	} catch (error) {
+		console.log("Stack Trace: " + error.stack);
+		console.log("Message: " + error.message);
+	}
     let result = await request.json();
 }

@@ -1,4 +1,4 @@
-[h:creatureTypes = pm.GetCreatureTypes()]
+[h:creatureTypes = json.append(pm.GetCreatureTypes(),json.set("","Name","","DisplayName","None"))]
 [h:creatureTypeOptions = ""]
 [h,foreach(tempType,creatureTypes): creatureTypeOptions = json.append(creatureTypeOptions,json.get(tempType,"DisplayName"))]
 
@@ -8,7 +8,7 @@
 	" ct.Source | "+pm.GetBookInfo("DisplayName")+" | Which sourcebook is the creature subtype from | LIST | VALUE=STRING "
 ))]
 
-[h:ct.SourcebookLib = json.get(json.path.read(data.getData("addon:","pm.a5e.core","ms.Sources"),"[?(@.Name=='"+pm.RemoveSpecial(ct.Source)+"')]['Library']"),0)]
+[h:ct.SourcebookLib = json.get(json.path.read(data.getData("addon:","pm.a5e.core","ms.Sources"),"\$[*][?(@.Name=='"+pm.RemoveSpecial(ct.Source)+"')]['Library']"),0)]
 
 [h:ct.Data = json.set("",
 	"Name",pm.RemoveSpecial(ct.Name),
@@ -19,5 +19,5 @@
 
 [h:setLibProperty("sb.CreatureSubtypes",json.append(getLibProperty("sb.CreatureSubtypes","Lib:"+ct.SourcebookLib),ct.Data),"Lib:"+ct.SourcebookLib)]
 
-[r:ct.Name+" creature subtype from the sourcebook "+ct.Source+" created."]
+[h:broadcast(ct.Name+" creature subtype from the sourcebook "+ct.Source+" created.")]
 [h,MACRO("Gather Sourcebook Information@Lib:pm.a5e.Core"):""]

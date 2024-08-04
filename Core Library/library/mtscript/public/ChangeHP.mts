@@ -5,6 +5,7 @@
 [h:IsTooltip = 0]
 [h:a5e.UnifiedAbilities = a5e.GatherAbilities(ParentToken)]
 [h:pm.a5e.EffectData = "[]"]
+[h:abilityTable = "[]"]
 [h:pm.a5e.OverarchingContext = "Damage"]
 
 [h:hp.DamageDealt = json.get(hp.Data,"DamageDealt")]
@@ -108,6 +109,29 @@
 [h:hp.AlreadyDying = if(getProperty("a5e.stat.HP")==0,1,0)]
 [h:setProperty("a5e.stat.HP",min(getProperty("a5e.stat.HP") - RemainingDamage + hp.Healing,getProperty("a5e.stat.MaxHP")))]
 
+[h:ShapechangedForms = getProperty("a5e.stat.PreviousForms")]
+[h:breakFormTest = 1]
+[h,while(!json.isEmpty(ShapechangedForms) && breakFormTest),CODE:{
+	[h:mostRecentForm = json.get(ShapechangedForms,0)]
+	[h,switch(json.get(mostRecentForm,"FormEndHPType")):
+		case "HP": breakFormTest = getProperty("a5e.stat.HP") <= 0;
+		case "TempHP": breakFormTest = getProperty("a5e.stat.TempHP") <= 0;
+		default: breakFormTest = 0
+	]
+	[h,if(breakFormTest),CODE:{
+		[h:breakFormRemainingDamage = abs(min(getProperty("a5e.stat.HP"),0))]
+		[h:mostRecentFormID = json.get(mostRecentForm,"AssociatedCondition")]
+		[h:RevertTransformationData = js.a5e.RevertTransformation(mostRecentFormID,ParentToken)]
+		[h:abilityTable = json.merge(abilityTable,json.get(RevertTransformationData,"Table"))]
+
+		[h,MACRO("EndCondition@Lib:pm.a5e.Core"): json.set("","Target",ParentToken,"GroupID",mostRecentFormID)]
+
+		[h:setProperty("a5e.stat.HP",getProperty("a5e.stat.HP") - breakFormRemainingDamage)]
+
+		[h:ShapechangedForms = getProperty("a5e.stat.PreviousForms")]
+	};{}]
+}]
+
 [h,if(hp.AlreadyDying && hp.Healing!=0),CODE:{
 	[h:setProperty("a5e.stat.DeathSaves",json.set(getProperty("a5e.stat.DeathSaves"),"Successes",0,"Failures",0))]
 	[h:hp.AlreadyDying = 0]
@@ -184,7 +208,6 @@
 
 [h:setBar("Health",(getProperty("a5e.stat.HP")/getProperty("a5e.stat.MaxHP")))]
 
-[h:abilityTable = "[]"]
 [h,if(hp.TempHPGain!=0),CODE:{
 	[h:TempHPLinks = json.path.read(getProperty("a5e.stat.ConditionGroups"),"\$[*][?(@.EndTriggers.TempHPLost==1)]")]
 	[h,if(json.isEmpty(TempHPLinks)),CODE:{

@@ -14,7 +14,7 @@ async function createCreatureTypeRows(IDSuffix){
 			limitsChoiceDisplay = "Allowed";
 		}
 
-		referenceRow = createTableRow(referenceRow,"rowCreatureTypeLimits"+IDSuffix,"<th><span id='CreatureTypeLimitsSpan"+IDSuffix+"'>"+limitsChoiceDisplay+"</span> Creature Types:</th><td><span class='check-multiple' style='width:100%'>"+CreatureTypeOptions+"</span></td>");
+		referenceRow = createTableRow(referenceRow,"rowCreatureTypeLimits"+IDSuffix,"<th><span id='CreatureTypeLimitsSpan"+IDSuffix+"'>"+limitsChoiceDisplay+"</span> Creature Types:</th><td><div class='check-multiple' style='width:100%'>"+CreatureTypeOptions+"</div></td>");
 	}
 	else if(limitsChoice == ""){
 		referenceRow.nextElementSibling.remove();
@@ -52,7 +52,7 @@ async function createCreatureSubtypeRows(IDSuffix){
 			limitsChoiceDisplay = "Allowed";
 		}
 
-		referenceRow = createTableRow(referenceRow,"rowCreatureSubtypeLimits"+IDSuffix,"<th><span id='CreatureSubtypeLimitsSpan"+IDSuffix+"'>"+limitsChoiceDisplay+"</span> Creature Types:</th><td><span class='check-multiple' style='width:100%'>"+CreatureSubtypeOptions+"</span></td>");
+		referenceRow = createTableRow(referenceRow,"rowCreatureSubtypeLimits"+IDSuffix,"<th><span id='CreatureSubtypeLimitsSpan"+IDSuffix+"'>"+limitsChoiceDisplay+"</span> Creature Types:</th><td><div class='check-multiple' style='width:100%'>"+CreatureSubtypeOptions+"</div></td>");
 	}
 	else if(limitsChoice == ""){
 		referenceRow.nextElementSibling.remove();
@@ -160,4 +160,109 @@ function createSizePrereqRows(IDSuffix){
 			});
 		}
 	} 
+}
+
+function createSpeedPrereqRows(IDSuffix){
+	if(IDSuffix === undefined){
+		IDSuffix = "";
+	}
+	let referenceRow = document.getElementById("rowSpeedPrereqs"+IDSuffix);
+	let prereqType = document.getElementById("SpeedPrereqs"+IDSuffix).value;
+
+	if(prereqType === ""){
+		deleteInterveningElements(referenceRow,document.getElementById("rowSpeedPrereqsEnd"+IDSuffix).nextElementSibling);
+	}
+	else{
+		let speedTypes = [
+			{Name:"Walking",DisplayName:"Walking"},
+			{Name:"Burrow",DisplayName:"Burrowing"},
+			{Name:"Climb",DisplayName:"Climbing"},
+			{Name:"Fly",DisplayName:"Flying"},
+			{Name:"Swim",DisplayName:"Swimming"}
+		];
+
+		if(document.getElementById("rowSpeedPrereqsEnd"+IDSuffix) == null){
+			let endRow = createTableRow(referenceRow,"rowSpeedPrereqsEnd"+IDSuffix,"<th colspan=2></th>");
+			endRow.classList.add("minor-section-end");
+		}
+
+		if(prereqType === "Inclusive" || prereqType === "Exclusive"){
+			let speedsMultiselect = createHTMLMultiselectOptions(speedTypes,"SpeedChoice"+IDSuffix);
+
+			if(document.getElementById("rowSpeedPrereqsInclude"+IDSuffix) == null){
+				deleteInterveningElements(referenceRow,document.getElementById("rowSpeedPrereqsEnd"+IDSuffix));
+
+				referenceRow = createTableRow(referenceRow,"rowSpeedPrereqsInclude"+IDSuffix,"<th><span id='SpeedPrereqsIncludeSpan"+IDSuffix+"'></span> Speed Types</th><td><div class='check-multiple' style='width:100%'>"+speedsMultiselect+"</div></td>");
+			}
+
+			if(prereqType === "Inclusive"){
+				document.getElementById("SpeedPrereqsIncludeSpan"+IDSuffix).innerHTML = "Allowed";
+			}
+			else{
+				document.getElementById("SpeedPrereqsIncludeSpan"+IDSuffix).innerHTML = "Prohibited";
+			}
+		}
+		else if(prereqType === "Range"){
+			deleteInterveningElements(referenceRow,document.getElementById("rowSpeedPrereqsEnd"+IDSuffix));
+
+			let speedTypeOptions = createHTMLSelectOptions(speedTypes);
+			speedTypeOptions = "<option value='Any'>Any Type</option>"+speedTypeOptions+"<option value='All'>All Types</option>";
+
+			referenceRow = createTableRow(referenceRow,"rowSpeedPrereqsRange"+IDSuffix,"<th><label for='SpeedPrereqsRangeMaximum"+IDSuffix+"'>Speed Range and Type:</label></th><td><input type='number' id='SpeedPrereqsRangeMinimum"+IDSuffix+"' name='SpeedPrereqsRangeMinimum"+IDSuffix+"' value=0 min=0 style='width:25px' class='small-number'> - <input type='number' id='SpeedPrereqsRangeMaximum"+IDSuffix+"' name='SpeedPrereqsRangeMaximum"+IDSuffix+"' value=0 min=0 style='width:25px' class='small-number'><select id='SpeedPrereqsRangeType"+IDSuffix+"' name='SpeedPrereqsRangeType"+IDSuffix+"'>"+speedTypeOptions+"</select><select id='SpeedPrereqsRangeIgnore"+IDSuffix+"'><option value='Minimum'>No Minimum</option><option value='Maximum'>No Maximum</option><option value=''>Both Min and Max</option></select></td>");
+
+			document.getElementById("SpeedPrereqsRangeIgnore"+IDSuffix).addEventListener("change",function(){
+				let ignoreChoice = this.value;
+				let minInput = document.getElementById("SpeedPrereqsRangeMinimum"+IDSuffix);
+				let maxInput = document.getElementById("SpeedPrereqsRangeMaximum"+IDSuffix);
+				if(ignoreChoice === ""){
+					minInput.removeAttribute("disabled");
+					maxInput.removeAttribute("disabled");
+				}
+				else if(ignoreChoice === "Minimum"){
+					maxInput.removeAttribute("disabled");
+					minInput.setAttribute("disabled","");
+				}
+				else if(ignoreChoice === "Maximum"){
+					minInput.removeAttribute("disabled");
+					maxInput.setAttribute("disabled","");
+				}
+			});
+
+			document.getElementById("SpeedPrereqsRangeMaximum"+IDSuffix).addEventListener("change",function(){
+				let currentMinInput = document.getElementById("SpeedPrereqsRangeMinimum"+IDSuffix);
+				if(currentMinInput.disabled === true){
+					return;
+				}
+
+				let currentMax = this.value;
+				let currentMin = currentMinInput.value;
+
+				if(currentMin > currentMax){
+					currentMinInput.value = currentMax;
+				}
+			});
+
+			document.getElementById("SpeedPrereqsRangeMinimum"+IDSuffix).addEventListener("change",function(){
+				let currentMaxInput = document.getElementById("SpeedPrereqsRangeMaximum"+IDSuffix);
+				if(currentMaxInput.disabled === true){
+					return;
+				}
+
+				let currentMin = this.value;
+				let currentMax = currentMaxInput.value;
+
+				if(currentMin > currentMax){
+					currentMaxInput.value = currentMin;
+				}
+			});
+		}
+		else if(prereqType === "Relative"){
+			deleteInterveningElements(referenceRow,document.getElementById("rowSpeedPrereqsEnd"+IDSuffix));
+
+			let speedTypeOptions = createHTMLSelectOptions(speedTypes);
+			speedTypeOptions = "<option value='Any'>Any Speed</option>"+speedTypeOptions+"<option value='All'>All Speeds</option>";
+
+			referenceRow = createTableRow(referenceRow,"rowSpeedPrereqsRange"+IDSuffix,"<th><label for='SpeedPrereqsRange"+IDSuffix+"'>Speed Compared to User:</label></th><td><select id='SpeedPrereqsRange"+IDSuffix+"' name='SpeedPrereqsRange"+IDSuffix+"'><option value='LessThan'>Slower Than</option><option value='GreaterThan'>Faster Than</option></select><select id='SpeedPrereqsRangeType"+IDSuffix+"' name='SpeedPrereqsRangeType"+IDSuffix+"'>"+speedTypeOptions+"</select></td>");
+		}
+	}
 }

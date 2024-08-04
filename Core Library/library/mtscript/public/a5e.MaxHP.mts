@@ -14,7 +14,7 @@
 [h:HDObject = getProperty("a5e.stat.MaxHitDice")]
 [h,foreach(tempHDSize,json.fields(HDObject)): totalHD = totalHD + json.get(HDObject,tempHDSize)]
 
-[h:setProperty("a5e.stat.BaseMaxHP",getProperty("a5e.stat.RolledMaxHP")+(json.get(getProperty("a5e.stat.AtrMods"),"Constitution")*totalHD))]
+[h:baseMaxHP = getProperty("a5e.stat.RolledMaxHP")+(json.get(getProperty("a5e.stat.AtrMods"),"Constitution")*totalHD)]
 [h:bonusMaxHP = 0]
 [h:multiplierMaxHP = 1]
 [h:setMaxHP = 0]
@@ -22,8 +22,8 @@
 
 [h:pm.PassiveFunction("MaxHP")]
 
-[h:maxHPFinal = (getProperty("a5e.stat.BaseMaxHP") + bonusMaxHP) * multiplierMaxHP]
+[h:maxHPFinal = (baseMaxHP + bonusMaxHP) * multiplierMaxHP]
 [h:maxHPFinal = max(setMaxHP,maxHPFinal)]
 [h,if(setOverrideMaxHP!=-1): maxHPFinal = setOverrideMaxHP]
 
-[h:macro.return = maxHPFinal]
+[h:return(0,maxHPFinal)]

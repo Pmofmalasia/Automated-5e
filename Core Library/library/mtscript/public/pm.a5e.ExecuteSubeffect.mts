@@ -3,7 +3,6 @@
 [h:SubeffectFunctionPrefixes = json.get(NonSubeffectData,"InstancePrefixes")]
 [h:MultiEffectModifier = number(json.get(NonSubeffectData,"MultiEffectModifier"))]
 [h:BaseEffectData = json.get(NonSubeffectData,"BaseData")]
-
 [h:thisEffectData = "{}"]
 
 [h,if(json.get(SubeffectData,"ParentSubeffect")!=""),CODE:{

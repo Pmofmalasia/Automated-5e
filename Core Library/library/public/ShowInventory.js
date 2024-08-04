@@ -468,8 +468,12 @@ async function castSpell(ItemID){
 	itemData = getItemData(ItemID);
 	itemData.ParentToken = ParentToken;
 	itemData.IsTooltip = 0;
-
-	let request = await fetch("macro:ItemSpellcastingInput@Lib:pm.a5e.Core", {method: "POST", body: JSON.stringify(itemData)});
+	try {
+		let request = await fetch("macro:ItemSpellcastingInput@Lib:pm.a5e.Core", {method: "POST", body: JSON.stringify(itemData)});
+	  } catch(e) {
+		console.log(""+e+"\n"+e.stack);
+	  }
+	
 	let resultingInventory = await request.json();
 }
 

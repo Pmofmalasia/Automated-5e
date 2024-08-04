@@ -105,6 +105,20 @@
 
 [h:pm.PassiveFunction("CondEnd")]
 
+[h,if(0),CODE:{
+	[h:oldUnifiedAbilities = a5e.UnifiedAbilities]
+	[h:a5e.UnifiedAbilities = json.path.put(RemovedConditionsFinal,"\$[*]","AbilityType","Condition")]
+	[h:pm.PassiveFunction("CondEndThis")]
+	[h:a5e.UnifiedAbilities = oldUnifiedAbilities]
+};{
+	[h,foreach(condition,RemovedConditionsFinal),if(json.get(condition,"CondEndThis") != ""),CODE:{
+		[h:CondEndThisEffect = json.get(condition,"CondEndThis")]
+		[h,if(json.get(CondEndThisEffect,"RevertTransformation") != ""): RevertTransformationData = js.a5e.RevertTransformation(json.get(condition,"GroupID"),ParentToken); RevertTransformationData = "{}"]
+		[h:abilityTable = json.merge(abilityTable,json.get(RevertTransformationData,"Table"))]
+	}]
+}]
+
+
 [h,if(!json.isEmpty(RemovedConditionsFinal)): abilityTable = json.append(abilityTable,json.set("",
 	"ShowIfCondensed",1,
 	"Header","Conditions Removed",

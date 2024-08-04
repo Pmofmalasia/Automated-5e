@@ -35,7 +35,7 @@
 
 [h:RaceInputHTML = RaceInputHTML + "<tr id='rowSwimSpeed'><th><label for='BaseSwimSpeed'>Base Swimming Speed:</label></th><td><input type='number' id='BaseSwimSpeed' name='BaseSwimSpeed' min=0 value=0 style='width:25px'></td></tr>"]
 
-[h:RaceInputHTML = RaceInputHTML + "<tr id='rowLimbs'><th><label for='Limbs'>Limb Configuration:</label></th><td><select id='Limbs' name='Limbs'><option value='Biped'>Bipedal (2 Arms)</option><option value='Quadriped'>Quadripedal</option><option value='Custom'>Other Configuration</option></select></td></tr>"]
+[h:RaceInputHTML = RaceInputHTML + "<tr id='rowLimbs'><th><label for='Limbs'>Limb Configuration:</label></th><td><select id='Limbs' name='Limbs'><option value='Biped'>Bipedal (2 Arms)</option><option value='Quadriped'>Quadripedal</option><option value='None'>No Limbs</option><option value='Custom'>Other Configuration</option></select></td></tr>"]
 
 [h:RaceInputHTML = RaceInputHTML + "<tr id='rowIsVision'><th><label for='isVision'>Gives Special Vision:</label></th><td><input type='checkbox' id='isVision' name='isVision' onchange='createVisionRows("+'"rowLanguageOptions"'+")'></td></tr>"]
 

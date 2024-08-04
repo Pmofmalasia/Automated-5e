@@ -9,11 +9,14 @@
 [h:ParentToken = json.get(effFull,"ParentToken")]
 [h:parentStillAvailable = json.contains(getTokens("json"),ParentToken)]
 [h,if(!parentStillAvailable): ParentToken = ""]
+[h:effForcedModifications = json.get(effFull,"ForcedModifications")]
+[h,if(effForcedModifications == ""): effForcedModifications = "{}"]
 
 [h:effTargets = json.get(effFull,"Targets")]
 [h:effTargets = json.intersection(getTokens("json"),effTargets)]
 [h:effTargetedConditions = json.get(effFull,"TargetedConditions")]
 [h:effConditionGroupID = pm.a5e.CreateConditionID(ParentToken,effTargets)]
+[h:effTransformGroupID = pm.a5e.CreateConditionID(ParentToken,effTargets)]
 
 [h,if(json.get(effFull,"SpecificTargets")!=""): effTargets = json.get(effFull,"SpecificTargets")]
 [h:remainingTargetsList = json.intersection(getTokens("json"),json.get(effFull,"RemainingTargets"))]
@@ -107,6 +110,8 @@
 [h:effCheckDCData = json.get(effToResolve,"CheckDC")]
 [h:effSaveDCData = json.get(effToResolve,"SaveDC")]
 [h:effSummonData = json.get(effToResolve,"Summon")]
+[h:effTransformData = json.get(effToResolve,"Transform")]
+[h,if(effTransformData == ""): effTransformData = "{}"]
 
 [h:effAllConditionIdentifiers = ""]
 [h,foreach(conditionSet,effConditionInfo),CODE:{
@@ -140,6 +145,8 @@
 	[h:thisTokenDamageDealt = effDamageData]
 	[h:thisTokenConditionInfo = effConditionInfo]
     [h:thisTokenConditionsApplied = effAllConditionIdentifiers]
+	[h:thisTokenTransformation = effTransformData]
+	[h:thisTokenDropItems = number(json.get(effToResolve,"isDropItems"))]
 
 	[h:needsFurtherResolution = 0]
 	[h:AttackHit = 0]
@@ -172,7 +179,9 @@
 		"Damage",thisTokenDamageDealt,
 		"ConditionModification",thisTokenConditionModificationInfo,
 		"ConditionsApplied",thisTokenConditionsApplied,
-		"TargetSpecific",thisTokenTargetSpecificEffects
+		"TargetSpecific",thisTokenTargetSpecificEffects,
+		"isDropItems",thisTokenDropItems,
+		"Transform",thisTokenTransformation
 	)]
 
 	[h,if(json.length(effTargets)>1):
@@ -222,7 +231,9 @@
 			"Conditions","[]",
 			"Damage","",
 			"ConditionModification","{}",
-			"ConditionsApplied",json.append("",json.set("","Conditions","[]","EndInfo","{}"))
+			"ConditionsApplied",json.append("",json.set("","Conditions","[]","EndInfo","{}")),
+			"isDropItems",0,
+			"Transform",""
 		)]
 		[h:thisTokenSaveDCData = ""]
 		[h:thisTokenCheckDCData = ""]
@@ -258,7 +269,16 @@
 		[h,if(AdditionalAttackResolution): targetsWithAdditionalAttackResolution = json.append(targetsWithAdditionalAttackResolution,targetToken)]
 	};{}]
 
-	[h,if(thisTokenSaveDCData!=""): needsToSave = json.get(effSavesMadeData,targetDataKey)==""; needsToSave = 0]
+	[h,if(thisTokenSaveDCData!=""),CODE:{
+		[h:isForcedFailure = json.get(effForcedModifications,"isForcedResult")]
+		[h,if(isForcedFailure != ""):
+			needsToSave = 0;
+			needsToSave = json.get(effSavesMadeData,targetDataKey) == ""
+		]
+		[h,if(isForcedFailure != ""): effSavesMadeData = json.set(effSavesMadeData,targetDataKey,json.set(json.get(effSavesMadeData,targetDataKey),"Value",isForcedFailure))]
+	};{
+		[h:needsToSave = 0]
+	}]
 
 	[h:"<!-- Wish this could be an if/else but CODE block limits say no -->"]
 	[h,switch((thisTokenSaveDCData!="")+""+(needsToSave)),CODE:
@@ -434,11 +454,15 @@
 	[h:thisTokenConditionInfo = json.get(thisTokenModifiableComponents,"Conditions")]
 	[h:thisTokenConditionModificationInfo = json.get(thisTokenModifiableComponents,"ConditionModification")]
 	[h:thisTokenConditionsApplied = json.get(thisTokenModifiableComponents,"ConditionsApplied")]
+	[h:thisTokenDropItems = json.get(thisTokenModifiableComponents,"isDropItems")]
+	[h:thisTokenTransformation = json.get(thisTokenModifiableComponents,"Transform")]
 
 	[h,if(needsFurtherResolution),CODE:{
 		[h:thisTokenDamageDealt = ""]
 		[h:thisTokenConditionInfo = "[]"]
 		[h:thisTokenConditionModificationInfo = "{}"]
+		[h:thisTokenDropItems = 0]
+		[h:thisTokenTransformation = ""]
 	};{
 		[h:remainingTargetsList = json.difference(remainingTargetsList,json.append("",tempTarget))]
 	}]
@@ -464,6 +488,28 @@
 	[h,if(!json.isEmpty(thisTokenConditionModificationInfo)),CODE:{
 		[h,MACRO("ModifyConditions@Lib:pm.a5e.Core"): json.set(thisTokenConditionModificationInfo,"Conditions",thisTokenTargetedConditions,"Target",tempTarget)]
 		[h:abilityTable = json.merge(abilityTable,json.get(macro.return,"Table"))]
+	};{}]
+
+	[h,if(thisTokenDropItems),CODE:{
+		[h,MACRO("DropHeldItems@Lib:pm.a5e.Core"): json.set("","ParentToken",tempTarget)]
+		[h:DropReturnData = macro.return]
+
+		[h:abilityTable = json.merge(abilityTable,json.get(DropReturnData,"Table"))]
+	};{}]
+
+	[h,foreach(transformation,thisTokenTransformation),CODE:{
+		[h:thisTokenNewForm = json.get(json.get(transformation,"Transformations"),tempTarget)]
+		[h:thisTransformation = json.set(transformation,"Transformations",thisTokenNewForm)]
+		[h:thisTransformation = json.set(thisTransformation,
+			"GroupID",effTransformGroupID,
+			"ParentToken",tempTarget,
+			"SourceEffect",effFull,
+			"SetBy",ParentToken
+		)]
+		[h,if(!json.isEmpty(thisTokenNewForm)),MACRO("TransformToken@Lib:pm.a5e.Core"): thisTransformation]
+		[h,if(!json.isEmpty(thisTokenNewForm)): TransformReturnData = macro.return]
+
+		[h,if(!json.isEmpty(thisTokenNewForm)): abilityTable = json.merge(abilityTable,json.get(TransformReturnData,"Table"))]
 	}]
 
 	[h,if(!needsFurtherResolution),CODE:{

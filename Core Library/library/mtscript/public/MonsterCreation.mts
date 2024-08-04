@@ -37,7 +37,7 @@
 
 [h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowMaxHP'><th><label for='MaxHP'>Maximum HP:</label></th><td><input type='number' id='MaxHP' name='MaxHP' min='1' style='width:40px'></td></tr>"]
 
-[h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowHitDie'><th><label for='HitDieNum'>Total Hit Dice:</label></th><td><input type='number' id='HitDieNum' name='HitDieNum' min='1' style='width:25px'> d <input type='number' id='HitDieSize' name='HitDieSize' min='1' style='width:25px'> + <input type='number' id='HitDieBonus' name='HitDieBonus' min='0' style='width:25px'></td></tr>"]
+[h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowHitDie'><th><label for='HitDieNum'>Total Hit Dice:</label></th><td><input type='number' id='HitDieNum' name='HitDieNum' min='1' style='width:25px'> d <input type='number' id='HitDieSize' name='HitDieSize' min='1' style='width:25px'> + <input type='number' id='HitDieBonus' name='HitDieBonus' style='width:25px'></td></tr>"]
 
 [h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowSpeed'><th><label for='Speed'>Walking Speed:</label></th><td><input type='number' id='Speed' name='Speed' min='0' style='width:25px' value='30'></td></tr>"]
 
@@ -64,7 +64,7 @@
 [h:baseConditionOptions = ut.a5e.GenerateSelectionHTML(allConditions,1,"ConditionImmunity")]
 [h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowConditionImmunities'><th>Condition Immunities:</th><td><div class='check-multiple' id='ConditionImmunities' style='width:100%; height='100px'>"+baseConditionOptions+"</div></td></tr>"]
 
-[h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowLimbs'><th><label for='Limbs'>Limb Configuration:</label></th><td><select id='Limbs' name='Limbs'><option value='Biped'>Bipedal (2 Arms)</option><option value='Quadriped'>Quadripedal</option><option value='Custom'>Other Configuration</option></select></td></tr>"]
+[h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowLimbs'><th><label for='Limbs'>Limb Configuration:</label></th><td><select id='Limbs' name='Limbs'><option value='Biped'>Bipedal (2 Arms)</option><option value='Quadriped'>Quadripedal</option><option value='None'>No Limbs</option><option value='Custom'>Other Configuration</option></select></td></tr>"]
 
 [h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowIsVision'><th><label for='isVision'>Gives Special Vision:</label></th><td><input type='checkbox' id='isVision' name='isVision' onchange='createVisionRows("+'"rowLanguageOptions"'+")'></td></tr>"]
 

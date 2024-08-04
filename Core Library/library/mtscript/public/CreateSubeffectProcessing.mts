@@ -2,7 +2,6 @@
 [h:EffectType = json.get(subeffectData,"EffectType")]
 [h:EffectsNumber = json.get(subeffectData,"EffectsNumber")]
 [h:subeffectData = json.remove(subeffectData,"EffectsNumber")]
-[h:subeffectData = json.remove(subeffectData,"EffectType")]
 [h:isPersistentEffect = json.contains(subeffectData,"isPersistentEffect")]
 [h:subeffectData = json.remove(subeffectData,"isPersistentEffect")]
 
@@ -500,7 +499,7 @@
 [h:isSummons = json.get(subeffectData,"isSummons")]
 [h,if(isSummons != "No"),CODE:{
 	[h:summonReturnData = ct.a5e.SummonsInputProcessing(subeffectData)]
-	[h:subeffectData = json.get(summonReturnData,"Subeffect")]
+	[h:subeffectData = json.get(summonReturnData,"Input")]
 	[h:SummonData = json.get(summonReturnData,"Summon")]
 
 	[h:subeffectData = json.set(subeffectData,"Summon",SummonData)]
@@ -729,7 +728,7 @@
 			"AHLScaling",0,
 			"AHLValue",0)
 	]
-	
+
 	[h:subeffectData = json.remove(subeffectData,"isMoveTarget")]
 	[h:subeffectData = json.remove(subeffectData,"moveTargetValue")]
 	[h:subeffectData = json.remove(subeffectData,"moveTargetUnits")]
@@ -743,11 +742,28 @@
 [h,if(json.get(subeffectData,"savePreventMove") != ""): SaveData = json.set(SaveData,"MoveResisted",json.get(subeffectData,"savePreventMove"))]
 [h:subeffectData = json.remove(subeffectData,"savePreventMove")]
 
+[h,if(json.get(subeffectData,"isTransform") != "No"),CODE:{
+	[h:TransformReturnData = ct.a5e.TransformInputProcessing(subeffectData,thisPlayerCurrentFeatureData)]
+	[h:subeffectData = json.get(TransformReturnData,"Input")]
+	[h:TransformData = json.get(TransformReturnData,"Transform")]
+	[h:subeffectData = json.set(subeffectData,"Transform",TransformData)]
+
+	[h,if(json.contains(subeffectData,"PreventTransform")): SaveData = json.set(SaveData,"TransformResisted",1)]
+	[h:subeffectData = json.remove(subeffectData,"PreventTransform")]
+};{}]
+
 [h,if(json.contains(subeffectData,"isSetHP")),CODE:{
+	[h:"<!-- Note: SetHPAmount key is used for SetHP data and is already set from input -->"]
 	[h,if(json.contains(subeffectData,"savePreventSetHP")): SaveData = json.set(SaveData,"SetHPResisted",1)]
 
 	[h:subeffectData = json.remove(subeffectData,"isSetHP")]
 	[h:subeffectData = json.remove(subeffectData,"savePreventSetHP")]
+};{}]
+
+[h,if(json.contains(subeffectData,"isDropItems")),CODE:{
+	[h,if(json.contains(subeffectData,"isSavePreventDrop")): SaveData = json.set(SaveData,"DropItemsResisted",1)]
+
+	[h:subeffectData = json.remove(subeffectData,"isSavePreventDrop")]
 };{}]
 
 [h,if(json.contains(subeffectData,"InstantKill")),CODE:{
@@ -791,7 +807,6 @@
 [h:subeffectData = json.remove(subeffectData,"isCreateObject")]
 
 [h,if(json.get(subeffectData,"isActivateItem") == ""): subeffectData = json.remove(subeffectData,"isActivateItem")]
-
 [h:GeneralTargetingReturn = ct.a5e.GeneralTargetingProcessing(subeffectData,"")]
 [h:subeffectData = json.get(GeneralTargetingReturn,"Subeffect")]
 [h:GeneralTargetingData = json.get(GeneralTargetingReturn,"Targeting")]
@@ -825,6 +840,7 @@
 [h:subeffectData = json.remove(subeffectData,"MainEffectsNumber")]
 [h:subeffectData = json.remove(subeffectData,"MainNeedsNewSubeffect")]
 [h:subeffectData = json.remove(subeffectData,"PersistentEffectsNumber")]
+[h:subeffectData = json.remove(subeffectData,"EffectType")]
 
 [h:ExtraDataKeys = json.fromList(json.get(subeffectData,"ExtraDataKeys"))]
 [h:extraData = ""]

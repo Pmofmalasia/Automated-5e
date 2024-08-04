@@ -115,7 +115,7 @@
 		[h,if((1+roll.count)>=SpellLevel && json.get(a5e.stat.SpellSlots,roll.count+1)>0): LevelOptionData = json.append(LevelOptionData,json.set("","Name",(roll.count+1),"ResourceType","Spell Slots"))]
 	}]
 	
-	[h:resourcesAsSpellSlot = json.path.read(getProperty("a5e.stat.AllFeatures"),"[*][?(@.ResourceAsSpellSlot==1)]")]
+	[h:resourcesAsSpellSlot = json.path.read(a5e.UnifiedAbilities,"\$[*][?(@.ResourceAsSpellSlot==1)]")]
 	[h,foreach(resource,resourcesAsSpellSlot),CODE:{
 		[h,if(json.get(resource,"Resource")>0): LevelOptions = json.append(LevelOptions,json.get(resource,"DisplayName"))]
 		[h,if(json.get(resource,"Resource")>0): LevelOptionData = json.append(LevelOptionData,json.set(resource,"ResourceType","FeatureSpell"))]
@@ -136,6 +136,8 @@
 		[h:LevelOptions = if(ForcedLevel==1,"1st",if(ForcedLevel==2,"2nd",if(ForcedLevel==3,"3rd",ForcedLevel+"th")))+" Level"]
 		[h:LevelOptionData = json.append("",json.set("","Name",ForcedLevel,"ResourceType","Spell Slots"))]
 	};{
+		[h:ForcedLevelSearch = json.path.read(a5e.UnifiedAbilities,"\$[*][?("+pm.a5e.PathFeatureFilter(ForcedLevel)+")]")]
+		[h,if(!json.isEmpty(ForcedLevelSearch)): ForcedLevel = json.get(ForcedLevelSearch,0)]
 		[h:LevelOptions = json.get(ForcedLevel,"DisplayName")]
 		[h:LevelOptionData = json.append("",json.set(ForcedLevel,"ResourceType","FeatureSpell"))]
 	}]
@@ -245,8 +247,6 @@
 [h:SpellAHLDescription = base64.decode(json.get(FinalSpellData,"AHLDescription"))]
 [h:CompleteSpellDescription = SpellDescription+if(SpellAHLDescription=="","","<br><br>"+if(IsCantrip,"","<b><i>At Higher Levels.</b></i> "))+SpellAHLDescription]
 
-[h:IsOngoing=json.get(FinalSpellData,"IsOngoing")]
-[h:IsCheck=json.get(FinalSpellData,"IsCheck")]
 [h:isConcentration = json.get(FinalSpellData,"isConcentration")]
 [h:ConcentrationLostLevel = json.get(FinalSpellData,"ConcentrationLostLevel")]
 
@@ -399,8 +399,10 @@
 [h:FinalSpellData = json.set(FinalSpellData,
 	"Source",sSource,
 	"PrimeStat",PrimeStat,
-	"sClassSelect",sClassSelect
+	"sClassSelect",sClassSelect,
+	"SlotUsed",if(IsCantrip,0,eLevel)
 )]
+[h:FinalSpellData = json.remove(FinalSpellData,"Subeffects")]
 [h:SpellDataWithSelections = json.set(FinalSpellData,
 	"Class","Spell",
 	"DisplayClass","zzSpell",
@@ -416,10 +418,10 @@
 			[h,if(FreeCasting!=1): setProperty("a5e.stat.SpellSlots",json.set(getProperty("a5e.stat.SpellSlots"),eLevel,json.get(getProperty("a5e.stat.SpellSlots"),eLevel)-1))]
 		};
 		case "FeatureSpell":{
-			[h,if(FreeCasting!=1): setProperty("a5e.stat.AllFeatures",json.path.set(getProperty("a5e.stat.AllFeatures"),"\$[*][?(@.Name=='"+json.get(sLevelSelectData,"Name")+"' && @.Class=='"+json.get(sLevelSelectData,"Class")+"' && @.Subclass=='"+json.get(sLevelSelectData,"Subclass")+"')]['Resource']",json.get(sLevelSelectData,"Resource")-1))]
+			[h:FeatureSourceData = pm.a5e.FeatureSourceData(json.get(sLevelSelectData,"AbilityType"),sLevelSelectData)]
+			[h,if(FreeCasting!=1): setProperty(json.get(FeatureSourceData,"Property"),json.path.set(getProperty(json.get(FeatureSourceData,"Property")),json.get(FeatureSourceData,"Path")+"['Resource']",json.get(sLevelSelectData,"Resource")-1))]
 		};
-		default:{
-		}
+		default:{}
 	]
 }]
 

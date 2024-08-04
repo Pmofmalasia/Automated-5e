@@ -22,8 +22,8 @@
 	[h:SummonPrereqs = json.set(SummonPrereqs,"CRMaximum",finalCRMax)]
 }]
 
-[h,if(0),CODE:{
-	[h:validSummons = js.evalURI("filterCreatures","lib://pm.a5e.core/GraalVM/FilterCreatures.js",data.getData("addon:","pm.a5e.core","sb.Bestiary"),SummonPrereqs,ParentToken)]
+[h,if(1),CODE:{
+	[h:validSummons = js.a5e.FilterCreatures(data.getData("addon:","pm.a5e.core","sb.Bestiary"),SummonPrereqs,ParentToken)]
 };{
 	[h:bestiary = data.getData("addon:","pm.a5e.core","sb.Bestiary")]
 	[h:validSummons = ""]
@@ -59,10 +59,7 @@
 
 [h,switch(json.length(summonOptionNamesFinal)),CODE:
 	case 0:{
-		[h,if(1):
-			SummonChoice = "";
-			assert(0,"No valid summons found in the bestiary!")
-		]
+		[h:assert(0,"No valid summons found in the bestiary!")]
 		[h:SummonName = ""]
 	};
 	case 1:{

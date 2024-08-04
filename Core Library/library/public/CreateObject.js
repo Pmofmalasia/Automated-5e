@@ -302,7 +302,7 @@ function createNonstandardEquipRows(){
 		referenceRow = createTableRow(referenceRow,"rowDropTime","<th><label for='DropTime'>Drop Time:</label></th><td><select id='DropTime' name='DropTime'>"+UseTimeOptions+"</select></td>");
 		document.getElementById("DropTime").value = "Free";
 
-		referenceRow = createTableRow(referenceRow,"rowNonstandardEquipEnd","<th></th><td></td>");
+		referenceRow = createTableRow(referenceRow,"rowNonstandardEquipEnd","<th colspan=2></th>");
 		referenceRow.classList.add("section-end");
 	}
 	else if(document.getElementById("isNonstandardEquip").value !== "Custom" && document.getElementById("rowNonstandardEquipEnd") !== null){

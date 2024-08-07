@@ -3,7 +3,7 @@ async function createTransformRows(){
 	let TransformChoice = document.getElementById("isTransform").value;
 	let hasPriorSelection = document.getElementById("rowTransformEnd") != null;
 
-	if(TransformChoice == "No"){
+	if(TransformChoice == ""){
 		deleteInterveningElements(referenceRow,document.getElementById("rowTransformEnd").nextElementSibling);
 	}
 	else{

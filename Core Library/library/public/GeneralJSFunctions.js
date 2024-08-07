@@ -201,17 +201,18 @@ function createMultiRowButtonsInput(baseName,referenceRow,rowContents,buttonName
 		let instanceNumber = Number(document.getElementById(baseName+"Number").value);
 
 		if(instanceNumber > 0){
+			instanceNumber--;
 			let referenceRow = document.getElementById("row"+baseName+instanceNumber);
 			
-			deleteInterveningElements(referenceRow.previousElementSibling,document.getElementById("row"+baseName+"Buttons"))
+			deleteInterveningElements(referenceRow.previousElementSibling,document.getElementById("row"+baseName+"Buttons"));
 
-			document.getElementById(baseName+"Number").value = instanceNumber - 1;			
+			document.getElementById(baseName+"Number").value = instanceNumber;
 		}
 
 		return instanceNumber;
 	});
 
-	document.getElementById("Add"+baseName+"Button").dispatchEvent("click");
+	document.getElementById("Add"+baseName+"Button").dispatchEvent(new Event("click"));
 }
 
 function sortData(data){
@@ -256,10 +257,10 @@ async function submitData(formName,nextMacroName){
     let form = document.getElementById(formName);
     let submitData = Object.fromEntries(new FormData(form));
 	try {
-		let request = fetch("macro:"+nextMacroName+"@Lib:pm.a5e.Core", {method: "POST", body: JSON.stringify(submitData)});		
+		let request = fetch("macro:"+nextMacroName+"@Lib:pm.a5e.Core", {method: "POST", body: JSON.stringify(submitData)});
+    	let result = await request.json();		
 	} catch (error) {
 		console.log("Stack Trace: " + error.stack);
 		console.log("Message: " + error.message);
 	}
-    let result = await request.json();
 }

@@ -742,7 +742,7 @@
 [h,if(json.get(subeffectData,"savePreventMove") != ""): SaveData = json.set(SaveData,"MoveResisted",json.get(subeffectData,"savePreventMove"))]
 [h:subeffectData = json.remove(subeffectData,"savePreventMove")]
 
-[h,if(json.get(subeffectData,"isTransform") != "No"),CODE:{
+[h,if(json.get(subeffectData,"isTransform") != ""),CODE:{
 	[h:TransformReturnData = ct.a5e.TransformInputProcessing(subeffectData,thisPlayerCurrentFeatureData)]
 	[h:subeffectData = json.get(TransformReturnData,"Input")]
 	[h:TransformData = json.get(TransformReturnData,"Transform")]

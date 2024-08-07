@@ -4,12 +4,15 @@
   overflow-y: scroll;
   border: 1px solid gray;
   text-align: left;
+  padding-left: 2px;
+  padding-bottom: 1px;
 }
 .check-multiple input {
   display: none;
 }
 .check-multiple label {
   display: block;
+  cursor: pointer;
 }
 .check-multiple span {
   display: inline-block;
@@ -18,4 +21,8 @@
 .check-multiple input:checked ~ span {
   background: var(--mt-theme-color-actions-blue);
   color: white;
+}
+
+div.check-multiple{
+	width: 100%;
 }

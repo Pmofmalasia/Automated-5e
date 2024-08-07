@@ -50,7 +50,7 @@ function createParentSubeffectRows(){
 		addTableRow("CreateSubeffectTable",nextRowIndex,"rowUsePriorTargets","<th><label for='UsePriorTargets'>Use Same Targets as Linked Effect:</label></th><td><input type='checkbox' id='UsePriorTargets' name='UsePriorTargets' onchange='createPriorTargetsRows("+'"CreateSubeffectTable","Prior"'+")'></td>");
 		nextRowIndex++;
 
-		addTableRow("CreateSubeffectTable",nextRowIndex,"rowUsePriorOrigin","<th><label for='UsePriorOrigin'>New Subeffect Originates from Old Target:</label></th><td><input type='checkbox' id='UsePriorOrigin' name='UsePriorOrigin' onchange='createPriorOriginRows("+'"CreateSubeffectTable"'+")'></td>");
+		addTableRow("CreateSubeffectTable",nextRowIndex,"rowUsePriorOrigin","<th><label for='UsePriorOrigin'>New Subeffect Originates from Old Target:</label></th><td><input type='checkbox' id='UsePriorOrigin' name='UsePriorOrigin' onchange='createPriorOriginRows()'></td>");
 		nextRowIndex++;
 	}
 }
@@ -149,7 +149,8 @@ async function createMitigationTable(){
 	}
 	else{
 		if(document.getElementById("rowMitigationEnd") == null){
-			createTableRow(referenceRow,"rowMitigationEnd","<th></th><td></td>");
+			let endRow = createTableRow(referenceRow,"rowMitigationEnd","<th colspan='2'></th>");
+			endRow.classList.add("section-end");
 		}
 
 		deleteInterveningElements(referenceRow,document.getElementById("rowMitigationEnd"));
@@ -243,15 +244,15 @@ async function createMitigationTable(){
 				referenceRow = createTableRow(referenceRow,"rowSavePreventInstantKill","<th><label for='savePreventInstantKill'>Save Prevents Instant Kill:</label></th><td><input type='checkbox' id='savePreventInstantKill' name='savePreventInstantKill'></td>");
 			}
 		}
-		else if(howMitigate == "ForceCheck"){
-			
-		}
-		else if(howMitigate == "Check"){
+		else if(howMitigate == "Check" || howMitigate == "ForceCheck"){
 			let request = await fetch("macro:pm.GetSkills@lib:pm.a5e.Core", {method: "POST", body: ""});
 			let checkList = await request.json();
 
 			let requestAttr = await fetch("macro:pm.GetAttributes@lib:pm.a5e.Core", {method: "POST", body: ""});
 			let attributeList = await requestAttr.json();
+
+			let requestTool = await fetch("macro:pm.GetTools@lib:pm.a5e.Core", {method: "POST", body: ""});
+			let toolList = await requestTool.json();
 
 			let checkOptions = createHTMLSelectOptions(checkList) + "<option value='AthleticsAcrobatics'>Athletics or Acrobatics</option>" + createHTMLSelectOptions(attributeList) + "<option value='Multiple'>Multiple Options</option>";
 		
@@ -259,58 +260,85 @@ async function createMitigationTable(){
 				checkOptions = "<option value='SpellAttribute'>Spellcasting Attribute</option>" + checkOptions;
 			}
 
-			referenceRow = createTableRow(referenceRow,"rowCheckType","<th><label for='CheckType'>Check Type:</label></th><select id='CheckType' name='CheckType'>"+checkOptions+"</select></td>");
+			referenceRow = createTableRow(referenceRow,"rowCheckType","<th><label for='CheckType'>Check Type:</label></th><span id='CheckTypeInputSpan'><select id='CheckType' name='CheckType'>"+checkOptions+"</select></span></td>");
 			document.getElementById("CheckType").addEventListener("change",function(){
-				//TODO: add a multiselect for checks here
+				let allOptions = attributeList.concat(checkList);
+				let allCheckOptions = createHTMLMultiselectOptions(allOptions,"MitigationCheckType");
+
+				document.getElementById("CheckTypeInputSpan").innerHTML = "<div class='check-multiple' style='width:100%'>"+allCheckOptions+"</div>";
 			});
 
-			referenceRow = createTableRow(referenceRow,"rowCheckDCMethod","<th><label for='CheckDCMethod'>Method of Choosing Check DC:</label></th><select id='CheckDCMethod' name='CheckDCMethod' onchange='createCheckDCMethodRow()'><option value='SetValue'>Preset Value</option><option value='Target'>Based on Target</option><option value='Stat'>Stat-Based</option></select></td>");
+			referenceRow = createTableRow(referenceRow,"rowCheckDCMethod","<th colspan='2'>Check DC = <input type='number' id='CheckDCBase' name='CheckDCBase' value='10' min='0' class='small-number'> + <select id='CheckDCStatBonus' name='CheckDCStatBonus'>"+createHTMLSelectOptions(attributeList)+createHTMLSelectOptions(checkList)+"</select> + <select id='CheckDCProfBonus' name='CheckDCProfBonus'><option value='Yes'>Proficiency Bonus</option><option value='No'>No Additional Proficiency</option></select><span id='CheckDCEffectLevelBonus'></span></th>");
 
+			function toggleEffectLevelBonus(){
+				let toggleOn = false;
 
+				if(document.getElementById("TargetType") != null){
+					if(document.getElementById("TargetType").value === "Effect"){
+						toggleOn = true;
+					}
+				}
 
+				if(document.getElementById("secondaryTargetType") != null){
+					if(document.getElementById("secondaryTargetType").value === "Effect"){
+						toggleOn = true;
+					}
 
+					document.getElementById("secondaryTargetType").addEventListener("change",toggleEffectLevelBonus);
+				}
 
+				if(document.getElementById("PriorTargetType") != null){
+					//TODO: Needs additional data for prior effects (specifically what their targets were) available to read 
+				}
 
-
-
-
-
-
-
-
-
-
-
-			if(checkEffectType() == "Spell"){
-	
-				document.getElementById("rowSaveDCMethod").setAttribute("hidden","");
-				document.getElementById("SaveDCMethod").value = "SpellSave";
+				let levelBonusSpan = document.getElementById("CheckDCEffectLevelBonus");
+				if(toggleOn){
+					if(document.getElementById("CheckDCLevelBonusModifier") === null){
+						levelBonusSpan.innerHTML = "+ Effect Level x<input type='number' id='CheckDCLevelBonusModifier' name='CheckDCLevelBonusModifier' value='1' min='0' class='small-number'>";						
+					}
+				}
+				else{
+					levelBonusSpan.innerHTML = "";
+				}
 			}
-			else{
-				referenceRow = createTableRow(referenceRow,"rowSaveDCMethod","<th><label for='SaveDCMethod'>Method of Choosing Save DC:</label></th><select id='SaveDCMethod' name='SaveDCMethod' onchange='createSaveDCMethodRow("+'"'+tableID+'"'+")'><option value='Stat'>Stat-Based</option><option value='SpellAttack'>Spell Attack Bonus</option><option value='SetValue'>Preset Value</option></select></td>");
-	
-				referenceRow = createTableRow(referenceRow,"rowSaveDC","<th><label for='SaveDCStat'>Stat Used:</label></th><select id='SaveDCStat' name='SaveDCStat'>"+saveOptions+"</select></td>");
+
+			if(document.getElementById("TargetType") != null){
+				document.getElementById("TargetType").addEventListener("change",toggleEffectLevelBonus);
+			}
+			if(document.getElementById("secondaryTargetType") != null){
+				document.getElementById("secondaryTargetType").addEventListener("change",toggleEffectLevelBonus);
+			}
+			if(document.getElementById("PriorTargetType") != null){
+				document.getElementById("PriorTargetType").addEventListener("change",toggleEffectLevelBonus);
 			}
 
+			toggleEffectLevelBonus();
 
+			if(false){
+			referenceRow = createTableRow(referenceRow,"rowCheckDCMethod","<th><label for='CheckDCMethod'>Method of Choosing Check DC:</label></th><select id='CheckDCMethod' name='CheckDCMethod' onchange='createCheckDCMethodRow()'><option value='SetValue'>Preset Value</option><option value='Stat'>Stat-Based</option><option value='Contested'>Contested Check</option></select></td>");
 
+			document.getElementById("CheckDCMethod").addEventListener("change",function(){
+				let referenceRow = document.getElementById("rowCheckDCMethod");
+				let methodChoice = document.getElementById("CheckDCMethod").value;
 
+				if(referenceRow.nextElementSibling.id === "rowCheckDC"){
+					referenceRow.nextElementSibling.remove();
+				}
 
+				if(methodChoice === "SetValue"){
 
+				}
+				else if(methodChoice === "Stat"){
+					referenceRow = createTableRow(referenceRow,"rowCheckDC","<th><label for='CheckDCStat'>Stat Used:</label></th><select id='isCheckDCStatProficiency'</td>");
+				}
+				else if(methodChoice === "Contested"){
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+				}
+				else if(methodChoice === "EffectLevel"){
+					referenceRow = createTableRow(referenceRow,"rowCheckDC","<th><label for='CheckDCStat'>Stat Used:</label></th><select id='CheckDCStat' name='CheckDCStat'>"+createHTMLSelectOptions(attributeList)+"</select></td>");
+				}
+			});				
+			}
 
 		}
 	}
@@ -929,11 +957,11 @@ function removeConditionEndInstanceRow(){
 	}
 }
 
-async function createAuraRows(){
+function createAuraRows(){
 	let tableID = document.getElementById("rowIsAura").closest("table").id;
 
 	if(document.getElementById("isAura").checked){
-		await createTargetingRows(tableID,"rowIsAuraEnd","Aura");
+		createTargetingRows(tableID,"rowIsAuraEnd","Aura");
 
 		document.getElementById("RangeTypeAura").value = "SelfRanged";
 		document.getElementById("RangeTypeAura").onchange();
@@ -1141,7 +1169,7 @@ async function createUncommonEffectsRows(){
 
 		referenceRow = createTableRow(referenceRow,"rowIsMoveTarget","<th><label for='isMoveTarget'>Moves the Target?</label></th><td><input type='checkbox' id='isMoveTarget' name='isMoveTarget' value=1 onchange='createMoveTargetTable()'></td>");
 
-		referenceRow = createTableRow(referenceRow,"rowIsTransform","<th><label for='isTransform'>Transform Target?</label></th><td><select id='isTransform' name='isTransform' onchange='createTransformRows()'><option value='No'>No</option><option value='Single'>Single Specific Creature</option><option value='Options'>Creature from List</option><option value='Unique'>Creature Unique to Feature</option><option value='Criteria'>Creature Based on Criteria</option><option value='Cosmetic'>Change Appearance Only</option></select></td>");
+		referenceRow = createTableRow(referenceRow,"rowIsTransform","<th><label for='isTransform'>Transform Target?</label></th><td><select id='isTransform' name='isTransform' onchange='createTransformRows()'><option value=''>No</option><option value='Single'>Single Specific Creature</option><option value='Options'>Creature from List</option><option value='Unique'>Creature Unique to Feature</option><option value='Criteria'>Creature Based on Criteria</option><option value='Cosmetic'>Change Appearance Only</option></select></td>");
 		
 		referenceRow = createTableRow(referenceRow,"rowSetHP","<th><label for='isSetHP'>Set Target's Current HP?</label></th><td><input type='checkbox' id='isSetHP' name='isSetHP' onchange='createSetHPRows()'></td>");
 		
@@ -1162,9 +1190,12 @@ async function createUncommonEffectsRows(){
 		if(effectType == "Object" || effectType == "Weapon"){
 			referenceRow = createTableRow(referenceRow,"rowIsActivateItem","<th><label for='isActivateItem'>Activates this Item:</label></th><td><select id='isActivateItem' name='isActivateItem'><option value=''>No Effect</option><option value='Activate'>Activate Item</option><option value='Deactivate'>Deactivate Item</option><option value='Toggle'>Toggle Activation</option></select></td>");
 		}
+		
+		referenceRow = createTableRow(referenceRow,"rowUncommonEffectsEnd","<th colspan='2'></th>");
+		referenceRow.classList.add("section-end");
 	}
 	else{
-		clearUnusedTable("CreateSubeffectTable","rowUncommonEffects","Range");
+		deleteInterveningElements(referenceRow,document.getElementById("rowUncommonEffectsEnd").nextElementSibling);
 	}
 }
 
@@ -1688,7 +1719,7 @@ async function loadUserData() {
 	let userdata = atob(await MapTool.getUserData());
 	document.getElementById('CreateSubeffectTable').innerHTML = userdata;
 
-	createTargetingRows("CreateSubeffectTable","rowNeedsNewSubeffect","");
+	createTargetingRows("CreateSubeffectTable","rowMitigation","");
 }
 
 setTimeout(loadUserData, 1);

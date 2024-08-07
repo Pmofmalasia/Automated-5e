@@ -21,7 +21,7 @@
 [h:"<!-- createFeatureTypeSpecificRows() is executed in JS to make those lines there -->"]
 
 [h,if(FeatureType == "Condition"),CODE:{
-	[h:CreateFeatureHTML = CreateFeatureHTML + "<tr id='rowConditionAssociatedFeature'><th><label for='ConditionAssociatedFeature'>Feature, Spell, or Item Associated with Condition:</label></th><td class='autocomplete-table'><input type='text' id='ConditionAssociatedFeature' name='ConditionAssociatedFeature' value='Base Condition'><span id='ConditionAssociatedFeatureValidationSpan'></span></td></tr>"]
+	[h:CreateFeatureHTML = CreateFeatureHTML + "<tr id='rowConditionAssociatedFeature'><th><label for='ConditionAssociatedFeature'>Feature, Spell, or Item Associated with Condition:</label></th><td class='autocomplete-table'><input type='text' id='ConditionAssociatedFeature' name='ConditionAssociatedFeature' value='Base Condition'><span id='ValidationSpanConditionAssociatedFeature'></span></td></tr>"]
 	
 	[h:BaseConditions = pm.a5e.GetBaseConditions()]
 	[h:CountsAsOptions = "<option value=''>None</option>" + ut.a5e.GenerateSelectionHTML(BaseConditions)]

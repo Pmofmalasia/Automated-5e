@@ -40,11 +40,7 @@ async function initializeConditionAssociatedFeature(){
 		finalFeatureOptions.push(feature.DisplayName);
 	}
 
-	document.getElementById("ConditionAssociatedFeature").addEventListener("change",function(e){
-		validateFeatureAutocomplete("ConditionAssociatedFeature",btoa(JSON.stringify(allFeatureOptions)));
-	});
-
-	autocomplete(document.getElementById("ConditionAssociatedFeature"),finalFeatureOptions);
+	autocomplete(document.getElementById("ConditionAssociatedFeature"),finalFeatureOptions,allFeatureOptions);
 }
 
 function createNewConditionTagRows(){

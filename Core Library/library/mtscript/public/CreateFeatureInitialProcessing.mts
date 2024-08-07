@@ -30,7 +30,7 @@
 [h:newFeatureData = json.set(newFeatureData,"isMultifeature",json.contains(featureInputData,"isMultifeature"))]
 
 [h,if(json.contains(featureInputData,"hasMaster")),CODE:{
-	[h:MasterFeatureData = ct.a5e.AutocompletedFeatureProcessing(featureInputData,"Main")]
+	[h:MasterFeatureData = ct.a5e.AutocompletedFeatureProcessing(featureInputData,"MainFeature")]
 	[h:newFeatureData = json.set(newFeatureData,"Master",json.get(MasterFeatureData,"Feature"))]
 };{}]
 
@@ -135,7 +135,7 @@
 
 
 [h,if(json.contains(featureInputData,"isReplaceFeature")),CODE:{
-	[h:ReplaceFeatureData = ct.a5e.AutocompletedFeatureProcessing(featureInputData,"Replace")]
+	[h:ReplaceFeatureData = ct.a5e.AutocompletedFeatureProcessing(featureInputData,"ReplaceFeature")]
 	[h:newFeatureData = json.set(newFeatureData,"Replace",json.get(ReplaceFeatureData,"Feature"))]
 };{}]
 
@@ -194,7 +194,8 @@
 	};{}]
 	
 	[h,if(json.contains(featureInputData,"isFeatureFeaturePrereq")),CODE:{
-		[h:FeaturePrereqData = ct.a5e.AutocompletedFeatureProcessing(featureInputData,"FeatureFeaturePrereq")]
+		[h:FeaturePrereqData = ct.a5e.AutocompletedFeatureProcessing(featureInputData,"FeatureFeaturePrereqFeature")]
+		[h:"<!-- Buffalo buffalo buffalo -->"]
 		[h:featurePrerequisites = json.set(featurePrerequisites,"Feature",json.get(FeaturePrereqData,"Feature"))]
 	};{}]
 	
@@ -271,7 +272,7 @@
 	
 	[h,switch(json.get(featureInputData,"isSpellFeaturePrereq")),CODE:
 		case "Specific":{
-			[h:SpellPrereqData = ct.a5e.AutocompletedFeatureProcessing(featureInputData,"FeaturePrereqSpecific",json.set("","Type","Spell"))]
+			[h:SpellPrereqData = ct.a5e.AutocompletedFeatureProcessing(featureInputData,"FeaturePrereqSpecificSpell","Spell")]
 			[h:chosenSpellName = json.get(json.get(SpellPrereqData,"Feature"),"Name")]
 			[h:featurePrerequisites = json.set(featurePrerequisites,"SpecificSpell",json.append("",chosenSpellName))]
 		};

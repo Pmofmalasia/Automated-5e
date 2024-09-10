@@ -16,6 +16,7 @@
 	"ParentToken",ParentToken
 )]
 
+[h:"<!-- TODO: MaxResource fix -->"]
 [h:"<!-- TODO: Roll this in with EventResourceRestoration in the future when inputs are updated since it has restoration by chance as well -->"]
 [h,foreach(feature,json.path.read(a5e.UnifiedAbilities,"\$[*][?(@.RechargeRoll!=null)]","DEFAULT_PATH_LEAF_TO_NULL")),CODE:{
 	[h:NeedsRecharge = (json.get(feature,"Resource") != evalMacro(json.get(feature,"MaxResource")))]

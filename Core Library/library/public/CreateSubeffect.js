@@ -7,7 +7,7 @@ function createParentSubeffectRows(){
 	let ParentSubeffect = getParentSubeffect();
 
 	if(ParentSubeffect == "NONE"){
-		clearUnusedTable("CreateSubeffectTable","rowParentSubeffect","rowMitigation");
+		clearUnusedTable("CreateSubeffectTable","rowParentSubeffect","rowParentSubeffectEnd");
 
 		let endRowIndex = document.getElementById("rowUsePriorTargets").rowIndex;
 		document.getElementById(tableID).deleteRow(endRowIndex);
@@ -69,37 +69,30 @@ function getParentSubeffect(){
 }
 
 async function createParentPrereqRows(){
-	let nextRowIndex = document.getElementById("rowParentPrereqs").rowIndex + 1;
+	let referenceElement = document.getElementById("rowParentPrereqs");
 	let PrereqChoice = document.getElementById("ParentPrereqs").value;
 	
-	clearUnusedTable("CreateSubeffectTable","rowParentPrereqs","rowMitigation");
+	deleteInterveningElements(referenceElement,document.getElementById("rowParentSubeffectEnd"));
 
 	if(PrereqChoice == "AttackHit"){
-		addTableRow("CreateSubeffectTable",nextRowIndex,"rowParentPrereqExtra","<th><label for='PrereqAttackHitMargin'>Must Hit by At Least:</label></th><td><input type='number' id='PrereqAttackHitMargin' name='PrereqAttackHitMargin' min=0 value=0></td>");
-		nextRowIndex++;
+		referenceElement = createTableRow(referenceElement,"rowParentPrereqExtra","<th><label for='PrereqAttackHitMargin'>Must Hit by At Least:</label></th><td><input type='number' id='PrereqAttackHitMargin' name='PrereqAttackHitMargin' min=0 value=0></td>");
 
-		addTableRow("CreateSubeffectTable",nextRowIndex,"rowParentPrereqExtra2","<th><label for='PrereqAttackCrits'>Attack Must Crit:</label></th><td><input type='checkbox' id='PrereqAttackCrits' name='PrereqAttackCrits'></td>");
-		nextRowIndex++;
+		referenceElement = createTableRow(referenceElement,"rowParentPrereqExtra2","<th><label for='PrereqAttackCrits'>Attack Must Crit:</label></th><td><input type='checkbox' id='PrereqAttackCrits' name='PrereqAttackCrits'></td>");
 	}
 	else if(PrereqChoice == "AttackMiss"){
-		addTableRow("CreateSubeffectTable",nextRowIndex,"rowParentPrereqExtra","<th><label for='PrereqAttackMissMargin'>Must Miss by At Least:</label></th><td><input type='number' id='PrereqAttackMissMargin' name='PrereqAttackMissMargin' min=0 value=0></td>");
-		nextRowIndex++;
+		referenceElement = createTableRow(referenceElement,"rowParentPrereqExtra","<th><label for='PrereqAttackMissMargin'>Must Miss by At Least:</label></th><td><input type='number' id='PrereqAttackMissMargin' name='PrereqAttackMissMargin' min=0 value=0></td>");
 	}
 	else if(PrereqChoice == "PassedSave"){
-		addTableRow("CreateSubeffectTable",nextRowIndex,"rowParentPrereqExtra","<th><label for='PrereqSaveSucceedMargin'>Must Succeed by At Least:</label></th><td><input type='number' id='PrereqSaveSucceedMargin' name='PrereqSaveSucceedMargin' min=0 value=0></td>");
-		nextRowIndex++;
+		referenceElement = createTableRow(referenceElement,"rowParentPrereqExtra","<th><label for='PrereqSaveSucceedMargin'>Must Succeed by At Least:</label></th><td><input type='number' id='PrereqSaveSucceedMargin' name='PrereqSaveSucceedMargin' min=0 value=0></td>");
 	}
 	else if(PrereqChoice == "FailedSave"){
-		addTableRow("CreateSubeffectTable",nextRowIndex,"rowParentPrereqExtra","<th><label for='PrereqSaveFailMargin'>Must Fail by At Least:</label></th><td><input type='number' id='PrereqSaveFailMargin' name='PrereqSaveFailMargin' min=0 value=0></td>");
-		nextRowIndex++;
+		referenceElement = createTableRow(referenceElement,"rowParentPrereqExtra","<th><label for='PrereqSaveFailMargin'>Must Fail by At Least:</label></th><td><input type='number' id='PrereqSaveFailMargin' name='PrereqSaveFailMargin' min=0 value=0></td>");
 	}
 	else if(PrereqChoice == "PassedCheck"){
-		addTableRow("CreateSubeffectTable",nextRowIndex,"rowParentPrereqExtra","<th><label for='PrereqCheckSucceedMargin'>Must Succeed by At Least:</label></th><td><input type='number' id='PrereqCheckSucceedMargin' name='PrereqCheckSucceedMargin' min=0 value=0></td>");
-		nextRowIndex++;
+		referenceElement = createTableRow(referenceElement,"rowParentPrereqExtra","<th><label for='PrereqCheckSucceedMargin'>Must Succeed by At Least:</label></th><td><input type='number' id='PrereqCheckSucceedMargin' name='PrereqCheckSucceedMargin' min=0 value=0></td>");
 	}
 	else if(PrereqChoice == "FailedCheck"){
-		addTableRow("CreateSubeffectTable",nextRowIndex,"rowParentPrereqExtra","<th><label for='PrereqCheckFailMargin'>Must Fail by At Least:</label></th><td><input type='number' id='PrereqCheckFailMargin' name='PrereqCheckFailMargin' min=0 value=0></td>");
-		nextRowIndex++;
+		referenceElement = createTableRow(referenceElement,"rowParentPrereqExtra","<th><label for='PrereqCheckFailMargin'>Must Fail by At Least:</label></th><td><input type='number' id='PrereqCheckFailMargin' name='PrereqCheckFailMargin' min=0 value=0></td>");
 	}
 	else if(PrereqChoice == "ConditionApplied"){
 		let ConditionsRequiredOptions = "<option value='All'>All Conditions</option><option value='Any'>Any Condition</option>";
@@ -110,8 +103,7 @@ async function createParentPrereqRows(){
 			ConditionsRequiredOptions = ConditionsRequiredOptions + "<option value='"+tempCondition.Name+"'>"+tempCondition.DisplayName+"</option>";
 		}
 
-		addTableRow("CreateSubeffectTable",nextRowIndex,"rowParentPrereqExtra","<th><label for='PrereqConditionsApplied'>Conditions that Must be Applied:</label></th><td><select id='PrereqConditionsApplied' name='PrereqConditionsApplied'>"+ConditionsRequiredOptions+"</select></td>");
-		nextRowIndex++;
+		referenceElement = createTableRow(referenceElement,"rowParentPrereqExtra","<th><label for='PrereqConditionsApplied'>Conditions that Must be Applied:</label></th><td><select id='PrereqConditionsApplied' name='PrereqConditionsApplied'>"+ConditionsRequiredOptions+"</select></td>");
 	}
 	else if(PrereqChoice == "Damage"){
 		let ParentSubeffect = getParentSubeffect();
@@ -130,12 +122,10 @@ async function createParentPrereqRows(){
 			}
 		}
 
-		addTableRow("CreateSubeffectTable",nextRowIndex,"rowParentPrereqExtra","<th><label for='PrereqDamageDealtMinimum'>Minimum Damage Dealt:</label></th><td><input type='number' id='PrereqDamageDealtMinimum' name='PrereqDamageDealtMinimum' value=1 min=1 style='width:35px'><select id='PrereqDamageDealtType' name='PrereqDamageDealtType'>"+PriorDamageTypeOptions+"</select></td>");
-		nextRowIndex++;
+		referenceElement = createTableRow(referenceElement,"rowParentPrereqExtra","<th><label for='PrereqDamageDealtMinimum'>Minimum Damage Dealt:</label></th><td><input type='number' id='PrereqDamageDealtMinimum' name='PrereqDamageDealtMinimum' value=1 min=1 style='width:35px'><select id='PrereqDamageDealtType' name='PrereqDamageDealtType'>"+PriorDamageTypeOptions+"</select></td>");
 	}
 	else if(PrereqChoice == "Healing"){
-		addTableRow("CreateSubeffectTable",nextRowIndex,"rowParentPrereqExtra","<th><label for='PrereqHealingMinimum'>Minimum Healing Done:</label></th><td><input type='number' id='PrereqHealingMinimum' name='PrereqHealingMinimum' value=1 min=1 style='width:35px'></td>");
-		nextRowIndex++;
+		referenceElement = createTableRow(referenceElement,"rowParentPrereqExtra","<th><label for='PrereqHealingMinimum'>Minimum Healing Done:</label></th><td><input type='number' id='PrereqHealingMinimum' name='PrereqHealingMinimum' value=1 min=1 style='width:35px'></td>");
 	}
 }
 

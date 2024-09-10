@@ -24,6 +24,28 @@ function createReplaceFeatureRow(){
 	}
 }
 
+async function createUniqueMonsterSelectionRows(){
+	let referenceElement = document.getElementById("rowIsMonsterFeatureUnique");
+	let uniqueChoice = document.getElementById("isMonsterFeatureUnique").checked;
+	let isInputRowPresent = referenceElement.nextElementSibling.id === "rowMonsterFeatureUniqueSelection";
+
+	if(uniqueChoice && !isInputRowPresent){
+		referenceElement = createTableRow(referenceElement,"rowMonsterFeatureUniqueSelection","<th><label for='MonsterFeatureUniqueSelection'>Associated NPC:</label></th><td class='autocomplete-table'><input type='text' id='MonsterFeatureUniqueSelection' name='MonsterFeatureUniqueSelection'></td>");
+
+		let bestiary = await fetch("macro:pm.a5e.GetCoreData@lib:pm.a5e.Core", {method: "POST", body: '["sb.Bestiary"]'});
+		bestiary = await bestiary.json();
+		let bestiaryDisplayNames = [];
+		for(let monster of bestiary){
+			bestiaryDisplayNames.push(atob(monster.MTProperties.name));
+		}
+
+		autocomplete(document.getElementById("MonsterFeatureUniqueSelection"),bestiaryDisplayNames);
+	}
+	else if(isInputRowPresent){
+		referenceElement.nextElementSibling.remove();
+	}
+}
+
 async function initializeConditionAssociatedFeature(){
 	let baseConditionFeature = {"Name":"BaseCondition","DisplayName":"Base Condition","Class":"Condition","Subclass":""};
 	let allFeatureOptions = [];

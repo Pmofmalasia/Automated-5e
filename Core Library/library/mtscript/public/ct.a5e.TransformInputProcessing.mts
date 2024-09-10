@@ -98,9 +98,12 @@
 		[h:inputData = json.remove(inputData,"TransformCRMaxMethod")]
 
 		[h:TransformFilter = json.set(TransformFilter,"CRMaximum",CRMaxFilter)]
+
+		[h:TransformFilter = json.set(TransformFilter,"SeenCreature",1)]
 	};
 	default:{}
-]
+]		
+
 [h,if(!json.isEmpty(TransformFilter)): TransformData = json.set(TransformData,"Prereqs",TransformFilter)]
 
 [h,switch(json.get(inputData,"TransformHP")),CODE:

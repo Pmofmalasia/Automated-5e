@@ -11,6 +11,7 @@
 [h:sourcePath = json.get(ResourceSourceData,"Path")]
 [h:matchingFeature = json.get(json.path.read(getProperty(sourceProperty),sourcePath),0)]
 
+[h:"<!-- TODO: MaxResource fix -->"]
 [h,if(pm.ResourceKey==""),CODE:{
 	[h:pm.MaxResourceBase = evalMacro(json.get(matchingFeature,"MaxResource"))]
 	[h:pm.ResourceAmount = json.get(matchingFeature,"Resource")]

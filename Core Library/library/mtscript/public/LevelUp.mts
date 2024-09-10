@@ -109,6 +109,7 @@
 [h:noFeaturesTest = json.isEmpty(getProperty("a5e.stat.AllFeatures"))]
 [h,if(noFeaturesTest): lu.OldResources = ""; lu.OldResources = json.path.read(getProperty("a5e.stat.AllFeatures"),"\$[*][?(@.MaxResource != null)]","DEFAULT_PATH_LEAF_TO_NULL")]
 [h:lu.OldResourcesMax = ""]
+[h:"<!-- TODO: MaxResource fix -->"]
 [h,foreach(ability,lu.OldResources),CODE:{
 	[h:lu.OldResourcesMax = json.set(lu.OldResourcesMax,json.get(ability,"Name")+json.get(ability,"Class")+json.get(ability,"Subclass"),evalMacro(json.get(ability,"MaxResource")))]
 }]
@@ -189,13 +190,13 @@
 
 [h,if(lu.DisplayNewAbilities != ""): abilityTable = json.append(abilityTable,json.set("","ShowIfCondensed",1,"Header","Abilities Gained","FalseHeader","","FullContents","","RulesContents",lu.DisplayNewAbilities,"RollContents","","DisplayOrder","['Rules','Roll','Full']"))]
 
-[h,MACRO("CreatePlayerClassMacro@Lib:pm.a5e.Core"): json.set("","AbilityList",lu.NewButtons,"ParentToken",ParentToken)]
+[h:js.a5e.CreateFeatureMacros(lu.NewButtons,ParentToken)]
 
 [h:"<!-- Addition of general resources: Happens last because the addition of abilities may change things (e.g. getting more health from a Con increase) -->"]
 
 [h:lu.NewConMod = json.get(getProperty("a5e.stat.AtrMods"),"Constitution")]
-[h:setProperty("a5e.stat.MaxHitDice",json.set(getProperty("a5e.stat.MaxHitDice"),"1d"+lu.HitDieSize,json.get(getProperty("a5e.stat.MaxHitDice"),"1d"+lu.HitDieSize)+1))]
-[h:setProperty("a5e.stat.HitDice",json.set(getProperty("a5e.stat.HitDice"),"1d"+lu.HitDieSize,json.get(getProperty("a5e.stat.HitDice"),"1d"+lu.HitDieSize)+1))]
+[h:setProperty("a5e.stat.MaxHitDice",json.set(getProperty("a5e.stat.MaxHitDice"),"d"+lu.HitDieSize,json.get(getProperty("a5e.stat.MaxHitDice"),"d"+lu.HitDieSize)+1))]
+[h:setProperty("a5e.stat.HitDice",json.set(getProperty("a5e.stat.HitDice"),"d"+lu.HitDieSize,json.get(getProperty("a5e.stat.HitDice"),"d"+lu.HitDieSize)+1))]
 [h:setProperty("a5e.stat.RolledMaxHP",getProperty("a5e.stat.RolledMaxHP")+lu.HPIncrease)]
 [h:HPCalc = getProperty("a5e.stat.HP")+lu.HPIncrease+json.get(getProperty("a5e.stat.AtrMods"),"Constitution")+((lu.NewConMod - lu.OldConMod)*(getProperty("a5e.stat.Level")-1))]
 [h:setProperty("a5e.stat.HP",HPCalc)]

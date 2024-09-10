@@ -1,4 +1,5 @@
-[h:thisSpellData = json.get(data.getData("addon:","pm.a5e.core","ct.NewSpell"),getPlayerName())]
+[h:SpellInputData = macro.args]
+[h:thisSpellData = json.get(SpellInputData,"FeatureData")]
 [h:SpellName = json.get(thisSpellData,"Name")]
 [h:classesWithSpell = json.get(thisSpellData,"ClassesWithSpell")]
 [h:spellSourcebook = json.get(thisSpellData,"spellSourcebook")]
@@ -26,7 +27,6 @@
 }]
 
 [h:setLibProperty("sb.Spells",json.sort(json.append(getLibProperty("sb.Spells","Lib:"+spellSourcebook),thisSpellData),"a","DisplayName"),"Lib:"+spellSourcebook)]
-[h:setLibProperty("ct.NewSpell",json.remove(data.getData("addon:","pm.a5e.core","ct.NewSpell"),getPlayerName()),"Lib:pm.a5e.Core")]
 
 [h:broadcast("Spell "+json.get(thisSpellData,"DisplayName")+" created.")]
 [h,MACRO("Gather Sourcebook Information@Lib:pm.a5e.Core"): ""]

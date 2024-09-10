@@ -41,7 +41,7 @@
 }]
 
 [h,if(json.contains(SubeffectData,"UseResource")),CODE:{
-	[h:subeffect.ResourceData = pm.a5e.UseResource(json.get(SubeffectData,"UseResource"),IsTooltip)]
+	[h:subeffect.ResourceData = pm.a5e.UseResource(json.get(SubeffectData,"UseResource"),a5e.UnifiedAbilities,ParentToken)]
 
 	[h:SubeffectData = json.set(SubeffectData,"Resource",json.get(subeffect.ResourceData,"Data"))]
 	[h:abilityTable = json.merge(abilityTable,json.get(subeffect.ResourceData,"Table"))]

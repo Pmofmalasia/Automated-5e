@@ -1,6 +1,6 @@
 [h:pass.abilityName = pm.RemoveSpecial(pass.abilityName)]
 [h:pass.abilitySubclass = pm.RemoveSpecial(pass.abilitySubclass)]
-[h:pass.abilityInfo = base64.decode(arg(0))]
+[h:pass.abilityInfo = thisFeatureArgs]
 [h:pass.Context = json.get(pass.abilityInfo,"Context")]
 [h:pass.DisplayObject = json.get(pass.abilityInfo,"Settings")]
 [h,if(pass.DisplayObject == ""): pass.DisplayObject = "{}"]

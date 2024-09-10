@@ -1,3 +1,4 @@
+[h,if(argCount() > 0): switchToken(arg(0))]
 [h:maxSpellLevel = 9]
 [h:SpellSlotDisplay = ""]
 [h,count(maxSpellLevel),CODE:{
@@ -9,7 +10,7 @@
 	]
 }]
 
-[h:unsharedSpellSlots = json.path.read(getProperty("a5e.stat.AllFeatures"),"[*][?(@.ResourceAsSpellSlot==1)]")]
+[h:unsharedSpellSlots = json.path.read(getProperty("a5e.stat.AllFeatures"),"[*][?(@.ResourceSpellLevel != null)]","DEFAULT_PATH_LEAF_TO_NULL")]
 [h,foreach(feature,unsharedSpellSlots),CODE:{
 	[h:multiResourceTest = json.type(json.get(feature,"Resource"))=="OBJECT"]
 	[h,if(multiResourceTest),CODE:{
@@ -21,4 +22,4 @@
 	}]
 }]
 
-[h:macro.return = SpellSlotDisplay]
+[h:return(0,SpellSlotDisplay)]

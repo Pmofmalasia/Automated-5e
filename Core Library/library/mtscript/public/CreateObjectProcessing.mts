@@ -387,6 +387,7 @@
 	};{}]
 }]
 
+[h:"<!-- TODO: MaxResource fix -->"]
 [h,switch(json.get(objectData,"isCharges")),CODE:
 	case "None":{};
 	case "One":{
@@ -625,15 +626,14 @@
 	
 		[h:objectData = json.set(objectData,"NewTemplate",newTemplateTest)]
 
-		[h:setLibProperty("ct.NewObject",json.set(data.getData("addon:","pm.a5e.core","ct.NewObject"),getPlayerName(),objectData),"Lib:pm.a5e.Core")]
-
 		[h:"<!-- TODO: Remove objectType==Weapon when the better system for implementing WeaponEffects is implemented -->"]
 		[h,MACRO("CreateSubeffect@Lib:pm.a5e.Core"): json.set("",
 			"WhichSubeffect",1+(objectType=="Weapon"),
 			"WhichEffect",1,
 			"EffectsNumber",ActiveEffectsNumber,
 			"EffectChoiceMethod",json.get(objectData,"EffectChoiceMethod"),
-			"EffectType","Object"
+			"EffectType","Object",
+			"FeatureData",objectData
 		)]
 	};{
 		[h,if(json.get(objectData,"tempLightEffects")!=""): objectData = json.set(objectData,"Effects",json.get(objectData,"tempLightEffects"))]

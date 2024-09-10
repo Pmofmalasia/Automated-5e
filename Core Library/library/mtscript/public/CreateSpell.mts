@@ -1,6 +1,3 @@
-[h,if(data.getData("addon:","pm.a5e.core","ct.NewSpell")==""): setLibProperty("ct.NewSpell","{}","Lib:pm.a5e.Core")]
-[h:setLibProperty("ct.NewSpell",json.remove(data.getData("addon:","pm.a5e.core","ct.NewSpell"),getPlayerName()),"Lib:pm.a5e.Core")]
-
 [h:list1through9 = ""]
 [h,c(9): list1through9 = list1through9 + "<option value="+(roll.count+1)+">"+(roll.count+1)+"</option>"]
 

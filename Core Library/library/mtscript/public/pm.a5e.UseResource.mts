@@ -8,6 +8,7 @@
 [h:pm.HitDiceData = json.get(pm.ResourceInfo,"HitDice")]
 [h:pm.TimeResourceData = json.get(pm.ResourceInfo,"TimeResource")]
 
+[h:"<!-- TODO: MaxResource fix -->"]
 [h,if(pm.FeatureResourceData!=""),CODE:{
 	[h:pm.FeatureResource = json.get(pm.FeatureResourceData,"Resource")]
 	[h:pm.FeatureResourceUsed = json.get(pm.FeatureResourceData,"ResourceUsed")]
@@ -64,7 +65,7 @@
 [h:ResourceInfo = "[]"]
 [h:BackupResourceOptions = "[]"]
 [h:BackupResourceInfo = "[]"]
-[h:resourcesAsSpellSlot = json.path.read(getProperty("a5e.stat.AllFeatures"),"\$[*][?(@.ResourceAsSpellSlot==1)]")]
+[h:resourcesAsSpellSlot = json.path.read(getProperty("a5e.stat.AllFeatures"),"\$[*][?(@.ResourceSpellLevel != null)]","DEFAULT_PATH_LEAF_TO_NULL")]
 
 [h,switch((pm.FeatureResource!="")+""+json.type(pm.FeatureResource)),CODE:
 	case "1UNKNOWN":{
@@ -343,89 +344,89 @@
 	case 1:{
 		[h:pm.HitDiceUsedMaxFinal = 0]
 		[h:pm.BackupHitDiceUsedMaxFinal = 0]
-		[h,if(json.get(a5e.stat.MaxHitDice,"1d6")>0),CODE:{
+		[h,if(json.get(a5e.stat.MaxHitDice,"d6")>0),CODE:{
 			[h:ResourceInfo = json.append(ResourceInfo,
 				json.set("",
 				"Name","6",
 				"TempResourceDisplayName","Hit Die: d6",
 				"TempResourceType","Hit Dice",
-				"TempEnoughResource",json.get(getProperty("a5e.stat.HitDice"),"1d6")>0))
+				"TempEnoughResource",json.get(getProperty("a5e.stat.HitDice"),"d6")>0))
 			]
-			[h:pm.HitDiceUsedMaxFinal = max(pm.HitDiceUsedMaxFinal,min(pm.HitDiceUsedMax,json.get(getProperty("a5e.stat.HitDice"),"1d6")))]
+			[h:pm.HitDiceUsedMaxFinal = max(pm.HitDiceUsedMaxFinal,min(pm.HitDiceUsedMax,json.get(getProperty("a5e.stat.HitDice"),"d6")))]
 		};{}]
-		[h,if(json.get(a5e.stat.MaxHitDice,"1d8")>0),CODE:{
+		[h,if(json.get(a5e.stat.MaxHitDice,"d8")>0),CODE:{
 			[h:ResourceInfo = json.append(ResourceInfo,
 				json.set("",
 				"Name","8",
 				"TempResourceDisplayName","Hit Die: d8",
 				"TempResourceType","Hit Dice",
-				"TempEnoughResource",json.get(getProperty("a5e.stat.HitDice"),"1d8")>0))
+				"TempEnoughResource",json.get(getProperty("a5e.stat.HitDice"),"d8")>0))
 			]
-			[h:pm.HitDiceUsedMaxFinal = max(pm.HitDiceUsedMaxFinal,min(pm.HitDiceUsedMax,json.get(getProperty("a5e.stat.HitDice"),"1d8")))]
+			[h:pm.HitDiceUsedMaxFinal = max(pm.HitDiceUsedMaxFinal,min(pm.HitDiceUsedMax,json.get(getProperty("a5e.stat.HitDice"),"d8")))]
 		};{}]
-		[h,if(json.get(a5e.stat.MaxHitDice,"1d10")>0),CODE:{
+		[h,if(json.get(a5e.stat.MaxHitDice,"d10")>0),CODE:{
 			[h:ResourceInfo = json.append(ResourceInfo,
 				json.set("",
 				"Name","10",
 				"TempResourceDisplayName","Hit Die: d10",
 				"TempResourceType","Hit Dice",
-				"TempEnoughResource",json.get(getProperty("a5e.stat.HitDice"),"1d10")>0))
+				"TempEnoughResource",json.get(getProperty("a5e.stat.HitDice"),"d10")>0))
 			]
-			[h:pm.HitDiceUsedMaxFinal = max(pm.HitDiceUsedMaxFinal,min(pm.HitDiceUsedMax,json.get(getProperty("a5e.stat.HitDice"),"1d10")))]
+			[h:pm.HitDiceUsedMaxFinal = max(pm.HitDiceUsedMaxFinal,min(pm.HitDiceUsedMax,json.get(getProperty("a5e.stat.HitDice"),"d10")))]
 		};{}]
-		[h,if(json.get(a5e.stat.MaxHitDice,"1d12")>0),CODE:{
+		[h,if(json.get(a5e.stat.MaxHitDice,"d12")>0),CODE:{
 			[h:ResourceInfo = json.append(ResourceInfo,
 				json.set("",
-				"Name","1d12",
+				"Name","d12",
 				"TempResourceDisplayName","Hit Die: d12",
 				"TempResourceType","Hit Dice",
-				"TempEnoughResource",json.get(getProperty("a5e.stat.HitDice"),"1d12")>0))
+				"TempEnoughResource",json.get(getProperty("a5e.stat.HitDice"),"d12")>0))
 			]
-			[h:pm.HitDiceUsedMaxFinal = max(pm.HitDiceUsedMaxFinal,min(pm.HitDiceUsedMax,json.get(getProperty("a5e.stat.HitDice"),"1d12")))]
+			[h:pm.HitDiceUsedMaxFinal = max(pm.HitDiceUsedMaxFinal,min(pm.HitDiceUsedMax,json.get(getProperty("a5e.stat.HitDice"),"d12")))]
 		};{}]
 	};
 	case 2:{
 		[h:pm.HitDiceUsedMaxFinal = 0]
 		[h:pm.BackupHitDiceUsedMaxFinal = 0]
-		[h,if(json.get(a5e.stat.MaxHitDice,"1d6")>0),CODE:{
+		[h,if(json.get(a5e.stat.MaxHitDice,"d6")>0),CODE:{
 			[h:BackupResourceInfo = json.append(BackupResourceInfo,
 				json.set("",
 				"Name","6",
 				"TempResourceDisplayName","Hit Die: d6",
 				"TempResourceType","Hit Dice",
-				"TempEnoughResource",json.get(getProperty("a5e.stat.HitDice"),"1d6")>0))
+				"TempEnoughResource",json.get(getProperty("a5e.stat.HitDice"),"d6")>0))
 			]
-			[h:pm.BackupHitDiceUsedMaxFinal = max(pm.BackupHitDiceUsedMaxFinal,min(pm.HitDiceUsedMax,json.get(getProperty("a5e.stat.HitDice"),"1d6")))]
+			[h:pm.BackupHitDiceUsedMaxFinal = max(pm.BackupHitDiceUsedMaxFinal,min(pm.HitDiceUsedMax,json.get(getProperty("a5e.stat.HitDice"),"d6")))]
 		};{}]
-		[h,if(json.get(a5e.stat.MaxHitDice,"1d8")>0),CODE:{
+		[h,if(json.get(a5e.stat.MaxHitDice,"d8")>0),CODE:{
 			[h:BackupResourceInfo = json.append(BackupResourceInfo,
 				json.set("",
 				"Name","8",
 				"TempResourceDisplayName","Hit Die: d8",
 				"TempResourceType","Hit Dice",
-				"TempEnoughResource",json.get(getProperty("a5e.stat.HitDice"),"1d8")>0))
+				"TempEnoughResource",json.get(getProperty("a5e.stat.HitDice"),"d8")>0))
 			]
-			[h:pm.BackupHitDiceUsedMaxFinal = max(pm.BackupHitDiceUsedMaxFinal,min(pm.HitDiceUsedMax,json.get(getProperty("a5e.stat.HitDice"),"1d8")))]
+			[h:pm.BackupHitDiceUsedMaxFinal = max(pm.BackupHitDiceUsedMaxFinal,min(pm.HitDiceUsedMax,json.get(getProperty("a5e.stat.HitDice"),"d8")))]
 		};{}]
-		[h,if(json.get(a5e.stat.MaxHitDice,"1d10")>0),CODE:{
+		[h,if(json.get(a5e.stat.MaxHitDice,"d10")>0),CODE:{
 			[h:BackupResourceInfo = json.append(BackupResourceInfo,
 				json.set("",
 				"Name","10",
 				"TempResourceDisplayName","Hit Die: d10",
 				"TempResourceType","Hit Dice",
-				"TempEnoughResource",json.get(getProperty("a5e.stat.HitDice"),"1d10")>0))
+				"TempEnoughResource",json.get(getProperty("a5e.stat.HitDice"),"d10")>0))
 			]
-			[h:pm.BackupHitDiceUsedMaxFinal = max(pm.BackupHitDiceUsedMaxFinal,min(pm.HitDiceUsedMax,json.get(getProperty("a5e.stat.HitDice"),"1d10")))]
+			[h:pm.BackupHitDiceUsedMaxFinal = max(pm.BackupHitDiceUsedMaxFinal,min(pm.HitDiceUsedMax,json.get(getProperty("a5e.stat.HitDice"),"d10")))]
 		};{}]
-		[h,if(json.get(a5e.stat.MaxHitDice,"1d12")>0),CODE:{
+		[h,if(json.get(a5e.stat.MaxHitDice,"d12")>0),CODE:{
 			[h:BackupResourceInfo = json.append(BackupResourceInfo,
 				json.set("",
-				"Name","1d12",
+				"Name","d12",
 				"TempResourceDisplayName","Hit Die: d12",
 				"TempResourceType","Hit Dice",
-				"TempEnoughResource",json.get(getProperty("a5e.stat.HitDice"),"1d12")>0))
+				"TempEnoughResource",json.get(getProperty("a5e.stat.HitDice"),"d12")>0))
 			]
-			[h:pm.BackupHitDiceUsedMaxFinal = max(pm.BackupHitDiceUsedMaxFinal,min(pm.HitDiceUsedMax,json.get(getProperty("a5e.stat.HitDice"),"1d12")))]
+			[h:pm.BackupHitDiceUsedMaxFinal = max(pm.BackupHitDiceUsedMaxFinal,min(pm.HitDiceUsedMax,json.get(getProperty("a5e.stat.HitDice"),"d12")))]
 		};{}]
 	};
 	default:{
@@ -711,7 +712,7 @@
 	};
 	case "Hit Dice":{
 		[h:HitDieSize = json.get(ResourceSelected,"Name")]
-		[h:setProperty("a5e.stat.HitDice",json.set(getProperty("a5e.stat.HitDice"),"1d"+HitDieSize,json.get(getProperty("a5e.stat.HitDice"),"1d"+HitDieSize)-1))]
+		[h:setProperty("a5e.stat.HitDice",json.set(getProperty("a5e.stat.HitDice"),"d"+HitDieSize,json.get(getProperty("a5e.stat.HitDice"),"d"+HitDieSize)-1))]
 
 		[h:abilityTable = json.append(abilityTable,json.set("",
 			"ShowIfCondensed",1,

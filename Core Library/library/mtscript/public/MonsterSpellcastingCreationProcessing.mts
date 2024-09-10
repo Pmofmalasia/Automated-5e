@@ -66,6 +66,7 @@
     [h,if(ShortRestRestoreTest): InnateMonsterCast = json.set(InnateMonsterCast,"RestoreShortRest",1)]
 
     [h:ResourceData = ResourceData + ")]"]
+[h:"<!-- TODO: MaxResource fix -->"]
     [h:InnateMonsterCast = json.set(InnateMonsterCast,
         "MaxResource",ResourceData,
         "ResourceDisplayName",ResourceDisplayData

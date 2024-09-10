@@ -44,7 +44,8 @@
 
 [h:setProperty("a5e.stat.Concentration","")]
 
-[h:pm.a5e.EventResourceRestoration(json.append("","LongRest","Dawn"))]
+[h:pm.a5e.EventResourceRestoration("LongRest")]
+[h:pm.a5e.EventResourceRestoration("Dawn")]
 
 [h:pm.PassiveFunction("LongRest")]
 

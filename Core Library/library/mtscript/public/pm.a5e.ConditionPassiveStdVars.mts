@@ -1,6 +1,6 @@
 [h:cond.abilityName = pm.RemoveSpecial(cond.abilityName)]
 [h:cond.abilitySubclass = pm.RemoveSpecial(cond.abilitySubclass)]
-[h:cond.Info = base64.decode(arg(0))]
+[h:cond.Info = thisFeatureArgs]
 [h:cond.Context = json.get(cond.Info,"Context")]
 [h:cond.Library = json.get(cond.Info,"Library")]
 

@@ -115,7 +115,7 @@
 		[h,if((1+roll.count)>=SpellLevel && json.get(a5e.stat.SpellSlots,roll.count+1)>0): LevelOptionData = json.append(LevelOptionData,json.set("","Name",(roll.count+1),"ResourceType","Spell Slots"))]
 	}]
 	
-	[h:resourcesAsSpellSlot = json.path.read(a5e.UnifiedAbilities,"\$[*][?(@.ResourceAsSpellSlot==1)]")]
+	[h:resourcesAsSpellSlot = json.path.read(a5e.UnifiedAbilities,"\$[*][?(@.ResourceSpellLevel != null)]","DEFAULT_PATH_LEAF_TO_NULL")]
 	[h,foreach(resource,resourcesAsSpellSlot),CODE:{
 		[h,if(json.get(resource,"Resource")>0): LevelOptions = json.append(LevelOptions,json.get(resource,"DisplayName"))]
 		[h,if(json.get(resource,"Resource")>0): LevelOptionData = json.append(LevelOptionData,json.set(resource,"ResourceType","FeatureSpell"))]

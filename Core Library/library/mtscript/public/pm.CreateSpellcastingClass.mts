@@ -96,7 +96,8 @@
 			[h:BaseSpellFilter = json.set(BaseSpellFilter,"MaxLevel",sp.LevelCap)]
 		}
 	]
-	[h:sp.SpellcastingAbility = json.set(sp.SpellcastingAbility,"ResourceSpellLevel",sp.SpellLevelExpression,"ResourceAsSpellSlot",1)]
+[h:"<!-- TODO: MaxResource fix -->"]
+	[h:sp.SpellcastingAbility = json.set(sp.SpellcastingAbility,"ResourceSpellLevel",sp.SpellLevelExpression)]
 	
 	[h,if(sp.ResourceType=="Multiple Spell Slot Levels"): sp.ResourceType = "Multiple Resources"]
 	[h:sp.ResourceInfo = pm.ResourceInput(json.set("","Name",json.get(sp.SpellcastingAbility,"Name"),"Class",json.get(sp.SpellcastingAbility,"Class"),"Subclass",json.get(sp.SpellcastingAbility,"Subclass"),"Level",sp.LevelGained),sp.ResourceType)]

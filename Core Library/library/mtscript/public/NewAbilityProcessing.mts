@@ -294,9 +294,7 @@
 }]
 
 [h:"<!-- Add buttons gained to list -->"]
-[h:lu.NewButtons = "[]"]
-[h,if(json.isEmpty(lu.NewAbilities)): lu.ButtonAbilities = "[]"; lu.ButtonAbilities = json.path.read(lu.NewAbilities,"\$[*][?(@.ButtonInfo != null)]","DEFAULT_PATH_LEAF_TO_NULL")]
-[h,foreach(ability,lu.ButtonAbilities): lu.NewButtons = json.merge(lu.NewButtons,json.get(ability,"ButtonInfo"))]
+[h,if(json.isEmpty(lu.NewAbilities)): lu.ButtonAbilities = "[]"; lu.ButtonAbilities = json.path.read(lu.NewAbilities,"\$[*][?(@.ButtonInfo != null || @.Effects != null)]","DEFAULT_PATH_LEAF_TO_NULL")]
 
 [h:"<!-- Add new spells gained from outside of the regular class spell list to an array. Does not currently transfer marker data, will wait until after spell data storage is reworked. -->"]
 [h:lu.NewSpells = "[]"]
@@ -304,4 +302,4 @@
 
 [h,foreach(spellGroup,lu.NewSpellsRaw): lu.NewSpells = json.merge(lu.NewSpells,spellGroup)]
 
-[h:macro.return = json.set("","Abilities",lu.NewAbilities,"Buttons",lu.NewButtons,"Spells",lu.NewSpells)]
+[h:return(0,json.set("","Abilities",lu.NewAbilities,"Buttons",lu.ButtonAbilities,"Spells",lu.NewSpells))]

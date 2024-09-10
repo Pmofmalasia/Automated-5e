@@ -99,9 +99,9 @@
 	};{}]
 }]
 
-[h:tempHitDieObject = json.set("","1d6",0,"1d8",0,"1d10",0,"1d12",0)]
+[h:tempHitDieObject = json.set("","d6",0,"d8",0,"d10",0,"d12",0)]
 [h:HitDieNum = json.get(MonsterData,"HitDieNum")]
-[h:setProperty("a5e.stat.MaxHitDice",json.set(tempHitDieObject,"1d"+json.get(MonsterData,"HitDieSize"),HitDieNum))]
+[h:setProperty("a5e.stat.MaxHitDice",json.set(tempHitDieObject,"d"+json.get(MonsterData,"HitDieSize"),HitDieNum))]
 [h:setProperty("a5e.stat.HitDice",getProperty("a5e.stat.MaxHitDice"))]
 [h:HPFromCon = HitDieNum * json.get(getProperty("a5e.stat.AtrMods"),"Constitution")]
 

@@ -1,4 +1,4 @@
-[h:ObjectData = json.get(data.getData("addon:","pm.a5e.core","ct.NewObject"),getPlayerName())]
+[h:ObjectData = json.get(macro.args,"FeatureData")]
 [h:ObjectName = json.get(ObjectData,"Name")]
 [h:ObjectType = json.get(ObjectData,"Type")]
 
@@ -10,8 +10,6 @@
 
 [h:newTemplateTest = json.get(ObjectData,"NewTemplate")]
 [h:ObjectData = json.remove(ObjectData,"NewTemplate")]
-
-[h:setLibProperty("ct.NewObject",json.remove(data.getData("addon:","pm.a5e.core","ct.NewObject"),getPlayerName()),"Lib:pm.a5e.Core")]
 
 [h,if(json.get(ObjectData,"Type") == "Weapon"),CODE:{
 	[h:"<!-- Removes the dummy subeffect used to show to the subeffect creation JS -->"]

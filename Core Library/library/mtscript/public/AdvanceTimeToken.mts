@@ -74,7 +74,7 @@
 		"RollContents","",
 		"DisplayOrder","['Rules','Roll','Full']"
 	))]
-
+[h:"<!-- TODO: MaxResource fix -->"]
 	[h:TimeResourcesExpired = "[]"]
 	[h:"<!-- Advance time from features with a TimeResource that is active -->"]
 	[h:TimeResourceFeatures = json.path.read(getProperty("a5e.stat.AllFeatures"),"\$[*][?(@.TimeResource != null && @.TimeResourceActive != 0 && @.TimeResourceActive != null)]","DEFAULT_PATH_LEAF_TO_NULL")]

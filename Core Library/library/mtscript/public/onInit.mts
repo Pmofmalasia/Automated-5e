@@ -192,7 +192,6 @@
 [h:defineFunction("pm.a5e.EffectAttackPrereqs","pm.a5e.EffectAttackPrereqs@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.a5e.EffectWeaponPrereqs","pm.a5e.EffectWeaponPrereqs@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.a5e.EffectSpellPrereqs","pm.a5e.EffectSpellPrereqs@Lib:pm.a5e.Core")]
-[h:defineFunction("pm.a5e.CreaturePrereqs","pm.a5e.CreaturePrereqs@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.a5e.ParentSubeffectInitialPrereqs","pm.a5e.ParentSubeffectInitialPrereqs@Lib:pm.a5e.Core")]
 
 [h:"<!-- Functions for getting information about a token -->"]
@@ -227,7 +226,8 @@
 [h:defineFunction("pm.a5e.ResolveDC","pm.a5e.ResolveDC@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.a5e.ResolveDCSuccess","pm.a5e.ResolveDCSuccess@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.a5e.ResolveDCFailure","pm.a5e.ResolveDCFailure@Lib:pm.a5e.Core")]
-[h:defineFunction("pm.a5e.UseResource","pm.a5e.UseResource@Lib:pm.a5e.Core")]
+[h:defineFunction("pm.a5e.UseResource","pm.a5e.UseResourceNew@Lib:pm.a5e.Core")]
+[h:defineFunction("pm.a5e.UseResourceInputOptions","pm.a5e.UseResourceInputOptions@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.a5e.RestoreResource","pm.a5e.RestoreResource@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.a5e.EventResourceRestoration","pm.a5e.EventResourceRestoration@Lib:pm.a5e.Core",0,0)]
 [h:defineFunction("pm.a5e.RechargeRoll","pm.a5e.RechargeRoll@Lib:pm.a5e.Core")]
@@ -332,8 +332,14 @@
 [h:defineFunction("js.setProperty","js.setProperty@Lib:pm.a5e.Core")]
 
 [h:"<!-- GraalVM Functions -->"]
+[h:js.evalURI("pm.a5e.core","lib://pm.a5e.core/GraalVM/GeneralGraalVMFunctions.js")]
 [h:js.evalURI("pm.a5e.core","lib://pm.a5e.core/GraalVM/FilterCreatures.js")]
 [h:js.evalURI("pm.a5e.core","lib://pm.a5e.core/GraalVM/isAssetPresent.js")]
 [h:js.evalURI("pm.a5e.core","lib://pm.a5e.core/GraalVM/RevertTransformation.js")]
+[h:js.evalURI("pm.a5e.core","lib://pm.a5e.core/GraalVM/gatherFeatures.js")]
+[h:js.evalURI("pm.a5e.core","lib://pm.a5e.core/GraalVM/CalculateResourceData.js")]
+[h:js.evalURI("pm.a5e.core","lib://pm.a5e.core/GraalVM/UseResource.js")]
+[h:js.evalURI("pm.a5e.core","lib://pm.a5e.core/GraalVM/CreateFeatureCoreProcessing.js")]
+[h:js.evalURI("pm.a5e.core","lib://pm.a5e.core/GraalVM/createFeatureMacros.js")]
 
 [h:broadcast("Startup Initialization Complete.")]

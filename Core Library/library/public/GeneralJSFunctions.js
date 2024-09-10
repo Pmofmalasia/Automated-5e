@@ -9,6 +9,9 @@ function clearUnusedTable(tableID,startRowID,endRowID){
 }
 
 function deleteInterveningElements(startRow,endRow){
+	if(startRow === null || endRow === null){
+		return;
+	}
     while(startRow.nextElementSibling != endRow){
         startRow.nextElementSibling.remove();
     }
@@ -184,10 +187,17 @@ function createMultiRowButtonsInput(baseName,referenceRow,rowContents,buttonName
 		let instanceNumber = Number(document.getElementById(baseName+"Number").value);
 		document.getElementById(baseName+"Number").value = instanceNumber + 1;
 
-		referenceRow = createTableRow(referenceRow,"row"+baseName+instanceNumber,rowContents);
+		if(typeof rowContents === "string"){
+			referenceRow = createTableRow(referenceRow,"row"+baseName+instanceNumber,rowContents);	
+			appendIDToChildren(referenceRow,instanceNumber);		
+		}
+		else{
+			for(let row of rowContents){
+				referenceRow = createTableRow(referenceRow,row.RowID+instanceNumber,row.Contents);
+				appendIDToChildren(referenceRow,instanceNumber);
+			}
+		}
 
-		appendIDToChildren(referenceRow,instanceNumber);
-		
 		for(let func of listeners){
 			document.getElementById(func.elementID + instanceNumber).addEventListener(func.listener,function(){
 				window[func.functionName](instanceNumber,func.functionArgs);
@@ -215,16 +225,29 @@ function createMultiRowButtonsInput(baseName,referenceRow,rowContents,buttonName
 	document.getElementById("Add"+baseName+"Button").dispatchEvent(new Event("click"));
 }
 
-function sortData(data){
-	return data.sort(function(a,b){
-		if ( a.Name < b.Name ){
-			return -1;
-		}
-		if ( a.Name > b.Name ){
-			return 1;
-		}
-			return 0;
-	});
+function sortData(data,key){
+	if(key === undefined){
+		return data.sort(function(a,b){
+			if ( a.Name < b.Name ){
+				return -1;
+			}
+			if ( a.Name > b.Name ){
+				return 1;
+			}
+				return 0;
+		});		
+	}
+	else{
+		return data.sort(function(a,b){
+			if ( a[key] < b[key] ){
+				return -1;
+			}
+			if ( a[key] > b[key] ){
+				return 1;
+			}
+				return 0;
+		});
+	}
 }
 
 async function evaluateMacro(macro){
@@ -253,12 +276,14 @@ async function mtSetProperty(property,value,token){
 	return result;
 }
 
-async function submitData(formName,nextMacroName){
+async function submitData(formName,nextMacroName,additionalData){
     let form = document.getElementById(formName);
     let submitData = Object.fromEntries(new FormData(form));
+	if(additionalData !== undefined){
+		Object.assign(submitData,additionalData);
+	}
 	try {
 		let request = fetch("macro:"+nextMacroName+"@Lib:pm.a5e.Core", {method: "POST", body: JSON.stringify(submitData)});
-    	let result = await request.json();		
 	} catch (error) {
 		console.log("Stack Trace: " + error.stack);
 		console.log("Message: " + error.message);

@@ -112,17 +112,17 @@
 
 [h:"<!-- TODO: BUGFIX: Retained features that have and use resources while transformed will currently regain the resources used while transformed. Will need to have a method of having these persist. -->"]
 [h:retainedFeatureTypes = json.get(TransformationData,"RetainedFeatures")]
-[h,MACRO("TransformFilterFeatures@Lib:pm.a5e.Core"): json.set("","NewOrOld","Old","Features",oldFormFeatures,"Filter",retainedFeatureTypes)]
+[h,MACRO("TransformFilterFeatures@Lib:pm.a5e.Core"): json.set("","NewOrOld","Old","Features",oldFormFeatures,"Filter",retainedFeatureTypes,"Form",json.get(NewForm,"Name"))]
 [h:oldFormFeaturesFinal = macro.return]
 
 [h:newFormFeatures = json.get(NewFormProperties,"a5e.stat.AllFeatures")]
 [h:gainedFeatureTypes = json.get(TransformationData,"GainedFeatures")]
-[h,MACRO("TransformFilterFeatures@Lib:pm.a5e.Core"): json.set("","NewOrOld","New","Features",newFormFeatures,"Filter",gainedFeatureTypes)]
+[h,MACRO("TransformFilterFeatures@Lib:pm.a5e.Core"): json.set("","NewOrOld","New","Features",newFormFeatures,"Filter",gainedFeatureTypes,"Form",json.get(NewForm,"Name"))]
 [h:newFormFeatures = macro.return]
 [h:newFormFeaturesFinal = json.merge(oldFormFeaturesFinal,newFormFeatures)]
 [h:NewFormProperties = json.set(NewFormProperties,"a5e.stat.AllFeatures",newFormFeaturesFinal)]
 
-[h:NewInventory = json.path.put(json.get(NewFormProperties,"a5e.stat.Inventory"),"\$[*]","AssociatedForm",GroupID)]
+[h:NewInventory = json.path.put(json.get(NewFormProperties,"a5e.stat.Inventory"),"\$[*]","AssociatedCondition",GroupID)]
 [h,switch(json.get(TransformationData,"isItemUsable")),CODE:
 	case "None":{
 
@@ -134,7 +134,7 @@
 		[h:"bleh"]
 	};
 	case "Reasonable":{
-		[h:"bleh"]
+		[h:"make input to choose, then store selections in a property on the addon (up.TransformationSettings?). then check for presence in that settings prop"]
 	}
 ]
 

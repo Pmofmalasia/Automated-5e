@@ -10,13 +10,28 @@ function filterCreatures(creatureList,filter,comparitorTokenID){
 	let allPrereqs = Object.keys(filter);
 
 	let validCreatureList = [];
+
 	for(let creature of creatureList){
 		let creatureProps;
-		if(creature.Properties !== undefined){
-			creatureProps = creature.Properties;
+		if(typeof creature === "string"){
+			let thisToken = MapTool.tokens.getTokenByID(creature);
+			let thisTokenPropNames = JSON.stringify(MTScript.execMacro(`[r:getPropertyNamesRaw("json","${creature}")]`));
+
+			creatureProps = {
+				TokenID:creature,
+				["a5e.stat.CurrentSize"]:MTScript.execMacro(`[r:getSize("${creature}")]`)
+			};
+			for(let property of thisTokenPropNames){
+				creatureProps[property] = thisToken.getProperty(property);
+			}
 		}
 		else{
-			creatureProps = creature;
+			if(creature.Properties !== undefined){
+				creatureProps = creature.Properties;
+			}
+			else{
+				creatureProps = creature;
+			}			
 		}
 
 		let isValid = true;
@@ -37,7 +52,7 @@ function filterCreatures(creatureList,filter,comparitorTokenID){
 				let allegianceInfo = filter[prereq];
 
 				let allegianceTest = false;
-				if(creatureProps.TokenID === comparitorToken.getProperty(TokenID)){
+				if(creatureProps.TokenID === comparitorToken.getProperty("TokenID")){
 					if(allegianceInfo.Self == 1){
 						allegianceTest = true;
 					}

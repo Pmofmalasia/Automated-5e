@@ -2,10 +2,24 @@
 	background-color: var(--mt-theme-color-actions-blue);
 }
 
+input[type='text']{
+	width: 95%;
+}
+
 .small-number{
 	width: 25px;
 }
 
 .large-number{
 	width: 35px;
+}
+
+.info-tooltip img{
+	height: 15px;
+	width: 15px;
+	cursor: pointer;
+}
+
+.info-tooltip{
+	cursor: pointer;
 }

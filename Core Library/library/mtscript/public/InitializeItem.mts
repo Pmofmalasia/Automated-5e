@@ -18,6 +18,7 @@
 [h:InitialChargesMethod = json.get(InitializedItem,"InitialChargesMethod")]
 [h,switch(InitialChargesMethod),CODE:
 	case "Full":{
+[h:"<!-- TODO: MaxResource fix -->"]
 		[h:InitializedItem = json.set(InitializedItem,"Resource",evalMacro(json.get(InitializedItem,"MaxResource")))]
 	};
 	case "Fixed":{

@@ -8,6 +8,8 @@
 [h:FeatureSubclass = json.get(featureInputData,"FeatureSubclass")]
 [h:FeatureLib = json.get(featureInputData,"Sourcebook")]
 
+[h,if(FeatureType == "MonsterFeature" && json.contains(featureInputData,"isMonsterFeatureUnique")): FeatureSubclass = json.get(featureInputData,"MonsterFeatureUniqueSelection")]
+
 [h:newFeatureData = json.set("",
 	"DisplayName",FeatureDisplayName,
 	"Name",FeatureName,

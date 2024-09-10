@@ -18,6 +18,7 @@
     case "iteminteractions": finalDuration = "interaction";
     case "iteminteraction": finalDuration = "interaction";
     case "interactions": finalDuration = "interaction";
+    case "interact": finalDuration = "interaction";
     case "items": finalDuration = "interaction";
     case "item": finalDuration = "interaction";
     case "turns": finalDuration = "turn";

@@ -23,6 +23,11 @@
   color: white;
 }
 
+.check-multiple input:disabled ~ span {
+	background: var(--mt-theme-color-actions-grey-dark);
+	color: white;
+  }
+
 div.check-multiple{
 	width: 100%;
 }

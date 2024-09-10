@@ -69,12 +69,9 @@
 };{
 	[h:pm.TargetSelf = 0]
 }]
+
    
 [h:"<!-- TODO: May want to include options for which prereqs to apply now and which to apply after targeting, to allow things to fizzle (e.g. things the user might not know, like creature type). Would allow these to be changed based on user preference in settings. Maybe include a 'deferredPrereqs' key or something. -->"]
-[h:pm.ValidTargets = "[]"]
-[h,foreach(target,pm.TargetsInRange),CODE:{
-	[h:isTargetValid = pm.a5e.CreaturePrereqs(target,targetFilteringData,ParentToken)]
-	[h,if(isTargetValid): pm.ValidTargets = json.append(pm.ValidTargets,target)]
-}]
+[h:pm.ValidTargets = js.a5e.FilterCreatures(pm.TargetsInRange,targetFilteringData,ParentToken)]
 
-[h:macro.return = json.set("","ValidTargets",pm.ValidTargets,"SelfOnly",0)]
+[h:return(0,json.set("","ValidTargets",pm.ValidTargets,"SelfOnly",0))]

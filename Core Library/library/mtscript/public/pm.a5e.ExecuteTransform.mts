@@ -37,13 +37,7 @@
 	[h:TransformPrereqs = json.set(TransformPrereqs,"CRMaximum",finalCRMax)]
 }]
 
-[h,if(0),CODE:{
-	[h:validTransformations = js.a5e.FilterCreatures(data.getData("addon:","pm.a5e.core","sb.Bestiary"),TransformPrereqs,ParentToken)]
-};{
-	[h:bestiary = data.getData("addon:","pm.a5e.core","sb.Bestiary")]
-	[h:validTransformations = ""]
-	[h,foreach(creature,bestiary): validTransformations = if(pm.a5e.CreaturePrereqs(creature,TransformPrereqs,ParentToken),json.append(validTransformations,creature),validTransformations)]
-}]
+[h:validTransformations = js.a5e.FilterCreatures(data.getData("addon:","pm.a5e.core","sb.Bestiary"),TransformPrereqs,ParentToken)]
 [h:TransformData = json.remove(TransformData,"Prereqs")]
 
 [h:vaildTransformationsByCRMax = "{}"]

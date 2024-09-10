@@ -472,35 +472,24 @@ function createCreatureTargetTable(startRowID,IDSuffix){
 }
 
 async function createObjectTargetTable(tableID,startRowID,selectionID,IDSuffix){
-	let currentTargetTypeSelection = document.getElementById(selectionID).value;
-	
-	let nextRowIndex = document.getElementById(startRowID).rowIndex + 1;
+	let referenceRow = document.getElementById(startRowID);
 	let optionLimits = "<option value=''>Not Relevant</option><option value='Inclusive'>Required</option><option value='Exclusive'>Invalid</option>";
 
-	addTableRow(tableID,nextRowIndex,"rowObjectTargetWornCarried"+IDSuffix,"<th><label for='ObjectTargetWornCarried"+IDSuffix+"'>Object is Worn or Carried:</label></th><td><select id='ObjectTargetWornCarried"+IDSuffix+"' name='ObjectTargetWornCarried"+IDSuffix+"' onchange='createHeldObjectCreatureLimitRows("+'"'+tableID+'","'+IDSuffix+'"'+")'><option value='NotWorn'>Cannot Be Worn</option><option value='Worn'>Must be Worn</option><option value=''>Not Relevant</option></select></td>");
-	nextRowIndex++;
+	referenceRow = createTableRow(referenceRow,"rowObjectTargetWornCarried"+IDSuffix,"<th><label for='ObjectTargetWornCarried"+IDSuffix+"'>Object is Worn or Carried:</label></th><td><select id='ObjectTargetWornCarried"+IDSuffix+"' name='ObjectTargetWornCarried"+IDSuffix+"' onchange='createHeldObjectCreatureLimitRows("+'"'+tableID+'","'+IDSuffix+'"'+")'><option value='NotWorn'>Cannot Be Worn</option><option value='Worn'>Must be Worn</option><option value=''>Not Relevant</option></select></td>");
 
-	//TODO: Need a way to both do this and object subtype conveniently
-	addTableRow(tableID,nextRowIndex,"rowObjectTargetType"+IDSuffix,"<th><label for='ObjectTargetType"+IDSuffix+"'>Limit by Object Type:</label></th><td><select id='ObjectTargetType"+IDSuffix+"' name='ObjectTargetType"+IDSuffix+"' onchange='createObjectTargetTypeRows("+'"'+tableID+'","'+IDSuffix+'"'+")'><option value='All'>All Types</option><option value='Inclusive'>Must Be Type(s)</option><option value='Exclusive'>Cannot Be Type(s)</option><option value='Mixture'>Mixture of Both</option></select><input type='checkbox' id='' name='' onchange=''>Use Subtypes?</td>");
-	nextRowIndex++;
+	referenceRow = createTableRow(referenceRow,"rowObjectTargetType"+IDSuffix,"<th><label for='ObjectTargetType"+IDSuffix+"'>Limit by Object Type:</label></th><td><select id='ObjectTargetType"+IDSuffix+"' name='ObjectTargetType"+IDSuffix+"' onchange='createObjectTargetTypeRows("+'"'+tableID+'","'+IDSuffix+'"'+")'><option value='All'>All Types</option><option value='Inclusive'>Must Be Type(s)</option><option value='Exclusive'>Cannot Be Type(s)</option><option value='Mixture'>Mixture of Both</option></select><input type='checkbox' id='' name='' onchange=''>Use Subtypes?</td>");
 
-	addTableRow(tableID,nextRowIndex,"rowObjectTargetMagical"+IDSuffix,"<th><label for='ObjectTargetMagical"+IDSuffix+"'>Object is Magical:</label></th><td><select id='ObjectTargetMagical"+IDSuffix+"' name='ObjectTargetMagical"+IDSuffix+"'>"+optionLimits+"</select></td>");
-	nextRowIndex++;
+	referenceRow = createTableRow(referenceRow,"rowObjectTargetMagical"+IDSuffix,"<th><label for='ObjectTargetMagical"+IDSuffix+"'>Object is Magical:</label></th><td><select id='ObjectTargetMagical"+IDSuffix+"' name='ObjectTargetMagical"+IDSuffix+"'>"+optionLimits+"</select></td>");
 
-	addTableRow(tableID,nextRowIndex,"rowObjectTargetSize"+IDSuffix,"<th><label for='ObjectTargetSizeType"+IDSuffix+"'>Object Size Limits:</label></th><td><select id='ObjectTargetSizeType"+IDSuffix+"' name='ObjectTargetSizeType"+IDSuffix+"'><option value=''>Not Relevant</option><option value='Maximum'>Maximum</option><option value='Minimum'>Minimum</option></select><select id='ObjectTargetSize"+IDSuffix+"' name='ObjectTargetSize"+IDSuffix+"'><option value='Diminutive'>Diminutive</option><option value='Tiny'>Tiny</option><option value='Small'>Small</option><option value='Medium'>Medium</option><option value='Large'>Large</option><option value='Huge'>Huge</option><option value='Gargantuan'>Gargantuan</option><option value='Colossal'>Colossal</option></select></td>");
-	nextRowIndex++;
+	referenceRow = createTableRow(referenceRow,"rowObjectTargetSize"+IDSuffix,"<th><label for='ObjectTargetSizeType"+IDSuffix+"'>Object Size Limits:</label></th><td><select id='ObjectTargetSizeType"+IDSuffix+"' name='ObjectTargetSizeType"+IDSuffix+"'><option value=''>Not Relevant</option><option value='Maximum'>Maximum</option><option value='Minimum'>Minimum</option></select><select id='ObjectTargetSize"+IDSuffix+"' name='ObjectTargetSize"+IDSuffix+"'><option value='Diminutive'>Diminutive</option><option value='Tiny'>Tiny</option><option value='Small'>Small</option><option value='Medium'>Medium</option><option value='Large'>Large</option><option value='Huge'>Huge</option><option value='Gargantuan'>Gargantuan</option><option value='Colossal'>Colossal</option></select></td>");
 
-	addTableRow(tableID,nextRowIndex,"rowObjectTargetWeight"+IDSuffix,"<th><label for='ObjectTargetWeightType"+IDSuffix+"'>Object Weight Limits:</label></th><td><select id='ObjectTargetWeightType"+IDSuffix+"' name='ObjectTargetWeightType"+IDSuffix+"'><option value=''>Not Relevant</option><option value='Maximum'>Maximum</option><option value='Minimum'>Minimum</option></select><input type='number' id='ObjectTargetWeight"+IDSuffix+"' name='ObjectTargetWeight"+IDSuffix+"' value=0 min=0 style='width:30px'></td>");
-	nextRowIndex++;
+	referenceRow = createTableRow(referenceRow,"rowObjectTargetWeight"+IDSuffix,"<th><label for='ObjectTargetWeightType"+IDSuffix+"'>Object Weight Limits:</label></th><td><select id='ObjectTargetWeightType"+IDSuffix+"' name='ObjectTargetWeightType"+IDSuffix+"'><option value=''>Not Relevant</option><option value='Maximum'>Maximum</option><option value='Minimum'>Minimum</option></select><input type='number' id='ObjectTargetWeight"+IDSuffix+"' name='ObjectTargetWeight"+IDSuffix+"' value=0 min=0 style='width:30px'></td>");
 
-	addTableRow(tableID,nextRowIndex,"rowObjectTargetTags"+IDSuffix,"<th><label for='ObjectTargetTags"+IDSuffix+"'>Limit by Object Tags:</label></th><td><select id='ObjectTargetTags"+IDSuffix+"' name='ObjectTargetTags"+IDSuffix+"' onchange='createObjectTargetTagRows("+'"'+tableID+'","'+IDSuffix+'"'+")'><option value='All'>All Types</option><option value='Inclusive'>Must Be Specific Type(s)</option><option value='Exclusive'>Cannot Be Specific Type(s)</option><option value='Mixture'>Mixture of Both Above</option></select></td>");
-	nextRowIndex++;
+	referenceRow = createTableRow(referenceRow,"rowObjectTargetTags"+IDSuffix,"<th><label for='ObjectTargetTags"+IDSuffix+"'>Limit by Object Tags:</label></th><td><select id='ObjectTargetTags"+IDSuffix+"' name='ObjectTargetTags"+IDSuffix+"' onchange='createObjectTargetTagRows("+'"'+tableID+'","'+IDSuffix+'"'+")'><option value='All'>All Types</option><option value='Inclusive'>Must Be Specific Type(s)</option><option value='Exclusive'>Cannot Be Specific Type(s)</option><option value='Mixture'>Mixture of Both Above</option></select></td>");
 
-	addTableRow(tableID,nextRowIndex,"rowObjectTargetFlammable"+IDSuffix,"<th><label for='ObjectTargetFlammable"+IDSuffix+"'>Object is Flammable:</label></th><td><select id='ObjectTargetFlammable"+IDSuffix+"' name='ObjectTargetFlammable"+IDSuffix+"'>"+optionLimits+"</select></td>");
-	nextRowIndex++;
+	referenceRow = createTableRow(referenceRow,"rowObjectTargetFlammable"+IDSuffix,"<th><label for='ObjectTargetFlammable"+IDSuffix+"'>Object is Flammable:</label></th><td><select id='ObjectTargetFlammable"+IDSuffix+"' name='ObjectTargetFlammable"+IDSuffix+"'>"+optionLimits+"</select></td>");
 
-	addTableRow(tableID,nextRowIndex,"rowObjectTargetMagnetic"+IDSuffix,"<th><label for='ObjectTargetMagnetic"+IDSuffix+"'>Object is Magnetic:</label></th><td><select id='ObjectTargetMagnetic"+IDSuffix+"' name='ObjectTargetMagnetic"+IDSuffix+"'>"+optionLimits+"</select></td>");
-	nextRowIndex++;
+	referenceRow = createTableRow(referenceRow,"rowObjectTargetMagnetic"+IDSuffix,"<th><label for='ObjectTargetMagnetic"+IDSuffix+"'>Object is Magnetic:</label></th><td><select id='ObjectTargetMagnetic"+IDSuffix+"' name='ObjectTargetMagnetic"+IDSuffix+"'>"+optionLimits+"</select></td>");
 }
 
 function createHeldObjectCreatureLimitRows(tableID,IDSuffix){
@@ -513,7 +502,7 @@ function createHeldObjectCreatureLimitRows(tableID,IDSuffix){
 		let nextRowIndex = document.getElementById("rowObjectTargetWornCarried"+IDSuffix) + 1;
 		let TargetTypeCreatureValues = ["AnyCreature","AnyOtherCreature","AlliedCreature","SelfOnly","EnemyCreature","HumanoidCreature","Creature","CreatureObject"];
 
-		//Checking for any creature limits from primary, secondary, or CreatureObject targeting methods
+		//TODO: Update Checking for any creature limits from primary, secondary, or CreatureObject targeting methods
 		let NoCreatureLimits = document.getElementById("CreatureTargetType"+IDSuffix) == null;
 		if(document.getElementById("secondaryTargetType"+IDSuffix) != null && NoCreatureLimits){
 			NoCreatureLimits = !TargetTypeCreatureValues.includes(document.getElementById("secondaryTargetType"+IDSuffix).value);

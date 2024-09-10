@@ -22,13 +22,7 @@
 	[h:SummonPrereqs = json.set(SummonPrereqs,"CRMaximum",finalCRMax)]
 }]
 
-[h,if(1),CODE:{
-	[h:validSummons = js.a5e.FilterCreatures(data.getData("addon:","pm.a5e.core","sb.Bestiary"),SummonPrereqs,ParentToken)]
-};{
-	[h:bestiary = data.getData("addon:","pm.a5e.core","sb.Bestiary")]
-	[h:validSummons = ""]
-	[h,foreach(creature,bestiary): validSummons = if(pm.a5e.CreaturePrereqs(creature,SummonPrereqs,ParentToken),json.append(validSummons,creature),validSummons)]
-}]
+[h:validSummons = js.a5e.FilterCreatures(data.getData("addon:","pm.a5e.core","sb.Bestiary"),SummonPrereqs,ParentToken)]
 [h:SummonData = json.remove(SummonData,"Prereqs")]
 
 [h:SummonNumber = json.get(SummonData,"Number")]

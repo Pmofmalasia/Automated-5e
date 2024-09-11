@@ -8,7 +8,6 @@
 [h:pm.HitDiceData = json.get(pm.ResourceInfo,"HitDice")]
 [h:pm.TimeResourceData = json.get(pm.ResourceInfo,"TimeResource")]
 
-[h:"<!-- TODO: MaxResource fix -->"]
 [h,if(pm.FeatureResourceData!=""),CODE:{
 	[h:pm.FeatureResource = json.get(pm.FeatureResourceData,"Resource")]
 	[h:pm.FeatureResourceUsed = json.get(pm.FeatureResourceData,"ResourceUsed")]

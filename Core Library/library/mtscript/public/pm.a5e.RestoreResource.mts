@@ -80,142 +80,70 @@
 	}
 ]
 
-[h:"<!-- TODO: MaxResource fix -->"]
 [h:CalculateResourceDataOptions = "{}"]
 [h,if(ResourceKey != ""): json.set(CalculateResourceDataOptions,"resource",ResourceKey)]
-[h:ResourceData = js.a5e.CalculateResourceData(FeatureToRestore,ParentToken,CalculateResourceDataOptions)]
-[h:broadcast(ResourceData)]
-[h:MaxResource = json.get(ResourceData,"MaxResource")]
-[h:broadcast(MaxResource)]
+[h:allResourceData = js.a5e.CalculateResourceData(FeatureToRestore,ParentToken,CalculateResourceDataOptions)]
 [h:CurrentResource = json.get(FeatureToRestore,"Resource")]
+
+[h,if(ResourceKey == ""):
+	restoredResources = json.fields(allResourceData,"json");
+	restoredResources = json.append("",ResourceKey)
+]
 [h:needsPutTest = json.isEmpty(json.path.read(getProperty(sourceProperty),sourcePath+"['Resource']"))]
 [h,switch(RestorationAmount),CODE:
 	case "":{
-		[h,if(json.type(MaxResource) == "OBJECT" && ResourceKey == ""),CODE:{
-			[h,foreach(tempResource,json.fields(MaxResource,"json")): abilityTable = json.append(abilityTable,json.set("",
+		[h,foreach(tempResource,restoredResources),CODE:{
+			[h:CurrentResource = json.set(CurrentResource,tempResource,json.get(json.get(allResourceData,tempResource),"MaxResource"))]
+
+			[h:abilityTable = json.append(abilityTable,json.set("",
 				"ShowIfCondensed",1,
-				"Header",json.get(FeatureToRestore,"DisplayName")+": "+json.get(json.get(FeatureToRestore,"ResourceDisplayName"),tempResource),
+				"Header",json.get(json.get(allResourceData,tempResource),"DisplayName"),
 				"FalseHeader","",
 				"FullContents","",
-				"RulesContents",json.get(MaxResource,tempResource),
+				"RulesContents",json.get(CurrentResource,tempResource)+"/"+json.get(json.get(allResourceData,tempResource),"MaxResource"),
 				"RollContents","",
 				"DisplayOrder","['Rules','Roll','Full']"
 			))]
-
-			[h:ResourceRestoredFinal = MaxResource]
-		};{
-			[h,if(json.type(MaxResource) == "OBJECT"): abilityTable = json.append(abilityTable,json.set("",
-				"ShowIfCondensed",1,
-				"Header",json.get(FeatureToRestore,"DisplayName")+": "+json.get(json.get(FeatureToRestore,"ResourceDisplayName"),ResourceKey),
-				"FalseHeader","",
-				"FullContents","",
-				"RulesContents",json.get(MaxResource,ResourceKey),
-				"RollContents","",
-				"DisplayOrder","['Rules','Roll','Full']"));
-			abilityTable = json.append(abilityTable,json.set("",
-				"ShowIfCondensed",1,
-				"Header",if(json.get(FeatureToRestore,"ResourceDisplayName") == "",json.get(FeatureToRestore,"DisplayName"),json.get(FeatureToRestore,"ResourceDisplayName")),
-				"FalseHeader","",
-				"FullContents","",
-				"RulesContents",MaxResource,
-				"RollContents","",
-				"DisplayOrder","['Rules','Roll','Full']"
-			))]
-
-			[h,if(json.type(MaxResource) == "OBJECT"):
-				ResourceRestoredFinal = json.set(CurrentResource,ResourceKey,json.get(MaxResource,ResourceKey));
-				ResourceRestoredFinal = MaxResource
-			]
 		}]
 	};
 	case 0:{
 
 	};
 	case "UpTo":{
-		[h,if(json.type(MaxResource) == "OBJECT" && ResourceKey == ""),CODE:{
-			[h:AllResourceKeys = json.fields(CurrentResource,"json")]
-			[h,foreach(resource,AllResourceKeys): CurrentResource = json.set(CurrentResource,resource,max(json.get(CurrentResource,resource),UpToAmount))]
-			[h,foreach(resource,AllResourceKeys): abilityTable = json.append(abilityTable,json.set("",
+		[h,foreach(tempResource,restoredResources),CODE:{
+			[h:CurrentResource = json.set(CurrentResource,tempResource,max(json.get(CurrentResource,tempResource),UpToAmount))]
+
+			[h:abilityTable = json.append(abilityTable,json.set("",
 				"ShowIfCondensed",1,
-				"Header",json.get(FeatureToRestore,"DisplayName")+": "+json.get(json.get(FeatureToRestore,"ResourceDisplayName"),resource),
+				"Header",json.get(json.get(allResourceData,tempResource),"DisplayName"),
 				"FalseHeader","",
 				"FullContents","",
-				"RulesContents",json.get(CurrentResource,resource)+"/"+json.get(MaxResource,resource),
+				"RulesContents",json.get(CurrentResource,tempResource)+"/"+json.get(json.get(allResourceData,tempResource),"MaxResource"),
 				"RollContents","",
 				"DisplayOrder","['Rules','Roll','Full']"
 			))]
-		};{
-			[h,if(json.type(MaxResource) == "OBJECT"):
-				CurrentResource = json.set(CurrentResource,ResourceKey,max(json.get(CurrentResource,ResourceKey),UpToAmount));
-				CurrentResource = max(CurrentResource,UpToAmount)
-			]
-			[h,if(json.type(MaxResource) == "OBJECT"):
-				abilityTable = json.append(abilityTable,json.set("",
-					"ShowIfCondensed",1,
-					"Header",json.get(FeatureToRestore,"DisplayName")+": "+json.get(json.get(FeatureToRestore,"ResourceDisplayName"),ResourceKey),
-					"FalseHeader","",
-					"FullContents","",
-					"RulesContents",json.get(CurrentResource,ResourceKey)+"/"+json.get(MaxResource,ResourceKey),
-					"RollContents","",
-					"DisplayOrder","['Rules','Roll','Full']"));
-				abilityTable = json.append(abilityTable,json.set("",
-					"ShowIfCondensed",1,
-					"Header",if(json.get(FeatureToRestore,"ResourceDisplayName") == "",json.get(FeatureToRestore,"DisplayName"),json.get(FeatureToRestore,"ResourceDisplayName")),
-					"FalseHeader","",
-					"FullContents","",
-					"RulesContents",CurrentResource+"/"+MaxResource,
-					"RollContents","",
-					"DisplayOrder","['Rules','Roll','Full']"))
-			]
 		}]
-
-		[h:ResourceRestoredFinal = CurrentResource]
 	};
 	default:{
-		[h,if(json.type(MaxResource) == "OBJECT" && ResourceKey == ""),CODE:{
-			[h:AllResourceKeys = json.fields(CurrentResource,"json")]
-			[h,foreach(resource,AllResourceKeys): CurrentResource = json.set(CurrentResource,resource,min(json.get(CurrentResource,resource) + RestorationAmount,json.get(MaxResource,resource)))]
-			[h,foreach(resource,AllResourceKeys): abilityTable = json.append(abilityTable,json.set("",
+		[h,foreach(tempResource,restoredResources),CODE:{
+			[h:CurrentResource = json.set(CurrentResource,tempResource,min(json.get(CurrentResource,tempResource) + RestorationAmount,json.get(json.get(allResourceData,tempResource),"MaxResource")))]
+
+			[h:abilityTable = json.append(abilityTable,json.set("",
 				"ShowIfCondensed",1,
-				"Header",json.get(FeatureToRestore,"DisplayName")+": "+json.get(json.get(FeatureToRestore,"ResourceDisplayName"),resource),
+				"Header",json.get(json.get(allResourceData,tempResource),"DisplayName"),
 				"FalseHeader","",
 				"FullContents","",
-				"RulesContents",json.get(CurrentResource,resource)+"/"+json.get(MaxResource,resource),
+				"RulesContents",json.get(CurrentResource,tempResource)+"/"+json.get(json.get(allResourceData,tempResource),"MaxResource"),
 				"RollContents","",
 				"DisplayOrder","['Rules','Roll','Full']"
 			))]
-		};{
-			[h,if(json.type(MaxResource) == "OBJECT"):
-				CurrentResource = json.set(CurrentResource,ResourceKey,min(json.get(CurrentResource,ResourceKey) + RestorationAmount,json.get(MaxResource,ResourceKey)));
-				CurrentResource = min(CurrentResource + RestorationAmount,MaxResource)
-			]
-			[h,if(json.type(MaxResource) == "OBJECT"):
-				abilityTable = json.append(abilityTable,json.set("",
-					"ShowIfCondensed",1,
-					"Header",json.get(FeatureToRestore,"DisplayName")+": "+json.get(json.get(FeatureToRestore,"ResourceDisplayName"),ResourceKey),
-					"FalseHeader","",
-					"FullContents","",
-					"RulesContents",json.get(CurrentResource,ResourceKey)+"/"+json.get(MaxResource,ResourceKey),
-					"RollContents","",
-					"DisplayOrder","['Rules','Roll','Full']"));
-				abilityTable = json.append(abilityTable,json.set("",
-					"ShowIfCondensed",1,
-					"Header",if(json.get(FeatureToRestore,"ResourceDisplayName") == "",json.get(FeatureToRestore,"DisplayName"),json.get(FeatureToRestore,"ResourceDisplayName")),
-					"FalseHeader","",
-					"FullContents","",
-					"RulesContents",CurrentResource+"/"+MaxResource,
-					"RollContents","",
-					"DisplayOrder","['Rules','Roll','Full']"))
-			]
 		}]
-
-		[h:ResourceRestoredFinal = CurrentResource]
 	}
 ]
 
 [h,if(needsPutTest):
-	setProperty(sourceProperty,json.path.put(getProperty(sourceProperty),sourcePath,"Resource",ResourceRestoredFinal));
-	setProperty(sourceProperty,json.path.set(getProperty(sourceProperty),sourcePath+"['Resource']",ResourceRestoredFinal))
+	setProperty(sourceProperty,json.path.put(getProperty(sourceProperty),sourcePath,"Resource",CurrentResource));
+	setProperty(sourceProperty,json.path.set(getProperty(sourceProperty),sourcePath+"['Resource']",CurrentResource))
 ]
 
 [h:return(0,json.set("","Table",abilityTable))]

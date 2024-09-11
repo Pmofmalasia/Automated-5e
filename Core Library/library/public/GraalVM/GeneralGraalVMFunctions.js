@@ -57,7 +57,7 @@ function getFeatureScalingLevel(feature){
 function getFeatureProperty(identifier,ParentToken){
 	let featureType = identifier.AbilityType;
 	if(featureType === "Feature"){
-		let features = ParentToken.getProperty("a5e.stat.AllFeatures");
+		let features = JSON.parse(ParentToken.getProperty("a5e.stat.AllFeatures"));
 		for(let feature of features){
 			if(feature.Name === identifier.Name && feature["Class"] === identifier["Class"] && feature.Subclass === identifier.Subclass){
 				feature.AbilityType = "Feature";
@@ -66,7 +66,7 @@ function getFeatureProperty(identifier,ParentToken){
 		}
 	}
 	else if(featureType === "Condition"){
-		let features = ParentToken.getProperty("a5e.stat.ConditionList");
+		let features = JSON.parse(ParentToken.getProperty("a5e.stat.ConditionList"));
 		for(let feature of features){
 			if(feature.Name === identifier.Name && feature["Class"] === identifier["Class"] && feature.Subclass === identifier.Subclass){
 				feature.AbilityType = "Condition";
@@ -75,7 +75,7 @@ function getFeatureProperty(identifier,ParentToken){
 		}
 	}
 	else if(featureType === "Item"){
-		let items = ParentToken.getProperty("a5e.stat.Inventory");
+		let items = JSON.parse(ParentToken.getProperty("a5e.stat.Inventory"));
 		for(let item of items){
 			if(item.ItemID === identifier.ItemID){
 				item.AbilityType = "Item"
@@ -84,7 +84,7 @@ function getFeatureProperty(identifier,ParentToken){
 		}
 	}
 	else if(featureType === "ItemCondition"){
-		let items = ParentToken.getProperty("a5e.stat.Inventory");
+		let items = JSON.parse(ParentToken.getProperty("a5e.stat.Inventory"));
 		for(let item of items){
 			let thisItemConditions = item.ItemConditions;
 			if(thisItemConditions === undefined){
@@ -98,7 +98,6 @@ function getFeatureProperty(identifier,ParentToken){
 					return feature;
 				}				
 			}
-
 		}
 	}
 }
@@ -107,7 +106,7 @@ function setFeatureProperty(newFeature,ParentToken,keys){
 	let featureType = newFeature.AbilityType;
 	let i=0;
 	if(featureType === "Feature"){
-		let features = ParentToken.getProperty("a5e.stat.AllFeatures");
+		let features = JSON.parse(ParentToken.getProperty("a5e.stat.AllFeatures"));
 		for(let feature of features){
 			if(feature.Name === newFeature.Name && feature["Class"] === newFeature["Class"] && feature.Subclass === newFeature.Subclass){
 				if(keys === undefined){
@@ -121,14 +120,14 @@ function setFeatureProperty(newFeature,ParentToken,keys){
 				}
 
 				features[i] = feature;
-				ParentToken.setProperty("a5e.stat.AllFeatures",features);
+				ParentToken.setProperty("a5e.stat.AllFeatures",JSON.stringify(features));
 				return features;
 			}
 			i++;
 		}
 	}
 	else if(featureType === "Condition"){
-		let features = ParentToken.getProperty("a5e.stat.ConditionList");
+		let features = JSON.parse(ParentToken.getProperty("a5e.stat.ConditionList"));
 		for(let feature of features){
 			if(feature.Name === newFeature.Name && feature["Class"] === newFeature["Class"] && feature.Subclass === newFeature.Subclass){
 				if(keys === undefined){
@@ -142,14 +141,14 @@ function setFeatureProperty(newFeature,ParentToken,keys){
 				}
 
 				features[i] = feature;
-				ParentToken.setProperty("a5e.stat.ConditionList",features);
+				ParentToken.setProperty("a5e.stat.ConditionList",JSON.stringify(features));
 				return features;
 			}
 			i++;
 		}
 	}
 	else if(featureType === "Item"){
-		let items = ParentToken.getProperty("a5e.stat.Inventory");
+		let items = JSON.parse(ParentToken.getProperty("a5e.stat.Inventory"));
 		for(let item of items){
 			if(item.ItemID === newFeature.ItemID){
 				if(keys === undefined){
@@ -163,14 +162,14 @@ function setFeatureProperty(newFeature,ParentToken,keys){
 				}
 
 				items[i] = item;
-				ParentToken.setProperty("a5e.stat.Inventory",items);
+				ParentToken.setProperty("a5e.stat.Inventory",JSON.stringify(items));
 				return items;
 			}
 			i++;
 		}
 	}
 	else if(featureType === "ItemCondition"){
-		let items = ParentToken.getProperty("a5e.stat.Inventory");
+		let items = JSON.parse(ParentToken.getProperty("a5e.stat.Inventory"));
 		for(let item of items){
 			let thisItemConditions = item.ItemConditions;
 			if(thisItemConditions === undefined){
@@ -199,7 +198,7 @@ function setFeatureProperty(newFeature,ParentToken,keys){
 
 					thisItemConditions[j] = condition;
 					items[i].ItemConditions = thisItemConditions;
-					ParentToken.setProperty("a5e.stat.Inventory",items);
+					ParentToken.setProperty("a5e.stat.Inventory",JSON.stringify(items));
 					return items;
 				}
 				j++;

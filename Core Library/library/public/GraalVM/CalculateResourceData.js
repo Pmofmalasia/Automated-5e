@@ -10,7 +10,6 @@ function calculateResourceDataMTScript(feature,ParentTokenID,options){
 	}
 
 	let returnData = calculateResourceData(feature,ParentToken,options);
-	MapTool.chat.broadcast(JSON.stringify(returnData));
 
 	return JSON.stringify(returnData);
 }
@@ -350,7 +349,6 @@ function calculateResourceData(feature,ParentToken,options){
 		let rawMaxResource = featureResourceData.Resources;
 		if(specificResource === undefined){
 			for(let resource of Object.keys(rawMaxResource)){
-				MapTool.chat.broadcast(JSON.stringify(resource));
 				finalResourceData[resource] = packageResourceData(rawMaxResource[resource]);
 			}		
 		}

@@ -19,21 +19,22 @@
 	};
 	default:{
 		[h:abort(input(
-			"resourceChoice | "+firstInputOptions+" | Choose a Resource to Use | SELECT | DELIMITER=JSON "
+			"resourceChoice | "+firstInputOptions+" | Choose a Resource to Use | LIST | DELIMITER=JSON "
 		))]
 	}
 ]
 
 [h:resourceType = json.get(firstInputData,resourceChoice)]
+[h,if(json.type(resourceType) != "UNKNOWN"): resourceTypeTemp = "Feature"; resourceTypeTemp = resourceType]
 [h:secondInput = json.get(secondInputOptions,resourceChoice)]
 [h:secondInputDataChoice = json.get(secondInputData,resourceChoice)]
 
-[h,switch(resourceType),CODE:
+[h,switch(resourceTypeTemp),CODE:
 	case "SpellSlot":{
 		[h,if(json.length(secondInput) == 1):
 			resourceChoice = 0;
 			abort(input(
-				"resourceChoice | "+secondInput+" | Spell Slot Used | SELECT | DELIMITER=JSON "
+				"resourceChoice | "+secondInput+" | Spell Slot Used | LIST | DELIMITER=JSON "
 			))
 		]
 
@@ -48,12 +49,12 @@
 				incrementTarget = json.get(increment,1) - json.get(increment,0);
 				incrementTarget = increment
 			]
-			[h,if(json.get(onlyDieSizeData,"Maximum") - json.get(onlyDieSizeData,"Minimum") < incrementTarget): needsInput = 0]
+			[h,if(json.get(onlyDieSizeData,"Maximum") == json.get(onlyDieSizeData,"Minimum") || json.get(onlyDieSizeData,"Maximum") - json.get(onlyDieSizeData,"Minimum") < incrementTarget): needsInput = 0]
 		};{}]
 
 		[h,if(needsInput),CODE:{
 			[h:hdInput = ""]
-			[h,foreach(size,secondInput): hdInput = listAppend(hdInput," hitDieChoice"+json.get(size,"DieSize")+" | "+pm.a5e.UseResourceInputOptions(size)+" | "+json.get(size,"DieSize")+"s Used | SELECT | VALUE=STRING DELIMITER=JSON "," ## ")]
+			[h,foreach(size,secondInput): hdInput = listAppend(hdInput," hitDieChoice"+json.get(size,"DieSize")+" | "+pm.a5e.UseResourceInputOptions(size)+" | "+json.get(size,"DieSize")+"s Used | LIST | VALUE=STRING DELIMITER=JSON "," ## ")]
 
 			[h:abort(input(
 				hdInput
@@ -80,11 +81,11 @@
 			incrementTarget = json.get(increment,1) - json.get(increment,0);
 			incrementTarget = increment
 		]
-		[h,if(json.get(secondInput,"Maximum") - json.get(secondInput,"Minimum") < incrementTarget): needsInput = 0; needsInput = 1]
+		[h,if(json.get(secondInput,"Maximum") == json.get(secondInput,"Minimum") || json.get(secondInput,"Maximum") - json.get(secondInput,"Minimum") < incrementTarget): needsInput = 0; needsInput = 1]
 
 		[h,if(needsInput),CODE:{
 			[h:abort(input(
-				" resourceAmount | "+pm.a5e.UseResourceInputOptions(secondInput)+" | "+json.get(firstInputOptions,resourceChoice)+" Used | SELECT | VALUE=STRING "
+				" resourceAmount | "+pm.a5e.UseResourceInputOptions(secondInput)+" | "+json.get(firstInputOptions,resourceChoice)+" Used | LIST | VALUE=STRING DELIMITER=JSON "
 			))]
 
 			[h:resourceSpent = json.append("",json.set(resourceType,
@@ -101,3 +102,4 @@
 ]
 
 [h:usedResourceData = js.a5e.ExpendResource(resourceSpent,ParentToken)]
+[h:return(0,usedResourceData)]

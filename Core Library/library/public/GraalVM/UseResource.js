@@ -132,7 +132,7 @@ function useResourceOptions(resourceOptions){
 				let thisHitDieData = {
 					DieSize:dieSize,
 					Minimum:resourceUsed,
-					Maximum:Math.max(resourceUsedMax,hitDice[dieSize]),
+					Maximum:Math.min(resourceUsedMax,hitDice[dieSize]),
 					Increment:Increment
 				};
 				thisResourceSecondaryOptionsInput.push(thisHitDieData);
@@ -150,7 +150,7 @@ function useResourceOptions(resourceOptions){
 				}
 
 				let resourceAmount = feature.Resource[resourceKey];
-				let display = feature.ResourceData[resourceKey].DisplayName;
+				let display = feature.ResourceData.Resources[resourceKey].DisplayName;
 				if(multiFeatureTest){
 					display += ": "+feature.Subclass+" "+feature["Class"];
 				}
@@ -163,7 +163,7 @@ function useResourceOptions(resourceOptions){
 
 				let secondaryData = {
 					Minimum:resourceUsed,
-					Maximum:Math.max(resourceUsedMax,resourceAmount),
+					Maximum:Math.min(resourceUsedMax,resourceAmount),
 					Increment:Increment
 				};
 				thisResourceSecondaryOptionsInput = secondaryData;
@@ -213,9 +213,9 @@ function expendResource(resources,ParentTokenID){
 
 			chatTable.push({
 				ShowIfCondensed:1,
-				Header:feature.ResourceData[resourceName].DisplayName+" Remaining",
+				Header:feature.ResourceData.Resources[resourceName].DisplayName+" Remaining",
 				FullContents:"",
-				RulesContents:newResourceAmount+" / "+resourceData[resourceName].MaxResource,
+				RulesContents:newResourceAmount+" / "+resourceData.MaxResource,
 				RollContents:"",
 				DisplayOrder:["Rules","Roll","Full"]
 			});

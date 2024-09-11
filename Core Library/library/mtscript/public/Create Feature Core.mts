@@ -410,6 +410,8 @@
 	[h:ab.ResourceInfo = pm.ResourceInput(json.set("","Name",json.get(ab.Final,"Name"),"Class",json.get(ab.Final,"Class"),"Subclass",json.get(ab.Final,"Subclass"),"Level",ab.Level),ab.ResourceType)]
 	[h:ab.Final = json.set(ab.Final,"RestoreShortRest",ab.RestoreShortRest,"RestoreLongRest",ab.RestoreLongRest,"MaxResource",json.get(ab.ResourceInfo,"Base"))]
 
+[h:"<!-- TODO: MaxResource fix -->"]
+[h:"<!-- TODO: Make this use the Event restoration macro everything else does -->"]
 	[h,if(ab.RestoreRechargeRoll),CODE:{
 		[h:"<!-- TODO: When converted to dialog, add functionality for more die sizes --> "]
 		[h:abort(input(

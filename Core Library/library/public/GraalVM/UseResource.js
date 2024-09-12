@@ -284,59 +284,69 @@ function useResourceTooltip(resourceList,unifiedFeatures,ParentTokenID){
 		unifiedFeatures = JSON.parse(unifiedFeatures);
 	}
 
-	for(let resource of resourceList){
-		if(resource.Type === "SpellSlot"){
-			chatTable.push({
-				ShowIfCondensed:1,
-				Header:"Spell Slots",
-				FullContents:"",
-				RulesContents:MTScript.execFunction(`[r:pm.SpellSlots("${ParentTokenID}")]`),
-				RollContents:"",
-				DisplayOrder:["Rules","Roll","Full"]
-			});
-		}
-		else if(resource.Type === "HitDice"){
-			chatTable.push({
-				ShowIfCondensed:1,
-				Header:"Hit Dice",
-				FullContents:"",
-				RulesContents:MTScript.execFunction(`[r:a5e.HitDieDisplay("${ParentTokenID}")]`),
-				RollContents:"",
-				DisplayOrder:["Rules","Roll","Full"]
-			});
-		}
-		else{
-			let matchingResources = findValidFeatureResources(resource,unifiedFeatures);
-			let resourceIdentifier = resource.Identifier;
-			let resourceKey = resourceIdentifier.Resource;
-
-			for(let feature of matchingResources){
-				let resetKeyTest = false;
-				if(resourceKey === undefined){
-					resetKeyTest = true;
-					resourceKey = feature.Name;
-				}
-		
-				let thisResourceData = calculateResourceData(feature,ParentToken,resourceKey);
-				let currentResource = feature.Resource[resourceKey];
-
+	for(let resourceTier of resourceList){
+		for(let resource of resourceTier){
+			if(resource.Type === "SpellSlot"){
 				chatTable.push({
 					ShowIfCondensed:1,
-					Header:thisResourceData.DisplayName+" Remaining",
+					Header:"Spell Slots",
 					FullContents:"",
-					RulesContents:currentResource+" / "+thisResourceData.MaxResource,
+					RulesContents:MTScript.execFunction(`[r:pm.SpellSlots("${ParentTokenID}")]`),
 					RollContents:"",
 					DisplayOrder:["Rules","Roll","Full"]
 				});
-
-				if(resetKeyTest){
-					resourceKey = undefined;
-				}
 			}
+			else if(resource.Type === "HitDice"){
+				chatTable.push({
+					ShowIfCondensed:1,
+					Header:"Hit Dice",
+					FullContents:"",
+					RulesContents:MTScript.execFunction(`[r:a5e.HitDieDisplay("${ParentTokenID}")]`),
+					RollContents:"",
+					DisplayOrder:["Rules","Roll","Full"]
+				});
+			}
+			else{
+				MapTool.chat.broadcast(JSON.stringify("HI"));
+				MapTool.chat.broadcast(JSON.stringify(resource));
+				let matchingResources = findValidFeatureResources(resource,unifiedFeatures);
+				MapTool.chat.broadcast("no");
+				MapTool.chat.broadcast(JSON.stringify(resource));
+				let resourceIdentifier = resource.Identifier;
+				let resourceKey = resourceIdentifier.Resource;
+
+				for(let feature of matchingResources){
+					let resetKeyTest = false;
+					if(resourceKey === undefined){
+						resetKeyTest = true;
+						resourceKey = feature.Name;
+					}
+			
+					let thisResourceData = calculateResourceData(feature,ParentToken,resourceKey);
+					MapTool.chat.broadcast(JSON.stringify(feature));
+					let currentResource = feature.Resource[resourceKey];
+
+					chatTable.push({
+						ShowIfCondensed:1,
+						Header:thisResourceData.DisplayName+" Remaining",
+						FullContents:"",
+						RulesContents:currentResource+" / "+thisResourceData.MaxResource,
+						RollContents:"",
+						DisplayOrder:["Rules","Roll","Full"]
+					});
+
+					if(resetKeyTest){
+						resourceKey = undefined;
+					}
+				}
+			}			
 		}
+
 	}
 
-	return JSON.stringify(chatTable);
+	return JSON.stringify({
+		Table:chatTable
+	});
 }
 
 function findValidFeatureResources(resource,unifiedFeatures,amountNeeded){

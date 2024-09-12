@@ -13,11 +13,9 @@ function gatherFeatures(ParentToken,options){
 		}
 	}
 
-	if(typeof ParentToken === "string"){
-		ParentToken = MapTool.tokens.getTokenByID(ParentToken);
-	}
 	function gatherFeatureType(features,type,isRequirePassive){
 		finalFeatures = [];
+
 		if(ignoreRequirePassive){
 			isRequirePassive = false;
 		}
@@ -110,7 +108,8 @@ function gatherFeatures(ParentToken,options){
 	return thisTokenFeatures;
 }
 
-function gatherFeaturesMTScript(ParentToken,options){
+function gatherFeaturesMTScript(ParentTokenID,options){
+	let ParentToken = MapTool.tokens.getTokenByID(ParentTokenID);
 	let AllFeatures = gatherFeatures(ParentToken,options);
 	return JSON.stringify(AllFeatures);
 }

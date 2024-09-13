@@ -117,7 +117,6 @@
 [h:defineFunction("pm.a5e.FeatureModifyDamageRoll","pm.a5e.FeatureModifyDamageRoll@Lib:pm.a5e.Core",0,0)]
 [h:defineFunction("pm.a5e.ModifyDamageRollLoop","pm.a5e.ModifyDamageRollLoop@Lib:pm.a5e.Core",0,0)]
 [h:defineFunction("pm.a5e.FeatureModifyCondition","pm.a5e.FeatureModifyCondition@Lib:pm.a5e.Core",0,0)]
-[h:defineFunction("pm.AbilityMagItemMsg","pm.AbilityMagItemMsg@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.AbilityPrereq","pm.AbilityPrereq@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.a5e.FeatureRange","pm.a5e.FeatureRange@Lib:pm.a5e.Core",0,0)]
 [h:defineFunction("pm.AbilityResourceRestoration","pm.AbilityResourceRestoration@Lib:pm.a5e.Core")]

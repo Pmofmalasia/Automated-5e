@@ -2,7 +2,7 @@
 [h:RechargeFeature = arg(1)]
 
 [h:"<!-- TODO: MaxResource fix -->"]
-[h:"<!-- Remove this -->"]
+[h:"<!-- Remove -->"]
 [h:ParentToken = json.get(RechargeData,"ParentToken")]
 [h:switchToken(ParentToken)]
 

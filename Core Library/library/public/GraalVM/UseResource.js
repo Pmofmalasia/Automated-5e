@@ -307,11 +307,7 @@ function useResourceTooltip(resourceList,unifiedFeatures,ParentTokenID){
 				});
 			}
 			else{
-				MapTool.chat.broadcast(JSON.stringify("HI"));
-				MapTool.chat.broadcast(JSON.stringify(resource));
 				let matchingResources = findValidFeatureResources(resource,unifiedFeatures);
-				MapTool.chat.broadcast("no");
-				MapTool.chat.broadcast(JSON.stringify(resource));
 				let resourceIdentifier = resource.Identifier;
 				let resourceKey = resourceIdentifier.Resource;
 
@@ -323,14 +319,13 @@ function useResourceTooltip(resourceList,unifiedFeatures,ParentTokenID){
 					}
 			
 					let thisResourceData = calculateResourceData(feature,ParentToken,resourceKey);
-					MapTool.chat.broadcast(JSON.stringify(feature));
 					let currentResource = feature.Resource[resourceKey];
 
 					chatTable.push({
 						ShowIfCondensed:1,
-						Header:thisResourceData.DisplayName+" Remaining",
+						Header:thisResourceData[resourceKey].DisplayName+" Remaining",
 						FullContents:"",
-						RulesContents:currentResource+" / "+thisResourceData.MaxResource,
+						RulesContents:currentResource+" / "+thisResourceData[resourceKey].MaxResource,
 						RollContents:"",
 						DisplayOrder:["Rules","Roll","Full"]
 					});

@@ -1,4 +1,3 @@
-[h:UseResourceData = macro.args]
 [h:ResourceList = arg(0)]
 [h:UnifiedFeatures = arg(1)]
 [h:ParentToken = arg(2)]

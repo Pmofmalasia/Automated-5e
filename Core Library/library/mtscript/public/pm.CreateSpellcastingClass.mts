@@ -97,6 +97,7 @@
 		}
 	]
 [h:"<!-- TODO: MaxResource fix -->"]
+[h:"<!-- TODO: Needs to use new format -->"]
 	[h:sp.SpellcastingAbility = json.set(sp.SpellcastingAbility,"ResourceSpellLevel",sp.SpellLevelExpression)]
 	
 	[h,if(sp.ResourceType=="Multiple Spell Slot Levels"): sp.ResourceType = "Multiple Resources"]

@@ -361,6 +361,29 @@ function calculateResourceData(feature,ParentToken,options){
 
 }
 
+function getMaximumResourcesMTScript(feature,ParentTokenID){
+	let ParentToken = MapTool.tokens.getTokenByID(ParentTokenID);
+
+	if(typeof feature === "string"){
+		feature = JSON.parse(feature);
+	}
+
+	let returnData = getMaximumResources(feature,ParentToken);
+
+	return JSON.stringify(returnData);
+}
+
+function getMaximumResources(feature,ParentToken){
+	let ResourceData = calculateResourceData(feature,ParentToken);
+
+	let maxResources = {};
+	for(let resource of Object.keys(ResourceData)){
+		maxResources[resource] = ResourceData[resource].MaxResource;
+	}
+
+	return maxResources;
+}
+
 function slotLevelIndependentCalcNameTBD(feature,ParentTokenID){
 	
 }
@@ -370,3 +393,4 @@ function diesizeindependentcalcNameTBD(feature,ParentTokenID){
 }
 
 MTScript.registerMacro("a5e.CalculateResourceData",calculateResourceDataMTScript);
+MTScript.registerMacro("a5e.GetMaximumResources",getMaximumResourcesMTScript);

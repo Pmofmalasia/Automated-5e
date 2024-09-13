@@ -18,10 +18,11 @@
 [h:InitialChargesMethod = json.get(InitializedItem,"InitialChargesMethod")]
 [h,switch(InitialChargesMethod),CODE:
 	case "Full":{
-[h:"<!-- TODO: MaxResource fix -->"]
-		[h:InitializedItem = json.set(InitializedItem,"Resource",evalMacro(json.get(InitializedItem,"MaxResource")))]
+		[h:InitializedItem = json.set(InitializedItem,"Resource",js.a5e.GetMaximumResources(InitializedItem,ParentToken))]
 	};
 	case "Fixed":{
+[h:"<!-- TODO: MaxResource fix -->"]
+[h:"<!-- This and Rolled need new format for setting resources - could do as is just setting key as item name, but need to check for alternative name of resource -->"]
 		[h:InitializedItem = json.set(InitializedItem,"Resource",json.get(InitializedItem,"InitialChargesAmount"))]
 	};
 	case "Rolled":{

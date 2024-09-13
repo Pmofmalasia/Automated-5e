@@ -7,7 +7,6 @@
 [h:sourcePath = json.get(ResourceSourceData,"Path")]
 [h:allMatchingFeatures = json.path.read(getProperty(sourceProperty),"\$[*][?(@.ResourceName=='"+resourceName+"' || (@.Name=='"+resourceName+"' && @.ResourceName==null) || @.ResourceData[*].Name=='"+resourceName+"')]","DEFAULT_PATH_LEAF_TO_NULL")]
 
-[h:"<!-- TODO: MaxResource fix -->"]
 [h:pm.MaxResourceIndex = 0]
 [h,foreach(resource,allMatchingFeatures): pm.MaxResourceIndex = if(evalMacro(json.get(resource,"MaxResource")) > evalMacro(json.get(json.get(allMatchingFeatures,pm.MaxResourceIndex),"MaxResource")),roll.count,pm.MaxResourceIndex)]
 

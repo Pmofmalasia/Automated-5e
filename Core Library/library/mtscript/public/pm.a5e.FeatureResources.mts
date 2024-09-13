@@ -1,7 +1,6 @@
 [h:pm.ResourceInfo = arg(1)]
 [h:pm.a5e.FeatureComponentStdVars(arg(0))]
 
-[h:"<!-- TODO: MaxResource fix -->"]
 [h:featureOptionsFixed = ""]
 [h:backupFeatureOptionsFixed = ""]
 [h,if(json.get(pm.ResourceInfo,"Feature") != ""),CODE:{

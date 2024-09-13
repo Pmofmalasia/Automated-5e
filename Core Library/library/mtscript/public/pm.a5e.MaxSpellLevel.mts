@@ -11,6 +11,7 @@
 
 [h,if(UseUnsharedSlotsTest),CODE:{
 [h:"<!-- TODO: MaxResource fix -->"]
+[h:"<!-- TODO: Needs method of getting all features usable as spell slots -->"]
 	[h:MatchingUnsharedLevels = json.path.read(getProperty("a5e.stat.AllFeatures"),"\$[*][?(@.ResourceSpellLevel!=null && @.IsActive>0)]","DEFAULT_PATH_LEAF_TO_NULL")]
 	[h,foreach(slotType,MatchingUnsharedLevels): CastingLevel = CastingLevel + evalMacro(json.get(slotType,"ResourceSpellLevel"))*2]
 };{}]

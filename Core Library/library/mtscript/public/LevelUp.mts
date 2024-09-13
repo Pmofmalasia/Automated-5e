@@ -105,13 +105,13 @@
 [h:lu.NewSpells = json.get(macro.return,"Spells")]
 [h,if(json.isEmpty(lu.NewSpells)): lu.NewSpells = "[]"]
 
-[h:"<!-- Looks up the current amount of max resources for each ability. After all abilities are added and updated, this will be checked again. If there is increase in the in the amount of max resource, the current amount of resource is increased for that amount. This is done instead of just giving the players a long rest in case anyone wants to run a game where leveling can occur without regaining all resources.-->"]
+[h:"<!-- Looks up the current amount of max resources for each ability. After all abilities are added and updated, this will be checked again. If there is increase in the in the amount of max resource, the current amount of resource is increased for that amount. This is done instead of just giving the players a long rest in case anyone wants to run a game where leveling can occur without regaining all resources. -->"]
 [h:noFeaturesTest = json.isEmpty(getProperty("a5e.stat.AllFeatures"))]
 [h,if(noFeaturesTest): lu.OldResources = ""; lu.OldResources = json.path.read(getProperty("a5e.stat.AllFeatures"),"\$[*][?(@.MaxResource != null)]","DEFAULT_PATH_LEAF_TO_NULL")]
 [h:lu.OldResourcesMax = ""]
-[h:"<!-- TODO: MaxResource fix -->"]
 [h,foreach(ability,lu.OldResources),CODE:{
-	[h:lu.OldResourcesMax = json.set(lu.OldResourcesMax,json.get(ability,"Name")+json.get(ability,"Class")+json.get(ability,"Subclass"),evalMacro(json.get(ability,"MaxResource")))]
+	[h:thisFeatureResource = js.a5e.GetMaximumResources(abiilty,ParentToken)]
+	[h:lu.OldResourcesMax = json.set(lu.OldResourcesMax,json.get(ability,"Name")+json.get(ability,"Class")+json.get(ability,"Subclass"),thisFeatureResource)]
 }]
 
 [h:"<!-- Checks to see if there is already a spellcasting ability associated with this class, so that spells will be added later even if it is not the 'correct' level for it by the calculation ceiling(Level*(1/2)*(1/CastingType)). Also needed for cantrips. -->"]
@@ -175,17 +175,23 @@
 [h:lu.NewResourcesMax = ""]
 [h,foreach(ability,lu.NewResources),CODE:{
 	[h:lu.CurrentResource = json.get(ability,"Resource")]
-	[h:lu.CurrentMax = evalMacro(json.get(ability,"MaxResource"))]
-	[h,if(json.type(lu.CurrentResource)=="OBJECT"),CODE:{
-		[h:lu.MultiResourceList = json.fields(lu.CurrentResource,"json")]
-		[h:TempNewResources = ""]
-		[h,foreach(resource,lu.MultiResourceList): TempNewResources = json.set(TempNewResources,resource,json.get(lu.CurrentResource,resource)+json.get(lu.CurrentMax,resource)-json.get(json.get(lu.OldResourcesMax,json.get(ability,"Name")+json.get(ability,"Class")+json.get(ability,"Subclass")),resource))]
-		[h:setProperty("a5e.stat.AllFeatures",json.path.set(getProperty("a5e.stat.AllFeatures"),"\$[*][?(@.Name=='"+json.get(ability,"Name")+"' && @.Class=='"+json.get(ability,"Class")+"' && @.Subclass=='"+json.get(ability,"Subclass")+"')]['Resource']",TempNewResources))]
-	};{
-		[h,if(lu.CurrentResource == ""):
-			setProperty("a5e.stat.AllFeatures",json.path.put(getProperty("a5e.stat.AllFeatures"),"\$[*][?(@.Name=='"+json.get(ability,"Name")+"' && @.Class=='"+json.get(ability,"Class")+"' && @.Subclass=='"+json.get(ability,"Subclass")+"')]","Resource",evalMacro(json.get(ability,"MaxResource")))); 
-			setProperty("a5e.stat.AllFeatures",json.path.set(getProperty("a5e.stat.AllFeatures"),"\$[*][?(@.Name=='"+json.get(ability,"Name")+"' && @.Class=='"+json.get(ability,"Class")+"' && @.Subclass=='"+json.get(ability,"Subclass")+"')]['Resource']",lu.CurrentResource+lu.CurrentMax-json.get(lu.OldResourcesMax,json.get(ability,"Name")+json.get(ability,"Class")+json.get(ability,"Subclass"))))]
+	[h:lu.CurrentMax = js.a5e.CalculateResourceData(abiilty,ParentToken)]
+	[h,if(json.type(lu.CurrentResource) == "UNKNOWN"),CODE:{
+		[h:lu.CurrentResource = "{}"]
+		[h,foreach(resource,json.fields(lu.CurrentMax,"json")): lu.CurrentResource = json.set(lu.CurrentResource,resource,0)]
+	};{}]
+	[h:thisFeatureAllOldResources = json.get(lu.OldResourcesMax,json.get(ability,"Name")+json.get(ability,"Class")+json.get(ability,"Subclass"))]
+
+	[h:lu.MultiResourceList = json.fields(lu.CurrentResource,"json")]
+	[h:TempNewResources = ""]
+	[h,foreach(resource,lu.MultiResourceList),CODE:{
+		[h:oldMaxResource = json.get(thisFeatureAllOldResources,resource)]
+		[h:newMaxResource = json.get(lu.CurrentMax,resource)]
+		[h:resourceGained = newMaxResource - oldMaxResource]
+		[h:TempNewResources = json.set(TempNewResources,resource,json.get(lu.CurrentResource,resource)+resourceGained)]
 	}]
+
+	[h:setProperty("a5e.stat.AllFeatures",json.path.set(getProperty("a5e.stat.AllFeatures"),"\$[*][?(@.Name=='"+json.get(ability,"Name")+"' && @.Class=='"+json.get(ability,"Class")+"' && @.Subclass=='"+json.get(ability,"Subclass")+"')]['Resource']",TempNewResources))]
 }]
 
 [h,if(lu.DisplayNewAbilities != ""): abilityTable = json.append(abilityTable,json.set("","ShowIfCondensed",1,"Header","Abilities Gained","FalseHeader","","FullContents","","RulesContents",lu.DisplayNewAbilities,"RollContents","","DisplayOrder","['Rules','Roll','Full']"))]

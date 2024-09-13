@@ -85,6 +85,9 @@
 [h:allResourceData = js.a5e.CalculateResourceData(FeatureToRestore,ParentToken,CalculateResourceDataOptions)]
 [h:CurrentResource = json.get(FeatureToRestore,"Resource")]
 
+[h:"<!-- Temporary need: Used to permanently convert tokens using the legacy resource format to the new one -->"]
+[h,if(json.type(CurrentResource) == "UNKNOWN"): CurrentResource = "{}"]
+
 [h,if(ResourceKey == ""):
 	restoredResources = json.fields(allResourceData,"json");
 	restoredResources = json.append("",ResourceKey)

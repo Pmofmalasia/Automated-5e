@@ -293,48 +293,18 @@ function calculateResourceData(feature,ParentToken,options){
 			return resourceFinal;
 		}
 
-		function calcResourceSlotLevel(slotLevelData){
-			let scalingHow = slotLevelData.Scaling;
-			let baseLevel = slotLevelData.Level;
-			let scalingAmount = slotLevelData.ScalingAmount;
-			let scalingTier = getFeatureScalingLevel(feature);
-
-			if(scalingHow === 0){
-				return baseLevel;
-			}
-			else{
-				let slotLevel = baseLevel + (scalingAmount * Math.floor(scalingTier/scalingAmount));
-				return slotLevel;
-			}
-		}
-
-		function calcResourceDieSize(DieSizeData){
-			let scalingHow = DieSizeData.Scaling;
-			let baseSize = DieSizeData.Size;
-			let scalingAmount = DieSizeData.ScalingAmount;
-			let scalingTier = getFeatureScalingLevel(feature);
-
-			if(scalingHow === 0){
-				return baseSize;
-			}
-			else{
-				let dieSize = baseSize + (scalingAmount * Math.floor(scalingTier/scalingAmount));
-				return dieSize;
-			}
-		}
-
 		function packageResourceData(resource){
 			let thisResourceData = {};
 			thisResourceData.MaxResource = calcMaxResource(resource);
 			thisResourceData.DisplayName = resource.DisplayName;
 			thisResourceData.Type = "";
 			if(resource.SlotLevel !== undefined){
-				thisResourceData.SlotLevel = calcResourceSlotLevel(resource.SlotLevel);
+				thisResourceData.SlotLevel = calcResourceSlotLevel(resource.SlotLevel,feature);
 				thisResourceData.Type = "SpellSlot";
 			}
 
 			if(resource.DieSize !== undefined){
-				thisResourceData.DieSize = calcResourceDieSize(resource.DieSize);
+				thisResourceData.DieSize = calcResourceDieSize(resource.DieSize,feature);
 				thisResourceData.Type = "Die";
 			}
 
@@ -361,6 +331,36 @@ function calculateResourceData(feature,ParentToken,options){
 
 }
 
+function calcResourceSlotLevel(slotLevelData,feature){
+	let scalingHow = slotLevelData.Scaling;
+	let baseLevel = slotLevelData.Level;
+	let scalingAmount = slotLevelData.ScalingAmount;
+	let scalingTier = getFeatureScalingLevel(feature);
+
+	if(scalingHow === 0){
+		return baseLevel;
+	}
+	else{
+		let slotLevel = baseLevel + (scalingAmount * Math.floor(scalingTier/scalingAmount));
+		return slotLevel;
+	}
+}
+
+function calcResourceDieSize(DieSizeData,feature){
+	let scalingHow = DieSizeData.Scaling;
+	let baseSize = DieSizeData.Size;
+	let scalingAmount = DieSizeData.ScalingAmount;
+	let scalingTier = getFeatureScalingLevel(feature);
+
+	if(scalingHow === 0){
+		return baseSize;
+	}
+	else{
+		let dieSize = baseSize + (scalingAmount * Math.floor(scalingTier/scalingAmount));
+		return dieSize;
+	}
+}
+
 function getMaximumResourcesMTScript(feature,ParentTokenID){
 	let ParentToken = MapTool.tokens.getTokenByID(ParentTokenID);
 
@@ -384,8 +384,54 @@ function getMaximumResources(feature,ParentToken){
 	return maxResources;
 }
 
-function slotLevelIndependentCalcNameTBD(feature,ParentTokenID){
-	
+function getFeatureSpellSlotsMTScript(unifiedFeatures,ParentTokenID){
+	let ParentToken = MapTool.tokens.getTokenByID(ParentTokenID);
+
+	if(typeof unifiedFeatures === "string"){
+		unifiedFeatures = JSON.parse(unifiedFeatures);
+	}
+
+	let returnData = getFeatureSpellSlots(unifiedFeatures,ParentToken);
+
+	return JSON.stringify(returnData);
+}
+
+function getFeatureSpellSlots(unifiedFeatures,ParentToken){
+	let featureSpellSlots = [];
+	for(let feature of unifiedFeatures){
+		if(feature.ResourceData === undefined){
+			continue;
+		}
+
+		for(let resource of feature.ResourceData){
+			if(resource.SlotLevel !== undefined){
+				let thisResourceData = calculateResourceData(feature,ParentToken,{resource:resource.Name})
+
+				let featureType = feature.AbilityType;
+				let resourceIdentifier = {
+					AbilityType:featureType,
+					Name:feature.Name,
+					Class:feature["Class"],
+					Subclass:feature.Subclass,
+					Resource:resource.Name
+				};
+
+				if(featureType === "Item" || featureType === "ItemCondition"){
+					resourceIdentifier.ItemID = feature.ItemID;
+				}
+				else if(featureType === "Condition" || featureType === "ItemCondition"){
+					resourceIdentifier.GroupID = feature.GroupID;
+				}
+
+				thisResourceData.Identifier = resourceIdentifier;
+				thisResourceData.CurrentResource = feature.Resource[resource.Name];
+
+				featureSpellSlots.push(thisResourceData);				
+			}
+		}
+	}
+
+	return featureSpellSlots;
 }
 
 function diesizeindependentcalcNameTBD(feature,ParentTokenID){
@@ -394,3 +440,4 @@ function diesizeindependentcalcNameTBD(feature,ParentTokenID){
 
 MTScript.registerMacro("a5e.CalculateResourceData",calculateResourceDataMTScript);
 MTScript.registerMacro("a5e.GetMaximumResources",getMaximumResourcesMTScript);
+MTScript.registerMacro("a5e.GetFeatureSpellSlots",getFeatureSpellSlotsMTScript);

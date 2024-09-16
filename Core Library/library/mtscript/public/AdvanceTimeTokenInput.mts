@@ -6,23 +6,24 @@
 
 [h:assert(isNumber(AdvanceValue),"Time to Advance must be a number!")]
 
-[h:AdvanceUnits = substring(AdvanceUnits,0,length(AdvanceUnits) - 1)]
-[h:AdvanceUnits = lower(AdvanceUnits)]
-[h:AdvanceTokens = getSelected("json")]
+[h,switch(AdvanceUnits):
+	case "Rounds": AdvanceValueFinal = AdvanceValue;
+	case "Minutes": AdvanceValueFinal = AdvanceValue * 10;
+	case "Hours": AdvanceValueFinal = AdvanceValue * 600;
+	case "Days": AdvanceValueFinal = AdvanceValue * 14400;
+	case "Years": AdvanceValueFinal = AdvanceValue * 5256000;
+]
 
-[h:AdvanceData = json.set("",
-	"Tokens",AdvanceTokens,
-	"TimeAdvanced",json.set("",
-		"Time",AdvanceValue,
-		"TimeUnits",AdvanceUnits)
-)]
-[h,MACRO("AdvanceTimeToken@Lib:pm.a5e.Core"): AdvanceData]
-[h:AdvanceTimeReturnData = macro.return]
+[h:AdvanceTokens = getSelected("json")]
+[h:AdvanceTimeReturnData = js.a5e.AdvanceTimeTokens(AdvanceTokens,AdvanceValueFinal)]
 
 [h:AdvanceTokenNames = "[]"]
 [h,foreach(tempToken,AdvanceTokens): AdvanceTokenNames = json.append(AdvanceTokenNames,getName(tempToken))]
 
 [h:abilityTable = json.get(AdvanceTimeReturnData,"Table")]
+
+[h:AdvanceUnits = substring(AdvanceUnits,0,length(AdvanceUnits) - 1)]
+[h:AdvanceUnits = lower(AdvanceUnits)]
 [h:TimeDescription = "Time advances " + AdvanceValue + " " + AdvanceUnits + if(AdvanceValue == 1,"","s") + " for " + pm.a5e.CreateDisplayList(AdvanceTokenNames,"and")+"."]
 
 [h:BorderData = json.set("",

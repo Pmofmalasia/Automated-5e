@@ -513,6 +513,7 @@
 };{}]
 [h:subeffectData = json.remove(subeffectData,"isSummons")]
 
+[h:"<!-- TODO: MaxResource - Will need total rework to use new UseResource format -->"]
 [h,if(json.contains(subeffectData,"isUseResource")),CODE:{
 	[h:ResourceData = "{}"]
 	[h:subeffectData = json.remove(subeffectData,"isUseResource")]

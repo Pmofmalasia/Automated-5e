@@ -340,5 +340,6 @@
 [h:js.evalURI("pm.a5e.core","lib://pm.a5e.core/GraalVM/UseResource.js")]
 [h:js.evalURI("pm.a5e.core","lib://pm.a5e.core/GraalVM/CreateFeatureCoreProcessing.js")]
 [h:js.evalURI("pm.a5e.core","lib://pm.a5e.core/GraalVM/createFeatureMacros.js")]
+[h:js.evalURI("pm.a5e.core","lib://pm.a5e.core/GraalVM/AdvanceTime.js")]
 
 [h:broadcast("Startup Initialization Complete.")]

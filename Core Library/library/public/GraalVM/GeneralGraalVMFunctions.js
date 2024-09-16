@@ -23,6 +23,42 @@ function sortData(data,key){
 	}
 }
 
+function createDisplayList(list,word,options){
+	let isVariableDelimiter = false;
+	if(options !== undefined){
+		isVariableDelimiter = options.VariableDelimiter;
+		if(isVariableDelimiter === undefined){
+			isVariableDelimiter = false;
+		}
+	}
+
+	if(list.length === 0){
+		return "";
+	}
+	else if(list.length === 1){
+		return json.get(list,0);
+	}
+	else if(list.length === 2){
+		return json.get(list,0)+" "+word+" "+json.get(list,1);
+	}
+	else{
+		let display = "";
+		let delimiter = ",";
+		if(isVariableDelimiter){
+			delimiter = "%{VerticalListFormat}";
+		}
+		for(let i = 0; i < list.length; i++){
+			display += delimiter+" ";
+			if(i === list.length - 1){
+				display += word+" ";
+			}
+			display += list[i];
+		}
+
+		return display;
+	}
+}
+
 function jsonIsEmpty(json){
 	if(typeof json !== "object"){
 		return null;

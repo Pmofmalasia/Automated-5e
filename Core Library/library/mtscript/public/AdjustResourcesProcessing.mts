@@ -4,6 +4,7 @@
 [h:featuresWithResource = json.path.read(allFeatures,"\$[*][?(@.MaxResource != null)]","DEFAULT_PATH_LEAF_TO_NULL")]
 [h:switchToken(ParentToken)]
 
+[h:"<!-- TODO: MaxResource - Need to remake this whole thing AGAIN -->"]
 [h,foreach(feature,featuresWithResource),CODE:{
 	[h:thisFeatureMaxResource = evalMacro(json.get(feature,"MaxResource"))]
 	[h,if(json.type(thisFeatureMaxResource) == "OBJECT"),CODE:{

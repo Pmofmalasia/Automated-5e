@@ -10,16 +10,8 @@
 	]
 }]
 
-[h:unsharedSpellSlots = json.path.read(getProperty("a5e.stat.AllFeatures"),"[*][?(@.ResourceSpellLevel != null)]","DEFAULT_PATH_LEAF_TO_NULL")]
-[h,foreach(feature,unsharedSpellSlots),CODE:{
-	[h:multiResourceTest = json.type(json.get(feature,"Resource"))=="OBJECT"]
-	[h,if(multiResourceTest),CODE:{
-		[h:tempResources = json.get(feature,"Resource")]
-		[h,foreach(resource,json.fields(tempResources)): SpellSlotDisplay = listAppend(SpellSlotDisplay,resource+": "+json.get(json.get(feature,"Resource"),resource)," | ")]
-	};{
-		[h:tempResourceName = if(json.get(feature,"ResourceDisplayName")=="",json.get(feature,"DisplayName"),json.get(feature,"ResourceDisplayName"))]
-		[h:SpellSlotDisplay = listAppend(SpellSlotDisplay,tempResourceName+": "+json.get(feature,"Resource")," | ")]
-	}]
-}]
+[h:a5e.UnifiedAbilities = a5e.GatherAbilities(ParentToken)]
+[h:featureSpellSlots = js.a5e.GetFeatureSpellSlots(a5e.UnifiedAbilities,ParentToken)]
+[h,foreach(slot,featureSpellSlots): SpellSlotDisplay = listAppend(SpellSlotDisplay,json.get(slot,"DisplayName")+": "+json.get(slot,"CurrentResource")," | ")]
 
 [h:return(0,SpellSlotDisplay)]

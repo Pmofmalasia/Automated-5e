@@ -129,4 +129,4 @@
 	"DisplayOrder","['Rules','Roll','Full']"
 ))]
 
-[h:macro.return = json.set("","Table",abilityTable,"Removed",RemovedConditionsFinal)]
+[h:return(0,json.set("","Table",abilityTable,"Removed",RemovedConditionsFinal))]

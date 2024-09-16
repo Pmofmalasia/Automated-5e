@@ -23,6 +23,7 @@
     [h:InnateSpellList = "[]"]
     [h:ShortRestRestoreTest = 0]
     [h:SafeCounter = 0]
+[h:"<!-- TODO: MaxResource - Redo setting up resources via UDF, don't do it raw -->"]
     [h,count(json.get(MonsterData,"InnateSpellNumber")+1),CODE:{
         [h:thisSpellName = json.get(MonsterData,"InnateSpell"+SafeCounter)]
         [h:SpellData = pm.a5e.GetSpecificSpell(thisSpellName)]

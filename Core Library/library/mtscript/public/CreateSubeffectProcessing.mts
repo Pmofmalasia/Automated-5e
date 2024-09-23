@@ -617,6 +617,8 @@
 		[h:ResourceData = json.set(ResourceData,"TimeResource",TimeResourceData)]
 	};{}]
 
+	[h:ResourceData = zzConvertOldUseResource(ResourceData)]
+
 	[h:subeffectData = json.set(subeffectData,"UseResource",ResourceData)]
 };{}]
 

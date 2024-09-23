@@ -40,7 +40,7 @@
             " LegendaryActionNumber | 0,1,2,3,4,5,6 | Legendary Actions | LIST | SELECT=3 "
         ))]
 
-[h:"<!-- TODO: MaxResource - Should make a UDF to package ResourceData instead of doing it raw here -->"]
+[h:"<!-- TODO: MaxResourceLowPrio - Should make a UDF to package ResourceData instead of doing it raw here -->"]
         [h:LegendaryActionFeature = json.set("",
             "Name","LegendaryActions",
             "DisplayName","Legendary Actions",
@@ -51,8 +51,17 @@
             "Optional",0,
             "MultiFeature",0,
             "Library","SRD",
-            "Resource",LegendaryActionNumber,
-            "ResourceData",json.append("",json.set("","Name","LegendaryActions","DisplayName","Legendary Actions","MaxResource",json.set("","Base",LegendaryActionNumber)))
+            "Resource",json.set("","LegendaryActions",LegendaryActionNumber),
+            "ResourceData",json.set("",
+				"Restoration",json.set("",
+					"StartTurn",json.set("","Method","Full"),
+					"ShortRest",json.set("","Method","Full"),
+					"LongRest",json.set("","Method","Full")),
+				"Resources",json.set("",
+					"Name","LegendaryActions",
+					"DisplayName","Legendary Actions",
+					"MaxResource",json.set("","Base",LegendaryActionNumber)
+			))
         )]
 
         [h:setProperty("a5e.stat.AllFeatures",json.append(getProperty("a5e.stat.AllFeatures"),LegendaryActionFeature))]

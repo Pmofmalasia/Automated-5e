@@ -71,6 +71,9 @@ function useResource(resourceList,unifiedFeatures,ParentTokenID){
 					resourceOptions.push(resource);
 				}
 			}
+			else if(resource.Type === "Time"){
+				
+			}
 			else{
 				let amountNeeded = resource.ResourceUsed;
 				if(amountNeeded === undefined){

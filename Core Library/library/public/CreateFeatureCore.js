@@ -14,7 +14,7 @@ function addFeatureChoicesRows(){
 
 	referenceRow = createTableRow(referenceRow,"rowIsResources","<th><span class='info-tooltip' title='Does NOT apply for abilities that use resources of another feature, e.g. Lore Bard - Cutting Words uses Bardic Inspiration, NOT its own resource.'><img src='lib://pm.a5e.core/InterfaceImages/info.png'> <label for='isResources'>Feature Has its Own Resources:</label></span></th><td><select id='isResources' name='isResources'><option value=''>No Resource</option><option value='one'>Single Resource</option><option value='multiple'>Multiple Resources</option></select></span></td>");
 	document.getElementById("isResources").addEventListener("change",function(){
-		createResourceRows();
+		createResourceRows(FeatureData);
 	});
 
 	if(FeatureType !== "Class"){

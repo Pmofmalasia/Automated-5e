@@ -1,5 +1,5 @@
 
-function createResourceRows(){
+function createResourceRows(FeatureData){
 	let referenceRow = document.getElementById("rowIsResources");
 	let isResourceChoice = document.getElementById("isResources").value;
 
@@ -8,21 +8,14 @@ function createResourceRows(){
 	}
 
 	if(isResourceChoice !== ""){
-		//TODO: Still need a way to make display name = chosen spell name
+		//TODO: MaxResource Still need a way to make display name = chosen spell name
 
 		let resourceRowData = [];
 		let resourceListeners = [];
 		if(isResourceChoice === "one"){
 			resourceRowData.push({
 				RowID:"rowResource",
-				Contents:"<th><label for='ResourceDisplayName'>Resource Display Name:</label></th><td><input type='text' id='ResourceDisplayName' name='ResourceDisplayName' disabled><input type='checkbox' id='isResourceDisplayNameUseFeature' name='isResourceDisplayNameUseFeature' checked>Use Feature Name?</td>"
-			});
-
-			resourceListeners.push({
-				elementID:"isResourceDisplayNameUseFeature",
-				listener:"change",
-				functionName:"resourceDisplayToggle",
-				functionArgs:{toggler:"isResourceDisplayNameUseFeature",input:"ResourceDisplayName"}
+				Contents:"<th><label for='ResourceDisplayName'>Resource Display Name:</label></th><td><input type='text' id='ResourceDisplayName' name='ResourceDisplayName' value='"+FeatureData.DisplayName+"'></td>"
 			});
 		}
 		else{
@@ -102,10 +95,6 @@ function createResourceRows(){
 
 		addResourceRestorationRows(referenceRow);
 	}
-}
-
-function resourceDisplayToggle(i,inputs){
-	toggleFieldEnabled(inputs.input + i,inputs.toggler + i);
 }
 
 function createResourceAmountTypeRow(i){

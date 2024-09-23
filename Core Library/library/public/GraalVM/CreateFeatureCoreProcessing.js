@@ -147,20 +147,12 @@ function resourceProcessing(CoreFeatureData,FeatureData){
 
 	let ResourceDisplayNames = {};
 	for(let i = 0; i < resourceNumber; i++){
-		let thisResourceName;
-		let thisResourceDisplayName;
 		let thisResourceMax = {};
-		if(CoreFeatureData.isResourceDisplayNameUseFeature0 !== undefined || CoreFeatureData["ResourceDisplayName"+i] === ""){
-			thisResourceDisplayName = FeatureData.DisplayName;
-			thisResourceName = FeatureData.Name;
-			ResourceDisplayNames[thisResourceName] = thisResourceDisplayName;
-		}
-		else{
-			thisResourceDisplayName = CoreFeatureData["ResourceDisplayName"+i];
 
-			//TODO: BUGFIX: Change this to use the setProperty method if ever able to set Lib properties natively in GraalVM
-			thisResourceName = MTScript.execMacro(`[r:pm.RemoveSpecial("${thisResourceDisplayName}")]`);
-		}
+		let thisResourceDisplayName = CoreFeatureData["ResourceDisplayName"+i];
+		MTScript.setVariable("js.temp.DisplayName",thisResourceDisplayName)
+		let thisResourceName = MTScript.evalMacro(`[r:pm.RemoveSpecial(js.temp.DisplayName)]`);
+
 		ResourceDisplayNames[thisResourceName] = thisResourceDisplayName;
 		thisResourceMax.Name = thisResourceName;
 		thisResourceMax.DisplayName = thisResourceDisplayName;
@@ -391,4 +383,18 @@ function resourceProcessing(CoreFeatureData,FeatureData){
 	return allResourceData;
 }
 
+function resourceProcessingMTScript(CoreFeatureData,FeatureData){
+	if(typeof CoreFeatureData === "string"){
+		CoreFeatureData = JSON.parse(CoreFeatureData);
+	}
+	if(typeof FeatureData === "string"){
+		FeatureData = JSON.parse(FeatureData);
+	}
+
+	let resourceData = resourceProcessing(CoreFeatureData,FeatureData);
+
+	return JSON.stringify(resourceData);
+}
+
 MTScript.registerMacro("ct.a5e.CreateFeatureCoreProcessing",coreFeatureProcessing);
+MTScript.registerMacro("ct.a5e.ResourceProcessing",resourceProcessingMTScript);

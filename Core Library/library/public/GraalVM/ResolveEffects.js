@@ -1,5 +1,5 @@
 function resolveEffects(effect){
-	let allActiveEffects = MTScript.evalFunction("[h:data.getData('addon:','pm.a5e.core','gd.Effects')]");
+	let allActiveEffects = MTScript.evalMacro("[h:data.getData('addon:','pm.a5e.core','gd.Effects')]");
 	let effectsToResolve = effect.ToResolve;
 
 	let ParentTokenID = effect.ParentToken;
@@ -11,9 +11,9 @@ function resolveEffects(effect){
 	}
 
 	let targets = effect.Targets;
-	targets = MTScript.evalFunction("[h:json.intersection(getTokens('json'),'"+targets+"')]");
-	let conditionGroupID = MTScript.evalFunction(`[h:pm.a5e.CreateConditionID(${ParentTokenID},${targets})]`);
-	let transformationGroupID = MTScript.evalFunction(`[h:pm.a5e.CreateConditionID(${ParentTokenID},${targets})]`);
+	targets = MTScript.evalMacro("[h:json.intersection(getTokens('json'),'"+targets+"')]");
+	let conditionGroupID = MTScript.evalMacro(`[h:pm.a5e.CreateConditionID(${ParentTokenID},${targets})]`);
+	let transformationGroupID = MTScript.evalMacro(`[h:pm.a5e.CreateConditionID(${ParentTokenID},${targets})]`);
 }
 
 function checkParentSubeffectRequirements(effectData){

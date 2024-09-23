@@ -10,6 +10,7 @@
 	]
 }]
 
+[h:ParentToken = currentToken()]
 [h:a5e.UnifiedAbilities = a5e.GatherAbilities(ParentToken)]
 [h:featureSpellSlots = js.a5e.GetFeatureSpellSlots(a5e.UnifiedAbilities,ParentToken)]
 [h,foreach(slot,featureSpellSlots): SpellSlotDisplay = listAppend(SpellSlotDisplay,json.get(slot,"DisplayName")+": "+json.get(slot,"CurrentResource")," | ")]

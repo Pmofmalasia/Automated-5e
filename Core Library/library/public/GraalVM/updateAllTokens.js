@@ -1,5 +1,5 @@
 function updateAllTokens(){
-	let allMaps = JSON.parse(MTScript.execFunction("getAllMapNames('json')"));
+	let allMaps = JSON.parse(MTScript.execMacro("getAllMapNames('json')"));
 	for(let map of allMaps){
 		let thisMapTokens = MapTool.tokens.getMapTokens(map);
 		for(let token of thisMapTokens){

@@ -341,7 +341,7 @@ function calcResourceSlotLevel(slotLevelData,feature){
 		return baseLevel;
 	}
 	else{
-		let slotLevel = baseLevel + (scalingAmount * Math.floor(scalingTier/scalingAmount));
+		let slotLevel = baseLevel + (scalingAmount * Math.floor(scalingTier/scalingHow));
 		return slotLevel;
 	}
 }
@@ -356,7 +356,7 @@ function calcResourceDieSize(DieSizeData,feature){
 		return baseSize;
 	}
 	else{
-		let dieSize = baseSize + (scalingAmount * Math.floor(scalingTier/scalingAmount));
+		let dieSize = baseSize + (scalingAmount * Math.floor(scalingTier/scalingHow));
 		return dieSize;
 	}
 }
@@ -403,28 +403,14 @@ function getFeatureSpellSlots(unifiedFeatures,ParentToken){
 			continue;
 		}
 
-		for(let resource of feature.ResourceData){
+		for(let resourceName of Object.keys(feature.ResourceData.Resources)){
+			let resource = feature.ResourceData.Resources[resourceName];
 			if(resource.SlotLevel !== undefined){
-				let thisResourceData = calculateResourceData(feature,ParentToken,{resource:resource.Name})
+				let thisResourceData = calculateResourceData(feature,ParentToken,{resource:resourceName});
 
-				let featureType = feature.AbilityType;
-				let resourceIdentifier = {
-					AbilityType:featureType,
-					Name:feature.Name,
-					Class:feature["Class"],
-					Subclass:feature.Subclass,
-					Resource:resource.Name
-				};
-
-				if(featureType === "Item" || featureType === "ItemCondition"){
-					resourceIdentifier.ItemID = feature.ItemID;
-				}
-				else if(featureType === "Condition" || featureType === "ItemCondition"){
-					resourceIdentifier.GroupID = feature.GroupID;
-				}
-
-				thisResourceData.Identifier = resourceIdentifier;
-				thisResourceData.CurrentResource = feature.Resource[resource.Name];
+				thisResourceData.Identifier = feature;
+				thisResourceData.CurrentResource = feature.Resource[resourceName];
+				thisResourceData.Resource = resourceName;
 
 				featureSpellSlots.push(thisResourceData);				
 			}

@@ -125,7 +125,7 @@ function resourceProcessing(CoreFeatureData,FeatureData){
 		return restoreData;
 	}
 
-	let restoreWhenOptions = ["ShortRest","LongRest","Dawn","Dusk","StartTurn","EndTurn","Initiative","Item"]
+	let restoreWhenOptions = ["ShortRest","LongRest","Dawn","Dusk","StartTurn","EndTurn","Initiative","Item"];
 	let isIndividualRestoration = false;
 	let individualRestorationData;
 	let ResourceRestorationMethod = CoreFeatureData.ResourceRestoreMethod;
@@ -139,7 +139,7 @@ function resourceProcessing(CoreFeatureData,FeatureData){
 		let resourceRestoration = {}
 		for(let instance of restoreWhenOptions){
 			if(CoreFeatureData["ResourceRestore"+instance] == 1){
-				resourceRestoration[instance] = RestorationData;
+				resourceRestoration[instance] = [RestorationData];
 			}
 		}
 		allResourceData.Restoration = resourceRestoration;

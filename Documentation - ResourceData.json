@@ -1,0 +1,67 @@
+{
+	"Restoration":{
+		"RESTORATION_INSTANCE":[{
+			"Name":"STRING: Optional ResourceName of resource to restore - if blank, all resources of the feature will be restored.",
+			"Method":"STRING: Fixed, Rolled, Chance, UpTo, Attribute, Proficiency, or Full",
+			"DieNumber":"NUMBER: For 'Rolled' or 'Chance' methods",
+			"DieSize":"Same as above",
+			"Bonus":"NUMBER: For Rolled, Chance, Attribute, or Proficiency",
+			"Amount":"NUMBER: For Fixed or UpTo",
+			"Target":"NUMBER: For Chance, number that must be rolled to restore",
+			"Multiplier":"NUMBER: For Attribute or Proficiency",
+			"RESTORATION_INSTANCE_OPTIONS (not a key)":["ShortRest","LongRest","Dawn","Dusk","StartTurn","EndTurn","Initiative","Item"]
+		}]
+	},
+	"Resources":{
+		"RESOURCE_NAME":{
+			"Name":"STRING: ResourceName (same as parent key)",
+			"DisplayName":"STRING: self explanatory",
+			"Base":"NUMBER: Base amount restored - OPTIONAL, not set if relies entirely on calculations",
+			"Minimum":"NUMBER: Optional minimum amount of resource you can have (for calculated ones)",
+			"Attribute":{
+				"Attribute":"STRING: Attribute modifier used to calculate",
+				"Modifier":"STRING: Add, Multiply, or Divide",
+				"ModifierAmount":"NUMBER: Amount to do the above with"
+			},
+			"Level":{
+				"Modifier":"STRING: Add, Multiply, or Divide",
+				"ModifierAmount":"NUMBER: Amount to do the above with",
+				"ScalingLevels":[
+					{
+						"Level":"NUMBER: Level at which 'Amount' is used for resource amount",
+						"Amount":"NUMBER: Amount of resource at corresponding level"
+					}
+				]
+			},
+			"ClassLevel":{
+				"Modifier":"STRING: Add, Multiply, or Divide",
+				"ModifierAmount":"NUMBER: Amount to do the above with",
+				"ScalingLevels":[
+					{
+						"Level":"NUMBER: Class level at which 'Amount' is used for resource amount",
+						"Amount":"NUMBER: Amount of resource at corresponding class level"
+					}
+				]
+			},
+			"ConditionTier":{
+				"Modifier":"STRING: Add, Multiply, or Divide",
+				"ModifierAmount":"NUMBER: Amount to do the above with"
+			},
+			"Proficiency":{
+				"Modifier":"STRING: Add, Multiply, or Divide",
+				"ModifierAmount":"NUMBER: Amount to do the above with"
+			},
+			"SlotLevel":{
+				"Level":"NUMBER: Base level of spell slot",
+				"Scaling":"STRING: Add, Multiply, or Divide base by scaling amount",
+				"ScalingAmount":"NUMBER: Amount to do the above with"
+			},
+			"DieSize":{
+				"Size":"NUMBER: Base size of die",
+				"Scaling":"STRING: Add, Multiply, or Divide base by scaling amount",
+				"ScalingAmount":"NUMBER: Amount to do the above with"
+			},
+			"TimeUnits":"STRING: Optional units of time"
+		}
+	}
+}

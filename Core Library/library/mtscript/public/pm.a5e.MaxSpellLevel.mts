@@ -9,10 +9,11 @@
 	UseUnsharedSlotsTest = 0
 ]
 
-[h:"<!-- TODO: MaxResource - test this w/ pact magic -->"]
 [h,if(UseUnsharedSlotsTest),CODE:{
-	[h:MatchingUnsharedLevels = js.a5e.GetFeatureSpellSlots(a5e.GatherAbilities(currentToken()))]
-	[h,foreach(slotType,MatchingUnsharedLevels): CastingLevel = CastingLevel + json.get(slotType,"Level")*2]
+	[h:ParentToken = currentToken()]
+	[h:a5e.UnifiedAbilities = a5e.GatherAbilities(ParentToken)]
+	[h:MatchingUnsharedLevels = js.a5e.GetFeatureSpellSlots(a5e.UnifiedAbilities,ParentToken)]
+	[h,foreach(slotType,MatchingUnsharedLevels): CastingLevel = CastingLevel + json.get(slotType,"SlotLevel")*2]
 };{}]
 
 [h:return(0,ceiling(CastingLevel/2))]

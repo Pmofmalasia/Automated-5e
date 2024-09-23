@@ -245,7 +245,7 @@ function expendResource(resources,ParentTokenID){
 		else if(resource.Type === "SpellSlot"){
 			let currentSpellSlots = JSON.parse(ParentToken.getProperty("a5e.stat.SpellSlots"));
 			let spentLevel = resource.Level;
-			currentSpellSlots[spentLevel] = Math.min(currentSpellSlots[spentLevel] - 1,0);
+			currentSpellSlots[spentLevel] = Math.max(currentSpellSlots[spentLevel] - 1,0);
 			ParentToken.setProperty("a5e.stat.SpellSlots",JSON.stringify(currentSpellSlots));
 
 			resourceUsed.push({
@@ -259,7 +259,7 @@ function expendResource(resources,ParentTokenID){
 				ShowIfCondensed:1,
 				Header:"Spell Slots Remaining",
 				FullContents:"",
-				RulesContents:MTScript.execFunction(`[r:pm.SpellSlots("${ParentTokenID}")]`),
+				RulesContents:MTScript.execMacro(`[r:pm.SpellSlots("${ParentTokenID}")]`),
 				RollContents:"",
 				DisplayOrder:["Rules","Roll","Full"]
 			});
@@ -291,7 +291,7 @@ function useResourceTooltip(resourceList,unifiedFeatures,ParentTokenID){
 					ShowIfCondensed:1,
 					Header:"Spell Slots",
 					FullContents:"",
-					RulesContents:MTScript.execFunction(`[r:pm.SpellSlots("${ParentTokenID}")]`),
+					RulesContents:MTScript.execMacro(`[r:pm.SpellSlots("${ParentTokenID}")]`),
 					RollContents:"",
 					DisplayOrder:["Rules","Roll","Full"]
 				});
@@ -301,7 +301,7 @@ function useResourceTooltip(resourceList,unifiedFeatures,ParentTokenID){
 					ShowIfCondensed:1,
 					Header:"Hit Dice",
 					FullContents:"",
-					RulesContents:MTScript.execFunction(`[r:a5e.HitDieDisplay("${ParentTokenID}")]`),
+					RulesContents:MTScript.execMacro(`[r:a5e.HitDieDisplay("${ParentTokenID}")]`),
 					RollContents:"",
 					DisplayOrder:["Rules","Roll","Full"]
 				});
@@ -365,6 +365,10 @@ function findValidFeatureResources(resource,unifiedFeatures,amountNeeded){
 		else{
 			if(feature.Name !== resourceIdentifier.Name || feature["Class"] !== resourceIdentifier["Class"] || feature.Subclass !== resourceIdentifier.Subclass){
 				continue;
+			}
+
+			if(resource.Type === "Item"){
+				if(false){}
 			}
 		}
 

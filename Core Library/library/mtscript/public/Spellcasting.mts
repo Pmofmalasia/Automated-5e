@@ -118,7 +118,7 @@
 	[h:featureSpellSlots = js.a5e.GetFeatureSpellSlots(a5e.UnifiedAbilities,ParentToken)]
 	[h,foreach(resource,featureSpellSlots),if(json.get(resource,"CurrentResource") > 0 && json.get(resource,"SlotLevel") >= SpellLevel),CODE:{
 		[h:LevelOptions = json.append(LevelOptions,json.get(resource,"DisplayName"))]
-		[h:LevelOptionData = json.append(LevelOptionData,json.set(resource,"ResourceType"))]
+		[h:LevelOptionData = json.append(LevelOptionData,json.set(resource,"ResourceType","FeatureSpell"))]
 	}]
 	
 	[h:LevelOptions = json.append(LevelOptions,"Free")]
@@ -413,20 +413,26 @@
 
 [h:pm.PassiveFunction("AfterSpell")]
 
-[h,if(IsCantrip),CODE:{};{
+[h,if(IsCantrip || FreeCasting == 1),CODE:{};{
 	[h,switch(json.get(sLevelSelectData,"ResourceType")),CODE:
 		case "Spell Slots":{
-			[h,if(FreeCasting!=1): setProperty("a5e.stat.SpellSlots",json.set(getProperty("a5e.stat.SpellSlots"),eLevel,json.get(getProperty("a5e.stat.SpellSlots"),eLevel)-1))]
+			[h:FeatureSpellIdentifier = json.get(sLevelSelectData,"Identifier")]
+			[h:FeatureSourceData = json.append("",json.set("","Level",eLevel,"Type","SpellSlot"))]
 		};
 		case "FeatureSpell":{
 			[h:FeatureSpellIdentifier = json.get(sLevelSelectData,"Identifier")]
-			[h:FeatureSourceData = pm.a5e.FeatureSourceData(json.get(FeatureSpellIdentifier,"AbilityType"),FeatureSpellIdentifier)]
-
-			[h:"<!-- TODO: MaxResource - Need to fix how resources are used here, should use a UDF instead of doing it raw -->"]
-			[h,if(FreeCasting!=1): setProperty(json.get(FeatureSourceData,"Property"),json.path.set(getProperty(json.get(FeatureSourceData,"Property")),json.get(FeatureSourceData,"Path")+"['Resource']",json.get(sLevelSelectData,"CurrentResource")-1))]
+			[h:FeatureSpellResourceKey = json.get(sLevelSelectData,"Resource")]
+			[h:FeatureSourceData = json.append("",json.set("",
+				"Feature",FeatureSpellIdentifier,
+				"Key",FeatureSpellResourceKey,
+				"Type","Feature",
+				"Amount",1
+			))]
 		};
 		default:{}
 	]
+
+	[h:ResourceUsedData = js.a5e.ExpendResource(FeatureSourceData,ParentToken)]
 }]
 
 [h:SpellDescriptionData = json.set("",

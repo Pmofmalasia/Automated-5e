@@ -342,4 +342,7 @@
 [h:js.evalURI("pm.a5e.core","lib://pm.a5e.core/GraalVM/createFeatureMacros.js")]
 [h:js.evalURI("pm.a5e.core","lib://pm.a5e.core/GraalVM/AdvanceTime.js")]
 
+[h:defineFunction("zzConvertOldUseResource","zzConvertOldUseResource@Lib:pm.a5e.Core")]
+
+
 [h:broadcast("Startup Initialization Complete.")]

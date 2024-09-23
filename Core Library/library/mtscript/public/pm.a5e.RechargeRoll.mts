@@ -1,8 +1,6 @@
 [h:RechargeData = arg(0)]
 [h:RechargeFeature = arg(1)]
 
-[h:"<!-- TODO: MaxResource fix -->"]
-[h:"<!-- Reminder to fix old monsters -->"]
 [h:ParentToken = json.get(RechargeData,"ParentToken")]
 [h:switchToken(ParentToken)]
 

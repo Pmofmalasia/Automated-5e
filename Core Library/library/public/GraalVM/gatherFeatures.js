@@ -96,7 +96,7 @@ function gatherFeatures(ParentToken,options){
 		let tokenAuras = gatherFeaturesThisToken(token,true);
 		for(let auraFeature of tokenAuras){
 			let auraData = auraFeature.Aura;
-			let validAuraTargets = JSON.parse(MTScript.execFunction(`[h:FilteredTargets = pm.a5e.TargetCreatureFiltering(json.set("","ParentToken","${token}","List",json.append("","${ParentToken}"),"Range",${JSON.stringify(auraData.Range)},${JSON.stringify(auraData.TargetLimits.Creature)}"]`)).ValidTargets;
+			let validAuraTargets = JSON.parse(MTScript.execMacro(`[h:FilteredTargets = pm.a5e.TargetCreatureFiltering(json.set("","ParentToken","${token}","List",json.append("","${ParentToken}"),"Range",${JSON.stringify(auraData.Range)},${JSON.stringify(auraData.TargetLimits.Creature)}"]`)).ValidTargets;
 
 			if(validAuraTargets.indexOf(ParentToken.getId()) !== -1){
 				auraFeature.AuraSource = tokenID;

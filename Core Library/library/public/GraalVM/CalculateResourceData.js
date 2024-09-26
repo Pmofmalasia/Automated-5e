@@ -97,7 +97,7 @@ function calculateResourceData(feature,ParentToken,options){
 			if(AttributeData !== undefined){
 				let allAttributes = ParentToken.getProperty("a5e.stat.Attributes");
 				let allAttributeModifiers = ParentToken.getProperty("a5e.stat.AtrMods");
-				let AttributeModifier = AttributeData.Modifer;
+				let AttributeModifier = AttributeData.Modifier;
 				let AttributeModifierValue = AttributeData.ModifierValue;
 
 				let whichAttribute = AttributeData.Attribute;
@@ -149,7 +149,7 @@ function calculateResourceData(feature,ParentToken,options){
 			let ProficiencyData = thisResource.Proficiency;
 			let ProficiencyBonus = 0;
 			if(ProficiencyData !== undefined){
-				let ProficiencyModifier = ProficiencyData.Modifer;
+				let ProficiencyModifier = ProficiencyData.Modifier;
 				let ProficiencyModifierValue = ProficiencyData.ModifierValue;
 				let Proficiency = ParentToken.getProperty("a5e.stat.Proficiency");
 				if(ProficiencyModifier === "Add"){
@@ -166,10 +166,10 @@ function calculateResourceData(feature,ParentToken,options){
 			let LevelData = thisResource.Level;
 			let LevelBonus = 0;
 			if(LevelData !== undefined){
-				let LevelModifier = LevelData.Modifer;
+				let LevelModifier = LevelData.Modifier;
 				let LevelModifierValue = LevelData.ModifierValue;
 
-				let resourceScalingHow = thisResource.ScalingLevels;
+				let resourceScalingHow = LevelData.ScalingLevels;
 				let featureScalingHow = feature.OverallScaling;
 				let rawLevel = ParentToken.getProperty("a5e.stat.Level");
 				let Level = 0;
@@ -213,10 +213,10 @@ function calculateResourceData(feature,ParentToken,options){
 			let ClassLevelData = thisResource.ClassLevel;
 			let ClassLevelBonus = 0;
 			if(ClassLevelData !== undefined){
-				let ClassLevelModifier = ClassLevelData.Modifer;
+				let ClassLevelModifier = ClassLevelData.Modifier;
 				let ClassLevelModifierValue = ClassLevelData.ModifierValue;
 
-				let resourceScalingHow = thisResource.ScalingLevels;
+				let resourceScalingHow = ClassLevelData.ScalingLevels;
 				let featureScalingHow = feature.OverallScaling;
 				let rawClassLevel = feature.Level;
 				let ClassLevel = 0;
@@ -260,7 +260,7 @@ function calculateResourceData(feature,ParentToken,options){
 			let ConditionTierData = thisResource.ConditionTier;
 			let ConditionTierBonus = 0;
 			if(ConditionTierData !== undefined){
-				let ConditionTierModifier = ConditionTierData.Modifer;
+				let ConditionTierModifier = ConditionTierData.Modifier;
 				let ConditionTierModifierValue = ConditionTierData.ModifierValue;
 				let ConditionTier = feature.Level;
 				if(ConditionTierModifier === "Add"){
@@ -278,14 +278,13 @@ function calculateResourceData(feature,ParentToken,options){
 
 			let resourceFinal;
 			if(thisResource.TimeUnits !== undefined){
+				totalResource = timeInRounds(totalResource,thisResource.TimeUnits);
 				resourceFinal = {
-					[thisResource.TimeUnits]:resourceFinal
+					Duration:totalResource,
+					ExpendedThisUse:0,
+					isActive:0,
+					Type:"Time"
 				};
-
-				//TODO: Decide what to do with time resource. Currently done as completely separate resources - could potentially be folded in with the rest, or could do time stuff by diverting from adding to ResourceMax...
-				//Proposed setup would be the amount/modifier/etc. determining the value, and then special resource input setting the units of time (days, hours, etc.). After calculated, the resource would then be an object containing the value + units, not a simple number.
-				//Barriers to using this - have to go back and change created light objects and the code to make them (minor but annoying); might be difficult to identify which resources are even time resources for purposes of counting down time (the actual problem).
-				//Currently TimeResourceActive is a separate key that provides the state of on/off, could probably merge this into the units+value object - would be in the Resource key though, not MaxResource.
 			}
 			else{
 				resourceFinal = totalResource;
@@ -420,10 +419,15 @@ function getFeatureSpellSlots(unifiedFeatures,ParentToken){
 	return featureSpellSlots;
 }
 
-function diesizeindependentcalcNameTBD(feature,ParentTokenID){
+function getResourceDieSizeMTScript(feature,ParentTokenID){
+	
+}
+
+function getResourceDieSize(feature,ParentToken){
 	
 }
 
 MTScript.registerMacro("a5e.CalculateResourceData",calculateResourceDataMTScript);
 MTScript.registerMacro("a5e.GetMaximumResources",getMaximumResourcesMTScript);
 MTScript.registerMacro("a5e.GetFeatureSpellSlots",getFeatureSpellSlotsMTScript);
+MTScript.registerMacro("a5e.GetResourceDieSize",getResourceDieSizeMTScript);

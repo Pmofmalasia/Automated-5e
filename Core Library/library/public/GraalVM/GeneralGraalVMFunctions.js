@@ -243,3 +243,21 @@ function setFeatureProperty(newFeature,ParentToken,keys){
 		i++;
 	}
 }
+
+function timeInRounds(value,units){
+	if(lower(units) === "year"){
+		return value * 5256000;
+	}
+	else if(lower(units) === "day"){
+		return value * 14400;
+	}
+	else if(lower(units) === "hour"){
+		return value * 600;
+	}
+	else if(lower(units) === "minute"){
+		return value * 10;
+	}
+	else{
+		return value;
+	}
+}

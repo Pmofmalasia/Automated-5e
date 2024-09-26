@@ -19,6 +19,7 @@ function advanceTimeTokens(tokens,timeAdvanced){
 				let thisResourceData = feature.Resources[resource];
 				if(thisResourceData.Type === "Time" && thisResourceData.isActive == 1){
 					feature.Resources[resource].Duration = advanceTime(thisResourceData.Duration,timeAdvanced);
+					feature.Resources[resource].ExpendedThisUse += timeAdvanced;
 
 					if(feature.Resources[resource].Duration === 0){
 						if(thisResourceData.Powering === "this"){
@@ -26,7 +27,7 @@ function advanceTimeTokens(tokens,timeAdvanced){
 							expiredFeatures.push(feature);
 						}
 						else{
-							//find feature/item/etc. it is powering and deactivate that
+							//TODO: MaxResource Time - find feature/item/etc. it is powering and deactivate that. Also, if time expended this use is less than minimum usable, subtract the difference
 						}
 					}
 				}

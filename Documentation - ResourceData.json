@@ -10,6 +10,8 @@
 			"Target":"NUMBER: For Chance, number that must be rolled to restore",
 			"Multiplier":"NUMBER: For Attribute or Proficiency",
 			"RESTORATION_INSTANCE_OPTIONS (not a key)":["ShortRest","LongRest","Dawn","Dusk","StartTurn","EndTurn","Initiative","Item"]
+		},{
+			"NOTE:":"Can just be an object instead of an array of objects if only one type of restoration is needed for that instance (most cases)"
 		}]
 	},
 	"Resources":{
@@ -19,7 +21,11 @@
 			"Base":"NUMBER: Base amount restored - OPTIONAL, not set if relies entirely on calculations",
 			"Minimum":"NUMBER: Optional minimum amount of resource you can have (for calculated ones)",
 			"Attribute":{
-				"Attribute":"STRING: Attribute modifier used to calculate",
+				"Attribute":"STRING or OBJECT: Attribute modifier used to calculate, PrimeStat to use chosen primary stat for feature; OBJECT if there are multiple options for attribute to be selected (NOTE: This structure doesn't exist - it's for calculating PrimeStat. May be good to actually have for resources though).",
+				"Attribute_OBJECT_METHOD":{
+					"Stats":"ARRAY: String names of stats",
+					"EvalMethod":"STRING: max, min, or choose - method of choosing among stats in Stats key."
+				},
 				"Modifier":"STRING: Add, Multiply, or Divide",
 				"ModifierAmount":"NUMBER: Amount to do the above with"
 			},

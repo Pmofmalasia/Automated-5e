@@ -71,12 +71,29 @@ function useResource(resourceList,unifiedFeatures,ParentTokenID){
 					resourceOptions.push(resource);
 				}
 			}
-			else if(resource.Type === "Time"){
-				
-			}
 			else{
 				let amountNeeded = resource.ResourceUsed;
-				if(amountNeeded === undefined){
+
+				if(resource.Type === "Time"){
+					let isActivated = resource.Activate;
+
+					if(isActivated == 1){
+						if(amountNeeded === undefined){
+							amountNeeded = 0;
+						}
+
+						let useInterval = resource.Interval;
+						if(useInterval === undefined){
+							useInterval = 0;
+						}
+
+						amountNeeded = Math.max(amountNeeded,useInterval,1);						
+					}
+					else{
+						amountNeeded = 0;
+					}
+				}
+				else if(amountNeeded === undefined){
 					amountNeeded = 1;
 				}
 
@@ -141,6 +158,9 @@ function useResourceOptions(resourceOptions){
 				thisResourceSecondaryOptionsInput.push(thisHitDieData);
 				thisResourceSecondaryOptionsData.push([]);
 			}
+		}
+		else if(resource.Type === "Time"){
+			
 		}
 		else{
 			let featureResources = resource.CurrentResource;
@@ -266,6 +286,9 @@ function expendResource(resources,ParentTokenID){
 				RollContents:"",
 				DisplayOrder:["Rules","Roll","Full"]
 			});
+		}
+		else if(resource.Type === "Time"){
+
 		}
 	}
 

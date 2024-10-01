@@ -60,14 +60,34 @@
 			"SlotLevel":{
 				"Level":"NUMBER: Base level of spell slot",
 				"Scaling":"STRING: Add, Multiply, or Divide base by scaling amount",
-				"ScalingAmount":"NUMBER: Amount to do the above with"
+				"ScalingAmount":"NUMBER: Amount to do the above with",
+				"Maximum":"NUMBER (OPTIONAL): Maximum spell level"
 			},
 			"DieSize":{
 				"Size":"NUMBER: Base size of die",
 				"Scaling":"STRING: Add, Multiply, or Divide base by scaling amount",
 				"ScalingAmount":"NUMBER: Amount to do the above with"
 			},
-			"TimeUnits":"STRING: Optional units of time"
+			"TimeUnits":"STRING: Optional units of time (required for TimeResource)"
 		}
 	}
 }
+
+[[{
+	"OVERALL_STRUCTURE":"Array of arrays of objects. Each object contains information on how each resource is used. The outer array assigns priority for each resource to be used (e.g. all resources in index 0 must be expended before using resources in index 1). Inner array is solely used for containing the objects, all resources within are equal in terms of priority."
+},{
+	"Type":"STRING: Type of resource used - Feature, SpellSlot, HitDice, or Time. Notes: SpellSlot checks for shared and feature spell slots; feature could potentially be used for feature spell slots, time resources, etc. to ignore the special aspects of those.",
+	"ResourceUsed":"NUMBER: Base amount of resource used. For time resources, denotes minimum amount that must be taken away per use (e.g. use at minimum 5 minutes of time)",
+	"ResourceUsedMax":"NUMBER: Maximum amount of resource that can be spent.",
+	"Increment":"NUMBER: Increment resource can be spent in, if not just a flat number",
+	"Activate":"NUMBER/BOOL: Activates (1) or deactivates (0) chosen resource",
+	"Powering":"OBJECT (PROPOSED): Identifiers for a separate feature that is activated/deactivated when active. 'this' could then refer to just the feature/item being used.",
+	"Identifier":{
+		"NOTE":"For feature/item/etc. resources only.",
+		"Resource":"STRING: Name of resource",
+		"Name":"STRING: Name of feature",
+		"Class":"STRING: Class of feature",
+		"Subclass":"STRING: You get it.",
+		"ItemID":"STRING: ItemID for items. May have it be set to 'this' to use the resource of the object used, needs work though. Currently not set until the item exists (because the ItemID doesn't exist until then)"
+	}
+}]]

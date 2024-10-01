@@ -141,7 +141,7 @@ function useResourceOptions(resourceOptions){
 			}
 
 			if(resource.CurrentResource.FeatureSpellSlots !== undefined){
-				//do stuff - presumably loop through valid feature resources
+				//TODO: MaxResource do stuff - presumably loop through valid feature resources
 			}
 		}
 		else if(resource.Type === "HitDice"){
@@ -160,7 +160,60 @@ function useResourceOptions(resourceOptions){
 			}
 		}
 		else if(resource.Type === "Time"){
-			
+			let featureResources = resource.CurrentResource;
+			let multiFeatureTest = (featureResources.length > 1);
+			for(let feature of featureResources){
+				let resourceIdentifier = resource.Identifier;
+				let resourceKey = resourceIdentifier.Resource;
+				if(resourceKey === undefined){
+					resourceKey = feature.Name;
+				}
+
+				let resourceAmount = feature.Resource[resourceKey];
+				let display = feature.ResourceData.Resources[resourceKey].DisplayName;
+				if(multiFeatureTest){
+					display += ": "+feature.Subclass+" "+feature["Class"];
+				}
+				let primaryData = {
+					Feature:feature,
+					Key:resourceKey,
+					Activate:resource.Activate,
+					Type:"Time",
+				};
+
+				if(resource.Activate == 1){
+					display = "Activate "+display;
+				}
+				else{
+					display = "Deactivate "+display;
+					resourceAmount = resourceAmount.Duration;
+				}
+
+				let timeResourceParameters = {
+					Minimum:resourceUsed,
+					Increment:Increment
+				};
+
+				if(resource.Powering === undefined){
+					timeResourceParameters.Powering = "this";
+				}
+				else{
+					timeResourceParameters.Powering = resource.Powering;
+				}
+
+				primaryData.Parameters = timeResourceParameters;
+
+				resourceOptionsInput.push(display);
+				resourceOptionsData.push(primaryData);
+
+				thisResourceSecondaryOptionsInput = {};
+
+				//Basically serves no purpose here and for hit dice, but needed as a placeholder to make spell slots work. Can eventually be replaced when HTML5 inputs can be used (ha)
+				thisResourceSecondaryOptionsData = {};
+			}
+
+			resourceSecondaryOptionsInput.push(thisResourceSecondaryOptionsInput);
+			resourceSecondaryOptionsData.push(thisResourceSecondaryOptionsData);
 		}
 		else{
 			let featureResources = resource.CurrentResource;
@@ -177,12 +230,14 @@ function useResourceOptions(resourceOptions){
 				if(multiFeatureTest){
 					display += ": "+feature.Subclass+" "+feature["Class"];
 				}
+				let primaryData = {
+					Feature:feature,
+					Key:resourceKey,
+					Type:"Feature"
+				};
 
 				resourceOptionsInput.push(display);
-				resourceOptionsData.push({
-					Feature:feature,
-					Key:resourceKey
-				});
+				resourceOptionsData.push(primaryData);
 
 				let secondaryData = {
 					Minimum:resourceUsed,
@@ -288,7 +343,51 @@ function expendResource(resources,ParentTokenID){
 			});
 		}
 		else if(resource.Type === "Time"){
+			let feature = getFeatureProperty(resource.Feature,ParentToken);
+			let resourceName = resource.Key;
+			let isActivating = resource.Activate;
+			let activationDisplay;
 
+			let currentlyPowering = feature.Resource[resourceName].Powering;
+			if(currentlyPowering === undefined){
+				currentlyPowering = [];
+			}
+
+			if(isActivating == 1){
+				feature.Resource[resourceName].isActive = 1;
+				let poweredFeatureData = {
+					Identifier:resource.Powering,
+					Minimum:resource.Minimum,
+					Increment:resource.Increment
+				}
+				feature.Resource[resourceName].Powering = currentlyPowering.push(poweredFeatureData);
+
+				activationDisplay = "Toggled On";
+			}
+			else{
+				//TODO: MaxResource - Make function for ending time resource and apply it to AdvanceTime also
+
+				activationDisplay = "Toggled Off";
+			}
+
+			setFeatureProperty(feature,ParentToken,["Resource"]);
+			let resourceData = calculateResourceData(feature,ParentToken,{resource:resourceName});
+
+			resourceUsed.push({
+				ResourceName:resourceName,
+				ResourceFeature:resource.Feature,
+				ResourceType:"Time",
+				Used:isActivating
+			});
+
+			chatTable.push({
+				ShowIfCondensed:1,
+				Header:"Time Resource: "+feature.ResourceData.Resources[resourceName].DisplayName,
+				FullContents:"",
+				RulesContents:activationDisplay,
+				RollContents:"",
+				DisplayOrder:["Rules","Roll","Full"]
+			});
 		}
 	}
 
@@ -332,12 +431,43 @@ function useResourceTooltip(resourceList,unifiedFeatures,ParentTokenID){
 					DisplayOrder:["Rules","Roll","Full"]
 				});
 			}
+			else if(resource.Type === "Time"){
+				let matchingResources = findValidFeatureResources(resource,unifiedFeatures);
+				let resourceIdentifier = resource.Identifier;
+				let resourceKey = resourceIdentifier.Resource;
+
+				for(let feature of matchingResources){
+					let resetKeyTest = false;
+					if(resourceKey === undefined){
+						resetKeyTest = true;
+						resourceKey = feature.Name;
+					}
+			
+					let thisResourceData = calculateResourceData(feature,ParentToken,resourceKey);
+					let currentResource = feature.Resource[resourceKey];
+					let currentResourceDisplay = MTScript.execMacro(`[r:pm.a5e.GenerateTimeDisplay(${currentResource})]`)
+
+					chatTable.push({
+						ShowIfCondensed:1,
+						Header:"Time Resource: "+thisResourceData[resourceKey].DisplayName,
+						FullContents:"",
+						RulesContents:currentResourceDisplay,
+						RollContents:"",
+						DisplayOrder:["Rules","Roll","Full"]
+					});
+
+					if(resetKeyTest){
+						resourceKey = undefined;
+					}
+				}
+			}
 			else{
 				let matchingResources = findValidFeatureResources(resource,unifiedFeatures);
 				let resourceIdentifier = resource.Identifier;
 				let resourceKey = resourceIdentifier.Resource;
 
 				for(let feature of matchingResources){
+					//Allows for using feature resources when a resource key is not specified
 					let resetKeyTest = false;
 					if(resourceKey === undefined){
 						resetKeyTest = true;
@@ -360,7 +490,7 @@ function useResourceTooltip(resourceList,unifiedFeatures,ParentTokenID){
 						resourceKey = undefined;
 					}
 				}
-			}			
+			}
 		}
 
 	}
@@ -388,13 +518,27 @@ function findValidFeatureResources(resource,unifiedFeatures,amountNeeded){
 				continue;
 			}
 		}
-		else{
-			if(feature.Name !== resourceIdentifier.Name || feature["Class"] !== resourceIdentifier["Class"] || feature.Subclass !== resourceIdentifier.Subclass){
+		else if(resource.Type === "Item"){
+			if(feature.ItemID === undefined){
 				continue;
 			}
+			//TODO: MaxResource - need ability to find resources on items
+			if(resourceIdentifier.ItemID === "this"){
+				
+			}
+			else{
+				if(feature.ItemID !== resourceIdentifier.ItemID){
+					continue;
+				}
+			}		
+		}
+		else{
+			if(resourceIdentifier.Subclass ===  undefined){
+				resourceIdentifier.Subclass = "";
+			}
 
-			if(resource.Type === "Item"){
-				if(false){}
+			if(feature.Name !== resourceIdentifier.Name || feature["Class"] !== resourceIdentifier["Class"] || feature.Subclass !== resourceIdentifier.Subclass){
+				continue;
 			}
 		}
 

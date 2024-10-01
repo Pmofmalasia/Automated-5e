@@ -8,7 +8,7 @@ function createResourceRows(FeatureData){
 	}
 
 	if(isResourceChoice !== ""){
-		//TODO: MaxResource Still need a way to make display name = chosen spell name
+		//TODO: MaxResourceLowPrio Still need a way to make display name = chosen spell name
 
 		let resourceRowData = [];
 		let resourceListeners = [];
@@ -189,6 +189,8 @@ function createResourceSpecialTypeRow(i){
 		document.getElementById("FeatureTierType").addEventListener("change",createResourceSpecialScaling);
 	}
 	else if(specialResourceType === "SpellSlot"){
+		//TODO: MaxResourceLowPrio - Add ability to set maximum spell level (e.g. Pact Magic) and set to key 'Maximum', or leave undefined if no maximum
+
 		referenceElement = createTableRow(referenceElement,"rowResourceSpecialTypeInfo"+i,"<th><label for='ResourceSpecialSlotLevel"+i+"'>Resource Spell Slot Level:</label></th><td><input type='number' id='ResourceSpecialSlotLevel"+i+"' name='ResourceSpecialSlotLevel"+i+"' class='small-number' value=1 min=1><span id='ResourceSpecialScalingSpan"+i+"'></span></td>");
 
 		document.getElementById("FeatureTierType").addEventListener("change",createResourceSpecialScaling);

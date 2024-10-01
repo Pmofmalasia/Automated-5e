@@ -24,12 +24,13 @@
 ]
 
 [h:resourceType = json.get(firstInputData,resourceChoice)]
-[h,if(json.type(resourceType) != "UNKNOWN"): resourceTypeTemp = "Feature"; resourceTypeTemp = resourceType]
+[h,if(json.type(resourceType) != "UNKNOWN"): resourceTypeTemp = json.get(resourceType,"Type"); resourceTypeTemp = resourceType]
 [h:secondInput = json.get(secondInputOptions,resourceChoice)]
 [h:secondInputDataChoice = json.get(secondInputData,resourceChoice)]
 
 [h,switch(resourceTypeTemp),CODE:
 	case "SpellSlot":{
+		[h:"<!-- TODO: MaxResourceLowPriority - May need the ability to spend multiple spell slots at once -->"]
 		[h,if(json.length(secondInput) == 1):
 			resourceChoice = 0;
 			abort(input(
@@ -53,7 +54,7 @@
 
 		[h,if(needsInput),CODE:{
 			[h:hdInput = ""]
-			[h,foreach(size,secondInput): hdInput = listAppend(hdInput," hitDieChoice"+json.get(size,"DieSize")+" | "+pm.a5e.UseResourceInputOptions(size)+" | "+json.get(size,"DieSize")+"s Used | LIST | VALUE=STRING DELIMITER=JSON "," ## ")]
+			[h,foreach(size,secondInput): hdInput = listAppend(hdInput," hitDieChoice"+json.get(size,"DieSize")+" | "+pm.a5e.UseResourceInputOptions(size)+" | d"+json.get(size,"DieSize")+"s Used | LIST | VALUE=STRING DELIMITER=JSON "," ## ")]
 
 			[h:abort(input(
 				hdInput
@@ -74,7 +75,10 @@
 			))]
 		}]
 	};
-	default:{
+	"Time":{
+		[h:resourceSpent = json.append("",resourceType)]
+	};
+	"Feature":{
 		[h:increment = json.get(secondInput,"Increment")]
 		[h,if(json.type(increment) == "ARRAY"): 
 			incrementTarget = json.get(increment,1) - json.get(increment,0);
@@ -88,12 +92,10 @@
 			))]
 
 			[h:resourceSpent = json.append("",json.set(resourceType,
-				"Type","Feature",
 				"Amount",resourceAmount
 			))]
 		};{
 			[h:resourceSpent = json.append("",json.set(resourceType,
-				"Type","Feature",
 				"Amount",json.get(secondInput,"Minimum")
 			))]
 		}]

@@ -50,55 +50,86 @@
 		" sp.RestoreLongRest | 1 | Spell Slots Restored on Long Rests | CHECK "
 	))]
 	
+	[h:slotLevelData = ""]
 	[h,switch(sp.SpellLevel),CODE:
 		case "Constant Level":{
 			[h:abort(input(
 				" sp.LevelCap | 1,2,3,4,5,6,7,8,9 | Spell Level | LIST | VALUE=STRING "
 			))]
 			
-			[h:sp.SpellLevelExpression = "[r:"+sp.LevelCap+"]"]
+			[h:slotLevelData = json.set("",
+				"Level",sp.LevelCap,
+				"Scaling",0,
+				"ScalingAmount",0
+			)]
 			[h:BaseSpellFilter = json.set(BaseSpellFilter,"MaxLevel",sp.LevelCap,"MinLevel",sp.LevelCap)]
 		};
 		case "Full Caster Pattern":{
-			[h:sp.SpellLevelExpression = "[r:ceiling(pm.GetAbilityLevel(json.set('','Name','"+json.get(sp.SpellcastingAbility,"Name")+"','Class','"+json.get(sp.SpellcastingAbility,"Class")+"','Subclass','"+json.get(sp.SpellcastingAbility,"Subclass")+"'))*(1/2))]"]
+			[h:slotLevelData = json.set("",
+				"Level",1,
+				"Scaling",2,
+				"ScalingAmount",1
+			)]
 			[h:sp.SpellcastingAbility = json.set(sp.SpellcastingAbility,"CasterType",1)]
 		};
 		case "Full Caster With Cap":{
 			[h:abort(input(
 				" sp.LevelCap | 1,2,3,4,5,6,7,8,9 | Max Spell Level | LIST | VALUE=STRING "
 			))]
-			[h:sp.SpellLevelExpression = "[r:min(ceiling(pm.GetAbilityLevel(json.set('','Name','"+json.get(sp.SpellcastingAbility,"Name")+"','Class','"+json.get(sp.SpellcastingAbility,"Class")+"','Subclass','"+json.get(sp.SpellcastingAbility,"Subclass")+"'))*(1/2)),"+sp.LevelCap+")]"]
+			[h:slotLevelData = json.set("",
+				"Level",1,
+				"Scaling",2,
+				"ScalingAmount",1,
+				"Maximum",sp.LevelCap
+			)]
 			[h:sp.SpellcastingAbility = json.set(sp.SpellcastingAbility,"CasterType",1,"CasterCap",sp.LevelCap)]
 			[h:BaseSpellFilter = json.set(BaseSpellFilter,"MaxLevel",sp.LevelCap)]
 		};
 		case "Half Caster Pattern":{
-			[h:sp.SpellLevelExpression = "[r:ceiling(pm.GetAbilityLevel(json.set('','Name','"+json.get(sp.SpellcastingAbility,"Name")+"','Class','"+json.get(sp.SpellcastingAbility,"Class")+"','Subclass','"+json.get(sp.SpellcastingAbility,"Subclass")+"'))*(1/4))]"]
+			[h:slotLevelData = json.set("",
+				"Level",1,
+				"Scaling",4,
+				"ScalingAmount",1
+			)]
 			[h:sp.SpellcastingAbility = json.set(sp.SpellcastingAbility,"CasterType",(1/2))]
 		};
 		case "Half Caster With Cap":{
 			[h:abort(input(
 				" sp.LevelCap | 1,2,3,4,5,6,7,8,9 | Max Spell Level | LIST | VALUE=STRING "
 			))]
-			[h:sp.SpellLevelExpression = "[r:min(ceiling(pm.GetAbilityLevel(json.set('','Name','"+json.get(sp.SpellcastingAbility,"Name")+"','Class','"+json.get(sp.SpellcastingAbility,"Class")+"','Subclass','"+json.get(sp.SpellcastingAbility,"Subclass")+"'))*(1/4)),"+sp.LevelCap+")]"]
+
+			[h:slotLevelData = json.set("",
+				"Level",1,
+				"Scaling",4,
+				"ScalingAmount",1,
+				"Maximum",sp.LevelCap
+			)]
 			[h:sp.SpellcastingAbility = json.set(sp.SpellcastingAbility,"CasterType",(1/2),"CasterCap",sp.LevelCap)]
 			[h:BaseSpellFilter = json.set(BaseSpellFilter,"MaxLevel",sp.LevelCap)]
 		};
 		case "Third Caster Pattern":{
-			[h:sp.SpellLevelExpression = "[r:ceiling(pm.GetAbilityLevel(json.set('','Name','"+json.get(sp.SpellcastingAbility,"Name")+"','Class','"+json.get(sp.SpellcastingAbility,"Class")+"','Subclass','"+json.get(sp.SpellcastingAbility,"Subclass")+"'))*(1/6))]"]
+			[h:slotLevelData = json.set("",
+				"Level",1,
+				"Scaling",6,
+				"ScalingAmount",1
+			)]
 			[h:sp.SpellcastingAbility = json.set(sp.SpellcastingAbility,"CasterType",(1/3))]
 		};
 		case "Third Caster With Cap":{
 			[h:abort(input(
 				" sp.LevelCap | 1,2,3,4,5,6,7,8,9 | Max Spell Level | LIST | VALUE=STRING "
 			))]
-			[h:sp.SpellLevelExpression = "[r:min(ceiling(pm.GetAbilityLevel(json.set('','Name','"+json.get(sp.SpellcastingAbility,"Name")+"','Class','"+json.get(sp.SpellcastingAbility,"Class")+"','Subclass','"+json.get(sp.SpellcastingAbility,"Subclass")+"'))*(1/6)),"+sp.LevelCap+")]"]
+			[h:slotLevelData = json.set("",
+				"Level",1,
+				"Scaling",6,
+				"ScalingAmount",1,
+				"Maximum",sp.LevelCap
+			)]
 			[h:sp.SpellcastingAbility = json.set(sp.SpellcastingAbility,"CasterType",(1/3),"CasterCap",sp.LevelCap)]
 			[h:BaseSpellFilter = json.set(BaseSpellFilter,"MaxLevel",sp.LevelCap)]
 		}
 	]
-[h:"<!-- TODO: MaxResource fix -->"]
-[h:"<!-- TODO: Needs to use new format -->"]
-	[h:sp.SpellcastingAbility = json.set(sp.SpellcastingAbility,"ResourceSpellLevel",sp.SpellLevelExpression)]
+[h:"<!-- TODO: MaxResourceLowPrio - Needs to use new format -->"]
 	
 	[h,if(sp.ResourceType=="Multiple Spell Slot Levels"): sp.ResourceType = "Multiple Resources"]
 	[h:sp.ResourceInfo = pm.ResourceInput(json.set("","Name",json.get(sp.SpellcastingAbility,"Name"),"Class",json.get(sp.SpellcastingAbility,"Class"),"Subclass",json.get(sp.SpellcastingAbility,"Subclass"),"Level",sp.LevelGained),sp.ResourceType)]

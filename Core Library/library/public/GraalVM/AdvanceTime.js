@@ -18,16 +18,20 @@ function advanceTimeTokens(tokens,timeAdvanced){
 			for(let resource of Object.keys(feature.Resources)){
 				let thisResourceData = feature.Resources[resource];
 				if(thisResourceData.Type === "Time" && thisResourceData.isActive == 1){
-					feature.Resources[resource].Duration = advanceTime(thisResourceData.Duration,timeAdvanced);
-					feature.Resources[resource].ExpendedThisUse += timeAdvanced;
+					//Note: usedByNumber allows an item/feature to be used by multiple sources at a time, draining additional time for each feature used
+					let usedByNumber = thisResourceData.Powering.length;
+					let totalTimeAdvanced = timeAdvanced * usedByNumber;
+					feature.Resources[resource].Duration = advanceTime(thisResourceData.Duration,totalTimeAdvanced);
+					feature.Resources[resource].ExpendedThisUse += totalTimeAdvanced;
 
-					if(feature.Resources[resource].Duration === 0){
+					if(feature.Resources[resource].Duration === 0 && false){
+						//TODO: MaxResource - create function for ending TimeResources instead of doing it here (needs to be done manually also)
 						if(thisResourceData.Powering === "this"){
 							feature.IsActive = 0;
 							expiredFeatures.push(feature);
 						}
 						else{
-							//TODO: MaxResource Time - find feature/item/etc. it is powering and deactivate that. Also, if time expended this use is less than minimum usable, subtract the difference
+							//TODO: MaxResourceLowPrio Time - find feature/item/etc. it is powering and deactivate that. Also, if time expended this use is less than minimum usable, subtract the difference
 						}
 					}
 				}

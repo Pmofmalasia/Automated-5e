@@ -3,7 +3,7 @@
 [h:NewItemID = eval("1d10000") + "a5e" + json.get(getInfo("client"),"timeInMs")]
 [h:ChangedItem = json.set(ChangedItem,"ItemID",NewItemID)]
 
-[h:"<!-- TODO: MaxResource - need to update the location of the item ID being updated -->"]
+[h:"<!-- TODO: MaxResource - need to update the location of the item ID being updated; can't use 'this' method yet (see below) -->"]
 
 [h:"<!-- If the item has a subeffect that uses its own resource, put the NewItemID into the subeffect -->"]
 [h:"<!-- TODO: Effects Data Refactoring: Once data is sent in a more consistent manner, for UseResource should just set ItemID to 'this' and grab the correct ID when using the resource. Other options: '' for using any item of that name, an actual ID for using the resource of a DIFFERENT specific item (this one may cause issues if the other item's ID changes) -->"]

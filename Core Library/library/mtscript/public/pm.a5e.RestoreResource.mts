@@ -80,6 +80,8 @@
 	}
 ]
 
+[h:"<!-- TODO: MaxResource - Need to apply this to Time resources - mostly just need to grab from Duration key and set to it instead of setting there. May also need to add 'Units' key - e.g. Fixed restoration of 6 minutes would need to be multiplied out. --?"]
+
 [h:CalculateResourceDataOptions = "{}"]
 [h,if(ResourceKey != ""): json.set(CalculateResourceDataOptions,"resource",ResourceKey)]
 [h:allResourceData = js.a5e.CalculateResourceData(FeatureToRestore,ParentToken,CalculateResourceDataOptions)]

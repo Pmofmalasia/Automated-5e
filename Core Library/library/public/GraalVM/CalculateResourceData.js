@@ -95,10 +95,12 @@ function calculateResourceData(feature,ParentToken,options){
 			let AttributeData = thisResource.Attribute;
 			let AttributeBonus = 0;
 			if(AttributeData !== undefined){
-				let allAttributes = ParentToken.getProperty("a5e.stat.Attributes");
-				let allAttributeModifiers = ParentToken.getProperty("a5e.stat.AtrMods");
+				//TODO: getProperty Bugfix
+				let allAttributes = JSON.parse(ParentToken.getProperty("a5e.stat.Attributes"));
+				let allAttributeModifiers = JSON.parse(MTScript.execMacro(`[r:getProperty("a5e.stat.AtrMods","${ParentToken.getId()}")]`));
+
 				let AttributeModifier = AttributeData.Modifier;
-				let AttributeModifierValue = AttributeData.ModifierValue;
+				let AttributeModifierAmount = AttributeData.ModifierAmount;
 
 				let whichAttribute = AttributeData.Attribute;
 				let Attribute = "";
@@ -136,13 +138,13 @@ function calculateResourceData(feature,ParentToken,options){
 
 				let AttributeValue = allAttributeModifiers[Attribute];
 				if(AttributeModifier === "Add"){
-					AttributeBonus = AttributeValue + AttributeModifierValue;
+					AttributeBonus = AttributeValue + AttributeModifierAmount;
 				}
 				else if(AttributeModifier === "Multiply"){
-					AttributeBonus = AttributeValue * AttributeModifierValue;
+					AttributeBonus = AttributeValue * AttributeModifierAmount;
 				}
 				else if(AttributeModifier === "Divide"){
-					AttributeBonus = Math.floor(AttributeValue / AttributeModifierValue);
+					AttributeBonus = Math.floor(AttributeValue / AttributeModifierAmount);
 				}
 			}
 
@@ -150,16 +152,16 @@ function calculateResourceData(feature,ParentToken,options){
 			let ProficiencyBonus = 0;
 			if(ProficiencyData !== undefined){
 				let ProficiencyModifier = ProficiencyData.Modifier;
-				let ProficiencyModifierValue = ProficiencyData.ModifierValue;
+				let ProficiencyModifierAmount = ProficiencyData.ModifierAmount;
 				let Proficiency = ParentToken.getProperty("a5e.stat.Proficiency");
 				if(ProficiencyModifier === "Add"){
-					ProficiencyBonus = Proficiency + ProficiencyModifierValue;
+					ProficiencyBonus = Proficiency + ProficiencyModifierAmount;
 				}
 				else if(ProficiencyModifier === "Multiply"){
-					ProficiencyBonus = Proficiency * ProficiencyModifierValue;
+					ProficiencyBonus = Proficiency * ProficiencyModifierAmount;
 				}
 				else if(ProficiencyModifier === "Divide"){
-					ProficiencyBonus = Math.floor(Proficiency / ProficiencyModifierValue);
+					ProficiencyBonus = Math.floor(Proficiency / ProficiencyModifierAmount);
 				}
 			}
 
@@ -167,7 +169,7 @@ function calculateResourceData(feature,ParentToken,options){
 			let LevelBonus = 0;
 			if(LevelData !== undefined){
 				let LevelModifier = LevelData.Modifier;
-				let LevelModifierValue = LevelData.ModifierValue;
+				let LevelModifierAmount = LevelData.ModifierAmount;
 
 				let resourceScalingHow = LevelData.ScalingLevels;
 				let featureScalingHow = feature.OverallScaling;
@@ -199,13 +201,13 @@ function calculateResourceData(feature,ParentToken,options){
 					}
 
 					if(LevelModifier === "Add"){
-						LevelBonus = Level + LevelModifierValue;
+						LevelBonus = Level + LevelModifierAmount;
 					}
 					else if(LevelModifier === "Multiply"){
-						LevelBonus = Level * LevelModifierValue;
+						LevelBonus = Level * LevelModifierAmount;
 					}
 					else if(LevelModifier === "Divide"){
-						LevelBonus = Math.floor(Level / LevelModifierValue);
+						LevelBonus = Math.floor(Level / LevelModifierAmount);
 					}
 				}
 			}
@@ -214,7 +216,7 @@ function calculateResourceData(feature,ParentToken,options){
 			let ClassLevelBonus = 0;
 			if(ClassLevelData !== undefined){
 				let ClassLevelModifier = ClassLevelData.Modifier;
-				let ClassLevelModifierValue = ClassLevelData.ModifierValue;
+				let ClassLevelModifierAmount = ClassLevelData.ModifierAmount;
 
 				let resourceScalingHow = ClassLevelData.ScalingLevels;
 				let featureScalingHow = feature.OverallScaling;
@@ -246,13 +248,13 @@ function calculateResourceData(feature,ParentToken,options){
 					}
 
 					if(ClassLevelModifier === "Add"){
-						ClassLevelBonus = ClassLevel + ClassLevelModifierValue;
+						ClassLevelBonus = ClassLevel + ClassLevelModifierAmount;
 					}
 					else if(ClassLevelModifier === "Multiply"){
-						ClassLevelBonus = ClassLevel * ClassLevelModifierValue;
+						ClassLevelBonus = ClassLevel * ClassLevelModifierAmount;
 					}
 					else if(ClassLevelModifier === "Divide"){
-						ClassLevelBonus = Math.floor(ClassLevel / ClassLevelModifierValue);
+						ClassLevelBonus = Math.floor(ClassLevel / ClassLevelModifierAmount);
 					}
 				}
 			}
@@ -261,16 +263,16 @@ function calculateResourceData(feature,ParentToken,options){
 			let ConditionTierBonus = 0;
 			if(ConditionTierData !== undefined){
 				let ConditionTierModifier = ConditionTierData.Modifier;
-				let ConditionTierModifierValue = ConditionTierData.ModifierValue;
+				let ConditionTierModifierAmount = ConditionTierData.ModifierAmount;
 				let ConditionTier = feature.Level;
 				if(ConditionTierModifier === "Add"){
-					ConditionTierBonus = ConditionTier + ConditionTierModifierValue;
+					ConditionTierBonus = ConditionTier + ConditionTierModifierAmount;
 				}
 				else if(ConditionTierModifier === "Multiply"){
-					ConditionTierBonus = ConditionTier * ConditionTierModifierValue;
+					ConditionTierBonus = ConditionTier * ConditionTierModifierAmount;
 				}
 				else if(ConditionTierModifier === "Divide"){
-					ConditionTierBonus = Math.floor(ConditionTier / ConditionTierModifierValue);
+					ConditionTierBonus = Math.floor(ConditionTier / ConditionTierModifierAmount);
 				}
 			}
 
@@ -334,15 +336,29 @@ function calcResourceSlotLevel(slotLevelData,feature){
 	let scalingHow = slotLevelData.Scaling;
 	let baseLevel = slotLevelData.Level;
 	let scalingAmount = slotLevelData.ScalingAmount;
-	let scalingTier = getFeatureScalingLevel(feature);
+	let levelMaximum = slotLevelData.Maximum;
+	let scalingTier;
 
-	if(scalingHow === 0){
+	if(typeof scalingHow === "object"){
+		scalingTier = 1;
+		for(let level of scalingHow){
+			if(feature.Level >= level){
+				scalingTier++;
+			}
+		}
+	}
+	else if(scalingHow === 0){
 		return baseLevel;
 	}
 	else{
-		let slotLevel = baseLevel + (scalingAmount * Math.floor(scalingTier/scalingHow));
-		return slotLevel;
+		scalingTier = getFeatureScalingLevel(feature);
 	}
+
+	let slotLevel = baseLevel + (scalingAmount * Math.floor(scalingTier/scalingHow));
+	if(levelMaximum !== undefined){
+		slotLevel = Math.max(levelMaximum,slotLevel);
+	}
+	return slotLevel;
 }
 
 function calcResourceDieSize(DieSizeData,feature){

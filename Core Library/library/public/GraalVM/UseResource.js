@@ -37,10 +37,15 @@ function useResource(resourceList,unifiedFeatures,ParentTokenID){
 					allValidSlots.SharedSpellSlots = validSpellSlots;
 				}
 
-				let featureSpellSlots = [];
-				//Will need a function for this - then add features to validSpellSlots.Features key
+				let featureSpellSlots = getFeatureSpellSlots(unifiedFeatures,ParentToken);
 				if(!jsonisEmpty(featureSpellSlots)){
-					allValidSlots.FeatureSpellSlots = featureSpellSlots;
+					let validFeatureSpellSlots = [];
+					for(let spellResource of featureSpellSlots){
+						if(spellResource.SlotLevel >= minimumLevel && spellResource.SlotLevel <= maximumLevel){
+							validFeatureSpellSlots.push(spellResource);
+						}
+					}
+					allValidSlots.FeatureSpellSlots = validFeatureSpellSlots;
 				}
 
 				if(!jsonisEmpty(allValidSlots)){
@@ -129,19 +134,23 @@ function useResourceOptions(resourceOptions){
 			resourceOptionsInput.push("Spell Slot");
 			resourceOptionsData.push("SpellSlot");
 
+			if(resource.CurrentResource.FeatureSpellSlots !== undefined){
+				for(let resourceSpell of resource.CurrentResource.FeatureSpellSlots){
+					thisResourceSecondaryOptionsInput.push(resourceSpell.DisplayName);
+					resourceSpell.Type = "FeatureSpell";
+					thisResourceSecondaryOptionsData.push(resourceSpell);
+				}
+			}
+
 			let sharedSpellLevels = resource.CurrentResource.SharedSpellSlots;
 			if(sharedSpellLevels !== undefined){
 				for(let level of Object.keys(sharedSpellLevels)){
 					thisResourceSecondaryOptionsInput.push("Level "+level);
 					thisResourceSecondaryOptionsData.push({
-						Type:"SharedSlot",
-						Level:level
+						Type:"SharedSpell",
+						SlotLevel:level
 					});
 				}
-			}
-
-			if(resource.CurrentResource.FeatureSpellSlots !== undefined){
-				//TODO: MaxResource do stuff - presumably loop through valid feature resources
 			}
 		}
 		else if(resource.Type === "HitDice"){
@@ -320,16 +329,16 @@ function expendResource(resources,ParentTokenID){
 				DisplayOrder:["Rules","Roll","Full"]
 			});
 		}
-		else if(resource.Type === "SpellSlot"){
+		else if(resource.Type === "SharedSpell"){
 			let currentSpellSlots = JSON.parse(ParentToken.getProperty("a5e.stat.SpellSlots"));
-			let spentLevel = resource.Level;
+			let spentLevel = resource.SlotLevel;
 			currentSpellSlots[spentLevel] = Math.max(currentSpellSlots[spentLevel] - 1,0);
 			ParentToken.setProperty("a5e.stat.SpellSlots",JSON.stringify(currentSpellSlots));
 
 			resourceUsed.push({
 				SpellLevel:spentLevel,
 				ResourceName:"Spell Slot",
-				ResourceType:"Spell Slots",
+				ResourceType:"SpellSlot",
 				Used:1,
 			});
 
@@ -338,6 +347,34 @@ function expendResource(resources,ParentTokenID){
 				Header:"Spell Slots Remaining",
 				FullContents:"",
 				RulesContents:MTScript.execMacro(`[r:pm.SpellSlots("${ParentTokenID}")]`),
+				RollContents:"",
+				DisplayOrder:["Rules","Roll","Full"]
+			});
+		}
+		else if(resource.Type === "FeatureSpell"){
+			//TODO: MaxResourceLowPriority - ability for spells to expend more than one resource at once
+
+			let feature = getFeatureProperty(resource.Identifier,ParentToken);
+			let resourceName = resource.Resource;
+			let newResourceAmount = Math.max(feature.Resource[resourceName] - 1,0);
+			feature.Resource[resourceName] = newResourceAmount;
+			setFeatureProperty(feature,ParentToken,["Resource"]);
+
+			let spentLevel = resource.SlotLevel;
+
+			resourceUsed.push({
+				SpellLevel:spentLevel,
+				ResourceFeature:resource.Identifier,
+				ResourceName:resource.DisplayName,
+				ResourceType:"SpellSlot",
+				Used:1
+			});
+
+			chatTable.push({
+				ShowIfCondensed:1,
+				Header:feature.ResourceData.Resources[resourceName].DisplayName+" Remaining",
+				FullContents:"",
+				RulesContents:newResourceAmount+" / "+resourceData.MaxResource,
 				RollContents:"",
 				DisplayOrder:["Rules","Roll","Full"]
 			});
@@ -522,9 +559,9 @@ function findValidFeatureResources(resource,unifiedFeatures,amountNeeded){
 			if(feature.ItemID === undefined){
 				continue;
 			}
-			//TODO: MaxResource - need ability to find resources on items
+			
 			if(resourceIdentifier.ItemID === "this"){
-				
+				//TODO: MaxResourceLowPriority - After refactoring, need to implement this method
 			}
 			else{
 				if(feature.ItemID !== resourceIdentifier.ItemID){

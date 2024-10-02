@@ -1,3 +1,4 @@
+Feature - ResourceData Key:
 {
 	"Restoration":{
 		"RESTORATION_INSTANCE":[{
@@ -73,6 +74,7 @@
 	}
 }
 
+Subeffect - UseResource Key:
 [[{
 	"OVERALL_STRUCTURE":"Array of arrays of objects. Each object contains information on how each resource is used. The outer array assigns priority for each resource to be used (e.g. all resources in index 0 must be expended before using resources in index 1). Inner array is solely used for containing the objects, all resources within are equal in terms of priority."
 },{
@@ -91,3 +93,26 @@
 		"ItemID":"STRING: ItemID for items. May have it be set to 'this' to use the resource of the object used, needs work though. Currently not set until the item exists (because the ItemID doesn't exist until then)"
 	}
 }]]
+
+Code - calculateResourceData Output:
+{
+	"DisplayName":"STRING: Self explanatory.",
+	"MaxResource":"NUMBER | OBJECT: Most resources are numbers - amount of max resource. Time resources are objects (and potentially others in the future).",
+	"MaxResource (Object)":{
+		"Type":"STRING: Type of special resource (currently only Time)",
+		"Duration":"NUMBER: Duration in rounds (for time resources)",
+		"ExpendedThisUse":"NUMBER: Amount of resource expended so far this activation (time resources)",
+		"isActive":"NUMBER/BOOL: If time resource is active or not"
+	},
+	"Type":"STRING: Special resource type, if any. Current types: SpellSlot, Die, Time",
+	"SlotLevel":"NUMBER: Level of resource spell slot (optional)",
+	"DieSize":"NUMBER: Size of resource die (optional)"
+}
+
+Code - getFeatureSpellSlots Output:
+{
+	"SAME AS ABOVE, BUT":"With additional keys as follows",
+	"Identifier":"OBJECT: Identifier for feature (standard name/class/subclass/ItemID/whatever)",
+	"CurrentResource":"NUMBER | OBJECT: Current amount of resource, type dependent on resource type (object only for Time resources currently)",
+	"Resource":"STRING: Name of resource"
+}

@@ -60,6 +60,23 @@
 	]
 };{}]
 
+[h,if(json.get(pm.ResourceInfo,"TimeResource") != ""),CODE:{
+	[h:tempResource = json.get(pm.ResourceInfo,"TimeResource")]
+	[h,if(json.get(tempResource,"ResourceKey") != ""):
+		tempIdentifier = json.set(json.get(tempResource,"Resource"),"Resource",json.get(tempResource,"ResourceKey"));
+		tempIdentifier = json.remove(json.get(tempResource,"Resource"),"Resource")
+	]
+	[h:tempResource = json.set(tempResource,
+		"Type","Time",
+		"Identifier",tempIdentifier,
+		"Powering","this",
+		"Activate",json.get(pm.ResourceInfo,"isTimeActive")
+	)]
+	[h:tempResource = json.remove(tempResource,"Resource")]
+
+	[h:featureOptionsFixed = json.append(featureOptionsFixed,tempResource)]
+};{}]
+
 [h:finalResourceOptions = json.append("",featureOptionsFixed)]
 [h,if(backupFeatureOptionsFixed != ""): finalResourceOptions = json.append(finalResourceOptions,backupFeatureOptionsFixed)]
 

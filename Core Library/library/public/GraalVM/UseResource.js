@@ -87,12 +87,12 @@ function useResource(resourceList,unifiedFeatures,ParentTokenID){
 							amountNeeded = 0;
 						}
 
-						let useInterval = resource.Interval;
-						if(useInterval === undefined){
-							useInterval = 0;
+						let useIncrement = resource.Increment;
+						if(useIncrement === undefined){
+							useIncrement = 0;
 						}
 
-						amountNeeded = Math.max(amountNeeded,useInterval,1);						
+						amountNeeded = Math.max(amountNeeded,useIncrement,1);						
 					}
 					else{
 						amountNeeded = 0;

@@ -9,7 +9,7 @@
 		tempIdentifier = json.remove(json.get(tempResource,"Resource"),"Resource")
 	]
 	[h:tempResource = json.set(tempResource,
-		"Type",if(json.get(tempResource,"ResourceSource") == "","Feature",json.get(tempResource,"ResourceSource")),
+		"SourceType",if(json.get(tempResource,"ResourceSource") == "","Feature",json.get(tempResource,"ResourceSource")),
 		"Identifier",tempIdentifier
 	)]
 	[h:tempResource = json.remove(tempResource,"Resource")]
@@ -26,7 +26,7 @@
 		tempIdentifier = json.remove(json.get(tempResource,"Resource"),"Resource")
 	]
 	[h:tempResource = json.set(tempResource,
-		"Type",if(json.get(tempResource,"ResourceSource") == "","Feature",json.get(tempResource,"ResourceSource")),
+		"SourceType",if(json.get(tempResource,"ResourceSource") == "","Feature",json.get(tempResource,"ResourceSource")),
 		"Identifier",tempIdentifier
 	)]
 	[h:tempResource = json.remove(tempResource,"Resource")]
@@ -38,7 +38,7 @@
 
 [h,if(json.get(pm.ResourceInfo,"HitDice") != ""),CODE:{
 	[h:tempResource = json.get(pm.ResourceInfo,"HitDice")]
-	[h:tempResource = json.set(tempResource,"Type","HitDice")]
+	[h:tempResource = json.set(tempResource,"SourceType","HitDice","Type","HitDice")]
 	[h,if(json.get(tempResource,"Increment") == ""): tempResource = json.set(tempResource,"Increment",1)]
 	[h,if(json.get(tempResource,"ResourceUsedMax") == ""): tempResource = json.set(tempResource,"ResourceUsedMax",json.get(tempResource,"ResourceUsed"))]
 
@@ -50,7 +50,7 @@
 
 [h,if(json.get(pm.ResourceInfo,"SpellSlots") != ""),CODE:{
 	[h:tempResource = json.get(pm.ResourceInfo,"SpellSlots")]
-	[h:tempResource = json.set(tempResource,"Type","SpellSlot")]
+	[h:tempResource = json.set(tempResource,"SourceType","SpellSlot","Type","SpellSlot")]
 	[h,if(json.get(tempResource,"SpellLevelMin") == ""): tempResource = json.set(tempResource,"SpellLevelMin",1)]
 	[h,if(json.get(tempResource,"SpellLevelMax") == ""): tempResource = json.set(tempResource,"SpellLevelMax",9)]
 
@@ -67,12 +67,14 @@
 		tempIdentifier = json.remove(json.get(tempResource,"Resource"),"Resource")
 	]
 	[h:tempResource = json.set(tempResource,
+		"SourceType",if(json.get(tempResource,"ResourceSource") == "","Feature",json.get(tempResource,"ResourceSource")),
 		"Type","Time",
 		"Identifier",tempIdentifier,
 		"Powering","this",
-		"Activate",json.get(pm.ResourceInfo,"isTimeActive")
+		"Activate",json.get(tempResource,"isTimeActive")
 	)]
 	[h:tempResource = json.remove(tempResource,"Resource")]
+	[h:tempResource = json.remove(tempResource,"isTimeActive")]
 
 	[h:featureOptionsFixed = json.append(featureOptionsFixed,tempResource)]
 };{}]

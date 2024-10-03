@@ -118,6 +118,7 @@ function useResource(resourceList,unifiedFeatures,ParentTokenID){
 }
 
 function useResourceOptions(resourceOptions){
+	//TODO: MaxResource High Priority - time/item debugging here next
 	let resourceOptionsData = [];
 	let resourceOptionsInput = [];
 	let resourceSecondaryOptionsData = [];
@@ -540,13 +541,14 @@ function useResourceTooltip(resourceList,unifiedFeatures,ParentTokenID){
 function findValidFeatureResources(resource,unifiedFeatures,amountNeeded){
 	let resourceIdentifier = resource.Identifier;
 	let resourceKey = resourceIdentifier.Resource;
+	let resourceSourceType = resource.SourceType;
 	if(resourceKey === undefined){
 		resourceKey = resourceIdentifier.Name;
 	}
 
 	let matchingResources = [];
 	for(let feature of unifiedFeatures){
-		if((feature.AbilityType !== "Condition" && resource.Type === "Condition") || (feature.AbilityType === "Condition" && resource.Type !== "Condition")){
+		if((feature.AbilityType !== "Condition" && resourceSourceType === "Condition") || (feature.AbilityType === "Condition" && resourceSourceType !== "Condition")){
 			continue;
 		}
 
@@ -555,7 +557,7 @@ function findValidFeatureResources(resource,unifiedFeatures,amountNeeded){
 				continue;
 			}
 		}
-		else if(resource.Type === "Item"){
+		else if(resourceSourceType === "Item"){
 			if(feature.ItemID === undefined){
 				continue;
 			}
@@ -567,7 +569,7 @@ function findValidFeatureResources(resource,unifiedFeatures,amountNeeded){
 				if(feature.ItemID !== resourceIdentifier.ItemID){
 					continue;
 				}
-			}		
+			}
 		}
 		else{
 			if(resourceIdentifier.Subclass ===  undefined){
@@ -580,8 +582,11 @@ function findValidFeatureResources(resource,unifiedFeatures,amountNeeded){
 		}
 
 		let allCurrentResources = feature.Resource;
-
 		let currentResource = allCurrentResources[resourceKey];
+
+		if(resource.Type === "Time"){
+			currentResource = currentResource.Duration;
+		}
 
 		if(amountNeeded === undefined){
 			matchingResources.push(feature);

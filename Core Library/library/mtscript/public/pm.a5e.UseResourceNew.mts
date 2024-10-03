@@ -1,16 +1,18 @@
 [h:ResourceList = arg(0)]
 [h:UnifiedFeatures = arg(1)]
 [h:ParentToken = arg(2)]
-
+[h:broadcast("We in")]
 [h:allInputData = js.a5e.UseResource(ResourceList,UnifiedFeatures,ParentToken)]
 [h:firstInputOptions = json.get(allInputData,"Options")]
 [h:firstInputData = json.get(allInputData,"OptionsData")]
 [h:secondInputOptions = json.get(allInputData,"SecondaryOptions")]
 [h:secondInputData = json.get(allInputData,"SecondaryOptionsData")]
 
+[h:broadcast("out")]
+[h:broadcast(allInputData)]
 [h,switch(json.length(firstInputData)),CODE:
 	case 0:{
-		[h:"<!-- TODO: This is bad for both forced expenditure of the resource (other effects should still happen in that case) and giving autonomy to use the feature anyway (possible annoyance, goes against prior philosophy). Will think of something to do in this instance instead. Possibly a 5th key sent used only for this purpose?-->"]
+		[h:"<!-- TODO: This is bad for both forced expenditure of the resource (other effects should still happen in that case) and giving autonomy to use the feature anyway (possible annoyance, goes against prior philosophy). Will think of something to do in this instance instead. Possibly a 5th key sent used only for this purpose? -->"]
 		[h:assert(0,"You do not have enough resources left to use this!")]
 	};
 	case 1:{
@@ -28,6 +30,7 @@
 [h:secondInput = json.get(secondInputOptions,resourceChoice)]
 [h:secondInputDataChoice = json.get(secondInputData,resourceChoice)]
 
+[h:broadcast("hioooo")]
 [h,switch(resourceTypeTemp),CODE:
 	case "SpellSlot":{
 		[h:"<!-- TODO: MaxResourceLowPriority - May need the ability to spend multiple spell slots at once -->"]
@@ -102,5 +105,6 @@
 	}
 ]
 
+[h:broadcast("haaaaaaaaaaaaa")]
 [h:usedResourceData = js.a5e.ExpendResource(resourceSpent,ParentToken)]
 [h:return(0,usedResourceData)]

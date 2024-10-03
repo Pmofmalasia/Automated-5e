@@ -104,7 +104,8 @@ Code - calculateResourceData Output:
 		"ExpendedThisUse":"NUMBER: Amount of resource expended so far this activation (time resources)",
 		"isActive":"NUMBER/BOOL: If time resource is active or not"
 	},
-	"Type":"STRING: Special resource type, if any. Current types: SpellSlot, Die, Time",
+	"SourceType":"STRING (optional): Where the resource comes from: Item, Feature, Condition, ItemCondition, HitDice, SpellSlot",
+	"Type":"STRING: Special resource type, if any. Current types: SpellSlot, HitDie, Die, Time",
 	"SlotLevel":"NUMBER: Level of resource spell slot (optional)",
 	"DieSize":"NUMBER: Size of resource die (optional)"
 }

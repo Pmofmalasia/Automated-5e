@@ -3,79 +3,6 @@
 [h:ParentToken = json.get(MonsterData,"ParentToken")]
 [h:switchToken(ParentToken)]
 
-[h,if(json.contains(MonsterData,"isInnateSpellcasting")),CODE:{
-    [h:InnateMonsterCast = json.set("",
-        "Name","InnateSpellcasting",
-        "DisplayName","Innate Spellcasting",
-        "Class","Monster",
-        "Subclass","",
-        "Library","SRD",
-        "Level",1,
-        "PrimeStat",json.get(MonsterData,"InnateStat"),
-        "MagicSource","Arcane",
-        "IsActive",1,
-        "CallSpellClass",1,
-        "RestoreLongRest",1
-    )]
-
-    [h:ResourceData = "[r:json.set(''"]
-    [h:ResourceDisplayData = "{}"]
-    [h:InnateSpellList = "[]"]
-    [h:ShortRestRestoreTest = 0]
-    [h:SafeCounter = 0]
-[h:"<!-- TODO: MaxResource HighPrio - Redo setting up resources via UDF, don't do it raw -->"]
-    [h,count(json.get(MonsterData,"InnateSpellNumber")+1),CODE:{
-        [h:thisSpellName = json.get(MonsterData,"InnateSpell"+SafeCounter)]
-        [h:SpellData = pm.a5e.GetSpecificSpell(thisSpellName)]
-        [h:thisSpellDisplayName = json.get(SpellData,"DisplayName")]
-
-        [h:ResourceData = ResourceData + ",'"+thisSpellName+"',"+json.get(MonsterData,"InnateSpell"+SafeCounter+"Resource")]
-        [h:ResourceDisplayData = json.set(ResourceDisplayData,thisSpellName,thisSpellDisplayName)]
-        [h:InnateSpellList = json.append(InnateSpellList,thisSpellName)]
-        [h,if(json.get(MonsterData,"InnateSpell"+SafeCounter+"Restoration")=="Short"): ShortRestRestoreTest = 1]
-
-        [h,MACRO("CreateSpellMacroLabel@Lib:pm.a5e.Core"): thisSpellName]
-        [h:SpellMacroLabel = macro.return]
-        [h:DefaultDisplayData = pm.a5e.BorderColors("zzSpell",json.set("","Level",string(json.get(SpellData,"Level")),"Source","Arcane"),ParentToken)]
-        [h:BorderColor = json.get(DefaultDisplayData,"Border")]
-        [h:TextColor = json.get(DefaultDisplayData,"Title")]
-        [h:CastAtLevel = json.get(MonsterData,"InnateSpell"+SafeCounter+"Level")]
-        [h:SpellMacroCommand = '[h,MACRO("InnateSpellcasting ### Monster@Lib:SRD"): json.set("","ParentToken",currentToken(),"IsTooltip",0,"Spell","'+thisSpellName+'","Level","'+CastAtLevel+'")]']
-        [h:SpellMacroTooltip = '[h,MACRO("InnateSpellcasting ### Monster@Lib:SRD"): json.set("","ParentToken",currentToken(),"IsTooltip",1,"Spell","'+thisSpellName+'","Level","'+CastAtLevel+'")]']
-
-        [h:SpellMacroProps = json.set("",
-            "applyToSelected",0,
-            "autoExecute",1,
-            "color",BorderColor,
-            "command",SpellMacroCommand,
-            "fontColor",TextColor,
-            "fontSize","1.00em",
-            "includeLabel",0,
-            "group","Current Spells",
-            "sortBy",json.get(SpellData,"Level"),
-            "label",SpellMacroLabel,
-            "maxWidth","",
-            "minWidth",89,
-            "playerEditable",0,
-            "tooltip",SpellMacroTooltip,
-            "delim","json"
-        )]
-        [h:createMacro(SpellMacroProps)]
-        [h:SafeCounter = SafeCounter + 1]
-    }]
-
-    [h,if(ShortRestRestoreTest): InnateMonsterCast = json.set(InnateMonsterCast,"RestoreShortRest",1)]
-
-    [h:ResourceData = ResourceData + ")]"]
-[h:"<!-- TODO: MaxResource fix -->"]
-    [h:InnateMonsterCast = json.set(InnateMonsterCast,
-        "MaxResource",ResourceData,
-        "ResourceDisplayName",ResourceDisplayData
-    )]
-    
-    [h:setProperty("a5e.stat.AllFeatures",json.append(getProperty("a5e.stat.AllFeatures"),InnateMonsterCast))]
-};{}]
-
 [h,if(json.contains(MonsterData,"isSlotSpellcasting")),CODE:{
     [h:SlotMonsterCast = json.set("",
         "Name","Spellcasting",
@@ -110,5 +37,119 @@
     [h:setProperty("a5e.stat.MaxSpellSlots",table("Spell Slots",a5e.CastingLevel()))]
     [h:setProperty("a5e.stat.SpellSlots",getProperty("a5e.stat.MaxSpellSlots"))]
 };{}]
+
+[h,if(!json.contains(MonsterData,"isInnateSpellcasting")),CODE:{
+	[h:closeDialog("MonsterSpellcastingCreation")]
+	[h:return(0)]
+};{}]
+
+[h:InnateMonsterCast = json.set("",
+	"Name","InnateSpellcasting",
+	"DisplayName","Innate Spellcasting",
+	"Class","Monster",
+	"Subclass","",
+	"Library","SRD",
+	"Level",1,
+	"PrimeStat",json.get(MonsterData,"InnateStat"),
+	"MagicSource","Arcane",
+	"IsActive",1,
+	"CallSpellClass",1
+)]
+
+[h:MaxResource = ""]
+[h:ResourceData = ""]
+[h:ShortRestRestoreResources = ""]
+[h:LongRestRestoreResources = ""]
+[h:hasResource = ""]
+[h:InnateSpellList = "[]"]
+
+[h:SafeCounter = 0]
+[h:"<!-- Hardcoded: Resource -->"]
+
+[h,count(json.get(MonsterData,"InnateSpellNumber")+1),CODE:{
+	[h:thisSpellName = json.get(MonsterData,"InnateSpell"+SafeCounter)]
+	[h:SpellData = pm.a5e.GetSpecificSpell(thisSpellName)]
+	[h:thisSpellDisplayName = json.get(SpellData,"DisplayName")]
+
+	[h:RestorationType = json.get(MonsterData,"InnateSpell"+SafeCounter+"Restoration")]
+	[h,if(RestorationType == "AtWill"),CODE:{
+		[h:"<!-- TODO: MaxResource HighPrio - a key needs to be set to AtWill somewhere, need to check the updated file at home for where exactly. -->"]
+	};{
+		[h,if(RestorationType == "Short"): ShortRestRestoreResources = json.append(ShortRestRestoreResources,thisSpellName)]
+		[h:LongRestRestoreResources = json.append(LongRestRestoreResources,thisSpellName)]
+		[h:thisResourceAmount = json.get(MonsterData,"InnateSpell"+SafeCounter+"Resource")]
+		[h:MaxResource = json.set(MaxResource,thisSpellName,thisResourceAmount)]
+		[h:thisResourceData = json.set("",
+			"Name",thisSpellName,
+			"DisplayName",thisSpellDisplayName,
+			"Base",thisResourceAmount
+		)]
+		[h:ResourceData = json.set(ResourceData,thisSpellName,thisResourceData)]
+		[h:InnateSpellList = json.append(InnateSpellList,thisSpellName)]
+		[h:hasResource = json.append(hasResource,thisSpellName)]
+	}]
+
+	[h,MACRO("CreateSpellMacroLabel@Lib:pm.a5e.Core"): thisSpellName]
+	[h:SpellMacroLabel = macro.return]
+	[h:DefaultDisplayData = pm.a5e.BorderColors("zzSpell",json.set("","Level",string(json.get(SpellData,"Level")),"Source","Arcane"),ParentToken)]
+	[h:BorderColor = json.get(DefaultDisplayData,"Border")]
+	[h:TextColor = json.get(DefaultDisplayData,"Title")]
+	[h:CastAtLevel = json.get(MonsterData,"InnateSpell"+SafeCounter+"Level")]
+	[h:SpellMacroCommand = '[h,MACRO("InnateSpellcasting ### Monster@Lib:SRD"): json.set("","ParentToken",currentToken(),"IsTooltip",0,"Spell","'+thisSpellName+'","Level","'+CastAtLevel+'")]']
+	[h:SpellMacroTooltip = '[h,MACRO("InnateSpellcasting ### Monster@Lib:SRD"): json.set("","ParentToken",currentToken(),"IsTooltip",1,"Spell","'+thisSpellName+'","Level","'+CastAtLevel+'")]']
+
+	[h:SpellMacroProps = json.set("",
+		"applyToSelected",0,
+		"autoExecute",1,
+		"color",BorderColor,
+		"command",SpellMacroCommand,
+		"fontColor",TextColor,
+		"fontSize","1.00em",
+		"includeLabel",0,
+		"group","Current Spells",
+		"sortBy",json.get(SpellData,"Level"),
+		"label",SpellMacroLabel,
+		"maxWidth","",
+		"minWidth",89,
+		"playerEditable",0,
+		"tooltip",SpellMacroTooltip,
+		"delim","json"
+	)]
+	[h:createMacro(SpellMacroProps)]
+	[h:SafeCounter = SafeCounter + 1]
+}]
+
+[h,if(!json.isEmpty(hasResource)),CODE:{
+	[h:RestorationData = ""]
+	[h:baseRestorationData = json.set("",
+		"Method","Full"
+	)]
+	[h,if(!json.isEmpty(ShortRestRestoreResources)),CODE:{
+		[h,if(json.equals(hasResource,ShortRestRestoreResources)):
+			shortRestInstance = baseRestorationData;
+			shortRestInstance = json.set(baseRestorationData,"Name",ShortRestRestoreResources)
+		]
+
+		[h:RestorationData = json.set(RestorationData,"ShortRest",shortRestInstance)]	
+	};{}]
+
+	
+	[h,if(json.equals(hasResource,LongRestRestoreResources)):
+		longRestInstance = baseRestorationData;
+		longRestInstance = json.set(baseRestorationData,"Name",LongRestRestoreResources)
+	]
+	[h:RestorationData = json.set(RestorationData,"LongRest",longRestInstance)]
+
+	[h:FinalResourceData = json.set("",
+		"Resources",ResourceData,
+		"Restoration",RestorationData
+	)]
+	[h:InnateMonsterCast = json.set(InnateMonsterCast,
+		"Resource",MaxResource,
+		"ResourceData",FinalResourceData
+	)]	
+}]
+
+[h:setProperty("a5e.stat.AllFeatures",json.append(getProperty("a5e.stat.AllFeatures"),InnateMonsterCast))]
 
 [h:closeDialog("MonsterSpellcastingCreation")]

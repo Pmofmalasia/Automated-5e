@@ -78,7 +78,7 @@ Subeffect - UseResource Key:
 [[{
 	"OVERALL_STRUCTURE":"Array of arrays of objects. Each object contains information on how each resource is used. The outer array assigns priority for each resource to be used (e.g. all resources in index 0 must be expended before using resources in index 1). Inner array is solely used for containing the objects, all resources within are equal in terms of priority."
 },{
-	"Type":"STRING: Type of resource used - Feature, SpellSlot, HitDice, or Time. Notes: SpellSlot checks for shared and feature spell slots; feature could potentially be used for feature spell slots, time resources, etc. to ignore the special aspects of those.",
+	"Type":"STRING: Type of resource used - Feature, SpellSlot, HitDice, or Time. Notes: SpellSlot checks for shared and feature spell slots; feature could potentially be used for feature spell slots, time resources, etc. to ignore the special aspects of those." - Change to SourceType/Type split?,
 	"ResourceUsed":"NUMBER: Base amount of resource used. For time resources, denotes minimum amount that must be taken away per use (e.g. use at minimum 5 minutes of time)",
 	"ResourceUsedMax":"NUMBER: Maximum amount of resource that can be spent.",
 	"Increment":"NUMBER: Increment resource can be spent in, if not just a flat number",

@@ -65,19 +65,22 @@
 
 [h:SafeCounter = 0]
 [h:"<!-- Hardcoded: Resource -->"]
-
-[h,count(json.get(MonsterData,"InnateSpellNumber")+1),CODE:{
+[h:broadcast("Num: "+json.get(MonsterData,"InnateSpellNumber"))]
+[h,count(json.get(MonsterData,"InnateSpellNumber")),CODE:{
 	[h:thisSpellName = json.get(MonsterData,"InnateSpell"+SafeCounter)]
 	[h:SpellData = pm.a5e.GetSpecificSpell(thisSpellName)]
 	[h:thisSpellDisplayName = json.get(SpellData,"DisplayName")]
+	[h:broadcast(thisSpellDisplayName)]
 
-	[h:RestorationType = json.get(MonsterData,"InnateSpell"+SafeCounter+"Restoration")]
-	[h,if(RestorationType == "AtWill"),CODE:{
-		[h:"<!-- TODO: MaxResource HighPrio - a key needs to be set to AtWill somewhere, need to check the updated file at home for where exactly. -->"]
+	[h:RestorationType = json.get(MonsterData,"InnateSpellRestoration"+SafeCounter)]
+	[h:isAtWill = RestorationType == "AtWill"]
+	[h,if(isAtWill),CODE:{
+		[h:AtWillSetting = ',"isAtWill",1']
 	};{
+		[h:AtWillSetting = ',"isAtWill",0']
 		[h,if(RestorationType == "Short"): ShortRestRestoreResources = json.append(ShortRestRestoreResources,thisSpellName)]
 		[h:LongRestRestoreResources = json.append(LongRestRestoreResources,thisSpellName)]
-		[h:thisResourceAmount = json.get(MonsterData,"InnateSpell"+SafeCounter+"Resource")]
+		[h:thisResourceAmount = json.get(MonsterData,"InnateSpellResource"+SafeCounter)]
 		[h:MaxResource = json.set(MaxResource,thisSpellName,thisResourceAmount)]
 		[h:thisResourceData = json.set("",
 			"Name",thisSpellName,
@@ -94,9 +97,9 @@
 	[h:DefaultDisplayData = pm.a5e.BorderColors("zzSpell",json.set("","Level",string(json.get(SpellData,"Level")),"Source","Arcane"),ParentToken)]
 	[h:BorderColor = json.get(DefaultDisplayData,"Border")]
 	[h:TextColor = json.get(DefaultDisplayData,"Title")]
-	[h:CastAtLevel = json.get(MonsterData,"InnateSpell"+SafeCounter+"Level")]
-	[h:SpellMacroCommand = '[h,MACRO("InnateSpellcasting ### Monster@Lib:SRD"): json.set("","ParentToken",currentToken(),"IsTooltip",0,"Spell","'+thisSpellName+'","Level","'+CastAtLevel+'")]']
-	[h:SpellMacroTooltip = '[h,MACRO("InnateSpellcasting ### Monster@Lib:SRD"): json.set("","ParentToken",currentToken(),"IsTooltip",1,"Spell","'+thisSpellName+'","Level","'+CastAtLevel+'")]']
+	[h:CastAtLevel = json.get(MonsterData,"InnateSpellLevel"+SafeCounter)]
+	[h:SpellMacroCommand = '[h,MACRO("InnateSpellcasting ### Monster@Lib:SRD"): json.set("","ParentToken",currentToken(),"IsTooltip",0,"Spell","'+thisSpellName+'","Level","'+CastAtLevel+'"'+AtWillSetting+')]']
+	[h:SpellMacroTooltip = '[h,MACRO("InnateSpellcasting ### Monster@Lib:SRD"): json.set("","ParentToken",currentToken(),"IsTooltip",1,"Spell","'+thisSpellName+'","Level","'+CastAtLevel+'"'+AtWillSetting+')]']
 
 	[h:SpellMacroProps = json.set("",
 		"applyToSelected",0,

@@ -14,7 +14,7 @@ async function createInnateInfo(){
 
 		referenceElement = createTableRow(referenceElement,"rowInnateStat","<th><label for='InnateStat'>Innate Spellcasting Stat:</label></th><td><select id='InnateStat' name='InnateStat'>"+StatOptions+"</select></td>");
 
-		referenceElement = createTableRow(referenceElement,"rowInnateSpellTitle","<th colspan='2' text-align='center'>Choose Innate Spells</th><input type='hidden' id='InnateSpellNumber' name='InnateSpellNumber' value=0>");
+		referenceElement = createTableRow(referenceElement,"rowInnateSpellTitle","<th colspan='2' style='text-align:center'>Choose Innate Spells</th>");
 
         let response = await fetch("macro:pm.a5e.GetBaseSpellData@lib:pm.a5e.Core", {method: "POST", body: ""});
         let SpellList = await response.json();
@@ -26,53 +26,34 @@ async function createInnateInfo(){
             SpellOptions = SpellOptions + "<option value='"+SpellName+"'>"+SpellDisplayName+"</option>";
         }
 
-		referenceElement = createTableRow(referenceElement,"rowInnateSpell0","<th colspan='2' text-align='center'>Level <input type='number' id='InnateSpell0Level' name='InnateSpell0Level' style='width:25px'><select id='InnateSpell0' name='InnateSpell0' onchange='setDefaultInnateLevel(0)'>"+SpellOptions+"</select>, <input type='number' id='InnateSpell0Resource' name='InnateSpell0Resource' min=1 value=1 style='width:25px'> times per <select id='InnateSpell0Restoration' name='InnateSpell0Restoration'><option value='Short'>Short Rest</option><option value='Long' selected>Long Rest</option></select></th>");
+		let innateInputListeners = [
+			{
+				elementID:"InnateSpell",
+				listener:"change",
+				functionName:"setDefaultInnateLevel",
+				functionArgs:[]
+			},
+			{
+				elementID:"InnateSpellRestoration",
+				listener:"change",
+				functionName:"toggleAtWill",
+				functionArgs:[]
+			}
+		]
+		createMultiRowButtonsInput("InnateSpell",referenceElement,"<th colspan='2' style='text-align:center'>Level <input type='number' id='InnateSpellLevel' name='InnateSpellLevel' style='width:25px'><select id='InnateSpell' name='InnateSpell'>"+SpellOptions+"</select>: <span id='InnateSpellResourceSpan'><input type='number' id='InnateSpellResource' name='InnateSpellResource' min=1 value=1 class='small-number'> time(s) per </span><select id='InnateSpellRestoration' name='InnateSpellRestoration'><option value='Long'>Long Rest</option><option value='Short'>Short Rest</option><option value='AtWill'>At Will</option></select></th>","Spell",innateInputListeners);
 
-		referenceElement = createTableRow(referenceElement,"rowInnateAdditionButtons","<th text-align='center' colspan='2'><input type='button' id='addInnateSpell' name='addInnateSpell' value='Add' onclick='addInnateSpellRow()'>  <input type='button' id='removeInnateSpell' name='removeInnateSpell' value='Remove' onclick='removeInnateSpellRow()'></th>");
-
-        setDefaultInnateLevel(0);
+		document.getElementById("InnateSpell0").dispatchEvent(new Event("change"));
+		document.getElementById("AddInnateSpellButton").addEventListener("click",function(){
+			setDefaultInnateLevel(Number(document.getElementById("InnateSpellNumber").value) - 1);
+		});
     }
     else{
         clearUnusedTable("rowIsInnateSpellcasting","rowisSlotSpellcasting");
     } 
 }
 
-async function addInnateSpellRow(){
-	//TODO: MaxResource - this gets the current number of spells by looping through the rows (ew). Should rework this and use the standardized form + add At Will functionality.
-    let table = document.getElementById("MonsterSpellcastingCreationTable");
-    let nextRowIndex = document.getElementById("rowInnateSpellTitle").rowIndex + 1;
-    let nextInnateNumber = 0;
-    while(nextRowIndex != document.getElementById("rowInnateAdditionButtons").rowIndex){
-        nextRowIndex++;
-        nextInnateNumber++;
-    }
-
-    let response = await fetch("macro:pm.a5e.GetBaseSpellData@lib:pm.a5e.Core", {method: "POST", body: ""});
-    let SpellList = await response.json();
-
-    let SpellOptions = "";
-    for(let tempSpell of SpellList){
-        let SpellName = tempSpell.Name;
-        let SpellDisplayName = tempSpell.DisplayName;
-        SpellOptions = SpellOptions + "<option value='"+SpellName+"'>"+SpellDisplayName+"</option>";
-    }
-
-    let rowNewInnateSpell = table.insertRow(nextRowIndex);
-    rowNewInnateSpell.id = "rowInnateSpell"+nextInnateNumber;
-    rowNewInnateSpell.innerHTML = "<th colspan='2' text-align='center'>Level <input type='number' id='InnateSpell"+nextInnateNumber+"Level' name='InnateSpell"+nextInnateNumber+"Level' style='width:25px'><select id='InnateSpell"+nextInnateNumber+"' name='InnateSpell"+nextInnateNumber+"' onchange='setDefaultInnateLevel("+nextInnateNumber+")'>"+SpellOptions+"</select>, <input type='number' id='InnateSpell"+nextInnateNumber+"Resource' name='InnateSpell"+nextInnateNumber+"Resource' min=1 value=1 style='width:25px'> times per <select id='InnateSpell"+nextInnateNumber+"Restoration' name='InnateSpell"+nextInnateNumber+"Restoration'><option value='Short'>Short Rest</option><option value='Long' selected>Long Rest</option></select></th>";
-    nextRowIndex++;
-
-    document.getElementById("InnateSpellNumber").value = nextInnateNumber;
-}
-
-async function removeInnateSpellRow(){
-    let table = document.getElementById("MonsterSpellcastingCreationTable");
-    let currentInnateNumber = document.getElementById("InnateSpellNumber").value;
-    table.deleteRow(document.getElementById("rowInnateSpell"+currentInnateNumber).rowIndex);
-    document.getElementById("InnateSpellNumber").value = currentInnateNumber - 1;
-}
-
 async function setDefaultInnateLevel(whichSpell){
+	console.log(whichSpell);
     let response = await fetch("macro:pm.a5e.GetBaseSpellData@lib:pm.a5e.Core", {method: "POST", body: ""});
     let SpellList = await response.json();
 
@@ -84,7 +65,19 @@ async function setDefaultInnateLevel(whichSpell){
         }
     }
     
-    document.getElementById("InnateSpell"+whichSpell+"Level").value = SpellLevel;
+    document.getElementById("InnateSpellLevel"+whichSpell).value = SpellLevel;
+}
+
+function toggleAtWill(whichSpell){
+	let restorationChoice = document.getElementById("InnateSpellRestoration"+whichSpell).value;
+	let resourceSpan = document.getElementById("InnateSpellResourceSpan"+whichSpell);
+
+	if(restorationChoice === "AtWill"){
+		resourceSpan.innerHTML = "";
+	}
+	else if(resourceSpan.innerHTML === ""){
+		resourceSpan.innerHTML = "<input type='number' id='InnateSpellResource' name='InnateSpellResource' min=1 value=1 class='small-number'> time(s) per ";
+	}
 }
 
 async function createSlotInfo() {

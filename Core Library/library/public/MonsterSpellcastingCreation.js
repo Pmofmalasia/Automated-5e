@@ -53,7 +53,6 @@ async function createInnateInfo(){
 }
 
 async function setDefaultInnateLevel(whichSpell){
-	console.log(whichSpell);
     let response = await fetch("macro:pm.a5e.GetBaseSpellData@lib:pm.a5e.Core", {method: "POST", body: ""});
     let SpellList = await response.json();
 

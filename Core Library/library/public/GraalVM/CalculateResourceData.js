@@ -151,9 +151,10 @@ function calculateResourceData(feature,ParentToken,options){
 			let ProficiencyData = thisResource.Proficiency;
 			let ProficiencyBonus = 0;
 			if(ProficiencyData !== undefined){
+				//TODO: getProperty Bugfix
 				let ProficiencyModifier = ProficiencyData.Modifier;
 				let ProficiencyModifierAmount = ProficiencyData.ModifierAmount;
-				let Proficiency = ParentToken.getProperty("a5e.stat.Proficiency");
+				let Proficiency = JSON.parse(MTScript.execMacro(`[r:getProperty("a5e.stat.Proficiency","${ParentToken.getId()}")]`));
 				if(ProficiencyModifier === "Add"){
 					ProficiencyBonus = Proficiency + ProficiencyModifierAmount;
 				}

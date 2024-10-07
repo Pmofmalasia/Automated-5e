@@ -118,7 +118,6 @@ function useResource(resourceList,unifiedFeatures,ParentTokenID){
 }
 
 function useResourceOptions(resourceOptions){
-	//TODO: MaxResource High Priority - time/item debugging here next
 	let resourceOptionsData = [];
 	let resourceOptionsInput = [];
 	let resourceSecondaryOptionsData = [];
@@ -296,7 +295,8 @@ function expendResource(resources,ParentTokenID){
 				ResourceName:resourceName,
 				ResourceFeature:resource.Feature,
 				ResourceType:"Feature",
-				Used:resource.Amount
+				Used:resource.Amount,
+				Tier:resource.Tier
 			});
 
 			chatTable.push({
@@ -323,7 +323,7 @@ function expendResource(resources,ParentTokenID){
 
 			chatTable.push({
 				ShowIfCondensed:1,
-				Header:spentSize+" Hit Dice Remaining",
+				Header:"d"+spentSize+" Hit Dice Remaining",
 				FullContents:"",
 				RulesContents:currentHitDice[spentSize]+" / "+ParentToken.getProperty("a5e.stat.MaxHitDice"),
 				RollContents:"",
@@ -353,7 +353,7 @@ function expendResource(resources,ParentTokenID){
 			});
 		}
 		else if(resource.Type === "FeatureSpell"){
-			//TODO: MaxResourceLowPriority - ability for spells to expend more than one resource at once
+			//TODO: Resource - ability for spells to expend more than one resource at once
 
 			let feature = getFeatureProperty(resource.Identifier,ParentToken);
 			let resourceName = resource.Resource;
@@ -563,7 +563,8 @@ function findValidFeatureResources(resource,unifiedFeatures,amountNeeded){
 			}
 			
 			if(resourceIdentifier.ItemID === "this"){
-				//TODO: MaxResourceLowPriority - After refactoring, need to implement this method
+				//TODO: Resource - After refactoring, need to implement this method
+				//TODO: Refactoring - see above
 			}
 			else{
 				if(feature.ItemID !== resourceIdentifier.ItemID){

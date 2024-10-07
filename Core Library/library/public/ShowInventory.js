@@ -1,7 +1,6 @@
 async function createInventoryTable(){
 	let allItemsWeight = 0;
 	let allItemRows = "";
-	let currentDepth = 1;
 	let containerDepths = {};
 
 	for(let Item of Inventory){
@@ -33,29 +32,27 @@ async function createInventoryTable(){
 	if(debug){console.log("2");}
 	
 		let NumberDisplay = "";
-		if(Item.MaxResource == undefined){
+		if(Item.ResourceData == undefined){
 			NumberDisplay = ItemNumber;
 		}
 		else{
-			let ResourceData = await MTFunction("evalMacro",[Item.MaxResource]);
+			let ResourceData = await MTFunction("js.a5e.CalculateResourceData",[Item,ParentToken]);
 			if(debug){console.log("3");}
-			if(typeof ResourceData == "number"){
-				NumberDisplay = Item.Resource+"<b>/</b>"+ResourceData;
-			}
-			else{
-				let resourceNames = Object.keys(ResourceData);
-				let resourceDisplayNames = Item.ResourceDisplayName;
-				let isFirst = true;
-				for(let tempResourceName of resourceNames){
-					if(isFirst){
-						//I'm like 99% sure there's a function that would make doing this unnecessary but I don't feel like finding it
-						isFirst = false;
-					}
-					else{
-						NumberDisplay = NumberDisplay + "<br>";
-					}
-					NumberDisplay = NumberDisplay + resourceDisplayNames[tempResourceName]+": " + Item.Resource[tempResourceName] + "<b>/</b>" + ResourceData[tempResourceName];
+			let resourceNames = Object.keys(ResourceData);
+			let isFirst = true;
+			for(let tempResourceName of resourceNames){
+				if(isFirst){
+					//I'm like 99% sure there's a function that would make doing this unnecessary but I don't feel like finding it
+					isFirst = false;
 				}
+				else{
+					NumberDisplay += "<br>";
+				}
+				let thisResourceData = ResourceData[tempResourceName];
+				if(resourceNames.length > 1){
+					NumberDisplay += thisResourceData.DisplayName + ": ";
+				}
+				NumberDisplay += Item.Resource[tempResourceName] + "<b>/</b>" + thisResourceData.MaxResource;
 			}
 		}
 		if(debug){console.log("4");}
@@ -457,11 +454,15 @@ async function useItem(ItemID){
 	itemData = getItemData(ItemID);
 	itemData.ParentToken = ParentToken;
 	itemData.IsTooltip = 0;
-
-	let request = await fetch("macro:UseItem@Lib:pm.a5e.Core", {method: "POST", body: JSON.stringify(itemData)});
-	let resultingInventory = await request.json();
-
-	//compare resultingInventory with Inventory here to find differences, then update those rows
+	try {
+		let request = await fetch("macro:UseItem@Lib:pm.a5e.Core", {method: "POST", body: JSON.stringify(itemData)});
+		let resultingInventory = await request.json();
+		
+		//compare resultingInventory with Inventory here to find differences, then update those rows
+	} catch (error) {
+		console.log("HI");
+		console.log(error.message);
+	}
 }
 
 async function castSpell(ItemID){

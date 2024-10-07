@@ -25,7 +25,7 @@ function advanceTimeTokens(tokens,timeAdvanced){
 					feature.Resources[resource].ExpendedThisUse += totalTimeAdvanced;
 
 					if(feature.Resources[resource].Duration === 0 && false){
-						//TODO: MaxResource - create function for ending TimeResources instead of doing it here (needs to be done manually also)
+						//TODO: MaxResource HighPriority - create function for ending TimeResources instead of doing it here (needs to be done manually also)
 						if(thisResourceData.Powering === "this"){
 							feature.IsActive = 0;
 							expiredFeatures.push(feature);

@@ -235,7 +235,7 @@ function sortData(data,key){
 				return 1;
 			}
 				return 0;
-		});		
+		});
 	}
 	else{
 		return data.sort(function(a,b){
@@ -265,7 +265,7 @@ async function MTFunction(functionName,functionArgs){
 	if(!Array.isArray(functionArgs)){
 		functionArgs = [functionArgs];
 	}
-	let request = await fetch("macro:js.a5e.MaptoolFunction@Lib:pm.a5e.Core", {method: "POST", body: "["+functionName+","+JSON.stringify(functionArgs)+"]"});
+	let request = await fetch("macro:js.a5e.MaptoolFunction@Lib:pm.a5e.Core", {method: "POST", body: JSON.stringify([functionName,functionArgs])});
 	let result = await request.json();
 	return result[0];
 }

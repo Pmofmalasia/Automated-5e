@@ -80,7 +80,7 @@
 	}
 ]
 
-[h:"<!-- TODO: MaxResource - Need to apply this to Time resources - mostly just need to grab from Duration key and set to it instead of setting there. May also need to add 'Units' key - e.g. Fixed restoration of 6 minutes would need to be multiplied out. --?"]
+[h:"<!-- TODO: MaxResource - Need to test applying this to Time resources -->"]
 
 [h:CalculateResourceDataOptions = "{}"]
 [h,if(ResourceKey != ""): json.set(CalculateResourceDataOptions,"resource",ResourceKey)]
@@ -98,7 +98,11 @@
 [h,switch(RestorationAmount),CODE:
 	case "":{
 		[h,foreach(tempResource,restoredResources),CODE:{
-			[h:CurrentResource = json.set(CurrentResource,tempResource,json.get(json.get(allResourceData,tempResource),"MaxResource"))]
+			[h:tempResourceData = json.get(allResourceData,tempResource)]
+			[h,if(json.get(tempResourceData,"Type") == "Time"): 
+				CurrentResource = json.path.set(CurrentResource,"\$['"+tempResource+"']['Duration']",json.path.read(tempResourceData,"\$.MaxResource.Duration"));
+				CurrentResource = json.set(CurrentResource,tempResource,json.get(json.get(allResourceData,tempResource),"MaxResource"))
+			]
 
 			[h:abilityTable = json.append(abilityTable,json.set("",
 				"ShowIfCondensed",1,
@@ -116,6 +120,9 @@
 	};
 	case "UpTo":{
 		[h,foreach(tempResource,restoredResources),CODE:{
+			[h:tempResourceData = json.get(allResourceData,tempResource)]
+			[h,if(json.get(tempResourceData,"Type") == "Time"): UpToAmount = pm.a5e.TimeInRounds(UpToAmount,json.get(restorationData,"Units"))]
+			
 			[h:CurrentResource = json.set(CurrentResource,tempResource,max(json.get(CurrentResource,tempResource),UpToAmount))]
 
 			[h:abilityTable = json.append(abilityTable,json.set("",
@@ -131,6 +138,9 @@
 	};
 	default:{
 		[h,foreach(tempResource,restoredResources),CODE:{
+			[h:tempResourceData = json.get(allResourceData,tempResource)]
+			[h,if(json.get(tempResourceData,"Type") == "Time"): RestorationAmount = pm.a5e.TimeInRounds(RestorationAmount,json.get(restorationData,"Units"))]
+
 			[h:CurrentResource = json.set(CurrentResource,tempResource,min(json.get(CurrentResource,tempResource) + RestorationAmount,json.get(json.get(allResourceData,tempResource),"MaxResource")))]
 
 			[h:abilityTable = json.append(abilityTable,json.set("",

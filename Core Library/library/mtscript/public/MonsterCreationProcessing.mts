@@ -89,7 +89,7 @@
 	};{}]
 
 	[h,if(json.contains(MonsterData,"isShield")),CODE:{
-		[h:"<!-- U2hpZWxk477685 is the ObjectID for the base shield -->"]
+		[h:"<!-- Hardcoded: U2hpZWxk477685 is the ObjectID for the base shield -->"]
 		[h:AddShieldData = json.set("",
 			"ItemChoice","U2hpZWxk477685",
 			"ParentToken",ParentToken,
@@ -99,9 +99,8 @@
 	};{}]
 }]
 
-[h:tempHitDieObject = json.set("","d6",0,"d8",0,"d10",0,"d12",0)]
 [h:HitDieNum = json.get(MonsterData,"HitDieNum")]
-[h:setProperty("a5e.stat.MaxHitDice",json.set(tempHitDieObject,"d"+json.get(MonsterData,"HitDieSize"),HitDieNum))]
+[h:setProperty("a5e.stat.MaxHitDice",json.set("",json.get(MonsterData,"HitDieSize"),HitDieNum))]
 [h:setProperty("a5e.stat.HitDice",getProperty("a5e.stat.MaxHitDice"))]
 [h:HPFromCon = HitDieNum * json.get(getProperty("a5e.stat.AtrMods"),"Constitution")]
 

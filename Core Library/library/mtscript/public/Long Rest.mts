@@ -13,7 +13,7 @@
 
 [h:HitDieSizes = json.fields(getProperty("a5e.stat.MaxHitDice"))]
 [h,foreach(DieSize,HitDieSizes),CODE:{
-	[h:CurrentHD = if(json.get(getProperty("a5e.stat.HitDice"),+DieSize)=="",0,json.get(getProperty("a5e.stat.HitDice"),DieSize))]
+	[h:CurrentHD = if(json.get(getProperty("a5e.stat.HitDice"),DieSize)=="",0,json.get(getProperty("a5e.stat.HitDice"),DieSize))]
 	[h:HDRecharge = max(1,floor(json.get(getProperty("a5e.stat.MaxHitDice"),DieSize)/2))]
 	[h:HDNewTotal = min(json.get(getProperty("a5e.stat.MaxHitDice"),DieSize),CurrentHD+HDRecharge)]
 	[h:setProperty("a5e.stat.HitDice",json.set(getProperty("a5e.stat.HitDice"),DieSize,HDNewTotal))]

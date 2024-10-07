@@ -40,7 +40,7 @@
             " LegendaryActionNumber | 0,1,2,3,4,5,6 | Legendary Actions | LIST | SELECT=3 "
         ))]
 
-[h:"<!-- TODO: MaxResourceLowPrio - Should make a UDF to package ResourceData instead of doing it raw here -->"]
+[h:"<!-- Hardcoded: ResourceData -->"]
         [h:LegendaryActionFeature = json.set("",
             "Name","LegendaryActions",
             "DisplayName","Legendary Actions",

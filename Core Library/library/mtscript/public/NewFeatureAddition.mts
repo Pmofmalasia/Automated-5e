@@ -11,7 +11,7 @@
 
 [h,if(json.isEmpty(a5e.stat.AllFeatures)): pm.NewResources = ""; pm.NewResources = json.path.read(getProperty("a5e.stat.AllFeatures"),"\$[*][?(@.MaxResource != null)]","DEFAULT_PATH_LEAF_TO_NULL")]
 [h,foreach(ability,pm.NewResources),CODE:{
-	[h:NewResource = js.a5e.GetMaximumResources(abiilty,ParentToken)]
+	[h:NewResource = js.a5e.GetMaximumResources(ability,ParentToken)]
 
 	[h:setProperty("a5e.stat.AllFeatures",json.path.put(getProperty("a5e.stat.AllFeatures"),"\$[*][?(@.Name=='"+json.get(ability,"Name")+"' && @.Class=='"+json.get(ability,"Class")+"' && @.Subclass=='"+json.get(ability,"Subclass")+"')]","Resource",NewResource))]
 }]

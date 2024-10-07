@@ -65,12 +65,10 @@
 
 [h:SafeCounter = 0]
 [h:"<!-- Hardcoded: Resource -->"]
-[h:broadcast("Num: "+json.get(MonsterData,"InnateSpellNumber"))]
 [h,count(json.get(MonsterData,"InnateSpellNumber")),CODE:{
 	[h:thisSpellName = json.get(MonsterData,"InnateSpell"+SafeCounter)]
 	[h:SpellData = pm.a5e.GetSpecificSpell(thisSpellName)]
 	[h:thisSpellDisplayName = json.get(SpellData,"DisplayName")]
-	[h:broadcast(thisSpellDisplayName)]
 
 	[h:RestorationType = json.get(MonsterData,"InnateSpellRestoration"+SafeCounter)]
 	[h:isAtWill = RestorationType == "AtWill"]

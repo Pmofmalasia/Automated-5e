@@ -19,9 +19,9 @@
 		[h,if(json.get(CheckResourceData,"Size")==""),CODE:{
 			[h:RemainingResource = 0]
 			[h:AllDieSizes = json.fields(CurrentHitDice)]
-			[h:foreach(dieSize,AllDieSizes): RemainingResource = RemainingResource + number(json.get(CurrentHitDice,"d"+dieSize))]
+			[h:foreach(dieSize,AllDieSizes): RemainingResource = RemainingResource + number(json.get(CurrentHitDice,dieSize))]
 		};{
-			[h:RemainingResource = number(json.get(CurrentHitDice,"d"+json.get(CheckResourceData,"Size")))]
+			[h:RemainingResource = number(json.get(CurrentHitDice,json.get(CheckResourceData,"Size")))]
 		}]
 	};
 	default:{

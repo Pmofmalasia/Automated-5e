@@ -5,8 +5,8 @@
 [h:a5e.ConditionsToBeUnified = pm.a5e.MergeTieredConditions(a5e.ConditionsToBeUnified)]
 [h:a5e.UnifiedAbilities = json.merge(a5e.UnifiedAbilities,json.path.put(a5e.ConditionsToBeUnified,"\$[*]","AbilityType","Condition"))]
 
-[h:"<!-- TODO: MaxResource High Priority - revert these changes after testing, particularly bypassing IsActive check -->"]
-[h:a5e.ValidItems = json.path.read(getProperty("a5e.stat.Inventory"),"\$[*][?(@.IsActive > 0)]")]
+[h:"<!-- Note: IsActive check is now exclusively used for passive features, and is done in pm.PassiveFunction. If weird things happen, check there. -->"]
+[h:a5e.ValidItems = getProperty("a5e.stat.Inventory")]
 [h,if(0): a5e.InventoryAbilities = json.path.read(a5e.ValidItems,"\$[*][?(@.isPassiveFunction == 1)]"); a5e.InventoryAbilities = getProperty("a5e.stat.Inventory")]
 [h:a5e.InventoryAbilities = json.path.put(a5e.InventoryAbilities,"\$[*]","AbilityType","Item")]
 [h:a5e.UnifiedAbilities = json.merge(a5e.UnifiedAbilities,a5e.InventoryAbilities)]

@@ -249,6 +249,7 @@
 [h:defineFunction("pm.a5e.FeatureSourceData","pm.a5e.FeatureSourceData@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.a5e.ComparitorForEval","pm.a5e.ComparitorForEval@Lib:pm.a5e.Core")]
 [h:defineFunction("ut.a5e.GenerateSelectionHTML","ut.a5e.GenerateSelectionHTML@Lib:pm.a5e.Core")]
+[h:defineFunction("pm.a5e.TimeInRounds","pm.a5e.TimeInRounds@Lib:pm.a5e.Core")]
 
 [h:"<!-- Functions for Leveling -->"]
 [h:defineFunction("pm.SubclassSelection","pm.SubclassSelection@Lib:pm.a5e.Core")]

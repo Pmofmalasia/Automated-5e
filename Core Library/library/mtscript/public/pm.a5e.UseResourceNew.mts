@@ -1,19 +1,18 @@
 [h:ResourceList = arg(0)]
 [h:UnifiedFeatures = arg(1)]
 [h:ParentToken = arg(2)]
-[h:broadcast("We in")]
+
 [h:allInputData = js.a5e.UseResource(ResourceList,UnifiedFeatures,ParentToken)]
 [h:firstInputOptions = json.get(allInputData,"Options")]
 [h:firstInputData = json.get(allInputData,"OptionsData")]
 [h:secondInputOptions = json.get(allInputData,"SecondaryOptions")]
 [h:secondInputData = json.get(allInputData,"SecondaryOptionsData")]
 
-[h:broadcast("out")]
-[h:broadcast(allInputData)]
 [h,switch(json.length(firstInputData)),CODE:
 	case 0:{
 		[h:"<!-- TODO: This is bad for both forced expenditure of the resource (other effects should still happen in that case) and giving autonomy to use the feature anyway (possible annoyance, goes against prior philosophy). Will think of something to do in this instance instead. Possibly a 5th key sent used only for this purpose? -->"]
-		[h:assert(0,"You do not have enough resources left to use this!")]
+		[h:broadcast("You do not have enough resources left to use this!")]
+		[h:abort(0)]
 	};
 	case 1:{
 		[h:resourceChoice = 0]
@@ -30,10 +29,9 @@
 [h:secondInput = json.get(secondInputOptions,resourceChoice)]
 [h:secondInputDataChoice = json.get(secondInputData,resourceChoice)]
 
-[h:broadcast("hioooo")]
 [h,switch(resourceTypeTemp),CODE:
 	case "SpellSlot":{
-		[h:"<!-- TODO: MaxResourceLowPriority - May need the ability to spend multiple spell slots at once -->"]
+		[h:"<!-- TODO: Resource - May need the ability to spend multiple spell slots at once -->"]
 		[h,if(json.length(secondInput) == 1):
 			resourceChoice = 0;
 			abort(input(
@@ -78,10 +76,10 @@
 			))]
 		}]
 	};
-	"Time":{
+	case "Time":{
 		[h:resourceSpent = json.append("",resourceType)]
 	};
-	"Feature":{
+	case "Feature":{
 		[h:increment = json.get(secondInput,"Increment")]
 		[h,if(json.type(increment) == "ARRAY"): 
 			incrementTarget = json.get(increment,1) - json.get(increment,0);
@@ -90,21 +88,23 @@
 		[h,if(json.get(secondInput,"Maximum") == json.get(secondInput,"Minimum") || json.get(secondInput,"Maximum") - json.get(secondInput,"Minimum") < incrementTarget): needsInput = 0; needsInput = 1]
 
 		[h,if(needsInput),CODE:{
+			[h:featureResourceOptions = pm.a5e.UseResourceInputOptions(secondInput)]
 			[h:abort(input(
-				" resourceAmount | "+pm.a5e.UseResourceInputOptions(secondInput)+" | "+json.get(firstInputOptions,resourceChoice)+" Used | LIST | VALUE=STRING DELIMITER=JSON "
+				" resourceAmount | "+featureResourceOptions+" | "+json.get(firstInputOptions,resourceChoice)+" Used | LIST | DELIMITER=JSON "
 			))]
 
 			[h:resourceSpent = json.append("",json.set(resourceType,
-				"Amount",resourceAmount
+				"Amount",json.get(featureResourceOptions,resourceAmount),
+				"Tier",resourceAmount+1
 			))]
 		};{
 			[h:resourceSpent = json.append("",json.set(resourceType,
-				"Amount",json.get(secondInput,"Minimum")
+				"Amount",json.get(secondInput,"Minimum"),
+				"Tier",1
 			))]
 		}]
 	}
 ]
 
-[h:broadcast("haaaaaaaaaaaaa")]
 [h:usedResourceData = js.a5e.ExpendResource(resourceSpent,ParentToken)]
 [h:return(0,usedResourceData)]

@@ -3,7 +3,8 @@
 [h:max = json.get(resourceData,"Maximum")]
 [h:increment = json.get(resourceData,"Increment")]
 
-[h:options = "[0]"]
+[h:"<!-- TODO: Resource - Need the ability to spend 0 resource if multiple resources can be spent at the same time (Hit Dice) -->"]
+[h:options = ""]
 [h,if(json.type(increment) == "ARRAY"),CODE:{
 	[h:currentAmount = min]
 	[h,while(currentAmount <= max),CODE:{
@@ -11,8 +12,10 @@
 		[h:currentAmount = currentAmount + increment]
 	}]
 };{
-	[h,foreach(amount,increment),CODE:{
-		[h,if(amount <= max): options = json.append(options,amount)]
+	[h:currentAmount = min]
+	[h,while(currentAmount <= max),CODE:{
+		[h:options = json.append(options,currentAmount)]
+		[h:currentAmount = currentAmount + increment]
 	}]
 }]
 

@@ -74,6 +74,24 @@ Feature - ResourceData Key:
 	}
 }
 
+Feature - Resource Key:
+{
+	"RESOURCE_NAME":"NUMBER: Amount of current resource",
+	"RESOURCE_NAME":{
+		"Type":"STRING: Type of special resource (currently only Time)",
+		"Duration":"NUMBER: Duration remaining in rounds",
+		"isActive":"BOOLEAN: Yes/no currently powering something and counting down.",
+		"Powering":[
+			{
+				"Feature":"STRING | OBJECT: 'this' for this feature, identifier object for another feature",
+				"Minimum":"NUMBER: Minimum resource expended per use",
+				"Increment":"NUMBER: Resource is expended in increments of some number (e.g. spend in minutes instead of by the round)",
+				"ExpendedThisUse":"NUMBER: Amount expended so far, for use with the above two keys."
+			}
+		]
+	}
+}
+
 Subeffect - UseResource Key:
 [[{
 	"OVERALL_STRUCTURE":"Array of arrays of objects. Each object contains information on how each resource is used. The outer array assigns priority for each resource to be used (e.g. all resources in index 0 must be expended before using resources in index 1). Inner array is solely used for containing the objects, all resources within are equal in terms of priority."
@@ -81,6 +99,8 @@ Subeffect - UseResource Key:
 	"Type":"STRING: Type of resource used - Feature, SpellSlot, HitDice, or Time. Notes: SpellSlot checks for shared and feature spell slots; feature could potentially be used for feature spell slots, time resources, etc. to ignore the special aspects of those." - Change to SourceType/Type split?,
 	"ResourceUsed":"NUMBER: Base amount of resource used. For time resources, denotes minimum amount that must be taken away per use (e.g. use at minimum 5 minutes of time)",
 	"ResourceUsedMax":"NUMBER: Maximum amount of resource that can be spent.",
+	"SpellLevelMin":"NUMBER: Minimum spell level allowed to spend (for SpellSlot resources)",
+	"SpellLevelMax":"NUMBER | Empty: Maximum spell level allowed to spend. Empty if no limit. Unused if not a SpellSlot resource.",
 	"Increment":"NUMBER: Increment resource can be spent in, if not just a flat number",
 	"Activate":"NUMBER/BOOL: Activates (1) or deactivates (0) chosen resource",
 	"Powering":"OBJECT (PROPOSED): Identifiers for a separate feature that is activated/deactivated when active. 'this' could then refer to just the feature/item associated with the resource.",
@@ -102,7 +122,7 @@ Code - calculateResourceData Output:
 		"Type":"STRING: Type of special resource (currently only Time)",
 		"Duration":"NUMBER: Duration in rounds (for time resources)",
 		"ExpendedThisUse":"NUMBER: Amount of resource expended so far this activation (time resources)",
-		"isActive":"NUMBER/BOOL: If time resource is active or not"
+		"isActive":"NUMBER/BOOL: If time resource is active or not",
 	},
 	"SourceType":"STRING (optional): Where the resource comes from: Item, Feature, Condition, ItemCondition, HitDice, SpellSlot",
 	"Type":"STRING: Special resource type, if any. Current types: SpellSlot, HitDie, Die, Time",

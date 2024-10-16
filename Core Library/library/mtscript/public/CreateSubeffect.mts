@@ -11,6 +11,8 @@
 [h:SubeffectHTML = "<input type='hidden' id='FeatureData' name='FeatureData' value='"+base64.encode(FeatureData)+"'>"]
 [h,if(isPersistentEffect): SubeffectHTML = SubeffectHTML + "<input type='hidden' id='isPersistentEffect' name='isPersistentEffect' value=1><input type='hidden' id='MainEffectsNumber' name='MainEffectsNumber' value='"+json.get(subeffectData,"MainEffectsNumber")+"'><input type='hidden' id='MainNeedsNewSubeffect' name='MainNeedsNewSubeffect' value="+json.get(subeffectData,"MainNeedsNewSubeffect")+"><tr><th text-align='center' colspan='2'>Persistent Effect</th></tr><tr id='rowPersistentEffectBreak'></tr>"]
 
+[h:SubeffectHTML = SubeffectHTML + "<tr id='rowIsUseResource'><th><label for='isUseResource'>Uses a Resource?</label></th><td><input type='checkbox' id='isUseResource' name='isUseResource' onchange='createUseResourceRows()'></td></tr>"]
+
 [h,if(thisSubeffectNum == 1),CODE:{
 	[h:SubeffectHTML = SubeffectHTML + "<tr id='rowEffectHeader'><th text-align='center' colspan='2'>Overall Effect Information</th></tr>"]
 
@@ -102,8 +104,6 @@
 <tr id='rowCondition'><th><label for='isCondition'>Sets Conditions on Target:</label></th><td><select id='isCondition' name='isCondition' value=1 onchange='createConditionTable()'><option value='None'>None</option><option value='All'>All Selected</option><option value='Choose'>Choose Among Selected</option><option value='Mixture'>Mixture of Both</option></select></td></tr>
 
 <tr id='rowSummons'><th><label for='isSummons'>Summons a Creature?</label></th><td><select id='isSummons' name='isSummons' onchange='createSummonRows()'><option value='No'>No</option><option value='UniqueEffect'>Non-Creature Unique Effect</option><option value='Single'>Single Specific Creature</option><option value='Options'>Creature from List</option><option value='Criteria'>Creature Based on Criteria</option></select></td></tr>"]
-
-[h:SubeffectHTML = SubeffectHTML + "<tr id='rowIsUseResource'><th><label for='isUseResource'>Uses a Resource?</label></th><td><input type='checkbox' id='isUseResource' name='isUseResource' onchange='createUseResourceRows()'></td></tr>"]
 
 [h:SubeffectHTML = SubeffectHTML + "<tr id='rowUncommonEffects'><th><label for='isUncommonEffects'>Show Additional Effects:</label></th><td><input type='checkbox' id='isUncommonEffects' name='isUncommonEffects' value=1 onchange='createUncommonEffectsRows()'></td></tr>"]
 

@@ -244,6 +244,38 @@ function setFeatureProperty(newFeature,ParentToken,keys){
 	}
 }
 
+function compareFeatureIdentifier(identifier,feature){
+	let type = identifier.Type;
+	if(type !== feature.AbilityType){
+		return false;
+	}
+
+	if(type === "Feature"){
+		return (identifier.Name === feature.Name && identifier["Class"] === feature["Class"] && identifier.Subclass === feature.Subclass);
+	}
+	else if(type === "Condition"){
+		if(identifier.GroupID === undefined){
+			return (identifier.Name === feature.Name && identifier["Class"] === feature["Class"] && identifier.Subclass === feature.Subclass);
+		}
+		else{
+			return (identifier.GroupID === feature.GroupID);
+		}
+	}
+	else if(type === "Item"){
+		if(identifier.ItemID === undefined){
+			if(identifier.ObjectID === undefined){
+				return (identifier.Name === feature.Name && identifier["Class"] === feature["Class"] && identifier.Subclass === feature.Subclass);
+			}
+			else{
+				return (identifier.ObjectID === feature.ObjectID);
+			}
+		}
+		else{
+			return (identifier.ItemID === feature.ItemID);
+		}
+	}
+}
+
 function timeInRounds(value,units){
 	if(lower(units) === "year"){
 		return value * 5256000;
@@ -261,3 +293,9 @@ function timeInRounds(value,units){
 		return value;
 	}
 }
+
+function removeSpecialCharacters(input){
+	return input.replace(/[^a-zA-Z0-9]/g, '');
+}
+
+MTScript.registerMacro("a5e.RemoveSpecial",removeSpecialCharacters);

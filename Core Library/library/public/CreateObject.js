@@ -377,12 +377,10 @@ function createNewToolRows(tableID){
 }
 
 function createActivatableRows(){
-	let tableID = document.getElementById("rowIsActivatable").closest("table").id;
-	let nextRowIndex = document.getElementById("rowIsActivatable").rowIndex + 1;
+	let referenceElement = document.getElementById("rowIsActivatable");
 
 	if(document.getElementById("isActivatable").checked){
-		addTableRow(tableID,nextRowIndex,"rowIsActivationEffect","<th><label for='isActivationEffect'>Instantaneous Effect on Activation/Deactivation:</label></th><td><select id='isActivationEffect' name='isActivationEffect' onchange='createActivationEffectRows()'><option value=''>No (Passive Only)</option><option value='Activation'>Activation Only</option><option value='Deactivation'>Deactivation Only</option><option value='Both'>Both</option><select></td>");
-		nextRowIndex++;
+		referenceElement = createTableRow(referenceElement,"rowIsActivationEffect","<th><label for='isActivationEffect'>Instantaneous Effect on Activation/Deactivation:</label></th><td><select id='isActivationEffect' name='isActivationEffect' onchange='createActivationEffectRows()'><option value=''>No (Passive Only)</option><option value='Activation'>Activation Only</option><option value='Deactivation'>Deactivation Only</option><option value='Both'>Both</option><select></td>");
 
 		let UseTimeOptionsArray = ["Free","Item Interaction","Action","Bonus Action","Reaction","1 Minute","10 Minutes","1 Hour","8 Hours","12 Hours","24 Hours"];
 		let UseTimeOptions = "";
@@ -390,62 +388,21 @@ function createActivatableRows(){
 			UseTimeOptions = UseTimeOptions + "<option value='"+tempOption+"'>"+tempOption+"</option>";
 		}
 
-		addTableRow(tableID,nextRowIndex,"rowActivationUseTime","<th><label for='ActivationUseTime'>Activation Time:</label></th><td><select id='ActivationUseTime' name='ActivationUseTime'>"+UseTimeOptions+"</select></td>");
+		referenceElement = createTableRow(referenceElement,"rowActivationUseTime","<th><label for='ActivationUseTime'>Activation Time:</label></th><td><select id='ActivationUseTime' name='ActivationUseTime'>"+UseTimeOptions+"</select></td>");
 		document.getElementById("ActivationUseTime").value = "Bonus Action";
-		nextRowIndex++;
 
-		addTableRow(tableID,nextRowIndex,"rowActivationComponents","<th><label for='ActivationComponents'>Activation Requirements:</label></th><td><select id='ActivationComponents' name='ActivationComponents'><option value='None'>No Components</option><option value='Verbal'>Command Word (Verbal)</option><option value='Somatic'>Interaction (Somatic)</option><option value='Both'>Verbal and Somatic</option></select></td>");
-		nextRowIndex++;
+		referenceElement = createTableRow(referenceElement,"rowActivationComponents","<th><label for='ActivationComponents'>Activation Requirements:</label></th><td><select id='ActivationComponents' name='ActivationComponents'><option value='None'>No Components</option><option value='Verbal'>Command Word (Verbal)</option><option value='Somatic'>Interaction (Somatic)</option><option value='Both'>Verbal and Somatic</option></select></td>");
 
-		activationTimeResourceRow(tableID);
+		activationTimeResourceRow();
 
+//TODO: Items - Create ActivationEffects and DeactivationEffects. Simple lights automatically add one that turns the light off/on if one is not made for you. ActivateItem runs effect through ExecuteEffect. Need to sort out having multiple places where subeffects can be created (fine in JSON, hard for input tracking the data)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//Next thing to do: Create ActivationEffects and DeactivationEffects. Simple lights automatically add one that turns the light off/on if one is not made for you. ActivateItem runs effect through ExecuteEffect. Need to sort out having multiple places where subeffects can be created (fine in JSON, hard for input tracking the data)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+		if(document.getElementById("rowIsActivatableEnd") === null){
+			referenceElement = createTableRow(referenceElement,"rowIsActivatableEnd","<th colspan=2 class='section-end'></th>");
+		}
 	}
 	else{
-		clearUnusedTable("CreateObjectTable","rowIsActivatable","rowIsCharges");
+		deleteInterveningElements(document.getElementById("rowIsActivatable"),document.getElementById("rowIsActivatableEnd").nextElementSibling);
 	}
 }
 
@@ -475,9 +432,8 @@ function activationTimeResourceRow(){
 	}
 	
 	if(needsTimeRow){
-		let nextRowIndex = document.getElementById("rowActivationComponents").rowIndex + 1;
-		let tableID = document.getElementById("rowActivationComponents").closest("table").id;
-		addTableRow(tableID,nextRowIndex,"rowActivationUseTimeResource","<th><label for='isActivationUseTimeResource'>Activation Uses Time Resource:</label></th><td><input type='checkbox' id='isActivationUseTimeResource' name='isActivationUseTimeResource'></td>");
+		let referenceElement = document.getElementById("rowActivationComponents");
+		referenceElement = createTableRow(referenceElement,"rowActivationUseTimeResource","<th><label for='isActivationUseTimeResource'>Activation Uses Time Resource:</label></th><td><input type='checkbox' id='isActivationUseTimeResource' name='isActivationUseTimeResource'></td>");
 	}
 	else if(document.getElementById("rowActivationUseTimeResource") != null){
 		document.getElementById("rowActivationUseTimeResource").remove();
@@ -866,6 +822,14 @@ async function loadUserData() {
 	document.getElementById('CreateObjectTable').innerHTML = userdata;
 
 	createObjectSubtypeRows('CreateObjectTable','Type');
+
+	document.getElementById("isResources").addEventListener("change",function(){
+		let ItemData = {
+			DisplayName:document.getElementById("DisplayName").value,
+			Type:"Item"
+		};
+		createResourceRows(ItemData);
+	});
 }
 
 setTimeout(loadUserData, 1);

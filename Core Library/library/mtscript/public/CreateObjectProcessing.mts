@@ -388,40 +388,16 @@
 	};{}]
 }]
 
-[h:"<!-- TODO: MaxResource fix -->"]
-[h,switch(json.get(objectData,"isCharges")),CODE:
-	case "None":{};
-	case "One":{
-		[h:objectData = json.set(objectData,"MaxResource","[r:"+json.get(objectData,"MaxResource")+"]")]
-	};
-	case "Multiple":{
-		[h:MaxResourceString = "[r:json.set(''"]
-		[h:ResourceDisplayNames = "{}"]
-		[h,count(json.get(objectData,"MultiResourceNumber") + 1),CODE:{
-			[h:tempResourceDisplayName = json.get(objectData,"ResourceDisplayName"+roll.count)]
-			[h:tempResourceName = pm.RemoveSpecial(tempResourceDisplayName)]
-			[h:MaxResourceString = MaxResourceString + ",'" + tempResourceName + "'," + json.get(objectData,"MaxResource"+roll.count)]
-			[h:ResourceDisplayNames = json.set(ResourceDisplayNames,tempResourceName+ tempResourceDisplayName)]
-
-			[h:objectData = json.remove(objectData,"ResourceDisplayName"+roll.count)]
-			[h:objectData = json.remove(objectData,"MaxResource"+roll.count)]
-		}]
-		[h:MaxResourceString = MaxResourceString + ")]"]
-
-		[h:objectData = json.set(objectData,
-			"MaxResource",MaxResourceString,
-			"ResourceDisplayName",ResourceDisplayNames
-		)]
-		[h:objectData = json.remove(objectData,"MultiResourceNumber")]
-	}
-]
-
-[h,if(json.get(objectData,"isCharges") != "None"),CODE:{
-	[h:RestoreInstances = json.append("","ShortRest","LongRest","Dawn","Dusk","StartTurn","Initiative","Item")]
-	[h,foreach(instance,RestoreInstances),CODE:{
-		[h,if(json.contains(objectData,"Restore"+instance)): objectData = json.set(objectData,"Restore"+instance,1)]	
-	}]
+[h,if(json.get(objectData,"isResources") != ""),CODE:{
+	[h:objectResourceData = js.ct.a5e.ResourceProcessing(objectData,objectData)]
+	[h,if(json.get(objectResourceData,"FeatureUpdates") != ""),CODE:{
+		[h:objectData = json.set(objectData,"FeatureUpdates",json.get(objectResourceData,"FeatureUpdates"))]
+		[h:objectResourceData = json.remove(objectResourceData,"FeatureUpdates")]
+	};{}]
+	[h:objectData = json.set(objectResourceData,"ResourceData",objectResourceData)]
+	[h:objectData = ct.a5e.PruneResourceKeys(objectData)]
 };{}]
+[h:objectData = json.remove(objectData,"isResources")]
 
 [h:"<!-- TODO: Add Depleted Effects here -->"]
 

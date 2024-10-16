@@ -30,6 +30,9 @@
 [h:defineFunction("pm.WeaponSelectionPreset","pm.WeaponSelectionPreset@Lib:pm.a5e.Core")]
 [h:defineFunction("ct.a5e.AoEDataProcessing","ct.a5e.AoEDataProcessing@Lib:pm.a5e.Core",0,0)]
 [h:defineFunction("ct.a5e.UseTimeProcessing","ct.a5e.UseTimeProcessing@Lib:pm.a5e.Core")]
+[h:defineFunction("ct.a5e.PruneResourceKeys","ct.a5e.PruneResourceKeys@Lib:pm.a5e.Core")]
+[h:defineFunction("ct.a5e.UseResourceProcessing","ct.a5e.UseResourceProcessing@Lib:pm.a5e.Core")]
+[h:defineFunction("ct.a5e.UseResourceIndividualProcessing","ct.a5e.UseResourceIndividualProcessing@Lib:pm.a5e.Core")]
 [h:defineFunction("ct.a5e.SummonsInputProcessing","ct.a5e.SummonsInputProcessing@Lib:pm.a5e.Core")]
 [h:defineFunction("ct.a5e.TransformInputProcessing","ct.a5e.TransformInputProcessing@Lib:pm.a5e.Core")]
 [h:defineFunction("ct.a5e.CreatureTypeLimitsProcessing","ct.a5e.CreatureTypeLimitsProcessing@Lib:pm.a5e.Core")]
@@ -237,8 +240,6 @@
 
 [h:"<!-- Functions for general use -->"]
 [h:defineFunction("pm.DieRoller","pm.DieRoller@Lib:pm.a5e.Core")]
-[h:defineFunction("pm.DieDisplay","pm.DieDisplay@Lib:pm.a5e.Core")]
-[h:defineFunction("pm.DurationDisplay","pm.DurationDisplay@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.EvilChars","pm.EvilChars@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.PlusMinus","pm.PlusMinus@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.RemoveSpecial","pm.RemoveSpecial@Lib:pm.a5e.Core")]
@@ -344,6 +345,5 @@
 [h:js.evalURI("pm.a5e.core","lib://pm.a5e.core/GraalVM/AdvanceTime.js")]
 
 [h:defineFunction("zzConvertOldUseResource","zzConvertOldUseResource@Lib:pm.a5e.Core")]
-
 
 [h:broadcast("Startup Initialization Complete.")]

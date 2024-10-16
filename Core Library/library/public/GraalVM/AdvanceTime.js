@@ -12,7 +12,7 @@ function advanceTimeTokens(tokens,timeAdvanced){
 		};
 	}
 
-	function advanceTimeResource(feature){
+	function advanceTimeResource(feature,token){
 		let expiredFeatures = [];
 		if(feature.Resources !== undefined){
 			for(let resource of Object.keys(feature.Resources)){
@@ -22,22 +22,19 @@ function advanceTimeTokens(tokens,timeAdvanced){
 					let usedByNumber = thisResourceData.Powering.length;
 					let totalTimeAdvanced = timeAdvanced * usedByNumber;
 					feature.Resources[resource].Duration = advanceTime(thisResourceData.Duration,totalTimeAdvanced);
-					feature.Resources[resource].ExpendedThisUse += totalTimeAdvanced;
+					for(let i = 0; i < usedByNumber; i++){
+						feature.Resources[resource][i].ExpendedThisUse += timeAdvanced;
+					}
 
-					if(feature.Resources[resource].Duration === 0 && false){
-						//TODO: MaxResource HighPriority - create function for ending TimeResources instead of doing it here (needs to be done manually also)
-						if(thisResourceData.Powering === "this"){
-							feature.IsActive = 0;
-							expiredFeatures.push(feature);
-						}
-						else{
-							//TODO: MaxResourceLowPrio Time - find feature/item/etc. it is powering and deactivate that. Also, if time expended this use is less than minimum usable, subtract the difference
-						}
+					if(feature.Resources[resource].Duration === 0){
+						let deactivationData = deactivateFeatureResource(feature,token);
+						feature = deactivationData.feature;
+						expiredFeatures = expiredFeatures.concat(deactivationData.ended);
 					}
 				}
 			}
 		}
-
+//TODO: MaxResource - output for expired features somehow; testing
 		return {
 			feature:feature,
 			expired:expiredFeatures
@@ -74,10 +71,11 @@ function advanceTimeTokens(tokens,timeAdvanced){
 				}				
 			}
 
-			thisFeatureData = advanceTimeResource(features[i]);
+			thisFeatureData = advanceTimeResource(features[i],token);
 			features[i] = thisFeatureData.feature;
 			deactivatedFeatures = deactivatedFeatures.concat(thisFeatureData.expired);
 		}
+		token.setProperty("a5e.stat.AllFeatures",JSON.stringify(features));
 
 		if(deactivatedFeatures.length > 0){
 			let featuresDisplayList = [];
@@ -142,7 +140,7 @@ function advanceTimeTokens(tokens,timeAdvanced){
 				}
 			}
 
-			thisItemData = advanceTimeResource(items[i]);
+			thisItemData = advanceTimeResource(items[i],token);
 			items[i] = thisItemData.feature;
 			deactivatedItems = deactivatedItems.concat(thisItemData.expired);
 

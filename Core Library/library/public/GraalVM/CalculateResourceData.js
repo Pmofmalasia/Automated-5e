@@ -284,7 +284,7 @@ function calculateResourceData(feature,ParentToken,options){
 				totalResource = timeInRounds(totalResource,thisResource.TimeUnits);
 				resourceFinal = {
 					Duration:totalResource,
-					ExpendedThisUse:0,
+					Powering:[],
 					isActive:0,
 					Type:"Time"
 				};

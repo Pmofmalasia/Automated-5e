@@ -1,5 +1,8 @@
-function autocomplete(inp, arr, validation) {
+function autocomplete(inp, arr, validation, options) {
 	let currentFocus;
+	if(options === undefined){
+		options = {};
+	}
 
 	inp.addEventListener("input", function(e) {
 		let val = this.value;
@@ -107,23 +110,40 @@ function autocomplete(inp, arr, validation) {
 		closeAllLists(e.target);
 	});
 
-	if(validation !== null){
+	if(validation !== undefined){
 		inp.addEventListener("change",function(){
-			validateFeatureAutocomplete(inp.id,validation);
+			validateFeatureAutocomplete(inp.id,validation,options.validationPath);
 		});
 	}
 }
 
-function validateFeatureAutocomplete(inputID,featureList){
+function validateFeatureAutocomplete(inputID,featureList,validationPath){
 	let currentInput = document.getElementById(inputID).value;
 	if(currentInput == ""){
 		document.getElementById("ValidationSpan"+inputID).innerHTML = "";
 		return;
 	}
 
+	if(validationPath === undefined){
+		validationPath = ["DisplayName"];
+	}
+
 	let featureOptions = [];
 	for(let feature of featureList){
-		if(feature.DisplayName == currentInput){
+		let validationValue = feature;
+
+		for(let key of validationPath){
+			if(key === "@"){
+				key = removeSpecialCharacters(currentInput);
+			}
+			validationValue = validationValue[key];
+			
+			if(validationValue === undefined){
+				break;
+			}
+		}
+
+		if(validationValue === currentInput){
 			featureOptions.push(feature);
 		}
 	}

@@ -86,6 +86,7 @@ function resourceProcessing(CoreFeatureData,FeatureData){
 	let ResourceMax = [];
 	let SlotLevels = {};
 	let DieSizes = {};
+	let InitialResource;
 
 	function resourceRestorationMethodProcessing(i){
 		if(i === undefined){
@@ -150,7 +151,7 @@ function resourceProcessing(CoreFeatureData,FeatureData){
 		let thisResourceMax = {};
 
 		let thisResourceDisplayName = CoreFeatureData["ResourceDisplayName"+i];
-		MTScript.setVariable("js.temp.DisplayName",thisResourceDisplayName)
+		MTScript.setVariable("js.temp.DisplayName",thisResourceDisplayName);
 		let thisResourceName = MTScript.evalMacro(`[r:pm.RemoveSpecial(js.temp.DisplayName)]`);
 
 		ResourceDisplayNames[thisResourceName] = thisResourceDisplayName;
@@ -319,12 +320,37 @@ function resourceProcessing(CoreFeatureData,FeatureData){
 		else{
 			ResourceMax = {[thisResourceMax.Name]:thisResourceMax};
 		}
+
+		if(FeatureData.Type === "Item"){
+			if(InitialResource === undefined){
+				InitialResource = {};
+			}
+
+			let thisResourceInitial = {};
+			let thisResourceInitialMethod = CoreFeatureData["ResourceInitialMethod"+i];
+			thisResourceInitial.Method = thisResourceInitialMethod;
+
+			if(thisResourceInitialMethod === "Fixed"){
+				thisResourceInitial.Amount = CoreFeatureData["ResourceInitialAmount"+i];
+			}
+			else if(thisResourceInitialMethod === "Rolled"){
+				thisResourceInitial.DieNumber = CoreFeatureData["ResourceInitialAmountDieNumber"+i];
+				thisResourceInitial.DieSize = CoreFeatureData["ResourceInitialAmountDieSize"+i];
+				thisResourceInitial.Bonus = CoreFeatureData["ResourceInitialAmountBonus"+i];
+			}
+
+			InitialResource[thisResourceMax.Name] = thisResourceInitial;
+		}
 	}
 
 	allResourceData.Resources = ResourceMax;
 
 	if(isIndividualRestoration){
 		allResourceData.Restoration = individualRestorationData;
+	}
+
+	if(InitialResource !== undefined){
+		allResourceData.InitialResource = InitialResource;
 	}
 
 	if(!jsonIsEmpty(updateResourceData) || !jsonIsEmpty(updateRestorationData)){
@@ -392,6 +418,8 @@ function resourceProcessingMTScript(CoreFeatureData,FeatureData){
 	}
 
 	let resourceData = resourceProcessing(CoreFeatureData,FeatureData);
+
+	//TODO: Remove extra keys from CoreFeatureData here
 
 	return JSON.stringify(resourceData);
 }

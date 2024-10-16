@@ -16,13 +16,15 @@
 [h:HitDieDisadvantage = 0]
 [h,foreach(instance,PassiveInstanceSuffixes): pm.PassiveFunction("HitDieSpendPreRoll"+instance)]
 
+[h:"<!-- TODO: Test hit dice, formula for getting size changed slightly -->"]
+
 [h:SpentHitDieSizes = json.fields(SpentHitDie)]
 [h:HitDieRoll = "{}"]
 [h:currentHitDice = getProperty("a5e.stat.HitDice")]
 [h,foreach(size,SpentHitDieSizes),CODE:{
 	[h:thisSizeSpent = json.get(SpentHitDie,size)]
 	[h:HitDieBonuses = json.set(HitDieBonuses,"Modifier",thisSizeSpent)]
-	[h:thisHitDieRoll = pm.DieRoller(thisSizeSpent,substring(size,2))]
+	[h:thisHitDieRoll = pm.DieRoller(thisSizeSpent,substring(size,indexOf(size,"d")+1))]
 	[h:thisBonusInfo = pm.a5e.GetBonusValue(HitDieBonuses,ParentToken)]
 
 	[h:thisHitDieRoll = json.set(thisHitDieRoll,

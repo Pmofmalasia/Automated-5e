@@ -18,7 +18,11 @@
 }]
 
 [h,MACRO("InitializeItem@Lib:pm.a5e.Core"): json.set("","Item",ChosenItem,"ParentToken",ParentToken)]
-[h:ChosenItem = macro.return]
+[h:ChosenItemData = macro.return]
+[h:ChosenItem = json.get(ChosenItemData,"Item")]
+[h:abilityTable = json.get(ChosenItemData,"Table")]
+
+[h:"<!-- TODO: Resource - Add fancy output here so rolled initial resource values can be displayed -->"]
 
 [h,MACRO("AddItemToken@Lib:pm.a5e.Core"): json.set(AddItemData,"Item",ChosenItem)]
 

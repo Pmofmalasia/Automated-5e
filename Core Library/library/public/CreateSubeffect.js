@@ -690,7 +690,7 @@ async function createConditionTable(){
 
 			if(checkEffectType()!="Spell"){
 				document.getElementById("rowConditionSameDuration").setAttribute("hidden","");
-				document.getElementById("rowConditionSameDuration").removeAttribute("checked");
+				document.getElementById("isConditionSameDuration").removeAttribute("checked");
 				conditionAlternateDuration();
 				nextRowIndex++;
 			}
@@ -1060,90 +1060,7 @@ async function createConditionSaveTable(){
 	}
 }
 
-function createUseResourceRows(){
-	if(document.getElementById("isUseResource").checked){
-		let nextRowIndex = document.getElementById("rowIsUseResource").rowIndex + 1;
-
-		if(checkEffectType()!="Spell"){
-			addTableRow("CreateSubeffectTable",nextRowIndex,"rowIsUseUniqueResource","<th><label for='isUseUniqueResource'>Uses this Feature's Resource:</label></th><td><select id='isUseUniqueResource' name='isUseUniqueResource' onchange='createUniqueResourceRows()'><option value='0'>No</option><option value='1'>Yes, Main</option><option value='2'>Yes, Backup</option></select></td>");
-			nextRowIndex++;
-
-			addTableRow("CreateSubeffectTable",nextRowIndex,"rowIsUseSpellSlots","<th><label for='isUseSpellSlots'>Uses Spell Slots:</label></th><td><select id='isUseSpellSlots' name='isUseSpellSlots' onchange='createUseSpellSlotRows()'><option value='0'>No</option><option value='1'>Yes, Main</option><option value='2'>Yes, Backup</option></select></td>");
-			nextRowIndex++;
-		}
-
-		addTableRow("CreateSubeffectTable",nextRowIndex,"rowIsUseHitDice","<th><label for='isUseHitDice'>Uses Hit Dice:</label></th><td><select id='isUseHitDice' name='isUseHitDice' onchange='createUseHitDiceRows()'><option value='0'>No</option><option value='1'>Yes, Main</option><option value='2'>Yes, Backup</option></select></td>");
-		nextRowIndex++;
-
-		addTableRow("CreateSubeffectTable",nextRowIndex,"rowIsUseOtherFeatureResource","<th><label for='isUseOtherFeatureResource'>Uses Other Feature Resources:</label></th><td><select id='isUseOtherFeatureResource' name='isUseOtherFeatureResource' onchange='createOtherFeatureResourceRows()'><option value='0'>No</option><option value='1'>Yes, Main</option><option value='2'>Yes, Backup</option></select></td>");
-		nextRowIndex++;
-
-		addTableRow("CreateSubeffectTable",nextRowIndex,"rowToggleTimeResource","<th><label for='isToggleTimeResource'>Expends Time Resource:</label></th><td><select id='isToggleTimeResource' name='isToggleTimeResource' onchange=''><option value='0'>No</option><option value='1'>Yes, Turns On</option><option value='2'>Yes, Turns Off</option></select></td>");
-		nextRowIndex++;
-	}
-	else{
-		clearUnusedTable("CreateSubeffectTable","rowIsUseResource","rowUncommonEffects");
-	}
-}
-
-function createUniqueResourceRows(){
-	if(document.getElementById("isUseUniqueResource").value != "0" && document.getElementById("rowUseUniqueResourceRange") == null){
-		let nextRowIndex = document.getElementById("rowIsUseUniqueResource").rowIndex + 1;
-
-		//TODO: Add a check here to see if the feature has multiple resources, if so pick which one to use
-
-		addTableRow("CreateSubeffectTable",nextRowIndex,"rowUseUniqueResourceRange","<th><label for='UseUniqueResourceMin'>Usable Unique Resource at Once:</label></th><td><input type='number' id='UseUniqueResourceMin' name='UseUniqueResourceMin' min=1 value=1 style='width:25px'> - <input type='number' id='UseUniqueResourceMax' name='UseUniqueResourceMax' min=1 value=1 style='width:25px'><input type='checkbox' id='isNoUniqueResourceUseLimit' name='isNoUniqueResourceUseLimit' onchange='toggleFieldEnabled("+'"UseUniqueResourceMax","isNoUniqueResourceUseLimit"'+")'> No Limit</td>");
-		nextRowIndex++;
-
-		addTableRow("CreateSubeffectTable",nextRowIndex,"rowUseUniqueResourceIncrements","<th><label for='UseUniqueResourceIncrements'>Spend Resource in Increments of:</label></th><td><input type='number' id='UseUniqueResourceIncrements' name='UseUniqueResourceIncrements' min=1 value=1 style='width:25px'></td>");
-		nextRowIndex++;
-	}
-	else{
-		if(document.getElementById("isUseUniqueResource").value == "0"){
-			clearUnusedTable("CreateSubeffectTable","rowIsUseUniqueResource","rowIsUseSpellSlots");
-		}
-	}
-}
-
-function createUseSpellSlotRows(){
-	if(document.getElementById("isUseSpellSlots").value != "0" && document.getElementById("rowUseSpellSlotRange") == null){
-		let nextRowIndex = document.getElementById("rowIsUseSpellSlots").rowIndex + 1;
-
-		addTableRow("CreateSubeffectTable",nextRowIndex,"rowUseSpellSlotRange","<th><label for='UseSpellSlotMin'>Range of Usable Spell Slots:</label></th><td><input type='number' id='UseSpellSlotMin' name='UseSpellSlotMin' min=1 value=1 style='width:25px'> - <input type='number' id='UseSpellSlotMax' name='UseSpellSlotMax' min=1 value=9 style='width:25px' disabled><input type='checkbox' id='isNoSpellSlotUseLimit' name='isNoSpellSlotUseLimit' onchange='toggleFieldEnabled("+'"UseSpellSlotMax","isNoSpellSlotUseLimit"'+")' checked> No Limit</td>");
-		nextRowIndex++;
-	}
-	else{
-		clearUnusedTable("CreateSubeffectTable","rowIsUseSpellSlots","rowIsUseHitDice");
-	}
-}
-
-function createUseHitDiceRows(){
-	if(document.getElementById("isUseHitDice").value != "0" && document.getElementById("rowUseHitDiceRange") == null){
-		let nextRowIndex = document.getElementById("rowIsUseHitDice").rowIndex + 1;
-
-		addTableRow("CreateSubeffectTable",nextRowIndex,"rowUseHitDiceRange","<th><label for='UseHitDiceMin'>Range of Usable Hit Dice:</label></th><td><input type='number' id='UseHitDiceMin' name='UseHitDiceMin' min=1 value=1 style='width:25px'> - <input type='number' id='UseHitDiceMax' name='UseHitDiceMax' min=1 value=5 style='width:25px'><input type='checkbox' id='isNoHitDiceUseLimit' name='isNoHitDiceUseLimit' onchange='toggleFieldEnabled("+'"UseHitDiceMax","isNoHitDiceUseLimit"'+")'> No Limit</td>");
-		nextRowIndex++;
-
-		addTableRow("CreateSubeffectTable",nextRowIndex,"rowUseHitDiceIncrements","<th><label for='UseHitDiceIncrements'>Spend Hit Dice in Increments of:</label></th><td><input type='number' id='UseHitDiceIncrements' name='UseHitDiceIncrements' min=1 value=1 style='width:25px'></td>");
-		nextRowIndex++;
-	}
-	else{
-		clearUnusedTable("CreateSubeffectTable","rowIsUseHitDice","rowIsUseOtherFeatureResource");
-	}
-}
-
-function createOtherFeatureResourceRows(){
-	if(document.getElementById("isUseOtherFeatureResource").value != "0"){
-		let nextRowIndex = document.getElementById("rowIsUseOtherFeatureResource").rowIndex + 1;
-
-		//In addition to the UseUniqueResource input above, will need option for using the name only and not subclass info (e.g. Channel Divinity)
-	}
-	else{
-		clearUnusedTable("CreateSubeffectTable","rowIsUseOtherFeatureResource","rowToggleTimeResource");
-	}
-}
-
-async function createUncommonEffectsRows(){
+function createUncommonEffectsRows(){
 	let referenceRow = document.getElementById("rowUncommonEffects");
 
 	if(document.getElementById("isUncommonEffects").checked){

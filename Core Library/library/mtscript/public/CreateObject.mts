@@ -39,7 +39,7 @@
 
 <tr id='rowIsActivatable'><th><label for='isActivatable'>Object Can be Activated/Deactivated?</label></th><td><input type='checkbox' id='isActivatable' name='isActivatable' onchange='createActivatableRows("+'"CreateObjectTable"'+")'></td></tr>
 
-<tr id='rowIsCharges'><th><label for='isCharges'>Object has Charges?</label></th><td><select id='isCharges' name='isCharges' onchange='createChargesRows("+'"CreateObjectTable"'+")'><option value='None'>None</option><option value='One'>Single Type</option><option value='Multiple'>Multiple Types</option></select></td></tr>
+<tr id='rowIsResources'><th><label for='isResources'>Object Has Limited Charges:</label></th><td><select id='isResources' name='isResources' onchange=''><option value=''>No Charges</option><option value='one'>Single Charge</option><option value='multiple'>Multiple Charges</option></select></span></td></tr>
 
 <tr id='rowObjectDuration'><th><label for='isDuration'>Perishable/Usable for Limited Time?</label></th><td><input type='checkbox' id='isDuration' name='isDuration' onchange='createDurationRows("+'"CreateObjectTable","rowIsSpellcastingFocus"'+")'><input type='hidden' id='ObjectDuration' value='Custom'></td></tr>
 

@@ -41,7 +41,7 @@
 };{}]
 
 [h,if(FeatureType == "MonsterFeature"),CODE:{
-	[h:CreateFeatureHTML = CreateFeatureHTML + "<tr id='rowIsMonsterFeatureUnique'><th><label for='isMonsterFeatureUnique'>Feature is Unique to "+if(ParentToken == "","an","This")+" NPC:</label></th><td><input type='checkbox' id='isMonsterFeatureUnique' name='isMonsterFeatureUnique'"+if(ParentToken == ""," onchange='createUniqueMonsterSelectionRows()'","")+"></td></tr>"]
+	[h:CreateFeatureHTML = CreateFeatureHTML + "<tr id='rowIsMonsterFeatureUnique'><th><label for='isMonsterFeatureUnique'>Feature is Unique to "+if(ParentToken == "","an","This")+" NPC:</label></th><td><input type='checkbox' id='isMonsterFeatureUnique' name='isMonsterFeatureUnique'"+if(ParentToken == ""," onchange='createUniqueMonsterSelectionRows()'","")+"><input type='hidden' name='Class' id='Class'></td></tr>"]
 };{}]
 
 [h:levelingRelevantTypes = json.append("","Class","Race","Background","")]

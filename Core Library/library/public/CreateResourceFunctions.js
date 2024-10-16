@@ -1,4 +1,3 @@
-
 function createResourceRows(FeatureData){
 	let referenceRow = document.getElementById("rowIsResources");
 	let isResourceChoice = document.getElementById("isResources").value;
@@ -44,7 +43,7 @@ function createResourceRows(FeatureData){
 			functionArgs:{}
 		});
 
-		if(isResourceChoice === "multiple"){
+		if(isResourceChoice === "multiple" && FeatureData.Type !== "Item"){
 			resourceRowData.push({
 				RowID:"rowResourceGainedLevel",
 				Contents:"<th><label for='ResourceGainedLevel'>Resource Gained at Level:</label></th><td><input type='number' class='small-number' id='ResourceGainedLevel' name='ResourceGainedLevel' value='"+FeatureData.Level+"' min='"+FeatureData.Level+"'></td>"
@@ -61,6 +60,19 @@ function createResourceRows(FeatureData){
 			functionName:"createResourceSpecialTypeRow",
 			functionArgs:{}
 		});
+
+		if(FeatureData.Type === "Item"){
+			resourceRowData.push({
+				RowID:"rowResourceInitialMethod",
+				Contents:"<th><label for='ResourceInitialMethod'>Charges When Gained:</label></th><td><select id='ResourceInitialMethod' name='ResourceInitialMethod'><option value='Full'>Fully Charged</option><option value='Fixed'>Fixed Amount</option><option value='Rolled'>Rolled Amount</option></select></td>"
+			});
+			resourceListeners.push({
+				elementID:"ResourceInitialMethod",
+				listener:"change",
+				functionName:"createResourceInitialMethodRows",
+				functionArgs:{}
+			});		
+		}
 
 		resourceRowData.push({
 			RowID:"rowMultiResourceEnd",
@@ -217,6 +229,24 @@ function createResourceSpecialTypeRow(i){
 	}
 }
 
+function createResourceInitialMethodRows(i){
+	let referenceElement = document.getElementById("rowResourceInitialMethod"+i);
+	let endRow = document.getElementById("rowResourceInitialAmount"+i);
+	if(endRow === null){
+		endRow = referenceElement;
+	}
+	endRow = endRow.nextElementSibling;
+	deleteInterveningElements(referenceElement,endRow);
+
+	let methodChoice = document.getElementById("ResourceInitialMethod"+i).value;
+	if(methodChoice === "Fixed"){
+		referenceElement = createTableRow(referenceElement,"rowResourceInitialAmount"+i,"<th><label for='ResourceInitialAmount"+i+"'>Initial Charges:</label></th><td><input type='number' id='ResourceInitialAmount"+i+"' name='ResourceInitialAmount"+i+"' min='0' value='1' style='width:35px'></td>");
+	}
+	else if(methodChoice === "Rolled"){
+		referenceElement = createTableRow(referenceElement,"rowResourceInitialAmount"+i,"<th><label for='ResourceInitialAmountDieNumber"+i+"'>Initial Charges Roll:</label></th><td><input type='number' id='ResourceInitialAmountDieNumber"+i+"' name='ResourceInitialAmountDieNumber"+i+"' min='0' value='1' style='width:25px'> d <input type='number' id='ResourceInitialAmountDieSize"+i+"' name='ResourceInitialAmountDieSize"+i+"' min='0' value='6' style='width:25px'> + <input type='number' id='ResourceInitialAmountBonus"+i+"' name='ResourceInitialAmountBonus"+i+"' value=0 style='width:25px'></td>");
+	}
+}
+
 function createResourceSpecialScaling(){
 	let currentNumber = Number(document.getElementById("ResourceNumber").value);
 	let isLevelScaling = document.getElementById("FeatureTierType").value;
@@ -332,5 +362,8 @@ function createRestoreMethodRows(i){
 	}
 	else if(restoreMethodChoice == "Proficiency"){
 		referenceRow = createTableRow(referenceRow,"rowResourceRestoreAmount"+i,"<th><label for='RestoreAmountMultiplier"+i+"'>Amount Recharged:</label></th><td>(<input type='number' id='RestoreAmountMultiplier"+i+"' name='RestoreAmountMultiplier"+i+"' min='0' value='1' class='small-number'> * Proficiency) + <input type='number' id='RestoreAmountBonus"+i+"' name='RestoreAmountBonus"+i+"' value=0 class='small-number'></td>");
+	}
+	else if(restoreMethodChoice === "Item"){
+		//TODO: Resource - implement restoring resources with other items (probably pick item by name and use ObjectID, some things may require a specific item though?)
 	}
 }

@@ -177,7 +177,11 @@ function capitalize(string){
     return string[0].toUpperCase() + string.slice(1);
 }
 
-function createMultiRowButtonsInput(baseName,referenceRow,rowContents,buttonName,listeners){
+function createMultiRowButtonsInput(baseName,referenceRow,rowContents,buttonName,listeners,options){
+	let isSuppressAutoAdd = false;
+	if(options !== undefined){
+		isSuppressAutoAdd = options.SuppressAutoAdd;
+	}
 	if(arguments.length < 5){listeners = [];}
 
 	referenceRow = createTableRow(referenceRow,"row"+baseName+"Buttons","<th colspan=2 style='text-align:center'><input type='button' id='Add"+baseName+"Button' value='Add "+buttonName+"'><input type='button' id='Remove"+baseName+"Button' value='Remove "+buttonName+"'><input type='hidden' id='"+baseName+"Number' name='"+baseName+"Number' value=0></th>");
@@ -222,7 +226,9 @@ function createMultiRowButtonsInput(baseName,referenceRow,rowContents,buttonName
 		return instanceNumber;
 	});
 
-	document.getElementById("Add"+baseName+"Button").dispatchEvent(new Event("click"));
+	if(isSuppressAutoAdd === undefined || !isSuppressAutoAdd){
+		document.getElementById("Add"+baseName+"Button").dispatchEvent(new Event("click"));
+	}
 }
 
 function sortData(data,key){
@@ -274,6 +280,10 @@ async function mtSetProperty(property,value,token){
 	let request = await fetch("macro:js.setProperty@Lib:pm.a5e.Core", {method: "POST", body: "["+property+","+value+","+token+"]"});
 	let result = await request.json();
 	return result;
+}
+
+function removeSpecialCharacters(input){
+	return input.replace(/[^a-zA-Z0-9]/g, '');
 }
 
 async function submitData(formName,nextMacroName,additionalData){

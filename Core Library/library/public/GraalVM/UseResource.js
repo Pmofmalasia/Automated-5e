@@ -403,7 +403,10 @@ function expendResource(resources,ParentTokenID){
 				activationDisplay = "Toggled On";
 			}
 			else{
-				//TODO: MaxResource - Make function for ending time resource and apply it to AdvanceTime also
+				deactivationData = deactivateFeatureResource(feature,resourceName);
+				feature = deactivationData.feature;
+
+				//TODO: MaxResource - output for expired features somehow - maybe make toggled on/off the header and features activated the body? Or an extra key.; testing
 
 				activationDisplay = "Toggled Off";
 			}
@@ -433,6 +436,85 @@ function expendResource(resources,ParentTokenID){
 		Table:chatTable,
 		Data:resourceUsed
 	});
+}
+
+function deactivateFeatureResource(feature,resourceName,ParentToken,specificPoweredFeature){
+	let currentResource = feature.Resources[resourceName];
+	let poweredFeatures = currentResource.Powering;
+	let deactivatedFeatures = [];
+
+	function deactivateSpecificFeature(specificFeature){
+		let thisFeature;
+		let extraExpended = 0;
+		if(specificFeature.Identifier === "this"){
+			thisFeature = feature;
+		}
+		else{
+			thisFeature = getFeatureProperty(specificFeature.Identifier,ParentToken);
+		}
+
+		if(specificFeature.Minimum !== undefined && specificFeature.Minimum > specificFeature.ExpendedThisUse){
+			extraExpended += specificFeature.Minimum - specificFeature.ExpendedThisUse;
+			specificFeature.ExpendedThisUse = specificFeature.Minimum;
+		}
+
+		if(specificFeature.Increment !== undefined){
+			let remainder = specificFeature.Increment % specificFeature.ExpendedThisUse;
+			extraExpended += remainder;
+			specificFeature.ExpendedThisUse += remainder;
+		}
+
+		thisFeature.IsActive = 0;
+		setFeatureProperty(thisFeature,ParentToken,["IsActive"]);
+
+		return {
+			deactivatedFeature:thisFeature,
+			extraDuration:extraExpended
+		};
+	}
+
+	let extraExpended = 0;
+	if(specificPoweredFeature === undefined){
+		for(let poweredFeature of poweredFeatures){
+			let deactivationData = deactivateSpecificFeature(poweredFeature);
+			extraExpended += deactivationData.extraDuration;
+			deactivatedFeatures.push(deactivationData.deactivatedFeature);
+		}
+
+		currentResource.Powering = [];
+		currentResource.isActive = 0;
+	}
+	else{
+		//TODO: Resource - Don't think there's any way for the UseResource function to hook into this, but don't think there's actually anything that needs it anyway.
+		for(let i = poweredFeatures.length - 1; i >= 0; --i){
+			let thisFeature = poweredFeatures[i];
+			if(thisFeature.Identifier === "this"){
+				let deactivationData = deactivateSpecificFeature(thisFeature);
+				extraExpended += deactivationData.extraDuration;
+				deactivatedFeatures.push(deactivationData.deactivatedFeature);
+
+				delete poweredFeatures[i];
+			}
+			else if(compareFeatureIdentifier(thisFeature.Identifier,specificPoweredFeature)){
+				let deactivationData = deactivateSpecificFeature(thisFeature);
+				extraExpended += deactivationData.extraDuration;
+				deactivatedFeatures.push(deactivationData.deactivatedFeature);
+			}
+		}
+
+		currentResource.Powering = poweredFeatures;
+		if(poweredFeatures.length === 0){
+			currentResource.isActive = 0;
+		}
+	}
+
+	currentResource.Duration = Math.max(0,currentResource.Duration - extraExpended);
+	feature.Resource[resourceName] = currentResource;
+
+	return {
+		feature:feature,
+		ended:deactivatedFeatures
+	}
 }
 
 function useResourceTooltip(resourceList,unifiedFeatures,ParentTokenID){

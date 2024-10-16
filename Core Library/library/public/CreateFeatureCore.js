@@ -34,7 +34,6 @@ function addFeatureChoicesRows(){
 		});		
 	}
 
-
 	let attributeOptions = createHTMLSelectOptions(attributes);
 	referenceRow = createTableRow(referenceRow,"rowPrimeStat","<th><label for='PrimeStat'>Feature has Main Attribute:</label></th><td><span id='PrimeStatSpan'><select id='PrimeStat' name='PrimeStat'><option value=''>None</option>"+attributeOptions+"<option value='variable'>Multiple Options</option></select></span></td>");
 	document.getElementById("PrimeStat").addEventListener("change",function(){

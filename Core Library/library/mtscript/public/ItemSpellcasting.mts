@@ -21,8 +21,8 @@
 [h,if(ItemSpellcastingResource != ""),CODE:{
 	[h:allItemResourceData = pm.a5e.UseResource(ItemSpellcastingResource,a5e.UnifiedAbilities,ParentToken)]
 	[h:abilityTable = json.merge(abilityTable,json.get(allItemResourceData,"Table"))]
-[h:"<!-- TODO: MaxResource - Need to find a better way to do resource data - probably get rid of current array method, and have HitDice data include number of dice by size. May need a way to spend multiple resources at once, gotta think of one. -->"]
-	[h:ItemResourceData = json.get(json.get(allItemResourceData,"Data"),0)]
+
+	[h:ItemResourceData = json.get(allItemResourceData,"Data")]
 	[h,switch(json.get(ItemResourceData,"ResourceType")):
 		case "Feature": resourceTier = json.get(ItemResourceData,"Tier");
 		case "HitDice": resourceTier = json.get(ItemResourceData,"Used");

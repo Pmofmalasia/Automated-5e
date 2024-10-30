@@ -39,12 +39,12 @@
 [h,if(ab.IsClassOptions),CODE:{
 	
 	[h:disClassOptions = " junkVar | ---------------------- Class Choice Options ---------------------- |  | LABEL | SPAN=TRUE "]
-	[h,foreach(TempClass,pm.GetClasses("DisplayName",",")): disClassOptions = listAppend(disClassOptions," temp."+pm.RemoveSpecial(TempClass)+" |  | "+TempClass+" | CHECK ","##")]
+	[h,foreach(TempClass,pm.GetClasses("DisplayName",",")): disClassOptions = listAppend(disClassOptions," temp."+js.a5e.RemoveSpecial(TempClass)+" |  | "+TempClass+" | CHECK ","##")]
 	
 	[h:abort(input(disClassOptions))]
 
 	[h:ab.ClassOptions = ""]
-	[h,foreach(TempClass,pm.GetClasses("DisplayName",",")): ab.ClassOptions = if(eval("temp."+pm.RemoveSpecial(TempClass)),json.append(ab.ClassOptions,TempClass),ab.ClassOptions)]
+	[h,foreach(TempClass,pm.GetClasses("DisplayName",",")): ab.ClassOptions = if(eval("temp."+js.a5e.RemoveSpecial(TempClass)),json.append(ab.ClassOptions,TempClass),ab.ClassOptions)]
 	
 	[h:ab.Final = json.set(ab.Final,
 		"ClassOptions",ab.ClassOptions
@@ -53,14 +53,14 @@
 
 [h,if(ab.PrimeAttribute=="Variable"),CODE:{
 	[h:ab.AttributeOptions = " junkVar | Choose which of the following can be selected as the primary stat for the feature |  | LABEL | SPAN=TRUE ## ab.AttrDescMethod | Choice,Chosen Attribute,Chosen Class Casting Stat,Maximum,Minimum | <html><span title='Choice vs. Chosen Attribute: Choice is for decisions made by the player independent of any other. Chosen attribute is for things like feats where the player chooses a stat to add points to, and then the prime stat becomes that stat. Chosen attribute and chosen class will ignore your selections of possible stats.'>Method of choosing among the options</span></html> | LIST | VALUE=STRING "]
-	[h,foreach(TempAtr,ab.AtrList): ab.AttributeOptions = listAppend(ab.AttributeOptions,"ab."+pm.RemoveSpecial(TempAtr)+"Option |  | "+TempAtr+" | CHECK ","##")]
+	[h,foreach(TempAtr,ab.AtrList): ab.AttributeOptions = listAppend(ab.AttributeOptions,"ab."+js.a5e.RemoveSpecial(TempAtr)+"Option |  | "+TempAtr+" | CHECK ","##")]
 
 	[h:abort(input(ab.AttributeOptions))]
 
 	[h:"<!-- Note: pm.RemoveSpecial call is correctly left out here so DisplayName can be used for choosing the attribute. pm.RemoveSpecial happens after the choice. -->"]
 	[h,if(ab.AttrDescMethod == "Choice"),CODE:{
 		[h:ab.PrimeOptionArray = "[]"]
-		[h,foreach(TempAtr,ab.AtrList): ab.PrimeOptionArray = if(eval("ab."+pm.RemoveSpecial(TempAtr)+"Option"),json.append(ab.PrimeOptionArray,TempAtr),PrimeOptionArray)]
+		[h,foreach(TempAtr,ab.AtrList): ab.PrimeOptionArray = if(eval("ab."+js.a5e.RemoveSpecial(TempAtr)+"Option"),json.append(ab.PrimeOptionArray,TempAtr),PrimeOptionArray)]
 		[h:ab.PrimeOptions = json.set("","ChoiceMethod","Choice","Stats",PrimeOptionArray)]
 		[h:ab.Final = json.set(ab.Final,"PrimeStatOptions",ab.PrimeOptions)]
 	};{}]
@@ -77,11 +77,11 @@
 	
 	[h,if(ab.AttrDescMethod == "Maximum" || ab.AttrDescMethod == "Minimum"),CODE:{
 		[h:ab.PrimeOptions = ""]
-		[h,foreach(TempAtr,ab.AtrList): ab.PrimeOptions = if(eval("ab."+pm.RemoveSpecial(TempAtr)+"Option"),json.append(ab.PrimeOptions,pm.RemoveSpecial(TempAtr)),ab.PrimeOptions)]
+		[h,foreach(TempAtr,ab.AtrList): ab.PrimeOptions = if(eval("ab."+js.a5e.RemoveSpecial(TempAtr)+"Option"),json.append(ab.PrimeOptions,js.a5e.RemoveSpecial(TempAtr)),ab.PrimeOptions)]
 		[h:ab.Final = json.set(ab.Final,"PrimeStat",json.set("","Stats",ab.PrimeOptions,"EvalMethod",if(ab.AttrDescMethod=="Maximum","max","min")))]
 	};{}]
 };{
-	[h,if(ab.PrimeAttribute!="None"): ab.Final = json.set(ab.Final,"PrimeStat",pm.RemoveSpecial(ab.PrimeAttribute))]
+	[h,if(ab.PrimeAttribute!="None"): ab.Final = json.set(ab.Final,"PrimeStat",js.a5e.RemoveSpecial(ab.PrimeAttribute))]
 }]
 
 [h,if(ab.IsSpellList==1 || ab.IsSpellList==3),CODE:{
@@ -107,7 +107,7 @@
 			" DoneAddingSpellsTest |  | Finish adding spells to the list | CHECK "
 		))]
 		[h,if(SpellListLevelChanges==0): LevelGainedSpellList=ab.Level]
-		[h:ab.SpellList = if(IgnoreChoice,ab.SpellList,json.append(ab.SpellList,json.set("","Spell",pm.RemoveSpecial(TempSpellChoice),"Level",number(LevelGainedSpellList))))]
+		[h:ab.SpellList = if(IgnoreChoice,ab.SpellList,json.append(ab.SpellList,json.set("","Spell",js.a5e.RemoveSpecial(TempSpellChoice),"Level",number(LevelGainedSpellList))))]
 		[h:ab.LevelsChosen = if(json.contains(ab.LevelsChosen,number(LevelGainedSpellList)),ab.LevelsChosen,json.append(ab.LevelsChosen,number(LevelGainedSpellList)))]
 	}]
 	[h:ab.BaseSpellList=""]
@@ -191,7 +191,7 @@
 		" pickSpellOptionsSubclass |  | Feature Added to Subclass "
 	))]
 
-	[h:ab.Final = json.set(ab.Final,"AddedSpellOptionsFeature",json.set("","Name",pm.RemoveSpecial(pickSpellOptionsFeature),"Class",pm.RemoveSpecial(pickSpellOptionsClass),"Subclass",pm.RemoveSpecial(pickSpellOptionsSubclass)))]
+	[h:ab.Final = json.set(ab.Final,"AddedSpellOptionsFeature",json.set("","Name",js.a5e.RemoveSpecial(pickSpellOptionsFeature),"Class",js.a5e.RemoveSpecial(pickSpellOptionsClass),"Subclass",js.a5e.RemoveSpecial(pickSpellOptionsSubclass)))]
 };{}]
 
 [h:"<!-- Need to check the library of the fighting styles so fighting styles from different libraries from the base ability are added to a duplicate ability on the same library -->"]
@@ -284,7 +284,7 @@
 		[h:abort(input(
 			" ab.ClassTemp | "+pm.GetClasses("DisplayName")+" | Class of prerequisite subclass | LIST "
 		))]
-		[h:ab.ClassTemp = pm.RemoveSpecial(ab.ClassTemp)]
+		[h:ab.ClassTemp = js.a5e.RemoveSpecial(ab.ClassTemp)]
 		[h:ab.SubclassPrereqDis = ""]
 		[h,foreach(Subclass,pm.GetSubclasses(ab.ClassTemp)): ab.SubclassPrereqDis = listAppend(ab.SubclassPrereqDis," ab.Choice"+Subclass+" |  | "+Subclass+" | CHECK ","##")]
 		[h:ab.SubclassPrereqDis = if(ab.SubclassPrereq == 1,"ab.SubclassPrereqChoice | "+pm.GetSubclasses(ab.ClassTemp)+" | Prerequisite Subclass | RADIO | VALUE=STRING ",ab.SubclassPrereqDis)]
@@ -313,7 +313,7 @@
 			case "Same": "";
 			default: ab.PrereqFeatureClass = ab.PrereqFeatureType
 		]
-		[h:ab.PrereqFeatureClass = pm.RemoveSpecial(ab.PrereqFeatureClass)]
+		[h:ab.PrereqFeatureClass = js.a5e.RemoveSpecial(ab.PrereqFeatureClass)]
 		
 		[h,SWITCH(if(ab.AbilityPrereq==1,ab.PrereqFeatureType,"Same")):
 			case "Class": abort(input(" ab.PrereqFeatureSubclass | None,"+pm.GetSubclasses(ab.PrereqFeatureClass,"DisplayName")+" | Subclass associated with Prerequiste Feature | LIST | VALUE=STRING "));
@@ -321,7 +321,7 @@
 			case "Same": "";
 			default: ab.PrereqFeatureSubclass = ""
 		]
-		[h:ab.PrereqFeatureSubclass = if(ab.PrereqFeatureSubclass=="None","",pm.RemoveSpecial(ab.PrereqFeatureSubclass))]
+		[h:ab.PrereqFeatureSubclass = if(ab.PrereqFeatureSubclass=="None","",js.a5e.RemoveSpecial(ab.PrereqFeatureSubclass))]
 		
 		[h:ab.PrereqFeatureOptions = json.toList(json.path.read(data.getData("addon:","pm.a5e.core","sb.Abilities"),"\$[?(@.Class=='"+ab.PrereqFeatureClass+"' && (@.Subclass==''|| @.Subclass=='"+ab.PrereqFeatureSubclass+"'))]['DisplayName']"))]
 		[h:abort(input(
@@ -329,7 +329,7 @@
 			" ab.AbilityPrereq | No,Yes,Yes - Use Same Filter | Add Additional Prerequisite Feature | RADIO "
 		))]
 		
-		[h:ab.FeaturePrereqs = json.append(ab.FeaturePrereqs,json.set("","Name",pm.RemoveSpecial(ab.PrereqFeatureName),"Class",ab.PrereqFeatureClass,"Subclass",ab.PrereqFeatureSubclass))]
+		[h:ab.FeaturePrereqs = json.append(ab.FeaturePrereqs,json.set("","Name",js.a5e.RemoveSpecial(ab.PrereqFeatureName),"Class",ab.PrereqFeatureClass,"Subclass",ab.PrereqFeatureSubclass))]
 		
 		[h:tempPrereqFeatureNum = json.length(ab.FeaturePrereqs)]
 		[h:numberOptions = ""]
@@ -342,35 +342,35 @@
 	[h,if(ab.RacePrereq>0 || ab.SubracePrereq>0),CODE:{
 		[h:ab.RaceList = pm.GetRaces("DisplayName","json")]
 		[h:ab.RacePrereqDis = ""]
-		[h,foreach(RaceOption,ab.RaceList): ab.RacePrereqDis = listAppend(ab.RacePrereqDis," ab.Choice"+pm.RemoveSpecial(RaceOption)+" |  | "+RaceOption+" | CHECK ","##")]
+		[h,foreach(RaceOption,ab.RaceList): ab.RacePrereqDis = listAppend(ab.RacePrereqDis," ab.Choice"+js.a5e.RemoveSpecial(RaceOption)+" |  | "+RaceOption+" | CHECK ","##")]
 		[h:ab.RacePrereqFinal = ""]
 		[h:ab.RacePrereqDis = if(ab.RacePrereq == 1,"ab.RacePrereqChoice | "+ab.RaceList+" | Prerequisite Race | RADIO | VALUE=STRING DELIMITER=JSON ",ab.RacePrereqDis)]
 		[h:ab.RacePrereqDis = if(ab.RacePrereq == 0,"ab.RacePrereqChoice | "+ab.RaceList+" | Race of Subrace Prerequisite | RADIO | VALUE=STRING DELIMITER=JSON",ab.RacePrereqDis)]
 		
 		[h:abort(input(ab.RacePrereqDis))]
 		
-		[h,if(ab.RacePrereq==2),foreach(RaceOption,ab.RaceList): ab.RacePrereqFinal = if(eval("ab.Choice"+pm.RemoveSpecial(RaceOption)),json.append(ab.RacePrereqFinal,pm.RemoveSpecial(RaceOption)),ab.RacePrereqFinal)]
-		[h,if(ab.RacePrereq!=2): ab.RacePrereqFinal = json.append("",pm.RemoveSpecial(ab.RacePrereqChoice))]
+		[h,if(ab.RacePrereq==2),foreach(RaceOption,ab.RaceList): ab.RacePrereqFinal = if(eval("ab.Choice"+js.a5e.RemoveSpecial(RaceOption)),json.append(ab.RacePrereqFinal,js.a5e.RemoveSpecial(RaceOption)),ab.RacePrereqFinal)]
+		[h,if(ab.RacePrereq!=2): ab.RacePrereqFinal = json.append("",js.a5e.RemoveSpecial(ab.RacePrereqChoice))]
 		[h:ab.PrereqsFinal = json.set(ab.PrereqsFinal,"Race",ab.RacePrereqFinal)]
 	};{}]
 	
 	[h,if(ab.SubracePrereq>0),CODE:{
 		[h:ab.SubraceList = pm.GetSubraces(ab.RacePrereqChoice,"DisplayName","json")]
 		[h:ab.SubracePrereqDis = ""]
-		[h,foreach(SubraceOption,ab.SubraceList): ab.SubracePrereqDis = listAppend(ab.SubracePrereqDis," ab.Choice"+pm.RemoveSpecial(SubraceOption)+" |  | "+SubraceOption+" | CHECK ","##")]
+		[h,foreach(SubraceOption,ab.SubraceList): ab.SubracePrereqDis = listAppend(ab.SubracePrereqDis," ab.Choice"+js.a5e.RemoveSpecial(SubraceOption)+" |  | "+SubraceOption+" | CHECK ","##")]
 		[h:ab.SubracePrereqFinal = ""]
 		[h:ab.SubracePrereqDis = if(ab.SubracePrereq == 1,"ab.SubracePrereqChoice | "+ab.SubraceList+" | Prerequisite Class | RADIO | VALUE=STRING DELIMITER=JSON ",ab.SubracePrereqDis)]
 		
 		[h:abort(input(ab.SubracePrereqDis))]
 		
-		[h,if(ab.SubracePrereq==2),foreach(SubraceOption,ab.SubraceList): ab.SubracePrereqFinal = if(eval("ab.Choice"+pm.RemoveSpecial(SubraceOption)),json.append(ab.SubracePrereqFinal,pm.RemoveSpecial(SubraceOption)),ab.SubracePrereqFinal)]
-		[h,if(ab.SubracePrereq==1): ab.SubracePrereqFinal = json.append("",pm.RemoveSpecial(ab.SubracePrereqChoice))]
+		[h,if(ab.SubracePrereq==2),foreach(SubraceOption,ab.SubraceList): ab.SubracePrereqFinal = if(eval("ab.Choice"+js.a5e.RemoveSpecial(SubraceOption)),json.append(ab.SubracePrereqFinal,js.a5e.RemoveSpecial(SubraceOption)),ab.SubracePrereqFinal)]
+		[h,if(ab.SubracePrereq==1): ab.SubracePrereqFinal = json.append("",js.a5e.RemoveSpecial(ab.SubracePrereqChoice))]
 		[h:ab.PrereqsFinal = json.set(ab.PrereqsFinal,"Subrace",ab.SubracePrereqFinal)]
 	};{}]
 
 	[h,if(ab.AttrPrereq),CODE:{
 		[h:ab.AtrPreInput = ""]
-		[h,foreach(TempAtr,ab.AtrList): ab.AtrPreInput = listAppend(ab.AtrPreInput," ab."+pm.RemoveSpecial(TempAtr)+"Prereq | "+ab.LevelList+" | "+TempAtr+" Prerequisite | LIST ","##")]
+		[h,foreach(TempAtr,ab.AtrList): ab.AtrPreInput = listAppend(ab.AtrPreInput," ab."+js.a5e.RemoveSpecial(TempAtr)+"Prereq | "+ab.LevelList+" | "+TempAtr+" Prerequisite | LIST ","##")]
 		[h:abort(input(
 			" junkVar | ---------------------- Attribute Prerequisite Info ---------------------- |  | LABEL | SPAN=TRUE ",
 			" ab.AttrAllOrOne | All,One | Requires all of the below to be met or just one | RADIO | SELECT=1 ",
@@ -379,8 +379,8 @@
 
 		[h:ab.AtrPreChoices = ""]
 		[h:ab.AttrPrereqCount = 0]
-		[h,foreach(TempAtr,ab.AtrList): ab.AtrPreChoices = json.set(ab.AtrPreChoices,pm.RemoveSpecial(TempAtr),eval("ab."+pm.RemoveSpecial(TempAtr)+"Prereq"))]
-		[h,foreach(TempAtr,ab.AtrList): ab.AttrPrereqCount = if(ab.AttrAllOrOne,1,if(eval("ab."+pm.RemoveSpecial(TempAtr)+"Prereq")>0,ab.AttrPrereqCount+1,ab.AttrPrereqCount))]
+		[h,foreach(TempAtr,ab.AtrList): ab.AtrPreChoices = json.set(ab.AtrPreChoices,js.a5e.RemoveSpecial(TempAtr),eval("ab."+js.a5e.RemoveSpecial(TempAtr)+"Prereq"))]
+		[h,foreach(TempAtr,ab.AtrList): ab.AttrPrereqCount = if(ab.AttrAllOrOne,1,if(eval("ab."+js.a5e.RemoveSpecial(TempAtr)+"Prereq")>0,ab.AttrPrereqCount+1,ab.AttrPrereqCount))]
 		[h:ab.AtrPreChoices = json.set(ab.AtrPreChoices,"AllOrOne",ab.AttrPrereqCount)]
 		[h:ab.PrereqsFinal = json.set(ab.PrereqsFinal,"Attributes",ab.AtrPreChoices)]
 	};{}]
@@ -1165,7 +1165,7 @@
 			))]
 		[h:abort(input(if(ab.CastTime=="Custom"," ab.CastTime |  | Enter custom casting time ","")))]
 		[h:ab.Marker = if(ab.Marker=="-- Ignore/Blank for None --","",ab.Marker)]
-		[h:ab.NewButtons = json.append(ab.NewButtons,json.set("","UseTime",if(ab.CastTime=="None","",ab.CastTime),"Marker",ab.Marker,"Class",json.get(ab.Final,"Class"),"Subclass",json.get(ab.Final,"Subclass"),"Name",pm.RemoveSpecial(ab.ButtonName),"DisplayName",ab.ButtonName,"Library",json.get(ab.Final,"Library")))]
+		[h:ab.NewButtons = json.append(ab.NewButtons,json.set("","UseTime",if(ab.CastTime=="None","",ab.CastTime),"Marker",ab.Marker,"Class",json.get(ab.Final,"Class"),"Subclass",json.get(ab.Final,"Subclass"),"Name",js.a5e.RemoveSpecial(ab.ButtonName),"DisplayName",ab.ButtonName,"Library",json.get(ab.Final,"Library")))]
 	}]
 	[h:ab.Final = json.set(ab.Final,"ButtonInfo",ab.NewButtons)]
 };{}]

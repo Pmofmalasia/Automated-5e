@@ -22,7 +22,7 @@
 	};
 	case "Single":{
 		[h:TransformDisplayName = pm.EvilChars(json.get(inputData,"singleTransform"))]
-		[h:TransformName = pm.RemoveSpecial(TransformDisplayName)]
+		[h:TransformName = js.a5e.RemoveSpecial(TransformDisplayName)]
 		[h:TransformFilter = json.set(TransformFilter,"CreatureNameInclusive",json.append("",TransformName))]
 		[h:inputData = json.remove(inputData,"singleTransform")]
 	};
@@ -31,7 +31,7 @@
 		[h:TransformOptions = "[]"]
 		[h,foreach(TransformOption,tempTransformOptions),CODE:{
 			[h:tempDisplayName = pm.EvilChars(decode(TransformOption))]
-			[h:tempName = pm.RemoveSpecial(tempDisplayName)]
+			[h:tempName = js.a5e.RemoveSpecial(tempDisplayName)]
 			[h:TransformOptions = json.append(TransformOptions,tempName)]
 		}]
 		[h:TransformFilter = json.set(TransformFilter,"CreatureNameInclusive",TransformOptions)]

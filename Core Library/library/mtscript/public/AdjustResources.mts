@@ -3,7 +3,7 @@
 [h:featuresWithResource = json.path.read(allFeatures,"\$[*][?(@.ResourceData != null)]","DEFAULT_PATH_LEAF_TO_NULL")]
 [h:switchToken(ParentToken)]
 
-[h:"<!-- TODO: MaxResource - testing -->"]
+[h:"<!-- TODO: Resource - needs ability to do time resource -->"]
 [h:disAbilityResourceSelection = ""]
 [h,foreach(feature,featuresWithResource),CODE:{
 	[h:thisAbilityIdentifier = json.get(feature,"AbilityType")+json.get(feature,"Name")+json.get(feature,"Class")+json.get(feature,"Subclass")]

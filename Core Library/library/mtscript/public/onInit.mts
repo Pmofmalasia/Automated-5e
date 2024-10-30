@@ -228,7 +228,7 @@
 [h:defineFunction("pm.a5e.ResolveDC","pm.a5e.ResolveDC@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.a5e.ResolveDCSuccess","pm.a5e.ResolveDCSuccess@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.a5e.ResolveDCFailure","pm.a5e.ResolveDCFailure@Lib:pm.a5e.Core")]
-[h:defineFunction("pm.a5e.UseResource","pm.a5e.UseResourceNew@Lib:pm.a5e.Core")]
+[h:defineFunction("pm.a5e.UseResource","pm.a5e.UseResource@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.a5e.UseResourceInputOptions","pm.a5e.UseResourceInputOptions@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.a5e.RestoreResource","pm.a5e.RestoreResource@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.a5e.EventResourceRestoration","pm.a5e.EventResourceRestoration@Lib:pm.a5e.Core",0,0)]

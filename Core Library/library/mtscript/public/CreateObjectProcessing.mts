@@ -1,6 +1,6 @@
 [h:objectData = macro.args]
 [h:objectData = pm.a5e.KeyStringsToNumbers(objectData)]
-[h:ObjectName = pm.RemoveSpecial(json.get(objectData,"DisplayName"))]
+[h:ObjectName = js.a5e.RemoveSpecial(json.get(objectData,"DisplayName"))]
 [h:objectData = json.set(objectData,"Name",ObjectName)]
 [h:objectType = json.get(objectData,"Type")]
 [h:newTemplateTest = 0]
@@ -13,12 +13,12 @@
 [h,if(json.contains(objectData,"isNewTemplate"+objectType)),CODE:{
 	[h:newTemplateTest = 1]
 	[h:newTemplateDisplayName = json.get(objectData,"NewTypeName"+objectType)]
-	[h:newTemplateName = pm.RemoveSpecial(newTemplateDisplayName)]
+	[h:newTemplateName = js.a5e.RemoveSpecial(newTemplateDisplayName)]
 	[h:objectData = json.set(objectData,objectType+"Type",newTemplateName)]
 	[h:objectData = json.remove(objectData,"NewTypeName"+objectType)]
 	[h:objectData = json.remove(objectData,"isNewTemplate"+objectType)]
 };{
-	[h,if(json.get(objectData,objectType+"Type")=="@@NewType"): objectData = json.set(objectData,objectType+"Type",pm.RemoveSpecial(json.get(objectData,"NewTypeName"+objectType)))]
+	[h,if(json.get(objectData,objectType+"Type")=="@@NewType"): objectData = json.set(objectData,objectType+"Type",js.a5e.RemoveSpecial(json.get(objectData,"NewTypeName"+objectType)))]
 	[h:objectData = json.remove(objectData,"NewTypeName"+objectType)]
 }]
 
@@ -264,7 +264,7 @@
 [h,if(objectType=="Tool"),CODE:{
 	[h,if(json.contains(objectData,"isNewToolSubtypeTemplate")),CODE:{
 		[h:newToolDisplayName = json.get(objectData,"NewToolTypeDisplayName")]
-		[h:newToolName = pm.RemoveSpecial(newToolDisplayName)]
+		[h:newToolName = js.a5e.RemoveSpecial(newToolDisplayName)]
 		[h:newToolData = json.set("",
 			"Name",newToolName,
 			"DisplayName",newToolDisplayName,
@@ -376,6 +376,20 @@
 	]
 	[h:objectData = json.remove(objectData,"ActivationComponents")]
 
+	[h,if(json.get(objectData,"ActivationTimeResourceUsed") == ""),CODE:{
+		[h:objectData = json.remove(objectData,"ActivationTimeResourceUsed")]
+	};{
+		[h:usedResourceName = js.a5e.RemoveSpecial(json.get(objectData,"ResourceDisplayName"+json.get(objectData,"ActivationTimeResourceUsed")))]
+		[h:activationResourceData = json.set("",
+			"Name",ObjectName,
+			"Class","Item",
+			"Subclass","",
+			"ItemID","this",
+			"Resource",usedResourceName
+		)]
+		[h:objectData = json.set(objectData,"ActivationTimeResourceUsed",activationResourceData)]
+	}]
+
 	[h,if(json.get(objectData,"isMagical")),CODE:{
 		[h:"<!-- TODO: Merge any already present activation effects here, if there's a light also. -->"]
 		[h,if(lightActivationEffect != ""): objectData = json.set(objectData,"ActivationEffects",json.append("",lightActivationEffect))]
@@ -389,12 +403,12 @@
 }]
 
 [h,if(json.get(objectData,"isResources") != ""),CODE:{
-	[h:objectResourceData = js.ct.a5e.ResourceProcessing(objectData,objectData)]
+	[h:objectResourceData = js.ct.a5e.ResourceProcessing(objectData,json.set(objectData,"Type","Item"))]
 	[h,if(json.get(objectResourceData,"FeatureUpdates") != ""),CODE:{
 		[h:objectData = json.set(objectData,"FeatureUpdates",json.get(objectResourceData,"FeatureUpdates"))]
 		[h:objectResourceData = json.remove(objectResourceData,"FeatureUpdates")]
 	};{}]
-	[h:objectData = json.set(objectResourceData,"ResourceData",objectResourceData)]
+	[h:objectData = json.set(objectData,"ResourceData",objectResourceData)]
 	[h:objectData = ct.a5e.PruneResourceKeys(objectData)]
 };{}]
 [h:objectData = json.remove(objectData,"isResources")]
@@ -429,7 +443,7 @@
 [h,count(json.contains(objectData,"isCastSpells") * differentSpellsNumber),CODE:{
 	[h:thisSpellLevel = json.get(objectData,"CastSpellLevel"+roll.count)]
 	[h:thisSpellData = json.set("",
-		"Name",pm.RemoveSpecial(json.get(objectData,"CastSpellName"+roll.count)),
+		"Name",js.a5e.RemoveSpecial(json.get(objectData,"CastSpellName"+roll.count)),
 		"Level",thisSpellLevel
 	)]
 	[h:thisSpellResourceUsed = json.get(objectData,"CastSpellResource"+roll.count)]
@@ -442,7 +456,7 @@
 		isAHLAllowed = json.get(objectData,"CanAHLSpell"+roll.count);
 		isAHLAllowed = 0
 	]
-
+[h:"<!-- TODO: MaxResource - Fix this, whatever it does -->"]
 	[h:NoResourceUsedTest = or(json.get(objectData,"isCharges") == "None",and(thisSpellResourceUsed == 0,!isAHLAllowed))]
 	[h,if(!NoResourceUsedTest),CODE:{
 		[h:resourceIdentifiers = json.set("","Name",ObjectName,"Class","Item","Subclass","","ResourceSource","Item")]
@@ -460,7 +474,7 @@
 				"ResourceUsedMax",thisSpellResourceUsed)
 		]
 
-		[h,if(json.contains(objectData,"CastSpellResourceKey"+roll.count)): thisSpellResource = json.set(thisSpellResource,"ResourceKey",pm.RemoveSpecial(json.get(objectData,"CastSpellResourceKey"+roll.count)))]
+		[h,if(json.contains(objectData,"CastSpellResourceKey"+roll.count)): thisSpellResource = json.set(thisSpellResource,"ResourceKey",js.a5e.RemoveSpecial(json.get(objectData,"CastSpellResourceKey"+roll.count)))]
 
 		[h:FinalResourceData = json.set("","Feature",thisSpellResource)]
 		[h:thisSpellData = json.set(thisSpellData,"UseResource",FinalResourceData)]
@@ -535,7 +549,6 @@
 [h:objectData = json.remove(objectData,"isDefaultMaxHP")]
 
 [h:objectData = json.set(objectData,
-	"isWearable",json.contains(objectData,"isWearable"),
 	"isLockable",json.contains(objectData,"isLockable"),
 	"NeedsLock",json.contains(objectData,"NeedsLock"),
 	"isFlammable",json.contains(objectData,"isFlammable"),
@@ -543,6 +556,13 @@
 	"isStackable",json.contains(objectData,"isStackable"),
 	"isConsumable",json.contains(objectData,"isConsumable")
 )]
+
+[h:wornHeld = json.get(objectData,"wornHeld")]
+[h,if(wornHeld != ""),CODE:{
+	[h,if(wornHeld == "Worn"): objectData = json.set(objectData,"isWorn",1)]
+	[h,if(wornHeld == "Held"): objectData = json.set(objectData,"isHeld",1)]
+};{}]
+[h:objectData = json.remove(objectData,"wornHeld")]
 
 [h:MaterialTags = pm.a5e.GetCoreData("sb.MaterialTags")]
 [h:ObjectTags = pm.a5e.GetCoreData("sb.ObjectTags")]

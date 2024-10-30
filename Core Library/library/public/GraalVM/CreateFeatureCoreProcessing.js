@@ -19,12 +19,14 @@ function coreFeatureProcessing(CoreFeatureData){
 		FeatureData.OverallScaling = breakPoints;
 	}
 
-	let resourceData = resourceProcessing(CoreFeatureData,FeatureData);
-	if(resourceData.FeatureUpdates !== undefined){
-		FeatureData.FeatureUpdates = resourceData.FeatureUpdates;
-		delete resourceData.FeatureUpdates;
+	if(CoreFeatureData.isResources !== "" && CoreFeatureData.isResources !== undefined){
+		let resourceData = resourceProcessing(CoreFeatureData,FeatureData);
+		if(resourceData.FeatureUpdates !== undefined){
+			FeatureData.FeatureUpdates = resourceData.FeatureUpdates;
+			delete resourceData.FeatureUpdates;
+		}
+		FeatureData.ResourceData = resourceData;		
 	}
-	FeatureData.ResourceData = resourceData;
 
 	if(CoreFeatureData.HasActiveEffects == 1){
 		FeatureData.ActiveEffects = activeEffectsProcessing(CoreFeatureData);
@@ -151,8 +153,7 @@ function resourceProcessing(CoreFeatureData,FeatureData){
 		let thisResourceMax = {};
 
 		let thisResourceDisplayName = CoreFeatureData["ResourceDisplayName"+i];
-		MTScript.setVariable("js.temp.DisplayName",thisResourceDisplayName);
-		let thisResourceName = MTScript.evalMacro(`[r:pm.RemoveSpecial(js.temp.DisplayName)]`);
+		let thisResourceName = removeSpecialCharacters(thisResourceDisplayName);
 
 		ResourceDisplayNames[thisResourceName] = thisResourceDisplayName;
 		thisResourceMax.Name = thisResourceName;

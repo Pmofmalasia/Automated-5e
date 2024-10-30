@@ -1,9 +1,10 @@
 [h:featureInputData = macro.args]
 [h:FeatureType = json.get(featureInputData,"FeatureType")]
 [h:featureInputData = pm.a5e.KeyStringsToNumbers(featureInputData)]
+[h:ParentToken = json.get(featureInputData,"ParentToken")]
 
 [h:FeatureDisplayName = pm.EvilChars(json.get(featureInputData,"DisplayName"))]
-[h:FeatureName = pm.RemoveSpecial(FeatureDisplayName)]
+[h:FeatureName = js.a5e.RemoveSpecial(FeatureDisplayName)]
 [h:FeatureClass = json.get(featureInputData,"FeatureClass")]
 [h:FeatureSubclass = json.get(featureInputData,"FeatureSubclass")]
 [h:FeatureLib = json.get(featureInputData,"Sourcebook")]
@@ -16,7 +17,8 @@
 	"Class",FeatureClass,
 	"Subclass",FeatureSubclass,
 	"Type",FeatureType,
-	"Library",FeatureLib
+	"Library",FeatureLib,
+	"ParentToken",ParentToken
 )]
 
 [h,if(json.get(featureInputData,"Level") != ""),CODE:{
@@ -51,7 +53,7 @@
 
 	[h,if(json.contains(featureInputData,"NewConditionTag")),CODE:{
 		[h:conditionTagDisplayName = pm.EvilChars(json.get(featureInputData,"NewConditionTag"))]
-		[h:conditionTagName = pm.RemoveSpecial(conditionTagDisplayName)]
+		[h:conditionTagName = js.a5e.RemoveSpecial(conditionTagDisplayName)]
 		[h:conditionTagData = json.set("",
 			"DisplayName",conditionTagDisplayName,
 			"Name",conditionTagName,

@@ -39,7 +39,7 @@
 		"PropertyType",getPropertyType(token)
 	)]
 	[h:thisTokenJSON = json.set(thisTokenJSON,"MTProperties",otherProps)]
-	[h:thisTokenJSON = json.set(thisTokenJSON,"Name",pm.RemoveSpecial(getName(token)),"Token",token)]
+	[h:thisTokenJSON = json.set(thisTokenJSON,"Name",js.a5e.RemoveSpecial(getName(token)),"Token",token)]
 
 	[h:StoredTokens = json.append(StoredTokens,thisTokenJSON)]
 }]

@@ -1,7 +1,7 @@
 [h:RaceData = macro.args]
 [h:RaceData = pm.a5e.KeyStringsToNumbers(RaceData)]
 [h:RaceDisplayName = json.get(RaceData,"DisplayName")]
-[h:RaceName = pm.RemoveSpecial(RaceDisplayName)]
+[h:RaceName = js.a5e.RemoveSpecial(RaceDisplayName)]
 [h,if(json.contains(RaceData,"Race")):
 	RaceOrSubrace = "Subrace";
 	RaceOrSubrace = "Race"

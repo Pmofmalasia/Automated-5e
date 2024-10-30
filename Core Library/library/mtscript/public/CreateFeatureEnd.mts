@@ -1,13 +1,13 @@
 [h:FeatureData = json.get(macro.args,"FeatureData")]
 [h:FeatureName = json.get(FeatureData,"Name")]
 [h:FeatureType = json.get(macro.args,"FeatureType")]
+[h:ParentToken = json.get(macro.args,"ParentToken")]
 
 [h:FeatureData = json.remove(FeatureData,"Sourcebook")]
 [h:FeatureData = json.remove(FeatureData,"EffectsNumber")]
 [h:FeatureData = json.remove(FeatureData,"SpecialEffects")]
 [h:FeatureData = json.remove(FeatureData,"ParentToken")]
 
-[h:ParentToken = json.get(macro.args,"ParentToken")]
 [h,if(ParentToken == ""),CODE:{
 	[h,switch(FeatureType):
 		case "Background": PropertyName = "sb.Backgrounds";
@@ -33,12 +33,7 @@
 
 	[h:setLibProperty(PropertyName,json.append(getLibProperty(PropertyName,"Lib:"+json.get(FeatureData,"Library")),FeatureData),"Lib:"+json.get(FeatureData,"Library"))]
 
-	[h:MacroCreationData = json.set("",
-		"AbilityList",json.get(FeatureData,"ButtonInfo"),
-		"Effects",json.get(FeatureData,"Effects"),
-		"ParentToken",ParentToken
-	)]
-	[h,MACRO("CreatePlayerClassMacro@Lib:pm.a5e.Core"): MacroCreationData]
+	[h:js.a5e.CreateFeatureMacros(json.append("",FeatureData),ParentToken)]
 }]
 
 [h:broadcast("Feature "+json.get(FeatureData,"DisplayName")+" created.")]

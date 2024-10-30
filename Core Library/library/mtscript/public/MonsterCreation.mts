@@ -14,7 +14,7 @@
 [h:CreatureSubtypes = pm.a5e.GetCreatureSubtypes(firstCreatureType,"DisplayName")]
 [h:allSubtypes = json.unique(json.merge(matchingRaces,CreatureSubtypes))]
 [h:creatureSubtypeOptions = ""]
-[h,foreach(tempSubtype,allSubtypes): creatureSubtypeOptions = creatureSubtypeOptions + "<option value='"+pm.RemoveSpecial(tempSubtype)+"'>"+tempSubtype+"</option>"]
+[h,foreach(tempSubtype,allSubtypes): creatureSubtypeOptions = creatureSubtypeOptions + "<option value='"+js.a5e.RemoveSpecial(tempSubtype)+"'>"+tempSubtype+"</option>"]
 [h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowCreatureSubtype'><th><label for='CreatureSubtype'>Creature Subtype/Race:</label></th><td><select id='CreatureSubtype' name='CreatureSubtype'><option value=''>None</option>"+creatureSubtypeOptions+"</select></td></tr>"]
 
 [h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowAlignment'><th><label for='Alignment'>Alignment:</label></th><td>

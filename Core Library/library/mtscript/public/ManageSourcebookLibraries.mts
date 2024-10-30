@@ -7,7 +7,7 @@
 			[h:abort(input(
 				" libDisplayName |  | Input the name of the sourcebook - must be unique "
 				))]
-			[h:libName = pm.RemoveSpecial(libDisplayName)]
+			[h:libName = js.a5e.RemoveSpecial(libDisplayName)]
 			[h:libData = json.set("","DisplayName",libDisplayName,"Name",libName,"Library",libName)]
 			[h:data.setData("addon:","pm.a5e.core","ms.Sources",json.append(data.getData("addon:","pm.a5e.core","ms.Sources"),json.set(libData,"Banned",0)))]
 			[h:newLibTokenData = json.set("",
@@ -47,7 +47,7 @@
 			[h:abort(input(
 				" areYouSure | No,Yes | Are you sure you want to delete "+libDeleteChoice+"? | RADIO "
 				))]
-			[h,if(areYouSure): data.setData("addon:","pm.a5e.core","ms.Sources",json.path.delete(data.getData("addon:","pm.a5e.core","ms.Sources"),"\$[*][?(@.Name == '"+pm.RemoveSpecial(libDeleteChoice)+"')]"))]
+			[h,if(areYouSure): data.setData("addon:","pm.a5e.core","ms.Sources",json.path.delete(data.getData("addon:","pm.a5e.core","ms.Sources"),"\$[*][?(@.Name == '"+js.a5e.RemoveSpecial(libDeleteChoice)+"')]"))]
 			[h:broadcast("Library "+libDeleteChoice+" has been deleted. This has not removed its library token or any of the data contained on it, just in case.")]
 		};
 	case 2: {
@@ -55,7 +55,7 @@
 			[h:abort(input(
 				" libBanChoice | "+libsNotBanned+" | Which library should be banned? Note: this will only prevent class features, languages, etc. on the library from appearing in the core library and being chosen. Class features, languages, etc. already chosen will remain. | LIST | VALUE=STRING "
 				))]
-			[h:data.setData("addon:","pm.a5e.core","ms.Sources",json.path.set(data.getData("addon:","pm.a5e.core","ms.Sources"),"\$[*][?(@.Name == '"+pm.RemoveSpecial(libBanChoice)+"')]['Banned']",1))]
+			[h:data.setData("addon:","pm.a5e.core","ms.Sources",json.path.set(data.getData("addon:","pm.a5e.core","ms.Sources"),"\$[*][?(@.Name == '"+js.a5e.RemoveSpecial(libBanChoice)+"')]['Banned']",1))]
 			[h:broadcast("Library "+libBanChoice+" has been banned.")]
 		};
 	case 3: {
@@ -64,7 +64,7 @@
 			[h:abort(input(
 				" libUnbanChoice | "+libsBanned+" | Which library should be unbanned? | LIST | VALUE=STRING "
 				))]
-			[h:data.setData("addon:","pm.a5e.core","ms.Sources",json.path.set(data.getData("addon:","pm.a5e.core","ms.Sources"),"\$[*][?(@.Name == '"+pm.RemoveSpecial(libUnbanChoice)+"')]['Banned']",0))]
+			[h:data.setData("addon:","pm.a5e.core","ms.Sources",json.path.set(data.getData("addon:","pm.a5e.core","ms.Sources"),"\$[*][?(@.Name == '"+js.a5e.RemoveSpecial(libUnbanChoice)+"')]['Banned']",0))]
 			[h:broadcast(if(libUnbanChoice == "No Libraries Currently Banned","No libraries currently banned. No changes made.","Library "+libUnbanChoice+" has been unbanned."))]
 		}
 	]

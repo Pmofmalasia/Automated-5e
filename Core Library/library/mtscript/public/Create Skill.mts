@@ -5,11 +5,11 @@
 	" sk.Source | "+pm.GetBookInfo("DisplayName")+" | Which sourcebook is the skill from | LIST | VALUE=STRING "
 	))]
 
-[h:sk.SourcebookLib = json.get(json.path.read(data.getData("addon:","pm.a5e.core","ms.Sources"),"\$[?(@.Name=='"+pm.RemoveSpecial(sk.Source)+"')]['Library']"),0)]
+[h:sk.SourcebookLib = json.get(json.path.read(data.getData("addon:","pm.a5e.core","ms.Sources"),"\$[?(@.Name=='"+js.a5e.RemoveSpecial(sk.Source)+"')]['Library']"),0)]
 
 [h,if(sk.SkillType == "Skill"),CODE:{
 	[h:setLibProperty("sb.Skills",
-			json.append(getLibProperty("sb.Skills","Lib:"+sk.SourcebookLib),json.set("","Name",pm.RemoveSpecial(sk.Name),"DisplayName",sk.Name,"Attribute",pm.RemoveSpecial(sk.Attribute))),
+			json.append(getLibProperty("sb.Skills","Lib:"+sk.SourcebookLib),json.set("","Name",js.a5e.RemoveSpecial(sk.Name),"DisplayName",sk.Name,"Attribute",js.a5e.RemoveSpecial(sk.Attribute))),
 			"Lib:"+sk.SourcebookLib
 		)]
 };{}]
@@ -19,7 +19,7 @@
       " sk.ToolType | None,"+pm.GetToolTypes("DisplayName")+" | Type of Tool | RADIO | VALUE=STRING "
    ))]
 	[h:setLibProperty("sb.Tools",
-			json.append(getLibProperty("sb.Tools","Lib:"+sk.SourcebookLib),json.set("","Name",pm.RemoveSpecial(sk.Name),"DisplayName",sk.Name,"Attribute",pm.RemoveSpecial(sk.Attribute),"ToolType",if(sk.ToolType=="None","",pm.RemoveSpecial(sk.ToolType)))),
+			json.append(getLibProperty("sb.Tools","Lib:"+sk.SourcebookLib),json.set("","Name",js.a5e.RemoveSpecial(sk.Name),"DisplayName",sk.Name,"Attribute",js.a5e.RemoveSpecial(sk.Attribute),"ToolType",if(sk.ToolType=="None","",js.a5e.RemoveSpecial(sk.ToolType)))),
 			"Lib:"+sk.SourcebookLib
 		)]
 };{}]

@@ -15,23 +15,23 @@
 ))]
 
 [h:sp.SpellcastingAbility = json.set(sp.SpellcastingAbility,
-	"Name",pm.RemoveSpecial(sp.Name),
+	"Name",js.a5e.RemoveSpecial(sp.Name),
 	"DisplayName",sp.Name,
 	"Level",sp.LevelGained,
-	"PrimeStat",pm.RemoveSpecial(sp.Stat),
+	"PrimeStat",js.a5e.RemoveSpecial(sp.Stat),
 	"CasterType",if(sp.HalfFull==0,1,if(sp.HalfFull==1,(1/2),if(sp.HalfFull==2,(1/3),0))),
 	"Ritual",sp.Ritual,
 	"MagicSource",sp.MagicSource,
 	"SpellPrepType",sp.Prepared,
 	"CallSpellClass",1,
-	"CallSharedDC",pm.RemoveSpecial(sp.Name)+json.get(sp.SpellcastingAbility,"Class")+json.get(sp.SpellcastingAbility,"Subclass"),
+	"CallSharedDC",js.a5e.RemoveSpecial(sp.Name)+json.get(sp.SpellcastingAbility,"Class")+json.get(sp.SpellcastingAbility,"Subclass"),
 	"GainOnLevel",1
 )]
 [h:sp.UpdateLevelOptions = string(sp.LevelGained)]
 [h,count(20-sp.LevelGained): sp.UpdateLevelOptions = listAppend(sp.UpdateLevelOptions,sp.LevelGained+roll.count+1)]
 
 [h:sp.Updates = json.set("",
-	"Name",pm.RemoveSpecial(sp.Name),
+	"Name",js.a5e.RemoveSpecial(sp.Name),
 	"DisplayName",sp.Name,
 	"Class",json.get(sp.SpellcastingAbility,"Class"),
 	"Subclass",json.get(sp.SpellcastingAbility,"Subclass"),
@@ -129,7 +129,7 @@
 			[h:BaseSpellFilter = json.set(BaseSpellFilter,"MaxLevel",sp.LevelCap)]
 		}
 	]
-[h:"<!-- TODO: MaxResourceLowPrio - Needs to use new format -->"]
+[h:"<!-- TODO: Resource - Needs to use new format; Needs HTML5 input to actually get correct info so will probably just wait until I rework this whole thing for resource to work -->"]
 	
 	[h,if(sp.ResourceType=="Multiple Spell Slot Levels"): sp.ResourceType = "Multiple Resources"]
 	[h:sp.ResourceInfo = pm.ResourceInput(json.set("","Name",json.get(sp.SpellcastingAbility,"Name"),"Class",json.get(sp.SpellcastingAbility,"Class"),"Subclass",json.get(sp.SpellcastingAbility,"Subclass"),"Level",sp.LevelGained),sp.ResourceType)]

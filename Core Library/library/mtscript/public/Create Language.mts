@@ -5,10 +5,10 @@
 	" lg.Source | "+pm.GetBookInfo("DisplayName")+" | Which sourcebook is the language from | LIST | VALUE=STRING "
 	))]
 
-[h:lg.SourcebookLib = json.get(json.path.read(data.getData("addon:","pm.a5e.core","ms.Sources"),"\$[?(@.Name=='"+pm.RemoveSpecial(lg.Source)+"')]['Library']"),0)]
+[h:lg.SourcebookLib = json.get(json.path.read(data.getData("addon:","pm.a5e.core","ms.Sources"),"\$[?(@.Name=='"+js.a5e.RemoveSpecial(lg.Source)+"')]['Library']"),0)]
 
 [h:lg.Data = json.set("",
-			"Name",pm.RemoveSpecial(lg.Name),
+			"Name",js.a5e.RemoveSpecial(lg.Name),
 			"DisplayName",lg.Name,
 			"Script",lg.Script,
 			"Rarity",lg.Rarity,

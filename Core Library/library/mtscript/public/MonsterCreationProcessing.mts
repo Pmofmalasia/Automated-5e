@@ -4,7 +4,7 @@
 [h:switchToken(ParentToken)]
 
 [h:MonsterDisplayName = json.get(MonsterData,"DisplayName")]
-[h:MonsterName = pm.RemoveSpecial(MonsterDisplayName)]
+[h:MonsterName = js.a5e.RemoveSpecial(MonsterDisplayName)]
 [h:MonsterLibrary = json.get(MonsterData,"Library")]
 [h:setName(MonsterDisplayName)]
 [h:setProperty("a5e.stat.CreatureName",MonsterName)]

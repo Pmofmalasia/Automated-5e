@@ -1,8 +1,8 @@
 async function createWeaponTableRows(tableID,startRowID){
 	let nextRowIndex = document.getElementById(startRowID).rowIndex + 1;
 
-	if(document.getElementById("isWearable")!=null){
-		document.getElementById("isWearable").setAttribute("checked","");
+	if(document.getElementById("wornHeld")!=null){
+		document.getElementById("wornHeld").value = "Held";
 	}
 	if(document.getElementById("isStackable")!=null){
 		document.getElementById("isStackable").checked = false;

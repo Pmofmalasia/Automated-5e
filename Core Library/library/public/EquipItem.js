@@ -141,7 +141,7 @@ function createWornItemsRows(tableID,Inventory){
 
 	let HoldableTypes = ["Weapon","Shield","SpellcastingFocus","Tool","Armor","Ammunition","Rod","Staff","Wand"];
 	for(let tempItem of Inventory){
-		if(HoldableTypes.includes(tempItem.Type) === false && tempItem.isAttunement != 1 && tempItem.isWearable == 1){
+		if(HoldableTypes.includes(tempItem.Type) === false && tempItem.isAttunement != 1 && tempItem.isWorn == 1){
 			let tempElementName = "WearableChoice"+tempItem.ItemID;
 			let checkedTest = "";
 			if(tempItem.IsActive == 1){

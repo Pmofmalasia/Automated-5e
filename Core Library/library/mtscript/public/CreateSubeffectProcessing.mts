@@ -40,7 +40,7 @@
 		[h:EffectDisplayName = json.get(subeffectData,"EffectDisplayName")]
 		[h:currentEffectData = json.set(currentEffectData,
 			"DisplayName",EffectDisplayName,
-			"Name",pm.RemoveSpecial(EffectDisplayName)
+			"Name",js.a5e.RemoveSpecial(EffectDisplayName)
 		)]
 
 		[h:subeffectData = json.remove(subeffectData,"EffectDisplayName")]
@@ -383,8 +383,8 @@
 		};
 		case "11":{
 			[h:conditionNames = json.fromList(encode(json.get(subeffectData,"AlwaysAddedEffectSpecificNames")),"%0A")]
-			[h,foreach(tempCondition,conditionNames): conditionsAlwaysAdded = json.append(conditionsAlwaysAdded,json.set(ConditionIdentificationInfo,"Name",pm.RemoveSpecial(pm.EvilChars(decode(tempCondition))),"DisplayName",decode(tempCondition)))]
-			[h,foreach(tempCondition,conditionNames): EffectSpecificConditions = json.append(EffectSpecificConditions,json.set(ConditionIdentificationInfo,"Name",pm.RemoveSpecial(tempCondition),"DisplayName",decode(tempCondition)))]
+			[h,foreach(tempCondition,conditionNames): conditionsAlwaysAdded = json.append(conditionsAlwaysAdded,json.set(ConditionIdentificationInfo,"Name",js.a5e.RemoveSpecial(pm.EvilChars(decode(tempCondition))),"DisplayName",decode(tempCondition)))]
+			[h,foreach(tempCondition,conditionNames): EffectSpecificConditions = json.append(EffectSpecificConditions,json.set(ConditionIdentificationInfo,"Name",js.a5e.RemoveSpecial(tempCondition),"DisplayName",decode(tempCondition)))]
 			[h:subeffectData = json.remove(subeffectData,"isEffectSpecificAlwaysAddedMultiple")]
 			[h:subeffectData = json.remove(subeffectData,"AlwaysAddedEffectSpecificNames")]
 		};
@@ -408,8 +408,8 @@
 		};
 		case "11":{
 			[h:conditionNames = json.fromList(encode(json.get(subeffectData,"ConditionOptionEffectSpecificNames")),"%0A")]
-			[h,foreach(tempCondition,conditionNames): conditionOptions = json.append(conditionOptions,json.set(ConditionIdentificationInfo,"Name",pm.RemoveSpecial(pm.EvilChars(decode(tempCondition))),"DisplayName",decode(tempCondition)))]
-			[h,foreach(tempCondition,conditionNames): EffectSpecificConditions = json.append(EffectSpecificConditions,json.set(ConditionIdentificationInfo,"Name",pm.RemoveSpecial(pm.EvilChars(decode(tempCondition))),"DisplayName",decode(tempCondition)))]
+			[h,foreach(tempCondition,conditionNames): conditionOptions = json.append(conditionOptions,json.set(ConditionIdentificationInfo,"Name",js.a5e.RemoveSpecial(pm.EvilChars(decode(tempCondition))),"DisplayName",decode(tempCondition)))]
+			[h,foreach(tempCondition,conditionNames): EffectSpecificConditions = json.append(EffectSpecificConditions,json.set(ConditionIdentificationInfo,"Name",js.a5e.RemoveSpecial(pm.EvilChars(decode(tempCondition))),"DisplayName",decode(tempCondition)))]
 			[h:subeffectData = json.remove(subeffectData,"isEffectSpecificConditionOptionMultiple")]
 			[h:subeffectData = json.remove(subeffectData,"ConditionOptionEffectSpecificNames")]
 		};

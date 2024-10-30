@@ -1,4 +1,27 @@
-[h:objects = getLibProperty("sb.Objects","Lib:XGTE")]
+[h:objects = data.getData("addon:","pm.a5e.core","sb.Abilities")]
+
+[h:features = json.path.read(objects,"\$[*][?(@.Effects != null)]['DisplayName']","DEFAULT_PATH_LEAF_TO_NULL")]
+
+[h:broadcast(features)]
+
+
+
+
+[h:objects = data.getData("addon:","pm.a5e.core","sb.MonsterFeatures")]
+
+[h:features = json.path.read(objects,"\$[*][?(@.ButtonInfo != null && @.Effects != null)]['DisplayName']","DEFAULT_PATH_LEAF_TO_NULL")]
+
+[h:broadcast(features)]
+
+
+
+
+
+[h:objects = data.getData("addon:","pm.a5e.core","sb.Abilities")]
+
+[h:features = json.path.read(objects,"\$[*][?(@.ButtonInfo != null && @.Name == 'WildShape')]['DisplayName']","DEFAULT_PATH_LEAF_TO_NULL")]
+
+[h:broadcast(features)]
 
 [h:i = 0]
 [h,foreach(object,objects),CODE:{

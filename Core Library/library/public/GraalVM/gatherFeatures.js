@@ -45,13 +45,13 @@ function gatherFeatures(ParentToken,options){
 		if(unifiedFeatures === "null"){
 			unifiedFeatures = "[]";
 		}
-		gatherFeatureType(JSON.parse(unifiedFeatures),"Feature",false);
+		unifiedFeatures = gatherFeatureType(JSON.parse(unifiedFeatures),"Feature",false);
 		
 		let unifiedConditions = ParentToken.getProperty("a5e.stat.ConditionList");
 		if(unifiedConditions === "null"){
 			unifiedConditions = "[]";
 		}
-		gatherFeatureType(JSON.parse(unifiedConditions),"Condition",false);
+		unifiedConditions = gatherFeatureType(JSON.parse(unifiedConditions),"Condition",false);
 
 		function mergeTieredFeatures(features){
 			let finalFeatures = [];
@@ -84,7 +84,7 @@ function gatherFeatures(ParentToken,options){
 		if(inventory === "null"){
 			inventory = "[]";
 		}
-		gatherFeatureType(JSON.parse(inventory),"Condition",true);
+		inventory = gatherFeatureType(JSON.parse(inventory),"Item",true);
 
 		let tempItemConditions = inventory.filter(function(item){
 			return (item.ItemConditions !== undefined || item.ItemConditions !== "");
@@ -95,7 +95,7 @@ function gatherFeatures(ParentToken,options){
 		}
 		let unifiedItemConditions = gatherFeatureType(itemConditions,"ItemCondition",false);
 
-		return unifiedFeatures.concat(unifiedConditions).concat(unifiedItems).concat(unifiedItemConditions);
+		return unifiedFeatures.concat(unifiedConditions).concat(inventory).concat(unifiedItemConditions);
 	}
 
 	let thisTokenFeatures = gatherFeaturesThisToken(ParentToken,false);

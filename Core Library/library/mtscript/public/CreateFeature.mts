@@ -5,7 +5,7 @@
 [h:list1through20 = ""]
 [h,c(20): list1through20 = list1through20 + "<option value="+(roll.count+1)+">"+(roll.count+1)+"</option>"]
 
-[h:CreateFeatureHTML = "<tr id='rowDisplayName'><th><label for='DisplayName'>Feature Name:</label></th><td><input type='text' id='DisplayName' name='DisplayName' autofocus></td></tr>"]
+[h:CreateFeatureHTML = "<tr id='rowDisplayName'><th><label for='DisplayName'>Feature Name:</label></th><td><input type='text' id='DisplayName' name='DisplayName' autofocus><input type='hidden' id='ParentToken' name='ParentToken' value='"+ParentToken+"'></td></tr>"]
 
 [h,if(FeatureType == ""),CODE:{
 	[h:CreateFeatureHTML = CreateFeatureHTML + "<tr id='rowFeatureType'><th><label for='FeatureType'>Feature Type:</label></th><td><select id='FeatureType' name='FeatureType'><option value='Class'>Class</option><option value='Race'>Race</option><option value='Feat'>Feat</option><option value='Background'>Background</option><option value='FightingStyle'>Fighting Style</option><option value='MonsterFeature'>NPC Feature</option></select></td></tr>"]

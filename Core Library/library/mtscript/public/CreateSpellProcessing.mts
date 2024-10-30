@@ -2,7 +2,7 @@
 [h:SpellCoreData = pm.a5e.KeyStringsToNumbers(SpellCoreData)]
 
 [h:SpellCoreData = json.set(SpellCoreData,"DisplayName",pm.EvilChars(json.get(SpellCoreData,"DisplayName")))]
-[h:SpellCoreData = json.set(SpellCoreData,"Name",pm.RemoveSpecial(json.get(SpellCoreData,"DisplayName")))]
+[h:SpellCoreData = json.set(SpellCoreData,"Name",js.a5e.RemoveSpecial(json.get(SpellCoreData,"DisplayName")))]
 
 [h,if(json.contains(SpellCoreData,"mComp")),CODE:{
 	[h,if(json.get(SpellCoreData,"mComponents")==""):

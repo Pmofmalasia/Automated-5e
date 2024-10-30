@@ -19,6 +19,7 @@ function calculateResourceData(feature,ParentToken,options){
 	if(options !== undefined){
 		specificResource = options.resource;
 	}
+
 	let finalResourceData = {};
 
 	let featureResourceData = feature.ResourceData;

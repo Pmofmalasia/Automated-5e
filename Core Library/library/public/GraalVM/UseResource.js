@@ -280,8 +280,8 @@ function expendResource(resources,ParentTokenID){
 	}
 
 	let chatTable = [];
-	let resourceUsed = [];
-
+	let resourceUsed;
+	let hitDiceUsed = [];
 	for(let resource of resources){
 		if(resource.Type === "Feature"){
 			let feature = getFeatureProperty(resource.Feature,ParentToken);
@@ -291,13 +291,13 @@ function expendResource(resources,ParentTokenID){
 			setFeatureProperty(feature,ParentToken,["Resource"]);
 			let resourceData = calculateResourceData(feature,ParentToken,{resource:resourceName});
 
-			resourceUsed.push({
+			resourceUsed = {
 				ResourceName:resourceName,
 				ResourceFeature:resource.Feature,
 				ResourceType:"Feature",
 				Used:resource.Amount,
 				Tier:resource.Tier
-			});
+			};
 
 			chatTable.push({
 				ShowIfCondensed:1,
@@ -314,12 +314,16 @@ function expendResource(resources,ParentTokenID){
 			currentHitDice[spentSize] = Math.max(currentHitDice[spentSize] - resource.Amount,0);
 			ParentToken.setProperty("a5e.stat.HitDice",JSON.stringify(currentHitDice));
 
-			resourceUsed.push({
-				HitDieSize:spentSize,
+			for(let i = 0; i < resource.Amount; i++){
+				hitDiceUsed.push(spentSize);
+			}
+
+			resourceUsed = {
+				HitDice:hitDiceUsed,
 				ResourceName:"Hit Dice",
 				ResourceType:"Hit Dice",
 				Used:resource.Amount,
-			});
+			};
 
 			chatTable.push({
 				ShowIfCondensed:1,
@@ -336,12 +340,12 @@ function expendResource(resources,ParentTokenID){
 			currentSpellSlots[spentLevel] = Math.max(currentSpellSlots[spentLevel] - 1,0);
 			ParentToken.setProperty("a5e.stat.SpellSlots",JSON.stringify(currentSpellSlots));
 
-			resourceUsed.push({
+			resourceUsed = {
 				SpellLevel:spentLevel,
 				ResourceName:"Spell Slot",
 				ResourceType:"SpellSlot",
 				Used:1,
-			});
+			};
 
 			chatTable.push({
 				ShowIfCondensed:1,
@@ -363,13 +367,13 @@ function expendResource(resources,ParentTokenID){
 
 			let spentLevel = resource.SlotLevel;
 
-			resourceUsed.push({
+			resourceUsed = {
 				SpellLevel:spentLevel,
 				ResourceFeature:resource.Identifier,
 				ResourceName:resource.DisplayName,
 				ResourceType:"SpellSlot",
 				Used:1
-			});
+			};
 
 			chatTable.push({
 				ShowIfCondensed:1,
@@ -414,12 +418,12 @@ function expendResource(resources,ParentTokenID){
 			setFeatureProperty(feature,ParentToken,["Resource"]);
 			let resourceData = calculateResourceData(feature,ParentToken,{resource:resourceName});
 
-			resourceUsed.push({
+			resourceUsed = {
 				ResourceName:resourceName,
 				ResourceFeature:resource.Feature,
 				ResourceType:"Time",
 				Used:isActivating
-			});
+			};
 
 			chatTable.push({
 				ShowIfCondensed:1,

@@ -22,10 +22,10 @@
 
 [h:ab.UpdateLevelOptions = string(ab.Level)]
 [h,count(20-ab.Level): ab.UpdateLevelOptions = listAppend(ab.UpdateLevelOptions,ab.Level+roll.count+1)]
-[h:ab.SourceLib = json.get(json.path.read(data.getData("addon:","pm.a5e.core","ms.Sources"),"[?(@.Name=='"+pm.RemoveSpecial(ab.Source)+"')]['Library']"),0)]
+[h:ab.SourceLib = json.get(json.path.read(data.getData("addon:","pm.a5e.core","ms.Sources"),"[?(@.Name=='"+js.a5e.RemoveSpecial(ab.Source)+"')]['Library']"),0)]
 [h:ab.Master=""]
 [h:ab.DisplayName = ab.Name]
-[h:ab.Name = pm.RemoveSpecial(ab.Name)]
+[h:ab.Name = js.a5e.RemoveSpecial(ab.Name)]
 [h:ab.Final = json.set("",
 	"Name",ab.Name,
 	"DisplayName",ab.DisplayName,
@@ -59,13 +59,13 @@
 			]
 		[h:abort(input(ab.MasterInput))]
 		
-		[h:ab.MasterSubclass = pm.RemoveSpecial(ab.MasterSubclass)]
+		[h:ab.MasterSubclass = js.a5e.RemoveSpecial(ab.MasterSubclass)]
 		[h:ab.MasterOptions = json.toList(json.path.read(data.getData("addon:","pm.a5e.core","sb.Abilities"),"[?(@.Class=='"+ab.MasterClass+"' && (@.Subclass==''|| @.Subclass=='"+ab.MasterSubclass+"'))]['DisplayName']"))]
 
 		[h:abort(input(
 			" ab.MasterName | "+ab.MasterOptions+" | Name of Master Feature | LIST | VALUE=STRING "))]
 
-		[h:ab.MasterFeature = json.set("","Name",pm.RemoveSpecial(ab.MasterName),"DisplayName",ab.MasterName,"Class",ab.MasterClass,"Subclass",if(ab.MasterSubclass=="None","",pm.RemoveSpecial(ab.MasterSubclass)))]
+		[h:ab.MasterFeature = json.set("","Name",js.a5e.RemoveSpecial(ab.MasterName),"DisplayName",ab.MasterName,"Class",ab.MasterClass,"Subclass",if(ab.MasterSubclass=="None","",js.a5e.RemoveSpecial(ab.MasterSubclass)))]
 	};{
 		[h:ab.MasterInput = ""]
 		[h,SWITCH(ab.MasterType):
@@ -86,7 +86,7 @@
 			]
 		[h:abort(input(ab.MasterInput))]
 	
-		[h:ab.MasterFeature = json.set("","Name",pm.RemoveSpecial(ab.MasterName),"DisplayName",ab.MasterName,"Class",ab.MasterClass,"Subclass",if(ab.MasterSubclass=="None","",pm.RemoveSpecial(ab.MasterSubclass)))]
+		[h:ab.MasterFeature = json.set("","Name",js.a5e.RemoveSpecial(ab.MasterName),"DisplayName",ab.MasterName,"Class",ab.MasterClass,"Subclass",if(ab.MasterSubclass=="None","",js.a5e.RemoveSpecial(ab.MasterSubclass)))]
 	}]
 	
 	[h:ab.Final = json.set(ab.Final,"Master",ab.MasterFeature)]
@@ -111,13 +111,13 @@
 			]
 		[h:abort(input(ab.ReplaceInput))]
 		
-		[h:ab.ReplaceSubclass = pm.RemoveSpecial(ab.ReplaceSubclass)]
+		[h:ab.ReplaceSubclass = js.a5e.RemoveSpecial(ab.ReplaceSubclass)]
 		[h:ab.ReplaceOptions = json.toList(json.path.read(data.getData("addon:","pm.a5e.core","sb.Abilities"),"[?(@.Class=='"+ab.ReplaceClass+"' && (@.Subclass==''|| @.Subclass=='"+ab.ReplaceSubclass+"'))]['DisplayName']"))]
 
 		[h:abort(input(
 			" ab.ReplaceName | "+ab.ReplaceOptions+" | Name of Replaced Feature | LIST | VALUE=STRING "))]
 
-		[h:ab.ReplaceFeature = json.set("","Name",pm.RemoveSpecial(ab.ReplaceName),"DisplayName",ab.ReplaceName,"Class",ab.ReplaceClass,"Subclass",if(ab.ReplaceSubclass=="None","",pm.RemoveSpecial(ab.ReplaceSubclass)))]
+		[h:ab.ReplaceFeature = json.set("","Name",js.a5e.RemoveSpecial(ab.ReplaceName),"DisplayName",ab.ReplaceName,"Class",ab.ReplaceClass,"Subclass",if(ab.ReplaceSubclass=="None","",js.a5e.RemoveSpecial(ab.ReplaceSubclass)))]
 	};{
 		[h:ab.ReplaceInput = ""]
 		[h,SWITCH(ab.ReplaceType):
@@ -138,7 +138,7 @@
 			]
 		[h:abort(input(ab.ReplaceInput))]
 	
-		[h:ab.ReplaceFeature = json.set("","Name",pm.RemoveSpecial(ab.ReplaceName),"DisplayName",ab.ReplaceName,"Class",ab.ReplaceClass,"Subclass",if(ab.ReplaceSubclass=="None","",pm.RemoveSpecial(ab.ReplaceSubclass)))]
+		[h:ab.ReplaceFeature = json.set("","Name",js.a5e.RemoveSpecial(ab.ReplaceName),"DisplayName",ab.ReplaceName,"Class",ab.ReplaceClass,"Subclass",if(ab.ReplaceSubclass=="None","",js.a5e.RemoveSpecial(ab.ReplaceSubclass)))]
 	}]
 	
 	[h:ab.Final = json.set(ab.Final,"Replace",ab.ReplaceFeature)]

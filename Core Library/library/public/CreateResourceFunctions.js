@@ -7,7 +7,7 @@ function createResourceRows(FeatureData){
 	}
 
 	if(isResourceChoice !== ""){
-		//TODO: MaxResourceLowPrio Still need a way to make display name = chosen spell name
+		//TODO: Resource - Still need a way to make display name = chosen spell name
 
 		let resourceRowData = [];
 		let resourceListeners = [];
@@ -25,7 +25,7 @@ function createResourceRows(FeatureData){
 		}
 
 		let resourceNumberTypes = "<option value='1'>One</option><option value='OtherNumber'>Other Number</option><option value='Attribute'>Attribute-Based</option><option value='Proficiency'>Proficiency-Based</option><option value='Level'>Level-Based</option><option value='NonlinearLevel'>Nonlinear Level-Based</option>";
-		if(FeatureData.Type === "Class"){
+		if(FeatureData.Type === "Class" || FeatureData.Type === "Item"){
 			resourceNumberTypes += "<option value='Class'>Class Level-Based</option><option value='NonlinearClass'>Nonlinear Class Level-Based</option>";
 		}
 		else if(FeatureData.Type === "Condition"){
@@ -126,48 +126,51 @@ function createResourceAmountTypeRow(i){
 		endRow.setAttribute("hidden","");
 	}
 
-	document.getElementById("PrimeStat").removeEventListener("change",attributeResourcePrimeStatOption);
+	let PrimeStatInput = document.getElementById("PrimeStat");
+	if(PrimeStatInput !== null){
+		PrimeStatInput.removeEventListener("change",attributeResourcePrimeStatOption);
+	}
 
 	if(resourceNumberType === "OtherNumber"){
 		referenceRow = createTableRow(referenceRow,"rowResourceAmount"+i,"<th><label for='ResourceAmount"+i+"'>Resource Amount:</label></th><td><input type='number' class='small-number' id='ResourceAmount"+i+"' name='ResourceAmount"+i+"' value=2 min=1></td>");
 	}
 	else if(resourceNumberType === "Attribute"){
 		let attributeOptions = createHTMLSelectOptions(attributes);
-		if(document.getElementById("PrimeStat") !== null){
-			if(document.getElementById("PrimeStat").value !== ""){
-				attributeOptions = "<option value='PrimeStat' id='ResourceAmountPrimeStatOption"+i+"'>Use Primary Stat</option>" + attributeOptions;
-			}
-		}
-		referenceRow = createTableRow(referenceRow,"rowResourceAmount"+i,"<th><label for='ResourceAmount"+i+"'>Resource Amount:</label></th><td><select id='ResourceAmount"+i+"' name='ResourceAmount"+i+"'>"+attributeOptions+"</select><select id='ResourceAmountModifierType"+i+"' name='ResourceAmountModifierType"+i+"'><option value='Multiply'>Times</option><option value='Add'>Plus</option><option value='Divide'>Divided By</option></select><input type='number' class='small-number' id='ResourceAmountModifier"+i+"' name='ResourceAmountModifier"+i+"' value=1> (min. <input type='number' class='small-number' id='ResourceAmountMinimum"+i+"' name='ResourceAmountMinimum"+i+"' value=1 min=0>)</td>");
+		if(PrimeStatInput !== null){
+			function attributeResourcePrimeStatOption(){
+				let primeStatChoice = PrimeStatInput.value;
+				let ResourceNumber = document.getElementById("ResourceNumber");
+				if(ResourceNumber === null){
+					ResourceNumber = 1;
+				}
+				else{
+					ResourceNumber = Number(ResourceNumber.value);
+				}
 
-		function attributeResourcePrimeStatOption(){
-			let primeStatChoice = document.getElementById("PrimeStat").value;
-			let ResourceNumber = document.getElementById("ResourceNumber");
-			if(ResourceNumber === null){
-				ResourceNumber = 1;
-			}
-			else{
-				ResourceNumber = Number(ResourceNumber.value);
-			}
+				for(let i = 0; i < ResourceNumber; i++){
+					let primeStatOption = document.getElementById("ResourceAmountPrimeStatOption"+i);
+					if(primeStatChoice === ""){
+						if(primeStatOption !== null){
+							primeStatOption.remove();
+						}
+					}
+					else if(primeStatOption === null){
+						primeStatOption = document.createElement("option");
+						primeStatOption.innerHTML = "Use Primary Stat";
+						primeStatOption.value = "PrimeStat";
 
-			for(let i = 0; i < ResourceNumber; i++){
-				let primeStatOption = document.getElementById("ResourceAmountPrimeStatOption"+i);
-				if(primeStatChoice === ""){
-					if(primeStatOption !== null){
-						primeStatOption.remove();
+						document.getElementById("ResourceAmount"+i).insertAdjacentElement("afterbegin",primeStatOption);
 					}
 				}
-				else if(primeStatOption === null){
-					primeStatOption = document.createElement("option");
-					primeStatOption.innerHTML = "Use Primary Stat";
-					primeStatOption.value = "PrimeStat";
-
-					document.getElementById("ResourceAmount"+i).insertAdjacentElement("afterbegin",primeStatOption);
-				}
 			}
-		}
 
-		document.getElementById("PrimeStat").addEventListener("change",attributeResourcePrimeStatOption);
+			if(PrimeStatInput.value !== ""){
+				attributeOptions = "<option value='PrimeStat' id='ResourceAmountPrimeStatOption"+i+"'>Use Primary Stat</option>" + attributeOptions;
+			}
+	
+			PrimeStatInput.addEventListener("change",attributeResourcePrimeStatOption);
+		}
+		referenceRow = createTableRow(referenceRow,"rowResourceAmount"+i,"<th><label for='ResourceAmount"+i+"'>Resource Amount:</label></th><td><select id='ResourceAmount"+i+"' name='ResourceAmount"+i+"'>"+attributeOptions+"</select><select id='ResourceAmountModifierType"+i+"' name='ResourceAmountModifierType"+i+"'><option value='Multiply'>Times</option><option value='Add'>Plus</option><option value='Divide'>Divided By</option></select><input type='number' class='small-number' id='ResourceAmountModifier"+i+"' name='ResourceAmountModifier"+i+"' value=1> (min. <input type='number' class='small-number' id='ResourceAmountMinimum"+i+"' name='ResourceAmountMinimum"+i+"' value=1 min=0>)</td>");
 	}
 	else if(resourceNumberType === "Proficiency"){
 		referenceRow = createTableRow(referenceRow,"rowResourceAmount"+i,"<th><label for='ResourceAmountModifier"+i+"'>Resource Amount:</label></th><td>Proficiency Bonus <select id='ResourceAmountModifierType"+i+"' name='ResourceAmountModifierType"+i+"'><option value='Multiply'>Times</option><option value='Add'>Plus</option><option value='Divide'>Divided By</option></select><input type='number' class='small-number' id='ResourceAmountModifier"+i+"' name='ResourceAmountModifier"+i+"' value=1> (min. <input type='number' class='small-number' id='ResourceAmountMinimum"+i+"' name='ResourceAmountMinimum"+i+"' value=1 min=0>)</td>");
@@ -201,7 +204,7 @@ function createResourceSpecialTypeRow(i){
 		document.getElementById("FeatureTierType").addEventListener("change",createResourceSpecialScaling);
 	}
 	else if(specialResourceType === "SpellSlot"){
-		//TODO: MaxResourceLowPrio - Add ability to set maximum spell level (e.g. Pact Magic) and set to key 'Maximum', or leave undefined if no maximum
+		//TODO: Resource - Add ability to set maximum spell level (e.g. Pact Magic) and set to key 'Maximum', or leave undefined if no maximum
 
 		referenceElement = createTableRow(referenceElement,"rowResourceSpecialTypeInfo"+i,"<th><label for='ResourceSpecialSlotLevel"+i+"'>Resource Spell Slot Level:</label></th><td><input type='number' id='ResourceSpecialSlotLevel"+i+"' name='ResourceSpecialSlotLevel"+i+"' class='small-number' value=1 min=1><span id='ResourceSpecialScalingSpan"+i+"'></span></td>");
 
@@ -366,4 +369,38 @@ function createRestoreMethodRows(i){
 	else if(restoreMethodChoice === "Item"){
 		//TODO: Resource - implement restoring resources with other items (probably pick item by name and use ObjectID, some things may require a specific item though?)
 	}
+}
+
+function getInProgressResourceOptions(options){
+	let SpecialType = undefined;
+	if(options !== null){
+		SpecialType = options.SpecialType;
+	}
+
+	let resourceOptions = "";
+	let resourceNum;
+	let resourceChoice = document.getElementById("isResources").value;
+
+	if(resourceChoice === "one"){
+		resourceNum = 1;
+	}
+	else{
+		resourceNum = Number(document.getElementById("ResourceNumber").value);
+	}
+
+	for(let i = 0; i < resourceNum; i++){
+		let isAdded = true;
+
+		if(SpecialType !== undefined){
+			isAdded = SpecialType === document.getElementById("ResourceSpecialType"+i).value;
+		}
+
+		if(isAdded){
+			let ResourceDisplayName = document.getElementById("ResourceDisplayName"+i).value;
+
+			resourceOptions += "<option value='"+removeSpecialCharacters(ResourceDisplayName)+"'>"+ResourceDisplayName+"</option>";
+		}
+	}
+
+	return resourceOptions;
 }

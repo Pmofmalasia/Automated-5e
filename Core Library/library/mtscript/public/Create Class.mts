@@ -22,9 +22,9 @@
 }]
 [h:cl.FinalPrereqs = json.set(cl.FinalPrereqs,"AllOrOne",cl.AllorOneFinal))]
 
-[h:cl.SourcebookLib = json.get(json.path.read(data.getData("addon:","pm.a5e.core","ms.Sources"),"[?(@.Name=='"+pm.RemoveSpecial(cl.Source)+"')]['Library']"),0)]
+[h:cl.SourcebookLib = json.get(json.path.read(data.getData("addon:","pm.a5e.core","ms.Sources"),"[?(@.Name=='"+js.a5e.RemoveSpecial(cl.Source)+"')]['Library']"),0)]
 
-[h:cl.Final = json.set("","Name",pm.RemoveSpecial(cl.Name),"DisplayName",cl.Name,"SubclassLevel",cl.SubclassLevel,"HitDie",cl.HitDie,"Prereqs",cl.FinalPrereqs)]
+[h:cl.Final = json.set("","Name",js.a5e.RemoveSpecial(cl.Name),"DisplayName",cl.Name,"SubclassLevel",cl.SubclassLevel,"HitDie",cl.HitDie,"Prereqs",cl.FinalPrereqs)]
 
 [h:abort(input(
 	" junkVar |  ------------------------ Choose Levels for ASI ------------------------ | | LABEL | SPAN=TRUE ",
@@ -55,7 +55,7 @@
 [h:cl.Final = json.set(cl.Final,"ASILevels",cl.ASILevels)]
 
 [h,if(cl.Spellcasting),CODE:{
-	[h:pm.CreateSpellcastingClass(json.set("","Class",pm.RemoveSpecial(cl.Name),"Subclass","","Library",cl.SourcebookLib))]
+	[h:pm.CreateSpellcastingClass(json.set("","Class",js.a5e.RemoveSpecial(cl.Name),"Subclass","","Library",cl.SourcebookLib))]
 };{}]
 
 [h:abort(input(
@@ -67,9 +67,9 @@
 	))]
 
 [h:cl.Base =  json.set("",
-	"Name",pm.RemoveSpecial(cl.Name)+"Proficiencies",
+	"Name",js.a5e.RemoveSpecial(cl.Name)+"Proficiencies",
 	"DisplayName",cl.Name+" Proficiencies",
-	"Class",pm.RemoveSpecial(cl.Name),
+	"Class",js.a5e.RemoveSpecial(cl.Name),
 	"Subclass","",
 	"Level",1,
 	"Library",cl.SourcebookLib
@@ -116,9 +116,9 @@
 	))]
 
 [h:cl.Multi = json.set("",
-	"Name",pm.RemoveSpecial(cl.Name)+"MulticlassProficiencies",
+	"Name",js.a5e.RemoveSpecial(cl.Name)+"MulticlassProficiencies",
 	"DisplayName",cl.Name+" Multiclass Proficiencies",
-	"Class",pm.RemoveSpecial(cl.Name),
+	"Class",js.a5e.RemoveSpecial(cl.Name),
 	"Subclass","",
 	"Level",1,
 	"HitDie",cl.HitDie,

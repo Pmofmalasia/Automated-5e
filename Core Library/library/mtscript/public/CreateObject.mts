@@ -31,15 +31,15 @@
 
 <tr id='rowIsMagical'><th><label for='isMagical'>Object is a Magic Item?</label></th><td><input type='checkbox' id='isMagical' name='isMagical' onchange='createMagicItemRows("+'"CreateObjectTable"'+")'></td></tr>
 
-<tr id='rowIsWearable'><th><label for='isWearable'>Must be Worn/Held for Effect?</label></th><td><input type='checkbox' id='isWearable' name='isWearable'></td></tr>
+<tr id='rowIsWearable'><th><label for='wornHeld'>Must be Worn or Held for Effect?</label></th><td><select id='wornHeld' name='wornHeld'><option value=''>Neither</option><option value='Worn'>Worn</option><option value='Held'>Held</option></select></td></tr>
 
 <tr id='rowIsNonstandardEquip'><th><label for='isNonstandardEquip'>Time to Equip/Drop:</label></th><td><select id='isNonstandardEquip' name='isNonstandardEquip' onchange='createNonstandardEquipRows("+'"CreateObjectTable"'+")'><option value=''>Interaction/Free Drop</option><option value='Custom'>Other Equip/Drop Time</option><option value='CannotDrop'>Cannot Be Unequipped</option></select></td></tr>
 
 <tr id='rowIsConsumable'><th><label for='isConsumable'>Object is Consumable?</label></th><td><input type='checkbox' id='isConsumable' name='isConsumable' onchange='createConsumableRows("+'"CreateObjectTable"'+")'></td></tr>
 
-<tr id='rowIsActivatable'><th><label for='isActivatable'>Object Can be Activated/Deactivated?</label></th><td><input type='checkbox' id='isActivatable' name='isActivatable' onchange='createActivatableRows("+'"CreateObjectTable"'+")'></td></tr>
+<tr id='rowIsResources'><th><label for='isResources'>Object Has Limited Charges:</label></th><td><select id='isResources' name='isResources'><option value=''>No Charges</option><option value='one'>Single Charge</option><option value='multiple'>Multiple Charges</option></select></span></td></tr>
 
-<tr id='rowIsResources'><th><label for='isResources'>Object Has Limited Charges:</label></th><td><select id='isResources' name='isResources' onchange=''><option value=''>No Charges</option><option value='one'>Single Charge</option><option value='multiple'>Multiple Charges</option></select></span></td></tr>
+<tr id='rowIsActivatable'><th><label for='isActivatable'>Object Can be Activated/Deactivated?</label></th><td><input type='checkbox' id='isActivatable' name='isActivatable' onchange='createActivatableRows("+'"CreateObjectTable"'+")'></td></tr>
 
 <tr id='rowObjectDuration'><th><label for='isDuration'>Perishable/Usable for Limited Time?</label></th><td><input type='checkbox' id='isDuration' name='isDuration' onchange='createDurationRows("+'"CreateObjectTable","rowIsSpellcastingFocus"'+")'><input type='hidden' id='ObjectDuration' value='Custom'></td></tr>
 

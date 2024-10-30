@@ -54,7 +54,7 @@ function createFeatureMacros(features,ParentTokenID){
 			for(let effect of feature.Effects){
 				let macroProps = baseMacroProps;
 				let macroLabel = effect.DisplayName;
-				if(macroLabel === ""){
+				if(macroLabel === undefined || macroLabel === ""){
 					macroLabel = feature.DisplayName;
 				}
 	
@@ -81,7 +81,7 @@ function createFeatureMacros(features,ParentTokenID){
 				let borderColors = JSON.parse(MTScript.execMacro(`[r:pm.a5e.BorderColors("${feature["Class"]}","","${ParentTokenID}")]`));
 				macroProps.color = borderColors.Border;
 				macroProps.fontColor = borderColors.Title;
-	
+
 				let subeffectCallingText = "";
 				if(feature.Subclass !== ""){
 					subeffectCallingText = " ### "+feature.Subclass;
@@ -93,7 +93,7 @@ function createFeatureMacros(features,ParentTokenID){
 				i++;
 
 				MTScript.setVariable("macroProps",JSON.stringify(macroProps));
-				let thisNewMacroIndex = MTScript.evalMacro(`[r:newMacro = createMacro(macroProps,"${ParentTokenID}")]`);
+				let thisNewMacroIndex = MTScript.evalMacro(`[h:macroName = json.get(macroProps,"label")][r,if(!hasMacro(macroName,"${ParentTokenID}")): newMacro = createMacro(macroProps,"${ParentTokenID}")]`);
 
 				newMacroIndices.push(thisNewMacroIndex);
 			}

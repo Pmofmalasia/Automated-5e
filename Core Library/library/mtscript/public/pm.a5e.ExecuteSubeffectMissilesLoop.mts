@@ -33,7 +33,7 @@
 
 	[h,foreach(tempDamageType,allDamageData),CODE:{
 		[h:typeOptionTest = json.contains(json.get(allDamageData,roll.count),"DamageTypeOptions")]
-		[h,if(typeOptionTest): allDamageData = json.path.put(allDamageData,"\$["+roll.count+"]","DamageType",pm.RemoveSpecial(eval("DamageTypeSelection"+roll.count)))]
+		[h,if(typeOptionTest): allDamageData = json.path.put(allDamageData,"\$["+roll.count+"]","DamageType",js.a5e.RemoveSpecial(eval("DamageTypeSelection"+roll.count)))]
 	}]
 }]
 

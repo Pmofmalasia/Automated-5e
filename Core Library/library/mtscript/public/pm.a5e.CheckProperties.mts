@@ -18,5 +18,5 @@
 		default: PrimeStat = "None"
 	]
 };{
-	[h:PrimeStat = pm.RemoveSpecial(json.get(d20Data,"Alternate"))]
+	[h:PrimeStat = js.a5e.RemoveSpecial(json.get(d20Data,"Alternate"))]
 }]

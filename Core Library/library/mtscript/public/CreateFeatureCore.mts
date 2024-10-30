@@ -1,4 +1,7 @@
 [h:newFeature = macro.args]
+[h:ParentToken = json.get(newFeature,"ParentToken")]
+[h:newFeature = json.remove(newFeature,"ParentToken")]
+
 [h:CreateFeatureHTML = "<tr id='rowChoicesWhenGainedTitle'><th colspan='2' style='text-align:center'>Choices Made on Gaining Feature</th>"]
 [h:CreateFeatureHTML = CreateFeatureHTML + "<tr id='rowPassiveFeaturesTitle'><th colspan='2' style='text-align:center'>Passive Effects of Feature</th>"]
 [h:CreateFeatureHTML = CreateFeatureHTML + "<tr id='rowActiveFeaturesTitle'><th colspan='2' style='text-align:center'>Active Effects of Feature</th>"]
@@ -6,7 +9,7 @@
 
 [h:createFeatureData = json.set("",
 	"Input",CreateFeatureHTML,
-	"ParentToken",currentToken(),
+	"ParentToken",ParentToken,
 	"PriorData",newFeature
 )]
 

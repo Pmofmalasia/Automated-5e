@@ -49,7 +49,7 @@
 		[h:SaveSelection = SaveOptions]
 	};{
 		[h:abort(input(" SaveSelection | "+SaveOptions+" | Choose a Save | LIST | DELIMITER=JSON VALUE=STRING "))]
-		[h:SaveSelection = pm.RemoveSpecial(SaveSelection)]
+		[h:SaveSelection = js.a5e.RemoveSpecial(SaveSelection)]
 	}]
 
 	[h:SaveData = json.set("",

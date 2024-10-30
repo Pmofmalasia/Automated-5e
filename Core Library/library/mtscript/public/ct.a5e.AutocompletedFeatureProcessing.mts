@@ -24,7 +24,7 @@
 		[h:inputData = json.remove(inputData,prefix+"ClassChoice")]
 		[h:inputData = json.remove(inputData,prefix+"ClassOptions")]
 	};{
-		[h:validatedFeatureData = json.set("","Name",pm.RemoveSpecial(json.get(inputData,prefix)))]
+		[h:validatedFeatureData = json.set("","Name",js.a5e.RemoveSpecial(json.get(inputData,prefix)))]
 	}]
 }]
 

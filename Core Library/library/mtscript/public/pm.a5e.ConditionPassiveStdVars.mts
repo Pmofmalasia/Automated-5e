@@ -1,5 +1,5 @@
-[h:cond.abilityName = pm.RemoveSpecial(cond.abilityName)]
-[h:cond.abilitySubclass = pm.RemoveSpecial(cond.abilitySubclass)]
+[h:cond.abilityName = js.a5e.RemoveSpecial(cond.abilityName)]
+[h:cond.abilitySubclass = js.a5e.RemoveSpecial(cond.abilitySubclass)]
 [h:cond.Info = thisFeatureArgs]
 [h:cond.Context = json.get(cond.Info,"Context")]
 [h:cond.Library = json.get(cond.Info,"Library")]

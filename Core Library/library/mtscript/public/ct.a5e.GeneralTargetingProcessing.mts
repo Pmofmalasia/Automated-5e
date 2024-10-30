@@ -38,10 +38,10 @@
 		[h:AoEShapes = json.append("","Cone","Cube","Cylinder","Half Sphere","Line","Panels","Sphere","Wall")]
 		[h:AoEShapeOptions = "[]"]
 		[h,foreach(tempShape,AoEShapes),CODE:{
-			[h:isOptionTest = json.contains(subeffectData,"is"+pm.RemoveSpecial(tempShape)+"AOEMulti"+IDSuffix)]
+			[h:isOptionTest = json.contains(subeffectData,"is"+js.a5e.RemoveSpecial(tempShape)+"AOEMulti"+IDSuffix)]
 			[h,if(isOptionTest): AoEShapeData = ct.a5e.AoEDataProcessing(tempShape,IDSuffix)]
-			[h,if(isOptionTest): AoEShapeOptions = json.append(AoEShapeOptions,json.set(AoEShapeData,"Shape",pm.RemoveSpecial(tempShape)))]
-			[h:subeffectData = json.remove(subeffectData,"is"+pm.RemoveSpecial(tempShape)+"AOEMulti"+IDSuffix)]
+			[h,if(isOptionTest): AoEShapeOptions = json.append(AoEShapeOptions,json.set(AoEShapeData,"Shape",js.a5e.RemoveSpecial(tempShape)))]
+			[h:subeffectData = json.remove(subeffectData,"is"+js.a5e.RemoveSpecial(tempShape)+"AOEMulti"+IDSuffix)]
 		}]
 
 		[h:TargetingInfo = json.set(TargetingInfo,"AoEOptions",AoEShapeOptions)]
@@ -49,7 +49,7 @@
 	default:{
 		[h:AoEShapeData = ct.a5e.AoEDataProcessing(json.get(subeffectData,"aoeShape"+IDSuffix),IDSuffix)]
 
-		[h:TargetingInfo = json.set(TargetingInfo,"AoE",json.set(AoEShapeData,"Shape",pm.RemoveSpecial(json.get(subeffectData,"aoeShape"+IDSuffix))))]
+		[h:TargetingInfo = json.set(TargetingInfo,"AoE",json.set(AoEShapeData,"Shape",js.a5e.RemoveSpecial(json.get(subeffectData,"aoeShape"+IDSuffix))))]
 	}
 ]
 [h:subeffectData = json.remove(subeffectData,"aoeShape"+IDSuffix)]

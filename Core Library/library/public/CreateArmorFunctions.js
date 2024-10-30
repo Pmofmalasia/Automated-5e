@@ -3,7 +3,7 @@ async function createArmorRows(ArmorOrShield,IDSuffix){
 
 	let referenceRow = document.getElementById("rowObjectType"+IDSuffix);
 
-	document.getElementById("isWearable").checked = true;
+	document.getElementById("wornHeld").value = "Worn";
 
 	let allArmorTypes = "";
 	if(ArmorOrShield == "Armor"){

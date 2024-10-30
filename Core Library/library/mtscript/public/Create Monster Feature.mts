@@ -12,10 +12,10 @@
 	" ab.LegendaryAction |  | Is Feature a Legendary Action | CHECK "
 ))]
 
-[h:ab.SourceLib = json.get(json.path.read(data.getData("addon:","pm.a5e.core","ms.Sources"),"\$[?(@.Name=='"+pm.RemoveSpecial(ab.Source)+"')]['Library']"),0)]
+[h:ab.SourceLib = json.get(json.path.read(data.getData("addon:","pm.a5e.core","ms.Sources"),"\$[?(@.Name=='"+js.a5e.RemoveSpecial(ab.Source)+"')]['Library']"),0)]
 [h:ab.Master=""]
 [h:ab.DisplayName = ab.Name]
-[h:ab.Name = pm.RemoveSpecial(ab.Name)]
+[h:ab.Name = js.a5e.RemoveSpecial(ab.Name)]
 [h:ab.Final = json.set("",
 	"Name",ab.Name,
 	"DisplayName",ab.DisplayName,
@@ -29,7 +29,7 @@
 )]
 
 [h,if(ab.IsUnique):
-    ab.Final = json.set(ab.Final,"Subclass",pm.RemoveSpecial(getName()));
+    ab.Final = json.set(ab.Final,"Subclass",js.a5e.RemoveSpecial(getName()));
     ab.Final = json.set(ab.Final,"Subclass","")
 ]
 

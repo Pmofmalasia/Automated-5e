@@ -60,27 +60,27 @@
 	[h:lu.NewAbilities = json.append(lu.NewAbilities,macro.return)]
 };{}]
 
-[h:tokenSubrace = pm.RemoveSpecial(getProperty("a5e.stat.Subrace"))]
+[h:tokenSubrace = js.a5e.RemoveSpecial(getProperty("a5e.stat.Subrace"))]
 [h,if(tokenSubrace != ""),CODE:{
 	[h:"<!-- SubraceIgnoredFeatures specifically removes features from the base race that the subrace does not get (usually when a race that formerly did not have a subrace is given one later) -->"]
 	[h:subraceData = json.get(json.path.read(data.getData("addon:","pm.a5e.core","sb.Subraces"),"\$[*][?(@.Name == '"+tokenSubrace+"')]"),0)]
 	[h:subraceIgnoredFeatures = json.get(subraceData,"IgnoredFeatures")]
 	[h,if(subraceIgnoredFeatures != ""),CODE:{
-		[h:subraceIgnoredFeaturesPath = "!(@.Name in "+subraceIgnoredFeatures+" && @.Class == '"+pm.RemoveSpecial(getProperty("a5e.stat.Race"))+"' && @.Subclass == '') && "]
+		[h:subraceIgnoredFeaturesPath = "!(@.Name in "+subraceIgnoredFeatures+" && @.Class == '"+js.a5e.RemoveSpecial(getProperty("a5e.stat.Race"))+"' && @.Subclass == '') && "]
 	};{
 		[h:subraceIgnoredFeaturesPath = ""]
 	}]
 };{
 	[h:subraceIgnoredFeaturesPath = ""]
 }]
-[h:lu.NewClassIDPath = "(@.Class == '"+lu.Class+"' && (@.Subclass == null || @.Subclass == '' || @.Subclass == '"+pm.RemoveSpecial(json.get(getProperty("a5e.stat.Subclasses"),lu.Class))+"'))"]
-[h:lu.RaceIDPath = subraceIgnoredFeaturesPath+"(@.Class=='"+pm.RemoveSpecial(getProperty("a5e.stat.Race"))+"' && (@.Subclass=='"+pm.RemoveSpecial(getProperty("a5e.stat.Subrace"))+"' || @.Subclass==''))"]
-[h:lu.RaceIDPathOld = "(@.Class=='"+pm.RemoveSpecial(getProperty("a5e.stat.Race"))+"' && (@.Subclass=='"+pm.RemoveSpecial(getProperty("a5e.stat.Subrace"))+"' || @.Subclass==''))"]
+[h:lu.NewClassIDPath = "(@.Class == '"+lu.Class+"' && (@.Subclass == null || @.Subclass == '' || @.Subclass == '"+js.a5e.RemoveSpecial(json.get(getProperty("a5e.stat.Subclasses"),lu.Class))+"'))"]
+[h:lu.RaceIDPath = subraceIgnoredFeaturesPath+"(@.Class=='"+js.a5e.RemoveSpecial(getProperty("a5e.stat.Race"))+"' && (@.Subclass=='"+js.a5e.RemoveSpecial(getProperty("a5e.stat.Subrace"))+"' || @.Subclass==''))"]
+[h:lu.RaceIDPathOld = "(@.Class=='"+js.a5e.RemoveSpecial(getProperty("a5e.stat.Race"))+"' && (@.Subclass=='"+js.a5e.RemoveSpecial(getProperty("a5e.stat.Subrace"))+"' || @.Subclass==''))"]
 
 [h:"<!-- Adds abilities based on class, race, and background that are gained on level up, separately since race and background go off of total level -->"]
 [h:tempNewAbilities = json.path.read(data.getData("addon:","pm.a5e.core","sb.Abilities"),"\$[*][?("+lu.RaceIDPath+" && @.Level=="+(getProperty("a5e.stat.Level")+1)+" && @.GainOnLevel==1)]")]
 
-[h:tempNewAbilities = json.merge(tempNewAbilities,json.path.read(data.getData("addon:","pm.a5e.core","sb.Abilities"),"\$[*][?(@.Class=='Background' && @.Subclass=='"+pm.RemoveSpecial(getProperty("a5e.stat.Background"))+"' && @.Level=="+(getProperty("a5e.stat.Level")+1)+" && @.GainOnLevel==1)]"))]
+[h:tempNewAbilities = json.merge(tempNewAbilities,json.path.read(data.getData("addon:","pm.a5e.core","sb.Abilities"),"\$[*][?(@.Class=='Background' && @.Subclass=='"+js.a5e.RemoveSpecial(getProperty("a5e.stat.Background"))+"' && @.Level=="+(getProperty("a5e.stat.Level")+1)+" && @.GainOnLevel==1)]"))]
 
 [h:tempNewAbilities = json.merge(tempNewAbilities,json.path.read(data.getData("addon:","pm.a5e.core","sb.Abilities"),"\$[*][?("+lu.NewClassIDPath+" && @.Level=="+lu.NewLevel+" && @.GainOnLevel==1)]"))]
 
@@ -173,7 +173,7 @@
 	[h:setProperty("a5e.stat.AllFeatures",json.append(getProperty("a5e.stat.AllFeatures"),json.set(ability,"IsDisplayed",1,"IsActive",1)))]
 	[h:lu.DisplayNewAbilities = listAppend(lu.DisplayNewAbilities,json.get(ability,"DisplayName"),"<br>")]
 }]
-[h:setProperty("a5e.stat.AllFeatures",json.path.set(getProperty("a5e.stat.AllFeatures"),"\$[*][?(@.Class=='"+lu.Class+"' || @.Race == '"+pm.RemoveSpecial(getProperty("a5e.stat.Race"))+"')]['Level']",lu.NewLevel))]
+[h:setProperty("a5e.stat.AllFeatures",json.path.set(getProperty("a5e.stat.AllFeatures"),"\$[*][?(@.Class=='"+lu.Class+"' || @.Race == '"+js.a5e.RemoveSpecial(getProperty("a5e.stat.Race"))+"')]['Level']",lu.NewLevel))]
 [h:"<!-- Adds newly gained resources to the abilities array, see above. If resource existed previously, added resource amount = New difference - old difference. If resource did not exist previously, just sets resource = maxresource. -->"]
 [h:noFeaturesTest = json.isEmpty(getProperty("a5e.stat.AllFeatures"))]
 [h,if(noFeaturesTest): lu.NewResources = ""; lu.NewResources = json.path.read(getProperty("a5e.stat.AllFeatures"),"\$[*][?(@.ResourceData != null)]","DEFAULT_PATH_LEAF_TO_NULL")]

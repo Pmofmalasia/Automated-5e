@@ -77,7 +77,7 @@
         };
         case "Dialog":{
             [h:SpellOptions = ""]
-            [h,foreach(tempSpell,FinalSelectionList): SpellOptions = SpellOptions + "<option value='"+pm.RemoveSpecial(tempSpell)+"'>"+tempSpell+"</option>"]
+            [h,foreach(tempSpell,FinalSelectionList): SpellOptions = SpellOptions + "<option value='"+js.a5e.RemoveSpecial(tempSpell)+"'>"+tempSpell+"</option>"]
             [h:NoNumberTest = TotalSelectionNumber == 1]
 
             [h,count(CurrentSelectionsNumber): SelectionInput = SelectionInput + "<tr><th><label for='choice"+json.get(SpellSelectionFeature,"Name")+json.get(SpellSelectionFeature,"Class")+json.get(SpellSelectionFeature,"Subclass")+outerCounter+roll.count+"'>"+FilterDescription+if(NoNumberTest,""," #"+(roll.count+1))+":</label></th><td><select id='choice"+json.get(SpellSelectionFeature,"Name")+json.get(SpellSelectionFeature,"Class")+json.get(SpellSelectionFeature,"Subclass")+outerCounter+roll.count+"' name='choice"+json.get(SpellSelectionFeature,"Name")+json.get(SpellSelectionFeature,"Class")+json.get(SpellSelectionFeature,"Subclass")+outerCounter+roll.count+"'>"+

@@ -1,5 +1,5 @@
-[h:pass.abilityName = pm.RemoveSpecial(pass.abilityName)]
-[h:pass.abilitySubclass = pm.RemoveSpecial(pass.abilitySubclass)]
+[h:pass.abilityName = js.a5e.RemoveSpecial(pass.abilityName)]
+[h:pass.abilitySubclass = js.a5e.RemoveSpecial(pass.abilitySubclass)]
 [h:pass.abilityInfo = thisFeatureArgs]
 [h:pass.Context = json.get(pass.abilityInfo,"Context")]
 [h:pass.DisplayObject = json.get(pass.abilityInfo,"Settings")]

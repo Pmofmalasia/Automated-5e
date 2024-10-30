@@ -9,7 +9,7 @@
 	case "PersonalChat":{
 		[h:allPlayerChatSettings = data.getData("addon:","pm.a5e.core","PlayerChatSettings")]
 		[h:PlayerDisplayName = getPlayerName()]
-		[h:PlayerName = pm.RemoveSpecial(PlayerDisplayName)]
+		[h:PlayerName = js.a5e.RemoveSpecial(PlayerDisplayName)]
 		[h:thisPlayerChatSettings = json.get(allPlayerChatSettings,PlayerName)]
 		[h,if(thisPlayerChatSettings == ""):
 			activeChatSettings = data.getData("addon:","pm.a5e.core","ChatSettings");
@@ -26,7 +26,7 @@
 	case "PersonalTooltip":{
 		[h:allPlayerChatSettings = data.getData("addon:","pm.a5e.core","PlayerTooltipSettings")]
 		[h:PlayerDisplayName = getPlayerName()]
-		[h:PlayerName = pm.RemoveSpecial(PlayerDisplayName)]
+		[h:PlayerName = js.a5e.RemoveSpecial(PlayerDisplayName)]
 		[h:thisPlayerChatSettings = json.get(allPlayerChatSettings,PlayerName)]
 		[h,if(thisPlayerChatSettings == ""):
 			activeChatSettings = data.getData("addon:","pm.a5e.core","TooltipSettings");

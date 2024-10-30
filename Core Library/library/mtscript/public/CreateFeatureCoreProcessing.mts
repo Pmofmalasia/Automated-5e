@@ -2,7 +2,6 @@
 [h:CoreFeatureData = pm.a5e.KeyStringsToNumbers(CoreFeatureData)]
 
 [h:FeatureData = js.ct.a5e.CreateFeatureCoreProcessing(CoreFeatureData)]
-
 [h,if(json.contains(FeatureData,"ActiveEffects")),CODE:{
 	[h:ActiveEffectsData = json.get(FeatureData,"ActiveEffects")]
 
@@ -13,7 +12,8 @@
 		"EffectChoiceMethod",json.get(ActiveEffectsData,"Method"),
 		"EffectType","Feature",
 		"FeatureData",FeatureData,
-		"ExtraData",json.set("","FeatureType",json.get(FeatureData,"Type"))
+		"ExtraData",json.set("","FeatureType",json.get(FeatureData,"Type")),
+		"ParentToken",json.get(CoreFeatureData,"ParentToken")
 	)]
 };{
 	[h:endFeatureData = json.set("",

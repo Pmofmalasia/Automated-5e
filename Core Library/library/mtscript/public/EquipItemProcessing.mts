@@ -6,7 +6,7 @@
 [h:ItemChoiceID = json.get(EquipItemData,"ItemChoice")]
 [h:CurrentInventory = getProperty("a5e.stat.Inventory")]
 
-[h:NewInventory = json.path.set(CurrentInventory,"\$[*][?(@.isWearable == 1 || @.isAttunement == 1)]['IsActive']",0)]
+[h:NewInventory = json.path.set(CurrentInventory,"\$[*][?(@.isWorn == 1 || @.isHeld == 1 || @.isAttunement == 1)]['IsActive']",0)]
 [h:NewInventory = json.path.set(NewInventory,"\$[*][?(@.isAttunement == 1)]['AttunedTo']","")]
 
 [h:OldArmorChoice = getProperty("a5e.stat.EquippedArmor")]
@@ -171,7 +171,7 @@
 	[h:setProperty("a5e.stat.NaturalWeapons",FinalNaturalWeapons)]
 }]
 
-[h:AllWearables = json.path.read(NewInventory,"\$[*][?(@.isWearable == 1)]")]
+[h:AllWearables = json.path.read(NewInventory,"\$[*][?(@.isWorn == 1)]")]
 [h:WornItemNames = "[]"]
 [h,foreach(wearableItem,AllWearables),CODE:{
 	[h:thisItemID = json.get(wearableItem,"ItemID")]

@@ -34,7 +34,61 @@ function advanceTimeTokens(tokens,timeAdvanced){
 				}
 			}
 		}
-//TODO: MaxResource - output for expired features somehow; testing
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		
+
+
+
+
+//TODO: MaxResource - output for expired features somehow; testing - need way for items that only have an activation/deactivation to use a charge (including time charges for testing)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 		return {
 			feature:feature,
 			expired:expiredFeatures
@@ -44,7 +98,7 @@ function advanceTimeTokens(tokens,timeAdvanced){
 
 
 
-	//TOOD: Add "cooldown" functionality option for restoration of resources (e.g. can be used once every 6 hours = restore resource 6 hours after use)
+	//TODO: Resource - Add "cooldown" functionality option for restoration of resources (e.g. can be used once every 6 hours = restore resource 6 hours after use)
 
 
 

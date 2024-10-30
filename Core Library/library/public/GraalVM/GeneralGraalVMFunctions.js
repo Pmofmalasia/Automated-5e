@@ -277,16 +277,17 @@ function compareFeatureIdentifier(identifier,feature){
 }
 
 function timeInRounds(value,units){
-	if(lower(units) === "year"){
+	units = units.toLowerCase();
+	if(units === "year"){
 		return value * 5256000;
 	}
-	else if(lower(units) === "day"){
+	else if(units === "day"){
 		return value * 14400;
 	}
-	else if(lower(units) === "hour"){
+	else if(units === "hour"){
 		return value * 600;
 	}
-	else if(lower(units) === "minute"){
+	else if(units === "minute"){
 		return value * 10;
 	}
 	else{

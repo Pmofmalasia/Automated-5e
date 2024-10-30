@@ -42,7 +42,7 @@
 		[h:SkillSelection = SkillOptions]
 	};{
 		[h:abort(input(" SkillSelection | "+SkillOptions+" | Choose a Skill | RADIO | DELIMITER=JSON VALUE=STRING "))]
-		[h:SkillSelection = pm.RemoveSpecial(SkillSelection)]
+		[h:SkillSelection = js.a5e.RemoveSpecial(SkillSelection)]
 	}]
 
 	[h:CheckData = json.set("",

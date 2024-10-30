@@ -4,7 +4,7 @@
 [h:ParentToken = json.get(ItemActivationData,"ParentToken")]
 [h:switchToken(ParentToken)]
 
-[h:"<!-- TODO: Will eventually add validation to if you're allowed to activate the item - e.g. requiring a command word but silenced -->"]
+[h:"<!-- TODO: Items - Will eventually add validation to if you're allowed to activate the item - e.g. requiring a command word but silenced -->"]
 [h:isActivationSuccessful = 1]
 [h:return(isActivationSuccessful,"")]
 
@@ -20,7 +20,7 @@
 
 
 
-	[h:"<!-- Need to execute activation effects here -->"]
+	[h:"<!-- Need to execute activation effects here - will be used for picking a resource to use on activation (including activating a time resource) -->"]
 
 	[h:"<!-- Next to do: Differential effect execution based on activation status of used item. -->"]
 

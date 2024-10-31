@@ -185,74 +185,65 @@ function MagicBonusChanges(){
 		if(document.getElementById("isMagical").checked != null){
 			if(document.getElementById("isMagical").checked == false){
 				document.getElementById("isMagical").setAttribute("checked","");
-				createMagicItemRows(tableID);
+				createMagicItemRows();
 			}
 		}
 	}
 }
 
-function createMagicItemRows(tableID){
+function createMagicItemRows(){
+	let referenceElement = document.getElementById("rowIsMagical");
 	if(document.getElementById("isMagical").checked){
-		let nextRowIndex = document.getElementById("rowIsMagical").rowIndex+1;
 
-		addTableRow(tableID,nextRowIndex,"rowIsAttunement","<th><label for='isAttunement'>Requires Attunement:</label></th><td><select id='isAttunement' name='isAttunement' onchange='createAttunementRequirementRows("+'"'+tableID+'"'+")'><option value=0>No</option><option value='1'>Yes</option><option value='2'>Yes, With Requirements</option></select></td>");
-		nextRowIndex++;
+		referenceElement = createTableRow(referenceElement,"rowIsAttunement","<th><label for='isAttunement'>Requires Attunement:</label></th><td><select id='isAttunement' name='isAttunement' onchange='createAttunementRequirementRows()'><option value=0>No</option><option value='1'>Yes</option><option value='2'>Yes, With Requirements</option></select></td>");
 
-		addTableRow(tableID,nextRowIndex,"rowIsSentient","<th><label for='isSentient'>Item is Sentient:</label></th><td><input type='checkbox' id='isSentient' name='isSentient' onchange='createSentientItemRows("+'"'+tableID+'"'+")'></td>");
-		nextRowIndex++;
+		referenceElement = createTableRow(referenceElement,"rowIsSentient","<th><label for='isSentient'>Item is Sentient:</label></th><td><input type='checkbox' id='isSentient' name='isSentient' onchange='createSentientItemRows()'></td>");
 
-		addTableRow(tableID,nextRowIndex,"rowIsCursed","<th><label for='isCursed'>Item is Cursed:</label></th><td><input type='checkbox' id='isCursed' name='isCursed'></td>");
-		nextRowIndex++;
+		referenceElement = createTableRow(referenceElement,"rowIsCursed","<th><label for='isCursed'>Item is Cursed:</label></th><td><input type='checkbox' id='isCursed' name='isCursed'></td>");
 	}
 	else{
-		clearUnusedTable(tableID,"rowIsMagical","rowIsWearable");
+		deleteInterveningElements(referenceElement,document.getElementById("rowIsWearable"));
 	}
 }
 
-async function createAttunementRequirementRows(tableID){
+async function createAttunementRequirementRows(){
+	let referenceElement = document.getElementById("rowIsAttunement");
 	if(document.getElementById("isAttunement").value == 2){
-		let nextRowIndex = document.getElementById("rowIsAttunement").rowIndex + 1;
 
 		let classesRequest = await fetch("macro:pm.GetClasses@lib:pm.a5e.Core", {method: "POST", body: ""});
 		let allClasses = await classesRequest.json();
 		let allClassOptions = createHTMLMultiselectOptions(allClasses,"AttunementClass");
-		addTableRow(tableID,nextRowIndex,"rowAttunementRequirementClasses","<th>Required Classes</th><td><div class='check-multiple' style='width:100%'>"+allClassOptions+"</div></td>");
-		nextRowIndex++;
+		referenceElement = createTableRow(referenceElement,"rowAttunementRequirementClasses","<th>Required Classes</th><td><div class='check-multiple' style='width:100%'>"+allClassOptions+"</div></td>");
 
 		let RacesRequest = await fetch("macro:pm.GetRaces@lib:pm.a5e.Core", {method: "POST", body: ""});
 		let allRaces = await RacesRequest.json();
 		let allRaceOptions = createHTMLMultiselectOptions(allRaces,"AttunementRace");
-		addTableRow(tableID,nextRowIndex,"rowAttunementRequirementRaces","<th>Required Races</th><td><div class='check-multiple' style='width:100%'>"+allRaceOptions+"</div></td>");
-		nextRowIndex++;
+		referenceElement = createTableRow(referenceElement,"rowAttunementRequirementRaces","<th>Required Races</th><td><div class='check-multiple' style='width:100%'>"+allRaceOptions+"</div></td>");
 
 		let CreatureTypesRequest = await fetch("macro:pm.GetCreatureTypes@lib:pm.a5e.Core", {method: "POST", body: ""});
 		let allCreatureTypes = await CreatureTypesRequest.json();
 		let allCreatureTypeOptions = createHTMLMultiselectOptions(allCreatureTypes,"AttunementRace");
-		addTableRow(tableID,nextRowIndex,"rowAttunementRequirementCreatureTypes","<th>Required Creature Types</th><td><div class='check-multiple' style='width:100%'>"+allCreatureTypeOptions+"</div></td>");
-		nextRowIndex++;
+		referenceElement = createTableRow(referenceElement,"rowAttunementRequirementCreatureTypes","<th>Required Creature Types</th><td><div class='check-multiple' style='width:100%'>"+allCreatureTypeOptions+"</div></td>");
 	}
 	else{
-		clearUnusedTable(tableID,"rowIsAttunement","rowIsSentient");
+		deleteInterveningElements(referenceElement,document.getElementById("rowIsSentient"));
 	}
 }
 
-function createSentientItemRows(tableID){
+function createSentientItemRows(){
+	let referenceElement = document.getElementById("rowIsSentient");
 	if(document.getElementById("isSentient").checked){
-		let nextRowIndex = document.getElementById("rowIsSentient").rowIndex+1;
 
-		addTableRow(tableID,nextRowIndex,"rowSentientAlignment","<th><label for='sentientAlignment'>Item Alignment:</label></th><td><select id='sentientAlignment' name='sentientAlignment'><option value='LawfulGood'>Lawful Good</option><option value='NeutralGood'>Neutral Good</option><option value='ChaoticGood'>Chaotic Good</option><option value='LawfulNeutral'>Lawful Neutral</option><option value='TrueNeutral'>True Neutral</option><option value='ChaoticNeutral'>Chaotic Neutral</option><option value='LawfulEvil'>Lawful Evil</option><option value='NeutralEvil'>Neutral Evil</option><option value='ChaoticEvil'>Chaotic Evil</option><option value='Unaligned'>Unaligned</option><option value='Undetermined'>Undetermined</option></select></td>");
-		nextRowIndex++;
+		referenceElement = createTableRow(referenceElement,"rowSentientAlignment","<th><label for='sentientAlignment'>Item Alignment:</label></th><td><select id='sentientAlignment' name='sentientAlignment'><option value='LawfulGood'>Lawful Good</option><option value='NeutralGood'>Neutral Good</option><option value='ChaoticGood'>Chaotic Good</option><option value='LawfulNeutral'>Lawful Neutral</option><option value='TrueNeutral'>True Neutral</option><option value='ChaoticNeutral'>Chaotic Neutral</option><option value='LawfulEvil'>Lawful Evil</option><option value='NeutralEvil'>Neutral Evil</option><option value='ChaoticEvil'>Chaotic Evil</option><option value='Unaligned'>Unaligned</option><option value='Undetermined'>Undetermined</option></select></td>");
 
 		//TODO: Add lines for all mental stats here procedurally; add vision/hearing distances; add communication method/language
 
-		addTableRow(tableID,nextRowIndex,"rowHasSight","<th><label for='hasSight'>Item can See:</label></th><td><input type='checkbox' id='hasSight' name='hasSight' onchange='createSentientItemSightRows()'></td>");
-		nextRowIndex++;
+		referenceElement = createTableRow(referenceElement,"rowHasSight","<th><label for='hasSight'>Item can See:</label></th><td><input type='checkbox' id='hasSight' name='hasSight' onchange='createSentientItemSightRows()'></td>");
 
-		addTableRow(tableID,nextRowIndex,"rowHasHearing","<th><label for='hasHearing'>Item can Hear:</label></th><td><input type='checkbox' id='hasHearing' name='hasHearing' onchange='createSentientItemHearingRows()'></td>");
-		nextRowIndex++;
+		referenceElement = createTableRow(referenceElement,"rowHasHearing","<th><label for='hasHearing'>Item can Hear:</label></th><td><input type='checkbox' id='hasHearing' name='hasHearing' onchange='createSentientItemHearingRows()'></td>");
 	}
 	else{
-		clearUnusedTable(tableID,"rowIsSentient","rowIsCursed");
+		deleteInterveningElements(referenceElement,document.getElementById("rowIsCursed"));
 	}
 }
 

@@ -789,7 +789,7 @@ async function conditionAlternateDuration(){
 			durationOptions = durationOptions + "<option value='"+option+"'>"+option+"</option>";
 		}
 
-		addTableRow("CreateSubeffectTable",nextRowIndex,"rowConditionDuration","<th><label for='ConditionDuration'>Condition Duration:</label></th><select id='ConditionDuration' name='ConditionDuration' onchange='createCustomDurationRows("+'"CreateSubeffectTable","ConditionDuration","rowConditionAdvancePoint"'+")'>"+durationOptions+"</select></td>");
+		addTableRow("CreateSubeffectTable",nextRowIndex,"rowConditionDuration","<th><label for='ConditionDuration'>Condition Duration:</label></th><select id='ConditionDuration' name='ConditionDuration' onchange='createCustomDurationRows("+'"ConditionDuration","rowConditionAdvancePoint"'+")'>"+durationOptions+"</select></td>");
 	}
 }
 

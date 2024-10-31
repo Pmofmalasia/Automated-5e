@@ -62,7 +62,7 @@ async function armorTemplateUpdate(ArmorOrShield){
 		}
 	}
 	else{
-		clearUnusedTable("CreateObjectTable","rowArmorType","rowArmorBaseAC");
+		deleteInterveningElements(referenceRow,document.getElementById("rowArmorBaseAC"));
 		
 		let request = await fetch("macro:pm.a5e.GetCoreData@lib:pm.a5e.Core", {method: "POST", body: "['sb."+ArmorOrShield+"Types']"});
 		let allArmorTypes = await request.json();

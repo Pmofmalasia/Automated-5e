@@ -19,7 +19,9 @@
 
 <tr id='rowFalseName'><th><label for='FalseName'>False Name:</label></th><td><input type='text' id='FalseName' name='FalseName'></td></tr>
 
-<tr id='rowObjectType'><th><label for='Type'>Object Type:</label></th><td><select id='Type' name='Type' onchange='createObjectSubtypeRows("+'"CreateObjectTable"'+")'>"+ObjectTypeSelection+"</select></td></tr>
+<tr id='rowObjectType'><th><label for='Type'>Object Type:</label></th><td><select id='Type' name='Type' onchange='createObjectSubtypeRows()'>"+ObjectTypeSelection+"</select></td></tr>
+
+<tr id='rowObjectTypeEnd' hidden><th></th></tr>
 
 <tr id='rowSize'><th><label for='Size'>Object Size:</label></th><td><select id='Size' name='Size'><option value='Diminutive'>Diminutive</option><option value='Tiny' select>Tiny</option><option value='Small'>Small</option><option value='Medium'>Medium</option><option value='Large'>Large</option><option value='Huge'>Huge</option><option value='Gargantuan'>Gargantuan</option><option value='Colossal'>Colossal</option></select></td></tr>
 
@@ -29,25 +31,25 @@
 
 <tr id='rowWeight'><th><label for='Weight'>Weight:</label></th><td><input type='number' id='Weight' name='Weight' step='0.001' value=0 min=0 style='width:35px'> lbs.</td></tr>
 
-<tr id='rowIsMagical'><th><label for='isMagical'>Object is a Magic Item?</label></th><td><input type='checkbox' id='isMagical' name='isMagical' onchange='createMagicItemRows("+'"CreateObjectTable"'+")'></td></tr>
+<tr id='rowIsMagical'><th><label for='isMagical'>Object is a Magic Item?</label></th><td><input type='checkbox' id='isMagical' name='isMagical' onchange='createMagicItemRows()'></td></tr>
 
 <tr id='rowIsWearable'><th><label for='wornHeld'>Must be Worn or Held for Effect?</label></th><td><select id='wornHeld' name='wornHeld'><option value=''>Neither</option><option value='Worn'>Worn</option><option value='Held'>Held</option></select></td></tr>
 
-<tr id='rowIsNonstandardEquip'><th><label for='isNonstandardEquip'>Time to Equip/Drop:</label></th><td><select id='isNonstandardEquip' name='isNonstandardEquip' onchange='createNonstandardEquipRows("+'"CreateObjectTable"'+")'><option value=''>Interaction/Free Drop</option><option value='Custom'>Other Equip/Drop Time</option><option value='CannotDrop'>Cannot Be Unequipped</option></select></td></tr>
+<tr id='rowIsNonstandardEquip'><th><label for='isNonstandardEquip'>Time to Equip/Drop:</label></th><td><select id='isNonstandardEquip' name='isNonstandardEquip' onchange='createNonstandardEquipRows()'><option value=''>Interaction/Free Drop</option><option value='Custom'>Other Equip/Drop Time</option><option value='CannotDrop'>Cannot Be Unequipped</option></select></td></tr>
 
-<tr id='rowIsConsumable'><th><label for='isConsumable'>Object is Consumable?</label></th><td><input type='checkbox' id='isConsumable' name='isConsumable' onchange='createConsumableRows("+'"CreateObjectTable"'+")'></td></tr>
+<tr id='rowIsConsumable'><th><label for='isConsumable'>Object is Consumable?</label></th><td><input type='checkbox' id='isConsumable' name='isConsumable' onchange='createConsumableRows()'></td></tr>
 
 <tr id='rowIsResources'><th><label for='isResources'>Object Has Limited Charges:</label></th><td><select id='isResources' name='isResources'><option value=''>No Charges</option><option value='one'>Single Charge</option><option value='multiple'>Multiple Charges</option></select></span></td></tr>
 
-<tr id='rowIsActivatable'><th><label for='isActivatable'>Object Can be Activated/Deactivated?</label></th><td><input type='checkbox' id='isActivatable' name='isActivatable' onchange='createActivatableRows("+'"CreateObjectTable"'+")'></td></tr>
+<tr id='rowIsActivatable'><th><label for='isActivatable'>Object Can be Activated/Deactivated?</label></th><td><input type='checkbox' id='isActivatable' name='isActivatable' onchange='createActivatableRows()'></td></tr>
 
-<tr id='rowObjectDuration'><th><label for='isDuration'>Perishable/Usable for Limited Time?</label></th><td><input type='checkbox' id='isDuration' name='isDuration' onchange='createDurationRows("+'"CreateObjectTable","rowIsSpellcastingFocus"'+")'><input type='hidden' id='ObjectDuration' value='Custom'></td></tr>
+<tr id='rowObjectDuration'><th><label for='isDuration'>Perishable/Usable for Limited Time?</label></th><td><input type='checkbox' id='isDuration' name='isDuration' onchange='createDurationRows("+'"rowIsSpellcastingFocus"'+")'><input type='hidden' id='ObjectDuration' value='Custom'></td></tr>
 
-<tr id='rowIsSpellcastingFocus'><th><label for='isSpellcastingFocus'>Acts as Spellcasting Focus?</label></th><td><input type='checkbox' id='isSpellcastingFocus' name='isSpellcastingFocus' onchange='createSpellcastingFocusRows("+'"CreateObjectTable","rowIsCastSpells"'+")'></td></tr>
+<tr id='rowIsSpellcastingFocus'><th><label for='isSpellcastingFocus'>Acts as Spellcasting Focus?</label></th><td><input type='checkbox' id='isSpellcastingFocus' name='isSpellcastingFocus' onchange='createSpellcastingFocusRows("+'"rowIsCastSpells"'+")'></td></tr>
 
-<tr id='rowIsCastSpells'><th><label for='isCastSpells'>Object Can Cast Spells?</label></th><td><input type='checkbox' id='isCastSpells' name='isCastSpells' onchange='createCastSpellsRows("+'"CreateObjectTable"'+")'><input type='hidden' id='CastSpellNumber' name='CastSpellNumber' value=0></td></tr>
+<tr id='rowIsCastSpells'><th><label for='isCastSpells'>Object Can Cast Spells?</label></th><td><input type='checkbox' id='isCastSpells' name='isCastSpells' onchange='createCastSpellsRows()'><input type='hidden' id='CastSpellNumber' name='CastSpellNumber' value=0></td></tr>
 
-<tr id='rowIsImprovisedWeapon'><th><label for='isImprovisedWeapon'>Special Improvised Weapon Effect?</label></th><td><input type='checkbox' id='isImprovisedWeapon' name='isImprovisedWeapon' onchange='createImprovisedWeaponRows("+'"CreateObjectTable"'+")'></td></tr>
+<tr id='rowIsImprovisedWeapon'><th><label for='isImprovisedWeapon'>Special Improvised Weapon Effect?</label></th><td><input type='checkbox' id='isImprovisedWeapon' name='isImprovisedWeapon' onchange='createImprovisedWeaponRows()'></td></tr>
 
 <tr id='rowIsStackable'><th><label for='isStackable'>Object Stacks with Others in Inventory?</label></th><td><input type='checkbox' id='isStackable' name='isStackable'></td></tr>
 
@@ -57,11 +59,11 @@
 
 <tr id='rowIntegrity'><th><label for='Integrity'>Integrity:</label></th><td><select id='Integrity' name='Integrity'><option value='Resilient'>Resilient</option><option value='Fragile'>Fragile</option></select></td></tr>
 
-<tr id='rowIsCustomACHP'><th><label for='isCustomACHP'>Has Specific AC or HP Value:</label></th><td><input type='checkbox' id='isCustomACHP' name='isCustomACHP' onchange='createObjectACHPRows("+'"CreateObjectTable","rowStateOfMatter"'+")'></td></tr>
+<tr id='rowIsCustomACHP'><th><label for='isCustomACHP'>Has Specific AC or HP Value:</label></th><td><input type='checkbox' id='isCustomACHP' name='isCustomACHP' onchange='createObjectACHPRows("+'"rowStateOfMatter"'+")'></td></tr>
 
 <tr id='rowStateOfMatter'><th><label for='StateOfMatter'>State of Matter:</label></th><td><select id='StateOfMatter' name='StateOfMatter'><option value='Solid'>Solid</option><option value='Liquid'>Liquid</option><option value='Gas'>Gas</option><option value='Plasma'>Plasma</option></select></td></tr>
 
-<tr id='rowIsLockable'><th><label for='isLockable'>Object is Lockable:</label></th><td><input type='checkbox' id='isLockable' name='isLockable' onchange='createLockRows("+'"CreateObjectTable"'+")'></td></tr>
+<tr id='rowIsLockable'><th><label for='isLockable'>Object is Lockable:</label></th><td><input type='checkbox' id='isLockable' name='isLockable' onchange='createLockRows()'></td></tr>
 
 <tr id='rowIsFlammable'><th><label for='isFlammable'>Object is Flammable:</label></th><td><input type='checkbox' id='isFlammable' name='isFlammable'></td></tr>
 

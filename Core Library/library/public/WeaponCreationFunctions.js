@@ -1,5 +1,7 @@
-async function createWeaponTableRows(tableID,startRowID){
-	let nextRowIndex = document.getElementById(startRowID).rowIndex + 1;
+async function createWeaponTableRows(startRowID){
+	let referenceElement = document.getElementById(startRowID);
+	let endRow = createTableRow(referenceElement,"rowWeaponEnd","<th></th>");
+	endRow.setAttribute("hidden","");
 
 	if(document.getElementById("wornHeld")!=null){
 		document.getElementById("wornHeld").value = "Held";
@@ -17,23 +19,18 @@ async function createWeaponTableRows(tableID,startRowID){
 	}
 	WeaponTypeOptions = WeaponTypeOptions+"</option><option value='NaturalWeapon'>Natural Weapon</option><option value='Unarmed'>Unarmed</option>";
 
-	addTableRow(tableID,nextRowIndex,"rowWeaponType","<th><label for='WeaponType'>Weapon Type:</label></th><td><select id='WeaponType' name='WeaponType' onchange='createWeaponTypeRows("+'"'+tableID+'"'+")'><option value='@@NewType'>New Type</option>"+WeaponTypeOptions+"</select></td>");
-	nextRowIndex++;
+	referenceElement = createTableRow(referenceElement,"rowWeaponType","<th><label for='WeaponType'>Weapon Type:</label></th><td><select id='WeaponType' name='WeaponType' onchange='createWeaponTypeRows()'><option value='@@NewType'>New Type</option>"+WeaponTypeOptions+"</select></td>");
 
 	if(document.getElementById("WeaponType").value == "@@NewType"){
-		createWeaponTypeRows(tableID);
-		nextRowIndex++;
-		nextRowIndex++;
+		createWeaponTypeRows();
+		referenceElement = endRow.previousElementSibling;
 	}
 
-	addTableRow(tableID,nextRowIndex,"rowWeaponClass","<th><label for='WeaponClass'>Weapon Class:</label></th><td><select id='WeaponClass' name='WeaponClass'><option value='Natural'>Natural</option><option value='Simple'>Simple</option><option value='Martial'>Martial</option><option value='Exotic'>Exotic</option><option value='Improvised'>Improvised</option></select></td>");
-	nextRowIndex++;
+	referenceElement = createTableRow(referenceElement,"rowWeaponClass","<th><label for='WeaponClass'>Weapon Class:</label></th><td><select id='WeaponClass' name='WeaponClass'><option value='Natural'>Natural</option><option value='Simple'>Simple</option><option value='Martial'>Martial</option><option value='Exotic'>Exotic</option><option value='Improvised'>Improvised</option></select></td>");
 
-	addTableRow(tableID,nextRowIndex,"rowWeaponMeleeRanged","<th><label for='WeaponMeleeRanged'>Melee or Ranged:</label></th><td><select id='WeaponMeleeRanged' name='WeaponMeleeRanged' onchange='createWeaponRangeReachRows("+'"'+tableID+'",'+'"rowWeaponMeleeRanged"'+")'><option value='Melee'>Melee</option><option value='Ranged'>Ranged</option></select></td>");
-	nextRowIndex++;
+	referenceElement = createTableRow(referenceElement,"rowWeaponMeleeRanged","<th><label for='WeaponMeleeRanged'>Melee or Ranged:</label></th><td><select id='WeaponMeleeRanged' name='WeaponMeleeRanged' onchange='createWeaponRangeReachRows("+''+'"rowWeaponMeleeRanged"'+")'><option value='Melee'>Melee</option><option value='Ranged'>Ranged</option></select></td>");
 
-	addTableRow(tableID,nextRowIndex,"rowWeaponReach","<th><label for='Reach'>Reach:</label></th><td><input type='number' id='Reach' name='Reach' min='0' value='5' style='width:25px'></td>");
-	nextRowIndex++;
+	referenceElement = createTableRow(referenceElement,"rowWeaponReach","<th><label for='Reach'>Reach:</label></th><td><input type='number' id='Reach' name='Reach' min='0' value='5' style='width:25px'></td>");
 
 	let requestAttributes = await fetch("macro:pm.GetAttributes@lib:pm.a5e.Core", {method: "POST", body: ""});
 	let allAttributes = await requestAttributes.json();
@@ -43,65 +40,56 @@ async function createWeaponTableRows(tableID,startRowID){
 		AttributeOptions = AttributeOptions + "<option value='"+tempAttribute.Name+"'>"+tempAttribute.DisplayName+"</option>";
 	}
 
-	addTableRow(tableID,nextRowIndex,"rowWeaponPrimeStat","<th><label for='PrimeStat'>Main Stat:</label></th><td><select id='PrimeStat' name='PrimeStat'>"+AttributeOptions+"</select></td>");
-	nextRowIndex++;
+	referenceElement = createTableRow(referenceElement,"rowWeaponPrimeStat","<th><label for='PrimeStat'>Main Stat:</label></th><td><select id='PrimeStat' name='PrimeStat'>"+AttributeOptions+"</select></td>");
 
 	let requestPropsData = await fetch("macro:pm.a5e.GetCoreData@lib:pm.a5e.Core", {method: "POST", body: "['sb.WeaponProperties']"});
 	let allWeaponPropsData = await requestPropsData.json();
 
-	let WeaponPropertyOptions = createHTMLMultiselectOptions(allWeaponPropsData,"weaponProperty","createWeaponPropertyRows",[tableID]);
+	let WeaponPropertyOptions = createHTMLMultiselectOptions(allWeaponPropsData,"weaponProperty","createWeaponPropertyRows",[]);
 
-	addTableRow(tableID,nextRowIndex,"rowWeaponProperties","<th>Weapon Properties:</th><td><div class='check-multiple' style='width:100%'>"+WeaponPropertyOptions+"</div></td>");
-	nextRowIndex++;
+	referenceElement = createTableRow(referenceElement,"rowWeaponProperties","<th>Weapon Properties:</th><td><div class='check-multiple' style='width:100%'>"+WeaponPropertyOptions+"</div></td>");
 
-	addTableRow(tableID,nextRowIndex,"rowWeaponDamageHeader","<th style='text-align:center' colspan='2'>Weapon Damage:<input type='hidden' id='WeaponDamageInstanceNumber' name='WeaponDamageInstanceNumber' value=0></th>");
-	nextRowIndex++;
+	referenceElement = createTableRow(referenceElement,"rowWeaponDamageHeader","<th style='text-align:center' colspan='2'>Weapon Damage:<input type='hidden' id='WeaponDamageInstanceNumber' name='WeaponDamageInstanceNumber' value=0></th>");
 
-	addTableRow(tableID,nextRowIndex,"rowWeaponDamageInstanceButtons","<th style='text-align:center' colspan='2'><input type='button' id='addDamageType' name='addDamageType' value='Add Type' onclick='addDamageTypeRows("+'"'+tableID+'","Weapon"'+")'>  <input type='button' id='removeDamageType' name='removeDamageType' value='Remove Type' onclick='removeDamageTypeRows("+'"Weapon"'+")'></th>");
+	referenceElement = createTableRow(referenceElement,"rowWeaponDamageInstanceButtons","<th style='text-align:center' colspan='2'><input type='button' id='addDamageType' name='addDamageType' value='Add Type' onclick='addDamageTypeRows("+'"Weapon"'+")'>  <input type='button' id='removeDamageType' name='removeDamageType' value='Remove Type' onclick='removeDamageTypeRows("+'"Weapon"'+")'></th>");
 
-	await addDamageTypeRows(tableID,"Weapon");
-	nextRowIndex = document.getElementById("rowWeaponDamageInstanceButtons").rowIndex + 1;
+	await addDamageTypeRows("Weapon");
+	referenceElement = document.getElementById("rowWeaponDamageInstanceButtons");
 
-	addTableRow(tableID,nextRowIndex,"rowMagicBonus","<th><label for='MagicBonus'>Magic Bonus:</label></th><td>+ <input type='number' id='MagicBonus' name='MagicBonus' value='0' style='width:25px' onchange='MagicBonusChanges()'></td>");
-	nextRowIndex++;
+	referenceElement = createTableRow(referenceElement,"rowMagicBonus","<th><label for='MagicBonus'>Magic Bonus:</label></th><td>+ <input type='number' id='MagicBonus' name='MagicBonus' value='0' style='width:25px' onchange='MagicBonusChanges()'></td>");
 
-	addTableRow(tableID,nextRowIndex,"rowWeaponCritThresh","<th><label for='WeaponCritThresh'>Critical Threshhold:</label></th><td><input type='number' id='WeaponCritThresh' name='WeaponCritThresh' max='20' min='0' value='20'><select id='WeaponCritThreshMethod' name='WeaponCritThreshMethod'><option value='Set'>Set to Value</option><option value='Reduce'>Reduce by Value</option></select></td>");
-	nextRowIndex++;
+	referenceElement = createTableRow(referenceElement,"rowWeaponCritThresh","<th><label for='WeaponCritThresh'>Critical Threshhold:</label></th><td><input type='number' id='WeaponCritThresh' name='WeaponCritThresh' max='20' min='0' value='20'><select id='WeaponCritThreshMethod' name='WeaponCritThreshMethod'><option value='Set'>Set to Value</option><option value='Reduce'>Reduce by Value</option></select></td>");
 
-	addTableRow(tableID,nextRowIndex,"rowWeaponCritDice","<th><label for='WeaponCritDice'>Bonus Crit Dice:</label></th><td><select id='WeaponCritDiceMethod' name='WeaponCritDiceMethod'><option value='Add'>Add</option><option value='Multiply'>Multiply</option></select><input type='number' id='WeaponCritDice' name='WeaponCritDice' min='0' value=0 style='width:25px'></td>");
-	nextRowIndex++;
+	referenceElement = createTableRow(referenceElement,"rowWeaponCritDice","<th><label for='WeaponCritDice'>Bonus Crit Dice:</label></th><td><select id='WeaponCritDiceMethod' name='WeaponCritDiceMethod'><option value='Add'>Add</option><option value='Multiply'>Multiply</option></select><input type='number' id='WeaponCritDice' name='WeaponCritDice' min='0' value=0 style='width:25px'></td>");
 	
 	let requestWeaponTagsData = await fetch("macro:pm.a5e.GetCoreData@lib:pm.a5e.Core", {method: "POST", body: "['sb.WeaponTags']"});
 	let allWeaponTagsData = await requestWeaponTagsData.json();
 	let WeaponTagOptions = createHTMLMultiselectOptions(allWeaponTagsData,"weaponTag");
 
-	addTableRow(tableID,nextRowIndex,"rowWeaponTags","<th>Weapon Tags:</label></th><td><div class='check-multiple' style='width:100%'>"+WeaponTagOptions+"</div></td>");
-	nextRowIndex++;
+	referenceElement = createTableRow(referenceElement,"rowWeaponTags","<th>Weapon Tags:</label></th><td><div class='check-multiple' style='width:100%'>"+WeaponTagOptions+"</div></td>");
 
-	addTableRow(tableID,nextRowIndex,"rowWeaponEffect","<th><label for='isWeaponEffect'>Additional Effect on Hit:</label></th><td><input type='checkbox' id='isWeaponEffect' name='isWeaponEffect'></td>");
-	nextRowIndex++;
+	referenceElement = createTableRow(referenceElement,"rowWeaponEffect","<th><label for='isWeaponEffect'>Additional Effect on Hit:</label></th><td><input type='checkbox' id='isWeaponEffect' name='isWeaponEffect'></td>");
 }
 
-async function createWeaponTypeRows(tableID){
+async function createWeaponTypeRows(){
 	let referenceRow = document.getElementById("rowWeaponType");
-	let nextRowIndex = referenceRow.rowIndex + 1;
 
 	if(document.getElementById("WeaponType").value == "@@NewType"){
 		//In GeneralCreateObjectFunctions
 		createNewTemplateRows(referenceRow,"Weapon");
 	}
 	else{
-		clearUnusedTable(tableID,"rowWeaponType","rowWeaponClass");
+		deleteInterveningElements(referenceRow,document.getElementById("rowWeaponClass"));
 
 		if(document.getElementById("WeaponType").value == "NaturalWeapon"){
-			let insertRowIndex = document.getElementById("rowWeaponPrimeStat").rowIndex + 1;
+			let insertRow = document.getElementById("rowWeaponPrimeStat");
 
-			addTableRow(tableID,insertRowIndex,"rowWeaponNotProficient","<th><label for='isWeaponNotProficient'>Weapon PREVENTS Proficiency:</label></th><td><input type='checkbox' id='isWeaponNotProficient' name='isWeaponNotProficient'></td>");
+			createTableRow(insertRow,"rowWeaponNotProficient","<th><label for='isWeaponNotProficient'>Weapon PREVENTS Proficiency:</label></th><td><input type='checkbox' id='isWeaponNotProficient' name='isWeaponNotProficient'></td>");
 
 			document.getElementById("WeaponClass").value = "Natural";
 		}
 		else if(document.getElementById("rowWeaponNotProficient") != null){
-			document.getElementById(tableID).deleteRow(document.getElementById("rowWeaponNotProficient").rowIndex);
+			document.getElementById("rowWeaponNotProficient").remove();
 		}
 
 		let request = await fetch("macro:pm.a5e.GetCoreData@lib:pm.a5e.Core", {method: "POST", body: "['sb.WeaponTypes']"});
@@ -141,13 +129,13 @@ async function createWeaponTypeRows(tableID){
 			document.getElementById("WeaponMeleeRanged").dispatchEvent(new Event('change'));
 		}
 
-		clearUnusedTable(tableID,"rowWeaponDamageHeader","rowWeaponDamageInstanceButtons");
+		deleteInterveningElements(document.getElementById("rowWeaponDamageHeader"),document.getElementById("rowWeaponDamageInstanceButtons"));
 		if(WeaponTypeData.WeaponDamage != null){
 			document.getElementById("WeaponDamageInstanceNumber").value = 0;
 			let i = 0;
 
 			for(let tempInstance of WeaponTypeData.WeaponDamage){
-				await addDamageTypeRows(tableID,"Weapon");
+				await addDamageTypeRows("Weapon");
 				document.getElementById("WeaponDamageType"+i).value = tempInstance.DamageType;
 				document.getElementById("WeaponDamageDieNumber"+i).value = tempInstance.DamageDieNumber;
 				document.getElementById("WeaponDamageDieSize"+i).value = tempInstance.DamageDieSize;
@@ -164,15 +152,15 @@ async function createWeaponTypeRows(tableID){
 				let tempProperty = tempPropertyData.Name;
 				if(WeaponTypeData.WeaponProperties.includes(tempProperty)){
 					document.getElementById("weaponProperty"+tempProperty).setAttribute("checked","");
-					await createWeaponPropertyRows(tempProperty,tableID);
+					await createWeaponPropertyRows(tempProperty);
 
 					if(tempProperty == "Versatile"){
 						//Remove automatically created rows
-						clearUnusedTable(tableID,"rowVersatileDamageHeader","rowVersatileDamageInstanceButtons");
+						deleteInterveningElements(document.getElementById("rowVersatileDamageHeader"),document.getElementById("rowVersatileDamageInstanceButtons"));
 						document.getElementById("VersatileDamageInstanceNumber").value = 0;
 						let i = 0;
 						for(let tempInstance of WeaponTypeData.VersatileDamage){
-							await addDamageTypeRows(tableID,"Versatile");
+							await addDamageTypeRows("Versatile");
 							document.getElementById("VersatileDamageType"+i).value = tempInstance.DamageType;
 							document.getElementById("VersatileDamageDieNumber"+i).value = tempInstance.DamageDieNumber;
 							document.getElementById("VersatileDamageDieSize"+i).value = tempInstance.DamageDieSize;
@@ -247,15 +235,15 @@ async function createWeaponTypeRows(tableID){
 	}
 }
 
-async function addDamageTypeRows(tableID,rowPrefix){
+async function addDamageTypeRows(rowPrefix){
 	let currentInstanceNumber = Number(document.getElementById(rowPrefix+"DamageInstanceNumber").value);
-	let endRow = document.getElementById("row"+rowPrefix+"DamageInstanceButtons");
+	let referenceElement = document.getElementById("row"+rowPrefix+"DamageInstanceButtons").previousElementSibling;
 
 	let requestDamageData = await fetch("macro:pm.GetDamageTypes@lib:pm.a5e.Core", {method: "POST", body: ""});
 	let allDamageData = await requestDamageData.json();
 	let DamageTypeOptions = createHTMLSelectOptions(allDamageData);
 
-	addTableRow(tableID,endRow.rowIndex,"row"+rowPrefix+"Damage"+currentInstanceNumber,"<th style='text-align:center' colspan='2'><input type='number' id='"+rowPrefix+"DamageDieNumber"+currentInstanceNumber+"' name='"+rowPrefix+"DamageDieNumber"+currentInstanceNumber+"' min=0 value=1 style='width:25px'> d <input type='number' id='"+rowPrefix+"DamageDieSize"+currentInstanceNumber+"' name='"+rowPrefix+"DamageDieSize"+currentInstanceNumber+"' min=0 value=6 style='width:25px'> + <input type='number' id='"+rowPrefix+"DamageBonus"+currentInstanceNumber+"' name='"+rowPrefix+"DamageBonus"+currentInstanceNumber+"' value=0 style='width:25px'> + <select id='"+rowPrefix+"AddDmgMod"+currentInstanceNumber+"' name='"+rowPrefix+"AddDmgMod"+currentInstanceNumber+"'><option value=1>Modifier</option><option value=0>No Modifier</option></select><select id='"+rowPrefix+"DamageType"+currentInstanceNumber+"' name='"+rowPrefix+"DamageType"+currentInstanceNumber+"'>"+DamageTypeOptions+"</select></th>");
+	referenceElement = createTableRow(referenceElement,"row"+rowPrefix+"Damage"+currentInstanceNumber,"<th style='text-align:center' colspan='2'><input type='number' id='"+rowPrefix+"DamageDieNumber"+currentInstanceNumber+"' name='"+rowPrefix+"DamageDieNumber"+currentInstanceNumber+"' min=0 value=1 style='width:25px'> d <input type='number' id='"+rowPrefix+"DamageDieSize"+currentInstanceNumber+"' name='"+rowPrefix+"DamageDieSize"+currentInstanceNumber+"' min=0 value=6 style='width:25px'> + <input type='number' id='"+rowPrefix+"DamageBonus"+currentInstanceNumber+"' name='"+rowPrefix+"DamageBonus"+currentInstanceNumber+"' value=0 style='width:25px'> + <select id='"+rowPrefix+"AddDmgMod"+currentInstanceNumber+"' name='"+rowPrefix+"AddDmgMod"+currentInstanceNumber+"'><option value=1>Modifier</option><option value=0>No Modifier</option></select><select id='"+rowPrefix+"DamageType"+currentInstanceNumber+"' name='"+rowPrefix+"DamageType"+currentInstanceNumber+"'>"+DamageTypeOptions+"</select></th>");
 
 	currentInstanceNumber++;
 	document.getElementById(rowPrefix+"DamageInstanceNumber").value = currentInstanceNumber;
@@ -272,25 +260,23 @@ function removeDamageTypeRows(rowPrefix){
 	}
 }
 
-function createWeaponRangeReachRows(tableID,originID){
-	let nextRowIndex = document.getElementById(originID).rowIndex + 1;
+function createWeaponRangeReachRows(originID){
+	let referenceElement = document.getElementById(originID);
 
 	let ReachInnerHTML = "<th><label for='Reach'>Reach:</label></th><td><input type='number' id='Reach' name='Reach' min='0' value='5' style='width:25px'></td>";
 	let RangeInnerHTML = "<th><label for='Range'>Range:</label></th><td><input type='number' id='Range' name='Range' min='0' value='5' style='width:35px'> / <input type='number' id='LongRange' name='LongRange' min='0' value='5' style='width:35px'></td>";
 	if(originID == "rowWeaponMeleeRanged"){
-		clearUnusedTable(tableID,"rowWeaponMeleeRanged","rowWeaponPrimeStat");
+		deleteInterveningElements(referenceElement,document.getElementById("rowWeaponPrimeStat"));
 
 		if(document.getElementById("WeaponMeleeRanged").value == "Melee"){
-			addTableRow(tableID,nextRowIndex,"rowWeaponReach",ReachInnerHTML);
-			nextRowIndex++;
+			referenceElement = createTableRow(referenceElement,"rowWeaponReach",ReachInnerHTML);
 
 			if(document.getElementById("PrimeStat").value == "Dexterity"){
 				document.getElementById("PrimeStat").value = "Strength";
 			}
 		}
 		else{
-			addTableRow(tableID,nextRowIndex,"rowWeaponRange",RangeInnerHTML);
-			nextRowIndex++;
+			referenceElement = createTableRow(referenceElement,"rowWeaponRange",RangeInnerHTML);
 
 			if(document.getElementById("PrimeStat").value == "Strength"){
 				document.getElementById("PrimeStat").value = "Dexterity";
@@ -298,18 +284,16 @@ function createWeaponRangeReachRows(tableID,originID){
 		}
 	}
 	else if(originID == "rowWeaponProperties"){
-		addTableRow(tableID,nextRowIndex,"rowWeaponThrownRange",RangeInnerHTML);
-		nextRowIndex++;
+		referenceElement = createTableRow(referenceElement,"rowWeaponThrownRange",RangeInnerHTML);
 	}
 }
 
-async function createWeaponPropertyRows(toggledProperty,tableID){
-	let nextRowIndex = document.getElementById("rowWeaponProperties").rowIndex + 1;
-	let table = document.getElementById(tableID);
+async function createWeaponPropertyRows(toggledProperty){
+	let referenceElement = document.getElementById("rowWeaponProperties");
 
 	if(toggledProperty == "Ammunition"){
 		if(!document.getElementById("weaponProperty"+toggledProperty).checked){
-			table.deleteRow(document.getElementById("rowWeaponUsableAmmunition").rowIndex);
+			document.getElementById("rowWeaponUsableAmmunition").remove();
 		}
 		else if(document.getElementById("rowWeaponUsableAmmunition") == null){
 			let request = await fetch("macro:pm.a5e.GetCoreData@lib:pm.a5e.Core", {method: "POST", body: "['sb.AmmunitionTypes']"});
@@ -317,35 +301,31 @@ async function createWeaponPropertyRows(toggledProperty,tableID){
 	
 			let WeaponAmmunitionTypeOptions = createHTMLMultiselectOptions(allAmmunitionTypes,"validWeaponAmmunition");
 	
-			addTableRow(tableID,nextRowIndex,"rowWeaponUsableAmmunition","<th>Usable Ammunition:</th><td><div class='check-multiple' style='width:100%'>"+WeaponAmmunitionTypeOptions+"</div></td>");
-			nextRowIndex++;
+			referenceElement = createTableRow(referenceElement,"rowWeaponUsableAmmunition","<th>Usable Ammunition:</th><td><div class='check-multiple' style='width:100%'>"+WeaponAmmunitionTypeOptions+"</div></td>");
 		}
 	}
 	else if(toggledProperty == "Thrown"){
 		if(!document.getElementById("weaponProperty"+toggledProperty).checked){
-			table.deleteRow(document.getElementById("rowWeaponThrownRange").rowIndex);
+			document.getElementById("rowWeaponThrownRange").remove();
 		}
 		else if(document.getElementById("rowWeaponThrownRange") == null){
-			createWeaponRangeReachRows(tableID,"rowWeaponProperties");
+			createWeaponRangeReachRows("rowWeaponProperties");
 		}
 	}
 	else if(toggledProperty == "Versatile"){
 		endRow = document.getElementById("rowWeaponDamageInstanceButtons").nextElementSibling;
 		if(!document.getElementById("weaponProperty"+toggledProperty).checked){
-			clearUnusedTable(tableID,"rowWeaponDamageInstanceButtons",document.getElementById("rowVersatileDamageInstanceButtons").nextElementSibling.id);
+			deleteInterveningElements(document.getElementById("rowWeaponDamageInstanceButtons"),document.getElementById("rowVersatileDamageInstanceButtons").nextElementSibling);
 		}
 		else if(document.getElementById("rowVersatileDamageHeader") == null){
 			let weaponDamageInstanceNumber = Number(document.getElementById("WeaponDamageInstanceNumber").value);
-			addTableRow(tableID,endRow.rowIndex,"rowVersatileDamageHeader","<th style='text-align:center' colspan='2'>Versatile Damage:<input type='hidden' id='VersatileDamageInstanceNumber' name='VersatileDamageInstanceNumber' value=0></th>");
-			nextRowIndex++;
+			createTableRow(endRow.previousElementSibling,"rowVersatileDamageHeader","<th style='text-align:center' colspan='2'>Versatile Damage:<input type='hidden' id='VersatileDamageInstanceNumber' name='VersatileDamageInstanceNumber' value=0></th>");
 
-			addTableRow(tableID,endRow.rowIndex,"rowVersatileDamageInstanceButtons","<th style='text-align:center' colspan='2'><input type='button' id='addDamageType' name='addDamageType' value='Add Type' onclick='addDamageTypeRows("+'"'+tableID+'","Versatile"'+")'>  <input type='button' id='removeDamageType' name='removeDamageType' value='Remove Type' onclick='removeDamageTypeRows("+'"Versatile"'+")'></th>");
-			nextRowIndex++;
+			createTableRow(endRow.previousElementSibling,"rowVersatileDamageInstanceButtons","<th style='text-align:center' colspan='2'><input type='button' id='addDamageType' name='addDamageType' value='Add Type' onclick='addDamageTypeRows("+'"Versatile"'+")'>  <input type='button' id='removeDamageType' name='removeDamageType' value='Remove Type' onclick='removeDamageTypeRows("+'"Versatile"'+")'></th>");
 
 			//Sets default values and number of instances equal to main damage dice, for convenience
 			for(let i = 0; i < weaponDamageInstanceNumber; i++){
-				await addDamageTypeRows(tableID,"Versatile");
-				nextRowIndex++;
+				await addDamageTypeRows("Versatile");
 
 				document.getElementById("VersatileDamageDieNumber"+i).value = document.getElementById("WeaponDamageDieNumber"+i).value;
 				document.getElementById("VersatileDamageDieSize"+i).value = document.getElementById("WeaponDamageDieSize"+i).value;

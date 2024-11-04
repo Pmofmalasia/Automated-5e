@@ -102,7 +102,7 @@ Subeffect - UseResource Key:
 	"SpellLevelMin":"NUMBER: Minimum spell level allowed to spend (for SpellSlot resources)",
 	"SpellLevelMax":"NUMBER | Empty: Maximum spell level allowed to spend. Empty if no limit. Unused if not a SpellSlot resource.",
 	"Increment":"NUMBER: Increment resource can be spent in, if not just a flat number",
-	"Activate":"NUMBER/BOOL: Activates (1) or deactivates (0) chosen resource",
+	"Activate":"NUMBER/BOOL: Activates (1) or deactivates (0) chosen resource - for time resources",
 	"Powering":"OBJECT (PROPOSED): Identifiers for a separate feature that is activated/deactivated when active. 'this' could then refer to just the feature/item associated with the resource.",
 	"Identifier":{
 		"NOTE":"For feature/item/etc. resources only.",

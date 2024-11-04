@@ -208,7 +208,7 @@
 	[h:lightTimeResource = json.set("",json.get(lightDurationData,"Units"),json.get(lightDurationData,"Value"))]
 	[h:objectData = json.set(objectData,"TimeResourceMax",lightTimeResource,"TimeResource",lightTimeResource,"TimeResourceActive",0)]
 
-[h:"<!-- TODO: MaxResource - Time resource reformatting, don't do it raw -->"]
+[h:"<!-- TODO: ResourceTime - Time resource reformatting, don't do it raw -->"]
 	[h:objectData = json.set(objectData,"isPassiveFunction",1)]
 	[h:lightActivationEffect = json.set("",
 		"EffectDisplayName","Light "+json.get(objectData,"DisplayName"),
@@ -352,29 +352,48 @@
 [h:objectData = json.remove(objectData,"isLeaveBehindContainer")]
 
 [h,if(json.contains(objectData,"isActivatable")),CODE:{
-	[h:objectData = json.set(objectData,"isActivatable",json.contains(objectData,"isActivatable"))]
-	[h,switch(json.get(objectData,"ActivationUseTime")):
-		case "Free": objectData = json.set(objectData,"ActivationTime","","ActivationTimeUnits","");
-		case "Item Interaction": objectData = json.set(objectData,"ActivationTime",1,"ActivationTimeUnits","interaction");
-		case "Action": objectData = json.set(objectData,"ActivationTime",1,"ActivationTimeUnits","action");
-		case "Bonus Action": objectData = json.set(objectData,"ActivationTime",1,"ActivationTimeUnits","bonus");
-		case "Reaction": objectData = json.set(objectData,"ActivationTime",1,"ActivationTimeUnits","reaction");
-		case "1 Minute": objectData = json.set(objectData,"ActivationTime",1,"ActivationTimeUnits","minute");
-		case "10 Minutes": objectData = json.set(objectData,"ActivationTime",10,"ActivationTimeUnits","minute");
-		case "1 Hour": objectData = json.set(objectData,"ActivationTime",1,"ActivationTimeUnits","hour");
-		case "8 Hours": objectData = json.set(objectData,"ActivationTime",8,"ActivationTimeUnits","hour");
-		case "12 Hours": objectData = json.set(objectData,"ActivationTime",12,"ActivationTimeUnits","hour");
-		case "24 Hours": objectData = json.set(objectData,"ActivationTime",24,"ActivationTimeUnits","hour")
-	]
-	[h:objectData = json.remove(objectData,"ActivationUseTime")]
+	[h:ActivationEffect = json.set("",
+		"Name","Activate"+ObjectName,
+		"DisplayName","Activate"+json.get(objectData,"DisplayName"),
+		"ValidActivationState",0
+	)]
+	[h:DeactivationEffect = json.set("",
+		"Name","Deactivate"+ObjectName,
+		"DisplayName","Deactivate"+json.get(objectData,"DisplayName"),
+		"ValidActivationState",1
+	)]
+
+	[h:ActivationTimeData = ct.a5e.UseTimeProcessing(objectData,"Activation")]
+	[h:objectData = json.get(ActivationTimeData,"Subeffect")]
+	[h:ActivationEffect = json.set(ActivationEffect,"UseTime",json.get(ActivationTimeData,"UseTime"))]
+
+	[h,if(json.get(objectData,"UseTimeDeactivation") == "Same"),CODE:{
+		[h:DeactivationEffect = json.set(DeactivationEffect,"UseTime",json.get(ActivationTimeData,"UseTime"))]
+		[h:objectData = json.remove(objectData,"UseTimeDeactivation")]
+	};{
+		[h:DeactivationTimeData = ct.a5e.UseTimeProcessing(objectData,"Deactivation")]
+		[h:objectData = json.get(DeactivationTimeData,"Subeffect")]
+		[h:DeactivationEffect = json.set(DeactivationEffect,"UseTime",json.get(DeactivationTimeData,"UseTime"))]
+	}]
 
 	[h,switch(json.get(objectData,"ActivationComponents")):
-		case "None": objectData = json.set(objectData,"ActivationVerbalComponent",0,"ActivationSomaticComponent",0);
-		case "Verbal": objectData = json.set(objectData,"ActivationVerbalComponent",1,"ActivationSomaticComponent",0);
-		case "Somatic": objectData = json.set(objectData,"ActivationVerbalComponent",0,"ActivationSomaticComponent",1);
-		case "Both": objectData = json.set(objectData,"ActivationVerbalComponent",1,"ActivationSomaticComponent",1)
+		case "None": ActivationEffect = json.set(ActivationEffect,"vComp",0,"sComp",0);
+		case "Verbal": ActivationEffect = json.set(ActivationEffect,"vComp",1,"sComp",0);
+		case "Somatic": ActivationEffect = json.set(ActivationEffect,"vComp",0,"sComp",1);
+		case "Both": ActivationEffect = json.set(ActivationEffect,"vComp",1,"sComp",1)
 	]
 	[h:objectData = json.remove(objectData,"ActivationComponents")]
+
+	[h:ActivationSubeffect = json.set("",
+		"TargetNumber",1,
+		"RangeType","Touch",
+		"isActivateItem","Activate"
+	)]
+	[h:DeactivationSubeffect = json.set("",
+		"TargetNumber",1,
+		"RangeType","Touch",
+		"isActivateItem","Deactivate"
+	)]
 
 	[h,if(json.get(objectData,"ActivationTimeResourceUsed") == ""),CODE:{
 		[h:objectData = json.remove(objectData,"ActivationTimeResourceUsed")]
@@ -387,8 +406,43 @@
 			"ItemID","this",
 			"Resource",usedResourceName
 		)]
-		[h:objectData = json.set(objectData,"ActivationTimeResourceUsed",activationResourceData)]
+
+		[h:ActivationUseResource = json.set("",
+			"ResourceUsed",1,
+			"Increment",1,
+			"Activate",1,
+			"Powering","this",
+			"Identifier",activationResourceData
+		)]
+		[h:DeactivationUseResource = json.set("",
+			"ResourceUsed",0,
+			"Increment",0,
+			"Activate",0,
+			"Powering","this",
+			"Identifier",activationResourceData
+		)]
+
+		[h:ActivationSubeffect = json.set(ActivationSubeffect,"UseResource",json.append("",json.append("",ActivationUseResource)))]
+		[h:DeactivationSubeffect = json.set(DeactivationSubeffect,"UseResource",json.append("",json.append("",DeactivationUseResource)))]
 	}]
+
+	[h:ActivationEffect = json.set(ActivationEffect,"Subeffect",json.append("",ActivationSubeffect))]
+
+
+
+
+
+
+
+	
+		[h:"<!-- TODO: Test this, then change ActivateItem to execute the activation/deactivation effect. -->"]
+
+
+
+
+
+
+
 
 	[h,if(json.get(objectData,"isMagical")),CODE:{
 		[h:"<!-- TODO: Merge any already present activation effects here, if there's a light also. -->"]
@@ -396,11 +450,13 @@
 		[h,if(lightDeactivationEffect != ""): objectData = json.set(objectData,"DeactivationEffects",json.append("",lightDeactivationEffect))]
 	};{}]
 };{
+	[h:"<!-- NOTE: Why the isMagical test? Because lighting a mundane light is 'using' an item, while turning on a magical one is (usually) 'activating' an item, which is technically a separate action. Ew. -->"]
 	[h,if(json.get(objectData,"isMagical")),CODE:{
 		[h,if(lightActivationEffect != ""): objectData = json.set(objectData,"ActivationEffects",json.append("",lightActivationEffect))]
 		[h,if(lightDeactivationEffect != ""): objectData = json.set(objectData,"DeactivationEffects",json.append("",lightDeactivationEffect))]
 	};{}]
 }]
+[h:objectData = json.remove(objectData,"isActivatable")]
 
 [h,if(json.get(objectData,"isResources") != ""),CODE:{
 	[h:objectResourceData = js.ct.a5e.ResourceProcessing(objectData,json.set(objectData,"Type","Item"))]

@@ -162,6 +162,15 @@
 			subeffect.HeldItemCreatureOptions = json.get(pm.a5e.TargetCreatureFiltering(json.set("","ParentToken",ParentToken,"Origin",subeffect.TargetOrigin,"Range",subeffect.RangeData),json.get(subeffect.TargetObjectLimits,"CarryingCreatureFilter")),"ValidTargets")
 		]
 
+		[h:"<!-- Allows 'this' to be used in place of an ItemID for targeting the item that is executing the subeffect (for easier activation of items and not having to change it every time an item is moved) -->"]
+		[h:specificObjectsList = json.get(subeffect.TargetObjectLimits,"List")]
+		[h,if(specificObjectsList == ""):
+			thisItemTest = -1;
+			thisItemTest = json.indexOf(specificObjectsList,"this")
+		]
+		[h,if(thisItemTest != -1): specificObjectsList = json.set(specificObjectsList,thisItemTest,json.get(BaseEffectData,"ItemID"))]
+		[h:subeffect.TargetObjectLimits = json.set(subeffect.TargetObjectLimits,"List",specificObjectsList)]
+
 		[h:subeffect.ObjectTargetOptions = json.merge(subeffect.ObjectTargetOptions,pm.a5e.TargetHeldObjectFiltering(subeffect.HeldItemCreatureOptions,subeffect.TargetObjectLimits))]
 	};{}]
 

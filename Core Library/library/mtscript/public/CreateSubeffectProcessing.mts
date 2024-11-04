@@ -35,6 +35,7 @@
 [h:FeatureName = json.get(FeatureData,"Name")]
 [h:FeatureDisplayName = json.get(FeatureData,"DisplayName")]
 
+[h:"<!-- NOTE: Presence of UseTime key is a stand-in for being a new effect (as opposed to a linked subeffect, which would not have an associated UseTime). -->"]
 [h,if(json.contains(subeffectData,"UseTime")),CODE:{
 	[h,if(json.contains(subeffectData,"EffectDisplayName")),CODE:{
 		[h:EffectDisplayName = json.get(subeffectData,"EffectDisplayName")]

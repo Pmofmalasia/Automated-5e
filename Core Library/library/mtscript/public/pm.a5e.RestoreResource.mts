@@ -80,7 +80,7 @@
 	}
 ]
 
-[h:"<!-- TODO: MaxResourceTest - Need to test applying this to Time resources -->"]
+[h:"<!-- TODO: ResourceTimeTest - Need to test applying this to Time resources -->"]
 
 [h:CalculateResourceDataOptions = "{}"]
 [h,if(ResourceKey != ""): json.set(CalculateResourceDataOptions,"resource",ResourceKey)]

@@ -381,7 +381,10 @@ function getInProgressResourceOptions(options){
 	let resourceNum;
 	let resourceChoice = document.getElementById("isResources").value;
 
-	if(resourceChoice === "one"){
+	if(resourceChoice === ""){
+		return "";
+	}
+	else if(resourceChoice === "one"){
 		resourceNum = 1;
 	}
 	else{

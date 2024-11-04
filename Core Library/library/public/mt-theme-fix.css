@@ -22,3 +22,8 @@ input[type=number].theme-fix-submit {
 	background-color: var(--mt-theme-color-text-input-background);
 	color: var(--mt-theme-color-text-input-foreground);
 }
+
+*{
+	font-size: medium;
+	font-family: 'Courier New', Courier, monospace;
+}

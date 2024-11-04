@@ -117,6 +117,29 @@ async function createObjectSubtypeRows(IDSuffix){
 	else if(ObjectType === "Poison"){
 		document.getElementById("wornHeld").value = "";
 		document.getElementById("isStackable").checked = true;
+
+		referenceElement = createTableRow(referenceElement,"rowPoisonAdministrationRoute","<th><label for='PoisonAdministrationRoute'>Administration Route:</label></th><td><select id='PoisonAdministrationRoute' name='PoisonAdministrationRoute'><option value='Contact'>Contact</option><option value='Ingested'>Ingested</option><option value='Inhaled'>Inhaled</option><option value='Injury'>Injury</option></select></td>");
+
+		referenceElement = createTableRow(referenceElement,"rowPoisonEnd","<th colspan=2></th>");
+		referenceElement.classList.add("section-end");
+	
+		document.getElementById("PoisonAdministrationRoute").addEventListener("change",function(){
+			let PoisonChoice = this.value;
+			let referenceElement = document.getElementById("rowPoisonAdministrationRoute");
+			deleteInterveningElements(referenceElement,document.getElementById("rowPoisonEnd"));
+
+			//TODO: Need to decide if I should link targeting to the poison type (as described below) or just make people reinput it each time (easier for programming)
+
+
+
+			//TODO: For injury/contact, add details about what it can be applied to (e.g. surfaces (for contact), weapons, number of pieces of ammunition, traps, etc.); and how long it lasts when applied (e.g. duration vs. uses (single hit, no time limit by default))
+
+			//For inhaled, should create an AoE (cloud of gas, default 5ft cube) and then maybe how long it lingers for (default instantaneous)
+
+			//For ingested, should be able to apply it to food/water? But in actual play that would make no sense because nobody would have food tokens. Likely keep as just an active effect.
+
+			//For injury/contact, effect should be targeting an item (limits above) and putting a condition on it that does a thing.
+		});
 	}
 	else if(ObjectType == "Rod"){
 		document.getElementById("wornHeld").value = "Held";
@@ -366,14 +389,22 @@ function createActivatableRows(){
 	if(document.getElementById("isActivatable").checked){
 		referenceElement = createTableRow(referenceElement,"rowIsActivationEffect","<th><label for='isActivationEffect'>Instantaneous Effect on Activation/Deactivation:</label></th><td><select id='isActivationEffect' name='isActivationEffect' onchange='createActivationEffectRows()'><option value=''>No (Passive Only)</option><option value='Activation'>Activation Only</option><option value='Deactivation'>Deactivation Only</option><option value='Both'>Both</option><select></td>");
 
-		let UseTimeOptionsArray = ["Free","Item Interaction","Action","Bonus Action","Reaction","1 Minute","10 Minutes","1 Hour","8 Hours","12 Hours","24 Hours"];
+		let UseTimeOptionsArray = ["Free","Item Interaction","Action","Bonus Action","Reaction","1 Minute","10 Minutes","1 Hour","8 Hours","12 Hours","24 Hours","Custom"];
 		let UseTimeOptions = "";
 		for(let tempOption of UseTimeOptionsArray){
 			UseTimeOptions = UseTimeOptions + "<option value='"+tempOption+"'>"+tempOption+"</option>";
 		}
 
-		referenceElement = createTableRow(referenceElement,"rowActivationUseTime","<th><label for='ActivationUseTime'>Activation Time:</label></th><td><select id='ActivationUseTime' name='ActivationUseTime'>"+UseTimeOptions+"</select></td>");
-		document.getElementById("ActivationUseTime").value = "Bonus Action";
+		referenceElement = createTableRow(referenceElement,"rowUseTimeActivation","<th><label for='UseTimeActivation'>Activation Time:</label></th><td><select id='UseTimeActivation' name='UseTimeActivation'>"+UseTimeOptions+"</select></td>");
+		document.getElementById("UseTimeActivation").value = "Bonus Action";
+		document.getElementById("UseTimeActivation").addEventListener("change",function(){
+			createCustomUseTimeRows("UseTimeActivation","rowActivationComponents");
+		})
+
+		referenceElement = createTableRow(referenceElement,"rowUseTimeDeactivation","<th><label for='UseTimeDeactivation'>Deactivation Time:</label></th><td><select id='UseTimeDeactivation' name='UseTimeDeactivation'><option value='Same'>Same as Activation</option>"+UseTimeOptions+"</select></td>");
+		document.getElementById("UseTimeDeactivation").addEventListener("change",function(){
+			createCustomUseTimeRows("UseTimeDeactivation","rowDeactivationComponents");
+		})
 
 		referenceElement = createTableRow(referenceElement,"rowActivationComponents","<th><label for='ActivationComponents'>Activation Requirements:</label></th><td><select id='ActivationComponents' name='ActivationComponents'><option value='None'>No Components</option><option value='Verbal'>Command Word (Verbal)</option><option value='Somatic'>Interaction (Somatic)</option><option value='Both'>Verbal and Somatic</option></select></td>");
 
@@ -415,33 +446,22 @@ function activationTimeResourceRow(){
 		}
 	}
 
-	if(needsTimeRow){
-		let timeResourceOptions = getInProgressResourceOptions({SpecialType:"Time"});
-
-		let referenceElement = document.getElementById("rowActivationComponents");
-		referenceElement = createTableRow(referenceElement,"rowActivationTimeResourceUsed","<th><label for='ActivationTimeResourceUsed'>Activation Uses Time Resource:</label></th><td><select id='ActivationTimeResourceUsed' name='ActivationTimeResourceUsed'><option value=''>None</option>"+timeResourceOptions+"</select></td>");
-
-		//TODO: Resource - Gotta do a whole bunch of ass-covering here to prevent issues when changing resource amounts/names after the fact
-
-		let resourceNum = document.getElementById("ResourceNumber");
-		if(resourceNum === null){
-			resourceNum = 1;
-		}
-		else{
-			resourceNum = Number(resourceNum.value);
-		}
-	}
-	else if(document.getElementById("rowActivationTimeResourceUsed") != null){
-		document.getElementById("rowActivationTimeResourceUsed").remove();
-	}
-}
-
-function updateActivationResourceOptions(){
 	let timeResourceOptions = getInProgressResourceOptions({SpecialType:"Time"});
-	let select = document.getElementById("ActivationTimeResourceUsed");
-	let priorChoice = select.value;
-	select.innerHTML = "<option value=''>None</option>"+timeResourceOptions;
-	select.value = priorChoice;
+
+	let referenceElement = document.getElementById("rowActivationComponents");
+	referenceElement = createTableRow(referenceElement,"rowActivationTimeResourceUsed","<th><label for='ActivationTimeResourceUsed'>Activation Uses Time Resource:</label></th><td><select id='ActivationTimeResourceUsed' name='ActivationTimeResourceUsed'><option value=''>None</option>"+timeResourceOptions+"</select></td>");
+
+	//TODO: Resource - Gotta do a whole bunch of ass-covering here to prevent issues when changing resource amounts/names after the fact
+
+	let resourceNum = document.getElementById("ResourceNumber");
+	if(resourceNum === null){
+		resourceNum = 1;
+	}
+	else{
+		resourceNum = Number(resourceNum.value);
+	}
+
+	trackResourceOptionChanges(document.getElementById("ActivationTimeResourceUsed"),{SpecialType:"Time"});
 }
 
 function createDurationRows(endRowID){
@@ -531,7 +551,7 @@ async function addSpellSelectionRows(){
 
 	//TODO: MaxResource - Fix this for new resource format/input
 
-	if(document.getElementById("isCharges").value!="None"){
+	if(document.getElementById("isResources").value != ""){
 		let ChargesInput = "<span id='CastSpellResourceUsed"+SpellNumber+"'>";
 		if(document.getElementById("isCharges").value == "Multiple"){
 			let ResourceNumber = Number(document.getElementById("MultiResourceNumber").value);
@@ -555,6 +575,109 @@ async function addSpellSelectionRows(){
 	document.getElementById("CastSpellNumber").value = SpellNumber;
 }
 
+function trackResourceOptionChanges(updatedSelection,options){
+	let resourceInput = document.getElementById("isResources");
+	let resourceChoice = resourceInput.value;
+	let activeSelections = resourceInput.activeSelections;
+
+	let needsAllFunctions = false;
+	if(activeSelections === undefined){
+		activeSelections = [];
+		needsAllFunctions = true;
+	}
+	activeSelections.push({input:updatedSelection,options:options});
+	resourceInput.activeSelections = activeSelections;
+
+	if(needsAllFunctions){
+
+		//This part adds listeners to isResources for if it's changed off of no resource in the future
+		resourceInput.addEventListener("change",addResourceTrackingToAllResources);
+
+		//This part adds listeners to already existing resources
+		if(resourceChoice !== ""){
+			let currentNumber;
+			if(resourceChoice === "one"){
+				currentNumber = 1;
+			}
+			else{
+				currentNumber = Number(document.getElementById("ResourceNumber").value);
+				document.getElementById("RemoveResourceButton").addEventListener("click",updateResourceOptions);
+			}
+
+			for(let i = 0; i < currentNumber; i++){
+				document.getElementById("ResourceDisplayName"+i).addEventListener("change",updateResourceOptions);
+
+				document.getElementById("ResourceSpecialType"+i).addEventListener("change",updateResourceOptions);
+			}
+		}
+	}
+}
+
+function addResourceTrackingToAllResources(){
+	let choice = document.getElementById("isResources").value;
+
+	if(choice !== ""){
+		document.getElementById("ResourceDisplayName0").addEventListener("change",updateResourceOptions);
+
+		document.getElementById("ResourceSpecialType0").addEventListener("change",updateResourceOptions);
+	}
+	
+	if(choice === "multiple"){
+		document.getElementById("AddResourceButton").addEventListener("click",addResourceTrackingToNewResource);
+		document.getElementById("RemoveResourceButton").addEventListener("click",updateResourceOptions);
+	}
+
+	updateResourceOptions();
+}
+
+function addResourceTrackingToNewResource(){
+	let i = Number(document.getElementById("ResourceNumber").value)-1;
+	document.getElementById("ResourceDisplayName"+i).addEventListener("change",updateResourceOptions);
+
+	document.getElementById("ResourceSpecialType"+i).addEventListener("change",updateResourceOptions);	
+}
+
+function updateResourceOptions(){
+	let updatedSelections = document.getElementById("isResources").activeSelections;
+	for(let selection of updatedSelections){
+		let input = selection.input;
+		input.innerHTML = "<option value=''>None</option>"+getInProgressResourceOptions(selection.options);
+	}
+}
+
+function removeResourceOptionTracking(removedSelection){
+	let resourceInput = document.getElementById("isResources");
+	let currentActiveSelections = resourceInput.activeSelections;
+
+	if(currentActiveSelections !== undefined){
+		let index = currentActiveSelections.indexOf(removedSelection);
+		currentActiveSelections.splice(index,1);
+	}
+
+	if(currentActiveSelections === undefined || currentActiveSelections.length === 0){
+		resourceInput.removeEventListener("change",addResourceTrackingToAllResources);
+		let choice = resourceInput.value;
+		let resourceNum;
+
+		if(choice === "one"){
+			resourceNum = 1;
+		}
+		else if(choice === "multiple"){
+			resourceNum = Number(document.getElementById("ResourceNumber").value);
+			document.getElementById("RemoveResourceButton").removeEventListener("click",updateResourceOptions);
+			document.getElementById("AddResourceButton").removeEventListener("click",updateResourceOptions);
+		}
+		else{
+			resourceNum = 0;
+		}
+
+		for(let i = 0; i < resourceNum; i++){
+			document.getElementById("ResourceDisplayName"+i).removeEventListener("change",updateResourceOptions);
+			document.getElementById("ResourceSpecialType"+i).removeEventListener("change",updateResourceOptions);
+		}
+	}
+}
+
 function removeSpellSelectionRows(){
 	let SpellNumber = Number(document.getElementById("CastSpellNumber").value) - 1;
 
@@ -563,7 +686,7 @@ function removeSpellSelectionRows(){
 		finalRowPrefix = "rowCastSpell";
 	}
 	else{
-		finalRowPrefix = "rowSpellResource"
+		finalRowPrefix = "rowSpellResource";
 	}
 
 	deleteInterveningElements(document.getElementById(finalRowPrefix+(SpellNumber-1)),document.getElementById("rowSpellButtons"));

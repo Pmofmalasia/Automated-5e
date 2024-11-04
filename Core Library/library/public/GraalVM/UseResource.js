@@ -410,7 +410,7 @@ function expendResource(resources,ParentTokenID){
 				deactivationData = deactivateFeatureResource(feature,resourceName);
 				feature = deactivationData.feature;
 
-				//TODO: MaxResource - output for expired features somehow - maybe make toggled on/off the header and features activated the body? Or an extra key.; testing
+				//TODO: ResourceTime - output for expired features somehow - maybe make toggled on/off the header and features activated the body? Or an extra key.; testing
 
 				activationDisplay = "Toggled Off";
 			}

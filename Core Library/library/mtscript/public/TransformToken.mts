@@ -110,6 +110,7 @@
 	[h,MACRO("End Concentration@Lib:pm.a5e.Core"): json.set("","ParentToken",ParentToken)]
 };{}]
 
+[h:"<!-- TODO: Transformation: See below. -->"]
 [h:"<!-- TODO: BUGFIX: Retained features that have and use resources while transformed will currently regain the resources used while transformed. Will need to have a method of having these persist. -->"]
 [h:retainedFeatureTypes = json.get(TransformationData,"RetainedFeatures")]
 [h,MACRO("TransformFilterFeatures@Lib:pm.a5e.Core"): json.set("","NewOrOld","Old","Features",oldFormFeatures,"Filter",retainedFeatureTypes,"Form",json.get(NewForm,"Name"))]

@@ -3,6 +3,7 @@
 [h:EndingFormID = json.get(RevertTransformationData,"FormID")]
 [h:switchToken(ParentToken)]
 
+[h:currentFormProperties = getPropertyNamesRaw("json",ParentToken)]
 [h:OldFormData = getProperty("a5e.stat.PreviousForms")]
 [h:thisFormIndex = -1]
 [h,foreach(form,OldFormData),CODE:{
@@ -31,10 +32,14 @@
 	}]
 	[h,foreach(macro,OldFormMacros): createMacro(macro)]
 
-	[h,foreach(prop,OldFormPropertyNames),CODE:{
-		[h,if(json.contains(OldFormProperties,prop)):
-			setProperty(prop,json.get(OldFormProperties,prop));
-			setProperty(prop,getPropertyDefault(prop))
+[h:"<!-- TODO: Transform - test fixing this bug -->"]
+
+	[h,foreach(prop,currentFormProperties),CODE:{
+		[h:newHasProp = getRawProperty(prop,ParentToken)]
+		[h:oldHasProp = json.contains(OldFormProperties,prop)]
+		[h,if(newHasProp || !oldHasProp):
+			setProperty(prop,getPropertyDefault(prop));
+			setProperty(prop,json.get(OldFormProperties,prop))
 		]
 	}]
 	[h:setProperty("a5e.stat.Inventory",NewInventory)]

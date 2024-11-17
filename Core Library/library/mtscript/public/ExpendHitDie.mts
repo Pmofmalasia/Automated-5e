@@ -16,7 +16,7 @@
 [h:HitDieDisadvantage = 0]
 [h,foreach(instance,PassiveInstanceSuffixes): pm.PassiveFunction("HitDieSpendPreRoll"+instance)]
 
-[h:"<!-- TODO: Test hit dice, formula for getting size changed slightly -->"]
+[h:"<!-- TODO: MaxResource Test hit dice, formula for getting size changed slightly -->"]
 
 [h:SpentHitDieSizes = json.fields(SpentHitDie)]
 [h:HitDieRoll = "{}"]

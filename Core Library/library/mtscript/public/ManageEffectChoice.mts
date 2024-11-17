@@ -1,7 +1,8 @@
 [h:resolveAllTest = 0]
-[h:resolveHow = json.get(macro.args,"ResolveHow")]
-[h:chosenEffect = json.get(macro.args,"Effect")]
-[h:EffectDisplay = json.get(macro.args,"DisplayName")]
+[h:effectChoiceData = base64.decode(macro.args)]
+[h:resolveHow = json.get(effectChoiceData,"ResolveHow")]
+[h:chosenEffect = json.get(effectChoiceData,"Effect")]
+[h:EffectDisplay = json.get(effectChoiceData,"DisplayName")]
 
 [h:incompleteEffects = data.getData("addon:","pm.a5e.core","gd.Effects")]
 [h,switch(resolveAllTest),CODE:

@@ -1,11 +1,10 @@
-[h:adjustedResourceData = macro.args]
-[h:ParentToken = json.get(macro.args,"ParentToken")]
+[h:adjustedResourceData = pm.a5e.KeyStringsToNumbers(macro.args)]
+[h:ParentToken = json.get(adjustedResourceData,"ParentToken")]
 [h:allFeatures = js.a5e.GatherFeatures(ParentToken,json.set("","ignoreRequirePassive",true))]
 [h:featuresWithResource = json.path.read(allFeatures,"\$[*][?(@.ResourceData != null)]","DEFAULT_PATH_LEAF_TO_NULL")]
 [h:switchToken(ParentToken)]
 
 [h,foreach(feature,featuresWithResource),CODE:{
-	
 	[h:thisAbilityIdentifier = json.get(feature,"AbilityType")+json.get(feature,"Name")+json.get(feature,"Class")+json.get(feature,"Subclass")]
 	[h:thisResourceCurrentAmounts = json.get(feature,"Resource")]
 	[h:resourceKeys = json.fields(thisResourceCurrentAmounts,"json")]

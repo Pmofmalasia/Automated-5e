@@ -2,7 +2,7 @@
 [h:RerollInfo = arg(1)]
 
 [h,if(RerollInfo==""),CODE:{
-    [h:macro.return = OldRollData]
+    [h:return(0,OldRollData)]
 };{
     [h,if(json.get(RerollInfo,"ForcedAdvantage")=="" || json.get(RerollInfo,"ForcedAdvantage")==0),CODE:{
         [h:NewAdvantage = if(json.get(RerollInfo,"Advantage")=="",0,json.get(RerollInfo,"Advantage"))]
@@ -49,4 +49,4 @@
     ]
 }]
 
-[h:macro.return = OldRollData]
+[h:return(0,OldRollData)]

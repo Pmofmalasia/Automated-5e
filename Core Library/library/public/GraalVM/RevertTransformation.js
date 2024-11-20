@@ -31,21 +31,29 @@ let newMacros = [];
 			}
 		}
 
+		let currentPropTypeProps = JSON.parse(MTScript.execMacro(`[r:getPropertyNamesRaw("json","${ParentTokenID}")]`));
 		let OldFormProps = OldForm.Properties;
 		let OldFormPropNames = OldForm.RawPropertyNames;
 		inventory = inventory.concat(OldFormProps["a5e.stat.Inventory"]);
-		for(let prop of OldFormPropNames){
-			let thisPropValue = OldFormProps[prop];
-			if(thisPropValue !== undefined){
-				if(typeof thisPropValue === "string"){
-					ParentToken.setProperty(prop,thisPropValue);
+		for(let prop of currentPropTypeProps){
+			MapTool.chat.broadcast(prop);
+			let oldHasProp = OldFormPropNames.includes(prop);
+			let newPropValue = ParentToken.getProperty(prop);
+			let newHasProp = (newPropValue !== "null" && newPropValue !== null);
+			if(oldHasProp){
+				let oldPropValue = OldFormProps[prop];
+				if(oldPropValue === undefined){
+					oldPropValue = "";
+				}
+				if(typeof oldPropValue === "string"){
+					ParentToken.setProperty(prop,oldPropValue);
 				}
 				else{
-					ParentToken.setProperty(prop,JSON.stringify(thisPropValue));
+					ParentToken.setProperty(prop,JSON.stringify(oldPropValue));
 				}
 			}
 			else{
-				ParentToken.setProperty(prop,MTScript.execMacro("[r:getPropertyDefault('"+prop+"','"+ParentTokenID+"')]"));
+				ParentToken.setProperty(prop,MTScript.execMacro("[h:switchToken('"+ParentTokenID+"')][r:getPropertyDefault('"+prop+"')]"));
 			}
 		}
 		ParentToken.setProperty("a5e.stat.Inventory",JSON.stringify(inventory));

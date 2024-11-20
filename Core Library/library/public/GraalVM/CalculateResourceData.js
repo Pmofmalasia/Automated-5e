@@ -363,6 +363,18 @@ function calcResourceSlotLevel(slotLevelData,feature){
 	return slotLevel;
 }
 
+function calcResourceSlotLevelMTScript(slotLevelData,feature){
+	if(typeof slotLevelData === "string"){
+		slotLevelData = JSON.parse(slotLevelData);
+	}
+	if(typeof feature === "string"){
+		feature = JSON.parse(feature);
+	}
+
+	let slotLevel = calcResourceSlotLevel(slotLevelData,feature);
+	return slotLevel;
+}
+
 function calcResourceDieSize(DieSizeData,feature){
 	let scalingHow = DieSizeData.Scaling;
 	let baseSize = DieSizeData.Size;
@@ -449,3 +461,4 @@ MTScript.registerMacro("a5e.CalculateResourceData",calculateResourceDataMTScript
 MTScript.registerMacro("a5e.GetMaximumResources",getMaximumResourcesMTScript);
 MTScript.registerMacro("a5e.GetFeatureSpellSlots",getFeatureSpellSlotsMTScript);
 MTScript.registerMacro("a5e.GetResourceDieSize",getResourceDieSizeMTScript);
+MTScript.registerMacro("a5e.CalculateResourceSlotLevel",calcResourceSlotLevelMTScript);

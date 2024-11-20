@@ -125,7 +125,7 @@
 			[h,if(json.get(tempResourceData,"Type") == "Time" && json.get(CurrentResource,tempResource) == ""): CurrentResource = json.set(tempResource,json.set("","Type","Time","Duration",0,"isActive",0,"Powering","[]"))]
 			[h,if(json.get(tempResourceData,"Type") == "Time"): UpToAmount = pm.a5e.TimeInRounds(UpToAmount,json.get(restorationData,"Units"))]
 			
-			[h,if(json.get(tempResourceData,"Type" == "Time")): 
+			[h,if(json.get(tempResourceData,"Type") == "Time"): 
 				CurrentResource = json.path.set(CurrentResource,"\$['"+tempResource+"']['Duration']",UpToAmount);
 				CurrentResource = json.set(CurrentResource,tempResource,max(json.get(CurrentResource,tempResource),UpToAmount))
 			]
@@ -147,7 +147,7 @@
 			[h,if(json.get(tempResourceData,"Type") == "Time" && json.get(CurrentResource,tempResource) == ""): CurrentResource = json.set(tempResource,json.set("","Type","Time","Duration",0,"isActive",0,"Powering","[]"))]
 			[h,if(json.get(tempResourceData,"Type") == "Time"): RestorationAmount = pm.a5e.TimeInRounds(RestorationAmount,json.get(restorationData,"Units"))]
 
-			[h,if(json.get(tempResourceData,"Type" == "Time")):
+			[h,if(json.get(tempResourceData,"Type") == "Time"):
 				CurrentResource = json.path.set(CurrentResource,"\$['"+tempResource+"']['Duration']",json.path.read(CurrentResource,"\$.['"+tempResource+"'].Duration") + RestorationAmount);
 				CurrentResource = json.set(CurrentResource,tempResource,min(json.get(CurrentResource,tempResource) + RestorationAmount,json.get(json.get(allResourceData,tempResource),"MaxResource")))
 			]

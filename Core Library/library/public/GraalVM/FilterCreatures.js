@@ -2,6 +2,9 @@ function filterCreatures(creatureList,filter,comparitorTokenID){
 	if(typeof creatureList !== "object"){
 		creatureList = JSON.parse(creatureList);	
 	}
+	if(typeof filter !== "object"){
+		filter = JSON.parse(filter);	
+	}
 
 	let comparitorToken;
 	if(comparitorTokenID !== undefined){
@@ -10,20 +13,31 @@ function filterCreatures(creatureList,filter,comparitorTokenID){
 	let allPrereqs = Object.keys(filter);
 
 	let validCreatureList = [];
-
+	let defaultCreatureProps = JSON.parse(MTScript.execMacro(`[h:allProps = "{}"][h,foreach(prop,getAllPropertyNames("A5ECreature","json")): allProps = json.set(allProps,prop,getPropertyDefault(prop,"A5ECreature"))][r:allProps]`));
 	for(let creature of creatureList){
 		let creatureProps;
 		if(typeof creature === "string"){
+			creatureProps = {};
 			let thisToken = MapTool.tokens.getTokenByID(creature);
-			let thisTokenPropNames = JSON.stringify(MTScript.execMacro(`[r:getPropertyNamesRaw("json","${creature}")]`));
+			let thisTokenPropNames = JSON.parse(MTScript.execMacro(`[r:getPropertyNamesRaw("json","${creature}")]`));
 
-			creatureProps = {
-				TokenID:creature,
-				["a5e.stat.CurrentSize"]:MTScript.execMacro(`[r:getSize("${creature}")]`)
-			};
 			for(let property of thisTokenPropNames){
-				creatureProps[property] = thisToken.getProperty(property);
+				let thisProp = thisToken.getProperty(property);
+				try {
+					thisProp = JSON.parse(thisProp);
+				}catch(error){
+					//for the record, I hate this
+				}
+				if(thisProp === "null" || thisProp === null){
+					//TODO: MTUpdate - Remove in next update for getEvaluatedProperty()
+					creatureProps[property] = defaultCreatureProps[property];
+				}
+				else{
+					creatureProps[property] = thisProp;
+				}
 			}
+			creatureProps.TokenID = creature;
+			creatureProps["a5e.stat.CurrentSize"] = MTScript.execMacro(`[r:getSize("${creature}")]`);
 		}
 		else{
 			if(creature.Properties !== undefined){
@@ -124,7 +138,7 @@ function filterCreatures(creatureList,filter,comparitorTokenID){
 						break;
 					}
 
-					let sizeReference = MTScript.execMacro("[r:getSize("+comparitorTokenID+")]");
+					let sizeReference = MTScript.execMacro(`[r:getSize("${comparitorTokenID}")]`);
 					maximumSize = getSizeChange(sizeReference,maximumSize);
 				}
 
@@ -133,7 +147,7 @@ function filterCreatures(creatureList,filter,comparitorTokenID){
 					thisTokenSize = creatureProps["a5e.stat.Size"];
 				}
 
-				let isValid = (compareSizes(maximumSize,tokenSize) >= 0);
+				isValid = (compareSizes(maximumSize,thisTokenSize) >= 0);
 			}
 			else if(prereq === "SizeMinimum" || prereq === "SizeMin"){
 				let minimumSize = filter[prereq];
@@ -144,7 +158,7 @@ function filterCreatures(creatureList,filter,comparitorTokenID){
 						break;
 					}
 
-					let sizeReference = MTScript.execMacro("[r:getSize("+comparitorTokenID+")]");
+					let sizeReference = MTScript.execMacro(`[r:getSize("${comparitorTokenID}")]`);
 					minimumSize = getSizeChange(sizeReference,minimumSize);
 				}
 
@@ -153,18 +167,18 @@ function filterCreatures(creatureList,filter,comparitorTokenID){
 					thisTokenSize = creatureProps["a5e.stat.Size"];
 				}
 
-				let isValid = (compareSizes(minimumSize,tokenSize) <= 0);
+				isValid = (compareSizes(minimumSize,thisTokenSize) <= 0);
 			}
 			else if(prereq === "TypeInclusive"){
-				//TODO: Need to implement CountsAs effects
+				//TODO: Prerequisites: Need to implement CountsAs effects
 				let thisComparisonInfo = filter[prereq];
-
+				
 				if(Array.isArray(thisComparisonInfo)){
 					thisComparisonInfo = Array.from(thisComparisonInfo);
 					isValid = thisComparisonInfo.includes(creatureProps["a5e.stat.CreatureType"]);
 				}
 				else{
-					isValid = thisComparisonInfo == creatureProps["a5e.stat.CreatureType"]; 
+					isValid = thisComparisonInfo == creatureProps["a5e.stat.CreatureType"];
 				}
 			}
 			else if(prereq === "TypeExclusive"){
@@ -246,12 +260,12 @@ function filterCreatures(creatureList,filter,comparitorTokenID){
 					}
 				}
 				else if(comparisonType === "NoHP"){
-					if(creatureProps["a5e.stat.HP"] == 0){
+					if(creatureProps["a5e.stat.HP"] >= 1){
 						isValid = false;
 					}
 				}
 				else if(comparisonType === "HasHP"){
-					if(creatureProps["a5e.stat.HP"] >= 1){
+					if(creatureProps["a5e.stat.HP"] <= 0){
 						isValid = false;
 					}
 				}
@@ -288,19 +302,31 @@ function filterCreatures(creatureList,filter,comparitorTokenID){
 			}
 			else if(prereq === "IncludeCondition"){
 				let thisComparisonInfo = filter[prereq];
+				let hasCondition;
 
-				let hasConditions = hasConditions(thisComparisonInfo.Names,thisComparisonInfo.AllorOne,creatureProps["a5e.stat.ConditionsList"]);
+				if(Array.isArray(thisComparisonInfo)){
+					hasCondition = hasConditions(thisComparisonInfo,"All",creatureProps["a5e.stat.ConditionList"]);
+				}
+				else{
+					hasCondition = hasConditions(thisComparisonInfo.Names,thisComparisonInfo.AllorOne,creatureProps["a5e.stat.ConditionList"]);
+				}
 
-				if(!hasConditions){
+				if(!hasCondition){
 					isValid = false;
 				}
 			}
 			else if(prereq === "ExcludeCondition"){
 				let thisComparisonInfo = filter[prereq];
+				let hasCondition;
 
-				let hasConditions = hasConditions(thisComparisonInfo.Names,thisComparisonInfo.AllorOne,creatureProps["a5e.stat.ConditionsList"]);
+				if(Array.isArray(thisComparisonInfo)){
+					hasCondition = hasConditions(thisComparisonInfo,1,creatureProps["a5e.stat.ConditionList"]);
+				}
+				else{
+					hasCondition = hasConditions(thisComparisonInfo.Names,thisComparisonInfo.AllorOne,creatureProps["a5e.stat.ConditionList"]);
+				}
 
-				if(hasConditions){
+				if(hasCondition){
 					isValid = false;
 				}
 			}

@@ -103,7 +103,6 @@ function useResource(resourceList,unifiedFeatures,ParentTokenID){
 				}
 
 				let matchingResources = findValidFeatureResources(resource,unifiedFeatures,amountNeeded);
-
 				resource.CurrentResource = matchingResources;
 				resourceOptions.push(resource);
 			}
@@ -627,7 +626,7 @@ function useResourceTooltip(resourceList,unifiedFeatures,ParentTokenID){
 function findValidFeatureResources(resource,unifiedFeatures,amountNeeded){
 	let resourceIdentifier = resource.Identifier;
 	let resourceKey = resourceIdentifier.Resource;
-	let resourceSourceType = resource.SourceType;
+	let resourceSourceType = resourceIdentifier.ResourceSource;
 	if(resourceKey === undefined){
 		resourceKey = resourceIdentifier.Name;
 	}

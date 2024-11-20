@@ -493,30 +493,59 @@ async function createSpellcastingFocusRows(endRowID){
 
 async function createCastSpellsRows(){
 	let referenceElement = document.getElementById("rowIsCastSpells");
+
 	if(document.getElementById("isCastSpells").checked){
+		let spellcastingRows = [];
+		let spellcastingListeners = [];
+
+		let request = await fetch("macro:pm.a5e.GetBaseSpellData@lib:pm.a5e.Core", {"method":"POST","body":""});
+		let allSpells = await request.json();
+		allSpellOptions = createHTMLSelectOptions(allSpells);
+
+		spellcastingRows.push({
+			RowID:"rowCastSpell",
+			Contents:"<th style='text-align:center' colspan='2' id='headerCastSpell'>Cast <select id='CastSpellName' name='CastSpellName'>"+allSpellOptions+"</select><span id='CastSpellLevelInput'></span></th>"
+		});
+		spellcastingListeners.push({
+			elementID:"CastSpellName",
+			listener:"change",
+			functionName:"adjustSpellLevelOptions",
+			functionArgs:{}
+		});
+
+		if(document.getElementById("isResources").value !== ""){
+			spellcastingRows.push({
+				RowID:"rowCastSpellResource",
+				Contents:"<th style='text-align:center' colspan='2' id='headerCastSpellResource'>Uses <input type='number' id='CastSpellResource' name='CastSpellResource' style='width:25px' value=1> <span id='CastSpellResourceUsed'><select id='CastSpellResourceKey' name='CastSpellResourceKey'><option value=''>None</option></select> charge(s)</span><span id='CastSpellAHLInput'></span></th>"
+			});
+
+			//Listeners not needed here as they will be added by adjustSpellLevelOptions() if needed - can't do before that since could be level 0 spell without input to target
+			spellcastingListeners.push({
+				elementID:"CanAHLSpell",
+				listener:"change",
+				functionName:"toggleSpellAHLResource",
+				functionArgs:{}
+			});
+		}
+
+		createMultiRowButtonsInput("CastSpell",referenceElement,spellcastingRows,"Spell",spellcastingListeners);
+
+
+
+
 		referenceElement = createTableRow(referenceElement,"rowSpellButtons","<th style='text-align:center' colspan='2'><input type='button' value='Add Spell' onclick='addSpellSelectionRows()'>  <input type='button' value='Remove Spell' onclick='removeSpellSelectionRows()'></th>");
 
 		addSpellSelectionRows();
 
 		referenceElement = createTableRow(referenceElement,"rowCastSpellModifierHow","<th>Spell Attack/DC Modifier Method:</th><td><select id='CastSpellModifierHow' name='CastSpellModifierHow' onchange='createCastSpellModifierRows()'><option value='AnyClass'>Any Class Spell Modifier</option><option value='SpecificClass'>Specific Class Spell Modifier</option><option value='SetValue'>Preset Modifier</option><option value='Stat'>Based on a Stat</option></select></td>");
 
+		referenceElement = createTableRow(referenceElement,"rowCastSpellEnd","<th colspan = 2></th>");
+		referenceElement.classList.add("section-end");
+
 		//TODO: Add any modifications to spells
 	}
 	else{
-		deleteInterveningElements(referenceElement,document.getElementById("rowIsImprovisedWeapon"));
-	}
-}
-
-async function createImprovisedWeaponRows(){
-	if(document.getElementById("isImprovisedWeapon").checked){
-		await createWeaponTableRows("rowIsImprovisedWeapon");
-		document.getElementById("rowWeaponType").remove();
-		document.getElementById("rowNewTypeNameWeapon").remove();
-		document.getElementById("rowIsNewTemplateWeapon").remove();
-		document.getElementById("rowWeaponClass").remove();
-	}
-	else{
-		deleteInterveningElements(document.getElementById("rowIsImprovisedWeapon"),document.getElementById("rowIsStackable"));
+		deleteInterveningElements(referenceElement,document.getElementById("rowCastSpellEnd").nextElementSibling);
 	}
 }
 
@@ -549,6 +578,8 @@ async function addSpellSelectionRows(){
 
 	referenceElement = createTableRow(referenceElement,"rowCastSpell"+SpellNumber+"","<th style='text-align:center' colspan='2' id='headerCastSpell"+SpellNumber+"'>Cast <select id='CastSpellName"+SpellNumber+"' name='CastSpellName"+SpellNumber+"' onchange='adjustSpellLevelOptions("+SpellNumber+")'>"+allSpellOptions+"</select>"+levelInput+"</th>");
 
+	document.getElementById("isResources").addEventListener("change",toggleItemSpellcastingCharges)
+
 	//TODO: MaxResource - Fix this for new resource format/input
 
 	if(document.getElementById("isResources").value != ""){
@@ -575,122 +606,25 @@ async function addSpellSelectionRows(){
 	document.getElementById("CastSpellNumber").value = SpellNumber;
 }
 
-function trackResourceOptionChanges(updatedSelection,options){
-	let resourceInput = document.getElementById("isResources");
-	let resourceChoice = resourceInput.value;
-	let activeSelections = resourceInput.activeSelections;
-
-	let needsAllFunctions = false;
-	if(activeSelections === undefined){
-		activeSelections = [];
-		needsAllFunctions = true;
+function toggleItemSpellcastingCharges(){
+	let spellOptionsNumber = Number(document.getElementById("CastSpellNumber").value);
+	let resourceChoice = document.getElementById("isResources").value;
+	if(resourceChoice === ""){
+		for(let i = 0; i < spellOptionsNumber; i++){
+			document.getElementById("rowCastSpellResource"+i).remove();
+		}
 	}
-	activeSelections.push({input:updatedSelection,options:options});
-	resourceInput.activeSelections = activeSelections;
-
-	if(needsAllFunctions){
-
-		//This part adds listeners to isResources for if it's changed off of no resource in the future
-		resourceInput.addEventListener("change",addResourceTrackingToAllResources);
-
-		//This part adds listeners to already existing resources
-		if(resourceChoice !== ""){
-			let currentNumber;
-			if(resourceChoice === "one"){
-				currentNumber = 1;
-			}
-			else{
-				currentNumber = Number(document.getElementById("ResourceNumber").value);
-				document.getElementById("RemoveResourceButton").addEventListener("click",updateResourceOptions);
-			}
-
-			for(let i = 0; i < currentNumber; i++){
-				document.getElementById("ResourceDisplayName"+i).addEventListener("change",updateResourceOptions);
-
-				document.getElementById("ResourceSpecialType"+i).addEventListener("change",updateResourceOptions);
-			}
+	else if(document.getElementById("rowCastSpellResource0") === null){
+		for(let i = 0; i < spellOptionsNumber; i++){
+			addItemSpellcastingCharges(i);
 		}
 	}
 }
 
-function addResourceTrackingToAllResources(){
-	let choice = document.getElementById("isResources").value;
+function addItemSpellcastingCharges(i){
+	let referenceElement = document.getElementById("rowCastSpell"+i);
 
-	if(choice !== ""){
-		document.getElementById("ResourceDisplayName0").addEventListener("change",updateResourceOptions);
-
-		document.getElementById("ResourceSpecialType0").addEventListener("change",updateResourceOptions);
-	}
-	
-	if(choice === "multiple"){
-		document.getElementById("AddResourceButton").addEventListener("click",addResourceTrackingToNewResource);
-		document.getElementById("RemoveResourceButton").addEventListener("click",updateResourceOptions);
-	}
-
-	updateResourceOptions();
-}
-
-function addResourceTrackingToNewResource(){
-	let i = Number(document.getElementById("ResourceNumber").value)-1;
-	document.getElementById("ResourceDisplayName"+i).addEventListener("change",updateResourceOptions);
-
-	document.getElementById("ResourceSpecialType"+i).addEventListener("change",updateResourceOptions);	
-}
-
-function updateResourceOptions(){
-	let updatedSelections = document.getElementById("isResources").activeSelections;
-	for(let selection of updatedSelections){
-		let input = selection.input;
-		input.innerHTML = "<option value=''>None</option>"+getInProgressResourceOptions(selection.options);
-	}
-}
-
-function removeResourceOptionTracking(removedSelection){
-	let resourceInput = document.getElementById("isResources");
-	let currentActiveSelections = resourceInput.activeSelections;
-
-	if(currentActiveSelections !== undefined){
-		let index = currentActiveSelections.indexOf(removedSelection);
-		currentActiveSelections.splice(index,1);
-	}
-
-	if(currentActiveSelections === undefined || currentActiveSelections.length === 0){
-		resourceInput.removeEventListener("change",addResourceTrackingToAllResources);
-		let choice = resourceInput.value;
-		let resourceNum;
-
-		if(choice === "one"){
-			resourceNum = 1;
-		}
-		else if(choice === "multiple"){
-			resourceNum = Number(document.getElementById("ResourceNumber").value);
-			document.getElementById("RemoveResourceButton").removeEventListener("click",updateResourceOptions);
-			document.getElementById("AddResourceButton").removeEventListener("click",updateResourceOptions);
-		}
-		else{
-			resourceNum = 0;
-		}
-
-		for(let i = 0; i < resourceNum; i++){
-			document.getElementById("ResourceDisplayName"+i).removeEventListener("change",updateResourceOptions);
-			document.getElementById("ResourceSpecialType"+i).removeEventListener("change",updateResourceOptions);
-		}
-	}
-}
-
-function removeSpellSelectionRows(){
-	let SpellNumber = Number(document.getElementById("CastSpellNumber").value) - 1;
-
-	let finalRowPrefix;
-	if(document.getElementById("isCharges").value=="None"){
-		finalRowPrefix = "rowCastSpell";
-	}
-	else{
-		finalRowPrefix = "rowSpellResource";
-	}
-
-	deleteInterveningElements(document.getElementById(finalRowPrefix+(SpellNumber-1)),document.getElementById("rowSpellButtons"));
-	document.getElementById("CastSpellNumber").value = SpellNumber;
+	referenceElement = createTableRow(referenceElement,"rowCastSpellResource"+i,"<th style='text-align:center' colspan='2' id='headerCastSpellResource"+SpellNumber+"'>Uses <input type='number' id='CastSpellResource"+SpellNumber+"' name='CastSpellResource"+SpellNumber+"' style='width:25px' value=1> "+ChargesInput+AHLInput+"</th>");
 }
 
 async function adjustSpellLevelOptions(SpellNumber){
@@ -703,6 +637,24 @@ async function adjustSpellLevelOptions(SpellNumber){
 	document.getElementById("CastSpellLevel"+SpellNumber).selectedIndex = 0;
 	let PriorSpellLevel = document.getElementById("CastSpellLevel"+SpellNumber).value;
 
+
+
+
+
+
+
+
+
+//Next TODO: Convert this to new resource format
+
+
+
+
+
+
+
+
+
 	if(PriorSpellLevel != SpellLevel){
 		let levelInput = "";
 		let AHLInput = "";
@@ -710,7 +662,7 @@ async function adjustSpellLevelOptions(SpellNumber){
 			levelInput = "<input type='hidden' id='CastSpellLevel"+SpellNumber+"' name='CastSpellLevel"+SpellNumber+"' value=0>";
 			document.getElementById("CastSpellLevelInput"+SpellNumber).innerHTML = levelInput;
 
-			if(document.getElementById("isCharges").value != "None"){
+			if(document.getElementById("isResources").value != ""){
 				let SpellResourceRowText = document.getElementById("rowSpellResource"+SpellNumber).innerHTML;
 				SpellResourceRowText = SpellResourceRowText.split(";")[0];
 				AHLInput = "<input type='hidden' id='CanAHLSpell"+SpellNumber+"' name='CanAHLSpell"+SpellNumber+"' value=0>";
@@ -771,6 +723,19 @@ async function createCastSpellModifierRows(){
 		let allAttributeOptions = createHTMLMultiselectOptions(AllAttributes,"CastSpellStat");
 
 		referenceElement = createTableRow(referenceElement,"rowCastSpellModifier","<th>Allowed Casting Stats:</th><td><div class='check-multiple' style='width:100%'>"+allAttributeOptions+"</div></td>");
+	}
+}
+
+async function createImprovisedWeaponRows(){
+	if(document.getElementById("isImprovisedWeapon").checked){
+		await createWeaponTableRows("rowIsImprovisedWeapon");
+		document.getElementById("rowWeaponType").remove();
+		document.getElementById("rowNewTypeNameWeapon").remove();
+		document.getElementById("rowIsNewTemplateWeapon").remove();
+		document.getElementById("rowWeaponClass").remove();
+	}
+	else{
+		deleteInterveningElements(document.getElementById("rowIsImprovisedWeapon"),document.getElementById("rowIsStackable"));
 	}
 }
 

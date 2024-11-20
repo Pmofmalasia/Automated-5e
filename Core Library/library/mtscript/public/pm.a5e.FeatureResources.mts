@@ -5,12 +5,20 @@
 [h:backupFeatureOptionsFixed = ""]
 [h,if(json.get(pm.ResourceInfo,"Feature") != ""),CODE:{
 	[h:tempResource = json.get(pm.ResourceInfo,"Feature")]
-	[h,if(json.get(tempResource,"ResourceKey") != ""):
-		tempIdentifier = json.set(json.get(tempResource,"Resource"),"Resource",json.get(tempResource,"ResourceKey"));
-		tempIdentifier = json.remove(json.get(tempResource,"Resource"),"Resource")
-	]
+	[h:oldIdentifier = json.get(tempResource,"Resource")]
+	[h:IdentifierType = json.type(oldIdentifier)]
+
+	[h,if(IdentifierType == "UNKNOWN"),CODE:{
+		[h:tempIdentifier = oldIdentifier]
+	};{
+		[h,if(json.get(oldIdentifier,"ResourceKey") != ""):
+			tempIdentifier = json.set(oldIdentifier,"Resource",json.get(oldIdentifier,"ResourceKey"));
+			tempIdentifier = json.remove(oldIdentifier,"Resource")
+		]
+	}]
+
 	[h:tempResource = json.set(tempResource,
-		"Type",if(json.get(tempResource,"ResourceSource") == "","Feature",json.get(tempResource,"ResourceSource")),
+		"Type",if(json.get(oldIdentifier,"ResourceSource") == "","Feature",json.get(oldIdentifier,"ResourceSource")),
 		"Identifier",tempIdentifier
 	)]
 	[h:tempResource = json.remove(tempResource,"Resource")]
@@ -22,12 +30,20 @@
 
 [h,if(json.get(pm.ResourceInfo,"FeatureBackup") != ""),CODE:{
 	[h:tempResource = json.get(pm.ResourceInfo,"FeatureBackup")]
-	[h,if(json.get(tempResource,"ResourceKey") != ""):
-		tempIdentifier = json.set(json.get(tempResource,"Resource"),"Resource",json.get(tempResource,"ResourceKey"));
-		tempIdentifier = json.remove(json.get(tempResource,"Resource"),"Resource")
-	]
+	[h:oldIdentifier = json.get(tempResource,"Resource")]
+	[h:IdentifierType = json.type(oldIdentifier)]
+
+	[h,if(IdentifierType == "UNKNOWN"),CODE:{
+		[h:tempIdentifier = oldIdentifier]
+	};{
+		[h,if(json.get(oldIdentifier,"ResourceKey") != ""):
+			tempIdentifier = json.set(oldIdentifier,"Resource",json.get(oldIdentifier,"ResourceKey"));
+			tempIdentifier = json.remove(oldIdentifier,"Resource")
+		]
+	}]
+
 	[h:tempResource = json.set(tempResource,
-		"Type",if(json.get(tempResource,"ResourceSource") == "","Feature",json.get(tempResource,"ResourceSource")),
+		"Type",if(json.get(oldIdentifier,"ResourceSource") == "","Feature",json.get(oldIdentifier,"ResourceSource")),
 		"Identifier",tempIdentifier
 	)]
 	[h:tempResource = json.remove(tempResource,"Resource")]
@@ -63,7 +79,6 @@
 
 [h:finalResourceOptions = json.append("",featureOptionsFixed)]
 [h,if(backupFeatureOptionsFixed != ""): finalResourceOptions = json.append(finalResourceOptions,backupFeatureOptionsFixed)]
-
 [h,if(IsTooltip),CODE:{
 	[h:resourceData = js.a5e.UseResourceTooltip(finalResourceOptions,a5e.UnifiedAbilities,ParentToken)]
 	[h:abilityTable = json.merge(abilityTable,json.get(resourceData,"Table"))]
@@ -75,5 +90,5 @@
 
 	[h,MACRO("Build Effect@Lib:pm.a5e.Core"): json.set("","CurrentEffects",pm.a5e.EffectData,"ToMerge",effectsToMerge,"BaseEffect",pm.a5e.BaseEffectData,"WhichEffect",whichEffect)]
 
-	[h:return(0,pm.a5e.EffectData)]
+[h:pm.a5e.EffectData = macro.return]
 }]

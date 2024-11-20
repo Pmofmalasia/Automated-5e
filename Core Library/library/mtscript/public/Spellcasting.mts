@@ -132,13 +132,24 @@
 		[h:chosenLevel = -1]
 	}]
 };{
-	[h:"<!-- TODO: Allow forced spell slot usage to use resource spell slots, if they match -->"]
+	[h:"<!-- TODO: Resource - Allow forced spell slot usage to use resource spell slots, if they match -->"]
 	[h,if(json.type(ForcedLevel)=="UNKNOWN"),CODE:{
 		[h:LevelOptions = if(ForcedLevel==1,"1st",if(ForcedLevel==2,"2nd",if(ForcedLevel==3,"3rd",ForcedLevel+"th")))+" Level"]
 		[h:LevelOptionData = json.append("",json.set("","Name",ForcedLevel,"ResourceType","Spell Slots"))]
 	};{
+		[h:ForcedResourceKey = json.get(ForcedLevel,"ResourceKey")]
+		[h,if(ForcedResourceKey == ""): ForcedResourceKey = json.get(ForcedLevel,"Name")]
+
 		[h:ForcedLevelSearch = json.path.read(a5e.UnifiedAbilities,"\$[*][?("+pm.a5e.PathFeatureFilter(ForcedLevel)+")]")]
-		[h,if(!json.isEmpty(ForcedLevelSearch)): ForcedLevel = json.get(ForcedLevelSearch,0)]
+		[h,if(!json.isEmpty(ForcedLevelSearch)): tempForcedLevel = json.get(ForcedLevelSearch,0)]
+		[h,if(!json.isEmpty(ForcedLevelSearch)): currentResource = json.get(json.get(tempForcedLevel,"Resource"),ForcedResourceKey)]
+		[h,if(!json.isEmpty(ForcedLevelSearch)): tempForcedLevel = js.a5e.CalculateResourceData(tempForcedLevel,ParentToken,json.set("","resource",ForcedResourceKey))]
+		[h,if(!json.isEmpty(ForcedLevelSearch)): ForcedLevel = json.set(tempForcedLevel,
+			"Identifier",ForcedLevel,
+			"CurrentResource",currentResource,
+			"Resource",ForcedResourceKey
+		)]
+
 		[h:LevelOptions = json.get(ForcedLevel,"DisplayName")]
 		[h:LevelOptionData = json.append("",json.set(ForcedLevel,"ResourceType","FeatureSpell"))]
 	}]
@@ -220,6 +231,10 @@
 		case "Ritual":{
 			[h:eLevel = SpellLevel]
 			[h:CastAsRitual = 1]
+		};
+		case "None":{
+			[h:eLevel = SpellLevel]
+			[h:FreeCasting = 1]
 		};
 		default:{
 			[h:eLevel = SpellLevel]

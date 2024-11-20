@@ -407,3 +407,108 @@ function getInProgressResourceOptions(options){
 
 	return resourceOptions;
 }
+
+//The following group of functions are for updating a list of resources to use charges from while resources are simultaneously allowed to be modified
+
+function trackResourceOptionChanges(updatedSelection,options){
+	let resourceInput = document.getElementById("isResources");
+	let resourceChoice = resourceInput.value;
+	let activeSelections = resourceInput.activeSelections;
+
+	let needsAllFunctions = false;
+	if(activeSelections === undefined){
+		activeSelections = [];
+		needsAllFunctions = true;
+	}
+	activeSelections.push({input:updatedSelection,options:options});
+	resourceInput.activeSelections = activeSelections;
+
+	if(needsAllFunctions){
+
+		//This part adds listeners to isResources for if it's changed off of no resource in the future
+		resourceInput.addEventListener("change",addResourceTrackingToAllResources);
+
+		//This part adds listeners to already existing resources
+		if(resourceChoice !== ""){
+			let currentNumber;
+			if(resourceChoice === "one"){
+				currentNumber = 1;
+			}
+			else{
+				currentNumber = Number(document.getElementById("ResourceNumber").value);
+				document.getElementById("RemoveResourceButton").addEventListener("click",updateResourceOptions);
+			}
+
+			for(let i = 0; i < currentNumber; i++){
+				document.getElementById("ResourceDisplayName"+i).addEventListener("change",updateResourceOptions);
+
+				document.getElementById("ResourceSpecialType"+i).addEventListener("change",updateResourceOptions);
+			}
+		}
+	}
+}
+
+function addResourceTrackingToAllResources(){
+	let choice = document.getElementById("isResources").value;
+
+	if(choice !== ""){
+		document.getElementById("ResourceDisplayName0").addEventListener("change",updateResourceOptions);
+
+		document.getElementById("ResourceSpecialType0").addEventListener("change",updateResourceOptions);
+	}
+	
+	if(choice === "multiple"){
+		document.getElementById("AddResourceButton").addEventListener("click",addResourceTrackingToNewResource);
+		document.getElementById("RemoveResourceButton").addEventListener("click",updateResourceOptions);
+	}
+
+	updateResourceOptions();
+}
+
+function addResourceTrackingToNewResource(){
+	let i = Number(document.getElementById("ResourceNumber").value)-1;
+	document.getElementById("ResourceDisplayName"+i).addEventListener("change",updateResourceOptions);
+
+	document.getElementById("ResourceSpecialType"+i).addEventListener("change",updateResourceOptions);	
+}
+
+function updateResourceOptions(){
+	let updatedSelections = document.getElementById("isResources").activeSelections;
+	for(let selection of updatedSelections){
+		let input = selection.input;
+		input.innerHTML = "<option value=''>None</option>"+getInProgressResourceOptions(selection.options);
+	}
+}
+
+function removeResourceOptionTracking(removedSelection){
+	let resourceInput = document.getElementById("isResources");
+	let currentActiveSelections = resourceInput.activeSelections;
+
+	if(currentActiveSelections !== undefined){
+		let index = currentActiveSelections.indexOf(removedSelection);
+		currentActiveSelections.splice(index,1);
+	}
+
+	if(currentActiveSelections === undefined || currentActiveSelections.length === 0){
+		resourceInput.removeEventListener("change",addResourceTrackingToAllResources);
+		let choice = resourceInput.value;
+		let resourceNum;
+
+		if(choice === "one"){
+			resourceNum = 1;
+		}
+		else if(choice === "multiple"){
+			resourceNum = Number(document.getElementById("ResourceNumber").value);
+			document.getElementById("RemoveResourceButton").removeEventListener("click",updateResourceOptions);
+			document.getElementById("AddResourceButton").removeEventListener("click",updateResourceOptions);
+		}
+		else{
+			resourceNum = 0;
+		}
+
+		for(let i = 0; i < resourceNum; i++){
+			document.getElementById("ResourceDisplayName"+i).removeEventListener("change",updateResourceOptions);
+			document.getElementById("ResourceSpecialType"+i).removeEventListener("change",updateResourceOptions);
+		}
+	}
+}

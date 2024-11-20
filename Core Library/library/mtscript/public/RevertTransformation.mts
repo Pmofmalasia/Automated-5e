@@ -33,7 +33,6 @@
 	[h,foreach(macro,OldFormMacros): createMacro(macro)]
 
 [h:"<!-- TODO: Transform - test fixing this bug -->"]
-
 	[h,foreach(prop,currentFormProperties),CODE:{
 		[h:newHasProp = getRawProperty(prop,ParentToken)]
 		[h:oldHasProp = json.contains(OldFormProperties,prop)]

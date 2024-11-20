@@ -9,7 +9,7 @@
 	[h:changedProperties = "[]"]
 	[h,foreach(prop,currentProperties),CODE:{
 		[h,if(getRawProperty(prop,token) != ""): thisTokenProperties = json.set(thisTokenProperties,prop,getRawProperty(prop,token))]
-		[h,if(getRawProperty(prop,token) != ""): changedProperties = json.append(changedProperties,prop)]
+		[h,if(getRawProperty(prop,token) != "" && prop != "a5e.stat.DisplaySheetStats"): changedProperties = json.append(changedProperties,prop)]
 	}]
 	[h:thisTokenProperties = json.remove(thisTokenProperties,"a5e.stat.DisplaySheetStats")]
 	[h:thisTokenJSON = json.set(thisTokenJSON,"RawPropertyNames",changedProperties)]

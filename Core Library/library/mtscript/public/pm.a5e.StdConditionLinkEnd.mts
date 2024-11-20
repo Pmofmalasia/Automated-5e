@@ -1,1 +1,1 @@
-[h:pm.PassiveFunction("AfterCondition",json.set("","ParentToken",cond.SetBy))]
+[h,if(setByStillAvailable): pm.PassiveFunction("AfterCondition",json.set("","ParentToken",cond.SetBy))]

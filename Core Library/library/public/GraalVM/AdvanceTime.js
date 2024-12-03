@@ -95,14 +95,7 @@ function advanceTimeTokens(tokens,timeAdvanced){
 		};
 	}
 
-
-
-
 	//TODO: Resource - Add "cooldown" functionality option for restoration of resources (e.g. can be used once every 6 hours = restore resource 6 hours after use)
-
-
-
-
 
 	for(let token of tokens){
 		let thisTokenNewTableLines = [];

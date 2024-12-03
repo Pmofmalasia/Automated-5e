@@ -47,7 +47,7 @@
 
 <tr id='rowIsSpellcastingFocus'><th><label for='isSpellcastingFocus'>Acts as Spellcasting Focus?</label></th><td><input type='checkbox' id='isSpellcastingFocus' name='isSpellcastingFocus' onchange='createSpellcastingFocusRows("+'"rowIsCastSpells"'+")'></td></tr>
 
-<tr id='rowIsCastSpells'><th><label for='isCastSpells'>Object Can Cast Spells?</label></th><td><input type='checkbox' id='isCastSpells' name='isCastSpells' onchange='createCastSpellsRows()'><input type='hidden' id='CastSpellNumber' name='CastSpellNumber' value=0></td></tr>
+<tr id='rowIsCastSpells'><th><label for='isCastSpells'>Object Can Cast Spells?</label></th><td><input type='checkbox' id='isCastSpells' name='isCastSpells' onchange='createCastSpellsRows()'></tr>
 
 <tr id='rowIsImprovisedWeapon'><th><label for='isImprovisedWeapon'>Special Improvised Weapon Effect?</label></th><td><input type='checkbox' id='isImprovisedWeapon' name='isImprovisedWeapon' onchange='createImprovisedWeaponRows()'></td></tr>
 

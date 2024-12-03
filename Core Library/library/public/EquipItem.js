@@ -1,7 +1,7 @@
 function initialEquipmentRows(tableID,Inventory,HeldItems,Limbs,EquippedArmor,AttunementSlots,NaturalWeapons){
 	createEquippedArmorRow(tableID,Inventory,EquippedArmor);
 	createHeldItemsRows(tableID,Inventory,HeldItems,Limbs);
-	createAttunedItemsRows(tableID,Inventory,AttunementSlots);
+	createAttunedItemsRows(Inventory,AttunementSlots);
 	createWornItemsRows(tableID,Inventory);
 	createNaturaWeaponsRows(tableID,NaturalWeapons);
 }
@@ -104,8 +104,8 @@ function createLimbChoiceRows(tableID,Inventory,whichLimb){
 	}
 }
 
-function createAttunedItemsRows(tableID,Inventory,AttunementSlots){
-	let nextRowIndex = document.getElementById("rowMagicItemHeader").rowIndex + 1;
+function createAttunedItemsRows(Inventory,AttunementSlots){
+	let referenceElement = document.getElementById("rowMagicItemHeader");
 
 	let AttunableItems = [];
 	let AttunedItems = [];
@@ -128,8 +128,7 @@ function createAttunedItemsRows(tableID,Inventory,AttunementSlots){
 			thisAttunement = AttunedItems[i];
 		}
 
-		addTableRow(tableID,nextRowIndex,"rowAttunementChoice"+i,"<th><label for='AttunementChoice"+i+"'>Attunement Slot #"+(i+1)+":</label></th><td><select id='AttunementChoice"+i+"' name='AttunementChoice"+i+"'>"+AttunableOptions+"</select></td>");
-		nextRowIndex++;
+		referenceElement = createTableRow(referenceElement,"rowAttunementChoice"+i,"<th><label for='AttunementChoice"+i+"'>Attunement Slot #"+(i+1)+":</label></th><td><select id='AttunementChoice"+i+"' name='AttunementChoice"+i+"'>"+AttunableOptions+"</select></td>");
 
 		document.getElementById("AttunementChoice"+i).value = thisAttunement;
 	}

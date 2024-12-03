@@ -354,12 +354,12 @@
 [h,if(json.contains(objectData,"isActivatable")),CODE:{
 	[h:ActivationEffect = json.set("",
 		"Name","Activate"+ObjectName,
-		"DisplayName","Activate"+json.get(objectData,"DisplayName"),
+		"DisplayName","Activate "+json.get(objectData,"DisplayName"),
 		"ValidActivationState",0
 	)]
 	[h:DeactivationEffect = json.set("",
 		"Name","Deactivate"+ObjectName,
-		"DisplayName","Deactivate"+json.get(objectData,"DisplayName"),
+		"DisplayName","Deactivate "+json.get(objectData,"DisplayName"),
 		"ValidActivationState",1
 	)]
 
@@ -394,17 +394,19 @@
 		"RangeType","Touch",
 		"isActivateItem","Deactivate"
 	)]
+	
+	[h,if(json.get(objectData,"isActivationEffect") != ""),CODE:{
+		[h:"<!-- Will eventually contain processing for effects that occur on activation, outside of just turning on a passive effect. See CreateObject.js todo comment. -->"]
+	};{}]
+	[h:objectData = json.remove(objectData,"isActivationEffect")]
 
-	[h,if(json.get(objectData,"ActivationTimeResourceUsed") == ""),CODE:{
-		[h:objectData = json.remove(objectData,"ActivationTimeResourceUsed")]
-	};{
-		[h:usedResourceName = js.a5e.RemoveSpecial(json.get(objectData,"ResourceDisplayName"+json.get(objectData,"ActivationTimeResourceUsed")))]
+	[h,if(json.get(objectData,"ActivationTimeResourceUsed") != ""),CODE:{
 		[h:activationResourceData = json.set("",
 			"Name",ObjectName,
 			"Class","Item",
 			"Subclass","",
 			"ItemID","this",
-			"Resource",usedResourceName
+			"Resource",json.get(objectData,"ActivationTimeResourceUsed")
 		)]
 
 		[h:ActivationUseResource = json.set("",
@@ -424,9 +426,34 @@
 
 		[h:ActivationSubeffect = json.set(ActivationSubeffect,"UseResource",json.append("",json.append("",ActivationUseResource)))]
 		[h:DeactivationSubeffect = json.set(DeactivationSubeffect,"UseResource",json.append("",json.append("",DeactivationUseResource)))]
-	}]
+	};{}]
+	[h:objectData = json.remove(objectData,"ActivationTimeResourceUsed")]
 
-	[h:ActivationEffect = json.set(ActivationEffect,"Subeffect",json.append("",ActivationSubeffect))]
+	[h:allActivationSubeffects = json.append("",ActivationSubeffect)]
+	[h:allDeactivationSubeffects = json.append("",DeactivationSubeffect)]
+
+	[h,if(lightActivationEffect != "" && json.get(objectData,"isMagical")),CODE:{
+		[h:lightActivationSubeffects = json.get(lightActivationEffect,"Subeffects")]
+		[h:lightDeactivationSubeffects = json.get(lightDeactivationEffect,"Subeffects")]
+
+		[h:allActivationSubeffects = json.merge(allActivationSubeffects,lightActivationSubeffects)]
+		[h:allDeactivationSubeffects = json.merge(allDeactivationSubeffects,lightDeactivationSubeffects)]
+	};{}]
+
+	[h:ActivationEffect = json.set(ActivationEffect,"Subeffects",allActivationSubeffects)]
+	[h:DeactivationEffect = json.set(DeactivationEffect,"Subeffects",allDeactivationSubeffects)]
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -435,7 +462,7 @@
 
 
 	
-		[h:"<!-- TODO: Test this, then change ActivateItem to execute the activation/deactivation effect. -->"]
+		[h:"<!-- TODO: Resource - Test this (with boots of speed?), then change ActivateItem to execute the activation/deactivation effect. -->"]
 
 
 
@@ -444,11 +471,29 @@
 
 
 
-	[h,if(json.get(objectData,"isMagical")),CODE:{
-		[h:"<!-- TODO: Merge any already present activation effects here, if there's a light also. -->"]
-		[h,if(lightActivationEffect != ""): objectData = json.set(objectData,"ActivationEffects",json.append("",lightActivationEffect))]
-		[h,if(lightDeactivationEffect != ""): objectData = json.set(objectData,"DeactivationEffects",json.append("",lightDeactivationEffect))]
-	};{}]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	[h:objectData = json.set(objectData,
+		"ActivationEffects",ActivationEffect,
+		"DeactivationEffects",DeactivationEffect
+	)]
 };{
 	[h:"<!-- NOTE: Why the isMagical test? Because lighting a mundane light is 'using' an item, while turning on a magical one is (usually) 'activating' an item, which is technically a separate action. Ew. -->"]
 	[h,if(json.get(objectData,"isMagical")),CODE:{
@@ -457,19 +502,6 @@
 	};{}]
 }]
 [h:objectData = json.remove(objectData,"isActivatable")]
-
-[h,if(json.get(objectData,"isResources") != ""),CODE:{
-	[h:objectResourceData = js.ct.a5e.ResourceProcessing(objectData,json.set(objectData,"Type","Item"))]
-	[h,if(json.get(objectResourceData,"FeatureUpdates") != ""),CODE:{
-		[h:objectData = json.set(objectData,"FeatureUpdates",json.get(objectResourceData,"FeatureUpdates"))]
-		[h:objectResourceData = json.remove(objectResourceData,"FeatureUpdates")]
-	};{}]
-	[h:objectData = json.set(objectData,"ResourceData",objectResourceData)]
-	[h:objectData = ct.a5e.PruneResourceKeys(objectData)]
-};{}]
-[h:objectData = json.remove(objectData,"isResources")]
-
-[h:"<!-- TODO: Add Depleted Effects here -->"]
 
 [h,if(json.contains(objectData,"isDuration")),CODE:{
 	[h:objectDuration = json.set("",json.get(objectData,"customDurationUnits"),json.get(objectData,"customDurationValue"))]
@@ -494,85 +526,24 @@
 	[h:objectData = json.remove(objectData,"isSpellcastingFocus")]
 };{}]
 
-[h:objectSpellsAllowed = "[]"]
-[h:differentSpellsNumber = number(json.get(objectData,"CastSpellNumber"))]
-[h,count(json.contains(objectData,"isCastSpells") * differentSpellsNumber),CODE:{
-	[h:thisSpellLevel = json.get(objectData,"CastSpellLevel"+roll.count)]
-	[h:thisSpellData = json.set("",
-		"Name",js.a5e.RemoveSpecial(json.get(objectData,"CastSpellName"+roll.count)),
-		"Level",thisSpellLevel
-	)]
-	[h:thisSpellResourceUsed = json.get(objectData,"CastSpellResource"+roll.count)]
-
-	[h:objectData = json.remove(objectData,"CastSpellResource"+roll.count)]
-	[h:objectData = json.remove(objectData,"CastSpellName"+roll.count)]
-	[h:objectData = json.remove(objectData,"CastSpellLevel"+roll.count)]
-
-	[h,if(json.contains(objectData,"CanAHLSpell"+roll.count)):
-		isAHLAllowed = json.get(objectData,"CanAHLSpell"+roll.count);
-		isAHLAllowed = 0
-	]
-[h:"<!-- TODO: MaxResource - Fix this, whatever it does -->"]
-	[h:NoResourceUsedTest = or(json.get(objectData,"isCharges") == "None",and(thisSpellResourceUsed == 0,!isAHLAllowed))]
-	[h,if(!NoResourceUsedTest),CODE:{
-		[h:resourceIdentifiers = json.set("","Name",ObjectName,"Class","Item","Subclass","","ResourceSource","Item")]
-		[h:thisSpellResource = json.set("",
-			"Resource",resourceIdentifiers,
-			"ResourceUsed",thisSpellResourceUsed
-		)]
-
-		[h,if(isAHLAllowed):
-			thisSpellResource = json.set(thisSpellResource,
-				"Increment",json.get(objectData,"SpellResourceAHL"+roll.count),
-				"ResourceUsedMax",(9-thisSpellLevel)*json.get(objectData,"SpellResourceAHL"+roll.count) + thisSpellResourceUsed);
-			thisSpellResource = json.set(thisSpellResource,
-				"Increment",1,
-				"ResourceUsedMax",thisSpellResourceUsed)
-		]
-
-		[h,if(json.contains(objectData,"CastSpellResourceKey"+roll.count)): thisSpellResource = json.set(thisSpellResource,"ResourceKey",js.a5e.RemoveSpecial(json.get(objectData,"CastSpellResourceKey"+roll.count)))]
-
-		[h:FinalResourceData = json.set("","Feature",thisSpellResource)]
-		[h:thisSpellData = json.set(thisSpellData,"UseResource",FinalResourceData)]
-
-		[h:objectData = json.remove(objectData,"SpellResourceAHL"+roll.count)]
-		[h:objectData = json.remove(objectData,"CanAHLSpell"+roll.count)]
-		[h:objectData = json.remove(objectData,"CastSpellResourceKey"+roll.count)]
-	};{}]
-
-	[h:objectSpellsAllowed = json.append(objectSpellsAllowed,thisSpellData)]
-}]
-
 [h,if(json.contains(objectData,"isCastSpells")),CODE:{
-	[h:objectData = json.set(objectData,"ItemSpellcasting",objectSpellsAllowed)]
-	[h:calcModifierHow = json.get(objectData,"CastSpellModifierHow")]
-	[h:objectData = json.remove(objectData,"CastSpellModifierHow")]
-	[h:objectData = json.set(objectData,"ItemSpellcastingModifierMethod",calcModifierHow)]
-	[h,switch(calcModifierHow),CODE:
-		case "SetValue":{
-			[h:objectData = json.set(objectData,"ItemSpellcastingModifier",json.get(objectData,"CastSpellFlatModifier"))]
-			[h:objectData = json.remove(objectData,"CastSpellFlatModifier")]
-		};
-		case "Stat":{
-			[h:AllowedStats = "[]"]
-			[h:AllStats = pm.GetAttributes("Name","json")]
-			[h,foreach(stat,AllStats): AllowedStats = if(json.contains(objectData,"CastSpellStat"+stat),json.append(AllowedStats,stat),AllowedStats)]
-			[h,foreach(stat,AllStats): objectData = json.remove(objectData,"CastSpellStat"+stat)]
-			[h:objectData = json.set(objectData,"ItemSpellcastingPrimeStatOptions",AllowedStats)]
-		};
-		case "SpecificClass":{
-			[h:AllowedClasses = "[]"]
-			[h:AllClasses = pm.GetClasses("Name","json")]
-			[h,foreach(tempClass,AllClasses): AllowedClasses = if(json.contains(objectData,"CastSpellClass"+tempClass),json.append(AllowedClasses,tempClass),AllowedClasses)]
-			[h,foreach(tempClass,AllClasses): objectData = json.remove(objectData,"CastSpellClass"+tempClass)]
-			[h:objectData = json.set(objectData,"ItemSpellcastingClassOptions",AllowedClasses)]
-		};
-		default:{}
-	]
+	[h:objectData = ct.a5e.CastSpellsProcessing(objectData)]
 };{}]
-[h:objectData = json.remove(objectData,"isCharges")]
 [h:objectData = json.remove(objectData,"isCastSpells")]
 [h:objectData = json.remove(objectData,"CastSpellNumber")]
+
+[h,if(json.get(objectData,"isResources") != ""),CODE:{
+	[h:objectResourceData = js.ct.a5e.ResourceProcessing(objectData,json.set(objectData,"Type","Item"))]
+	[h,if(json.get(objectResourceData,"FeatureUpdates") != ""),CODE:{
+		[h:objectData = json.set(objectData,"FeatureUpdates",json.get(objectResourceData,"FeatureUpdates"))]
+		[h:objectResourceData = json.remove(objectResourceData,"FeatureUpdates")]
+	};{}]
+	[h:objectData = json.set(objectData,"ResourceData",objectResourceData)]
+	[h:objectData = ct.a5e.PruneResourceKeys(objectData)]
+};{}]
+[h:objectData = json.remove(objectData,"isResources")]
+
+[h:"<!-- TODO: Item: Add Depleted Effects here -->"]
 
 [h:ChosenMaterials = "[]"]
 [h:AllMaterials = pm.a5e.GetCoreData("sb.ObjectMaterials","Name","json")]

@@ -420,8 +420,6 @@ function resourceProcessingMTScript(CoreFeatureData,FeatureData){
 
 	let resourceData = resourceProcessing(CoreFeatureData,FeatureData);
 
-	//TODO: Remove extra keys from CoreFeatureData here
-
 	return JSON.stringify(resourceData);
 }
 

@@ -408,8 +408,6 @@ function createActivatableRows(){
 
 		referenceElement = createTableRow(referenceElement,"rowActivationComponents","<th><label for='ActivationComponents'>Activation Requirements:</label></th><td><select id='ActivationComponents' name='ActivationComponents'><option value='None'>No Components</option><option value='Verbal'>Command Word (Verbal)</option><option value='Somatic'>Interaction (Somatic)</option><option value='Both'>Verbal and Somatic</option></select></td>");
 
-//TODO: Items - Create ActivationEffects and DeactivationEffects. Simple lights automatically add one that turns the light off/on if one is not made for you. ActivateItem runs effect through ExecuteEffect. Need to sort out having multiple places where subeffects can be created (fine in JSON, hard for input tracking the data)
-
 		if(document.getElementById("rowIsActivatableEnd") === null){
 			referenceElement = createTableRow(referenceElement,"rowIsActivatableEnd","<th colspan=2 class='section-end'></th>");
 		}
@@ -426,7 +424,7 @@ function createActivationEffectRows(){
 		
 	}
 	else if(document.getElementById("isActivationEffect").value != ""){
-		
+		//TODO: Items - Create ActivationEffects and DeactivationEffects. Simple lights automatically add one that turns the light off/on if one is not made for you. ActivateItem runs effect through ExecuteEffect. Need to sort out having multiple places where subeffects can be created (fine in JSON, hard for input tracking the data)
 	}
 }
 
@@ -513,34 +511,22 @@ async function createCastSpellsRows(){
 			functionArgs:{}
 		});
 
-		if(document.getElementById("isResources").value !== ""){
-			spellcastingRows.push({
-				RowID:"rowCastSpellResource",
-				Contents:"<th style='text-align:center' colspan='2' id='headerCastSpellResource'>Uses <input type='number' id='CastSpellResource' name='CastSpellResource' style='width:25px' value=1> <span id='CastSpellResourceUsed'><select id='CastSpellResourceKey' name='CastSpellResourceKey'><option value=''>None</option></select> charge(s)</span><span id='CastSpellAHLInput'></span></th>"
-			});
-
-			//Listeners not needed here as they will be added by adjustSpellLevelOptions() if needed - can't do before that since could be level 0 spell without input to target
-			spellcastingListeners.push({
-				elementID:"CanAHLSpell",
-				listener:"change",
-				functionName:"toggleSpellAHLResource",
-				functionArgs:{}
-			});
-		}
-
 		createMultiRowButtonsInput("CastSpell",referenceElement,spellcastingRows,"Spell",spellcastingListeners);
 
 		let addSpellButton = document.getElementById("AddCastSpellButton");
-		addSpellButton.addEventListener(function(){
+		addSpellButton.addEventListener("change",function(){
 			if(document.getElementById("isResources").value !== ""){
 				let currentNumber = Number(document.getElementById("CastSpellNumber").value);
 				addItemSpellcastingCharges(currentNumber - 1);
 			}
 		});
 
-		document.getElementById("CastSpellName0").dispatchEvent(new Event("change"));
+		await adjustSpellLevelOptions(0);
 
 		document.getElementById("isResources").addEventListener("change",toggleItemSpellcastingCharges);
+		toggleItemSpellcastingCharges();
+
+		referenceElement = document.getElementById("rowCastSpellButtons");
 
 		referenceElement = createTableRow(referenceElement,"rowCastSpellModifierHow","<th>Spell Attack/DC Modifier Method:</th><td><select id='CastSpellModifierHow' name='CastSpellModifierHow' onchange='createCastSpellModifierRows()'><option value='AnyClass'>Any Class Spell Modifier</option><option value='SpecificClass'>Specific Class Spell Modifier</option><option value='SetValue'>Preset Modifier</option><option value='Stat'>Based on a Stat</option></select></td>");
 
@@ -552,63 +538,49 @@ async function createCastSpellsRows(){
 	else{
 		deleteInterveningElements(referenceElement,document.getElementById("rowCastSpellEnd").nextElementSibling);
 
-		document.getElementById("isResources").removeEventListener(toggleItemSpellcastingCharges);
+		document.getElementById("isResources").removeEventListener("change",toggleItemSpellcastingCharges);
 	}
 }
 
-async function addSpellSelectionRows(){
-	let referenceElement = document.getElementById("rowSpellButtons").previousElementSibling;
-	let SpellNumber = Number(document.getElementById("CastSpellNumber").value);
+async function adjustSpellLevelOptions(i){
 	let request = await fetch("macro:pm.a5e.GetBaseSpellData@lib:pm.a5e.Core", {"method":"POST","body":""});
 	let allSpells = await request.json();
-	allSpellOptions = createHTMLSelectOptions(allSpells);
-	let firstSpellData = allSpells[0];
-	let firstSpellLevel = Number(firstSpellData.Level);
 
-	let levelInput = "<span id='CastSpellLevelInput"+SpellNumber+"'>";
-	let AHLInput = "<span id='CastSpellAHLInput"+SpellNumber+"'>";
-	if(firstSpellLevel == 0){
-		levelInput = levelInput + "<input type='hidden' id='CastSpellLevel"+SpellNumber+"' name='CastSpellLevel"+SpellNumber+"' value=0>";
-		AHLInput = "<input type='hidden' id='CanAHLSpell"+SpellNumber+"' name='CanAHLSpell"+SpellNumber+"' value=0>";
+	let WhichSpell = document.getElementById("CastSpellName"+i).selectedIndex;
+	let SpellData = allSpells[WhichSpell];
+	let SpellLevel = Number(SpellData.Level);
+	let priorLevelInput = document.getElementById("CastSpellLevel"+i);
+	let PriorSpellLevel;
+	if(priorLevelInput !== null){
+		PriorSpellLevel = Number(priorLevelInput.value);
 	}
 	else{
-		levelInput = levelInput + " at level <select id='CastSpellLevel"+SpellNumber+"' name='CastSpellLevel"+SpellNumber+"'>";
-		for(let i=firstSpellLevel; i<=9; i++){
-			levelInput = levelInput + "<option value='"+i+"'>"+i+"</option>";
-		}
-		levelInput = levelInput + "</select>";
-
-		AHLInput = "; <select id='CanAHLSpell"+SpellNumber+"' name='CanAHLSpell"+SpellNumber+"' onchange='toggleSpellAHLResource("+SpellNumber+")'><option value='0'>Cannot</option><option value='1'>Can</option></select> spend <input type='number' id='SpellResourceAHL"+SpellNumber+"' name='SpellResourceAHL"+SpellNumber+"' style='width:25px' value='0' disabled> charge(s) per higher level.";
+		PriorSpellLevel = null;
 	}
-	levelInput = levelInput + "</span>";
-	AHLInput = AHLInput + "</span>";
 
-	//referenceElement = createTableRow(referenceElement,"rowCastSpell"+SpellNumber+"","<th style='text-align:center' colspan='2' id='headerCastSpell"+SpellNumber+"'>Cast <select id='CastSpellName"+SpellNumber+"' name='CastSpellName"+SpellNumber+"' onchange='adjustSpellLevelOptions("+SpellNumber+")'>"+allSpellOptions+"</select>"+levelInput+"</th>");
-
-	//TODO: MaxResource - Fix this for new resource format/input
-
-	if(document.getElementById("isResources").value != ""){
-		let ChargesInput = "<span id='CastSpellResourceUsed"+SpellNumber+"'>";
-		if(document.getElementById("isCharges").value == "Multiple"){
-			let ResourceNumber = Number(document.getElementById("MultiResourceNumber").value);
-			let ResourceOptions = "";
-			for(let i=0; i<=ResourceNumber; i++){
-				let thisResourceDisplayName = document.getElementById("ResourceDisplayName"+i).value;
-				thisResourceName = thisResourceDisplayName.split("'").join("");
-				ResourceOptions = ResourceOptions + "<option value='"+thisResourceName+"'>"+thisResourceDisplayName+"</option>";
-			}
-			ChargesInput = ChargesInput + "<select id='CastSpellResourceKey"+SpellNumber+"' name='CastSpellResourceKey"+SpellNumber+"'>"+ResourceOptions+"</select>";
+	if(PriorSpellLevel !== SpellLevel){
+		let levelInput = "";
+		if(SpellLevel === 0){
+			levelInput = "<input type='hidden' id='CastSpellLevel"+i+"' name='CastSpellLevel"+i+"' value=0>";
+			document.getElementById("CastSpellLevelInput"+i).innerHTML = levelInput;
 		}
 		else{
-			ChargesInput = ChargesInput + "charge(s)";
+			let levelOptions;
+			for(let j=SpellLevel; j<=9; j++){
+				levelOptions = levelOptions + "<option value='"+j+"'>"+j+"</option>";
+			}
+
+			if(PriorSpellLevel === 0 || PriorSpellLevel === null){
+				levelInput = " at level <select id='CastSpellLevel"+i+"' name='CastSpellLevel"+i+"'>"+levelOptions+ "</select>";
+				document.getElementById("CastSpellLevelInput"+i).innerHTML = levelInput;
+			}
+			else{
+				document.getElementById("CastSpellLevel"+i).innerHTML = levelOptions;
+			}
 		}
-		ChargesInput = ChargesInput + "</span>";
 
-		referenceElement = createTableRow(referenceElement,"rowCastSpellResource"+SpellNumber+"","<th style='text-align:center' colspan='2' id='headerCastSpellResource"+SpellNumber+"'>Uses <input type='number' id='CastSpellResource"+SpellNumber+"' name='CastSpellResource"+SpellNumber+"' style='width:25px' value=1> "+ChargesInput+AHLInput+"</th>");
+		updateItemSpellAHL(i);
 	}
-
-	SpellNumber++;
-	document.getElementById("CastSpellNumber").value = SpellNumber;
 }
 
 function toggleItemSpellcastingCharges(){
@@ -616,7 +588,10 @@ function toggleItemSpellcastingCharges(){
 	let resourceChoice = document.getElementById("isResources").value;
 	if(resourceChoice === ""){
 		for(let i = 0; i < spellOptionsNumber; i++){
-			document.getElementById("rowCastSpellResource"+i).remove();
+			let thisSpellResourceRow = document.getElementById("rowCastSpellResource"+i);
+			if(thisSpellResourceRow !== null){
+				thisSpellResourceRow.remove();
+			}
 		}
 	}
 	else if(document.getElementById("rowCastSpellResource0") === null){
@@ -630,9 +605,11 @@ function addItemSpellcastingCharges(i){
 	let referenceElement = document.getElementById("rowCastSpell"+i);
 	let castSpellResourceOptions = getInProgressResourceOptions();
 
-	referenceElement = createTableRow(referenceElement,"rowCastSpellResource"+i,"<th style='text-align:center' colspan='2' id='headerCastSpellResource"+i+"'>Uses <input type='number' id='CastSpellResource"+i+"' name='CastSpellResource"+i+"' style='width:25px' value=1> <select id='CastSpellResourceKey' name='CastSpellResourceKey'>"+castSpellResourceOptions+"</select><span id='CastSpellAHLInput"+i+"'></span></th>");
+	referenceElement = createTableRow(referenceElement,"rowCastSpellResource"+i,"<th style='text-align:center' colspan='2' id='headerCastSpellResource"+i+"'>Uses <input type='number' id='CastSpellResource"+i+"' name='CastSpellResource"+i+"' style='width:25px' value=1> <select id='CastSpellResourceKey"+i+"' name='CastSpellResourceKey"+i+"'><option value=''>No Resource</option>"+castSpellResourceOptions+"</select><span id='CastSpellAHLInput"+i+"'></span></th>");
 
 	trackResourceOptionChanges(document.getElementById("CastSpellResourceKey"+i));
+
+	updateItemSpellAHL(i);
 }
 
 async function updateItemSpellAHL(i){
@@ -657,41 +634,6 @@ async function updateItemSpellAHL(i){
 		document.getElementById("CanAHLSpell"+i).addEventListener("change",function(){
 			toggleSpellAHLResource(i);
 		});
-	}
-}
-
-async function adjustSpellLevelOptions(i){
-	let request = await fetch("macro:pm.a5e.GetBaseSpellData@lib:pm.a5e.Core", {"method":"POST","body":""});
-	let allSpells = await request.json();
-
-	let WhichSpell = document.getElementById("CastSpellName"+i).selectedIndex;
-	let SpellData = allSpells[WhichSpell];
-	let SpellLevel = Number(SpellData.Level);
-	document.getElementById("CastSpellLevel"+i).selectedIndex = 0;
-	let PriorSpellLevel = document.getElementById("CastSpellLevel"+i).value;
-
-	if(PriorSpellLevel != SpellLevel){
-		let levelInput = "";
-		if(SpellLevel == 0){
-			levelInput = "<input type='hidden' id='CastSpellLevel"+i+"' name='CastSpellLevel"+i+"' value=0>";
-			document.getElementById("CastSpellLevelInput"+i).innerHTML = levelInput;
-		}
-		else{
-			let levelOptions;
-			for(let j=SpellLevel; j<=9; j++){
-				levelOptions = levelOptions + "<option value='"+j+"'>"+j+"</option>";
-			}
-
-			if(PriorSpellLevel == 0){
-				levelInput = " at level <select id='CastSpellLevel"+i+"' name='CastSpellLevel"+i+"'>"+levelOptions+ "</select>";
-				document.getElementById("CastSpellLevelInput"+i).innerHTML = levelInput;
-			}
-			else{
-				document.getElementById("CastSpellLevel"+i).innerHTML = levelOptions;
-			}
-		}
-
-		updateItemSpellAHL(i);
 	}
 }
 

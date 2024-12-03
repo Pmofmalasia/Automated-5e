@@ -373,7 +373,7 @@ function createRestoreMethodRows(i){
 
 function getInProgressResourceOptions(options){
 	let SpecialType = undefined;
-	if(options !== null){
+	if(options !== undefined){
 		SpecialType = options.SpecialType;
 	}
 
@@ -476,7 +476,12 @@ function updateResourceOptions(){
 	let updatedSelections = document.getElementById("isResources").activeSelections;
 	for(let selection of updatedSelections){
 		let input = selection.input;
-		input.innerHTML = "<option value=''>None</option>"+getInProgressResourceOptions(selection.options);
+		let oldSelectionIndex = input.selectedIndex;
+		input.innerHTML = "<option value=''>None</option>";+getInProgressResourceOptions(selection.options);
+		let newSelectionNumber = input.length;
+		if(newSelectionNumber > oldSelectionIndex){
+			input.selectedIndex = oldSelectionIndex;
+		}
 	}
 }
 

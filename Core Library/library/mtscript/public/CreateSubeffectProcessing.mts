@@ -761,9 +761,14 @@
 
 [h,if(needsPersistentEffect == "Same"),CODE:{
 	[h:subeffectData = json.set(subeffectData,"PersistentEffects",1)]
-	[h:needsPersistentEffect = 0]
+	[h:needsPersistentEffectTest = 0]
 };{
-	[h,if(needsPersistentEffect == "Different"): needsPersistentEffect = 1]
+	[h,if(needsPersistentEffect == "Different"),CODE:{
+		[h:subeffectData = json.set(subeffectData,"PersistentEffects","")]
+		[h:needsPersistentEffectTest = 1]
+	};{
+		[h:needsPersistentEffectTest = 0]
+	}]
 }]
 
 [h:thisEffectSubeffectData = json.get(currentEffectData,"Subeffects")]
@@ -776,7 +781,16 @@
 	allEffectData = json.set(allEffectData,json.length(allEffectData)-1,currentEffectData)
 ]
 
-[h:FeatureData = json.set(FeatureData,"Effects",allEffectData)]
+[h,if(isPersistentEffect),CODE:{
+	[h:needsPutTest = json.contains(json.get(allMainSubeffectsData,MainSubeffectsLastIndex),"PersistentEffects")]
+	[h,if(needsPutTest):
+		FeatureData = json.path.put(FeatureData,"\$['Effects']["+MainEffectsLastIndex+"]['Subeffects']["+MainSubeffectsLastIndex+"]","PersistentEffects",allEffectData);
+		FeatureData = json.path.set(FeatureData,"\$['Effects']["+MainEffectsLastIndex+"]['Subeffects']["+MainSubeffectsLastIndex+"]['PersistentEffects']",allEffectData)
+	]
+};{
+	[h:FeatureData = json.set(FeatureData,"Effects",allEffectData)]
+}]
+
 [h:baseFeatureData = json.set("","FeatureData",FeatureData)]
 [h:lastEffectTest = json.length(allEffectData) == EffectsNumber]
 
@@ -817,14 +831,9 @@
 [h:closeDialog("SubeffectCreation")]
 [h,if(lastEffectTest && !NeedsNewSubeffect),CODE:{
 	[h,if(isPersistentEffect),CODE:{
-		[h:allMainEffectData = json.get(FeatureData,"Effects")]
-		[h:MainEffectsLastIndex = json.length(allMainEffectData)-1]
-		[h:allMainSubeffectsData = json.get(json.get(allMainEffectData,MainEffectsLastIndex),"Subeffects")]
-		[h:MainSubeffectsLastIndex = json.length(allMainSubeffectsData)-1]
-	
-		[h:FeatureData = json.path.put(FeatureData,"\$['Effects']["+MainEffectsLastIndex+"]['Subeffects']["+MainSubeffectsLastIndex+"]","PersistentEffects",allEffectData)]
-	
+		[h:"<!-- Switches back to non-persistent effect if lastEffectTest for persistent effects is true -->"]
 		[h:lastEffectTest = (json.length(allMainEffectData) >= MainEffectsNumber)]
+
 		[h:baseFeatureData = json.set(baseFeatureData,
 			"EffectsNumber",MainEffectsNumber,
 			"WhichSubeffect",if(MainNeedsNewSubeffect,MainSubeffectsLastIndex+1,1),
@@ -834,7 +843,7 @@
 		)]
 	};{}]
 
-	[h,if(lastEffectTest && !MainNeedsNewSubeffect && !needsPersistentEffect),CODE:{
+	[h,if(lastEffectTest && !MainNeedsNewSubeffect && !needsPersistentEffectTest),CODE:{
 		[h,MACRO("CreateFeatureCoreFinalInput@Lib:pm.a5e.Core"): json.set("","EffectType",EffectType,"ExtraData",extraData,"ParentToken",ParentToken,"FeatureData",FeatureData)]
 		[h:return(0,macro.return)]
 	};{

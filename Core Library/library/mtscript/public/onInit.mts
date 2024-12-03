@@ -35,6 +35,7 @@
 [h:defineFunction("ct.a5e.UseResourceIndividualProcessing","ct.a5e.UseResourceIndividualProcessing@Lib:pm.a5e.Core")]
 [h:defineFunction("ct.a5e.SummonsInputProcessing","ct.a5e.SummonsInputProcessing@Lib:pm.a5e.Core")]
 [h:defineFunction("ct.a5e.TransformInputProcessing","ct.a5e.TransformInputProcessing@Lib:pm.a5e.Core")]
+[h:defineFunction("ct.a5e.CastSpellsProcessing","ct.a5e.CastSpellsProcessing@Lib:pm.a5e.Core")]
 [h:defineFunction("ct.a5e.CreatureTypeLimitsProcessing","ct.a5e.CreatureTypeLimitsProcessing@Lib:pm.a5e.Core")]
 [h:defineFunction("ct.a5e.CreatureSubtypeLimitsProcessing","ct.a5e.CreatureSubtypeLimitsProcessing@Lib:pm.a5e.Core")]
 [h:defineFunction("ct.a5e.SizePrerequisiteProcessing","ct.a5e.SizePrerequisiteProcessing@Lib:pm.a5e.Core")]

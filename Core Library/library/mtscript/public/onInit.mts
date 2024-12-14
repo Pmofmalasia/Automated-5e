@@ -218,6 +218,7 @@
 [h:defineFunction("pm.a5e.TargetObjectTargeting","pm.a5e.TargetHeldObjectFiltering@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.a5e.InputTargeting","pm.a5e.InputTargeting@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.a5e.GenerateEffectID","pm.a5e.GenerateEffectID@Lib:pm.a5e.Core")]
+[h:defineFunction("pm.a5e.SelectEffect","pm.a5e.SelectEffect@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.a5e.d20TestRerollDataProcessing","pm.a5e.d20TestRerollDataProcessing@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.a5e.TargetEffectFiltering","pm.a5e.TargetEffectFiltering@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.a5e.TargetEffectTargeting","pm.a5e.TargetEffectTargeting@Lib:pm.a5e.Core")]

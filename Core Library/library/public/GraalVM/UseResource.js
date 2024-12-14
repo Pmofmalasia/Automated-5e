@@ -112,7 +112,7 @@ function useResource(resourceList,unifiedFeatures,ParentTokenID){
 			break;
 		}
 	}
-
+MapTool.chat.broadcast(JSON.stringify(resourceOptions));
 	return JSON.stringify(useResourceOptions(resourceOptions));
 }
 
@@ -636,7 +636,7 @@ function findValidFeatureResources(resource,unifiedFeatures,amountNeeded){
 		if((feature.AbilityType !== "Condition" && resourceSourceType === "Condition") || (feature.AbilityType === "Condition" && resourceSourceType !== "Condition")){
 			continue;
 		}
-
+if(feature.Name === "BootsofSpeed"){MapTool.chat.broadcast("HI");}
 		if(typeof resourceIdentifier === "string"){
 			if(feature.Name !== resourceIdentifier){
 				continue;
@@ -650,6 +650,7 @@ function findValidFeatureResources(resource,unifiedFeatures,amountNeeded){
 			if(resourceIdentifier.ItemID === "this"){
 				//TODO: Resource - After refactoring, need to implement this method
 				//TODO: Refactoring - see above
+				MapTool.chat.broadcast("coming here");
 			}
 			else{
 				if(feature.ItemID !== resourceIdentifier.ItemID){
@@ -667,6 +668,7 @@ function findValidFeatureResources(resource,unifiedFeatures,amountNeeded){
 			}
 		}
 
+		if(feature.Name === "BootsofSpeed"){MapTool.chat.broadcast(JSON.stringify(feature));}
 		let allCurrentResources = feature.Resource;
 		let currentResource = allCurrentResources[resourceKey];
 

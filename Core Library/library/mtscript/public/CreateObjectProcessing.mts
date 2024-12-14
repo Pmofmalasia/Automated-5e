@@ -442,57 +442,11 @@
 
 	[h:ActivationEffect = json.set(ActivationEffect,"Subeffects",allActivationSubeffects)]
 	[h:DeactivationEffect = json.set(DeactivationEffect,"Subeffects",allDeactivationSubeffects)]
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	
-		[h:"<!-- TODO: Resource - Test this (with boots of speed?), then change ActivateItem to execute the activation/deactivation effect. -->"]
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+	[h:allActivationEffects = json.append("",ActivationEffect,DeactivationEffect)]
 
 	[h:objectData = json.set(objectData,
-		"ActivationEffects",ActivationEffect,
-		"DeactivationEffects",DeactivationEffect
+		"ActivationEffects",allActivationEffects,
+		"ActivationEffectMetadata",json.set("","ChoiceMethod","ActivationState")
 	)]
 };{
 	[h:"<!-- NOTE: Why the isMagical test? Because lighting a mundane light is 'using' an item, while turning on a magical one is (usually) 'activating' an item, which is technically a separate action. Ew. -->"]
@@ -501,7 +455,6 @@
 		[h,if(lightDeactivationEffect != ""): objectData = json.set(objectData,"DeactivationEffects",json.append("",lightDeactivationEffect))]
 	};{}]
 }]
-[h:objectData = json.remove(objectData,"isActivatable")]
 
 [h,if(json.contains(objectData,"isDuration")),CODE:{
 	[h:objectDuration = json.set("",json.get(objectData,"customDurationUnits"),json.get(objectData,"customDurationValue"))]

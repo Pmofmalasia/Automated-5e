@@ -52,7 +52,21 @@ async function createInventoryTable(){
 				if(resourceNames.length > 1){
 					NumberDisplay += thisResourceData.DisplayName + ": ";
 				}
-				NumberDisplay += Item.Resource[tempResourceName] + "<b>/</b>" + thisResourceData.MaxResource;
+
+				let thisResourceDisplay;
+				let thisCurrentResource = Item.Resource[tempResourceName];
+				if(typeof thisCurrentResource === "object"){
+					if(thisCurrentResource.Type === "Time"){
+						let maxTime = await MTFunction("pm.a5e.GenerateTimeDisplay",[thisResourceData.MaxResource.Duration]);
+						let currTime = await MTFunction("pm.a5e.GenerateTimeDisplay",[thisCurrentResource.Duration]);
+
+						thisResourceDisplay = currTime + " <b>/</b> " + maxTime;
+					}
+				}
+				else{
+					thisResourceDisplay = thisCurrentResource + "<b>/</b>" + thisResourceData.MaxResource;
+				}
+				NumberDisplay += thisResourceDisplay;
 			}
 		}
 		if(debug){console.log("4");}

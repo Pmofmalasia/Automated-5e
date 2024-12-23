@@ -1,15 +1,21 @@
 function gatherFeatures(ParentToken,options){
 	let includeAuras;
 	let ignoreRequirePassive = false;
+	let ignoreIsActive = false;
 	if(options === undefined){
 		includeAuras = undefined;
-		ignoreRequirePassive = false;
 	}
 	else{
 		includeAuras = options.includeAuras;
 		ignoreRequirePassive = options.ignoreRequirePassive;
 		if(ignoreRequirePassive === undefined){
 			ignoreRequirePassive = false;
+		}
+
+		//Used for resource adjustment of activatable items that are currently inactive
+		ignoreIsActive = options.ignoreIsActive;
+		if(ignoreIsActive === undefined){
+			ignoreIsActive = false;
 		}
 	}
 
@@ -21,9 +27,9 @@ function gatherFeatures(ParentToken,options){
 		}
 
 		for(let feature of features){
-			if(feature.IsActive > 0){
+			if(feature.IsActive > 0 || ignoreIsActive){
 				feature.AbilityType = type;
-
+				
 				if((isRequirePassive && feature.isPassiveFunction == 1) || !isRequirePassive){
 					if(includeAuras === undefined){
 						finalFeatures.push(feature);

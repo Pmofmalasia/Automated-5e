@@ -178,7 +178,7 @@
 	[h:objectData = json.set(objectData,"isCursed",json.contains(objectData,"isCursed"))]
 };{}]
 
-[h,if(objectType=="LightSource"),CODE:{
+[h,if(objectType == "LightSource"),CODE:{
 	[h:returnLightData = ct.a5e.LightDataProcessing(objectData,"Type")]
 	[h:lightData = json.get(returnLightData,"Light")]
 	[h:objectData = json.get(returnLightData,"Subeffect")]
@@ -189,13 +189,26 @@
 			[h:allObjects = pm.a5e.GetCoreData("sb.Objects")]
 			[h:oilFlaskData = json.get(json.path.read(allObjects,"\$[*][?(@.Name == 'OilFlask')]"),0)]
 			[h:oilFlaskID = json.get(oilFlaskData,"ObjectID")]
-			[h:objectData = json.set(objectData,"TimeResourceRechargeItem",json.append("",oilFlaskID))]
+
+			[h:lightRestorationData = json.set("",
+				"Item",json.append("",json.set("",
+					"Name","LightDuration"+ObjectName,
+					"Method","Full",
+					"Identifier",oilFlaskID
+			)))]
 		};
 		case "None":{
-
+			[h:lightRestorationData = "{}"]
 		};
 		default:{
 			[h:"<!-- TODO: Add some resolution for looking up other specific items here -->"]
+
+			[h:lightRestorationData = json.set("",
+				"Item",json.append("",json.set("",
+					"Name","LightDuration"+ObjectName,
+					"Method","Full",
+					"Identifier","TO_BE_DETERMINED_VIA_TODO"
+			)))]
 		}
 	]
 
@@ -205,10 +218,17 @@
 	[h:lightDurationData = macro.return]
 	[h:objectData = json.get(lightDurationData,"OutputData")]
 	[h:lightDurationData = json.get(lightDurationData,"DurationInfo")]
-	[h:lightTimeResource = json.set("",json.get(lightDurationData,"Units"),json.get(lightDurationData,"Value"))]
-	[h:objectData = json.set(objectData,"TimeResourceMax",lightTimeResource,"TimeResource",lightTimeResource,"TimeResourceActive",0)]
 
-[h:"<!-- TODO: ResourceTime - Time resource reformatting, don't do it raw -->"]
+	[h:lightResource = json.set("",
+		"Name","LightDuration"+ObjectName,
+		"DisplayName","Light Duration: "+json.get(objectData,"DisplayName"),
+		"Base",json.get(lightDurationData,"Value"),
+		"TimeUnits",json.get(lightDurationData,"Units")
+	)]
+
+	[h:lightResourceData = json.set("","Resources",lightResource,"Restoration",lightRestorationData)]
+
+[h:"<!-- TODO: Resource - Change this to not be hardcoded? -->"]
 	[h:objectData = json.set(objectData,"isPassiveFunction",1)]
 	[h:lightActivationEffect = json.set("",
 		"EffectDisplayName","Light "+json.get(objectData,"DisplayName"),
@@ -219,17 +239,19 @@
 		"Subeffects",json.append("",json.set("",
 			"RangeType","Touch",
 			"isActivateItem","Activate",
-			"UseResource",json.set("",
-				"TimeResource",json.set("",
-					"isTimeActive",1,
-					"Resource",json.set("",
-						"Name",ObjectName,
-						"Class","Item",
-						"Subclass","",
-						"ResourceSource","Item"
-					)
+			"UseResource",json.append("",json.set("",
+				"Type","Time",
+				"ResourceUsed",1,
+				"Increment",1,
+				"Powering","this",
+				"Activate",1,
+				"Identifier",json.set("",
+					"Name",ObjectName,
+					"Class","Item",
+					"Subclass","",
+					"ResourceSource","Item"
 				)
-			)
+			))
 		))
 	)]
 	[h:lightDeactivationEffect = json.set("",
@@ -241,17 +263,19 @@
 		"Subeffects",json.append("",json.set("",
 			"RangeType","Touch",
 			"isActivateItem","Deactivate",
-			"UseResource",json.set("",
-				"TimeResource",json.set("",
-					"isTimeActive",0,
-					"Resource",json.set("",
-						"Name",ObjectName,
-						"Class","Item",
-						"Subclass","",
-						"ResourceSource","Item"
-					)
+			"UseResource",json.append("",json.set("",
+				"Type","Time",
+				"ResourceUsed",0,
+				"Increment",0,
+				"Powering","this",
+				"Activate",0,
+				"Identifier",json.set("",
+					"Name",ObjectName,
+					"Class","Item",
+					"Subclass","",
+					"ResourceSource","Item"
 				)
-			)
+			))
 		))
 	)]
 
@@ -259,6 +283,7 @@
 };{
 	[h:lightActivationEffect = ""]
 	[h:lightDeactivationEffect = ""]
+	[h:lightRestorationData = "{}"]
 }]
 
 [h,if(objectType=="Tool"),CODE:{
@@ -414,6 +439,7 @@
 			"Increment",1,
 			"Activate",1,
 			"Powering","this",
+			"Type","Time",
 			"Identifier",activationResourceData
 		)]
 		[h:DeactivationUseResource = json.set("",
@@ -421,6 +447,7 @@
 			"Increment",0,
 			"Activate",0,
 			"Powering","this",
+			"Type","Time",
 			"Identifier",activationResourceData
 		)]
 
@@ -491,9 +518,15 @@
 		[h:objectData = json.set(objectData,"FeatureUpdates",json.get(objectResourceData,"FeatureUpdates"))]
 		[h:objectResourceData = json.remove(objectResourceData,"FeatureUpdates")]
 	};{}]
+
+[h:"<!-- MAYDO: Bugfix: This will cause errors if a FeatureUpdate is performed on a resource that also has a separate light resource (the light resource will be overwritten). I don't think anyone will ever encounter this. -->"]
+	[h,if(!json.isEmpty(lightResourceData)): objectResourceData = ct.a5e.MergeResourceData(objectResourceData,lightResourceData)]
+
 	[h:objectData = json.set(objectData,"ResourceData",objectResourceData)]
 	[h:objectData = ct.a5e.PruneResourceKeys(objectData)]
-};{}]
+};{
+	[h,if(!json.isEmpty(lightResourceData)): objectData = json.set(objectData,"ResourceData",lightResourceData)]
+}]
 [h:objectData = json.remove(objectData,"isResources")]
 
 [h:"<!-- TODO: Item: Add Depleted Effects here -->"]

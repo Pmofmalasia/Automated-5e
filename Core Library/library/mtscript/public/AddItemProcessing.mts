@@ -22,10 +22,39 @@
 [h:ChosenItem = json.get(ChosenItemData,"Item")]
 [h:abilityTable = json.get(ChosenItemData,"Table")]
 
-[h:"<!-- TODO: Resource - Add fancy output here so rolled initial resource values can be displayed -->"]
-
 [h,MACRO("AddItemToken@Lib:pm.a5e.Core"): json.set(AddItemData,"Item",ChosenItem)]
 
-[h:broadcast(json.get(AddItemData,"NumberAdded")+" "+json.get(ChosenItem,"DisplayName")+" added to the inventory of "+getName(ParentToken))]
-
 [h:closeDialog("AddItem")]
+
+[h:"<!-- TODO: OutputTargets - May need adjusting of output targets options -->"]
+[h:outputTargets = if(getProperty("a5e.stat.WhichTeam",ParentToken) == 1,"not-gm","none")]
+
+[h:AddItemDescription = json.get(AddItemData,"NumberAdded")+" "+json.get(ChosenItem,"DisplayName")+" added to the inventory of "+getName(ParentToken)]
+
+[h:pm.a5e.BaseEffectData = json.set("",
+	"Class","Item",
+	"DisplayName","New Item",
+	"Type","Equipment",
+	"ID",pm.a5e.GenerateEffectID(),
+	"ParentToken",ParentToken
+)]
+
+[h:BorderData = json.set("",
+	"Name","NewItem",
+	"DisplayName","New Item",
+	"FalseName","",
+	"DisplayClass","Item",
+	"ColorSubtype",""
+)]
+[h:AllOutputComponents = json.set("",
+	"ParentToken",ParentToken,
+	"needsSplitGMOutput",(getProperty("a5e.stat.Allegiance") == "Enemy"),
+	"BorderData",BorderData,
+	"Table",abilityTable,
+	"ShowFullRulesType",json.append("","Equipment","Item"),
+	"OutputTargets",outputTargets,
+	"Description",AddItemDescription,
+	"AbridgedDescription",AddItemDescription
+)]
+
+[h,MACRO("GatherOutputComponents@Lib:pm.a5e.Core"): AllOutputComponents]

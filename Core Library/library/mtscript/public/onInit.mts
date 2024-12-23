@@ -32,6 +32,7 @@
 [h:defineFunction("ct.a5e.UseTimeProcessing","ct.a5e.UseTimeProcessing@Lib:pm.a5e.Core")]
 [h:defineFunction("ct.a5e.PruneResourceKeys","ct.a5e.PruneResourceKeys@Lib:pm.a5e.Core")]
 [h:defineFunction("ct.a5e.UseResourceProcessing","ct.a5e.UseResourceProcessing@Lib:pm.a5e.Core")]
+[h:defineFunction("ct.a5e.MergeResourceData","ct.a5e.MergeResourceData@Lib:pm.a5e.Core")]
 [h:defineFunction("ct.a5e.UseResourceIndividualProcessing","ct.a5e.UseResourceIndividualProcessing@Lib:pm.a5e.Core")]
 [h:defineFunction("ct.a5e.SummonsInputProcessing","ct.a5e.SummonsInputProcessing@Lib:pm.a5e.Core")]
 [h:defineFunction("ct.a5e.TransformInputProcessing","ct.a5e.TransformInputProcessing@Lib:pm.a5e.Core")]

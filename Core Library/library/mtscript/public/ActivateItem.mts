@@ -20,6 +20,5 @@
 [h:SelectedEffectData = pm.a5e.SelectEffect(ParentToken,ItemData,"Activation")]
 [h:selectedEffect = json.get(SelectedEffectData,"Effect")]
 [h,MACRO("ExecuteEffectBorder@Lib:pm.a5e.Core"): json.set(ItemData,"Effect",selectedEffect,"IsTooltip",0,"ParentToken",ParentToken)]
-[h:broadcast("out")]
 
 [h:return(0,ActivateItem)]

@@ -80,8 +80,6 @@
 	}
 ]
 
-[h:"<!-- TODO: ResourceTimeTest - Need to test applying this to Time resources -->"]
-
 [h:CalculateResourceDataOptions = "{}"]
 [h,if(ResourceKey != ""): json.set(CalculateResourceDataOptions,"resource",ResourceKey)]
 [h:allResourceData = js.a5e.CalculateResourceData(FeatureToRestore,ParentToken,CalculateResourceDataOptions)]
@@ -104,13 +102,17 @@
 				CurrentResource = json.path.set(CurrentResource,"\$['"+tempResource+"']['Duration']",json.path.read(tempResourceData,"\$.MaxResource.Duration"));
 				CurrentResource = json.set(CurrentResource,tempResource,json.get(json.get(allResourceData,tempResource),"MaxResource"))
 			]
+			[h,if(json.get(tempResourceData,"Type") == "Time"): 
+				CurrentResourceDisplay = pm.a5e.GenerateTimeDisplay(json.get(json.get(CurrentResource,tempResource),"Duration"))+" / "+pm.a5e.GenerateTimeDisplay(json.get(json.get(json.get(allResourceData,tempResource),"MaxResource"),"Duration"));
+				CurrentResourceDisplay = json.get(CurrentResource,tempResource)+"/"+json.get(json.get(allResourceData,tempResource),"MaxResource")
+			]
 
 			[h:abilityTable = json.append(abilityTable,json.set("",
 				"ShowIfCondensed",1,
 				"Header",json.get(json.get(allResourceData,tempResource),"DisplayName"),
 				"FalseHeader","",
 				"FullContents","",
-				"RulesContents",json.get(CurrentResource,tempResource)+"/"+json.get(json.get(allResourceData,tempResource),"MaxResource"),
+				"RulesContents",CurrentResourceDisplay,
 				"RollContents","",
 				"DisplayOrder","['Rules','Roll','Full']"
 			))]
@@ -129,13 +131,17 @@
 				CurrentResource = json.path.set(CurrentResource,"\$['"+tempResource+"']['Duration']",UpToAmount);
 				CurrentResource = json.set(CurrentResource,tempResource,max(json.get(CurrentResource,tempResource),UpToAmount))
 			]
+			[h,if(json.get(tempResourceData,"Type") == "Time"): 
+				CurrentResourceDisplay = pm.a5e.GenerateTimeDisplay(json.get(json.get(CurrentResource,tempResource),"Duration"))+" / "+pm.a5e.GenerateTimeDisplay(json.get(json.get(json.get(allResourceData,tempResource),"MaxResource"),"Duration"));
+				CurrentResourceDisplay = json.get(CurrentResource,tempResource)+"/"+json.get(json.get(allResourceData,tempResource),"MaxResource")
+			]
 
 			[h:abilityTable = json.append(abilityTable,json.set("",
 				"ShowIfCondensed",1,
 				"Header",json.get(json.get(allResourceData,tempResource),"DisplayName"),
 				"FalseHeader","",
 				"FullContents","",
-				"RulesContents",json.get(CurrentResource,tempResource)+"/"+json.get(json.get(allResourceData,tempResource),"MaxResource"),
+				"RulesContents",CurrentResourceDisplay,
 				"RollContents","",
 				"DisplayOrder","['Rules','Roll','Full']"
 			))]
@@ -151,13 +157,17 @@
 				CurrentResource = json.path.set(CurrentResource,"\$['"+tempResource+"']['Duration']",json.path.read(CurrentResource,"\$.['"+tempResource+"'].Duration") + RestorationAmount);
 				CurrentResource = json.set(CurrentResource,tempResource,min(json.get(CurrentResource,tempResource) + RestorationAmount,json.get(json.get(allResourceData,tempResource),"MaxResource")))
 			]
+			[h,if(json.get(tempResourceData,"Type") == "Time"): 
+				CurrentResourceDisplay = pm.a5e.GenerateTimeDisplay(json.get(json.get(CurrentResource,tempResource),"Duration"))+" / "+pm.a5e.GenerateTimeDisplay(json.get(json.get(json.get(allResourceData,tempResource),"MaxResource"),"Duration"));
+				CurrentResourceDisplay = json.get(CurrentResource,tempResource)+"/"+json.get(json.get(allResourceData,tempResource),"MaxResource")
+			]
 
 			[h:abilityTable = json.append(abilityTable,json.set("",
 				"ShowIfCondensed",1,
 				"Header",json.get(json.get(allResourceData,tempResource),"DisplayName"),
 				"FalseHeader","",
 				"FullContents","",
-				"RulesContents",json.get(CurrentResource,tempResource)+"/"+json.get(json.get(allResourceData,tempResource),"MaxResource"),
+				"RulesContents",CurrentResourceDisplay,
 				"RollContents","",
 				"DisplayOrder","['Rules','Roll','Full']"
 			))]

@@ -133,6 +133,8 @@
 	}]
 };{
 	[h:"<!-- TODO: Resource - Allow forced spell slot usage to use resource spell slots, if they match -->"]
+	[h:"<!-- TODO: FreeSpell - See below -->"]
+	[h:"<!-- TODO: Resource - Need functionality for features that give X free castings of a spell, but also allow using spell slots. Currently, issue is that there is no way to link the spell being cast to which resource it is associated with (by name of resource). Hypothetically the spell name could be used for static options (e.g. Misty Step in Fey Touched) but would not work for chosen options (1st level spell in Fey Touched). -->"]
 	[h,if(json.type(ForcedLevel)=="UNKNOWN"),CODE:{
 		[h:LevelOptions = if(ForcedLevel==1,"1st",if(ForcedLevel==2,"2nd",if(ForcedLevel==3,"3rd",ForcedLevel+"th")))+" Level"]
 		[h:LevelOptionData = json.append("",json.set("","Name",ForcedLevel,"ResourceType","Spell Slots"))]

@@ -112,7 +112,7 @@ function useResource(resourceList,unifiedFeatures,ParentTokenID){
 			break;
 		}
 	}
-MapTool.chat.broadcast(JSON.stringify(resourceOptions));
+
 	return JSON.stringify(useResourceOptions(resourceOptions));
 }
 
@@ -199,14 +199,15 @@ function useResourceOptions(resourceOptions){
 
 				let timeResourceParameters = {
 					Minimum:resourceUsed,
-					Increment:Increment
+					Increment:Increment,
+					ExpendedThisUse:0
 				};
 
 				if(resource.Powering === undefined){
-					timeResourceParameters.Powering = "this";
+					timeResourceParameters.Identifier = "this";
 				}
 				else{
-					timeResourceParameters.Powering = resource.Powering;
+					timeResourceParameters.Identifier = resource.Powering;
 				}
 
 				primaryData.Parameters = timeResourceParameters;
@@ -277,7 +278,6 @@ function expendResource(resources,ParentTokenID){
 	if(typeof resources === "string"){
 		resources = JSON.parse(resources);
 	}
-
 	let chatTable = [];
 	let resourceUsed;
 	let hitDiceUsed = [];
@@ -363,6 +363,7 @@ function expendResource(resources,ParentTokenID){
 			let newResourceAmount = Math.max(feature.Resource[resourceName] - 1,0);
 			feature.Resource[resourceName] = newResourceAmount;
 			setFeatureProperty(feature,ParentToken,["Resource"]);
+			let resourceData = calculateResourceData(feature,ParentToken,{resource:resourceName});
 
 			let spentLevel = resource.SlotLevel;
 
@@ -394,27 +395,25 @@ function expendResource(resources,ParentTokenID){
 				currentlyPowering = [];
 			}
 
+			//Note: This is for turning the resource itself on/off. Activation/deactivation of the associated feature is handled separately, as not every activation requires a resource. Outputs are therefore also handled separately.
 			if(isActivating == 1){
 				feature.Resource[resourceName].isActive = 1;
-				let poweredFeatureData = {
-					Identifier:resource.Powering,
-					Minimum:resource.Minimum,
-					Increment:resource.Increment
-				}
-				feature.Resource[resourceName].Powering = currentlyPowering.push(poweredFeatureData);
+
+				let poweredFeatureData = resource.Parameters;
+				currentlyPowering.push(poweredFeatureData);
+				feature.Resource[resourceName].Powering = currentlyPowering;
 
 				activationDisplay = "Toggled On";
 			}
 			else{
-				deactivationData = deactivateFeatureResource(feature,resourceName);
+				deactivationData = deactivateFeatureResource(feature,resourceName,ParentToken);
 				feature = deactivationData.feature;
-
-				//TODO: ResourceTime - output for expired features somehow - maybe make toggled on/off the header and features activated the body? Or an extra key.; testing
 
 				activationDisplay = "Toggled Off";
 			}
 
 			setFeatureProperty(feature,ParentToken,["Resource"]);
+
 			let resourceData = calculateResourceData(feature,ParentToken,{resource:resourceName});
 
 			resourceUsed = {
@@ -442,7 +441,7 @@ function expendResource(resources,ParentTokenID){
 }
 
 function deactivateFeatureResource(feature,resourceName,ParentToken,specificPoweredFeature){
-	let currentResource = feature.Resources[resourceName];
+	let currentResource = feature.Resource[resourceName];
 	let poweredFeatures = currentResource.Powering;
 	let deactivatedFeatures = [];
 
@@ -460,7 +459,6 @@ function deactivateFeatureResource(feature,resourceName,ParentToken,specificPowe
 			extraExpended += specificFeature.Minimum - specificFeature.ExpendedThisUse;
 			specificFeature.ExpendedThisUse = specificFeature.Minimum;
 		}
-
 		if(specificFeature.Increment !== undefined){
 			let remainder = specificFeature.Increment % specificFeature.ExpendedThisUse;
 			extraExpended += remainder;
@@ -488,7 +486,7 @@ function deactivateFeatureResource(feature,resourceName,ParentToken,specificPowe
 		currentResource.isActive = 0;
 	}
 	else{
-		//TODO: Resource - Don't think there's any way for the UseResource function to hook into this, but don't think there's actually anything that needs it anyway.
+		//TODO: Resource - Don't think there's any way for the UseResource function to hook into this (powering a feature other than the one associated with the resource), but don't think there's actually anything that needs it anyway.
 		for(let i = poweredFeatures.length - 1; i >= 0; --i){
 			let thisFeature = poweredFeatures[i];
 			if(thisFeature.Identifier === "this"){
@@ -636,7 +634,7 @@ function findValidFeatureResources(resource,unifiedFeatures,amountNeeded){
 		if((feature.AbilityType !== "Condition" && resourceSourceType === "Condition") || (feature.AbilityType === "Condition" && resourceSourceType !== "Condition")){
 			continue;
 		}
-if(feature.Name === "BootsofSpeed"){MapTool.chat.broadcast("HI");}
+
 		if(typeof resourceIdentifier === "string"){
 			if(feature.Name !== resourceIdentifier){
 				continue;
@@ -648,9 +646,8 @@ if(feature.Name === "BootsofSpeed"){MapTool.chat.broadcast("HI");}
 			}
 			
 			if(resourceIdentifier.ItemID === "this"){
-				//TODO: Resource - After refactoring, need to implement this method
+				//TODO: Resource - After refactoring, need to implement this method (identifying item by using 'this' instead of requiring the ID)
 				//TODO: Refactoring - see above
-				MapTool.chat.broadcast("coming here");
 			}
 			else{
 				if(feature.ItemID !== resourceIdentifier.ItemID){
@@ -668,12 +665,13 @@ if(feature.Name === "BootsofSpeed"){MapTool.chat.broadcast("HI");}
 			}
 		}
 
-		if(feature.Name === "BootsofSpeed"){MapTool.chat.broadcast(JSON.stringify(feature));}
 		let allCurrentResources = feature.Resource;
 		let currentResource = allCurrentResources[resourceKey];
 
-		if(resource.Type === "Time"){
-			currentResource = currentResource.Duration;
+		if(typeof currentResource !== "number"){
+			if(currentResource.Type === "Time"){
+				currentResource = currentResource.Duration;
+			}			
 		}
 
 		if(amountNeeded === undefined){
@@ -687,6 +685,125 @@ if(feature.Name === "BootsofSpeed"){MapTool.chat.broadcast("HI");}
 	return matchingResources;
 }
 
+function buildAdjustResourceInput(featuresWithResource,ParentTokenID){
+	if(typeof featuresWithResource === "string"){
+		featuresWithResource = Array.from(JSON.parse(featuresWithResource));
+	}
+	let ParentToken = MapTool.tokens.getTokenByID(ParentTokenID);
+
+	let input = "";
+	for(let feature of featuresWithResource){
+		let identifier = feature.AbilityType+feature.Name+feature["Class"]+feature.Subclass;
+		let resourceData = calculateResourceData(feature,ParentToken);
+		let currentResource = feature.Resource;
+		let resourceNames = Object.keys(resourceData);
+
+		for(let resource of resourceNames){
+			let thisResourceData = resourceData[resource];
+			let resourceDisplayName = thisResourceData.DisplayName;
+			let thisResourceMax = thisResourceData.MaxResource;
+
+			let thisResourceInput = "";
+			let thisResourceMaxDisplay;
+			let resourceType = thisResourceData.Type;
+			if(resourceType === "Time"){
+				let maxTimeInUnits = roundsToTime(thisResourceMax.Duration);
+				let largestTimeUnit = Object.keys(maxTimeInUnits)[0];
+				
+				let needsS = "";
+				if(maxTimeInUnits[largestTimeUnit] > 1){
+					needsS = "s";
+				}
+				thisResourceMaxDisplay = maxTimeInUnits[largestTimeUnit] + " " + largestTimeUnit + needsS;
+
+				let currentTime = currentResource[resource].Duration;
+				let currentTimeInUnits = roundsToTime(currentTime);
+
+				let timeUnitsList = ["year","day","hour","minute","round"];
+				timeUnitsList.splice(0,timeUnitsList.indexOf(largestTimeUnit));
+				let firstLoop = true;
+				for(let unit of timeUnitsList){
+					if(!firstLoop){
+						thisResourceInput += "<br>";
+					}
+
+					let currentTimeThisUnit = currentTimeInUnits[unit];
+					if(currentTimeThisUnit === undefined){
+						currentTimeThisUnit = 0;
+					}
+
+					//TODO: Resource - Could add a function to make sure total values don't exceed max (since split across multiple, max property won't do); but for now will just prevent going over max on processing side.
+
+					thisResourceInput += "<input type='number' class='small-number' id='"+identifier+resource+unit+"' name='"+identifier+resource+unit+"' min=0 value="+currentTimeThisUnit+"> "+unit+"s";
+					firstLoop = false;
+				}
+			}
+			else{
+				thisResourceInput = "<input type='number' class='small-number' id='"+identifier+resource+"' name='"+identifier+resource+"' min=0 max="+thisResourceMax+" value="+currentResource[resource]+">";
+				thisResourceMaxDisplay = thisResourceMax;
+			}
+
+			let finalResourceDisplay;
+			if(feature.DisplayName === resourceDisplayName){
+				finalResourceDisplay = feature.DisplayName;
+			}
+			else{
+				finalResourceDisplay = feature.DisplayName + " - " + resourceDisplayName;
+			}
+
+			input += "<tr id='row"+identifier+resource+"'><th><label for='"+identifier+resource+"'>"+finalResourceDisplay+":</label></th><td>"+thisResourceInput+" / "+thisResourceMaxDisplay+"</td>";
+		}
+	}
+
+	return input;
+}
+
+function adjustResourcesProcessing(adjustedResourceData,featuresWithResource,ParentTokenID){
+	if(typeof adjustedResourceData === "string"){
+		adjustedResourceData = JSON.parse(adjustedResourceData);
+	}
+	if(typeof featuresWithResource === "string"){
+		featuresWithResource = Array.from(JSON.parse(featuresWithResource));
+	}
+	let ParentToken = MapTool.tokens.getTokenByID(ParentTokenID);
+
+	for(let feature of featuresWithResource){
+		let identifier = feature.AbilityType+feature.Name+feature["Class"]+feature.Subclass;
+		let resourceData = calculateResourceData(feature,ParentToken);
+		let currentResource = feature.Resource;
+		let resourceNames = Object.keys(resourceData);
+
+		for(let resource of resourceNames){
+			let thisResource = currentResource[resource];
+			if(typeof thisResource === "object"){
+				let timeUnitsList = ["year","day","hour","minute","round"];
+				if(thisResource.Type === "Time"){
+					let timeInUnits = {};
+					for(let unit of timeUnitsList){
+						let tempTime = adjustedResourceData[identifier+resource+unit];
+						if(tempTime !== undefined){
+							timeInUnits[unit] = tempTime;
+						}
+					}
+
+					let adjustedTime = timeInRounds(timeInUnits);
+					adjustedTime = Math.min(adjustedTime,resourceData[resource].MaxResource.Duration);
+
+					currentResource[resource].Duration = adjustedTime;
+				}
+			}
+			else{
+				currentResource[resource] = adjustedResourceData[identifier+resource];
+			}
+		}
+
+		feature.Resource = currentResource;
+		setFeatureProperty(feature,ParentToken,["Resource"]);
+	}
+}
+
 MTScript.registerMacro("a5e.UseResource",useResource);
 MTScript.registerMacro("a5e.ExpendResource",expendResource);
 MTScript.registerMacro("a5e.UseResourceTooltip",useResourceTooltip);
+MTScript.registerMacro("a5e.BuildAdjustResourceInput",buildAdjustResourceInput);
+MTScript.registerMacro("a5e.AdjustResourcesProcessing",adjustResourcesProcessing);

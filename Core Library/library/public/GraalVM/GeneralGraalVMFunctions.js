@@ -36,10 +36,10 @@ function createDisplayList(list,word,options){
 		return "";
 	}
 	else if(list.length === 1){
-		return json.get(list,0);
+		return list[0];
 	}
 	else if(list.length === 2){
-		return json.get(list,0)+" "+word+" "+json.get(list,1);
+		return list[0]+" "+word+" "+list[1];
 	}
 	else{
 		let display = "";
@@ -277,22 +277,71 @@ function compareFeatureIdentifier(identifier,feature){
 }
 
 function timeInRounds(value,units){
-	units = units.toLowerCase();
-	if(units === "year"){
-		return value * 5256000;
+	function convertSingleUnit(value,unit){
+		unit = unit.toLowerCase();
+		if(unit === "year"){
+			return value * 5256000;
+		}
+		else if(unit === "day"){
+			return value * 14400;
+		}
+		else if(unit === "hour"){
+			return value * 600;
+		}
+		else if(unit === "minute"){
+			return value * 10;
+		}
+		else{
+			return value;
+		}		
 	}
-	else if(units === "day"){
-		return value * 14400;
-	}
-	else if(units === "hour"){
-		return value * 600;
-	}
-	else if(units === "minute"){
-		return value * 10;
+
+	let finalTime = 0;
+	if(arguments.length === 1){
+		let allUnits = Object.keys(value);
+		for(let unit of allUnits){
+			let thisUnitInRounds = convertSingleUnit(value[unit],unit);
+			finalTime += thisUnitInRounds;
+		}
 	}
 	else{
-		return value;
+		finalTime = convertSingleUnit(value,units);
 	}
+
+	return finalTime;
+}
+
+function roundsToTime(value){
+	let time = {};
+	if(value >= 5256000){
+		let years = Math.floor(value / 5256000);
+		value = value % 5256000;
+		time.year = years;
+	}
+	
+	if(value >= 14400){
+		let days = Math.floor(value / 14400);
+		value = value % 14400;
+		time.day = days;
+	}
+	
+	if(value >= 600){
+		let hours = Math.floor(value / 600);
+		value = value % 600;
+		time.hour = hours;
+	}
+	
+	if(value >= 10){
+		let minutes = Math.floor(value / 10);
+		value = value % 10;
+		time.minute = minutes;
+	}
+
+	if(value > 0){
+		time.round = value;
+	}
+
+	return time;
 }
 
 function removeSpecialCharacters(input){
@@ -300,3 +349,4 @@ function removeSpecialCharacters(input){
 }
 
 MTScript.registerMacro("a5e.RemoveSpecial",removeSpecialCharacters);
+MTScript.registerMacro("a5e.RoundsToTime",roundsToTime);

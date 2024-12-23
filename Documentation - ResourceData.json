@@ -10,6 +10,7 @@ Feature - ResourceData Key:
 			"Amount":"NUMBER: For Fixed or UpTo",
 			"Target":"NUMBER: For Chance, number that must be rolled to restore",
 			"Multiplier":"NUMBER: For Attribute or Proficiency",
+			"Identifier":"STRING | OBJECT: Identifier for object used to restore resource",
 			"RESTORATION_INSTANCE_OPTIONS (not a key)":["ShortRest","LongRest","Dawn","Dusk","StartTurn","EndTurn","Initiative","Item"]
 		},{
 			"NOTE:":"Can just be an object instead of an array of objects if only one type of restoration is needed for that instance (most cases)"
@@ -19,7 +20,7 @@ Feature - ResourceData Key:
 		"RESOURCE_NAME":{
 			"Name":"STRING: ResourceName (same as parent key)",
 			"DisplayName":"STRING: self explanatory",
-			"Base":"NUMBER: Base amount restored - OPTIONAL, not set if relies entirely on calculations",
+			"Base":"NUMBER: Base amount - OPTIONAL, not set if relies entirely on calculations",
 			"Minimum":"NUMBER: Optional minimum amount of resource you can have (for calculated ones)",
 			"Attribute":{
 				"Attribute":"STRING or OBJECT: Attribute modifier used to calculate, PrimeStat to use chosen primary stat for feature; OBJECT if there are multiple options for attribute to be selected (NOTE: This structure doesn't exist - it's for calculating PrimeStat. May be good to actually have for resources though).",
@@ -103,7 +104,7 @@ Subeffect - UseResource Key:
 	"SpellLevelMax":"NUMBER | Empty: Maximum spell level allowed to spend. Empty if no limit. Unused if not a SpellSlot resource.",
 	"Increment":"NUMBER: Increment resource can be spent in, if not just a flat number",
 	"Activate":"NUMBER/BOOL: Activates (1) or deactivates (0) chosen resource - for time resources",
-	"Powering":"OBJECT (PROPOSED): Identifiers for a separate feature that is activated/deactivated when active. 'this' could then refer to just the feature/item associated with the resource.",
+	"Powering":"OBJECT | STRING: Object = Identifiers for a separate feature that is activated/deactivated when active. | String = 'this' is the only option - designates feature/item associated with the resource.",
 	"Identifier":{
 		"NOTE":"For feature/item/etc. resources only.",
 		"Resource":"STRING: Name of resource",
@@ -116,6 +117,7 @@ Subeffect - UseResource Key:
 
 Code - calculateResourceData Output:
 {
+	"NOTE - NOT A KEY":"Output may be just this object (for a single resource calculated) or an object with keys of resource names containing this object for each resource",
 	"DisplayName":"STRING: Self explanatory.",
 	"MaxResource":"NUMBER | OBJECT: Most resources are numbers - amount of max resource. Time resources are objects (and potentially others in the future).",
 	"MaxResource (Object)":{

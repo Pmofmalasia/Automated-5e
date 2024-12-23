@@ -36,7 +36,6 @@ let newMacros = [];
 		let OldFormPropNames = OldForm.RawPropertyNames;
 		inventory = inventory.concat(OldFormProps["a5e.stat.Inventory"]);
 		for(let prop of currentPropTypeProps){
-			MapTool.chat.broadcast(prop);
 			let oldHasProp = OldFormPropNames.includes(prop);
 			let newPropValue = ParentToken.getProperty(prop);
 			let newHasProp = (newPropValue !== "null" && newPropValue !== null);

@@ -14,80 +14,29 @@ function advanceTimeTokens(tokens,timeAdvanced){
 
 	function advanceTimeResource(feature,token){
 		let expiredFeatures = [];
-		if(feature.Resources !== undefined){
-			for(let resource of Object.keys(feature.Resources)){
-				let thisResourceData = feature.Resources[resource];
+		if(feature.Resource !== undefined){
+			for(let resource of Object.keys(feature.Resource)){
+				let thisResourceData = feature.Resource[resource];
 				if(thisResourceData.Type === "Time" && thisResourceData.isActive == 1){
 					//Note: usedByNumber allows an item/feature to be used by multiple sources at a time, draining additional time for each feature used
 					let usedByNumber = thisResourceData.Powering.length;
 					let totalTimeAdvanced = timeAdvanced * usedByNumber;
-					feature.Resources[resource].Duration = advanceTime(thisResourceData.Duration,totalTimeAdvanced);
+					feature.Resource[resource].Duration = advanceTime(thisResourceData.Duration,totalTimeAdvanced);
+
 					for(let i = 0; i < usedByNumber; i++){
-						feature.Resources[resource][i].ExpendedThisUse += timeAdvanced;
+						feature.Resource[resource].Powering[i].ExpendedThisUse += timeAdvanced;
 					}
 
-					if(feature.Resources[resource].Duration === 0){
-						let deactivationData = deactivateFeatureResource(feature,token);
+					if(feature.Resource[resource].Duration === 0){
+						//TODO: Bugfix - See below
+						//TODO: Resource - this will result in errors if any feature other than feature associated with the resource is deactivated, as deactivateFeatureResource updates the property and then items/features/conditions are updated again after exiting this function, but only the currently running feature is updated. Use expiredFeatures to rectify this somehow.
+						let deactivationData = deactivateFeatureResource(feature,resource,token);
 						feature = deactivationData.feature;
 						expiredFeatures = expiredFeatures.concat(deactivationData.ended);
 					}
 				}
 			}
 		}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-		
-
-
-
-
-//TODO: MaxResource - output for expired features somehow; testing - need way for items that only have an activation/deactivation to use a charge (including time charges for testing)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 		return {
 			feature:feature,
@@ -105,9 +54,10 @@ function advanceTimeTokens(tokens,timeAdvanced){
 
 		let deactivatedFeatures = [];
 		let features = JSON.parse(token.getProperty("a5e.stat.AllFeatures"));
-		if(features === "null"){
+		if(features === "null" || features === null){
 			features = [];
 		}
+
 		for(let i = 0; i < features.length; i++){
 			if(features[i].IsActive > 0){
 				let thisFeatureData = advanceFeatureDuration(features[i]);
@@ -142,9 +92,10 @@ function advanceTimeTokens(tokens,timeAdvanced){
 
 		let expiredConditions = [];
 		let conditions = JSON.parse(token.getProperty("a5e.stat.ConditionGroups"));
-		if(conditions === "null"){
+		if(conditions === "null" || conditions === null){
 			conditions = [];
 		}
+
 		for(let i = 0; i < conditions.length; i++){
 			let thisConditionData = advanceFeatureDuration(conditions[i]);
 			conditions[i] = thisConditionData.feature;
@@ -152,6 +103,8 @@ function advanceTimeTokens(tokens,timeAdvanced){
 				expiredConditions.push(conditions[i].GroupID);
 			}
 		}
+
+		token.setProperty("a5e.stat.ConditionGroups",JSON.stringify(conditions));
 
 		if(expiredConditions.length > 0){
 			MTScript.setVariable("js.tempExpiredConditions",JSON.stringify(expiredConditions));
@@ -163,9 +116,10 @@ function advanceTimeTokens(tokens,timeAdvanced){
 		let expiredItems = [];
 		let expiredItemConditions = [];
 		let items = JSON.parse(token.getProperty("a5e.stat.Inventory"));
-		if(items === "null"){
+		if(items === "null" || items === null){
 			items = [];
 		}
+
 		for(let i = items.length - 1; i >= 0; --i){
 			if(items[i].IsActive){
 				let thisItemData = advanceFeatureDuration(items[i]);
@@ -197,13 +151,14 @@ function advanceTimeTokens(tokens,timeAdvanced){
 					let thisConditionData = advanceFeatureDuration(thisItemConditions[j]);
 					thisItemConditions[j] = thisConditionData.feature;
 					if(thisConditionData.expired){
-						let endedItemConditionsData = JSON.parse(MTScript.evalMacro(`[h,MACRO("EndCondition@Lib:pm.a5e.Core"): json.set("","GroupID","${thisItemConditions[j].GroupID}","Target",json.set("","ItemID",${items[i].ItemID},"HeldBy","${token.getId()}")][r:macro.return]`));
+						let endedItemConditionsData = JSON.parse(MTScript.evalMacro(`[h,MACRO("EndCondition@Lib:pm.a5e.Core"): json.set("","GroupID","${thisItemConditions[j].GroupID}","Target",json.set("","ItemID",${items[i].ItemID},"HeldBy","${token.getId()}"))][r:macro.return]`));
 						expiredItemConditions = expiredItemConditions.concat(endedItemConditionsData.Removed);
 					}
 				}
 				items[i].ItemConditions = thisItemConditions;
 			}
 		}
+		token.setProperty("a5e.stat.Inventory",JSON.stringify(items));
 
 		if(deactivatedItems.length > 0){
 			let itemsDisplayList = [];
@@ -308,9 +263,7 @@ function advanceTime(currentTime,timeAdvanced){
 		currentTime = timeInRounds;
 	}
 
-	currentTime = Math.max(0,currentTime - timeAdvanced);
-
-	return currentTime;
+	return Math.max(0,currentTime - timeAdvanced);
 }
 
 MTScript.registerMacro("a5e.AdvanceTimeTokens",advanceTimeTokensMTScript);

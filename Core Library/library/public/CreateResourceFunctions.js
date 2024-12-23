@@ -7,6 +7,7 @@ function createResourceRows(FeatureData){
 	}
 
 	if(isResourceChoice !== ""){
+		//TODO: FreeSpell - See below
 		//TODO: Resource - Still need a way to make display name = chosen spell name
 
 		let resourceRowData = [];

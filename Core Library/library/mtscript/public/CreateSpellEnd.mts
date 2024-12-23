@@ -28,5 +28,5 @@
 
 [h:setLibProperty("sb.Spells",json.sort(json.append(getLibProperty("sb.Spells","Lib:"+spellSourcebook),thisSpellData),"a","DisplayName"),"Lib:"+spellSourcebook)]
 
-[h:broadcast("Spell "+json.get(thisSpellData,"DisplayName")+" created.")]
+[h:broadcast("Spell "+json.get(thisSpellData,"DisplayName")+" from sourcebook "+json.get(getLibProperty("sb.SourcebookData","Lib:"+spellSourcebook),"DisplayName")+" created.")]
 [h,MACRO("Gather Sourcebook Information@Lib:pm.a5e.Core"): ""]

@@ -69,11 +69,10 @@
 [h,if(thisFormSettings == ""),CODE:{
 	[h:thisFormAllowedFeatureSettings = "[]"]
 	[h:thisFormProhibitedFeatureSettings = "[]"]
-}
-	[h:thisFormFeatureSettings = json.get(thisFormSettings,"Features")]
-	[h:thisFormAllowedFeatureSettings = json.get(thisFormFeatureSettings,"Allowed")]
-	[h:thisFormProhibitedFeatureSettings = json.get(thisFormFeatureSettings,"Prohibited")]
-]
+};{
+	[h:thisFormAllowedFeatureSettings = json.get(thisFormSettings,"Allowed")]
+	[h:thisFormProhibitedFeatureSettings = json.get(thisFormSettings,"Prohibited")]
+}]
 [h:allFormSettings = json.get(allTransformationSettings,"allForms")]
 [h:allFormAllowedFeatureSettings = json.get(allFormSettings,"Allowed")]
 [h:allFormProhibitedFeatureSettings = json.get(allFormSettings,"Prohibited")]
@@ -87,7 +86,7 @@
 	[h:featureIdentifier = json.set("","Name",json.get(feature,"Name"),"Class",json.get(feature,"Class"),"Subclass",json.get(feature,"Subclass"))]
 	[h,if(!json.contains(thisFormAllowedFeatureSettings,featureIdentifier) && !json.contains(thisFormProhibitedFeatureSettings,featureIdentifier) && !json.contains(allFormAllowedFeatureSettings,featureIdentifier) && !json.contains(allFormProhibitedFeatureSettings,featureIdentifier)),CODE:{
 		[h:featureChoiceInput = listAppend(featureChoiceInput," reasonableFeatureChoice"+featureCounter+" | "+featureChoiceOptions+" | "+json.get(feature,"DisplayName")+" | LIST | DELIMITER=JSON "," ## ")]
-		[h:featuresWithoutChoice = json.append(featuresWithoutChoice,featureIdentifier)]
+		[h:featuresWithoutChoice = json.append(featuresWithoutChoice,feature)]
 
 		[h:featureCounter = featureCounter + 1]
 	};{
@@ -102,7 +101,7 @@
 
 [h:abort(input(featureChoiceInput))]
 
-[h,foreacH(feature,featuresWithoutChoice),CODE:{
+[h,foreach(feature,featuresWithoutChoice),CODE:{
 	[h:thisFeatureChoice = eval("reasonableFeatureChoice"+roll.count)]
 	[h:featureIdentifier = json.set("","Name",json.get(feature,"Name"),"Class",json.get(feature,"Class"),"Subclass",json.get(feature,"Subclass"))]
 	[h,switch(thisFeatureChoice),CODE:
@@ -128,4 +127,4 @@
 [h:allTransformationSettings = json.set(allTransformationSettings,json.get(TransformFilterFeaturesData,"Form"),thisFormFinalData,"allForms",allFormsFinalData)]
 
 [h:data.setData("addon:","pm.a5e.core","a5e.settings.ReasonableTransformations",allTransformationSettings)]
-[h:return(0,safegainedfeatures)]
+[h:return(0,safeGainedFeatures)]

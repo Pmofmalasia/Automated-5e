@@ -135,12 +135,12 @@
 		[h:"bleh"]
 	};
 	case "Reasonable":{
-		[h:"make input to choose, then store selections in a property on the addon (up.TransformationSettings?). then check for presence in that settings prop"]
+		[h:"<!-- TODO: Transform - do transformfilterfeatures but for inventory -->"]
 	}
 ]
 
 [h,if(json.get(TransformationData,"isItemUsable") != "" && json.get(TransformationData,"ItemDestination") == "Drop"),CODE:{
-	[h:"drop da itemz"]
+		[h:"<!-- TODO: Transform - drop items which are supposed to be dropped -->"]
 }]
 
 [h:settingsProperties = json.append("","TargetingStyle","FullAbilityRules","FullSpellRules","DisplaySize","BorderColors","TitleColors")]

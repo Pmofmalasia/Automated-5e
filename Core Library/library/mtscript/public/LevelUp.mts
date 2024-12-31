@@ -108,7 +108,7 @@
 [h:"<!-- Looks up the current amount of max resources for each ability. After all abilities are added and updated, this will be checked again. If there is increase in the in the amount of max resource, the current amount of resource is increased for that amount. This is done instead of just giving the players a long rest in case anyone wants to run a game where leveling can occur without regaining all resources. -->"]
 [h:noFeaturesTest = json.isEmpty(getProperty("a5e.stat.AllFeatures"))]
 [h,if(noFeaturesTest): lu.OldResources = ""; lu.OldResources = json.path.read(getProperty("a5e.stat.AllFeatures"),"\$[*][?(@.ResourceData != null)]","DEFAULT_PATH_LEAF_TO_NULL")]
-[h:lu.OldResourcesMax = ""]
+[h:lu.OldResourcesMax = "{}"]
 [h,foreach(ability,lu.OldResources),CODE:{
 	[h:thisFeatureResource = js.a5e.GetMaximumResources(ability,ParentToken)]
 	[h:lu.OldResourcesMax = json.set(lu.OldResourcesMax,json.get(ability,"Name")+json.get(ability,"Class")+json.get(ability,"Subclass"),thisFeatureResource)]

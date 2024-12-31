@@ -130,6 +130,11 @@
 	case "Feature": ConditionIdentificationInfo = json.set("","Class",json.get(FeatureData,"Class"),"Subclass",json.get(FeatureData,"Subclass"));
 	default: ConditionIdentificationInfo = json.set("","Class","","Subclass","")
 ]
+[h:ConditionIdentificationInfo = json.set(ConditionIdentificationInfo,
+	"Name",json.get(FeatureData,"Name"),
+	"DisplayName",json.get(FeatureData,"DisplayName")
+)]
+[h:TransformData = json.set(TransformData,"Condition",ConditionIdentificationInfo)]
 
 [h,switch(json.get(inputData,"TransformAttributes")),CODE:
 	case "All":{

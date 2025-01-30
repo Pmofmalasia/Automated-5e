@@ -6,6 +6,9 @@
 [h:DropLocation = json.get(DropItemData,"Location")]
 [h:isLeaveToken = json.get(DropItemData,"LeaveToken")]
 
+[h:"<!-- Used for DropMultipleItems to unify the broadcast -->"]
+[h:isSuppressOutput = number(json.get(DropItemData,"SuppressOutput"))]
+
 [h:NewInventory = getProperty("a5e.stat.Inventory")]
 [h:ItemData = json.path.read(NewInventory,"\$[*][?(@.ItemID == '"+DroppedItem+"')]")]
 [h,if(json.isEmpty(ItemData)):
@@ -74,7 +77,7 @@
 			"GiveTo",ParentToken
 		)]
 		[h:restoreItemLink = macroLinkText("TradeItem@Lib:pm.a5e.Core","gm",RestorationData,ParentToken)]
-		[h:broadcast("<a href='"+restoreItemLink+"'>Return Item to "+getName(ParentToken)+"?</a>","gm")]		
+		[h,if(!isSuppressOutput): broadcast("<a href='"+restoreItemLink+"'>Return Item to "+getName(ParentToken)+"?</a>","gm")]		
 	}]
 }]
 

@@ -109,8 +109,8 @@
 [h:hp.AlreadyDying = if(getProperty("a5e.stat.HP")==0,1,0)]
 [h:setProperty("a5e.stat.HP",min(getProperty("a5e.stat.HP") - RemainingDamage + hp.Healing,getProperty("a5e.stat.MaxHP")))]
 
-[h:ShapechangedForms = getProperty("a5e.stat.PreviousForms")]
 [h:breakFormTest = 1]
+[h:ShapechangedForms = getProperty("a5e.stat.PreviousForms")]
 [h,while(!json.isEmpty(ShapechangedForms) && breakFormTest),CODE:{
 	[h:mostRecentForm = json.get(ShapechangedForms,0)]
 	[h,switch(json.get(mostRecentForm,"FormEndHPType")):
@@ -118,6 +118,7 @@
 		case "TempHP": breakFormTest = getProperty("a5e.stat.TempHP") <= 0;
 		default: breakFormTest = 0
 	]
+
 	[h,if(breakFormTest),CODE:{
 		[h:breakFormRemainingDamage = abs(min(getProperty("a5e.stat.HP"),0))]
 		[h:mostRecentFormID = json.get(mostRecentForm,"AssociatedCondition")]

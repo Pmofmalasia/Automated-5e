@@ -82,13 +82,18 @@ async function createTransformRows(){
 			}
 
 			if(!hasPriorSelection){
-				referenceRow = createTableRow(referenceRow,"rowTransformHP","<th><label for='TransformHP'>Use Transformation's HP:</label></th><td><select id='TransformHP' name='TransformHP'><option value='Regular'>Gain HP and Hit Dice</option><option value='TempHP'>Gain HP as Temp HP</option><option value='None'>Gain No HP</option></select></td>");
+				referenceRow = createTableRow(referenceRow,"rowTransformHP","<th><label for='TransformHP'>Use Transformation's HP:</label></th><td><select id='TransformHP' name='TransformHP'><option value='Regular'>Gain HP and Hit Dice</option><option value='TempHP'>Gain HP as Temp HP</option><option value='TempHPOther'>Gain Other Amount of Temp HP</option><option value='None'>Gain No HP</option></select></td>");
 				document.getElementById("TransformHP").addEventListener("change",function(){
 					let referenceRow = document.getElementById("rowTransformHP");
 					let HPChoice = this.value;
 
-					if(HPChoice === "TempHP"){
-						referenceRow = createTableRow(referenceRow,"rowTransformTempHP","<th><label for='TransformTempHP'>Temporary HP Gained:</label></th><td><select id='TransformTempHP' name='TransformTempHP'></select></td>");
+					if(HPChoice === "TempHPOther"){
+						referenceRow = createTableRow(referenceRow,"rowTransformTempHP","<th><label for='TransformTempHP'>Temporary HP Gained:</label></th><td><input type='number' id='TransformTempHP' name='TransformTempHP' min=1 class='small-number'><span id='TransformTempHPScalingSpan'></span></td>");
+
+						if(checkEffectType()=="Spell"){
+							let TransformTempHPScalingSelect = createAHLSelect("TransformTempHPScaling");
+							document.getElementById("TransformTempHPScalingSpan").innerHTML = "<select id='TransformTempHPScaleHow' name='TransformTempHPScaleHow'><option value='Add'>Plus</option><option value='Multiply'>Times</option></select><input type='number' id='TransformTempHPScaleAmount' name='TransformTempHPScaleAmount' min=0 value=0 class='small-number'>"+TransformTempHPScalingSelect;
+						}
 					}
 					else{
 						let transformTempHPRow = document.getElementById("rowTransformTempHP");

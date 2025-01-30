@@ -1,4 +1,3 @@
-
 [h:GenerateObjectData = macro.args]
 [h:allObjectData = json.get(GenerateObjectData,"Items")]
 [h:NewObjectLocation = json.get(GenerateObjectData,"Location")]

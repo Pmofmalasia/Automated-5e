@@ -58,6 +58,48 @@
 	[h:optionNamesByCRMax = json.set(optionNamesByCRMax,CR,TransformOptionNamesFinal)]
 }]
 
+[h:HPGainType = json.get(TransformData,"HPGain")]
+[h:HPGained = json.get(HPGainType,"HP")]
+[h,switch(HPGained),CODE:
+	case 1:{
+		[h:HPGainType = json.set(HPGainType,"HP",json.set("","Percentage",1))]
+	};
+	case "":{
+
+	};
+	case 0:{
+		[h:HPGainType = json.set(HPGainType,"HP","")]
+	};
+	default:{
+		[h:"<!-- TODO: Transformation: Add options for changing the percentage of HP gained from form, excluding gaining hit dice, etc. -->"]
+	}
+]
+
+[h:TempHPGained = json.get(HPGainType,"TempHP")]
+[h,switch(TempHPGained),CODE:
+	case 1:{
+		[h:HPGainType = json.set(HPGainType,"TempHP",json.set("","Percentage",1))]
+	};
+	case "":{
+
+	};
+	case 0:{
+		[h:HPGainType = json.set(HPGainType,"TempHP","")]
+	};
+	default:{
+		[h:baseTempHP = json.get(TempHPGained,"Value")]
+		[h:tempHPScaling = json.get(TempHPGained,"Scaling")]
+		[h:tempHPScaleAmount = json.get(TempHPGained,"ScalingAmount")]
+		[h,if(tempHPScaling == "Add"): 
+			finalTempHPValue = baseTempHP + (AHLTier * tempHPScaleAmount);
+			finalTempHPValue = baseTempHP * (AHLTier * tempHPScaleAmount)
+		]
+
+		[h:HPGainType = json.set(HPGainType,"TempHP",finalTempHPValue)]
+	}
+]
+[h:TransformData = json.set(TransformData,"HPGain",HPGainType)]
+
 [h:transformInput = ""]
 [h:transformationChoices = "{}"]
 [h:multipleTransformationsTest = 0]

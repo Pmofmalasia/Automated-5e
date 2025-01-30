@@ -20,7 +20,7 @@ function revertTransformation(FormID,ParentTokenID){
 			RevertedForms:""
 		});
 	}
-let newMacros = [];
+	let newMacros = [];
 	let NewFormDisplayName = OldForm.NextFormName;
 	if(thisFormIndex === 0){
 		//Revert form now
@@ -42,13 +42,15 @@ let newMacros = [];
 			if(oldHasProp){
 				let oldPropValue = OldFormProps[prop];
 				if(oldPropValue === undefined){
-					oldPropValue = "";
-				}
-				if(typeof oldPropValue === "string"){
-					ParentToken.setProperty(prop,oldPropValue);
+					MTScript.execMacro(`[h:resetProperty("${prop}","${ParentTokenID}")]`);
 				}
 				else{
-					ParentToken.setProperty(prop,JSON.stringify(oldPropValue));
+					if(typeof oldPropValue === "string" || typeof oldPropValue === "number"){
+						ParentToken.setProperty(prop,oldPropValue);
+					}
+					else{
+						ParentToken.setProperty(prop,JSON.stringify(oldPropValue));
+					}					
 				}
 			}
 			else{

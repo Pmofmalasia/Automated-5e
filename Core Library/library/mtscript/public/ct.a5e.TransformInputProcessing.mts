@@ -9,7 +9,7 @@
 	case "Unique":{
 
 
-		[h:"<!-- TODO: Needs some method of creating another creature and then adding it after the fact (made for wererats, etc.) -->"]
+		[h:"<!-- TODO: Transformation - Needs some method of creating another creature and then adding it after the fact (made for wererats, etc.) -->"]
 
 
 
@@ -112,6 +112,17 @@
 	};
 	case "TempHP":{
 		[h:HPGainData = json.set("","TempHP",0)]
+	};
+	case "TempHPOther":{
+		[h:CustomTempHPAmount = json.set("",
+			"Value",json.get(inputData,"TransformTempHP"),
+			"Scaling",json.get(inputData,"TransformTempHPScaleHow"),
+			"ScalingAmount",json.get(inputData,"TransformTempHPScaleAmount")
+		)]
+		[h:inputData = json.remove(inputData,"TransformTempHP")]
+		[h:inputData = json.remove(inputData,"TransformTempHPScaleHow")]
+		[h:inputData = json.remove(inputData,"TransformTempHPScaleAmount")]
+		[h:HPGainData = json.set("","TempHP",0,"TempHPAmount",CustomTempHPAmount)]
 	};
 	default:{
 		[h:HPGainData = "{}"]

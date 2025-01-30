@@ -76,6 +76,41 @@ function jsonIsEmpty(json){
 	}
 }
 
+function jsonUnique(data,keys){
+	let uniqueEntries = [];
+	for(let entry of data){
+		let finalEntry = entry;
+		if(keys !== undefined){
+			for(let key of keys){
+				finalEntry = finalEntry[key];
+				if(finalEntry === undefined){
+					continue;
+				}
+			}
+		}
+
+		if(finalEntry !== undefined){
+			uniqueEntries.push(entry);
+		}
+	}
+
+	return uniqueEntries;
+}
+
+function jsonUniqueMTScript(data,keys){
+	if(typeof data === "string"){
+		data = JSON.parse(data);
+	}
+
+	if(typeof keys === "string"){
+		keys = JSON.parse(keys);
+	}
+
+	let uniqueEntries = jsonUnique(data,keys);
+
+	return JSON.stringify(uniqueEntries);
+}
+
 function getFeatureScalingLevel(feature){
 	if(feature.OverallScaling === undefined){
 		return feature.Level;
@@ -348,5 +383,6 @@ function removeSpecialCharacters(input){
 	return input.replace(/[^a-zA-Z0-9]/g, '');
 }
 
+MTScript.registerMacro("a5e.json.unique",jsonUniqueMTScript);
 MTScript.registerMacro("a5e.RemoveSpecial",removeSpecialCharacters);
 MTScript.registerMacro("a5e.RoundsToTime",roundsToTime);

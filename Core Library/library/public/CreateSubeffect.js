@@ -2,6 +2,86 @@ function checkEffectType(){
 	return document.getElementById("EffectType").value;
 }
 
+function needsScalingData(){
+	if(checkEffectType() == "Spell"){
+		if(document.getElementById("ExtraDataSpellLevel") != null){
+			if(document.getElementById("ExtraDataSpellLevel").value == "0"){
+				return {
+					isScaling:true,
+					scalingMessage:["Cantrip Tier"]
+				};			
+			}
+			else{
+				return {
+					isScaling:true,
+					scalingMessage:["Spell Level"]
+				};
+			}
+		}
+	}
+
+	let scalingData = {
+		isScaling:false,
+		scalingMessage:[]
+	};
+	let FeatureData = JSON.parse(atob(document.getElementById("FeatureData").value));
+	if(FeatureData.OverallScaling !== "" && FeatureData.OverallScaling !== undefined){
+		scalingData.isScaling = true;
+
+		if(FeatureData.OverallScaling === "Consistent"){
+			scalingData.scalingMessage.push("Feature Level");
+		}
+		else{
+			scalingData.scalingMessage.push("Feature Tier");
+		}
+	}
+
+	if(document.getElementById("isUseResource") !== null){
+		if(document.getElementById("isUseResource").checked){
+			let tierNumber = Number(document.getElementById("UseResourceTierNumber").value);
+			for(let i = 0; i < tierNumber; i++){
+				let optionsNumber = Number(document.getElementById("UseResourceType"+i+"Number").value);
+				for(let j = 0; j < optionsNumber; j++){
+					let thisResourceType = document.getElementById("UseResourceType"+i+j);
+
+					if(thisResourceType === "SpellSlot"){
+						if(document.getElementById("isNoSpellSlotUseLimit"+i+j).checked){
+							scalingData.isScaling = true;
+							scalingData.scalingMessage.push("Spell Level");
+						}
+						else if(document.getElementById("UseSpellSlotMinimum"+i+j).value !== document.getElementById("UseSpellSlotMaximum"+i+j).value){
+							scalingData.isScaling = true;
+							scalingData.scalingMessage.push("Spell Level");
+						}
+					}
+					else if(thisResourceType === "HitDice"){
+						if(document.getElementById("isNoHitDiceUseLimit"+i+j).checked){
+							scalingData.isScaling = true;
+							scalingData.scalingMessage.push("Resource Spent");
+						}
+						else if(document.getElementById("UseHitDiceMinimum"+i+j).value !== document.getElementById("UseHitDiceMaximum"+i+j).value){
+							scalingData.isScaling = true;
+							scalingData.scalingMessage.push("Resource Spent");
+						}	
+					}
+					else if(thisResourceType === "OtherFeature" || thisResourceType === "ThisFeature"){
+						if(document.getElementById("isNoFeatureResourceUseLimit"+i+j).checked){
+							scalingData.isScaling = true;
+							scalingData.scalingMessage.push("Resource Spent");
+						}
+						else if(document.getElementById("UseFeatureResourceMinimum"+i+j).value !== document.getElementById("UseFeatureResourceMaximum"+i+j).value){
+							scalingData.isScaling = true;
+							scalingData.scalingMessage.push("Resource Spent");
+						}			
+					}
+				}
+			}
+		}
+	}
+
+	return scalingData;
+}
+
 function createParentSubeffectRows(){
 	let nextRowIndex = document.getElementById("rowParentSubeffect").rowIndex + 1;
 	let ParentSubeffect = getParentSubeffect();
@@ -184,7 +264,7 @@ async function createMitigationTable(){
 				document.getElementById("SaveDCMethod").value = "SpellSave";
 			}
 			else{
-				referenceRow = createTableRow(referenceRow,"rowSaveDCMethod","<th><label for='SaveDCMethod'>Method of Choosing Save DC:</label></th><select id='SaveDCMethod' name='SaveDCMethod' onchange='createSaveDCMethodRow("+'"'+tableID+'"'+")'><option value='Stat'>Stat-Based</option><option value='SpellAttack'>Spell Attack Bonus</option><option value='SetValue'>Preset Value</option></select></td>");
+				referenceRow = createTableRow(referenceRow,"rowSaveDCMethod","<th><label for='SaveDCMethod'>Method of Choosing Save DC:</label></th><select id='SaveDCMethod' name='SaveDCMethod' onchange='createSaveDCMethodRow("+'"'+tableID+'"'+")'><option value='Stat'>Stat-Based</option><option value='SpellAttack'>Spell Save DC</option><option value='SetValue'>Preset Value</option></select></td>");
 	
 				referenceRow = createTableRow(referenceRow,"rowSaveDC","<th><label for='SaveDCStat'>Stat Used:</label></th><select id='SaveDCStat' name='SaveDCStat'>"+saveOptions+"</select></td>");
 			}
@@ -397,7 +477,51 @@ async function createSaveDCMethodRow(tableID){
 		addTableRow(tableID,nextRowIndex,"rowSaveDC","<th><label for='SaveDC'>Save DC:</label></th><input type='number' id='SaveDC' name='SaveDC' value=0></td>");
 		nextRowIndex++;
 	}
-} 
+}
+
+function createScalingInput(idPrefix,scalingData){
+	if(!scalingData.isScaling){
+		return "";
+	}
+	let scalingTypeSelect = "";
+	let scalingTypes = scalingData.scalingMessage;
+	let multiTypesTest = scalingTypes.length > 1;
+	if(multiTypesTest){
+		scalingTypeSelect = "<select id='"+idPrefix+"Type' name='"+idPrefix+"Type'>";
+
+		for(let tempType of scalingTypes){
+			scalingTypeSelect += "<option value='"+tempType+"'>"+tempType+"</option>";
+		}
+
+		scalingTypeSelect += "</select>";
+	}
+	else{
+		scalingTypeSelect = "<input type='hidden' id='"+idPrefix+"Type' name='"+idPrefix+"Type'>";
+	}
+
+	let firstType = scalingTypes[0];
+	let scalingSelect = "<select id='"+idPrefix+"' name='"+idPrefix+"'>";
+
+	scalingSelect += adjustScalingOptions(firstType) + "</select>";
+
+	let finalInput = "";
+	if(multiTypesTest){
+		finalInput += "based on ";
+	}
+
+	finalInput += scalingTypeSelect+scalingSelect;
+}
+
+function adjustScalingOptions(selection){
+	let scalingSelect;
+	if(selection === "Spell Level" || selection === "Feature Level"){
+		scalingSelect = "<option value='0'>No Increase</option><option value='1'>Every Level</option><option value='2'>Every Other Level</option><option value='3'>Every Three Levels</option>";
+	}
+	else{
+		scalingSelect += "<option value='0'>No Increase</option><option value='1'>Every Interval</option><option value='2'>Every Other Interval</option><option value='3'>Every Three Intervals</option>";
+	}
+	return scalingSelect;
+}
 
 function createAHLSelect(ahlSelectID){
 	let ahlSelectHTML = "";
@@ -417,11 +541,8 @@ function createAHLSelect(ahlSelectID){
 
 async function createDamageTable(){
 	if(document.getElementById("isDamage").checked){
-		let table = document.getElementById("CreateSubeffectTable");
-		let damageRowIndex = document.getElementById("Damage").rowIndex;
-		let addRemoveButtonsRow = table.insertRow(damageRowIndex+1);
-		addRemoveButtonsRow.id = "AdditionButtons";
-		addRemoveButtonsRow.innerHTML = "<th text-align='center' colspan='2'><input type='button' id='addDamageType' name='addDamageType' value='Add Type' onclick='addDamageTypeRows()'>  <input type='button' id='removeDamageType' name='removeDamageType' value='Remove Type' onclick='removeDamageTypeRows()'></th>";
+		referenceElement = document.getElementById("Damage");
+		referenceElement = createTableRow(referenceElement,"AdditionButtons","<th text-align='center' colspan='2'><input type='button' id='addDamageType' name='addDamageType' value='Add Type' onclick='addDamageTypeRows()'>  <input type='button' id='removeDamageType' name='removeDamageType' value='Remove Type' onclick='removeDamageTypeRows()'></th>");
 
 		addDamageTypeRows();
 	}
@@ -432,8 +553,7 @@ async function createDamageTable(){
 }
 
 async function addDamageTypeRows(){
-	let table = document.getElementById("CreateSubeffectTable");
-	let buttonRowIndex = document.getElementById("AdditionButtons").rowIndex;
+	let referenceElement = document.getElementById("AdditionButtons").priorElementSibling;
 	let damageTypeNumber = document.getElementById("differentTypes").value;
 	damageTypeNumber++;
 	document.getElementById("differentTypes").value = damageTypeNumber;
@@ -456,35 +576,34 @@ async function addDamageTypeRows(){
 	}
 
 	let damageRowHTML = generateDamageRowText(damageTypeNumber,damageTypeOptions,UsePriorDamageButton);
-	let damageRow = table.insertRow(buttonRowIndex);
-	damageRow.id = "DamageSet"+damageTypeNumber;
-	damageRow.innerHTML = damageRowHTML;
-	
-	let modBonusRow = table.insertRow(buttonRowIndex+1);
-	modBonusRow.id = "rowModBonus"+damageTypeNumber;
-	modBonusRow.innerHTML = "<th>Add Ability Score Modifier:</th><td><input type='checkbox' id='ModBonus"+damageTypeNumber+"' name='ModBonus"+damageTypeNumber+"' value=1></td>";
-	
-	let isAHLRow = table.insertRow(buttonRowIndex+2);
-	isAHLRow.id = "rowIsAHL"+damageTypeNumber;
-   
-	if(checkEffectType()=="Spell"){
-		if(document.getElementById("ExtraDataSpellLevel").value == "0"){
-			isAHLRow.innerHTML = "<th>Damage Increases AHL:</th><td><select id='isAHL"+damageTypeNumber+"' name='isAHL"+damageTypeNumber+"' onchange='createAHLDamage("+damageTypeNumber+")'><option value='0'>No Increase</option><option value='1'>Every Interval</option><option value='2'>Every Other Interval</option><option value='3'>Every Three Intervals</option></select></td>";
-		}
-		else{
-			isAHLRow.innerHTML = "<th>Damage Increases AHL:</th><td><select id='isAHL"+damageTypeNumber+"' name='isAHL"+damageTypeNumber+"' onchange='createAHLDamage("+damageTypeNumber+")'><option value='0'>No Increase</option><option value='1'>Every Level</option><option value='2'>Every Other Level</option><option value='3'>Every Three Levels</option></select></td>";
-		}
+	referenceElement = createTableRow(referenceElement,"DamageSet"+damageTypeNumber,damageRowHTML);
+
+	referenceElement = createTableRow(referenceElement,"rowModBonus"+damageTypeNumber,"<th>Add Ability Score Modifier:</th><td><input type='checkbox' id='ModBonus"+damageTypeNumber+"' name='ModBonus"+damageTypeNumber+"' value=1></td>");
+
+	let scalingData = needsScalingData();
+	if(scalingData.isScaling){
+		referenceElement = createTableRow(referenceElement,"rowIsAHL"+damageTypeNumber,"<th>Damage Increases AHL:</th><td><span id='damageAHLSpan"+damageTypeNumber+"'></span></td>");
+		document.getElementById("damageAHLSpan"+damageTypeNumber).innerHTML = createScalingInput("isAHL"+damageTypeNumber,scalingData);
+		document.getElementById("isAHL"+damageTypeNumber).addEventListener("change",function(){
+			createAHLDamage(damageTypeNumber);
+		});
 	}
 
 	if(document.getElementById("howMitigate").value == "Save"){
-		let saveMitigationRow = table.insertRow(buttonRowIndex+3);
-		saveMitigationRow.id = "rowSaveMitigation"+damageTypeNumber;
-		saveMitigationRow.innerHTML = "<th>Damage on Successful Save:</th><td><select id='saveMitigation"+damageTypeNumber+"' name='saveMitigation"+damageTypeNumber+"'><option value=2>None</option><option value=1>Half</option><option value=0>Full</option></select></td>";
+		referenceElement = createTableRow(referenceElement,"rowSaveMitigation"+damageTypeNumber,"<th>Damage on Successful Save:</th><td><select id='saveMitigation"+damageTypeNumber+"' name='saveMitigation"+damageTypeNumber+"'><option value=2>None</option><option value=1>Half</option><option value=0>Full</option></select></td>");
 	}
 }
 
 function generateDamageRowText(damageTypeNumber,damageTypeOptions,UsePriorDamageButton){
-	return "<th text-align='center' colspan='2'><input type='number' id='DamageDieNum"+damageTypeNumber+"' name='DamageDieNum"+damageTypeNumber+"' value=1 min=0 style='width:25px'> d <input type='number' id='DamageDieSize"+damageTypeNumber+"' name='DamageDieSize"+damageTypeNumber+"' value=6 style='width:25px'> <b>+</b> <input type='number' id='DamageFlatBonus"+damageTypeNumber+"' name='DamageFlatBonus"+damageTypeNumber+"' value=0 style='width:25px'><select id='DamageType"+damageTypeNumber+"' name='DamageType"+damageTypeNumber+"' onchange='createTypeOptions("+damageTypeNumber+")'>"+damageTypeOptions+"</select> Damage"+UsePriorDamageButton+"</th>";
+	let modSelectOptions;
+	if(damageTypeNumber === 0){
+		modSelectOptions = "<option value='1' selected>Modifier</option><option value='0'>No Modifier</option>";
+	}
+	else{
+		modSelectOptions = "<option value='1'>Modifier</option><option value='0' selected>No Modifier</option>";
+	}
+	
+	return "<th text-align='center' colspan='2'><input type='number' id='DamageDieNum"+damageTypeNumber+"' name='DamageDieNum"+damageTypeNumber+"' value=1 min=0 style='width:25px'> d <input type='number' id='DamageDieSize"+damageTypeNumber+"' name='DamageDieSize"+damageTypeNumber+"' value=6 style='width:25px'> <b>+</b> <input type='number' id='DamageFlatBonus"+damageTypeNumber+"' name='DamageFlatBonus"+damageTypeNumber+"' value=0 style='width:25px'> + <select id='ModBonus"+damageTypeNumber+"' name='ModBonus"+damageTypeNumber+"'>"+modSelectOptions+"</select> <select id='DamageType"+damageTypeNumber+"' name='DamageType"+damageTypeNumber+"' onchange='createTypeOptions("+damageTypeNumber+")'>"+damageTypeOptions+"</select> Damage"+UsePriorDamageButton+"</th>";
 }
 
 async function generateDamageTypeOptions(){
@@ -529,7 +648,7 @@ async function switchToIndependentDamage(damageTypeNumber){
 	document.getElementById("DamageSet"+damageTypeNumber).innerHTML = newInnerHTML;
 }
 
-async function removeDamageTypeRows(){
+function removeDamageTypeRows(){
 	let table = document.getElementById("CreateSubeffectTable");
 	let damageTypeNumber = document.getElementById("differentTypes").value;
 	clearUnusedTable("CreateSubeffectTable","DamageSet"+damageTypeNumber,"AdditionButtons");
@@ -595,19 +714,17 @@ async function createAHLDamage(damageTypeNumber){
 }
 
 async function createConditionTable(){
-	let tableID = document.getElementById("rowCondition").closest("table").id;
-	let table = document.getElementById(tableID);
-	let nextRowIndex = document.getElementById("rowCondition").rowIndex + 1;
+	let referenceElement = document.getElementById("rowCondition");
 	let conditionChoice = document.getElementById("isCondition").value;
 
 	if(conditionChoice == "None"){
-		clearUnusedTable(tableID,"rowCondition","rowSummons");
+		deleteInterveningElements(referenceElement,document.getElementById("rowSummons"));
 	}
 	else{
-		let alreadyAlwaysAddedTest = (table.rows.namedItem("rowConditionsAlwaysAdded") != null);
-		let alreadyOptionsTest = (table.rows.namedItem("rowConditionOptions") != null);
-		let alreadyEndInfoTest = (table.rows.namedItem("rowConditionSameDuration") != null || table.rows.namedItem("rowConditionDuration") != null);
-		let alreadySaveTest = (table.rows.namedItem("rowConditionSave") != null);
+		let alreadyAlwaysAddedTest = (document.getElementById("rowConditionsAlwaysAdded") != null);
+		let alreadyOptionsTest = (document.getElementById("rowConditionOptions") != null);
+		let alreadyEndInfoTest = (document.getElementById("rowConditionSameDuration") != null || document.getElementById("rowConditionDuration") != null);
+		let alreadySaveTest = (document.getElementById("rowConditionSave") != null);
 
 		let endRowId = "";
 
@@ -620,26 +737,23 @@ async function createConditionTable(){
 
 		if(conditionChoice == "All" || conditionChoice == "Mixture"){
 			if(alreadyAlwaysAddedTest){
-				nextRowIndex = (document.getElementById("rowConditionsAlwaysAdded").rowIndex + 1);
+				referenceElement = document.getElementById("rowConditionsAlwaysAdded");
 			}
 			else{
 				let conditionOptions = await createConditionMultipleBoxes("AlwaysAdded","createConditionSaveTable()");
 				conditionOptions = conditionOptions + "<label><input type='checkbox' id='AlwaysAddedEffectSpecific' name='AlwaysAddedEffectSpecific' value=1 onchange='createUniqueConditionRow(1)'><span>Unique Condition</span></label>";
 
-				let rowConditionsAlwaysAdded = table.insertRow(nextRowIndex);
-				rowConditionsAlwaysAdded.id = "rowConditionsAlwaysAdded";
-				rowConditionsAlwaysAdded.innerHTML = "<th><label for='conditionsAlwaysAdded'>Set Conditions:</label></th><td><div class='check-multiple' style='width:100%'>"+conditionOptions+"</div></td>";
-				nextRowIndex++;
+				referenceElement = createTableRow(referenceElement,"rowConditionsAlwaysAdded","<th><label for='conditionsAlwaysAdded'>Set Conditions:</label></th><td><div class='check-multiple' style='width:100%'>"+conditionOptions+"</div></td>");
 			}
 
 			if(alreadyOptionsTest && conditionChoice == "All"){
-				clearUnusedTable(tableID,"rowConditionOptions","rowIsAura");
-				table.deleteRow(document.getElementById("rowConditionOptions").rowIndex);
+				deleteInterveningElements(document.getElementById("rowConditionOptions"),document.getElementById("rowIsAura"));
+				document.getElementById("rowConditionOptions").remove();
 			}
 		}
 		else{
 			if(alreadyAlwaysAddedTest){
-				nextRowIndex = (document.getElementById("rowConditionsAlwaysAdded").rowIndex + 1);
+				referenceElement = document.getElementById("rowConditionsAlwaysAdded");
 			}
 		}
 
@@ -648,65 +762,53 @@ async function createConditionTable(){
 				let conditionOptions = await createConditionMultipleBoxes("ConditionOption","createConditionSaveTable()");
 				conditionOptions = conditionOptions + "<label><input type='checkbox' id='ConditionOptionEffectSpecific' name='ConditionOptionEffectSpecific' value=1 onchange='createUniqueConditionRow(2)'><span>Unique Condition</span></label>";
 
-				let rowConditionOptions = table.insertRow(nextRowIndex);
-				rowConditionOptions.id = "rowConditionOptions";
-				rowConditionOptions.innerHTML = "<th>Condition Options:</th><td><div class='check-multiple' style='width:100%'>"+conditionOptions+"</div></td>";
-				nextRowIndex++;
+				referenceElement = createTableRow(referenceElement,"rowConditionOptions","<th>Condition Options:</th><td><div class='check-multiple' style='width:100%'>"+conditionOptions+"</div></td>");
 
-				let rowConditionOptionsNumber = table.insertRow(nextRowIndex);
-				rowConditionOptionsNumber.id = "rowConditionOptionsNumber";
-				let ConditionOptionsHTML = "<th><label  for='ConditionOptionsNumber'>Number of Options to Choose:</label></th><td><input type='number' id='ConditionOptionsNumber' name='ConditionOptionsNumber' min=1 value=1 style='width:25px'>";
+				referenceElement = createTableRow(referenceElement,"rowConditionOptionsNumber","<th><label  for='ConditionOptionsNumber'>Number of Options to Choose:</label></th><td><input type='number' id='ConditionOptionsNumber' name='ConditionOptionsNumber' min=1 value=1 class='small-number'><span id='ConditionOptionsNumberAHLScaling'></span></td>");
 
-				if(checkEffectType()=="Spell"){
-					let conditionAHLScalingSelect = createAHLSelect("ConditionOptionsNumberAHLScaling");                   
-					ConditionOptionsHTML = ConditionOptionsHTML + " + <input type='number' id='ConditionOptionsNumberAHL' name='ConditionOptionsNumberAHL' min=0 value=0 style='width:25px'>"+conditionAHLScalingSelect;
+				let scalingData = needsScalingData();
+				if(scalingData.isScaling){
+					let conditionAHLScalingSelect = createScalingInput("ConditionOptionsNumberAHLScaling",scalingData);                   
+					let ConditionOptionsHTML = " + <input type='number' id='ConditionOptionsNumberAHL' name='ConditionOptionsNumberAHL' min=0 value=0 class='small-number'>"+conditionAHLScalingSelect;
+					document.getElementById("ConditionOptionsNumberAHLScaling").innerHTML = ConditionOptionsHTML;
 				}
-
-				rowConditionOptionsNumber.innerHTML = ConditionOptionsHTML+"</td>";
-				nextRowIndex++;
 			}
 			else{
-				nextRowIndex = nextRowIndex + (document.getElementById(endRowId).rowIndex - document.getElementById("rowConditionOptions").rowIndex);
+				referenceElement = document.getElementById(endRowId).previousElementSibling;
 			}
 			if(alreadyAlwaysAddedTest && conditionChoice == "Choose"){
 				//ConditionOptions is likely being inserted one row too much when going from all --> choose, so endinfo stuff gets removed here
-				clearUnusedTable(tableID,"rowCondition","rowConditionOptions");
+				deleteInterveningElements(document.getElementById("rowCondition"),document.getElementById("rowConditionOptions"));
 			}
 		}
 
 		if(!alreadyEndInfoTest){
-			addTableRow(tableID,nextRowIndex,"rowIsAura","<th><label for='isAura'>Condition is an Aura:</label></th><td><input type='checkbox' id='isAura' name='isAura' onchange='createAuraRows()'></td>");
-			nextRowIndex++;
-
-			addTableRow(tableID,nextRowIndex,"rowIsAuraEnd","");
+			referenceElement = createTableRow(referenceElement,"rowIsAura","<th><label for='isAura'>Condition is an Aura:</label></th><td><input type='checkbox' id='isAura' name='isAura' onchange='createAuraRows()'></td>");
+			
+			referenceElement = createTableRow(referenceElement,"rowIsAuraEnd","");
 			document.getElementById("rowIsAuraEnd").setAttribute("hidden","");
-			nextRowIndex++;
 
 			createTableRow(document.getElementById("rowIsAuraEnd"),"rowIsConditionTiered","<th><label for='isConditionTiered'>Can Set Condition at Tier Over 1:</label></th><input type='checkbox' id='isConditionTiered' name='isConditionTiered' onchange='createConditionTierRows()'></td>");
-			nextRowIndex++;
-
-			addTableRow(tableID,nextRowIndex,"rowConditionSameDuration","<th><label for='isConditionSameDuration'>Duration is Same as Spell's?</label></th><input type='checkbox' id='isConditionSameDuration' name='isConditionSameDuration' onchange='conditionAlternateDuration()' checked></td>");
-			nextRowIndex++;
+			
+			//TODO: Subeffect - Should expand alternate duration to be able to apply to non-spells
+			referenceElement = createTableRow(referenceElement,"rowConditionSameDuration","<th><label for='isConditionSameDuration'>Duration is Same as Spell's?</label></th><input type='checkbox' id='isConditionSameDuration' name='isConditionSameDuration' onchange='conditionAlternateDuration()' checked></td>");
 
 			if(checkEffectType()!="Spell"){
 				document.getElementById("rowConditionSameDuration").setAttribute("hidden","");
 				document.getElementById("isConditionSameDuration").removeAttribute("checked");
 				conditionAlternateDuration();
-				nextRowIndex++;
+				referenceElement = referenceElement.nextElementSibling;
 			}
-
-			addTableRow(tableID,nextRowIndex,"rowConditionAdvancePoint","<th><label for='ConditionAdvancePoint'>When Duration Advances:</label></th><select id='ConditionAdvancePoint' name='ConditionAdvancePoint'><option value='EndofTurn'>End of Target's Turn</option><option value='StartofTurn'>Start of Target's Turn</option><option value='EndofSetByTurn'>End of User's Turn</option><option value='StartofSetByTurn'>Start of User's Turn</option><option value='StartofSetByTurn'>Not Specified</option></select></td>");
-			nextRowIndex++;
-
-			addTableRow(tableID,nextRowIndex,"rowIsConditionNonDurationEnd","<th><label for='isConditionNonDurationEnd'>May End Separate from Duration?</label></th><input type='checkbox' id='isConditionNonDurationEnd' name='isConditionNonDurationEnd' onchange='createConditionNonDurationEnd()'></td>");
-			nextRowIndex++;
+			
+			referenceElement = createTableRow(referenceElement,"rowConditionAdvancePoint","<th><label for='ConditionAdvancePoint'>When Duration Advances:</label></th><select id='ConditionAdvancePoint' name='ConditionAdvancePoint'><option value='EndofTurn'>End of Target's Turn</option><option value='StartofTurn'>Start of Target's Turn</option><option value='EndofSetByTurn'>End of User's Turn</option><option value='StartofSetByTurn'>Start of User's Turn</option><option value='StartofSetByTurn'>Not Specified</option></select></td>");
+			
+			referenceElement = createTableRow(referenceElement,"rowIsConditionNonDurationEnd","<th><label for='isConditionNonDurationEnd'>May End Separate from Duration?</label></th><input type='checkbox' id='isConditionNonDurationEnd' name='isConditionNonDurationEnd' onchange='createConditionNonDurationEnd()'></td>");
 		}
 
 		if(document.getElementById("howMitigate").value == "Save" && !alreadySaveTest){
-			let saveRowIndex = document.getElementById("rowSummons").rowIndex;
-			let rowConditionSave = table.insertRow(saveRowIndex);
-			rowConditionSave.id = "rowConditionSave";
-			rowConditionSave.innerHTML = "<th><label for='conditionSaveEffect'>Conditions Applied on Save:</label></th><select id='conditionSaveEffect' name='conditionSaveEffect' onchange='createConditionSaveTable()'><option value='0'>All Applied</option><option value='1'>Some Applied</option><option value='2' selected>None Applied</option><option value='Different'>Different Condition Applied</option></select></td>";
+			let saveRowElement = document.getElementById("rowSummons");
+			
+			saveRowElement = createTableRow(saveRowElement,"rowConditionSave","<th><label for='conditionSaveEffect'>Conditions Applied on Save:</label></th><select id='conditionSaveEffect' name='conditionSaveEffect' onchange='createConditionSaveTable()'><option value='0'>All Applied</option><option value='1'>Some Applied</option><option value='2' selected>None Applied</option><option value='Different'>Different Condition Applied</option></select></td>");
 		}
 	}
 }
@@ -757,7 +859,7 @@ async function createUniqueConditionRow(whichStartingPosition){
 	createConditionSaveTable();
 }
 
-async function createMultiUniqueConditionRow(conditionPrefix){
+function createMultiUniqueConditionRow(conditionPrefix){
 	let table = document.getElementById("CreateSubeffectTable");
 	let nextRowIndex = document.getElementById("rowIsEffectSpecificMulti"+conditionPrefix).rowIndex + 1;
 
@@ -771,16 +873,16 @@ async function createMultiUniqueConditionRow(conditionPrefix){
 	}
 }
 
-async function conditionAlternateDuration(){
+function conditionAlternateDuration(){
 	let isSameDuration = false;
-	let nextRowIndex = document.getElementById("rowConditionSameDuration").rowIndex + 1;
+	let referenceElement = document.getElementById("rowConditionSameDuration");
 
 	if(checkEffectType()=="Spell"){
 		isSameDuration = document.getElementById("isConditionSameDuration").checked;
 	}
 
 	if(isSameDuration){
-		clearUnusedTable("CreateSubeffectTable","rowConditionSameDuration","rowConditionAdvancePoint");
+		deleteInterveningElements(referenceElement,document.getElementById("rowConditionAdvancePoint"));
 	}
 	else{
 		let durationOptionsArray = ["Instantaneous","1 Round","1 Minute","10 Minutes","1 Hour","8 Hours","24 Hours","10 Days","Until Dispelled","Custom"];
@@ -788,8 +890,8 @@ async function conditionAlternateDuration(){
 		for(let option of durationOptionsArray){
 			durationOptions = durationOptions + "<option value='"+option+"'>"+option+"</option>";
 		}
-
-		addTableRow("CreateSubeffectTable",nextRowIndex,"rowConditionDuration","<th><label for='ConditionDuration'>Condition Duration:</label></th><select id='ConditionDuration' name='ConditionDuration' onchange='createCustomDurationRows("+'"ConditionDuration","rowConditionAdvancePoint"'+")'>"+durationOptions+"</select></td>");
+			
+		referenceElement = createTableRow(referenceElement,"rowConditionDuration","<th><label for='ConditionDuration'>Condition Duration:</label></th><select id='ConditionDuration' name='ConditionDuration' onchange='createCustomDurationRows("+'"ConditionDuration","rowConditionAdvancePoint"'+")'>"+durationOptions+"</select></td>");
 	}
 }
 
@@ -974,10 +1076,12 @@ function createAuraRows(){
 function createConditionTierRows(){
 	let isConditionTiered = document.getElementById("isConditionTiered").checked;
 	if(isConditionTiered){
-		createTableRow(document.getElementById("rowIsConditionTiered"),"rowConditionTier","<th><label for='ConditionTier'>Condition Tier:</label></th><td><input type='number' id='ConditionTier' name='ConditionTier' value=1 min=1 style='width:25px'><span id='ConditionTierAHLSpan'></span></td>");
-		if(checkEffectType() == "Spell"){
-			let tierAHLSelect = createAHLSelect("ConditionTierAHLScaling");
-			document.getElementById("ConditionTierAHLSpan").innerHTML = " + <input type='number' id='ConditionTierAHL' name='ConditionTierAHL' value=0 min=0 style='width:25px'>"+tierAHLSelect;
+		createTableRow(document.getElementById("rowIsConditionTiered"),"rowConditionTier","<th><label for='ConditionTier'>Condition Tier:</label></th><td><input type='number' id='ConditionTier' name='ConditionTier' value=1 min=1 class='small-number'><span id='ConditionTierAHLSpan'></span></td>");
+
+		let scalingData = needsScalingData();
+		if(scalingData.isScaling){
+			let tierAHLSelect = createScalingInput("ConditionTierAHLScaling",scalingData);
+			document.getElementById("ConditionTierAHLSpan").innerHTML = " + <input type='number' id='ConditionTierAHL' name='ConditionTierAHL' value=0 min=0 class='small-number'>"+tierAHLSelect;			
 		}
 	}
 	else{
@@ -1107,49 +1211,44 @@ function createUncommonEffectsRows(){
 }
 
 async function createModifyD20Rows(){
-	let nextRowIndex = document.getElementById("rowModifyD20").rowIndex + 1;
+	let referenceElement = document.getElementById("rowModifyD20");
 
 	if(document.getElementById("isModifyD20").checked){
-		addTableRow("CreateSubeffectTable",nextRowIndex,"rowIsModifyAttack","<th><label for='affectEffectAffectsAll'>Must Affect All Possible Effects:</label></th><td><input type='checkbox' id='affectEffectAffectsAll' name='affectEffectAffectsAll'> (This is incomplete and I forgot to come back to it at some point)</td>");
-		nextRowIndex++;
+		referenceElement = createTableRow(referenceElement,"rowIsAffectAll","<th><label for='affectEffectAffectsAll'>Must Affect All Possible Effects:</label></th><td><input type='checkbox' id='affectEffectAffectsAll' name='affectEffectAffectsAll'> (This is incomplete and I forgot to come back to it at some point)</td>");
 
-		addTableRow("CreateSubeffectTable",nextRowIndex,"rowModifyD20Number","<th><label for='affectEffectNumber'>Number to Remove:</label></th><td><input type='number' id='affectEffectNumber' name='affectEffectNumber' min=0 style='width:25px' value=1><input type='checkbox' name='affectEffectNumberUnlimited' id='affectEffectNumberUnlimited' onchange='toggleFieldEnabled("+'"affectEffectNumber","affectEffectNumberUnlimited"'+")'>Unlimited?</td>");
-		nextRowIndex++;
+		referenceElement = createTableRow(referenceElement,"rowModifyD20Number","<th><label for='affectEffectNumber'>Number to Remove:</label></th><td><input type='number' id='affectEffectNumber' name='affectEffectNumber' min=0 class='small-number' value=1><input type='checkbox' name='affectEffectNumberUnlimited' id='affectEffectNumberUnlimited' onchange='toggleFieldEnabled("+'"affectEffectNumber","affectEffectNumberUnlimited"'+")'>Unlimited?</td>");
 
-		if(checkEffectType()=="Spell"){
-			let affectEffectNumberAHLScalingSelect = createAHLSelect("affectEffectNumberAHLScaling");
+		let scalingData = needsScalingData();
+		if(scalingData.isScaling){
+			let affectEffectNumberAHLScalingSelect = createScalingInput("affectEffectNumberAHLScaling",scalingData);
 
-			addTableRow("CreateSubeffectTable",nextRowIndex,"rowModifyD20NumberAHL","<th><label for='affectEffectNumberAHL'>Number Affected Increase AHL:</th><td><input type='number' id='affectEffectNumberAHL' name='affectEffectNumberAHL' min=0 value=0 style='width:25px'>"+affectEffectNumberAHLScalingSelect+"</td>");
-			nextRowIndex++;
+			referenceElement = createTableRow(referenceElement,"rowModifyD20NumberAHL","<th><label for='affectEffectNumberAHL'>Number Affected Increase AHL:</th><td><input type='number' id='affectEffectNumberAHL' name='affectEffectNumberAHL' min=0 value=0 class='small-number'><span id='affectEffectNumberAHLScalingSpan'>"+affectEffectNumberAHLScalingSelect+"</span></td>");		
 		}
 
-		addTableRow("CreateSubeffectTable",nextRowIndex,"rowModifyD20Number","<th><label for='affectEffectAffectsAll'>Must Affect All Possible Effects:</label></th><td><input type='checkbox' id='affectEffectAffectsAll' name='affectEffectAffectsAll'></td>");
-		nextRowIndex++;
+		referenceElement = createTableRow(referenceElement,"rowModifyD20Number","<th><label for='affectEffectAffectsAll'>Must Affect All Possible Effects:</label></th><td><input type='checkbox' id='affectEffectAffectsAll' name='affectEffectAffectsAll'></td>");
 
-		addTableRow("CreateSubeffectTable",nextRowIndex,"rowModifyD20NameFilterType","<th><label for='affectEffectNameFilterType'>Valid Spells By Name:</label></th><td><select id='affectEffectNameFilterType' name='affectEffectNameFilterType' onchange='createModifyD20NameFilterRows()'><option value='All'>All Spells</option><option value='Inclusive'>Must Be Specific Spell(s)</option><option value='Exclusive'>Cannot Be Specific Spell(s)</option><option value='Mixture'>Mixture of Both Above</option></select></td>");
-		nextRowIndex++;
+		referenceElement = createTableRow(referenceElement,"rowModifyD20NameFilterType","<th><label for='affectEffectNameFilterType'>Valid Spells By Name:</label></th><td><select id='affectEffectNameFilterType' name='affectEffectNameFilterType' onchange='createModifyD20NameFilterRows()'><option value='All'>All Spells</option><option value='Inclusive'>Must Be Specific Spell(s)</option><option value='Exclusive'>Cannot Be Specific Spell(s)</option><option value='Mixture'>Mixture of Both Above</option></select></td>");
 
-		addTableRow("CreateSubeffectTable",nextRowIndex,"rowModifyD20TagFilterType","<th><label for='affectEffectTagFilterType'>Valid Spells By Type:</label></th><td><select id='affectEffectTagFilterType' name='affectEffectTagFilterType' onchange='createModifyD20TagFilterRows()'><option value='All'>All Types</option><option value='Inclusive'>Must Be Specific Type(s)</option><option value='Exclusive'>Cannot Be Specific Type(s)</option><option value='Mixture'>Mixture of Both Above</option></select></td>");
-		nextRowIndex++;
+		referenceElement = createTableRow(referenceElement,"rowModifyD20TagFilterType","<th><label for='affectEffectTagFilterType'>Valid Spells By Type:</label></th><td><select id='affectEffectTagFilterType' name='affectEffectTagFilterType' onchange='createModifyD20TagFilterRows()'><option value='All'>All Types</option><option value='Inclusive'>Must Be Specific Type(s)</option><option value='Exclusive'>Cannot Be Specific Type(s)</option><option value='Mixture'>Mixture of Both Above</option></select></td>");
 
 		if(checkEffectType()=="Spell"){
-			addTableRow("CreateSubeffectTable",nextRowIndex,"rowModifyD20LevelMax","<th><label for='affectEffectLevelMax'>Maximum Level Affected:</label></th><td><input type='number' id='affectEffectLevelMax' name='affectEffectLevelMax' min=0 value=1 style='width:25px'> OR <select id='affectEffectLevelMaxAlternate' name='affectEffectLevelMaxAlternate'><option value='None'>No Alternative</option><option value='CastLevel'>Spell Slot Level</option><option value='NoMax'>No Maximum</option></select></td>");
-			nextRowIndex++;
+			referenceElement = createTableRow(referenceElement,"rowModifyD20LevelMax","<th><label for='affectEffectLevelMax'>Maximum Level Affected:</label></th><td><input type='number' id='affectEffectLevelMax' name='affectEffectLevelMax' min=0 value=1 style='width:25px'> OR <select id='affectEffectLevelMaxAlternate' name='affectEffectLevelMaxAlternate'><option value='None'>No Alternative</option><option value='CastLevel'>Spell Slot Level</option><option value='NoMax'>No Maximum</option></select></td>");
 		}
 		else{
-			addTableRow("CreateSubeffectTable",nextRowIndex,"rowModifyD20LevelMax","<th><label for='affectEffectLevelMax'>Maximum Level Affected:</label></th><td><input type='number' id='affectEffectLevelMax' name='affectEffectLevelMax' min=0 value=1 style='width:25px'><input type='checkbox' name='affectEffectNumberUnlimited' id='affectEffectNumberUnlimited' onchange='toggleFieldEnabled("+'"affectEffectNumber","affectEffectNumberUnlimited"'+")'>Unlimited?</td>");
-			nextRowIndex++;
+			referenceElement = createTableRow(referenceElement,"rowModifyD20LevelMax","<th><label for='affectEffectLevelMax'>Maximum Level Affected:</label></th><td><input type='number' id='affectEffectLevelMax' name='affectEffectLevelMax' min=0 value=1 style='width:25px'><input type='checkbox' name='affectEffectNumberUnlimited' id='affectEffectNumberUnlimited' onchange='toggleFieldEnabled("+'"affectEffectNumber","affectEffectNumberUnlimited"'+")'>Unlimited?</td>");
 		}
-		
-		addTableRow("CreateSubeffectTable",nextRowIndex,"rowIsModifyD20LevelMaxOverride","<th><label for='isModifyD20LevelMaxOverride'>May Affect Spells Over Maximum Level?</label></th><td><input type='checkbox' id='isModifyD20LevelMaxOverride' name='isModifyD20LevelMaxOverride' onchange='createModifyD20LevelMaxOverrideRows()'></td>");
-		nextRowIndex++;
+
+		referenceElement = createTableRow(referenceElement,"rowIsModifyD20LevelMaxOverride","<th><label for='isModifyD20LevelMaxOverride'>May Affect Spells Over Maximum Level?</label></th><td><input type='checkbox' id='isModifyD20LevelMaxOverride' name='isModifyD20LevelMaxOverride' onchange='createModifyD20LevelMaxOverrideRows()'></td>");
+
+		referenceElement = createTableRow(referenceElement,"rowModifyD20End","<th colspan='2'></th>");
+		referenceElement.classList.add("section-end");
 	}
-	else{
-		clearUnusedTable("CreateSubeffectTable","rowModifyD20","rowAffectCondition");
+	else if(document.getElementById("rowModifyD20End") != null){
+		deleteInterveningElements(document.getElementById("rowModifyD20"),document.getElementById("rowModifyD20End"));
 	}
 }
 
-async function createModifyD20TypeRows(){
+function createModifyD20TypeRows(){
 	
 }
 
@@ -1162,11 +1261,12 @@ async function createAffectConditionRows(){
 		addTableRow("CreateSubeffectTable",nextRowIndex,"rowAffectConditionNumber","<th><label for='affectConditionNumber'>Number to Remove:</label></th><td><input type='number' id='affectConditionNumber' name='affectConditionNumber' min=0 style='width:25px' value=1><input type='checkbox' name='affectConditionNumberUnlimited' id='affectConditionNumberUnlimited' onchange='toggleFieldEnabled("+'"affectConditionNumber","affectConditionNumberUnlimited"'+")'>Unlimited?</td>");
 		nextRowIndex++;
 
-		if(checkEffectType()=="Spell"){
-			let affectConditionNumberAHLScalingSelect = createAHLSelect("affectConditionNumberAHLScaling");
+		let scalingData = needsScalingData();
+		if(scalingData.isScaling){
+			let affectConditionNumberAHLScalingSelect = createScalingInput("affectConditionNumberAHLScaling",scalingData);
 
-			addTableRow("CreateSubeffectTable",nextRowIndex,"rowAffectConditionNumberAHL","<th><label for='affectConditionNumberAHL'>Number Affected Increase AHL:</th><td><input type='number' id='affectConditionNumberAHL' name='affectConditionNumberAHL' min=0 value=0 style='width:25px'>"+affectConditionNumberAHLScalingSelect+"</td>");
-			nextRowIndex++;
+			addTableRow("CreateSubeffectTable",nextRowIndex,"rowAffectConditionNumberAHL","<th><label for='affectConditionNumberAHL'>Number Affected Increase AHL:</th><td><input type='number' id='affectConditionNumberAHL' name='affectConditionNumberAHL' min=0 value=0 class='small-number'><span id='affectConditionNumberAHLScalingSpan'>"+affectConditionNumberAHLScalingSelect+"</span></td>");
+			nextRowIndex++;			
 		}
 
 		addTableRow("CreateSubeffectTable",nextRowIndex,"rowAffectConditionAffectsAll","<th><label for='affectConditionAffectsAll'>Must Affect All Possible Conditions:</label></th><td><input type='checkbox' id='affectConditionAffectsAll' name='affectConditionAffectsAll'></td>");
@@ -1209,8 +1309,8 @@ async function createAffectConditionNameFilterRows(){
 			conditionExcludeOptions = conditionExcludeOptions + "<label><input type='checkbox' id='affectConditionNameFilterExclusive"+tempCondition.Name+"' name='affectConditionNameFilterExclusive"+tempCondition.Name+"' value=1><span>"+tempCondition.DisplayName+"</span></label>";
 		}
 
-		let alreadyInclusiveTest = (table.rows.namedItem("rowInclusiveAffectConditionNames") != null);
-		let alreadyExclusiveTest = (table.rows.namedItem("rowExclusiveAffectConditionNames") != null);
+		let alreadyInclusiveTest = (document.getElementById("rowInclusiveAffectConditionNames") != null);
+		let alreadyExclusiveTest = (document.getElementById("rowExclusiveAffectConditionNames") != null);
 
 		if(currentNameFilterTypeSelection == "Inclusive" || currentNameFilterTypeSelection == "Mixture"){
 			if(alreadyInclusiveTest){
@@ -1265,8 +1365,8 @@ async function createAffectConditionTagFilterRows(){
 			conditionTagExcludeOptions = conditionTagExcludeOptions + "<label><input type='checkbox' id='affectConditionTagFilterExclusive"+tempTag.Name+"' name='affectConditionTagFilterExclusive"+tempTag.Name+"' value=1><span>"+tempTag.DisplayName+"</span></label>";
 		}
 
-		let alreadyInclusiveTest = (table.rows.namedItem("rowInclusiveAffectConditionTags") != null);
-		let alreadyExclusiveTest = (table.rows.namedItem("rowExclusiveAffectConditionTags") != null);
+		let alreadyInclusiveTest = (document.getElementById("rowInclusiveAffectConditionTags") != null);
+		let alreadyExclusiveTest = (document.getElementById("rowExclusiveAffectConditionTags") != null);
 
 		if(currentTagFilterTypeSelection == "Inclusive" || currentTagFilterTypeSelection == "Mixture"){
 			if(alreadyInclusiveTest){
@@ -1331,11 +1431,13 @@ async function createAffectSpellRows(){
 		addTableRow("CreateSubeffectTable",nextRowIndex,"rowAffectSpellNumber","<th><label for='affectSpellNumber'>Number to Remove:</label></th><td><input type='number' id='affectSpellNumber' name='affectSpellNumber' min=0 style='width:25px' value=1><input type='checkbox' name='affectSpellNumberUnlimited' id='affectSpellNumberUnlimited' onchange='toggleFieldEnabled("+'"affectSpellNumber","affectSpellNumberUnlimited"'+")'>Unlimited?</td>");
 		nextRowIndex++;
 
-		if(checkEffectType()=="Spell"){
-			let affectSpellNumberAHLScalingSelect = createAHLSelect("affectSpellNumberAHLScaling");
 
-			addTableRow("CreateSubeffectTable",nextRowIndex,"rowAffectSpellNumberAHL","<th><label for='affectSpellNumberAHL'>Number Affected Increase AHL:</th><td><input type='number' id='affectSpellNumberAHL' name='affectSpellNumberAHL' min=0 value=0 style='width:25px'>"+affectSpellNumberAHLScalingSelect+"</td>");
-			nextRowIndex++;
+		let scalingData = needsScalingData();
+		if(scalingData.isScaling){
+			let affectSpellNumberAHLScalingSelect = createScalingInput("affectSpellNumberAHLScaling",scalingData);
+
+			addTableRow("CreateSubeffectTable",nextRowIndex,"rowAffectSpellNumberAHL","<th><label for='affectSpellNumberAHL'>Number Affected Increase AHL:</th><td><input type='number' id='affectSpellNumberAHL' name='affectSpellNumberAHL' min=0 value=0 class='small-number'><span id='affectSpellNumberAHLScalingSpan'>"+affectSpellNumberAHLScalingSelect+"</span></td>");
+			nextRowIndex++;			
 		}
 
 		addTableRow("CreateSubeffectTable",nextRowIndex,"rowAffectSpellAffectsAll","<th><label for='affectSpellAffectsAll'>Must Affect All Possible Spells:</label></th><td><input type='checkbox' id='affectSpellAffectsAll' name='affectSpellAffectsAll'></td>");
@@ -1361,10 +1463,13 @@ async function createAffectSpellRows(){
 		
 		addTableRow("CreateSubeffectTable",nextRowIndex,"rowIsAffectSpellLevelMaxOverride","<th><label for='isAffectSpellLevelMaxOverride'>May Affect Spells Over Maximum Level?</label></th><td><input type='checkbox' id='isAffectSpellLevelMaxOverride' name='isAffectSpellLevelMaxOverride' onchange='createAffectSpellLevelMaxOverrideRows()'></td>");
 		nextRowIndex++;
+
+		let referenceRow = createTableRow(document.getElementById("rowIsAffectSpellLevelMaxOverride"),"rowAffectSpellEnd","<th colspan=2></th>");
+		referenceRow.classList.add("section-end");
 	}
 	else{
 		document.getElementById("isAffectCondition").removeAttribute("disabled","");
-		clearUnusedTable("CreateSubeffectTable","rowAffectSpell","rowLightType");
+		clearUnusedTable("CreateSubeffectTable","rowAffectSpell","rowAffectSpellEnd");
 	}
 }
 
@@ -1389,8 +1494,8 @@ async function createAffectSpellNameFilterRows(){
 			spellExcludeOptions = spellExcludeOptions + "<label><input type='checkbox' id='affectSpellNameFilterExclusive"+tempSpell.Name+"' name='affectSpellNameFilterExclusive"+tempSpell.Name+"' value=1><span>"+tempSpell.DisplayName+"</span></label>";
 		}
 
-		let alreadyInclusiveTest = (table.rows.namedItem("rowInclusiveAffectSpellNames") != null);
-		let alreadyExclusiveTest = (table.rows.namedItem("rowExclusiveAffectSpellNames") != null);
+		let alreadyInclusiveTest = (document.getElementById("rowInclusiveAffectSpellNames") != null);
+		let alreadyExclusiveTest = (document.getElementById("rowExclusiveAffectSpellNames") != null);
 
 		if(currentNameFilterTypeSelection == "Inclusive" || currentNameFilterTypeSelection == "Mixture"){
 			if(alreadyInclusiveTest){
@@ -1444,8 +1549,8 @@ async function createAffectSpellTagFilterRows(){
 			spellTagExcludeOptions = spellTagExcludeOptions + "<label><input type='checkbox' id='affectSpellTagFilterExclusive"+tempTag.Name+"' name='affectSpellTagFilterExclusive"+tempTag.Name+"' value=1><span>"+tempTag.DisplayName+"</span></label>";
 		}
 
-		let alreadyInclusiveTest = (table.rows.namedItem("rowInclusiveAffectSpellTags") != null);
-		let alreadyExclusiveTest = (table.rows.namedItem("rowExclusiveAffectSpellTags") != null);
+		let alreadyInclusiveTest = (document.getElementById("rowInclusiveAffectSpellTags") != null);
+		let alreadyExclusiveTest = (document.getElementById("rowExclusiveAffectSpellTags") != null);
 
 		if(currentTagFilterTypeSelection == "Inclusive" || currentTagFilterTypeSelection == "Mixture"){
 			if(alreadyInclusiveTest){
@@ -1484,10 +1589,11 @@ async function createMoveTargetTable(){
 	if(document.getElementById("isMoveTarget").checked){
 		referenceRow = createTableRow(referenceRow,"rowMoveTargetInfo","<th><label for='moveTargetValue'>Distance Target Moved:</label></th><input type='number' id='moveTargetValue' name='moveTargetValue' min=0 value=10 style='width:25px'><select id='moveTargetUnits' name='moveTargetUnits'><option value='Feet'>Feet</option><option value='Miles'>Miles</option><option value='Unlimited'>Unlimited</option></select><select id='moveTargetDirection' name='moveTargetDirection'><option value='Choice'>User's Choice</option><option value='Away'>Away From User</option><option value='Towards'>Towards User</option><option value='Random4'>Random, 4 Directions</option><option value='Random8'>Random, 8 Directions</option></select></td>");
 
-		if(checkEffectType()=="Spell"){
-			let moveTargetAHLScalingSelect = createAHLSelect("moveTargetAHLScaling");
+		let scalingData = needsScalingData();
+		if(scalingData.isScaling){
+			let moveTargetAHLScalingSelect = createScalingInput("moveTargetAHLScaling",scalingData);
 
-			referenceRow = createTableRow(referenceRow,"rowMoveTargetAHLInfo","<th><label for='moveTargetAHLValue'>Increased Distance AHL:</label></th><input type='number' id='moveTargetAHLValue' name='moveTargetAHLValue' min=0 value=0 style='width:25px'>"+moveTargetAHLScalingSelect+"</td>");
+			referenceRow = createTableRow(referenceRow,"rowMoveTargetAHLInfo","<th><label for='moveTargetAHLValue'>Increased Distance AHL:</label></th><input type='number' id='moveTargetAHLValue' name='moveTargetAHLValue' min=0 value=0 class='small-number'><span id='moveTargetAHLScalingSpan'>"+moveTargetAHLScalingSelect+"</span></td>");			
 		}
 
 		referenceRow = createTableRow(referenceRow,"rowMoveTargetType","<th><label for='moveTargetType'>Type of Movement:</label></th><select id='moveTargetType' name='moveTargetType'><option value='Physical'>Physical Movement</option><option value='Teleportation'>Teleportation</option><option value='Extraplanar'>Extraplanar Teleportation</option></select></td>");
@@ -1630,3 +1736,215 @@ async function loadUserData() {
 }
 
 setTimeout(loadUserData, 1);
+
+//TODO: AI-generated code, needs validation, addition of targeting data, and (at minimum) triggering of onchange/onpress events for dynamic inputs
+async function populateDynamicInput(jsonData) {
+    const data = JSON.parse(jsonData);
+
+    if (data.EffectType) {
+        document.getElementById("EffectType").value = data.EffectType;
+    }
+
+    if (data.FeatureData) {
+        document.getElementById("FeatureData").value = btoa(JSON.stringify(data.FeatureData));
+    }
+
+    if (data.UseTime) {
+        document.getElementById("UseTime").value = data.UseTime;
+    }
+
+    if (data.Duration) {
+        document.getElementById("Duration").value = data.Duration;
+    }
+
+    if (data.Concentration) {
+        document.getElementById("isConcentration").checked = data.Concentration;
+    }
+
+    if (data.ConcentrationLostLevel) {
+        document.getElementById("ConcentrationLostLevel").value = data.ConcentrationLostLevel;
+    }
+
+    if (data.ParentSubeffect) {
+        document.getElementById("ParentSubeffect").value = data.ParentSubeffect;
+    }
+
+    if (data.ParentSubeffectRequirements) {
+        document.getElementById("ParentPrereqs").value = data.ParentSubeffectRequirements.Requirement;
+        if (data.ParentSubeffectRequirements.Margin) {
+            document.getElementById("PrereqAttackHitMargin").value = data.ParentSubeffectRequirements.Margin;
+        }
+        if (data.ParentSubeffectRequirements.MustCrit) {
+            document.getElementById("PrereqAttackCrits").checked = data.ParentSubeffectRequirements.MustCrit;
+        }
+    }
+
+    if (data.SaveData) {
+        document.getElementById("SaveType").value = data.SaveData.SaveType;
+        document.getElementById("SaveDCMethod").value = data.SaveData.DCMethod;
+        if (data.SaveData.DCStat) {
+            document.getElementById("SaveDCStat").value = data.SaveData.DCStat;
+        }
+        if (data.SaveData.DC) {
+            document.getElementById("SaveDC").value = data.SaveData.DC;
+        }
+        if (data.SaveData.IgnoreCover) {
+            document.getElementById("IgnoreCoverBenefit").checked = data.SaveData.IgnoreCover;
+        }
+    }
+
+    if (data.Attack) {
+        document.getElementById("MeleeRanged").value = data.Attack.MeleeRanged;
+        document.getElementById("CritThresh").value = data.Attack.CritThresh;
+        document.getElementById("ToHitMethod").value = data.Attack.ToHitMethod;
+        if (data.Attack.ToHitStat) {
+            document.getElementById("ToHitStat").value = data.Attack.ToHitStat;
+        }
+        if (data.Attack.ToHitBonus) {
+            document.getElementById("ToHitBonus").value = data.Attack.ToHitBonus;
+        }
+        if (data.Attack.IgnoreCover) {
+            document.getElementById("IgnoreCoverBenefit").checked = data.Attack.IgnoreCover;
+        }
+    }
+
+    if (data.Damage) {
+        document.getElementById("isDamage").checked = true;
+        document.getElementById("differentTypes").value = data.Damage.length;
+        data.Damage.forEach((damage, index) => {
+            const damageTypeNumber = index + 1;
+            document.getElementById(`DamageType${damageTypeNumber}`).value = damage.DamageType;
+            document.getElementById(`DamageDieNum${damageTypeNumber}`).value = damage.DamageDieNumber;
+            document.getElementById(`DamageDieSize${damageTypeNumber}`).value = damage.DamageDieSize;
+            document.getElementById(`DamageFlatBonus${damageTypeNumber}`).value = damage.DamageFlatBonus;
+            document.getElementById(`ModBonus${damageTypeNumber}`).checked = damage.IsModBonus;
+            if (damage.AHLScaling) {
+                document.getElementById(`isAHL${damageTypeNumber}`).value = damage.AHLScaling;
+                document.getElementById(`AHLDieSize${damageTypeNumber}`).value = damage.AHLDieSize;
+                document.getElementById(`AHLDieNum${damageTypeNumber}`).value = damage.AHLDieNum;
+                document.getElementById(`AHLFlatBonus${damageTypeNumber}`).value = damage.AHLFlatBonus;
+            }
+        });
+    }
+
+    if (data.ConditionInfo) {
+        document.getElementById("isCondition").value = "Choose";
+        data.ConditionInfo.Conditions.forEach(condition => {
+            document.getElementById(`ConditionOption${condition.Name}`).checked = true;
+        });
+        if (data.ConditionInfo.EndInfo) {
+            document.getElementById("isConditionSameDuration").checked = data.ConditionInfo.EndInfo.UseMainDuration;
+            document.getElementById("ConditionAdvancePoint").value = data.ConditionInfo.EndInfo.AdvancePoint;
+        }
+    }
+
+    if (data.Summon) {
+        document.getElementById("isSummons").value = "Yes";
+        document.getElementById("SummonType").value = data.Summon.Type;
+        document.getElementById("SummonName").value = data.Summon.Name;
+    }
+
+    if (data.UseResource) {
+        document.getElementById("isUseResource").checked = true;
+        document.getElementById("UseResourceType").value = data.UseResource.Type;
+        document.getElementById("UseResourceAmount").value = data.UseResource.Amount;
+    }
+
+    if (data.Lights) {
+        document.getElementById("isLight").checked = true;
+        document.getElementById("LightType").value = data.Lights.Type;
+        document.getElementById("LightRadius").value = data.Lights.Radius;
+    }
+
+    if (data.Movement) {
+        document.getElementById("isMoveTarget").checked = true;
+        document.getElementById("moveTargetValue").value = data.Movement.Value;
+        document.getElementById("moveTargetUnits").value = data.Movement.Units;
+        document.getElementById("moveTargetDirection").value = data.Movement.Direction;
+        document.getElementById("moveTargetType").value = data.Movement.Type;
+        if (data.Movement.AHLScaling) {
+            document.getElementById("moveTargetAHLScaling").value = data.Movement.AHLScaling;
+            document.getElementById("moveTargetAHLValue").value = data.Movement.AHLValue;
+        }
+    }
+
+    if (data.Transform) {
+        document.getElementById("isTransform").value = data.Transform.Type;
+        document.getElementById("TransformName").value = data.Transform.Name;
+    }
+
+    if (data.SetHPAmount) {
+        document.getElementById("isSetHP").checked = true;
+        document.getElementById("SetHPAmount").value = data.SetHPAmount;
+    }
+
+    if (data.DropItems) {
+        document.getElementById("isDropItems").checked = true;
+    }
+
+    if (data.InstantKill) {
+        document.getElementById("InstantKill").checked = true;
+    }
+
+    if (data.DifficultTerrain) {
+        document.getElementById("isDifficultTerrain").checked = true;
+        document.getElementById("DifficultTerrainMultiplier").value = data.DifficultTerrain.Multiplier;
+        document.getElementById("DifficultTerrainDistanceValue").value = data.DifficultTerrain.Value;
+        document.getElementById("DifficultTerrainDistanceUnits").value = data.DifficultTerrain.Units;
+    }
+
+    if (data.CreateObject) {
+        document.getElementById("isCreateObject").value = data.CreateObject.Type;
+        document.getElementById("CreatedObject").value = data.CreateObject.Name;
+    }
+
+    // Populate targeting data
+    if (data.TargetLimits) {
+        const targetLimits = data.TargetLimits;
+
+        if (targetLimits.TargetType) {
+            document.getElementById("TargetType").value = targetLimits.TargetType;
+            document.getElementById("TargetType").dispatchEvent(new Event('change'));
+        }
+
+        if (targetLimits.Range) {
+            document.getElementById("Range").value = targetLimits.Range;
+        }
+
+        if (targetLimits.AoE) {
+            document.getElementById("AoE").value = targetLimits.AoE;
+            document.getElementById("AoE").dispatchEvent(new Event('change'));
+        }
+
+        if (targetLimits.TargetNumber) {
+            document.getElementById("TargetNumber").value = targetLimits.TargetNumber;
+        }
+
+        if (targetLimits.TargetNumberUnlimited) {
+            document.getElementById("isTargetNumberUnlimited").checked = targetLimits.TargetNumberUnlimited;
+            document.getElementById("isTargetNumberUnlimited").dispatchEvent(new Event('change'));
+        }
+
+        if (targetLimits.TargetConditions) {
+            targetLimits.TargetConditions.forEach(condition => {
+                document.getElementById(`TargetCondition${condition}`).checked = true;
+            });
+        }
+
+        if (targetLimits.TargetTags) {
+            targetLimits.TargetTags.forEach(tag => {
+                document.getElementById(`TargetTag${tag}`).checked = true;
+            });
+        }
+
+        if (targetLimits.TargetingMethod) {
+            document.getElementById("TargetingMethod").value = targetLimits.TargetingMethod;
+        }
+
+        if (targetLimits.TargetingMethodOptions) {
+            targetLimits.TargetingMethodOptions.forEach(option => {
+                document.getElementById(`TargetingMethodOption${option}`).checked = true;
+            });
+        }
+    }
+}

@@ -25,7 +25,7 @@ function createResourceRows(FeatureData){
 			});
 		}
 
-		let resourceNumberTypes = "<option value='1'>One</option><option value='OtherNumber'>Other Number</option><option value='Attribute'>Attribute-Based</option><option value='Proficiency'>Proficiency-Based</option><option value='Level'>Level-Based</option><option value='NonlinearLevel'>Nonlinear Level-Based</option>";
+		let resourceNumberTypes = "<option value='OtherNumber'>Flat Number</option><option value='Attribute'>Attribute-Based</option><option value='Proficiency'>Proficiency-Based</option><option value='Level'>Level-Based</option><option value='NonlinearLevel'>Nonlinear Level-Based</option>";
 		if(FeatureData.Type === "Class" || FeatureData.Type === "Item"){
 			resourceNumberTypes += "<option value='Class'>Class Level-Based</option><option value='NonlinearClass'>Nonlinear Class Level-Based</option>";
 		}
@@ -89,6 +89,8 @@ function createResourceRows(FeatureData){
 		else{
 			document.getElementById("AddResourceButton").addEventListener("click",function(){
 				let currentNumber = Number(document.getElementById("ResourceNumber").value);
+				document.getElementById("ResourceAmountType"+currentNumber).dispatchEvent(new Event("change"));
+
 				if(currentNumber > 1){
 					document.getElementById("rowMultiResourceEnd"+(currentNumber-2)).classList.add("section-end");
 				}
@@ -133,7 +135,7 @@ function createResourceAmountTypeRow(i){
 	}
 
 	if(resourceNumberType === "OtherNumber"){
-		referenceRow = createTableRow(referenceRow,"rowResourceAmount"+i,"<th><label for='ResourceAmount"+i+"'>Resource Amount:</label></th><td><input type='number' class='small-number' id='ResourceAmount"+i+"' name='ResourceAmount"+i+"' value=2 min=1></td>");
+		referenceRow = createTableRow(referenceRow,"rowResourceAmount"+i,"<th><label for='ResourceAmount"+i+"'>Resource Amount:</label></th><td><input type='number' class='small-number' id='ResourceAmount"+i+"' name='ResourceAmount"+i+"' value=1 min=1></td>");
 	}
 	else if(resourceNumberType === "Attribute"){
 		let attributeOptions = createHTMLSelectOptions(attributes);
@@ -213,7 +215,7 @@ function createResourceSpecialTypeRow(i){
 	}
 	else if(specialResourceType === "Time"){
 		let timeUnitsSelect = createTimeUnitsSelect();
-		referenceElement = createTableRow(referenceElement,"rowResourceSpecialTypeInfo"+i,"<th><label for='ResourceTimeUnits"+i+"'>Units of Time:</label></th><td><select id='ResourceTimeUnits"+i+"' name='ResourceTimeUnits"+i+"'>"+timeUnitsSelect+"</select> (Value Determined Above)</td>");
+		referenceElement = createTableRow(referenceElement,"rowResourceSpecialTypeInfo"+i,"<th><label for='ResourceTimeUnits"+i+"'>Units of Time:</label></th><td><select id='ResourceTimeUnits"+i+"' name='ResourceTimeUnits"+i+"'>"+timeUnitsSelect+"</select> (Value Above)</td>");
 	}
 	
 	if(specialResourceType === "Time" || specialResourceType === ""){

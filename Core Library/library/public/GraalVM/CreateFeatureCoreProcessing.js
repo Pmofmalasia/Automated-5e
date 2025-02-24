@@ -4,12 +4,12 @@ function coreFeatureProcessing(CoreFeatureData){
 	}
 	let FeatureData = CoreFeatureData.Feature;
 
-	let featureScalingType = FeatureData.FeatureTierType;
+	let featureScalingType = CoreFeatureData.FeatureTierType;
 	if(featureScalingType === "consistent"){
 		FeatureData.OverallScaling = "Consistent";
 	}
 	else if(featureScalingType === "inconsistent"){
-		let breakPointNum = FeatureData.FeatureTierLevelNumber;
+		let breakPointNum = CoreFeatureData.FeatureTierLevelNumber;
 		let breakPoints = [];
 		for(let i=0; i<breakPointNum; i++){
 			breakPoints.push(FeatureData["FeatureTierLevelSeparator"+i]);

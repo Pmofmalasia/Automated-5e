@@ -97,7 +97,7 @@
 
 
 
-[h:"<!-- For fighting styles: Will defer this to the end of creation so things that aren't fully made don't get added -->"]
+[h:"<!-- TODO: Creation - For fighting styles: Will defer this to the end of creation so things that aren't fully made don't get added -->"]
 [h,if(0),CODE:{
 	[h:LibHasPreviousData = !json.isEmpty(json.path.read(getLibProperty("sb.Abilities","Lib:"+FeatureLib),"\$[*][?(@.Name=='"+json.get(tempGroup,"Name")+"' && @.Class=='"+json.get(tempGroup,"Class")+"' && @.Subclass=='"+json.get(tempGroup,"Subclass")+"')]['FightingStyleList']"))]
 	[h,switch(CanUseFSTest+""+LibHasPreviousData),CODE:

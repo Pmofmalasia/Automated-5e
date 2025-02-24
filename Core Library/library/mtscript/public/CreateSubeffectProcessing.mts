@@ -303,7 +303,7 @@
 			"DamageDieNumber",number(json.get(subeffectData,"DamageDieNum"+whichType)),
 			"DamageDieSize",number(json.get(subeffectData,"DamageDieSize"+whichType)),
 			"DamageFlatBonus",number(json.get(subeffectData,"DamageFlatBonus"+whichType)),
-			"IsModBonus",json.contains(subeffectData,"ModBonus"+whichType)
+			"IsModBonus",json.get(subeffectData,"ModBonus"+whichType)
 		)]
 	};{
 		[h,if(json.get(subeffectData,"PriorDamageType"+whichType) == "TotalDamage"):

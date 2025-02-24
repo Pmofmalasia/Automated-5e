@@ -13,13 +13,14 @@ function createTargetingRows(tableID,startRowID,IDSuffix){
 
 	referenceRow = createTableRow(referenceRow,"AoE"+IDSuffix,"<th><label for='aoeShape"+IDSuffix+"'>Area of Effect Shape:</label></th><td><select id='aoeShape"+IDSuffix+"' name='aoeShape"+IDSuffix+"' onchange='createAoETable("+'"'+tableID+'"'+',1,"'+IDSuffix+'"'+")'><option value='None'>None</option><option value='Cone'>Cone</option><option value='Cube'>Cube</option><option value='Cylinder'>Cylinder</option><option value='Half Sphere'>Half Sphere</option><option value='Line'>Line</option><option value='Panels'>Panels</option><option value='Sphere'>Sphere</option><option value='Wall'>Wall</option><option value='Choose'>Multiple Options</option></td>");
 
-	referenceRow = createTableRow(referenceRow,"rowTargetNumber"+IDSuffix,"<th><label for='TargetNumber"+IDSuffix+"'>Maximum Number of Targets:</label></th><td><input type='number' id='TargetNumber"+IDSuffix+"' name='TargetNumber"+IDSuffix+"' value=1 min=1 style='width:25px'><span id='TargetNumberAHLSpan"+IDSuffix+"'></span><input type='checkbox' id='isTargetNumberUnlimited"+IDSuffix+"' name='isTargetNumberUnlimited"+IDSuffix+"'>Unlimited Targets</td>");
+	referenceRow = createTableRow(referenceRow,"rowTargetNumber"+IDSuffix,"<th><label for='TargetNumber"+IDSuffix+"'>Maximum Number of Targets:</label></th><td><input type='number' id='TargetNumber"+IDSuffix+"' name='TargetNumber"+IDSuffix+"' value=1 min=1 class='small-number'><span id='TargetNumberAHLSpan"+IDSuffix+"'></span><input type='checkbox' id='isTargetNumberUnlimited"+IDSuffix+"' name='isTargetNumberUnlimited"+IDSuffix+"'>Unlimited Targets</td>");
 
-	if(checkEffectType()=="Spell"){
-		let TargetNumberAHLScalingSelect = createAHLSelect("TargetNumberAHLScaling"+IDSuffix);
+	let scalingData = needsScalingData();
+	if(scalingData.isScaling){
+		let TargetNumberAHLScalingSelect = createScalingInput("TargetNumberAHLScaling"+IDSuffix,scalingData);
 		let AHLSpan = document.getElementById("TargetNumberAHLSpan"+IDSuffix);
 
-		AHLSpan.innerHTML = " + <input type='number' id='TargetNumberAHL"+IDSuffix+"' name='TargetNumberAHL"+IDSuffix+"' value=0 min=0 style='width:25px'>"+TargetNumberAHLScalingSelect+"<br>OR ";
+		AHLSpan.innerHTML = " + <input type='number' id='TargetNumberAHL"+IDSuffix+"' name='TargetNumberAHL"+IDSuffix+"' value=0 min=0 class='small-number'>"+TargetNumberAHLScalingSelect+"<br>OR ";
 	}
 
 	function toggleMultitargetOptions(){
@@ -56,7 +57,7 @@ function createTargetingRows(tableID,startRowID,IDSuffix){
 	}
 
 	document.getElementById("TargetNumber"+IDSuffix).addEventListener("change",toggleMultitargetOptions);
-	if(checkEffectType()=="Spell"){
+	if(scalingData.isScaling){
 		document.getElementById("TargetNumberAHL"+IDSuffix).addEventListener("change",toggleMultitargetOptions);
 		document.getElementById("TargetNumberAHLScaling"+IDSuffix).addEventListener("change",toggleMultitargetOptions);
 	}
@@ -65,13 +66,13 @@ function createTargetingRows(tableID,startRowID,IDSuffix){
 		if(document.getElementById("isTargetNumberUnlimited"+IDSuffix).checked){
 			document.getElementById("TargetNumber"+IDSuffix).setAttribute("disabled","");
 
-			if(checkEffectType()=="Spell"){
+			if(scalingData.isScaling){
 				document.getElementById("TargetNumberAHL"+IDSuffix).setAttribute("disabled","");
 				document.getElementById("TargetNumberAHLScaling"+IDSuffix).setAttribute("disabled","");
 			}
 		}
 		else{
-			if(checkEffectType()=="Spell"){
+			if(scalingData.isScaling){
 				document.getElementById("TargetNumberAHL"+IDSuffix).removeAttribute("disabled");
 				document.getElementById("TargetNumberAHLScaling"+IDSuffix).removeAttribute("disabled");   
 			}
@@ -145,19 +146,20 @@ function createPriorTargetsNewLimit(tableID,callingType,tempIDSuffix){
 function createRangeTable(IDSuffix){
 	let referenceRow = document.getElementById("Range"+IDSuffix);
 
+	let scalingData = needsScalingData();
 	if(document.getElementById("RangeType"+IDSuffix).value == "SelfRanged" || document.getElementById("RangeType"+IDSuffix).value == "Ranged"){
 		if(document.getElementById("rowRangeDistance"+IDSuffix) == null){
 			referenceRow = createTableRow(referenceRow,"rowRangeDistance"+IDSuffix,"<th><label for='RangeValue"+IDSuffix+"'>Range:</label></th><td><input type='number' id='RangeValue"+IDSuffix+"' name='RangeValue"+IDSuffix+"' min=0 style='width:25px' value=0><select id='RangeUnits"+IDSuffix+"' name='RangeUnits"+IDSuffix+"'><option value='Feet'>Feet</option><option value='Miles'>Miles</option></select></td>");
 
-			if(checkEffectType()=="Spell"){
-				let RangeScalingAHLSelect = createAHLSelect("RangeScalingAHL"+IDSuffix);
+			if(scalingData.isScaling){
+				let RangeScalingAHLSelect = createScalingInput("RangeScalingAHL"+IDSuffix,scalingData);
 				referenceRow = createTableRow(referenceRow,"rowRangeDistanceAHL"+IDSuffix,"<th>Range Increase AHL:</th><td><input type='number' id='RangeValueAHL"+IDSuffix+"' name='RangeValueAHL"+IDSuffix+"' min=0 style='width:25px' value=0>"+RangeScalingAHLSelect+"</td>");
 			}
 		}
 	}
 	else if(document.getElementById("rowRangeDistance"+IDSuffix) != null){
 		document.getElementById("rowRangeDistance"+IDSuffix).remove();
-		if(checkEffectType()=="Spell"){
+		if(scalingData.isScaling){
 			document.getElementById("rowRangeDistanceAHL"+IDSuffix).remove();
 		}
 	}
@@ -166,6 +168,7 @@ function createRangeTable(IDSuffix){
 function createAoETable(tableID,whichShape,IDSuffix){
 	let table = document.getElementById(tableID);
 	let nextRowIndex = document.getElementById("AoE"+IDSuffix).rowIndex + 1;
+	let scalingData = needsScalingData();
 	let shapesArray = ["Cone","Cube","Cylinder","Half Sphere","Line","Panels","Sphere","Wall"];
 	let aoeShapeSelction = document.getElementById("aoeShape"+IDSuffix).value;
 	if(aoeShapeSelction == "None"){
@@ -178,13 +181,13 @@ function createAoETable(tableID,whichShape,IDSuffix){
 	}
 	else{
 		if(document.getElementById("rowAoENum"+IDSuffix) == null){
-			let rowAoEHTML = "<th><label for='AoENum"+IDSuffix+"'>Number of AoEs:</label></th><td><input type='number' id='AoENum"+IDSuffix+"' name='AoENum"+IDSuffix+"' min=1 value=1 style='width:25px'>";
-			if(checkEffectType()=="Spell"){
-				let AoENumAHLScalingSelect = createAHLSelect("AoENumAHLScaling"+IDSuffix);
+			let rowAoEHTML = "<th><label for='AoENum"+IDSuffix+"'>Number of AoEs:</label></th><td><input type='number' id='AoENum"+IDSuffix+"' name='AoENum"+IDSuffix+"' min=1 value=1 class='small-number'><span id='AoENumAHLScalingSpan'>";
+			if(scalingData.isScaling){
+				let AoENumAHLScalingSelect = createScalingInput("AoENumAHLScaling"+IDSuffix,scalingData);
 
-				rowAoEHTML = rowAoEHTML + " + <input type='number' id='AoENumAHL"+IDSuffix+"' name='AoENumAHL"+IDSuffix+"' min=0 value=0 style='width:25px'>"+AoENumAHLScalingSelect;
+				rowAoEHTML = rowAoEHTML + " + <input type='number' id='AoENumAHL"+IDSuffix+"' name='AoENumAHL"+IDSuffix+"' min=0 value=0 class='small-number'>"+AoENumAHLScalingSelect;
 			}
-			rowAoEHTML = rowAoEHTML+"</td>";
+			rowAoEHTML = rowAoEHTML+"</span></td>";
 			addTableRow(tableID,nextRowIndex,"rowAoENum"+IDSuffix,rowAoEHTML);
 			nextRowIndex++;
 		}
@@ -242,8 +245,8 @@ function createAoETable(tableID,whichShape,IDSuffix){
 			whichShape = document.getElementById("aoeShape"+IDSuffix).value;
 			if(document.getElementById("row"+whichShape+"Dimensions"+IDSuffix) != null){
 				clearUnusedTable(tableID,"AoE","row"+whichShape+"Dimensions"+IDSuffix);
-				
-				if(checkEffectType()=="Spell"){
+
+				if(scalingData.isScaling){
 					clearUnusedTable(tableID,"row"+whichShape+"DimensionsAHL"+IDSuffix,"rowAoENum");                    
 				}
 				else{
@@ -263,8 +266,8 @@ function createAoETable(tableID,whichShape,IDSuffix){
 			rowConeDimensions.innerHTML = "<th><label for='coneDimensionValue"+IDSuffix+"'>Cone Size:</label></th><td><input type='number' id='coneDimensionValue"+IDSuffix+"' name='coneDimensionValue"+IDSuffix+"' min=0 style='width:25px' value=0><select id='coneDimensionUnits"+IDSuffix+"' name='coneDimensionUnits"+IDSuffix+"'><option value='Feet'>Feet</option><option value='Miles'>Miles</option></select></td>";
 			nextRowIndex++;
 
-			if(checkEffectType()=="Spell"){
-				let coneSizeAHLScalingSelect = createAHLSelect("coneSizeAHLScaling"+IDSuffix);
+			if(scalingData.isScaling){
+				let coneSizeAHLScalingSelect = createScalingInput("coneSizeAHLScaling"+IDSuffix,scalingData);
 
 				let rowConeDimensionsAHL = table.insertRow(nextRowIndex);
 				rowConeDimensionsAHL.id = "rowConeDimensionsAHL"+IDSuffix;
@@ -278,8 +281,8 @@ function createAoETable(tableID,whichShape,IDSuffix){
 			rowCubeDimensions.innerHTML = "<th><label for='cubeDimensionValue"+IDSuffix+"'>Cube Side Length:</label></th><td><input type='number' id='cubeDimensionValue"+IDSuffix+"' name='cubeDimensionValue"+IDSuffix+"' min=0 style='width:25px' value=0><select id='cubeDimensionUnits"+IDSuffix+"' name='cubeDimensionUnits"+IDSuffix+"'><option value='Feet'>Feet</option><option value='Miles'>Miles</option></select></td>";
 			nextRowIndex++;
 
-			if(checkEffectType()=="Spell"){
-				let cubeSizeAHLScalingSelect = createAHLSelect("cubeSizeAHLScaling"+IDSuffix);
+			if(scalingData.isScaling){
+				let cubeSizeAHLScalingSelect = createScalingInput("cubeSizeAHLScaling"+IDSuffix,scalingData);
 
 				let rowCubeDimensionsAHL = table.insertRow(nextRowIndex);
 				rowCubeDimensionsAHL.id = "rowCubeDimensionsAHL"+IDSuffix;
@@ -293,8 +296,8 @@ function createAoETable(tableID,whichShape,IDSuffix){
 			rowCylinderDimensions.innerHTML = "<th><label for='cylinderRadiusValue"+IDSuffix+"'>Cylinder Radius x Height:</label></th><td><input type='number' id='cylinderRadiusValue"+IDSuffix+"' name='cylinderRadiusValue"+IDSuffix+"' min=0 style='width:25px' value=0><select id='cylinderRadiusUnits"+IDSuffix+"' name='cylinderRadiusUnits"+IDSuffix+"'><option value='Feet'>Feet</option><option value='Miles'>Miles</option></select> x <input type='number' id='cylinderHeightValue"+IDSuffix+"' name='cylinderHeightValue"+IDSuffix+"' min=0 style='width:25px' value=0><select id='cylinderHeightUnits"+IDSuffix+"' name='cylinderHeightUnits"+IDSuffix+"'><option value='Feet'>Feet</option><option value='Miles'>Miles</option></select></td>";
 			nextRowIndex++;
 
-			if(checkEffectType()=="Spell"){
-				let cylinderSizeAHLScalingSelect = createAHLSelect("cylinderSizeAHLScaling"+IDSuffix);
+			if(scalingData.isScaling){
+				let cylinderSizeAHLScalingSelect = createScalingInput("cylinderSizeAHLScaling"+IDSuffix,scalingData);
 
 				let rowCylinderDimensionsAHL = table.insertRow(nextRowIndex);
 				rowCylinderDimensionsAHL.id = "rowCylinderDimensionsAHL"+IDSuffix;
@@ -308,8 +311,8 @@ function createAoETable(tableID,whichShape,IDSuffix){
 			rowHalfSphereDimensions.innerHTML = "<th><label for='halfSphereDimensionValue"+IDSuffix+"'>Half Sphere Radius:</label></th><td><input type='number' id='halfSphereDimensionValue"+IDSuffix+"' name='halfSphereDimensionValue"+IDSuffix+"' min=0 style='width:25px' value=0><select id='halfSphereDimensionUnits"+IDSuffix+"' name='halfSphereDimensionUnits"+IDSuffix+"'><option value='Feet'>Feet</option><option value='Miles'>Miles</option></select></td>";
 			nextRowIndex++;
 
-			if(checkEffectType()=="Spell"){
-				let halfSphereSizeAHLScalingSelect = createAHLSelect("halfSphereSizeAHLScaling"+IDSuffix);
+			if(scalingData.isScaling){
+				let halfSphereSizeAHLScalingSelect = createScalingInput("halfSphereSizeAHLScaling"+IDSuffix,scalingData);
 
 				let rowHalfSphereDimensionsAHL = table.insertRow(nextRowIndex);
 				rowHalfSphereDimensionsAHL.id = "rowHalfSphereDimensionsAHL"+IDSuffix;
@@ -324,8 +327,8 @@ function createAoETable(tableID,whichShape,IDSuffix){
 			rowLineDimensions.innerHTML = "<th><label for='lineLengthValue"+IDSuffix+"'>Line Length x Width:</label></th><td><input type='number' id='lineLengthValue"+IDSuffix+"' name='lineLengthValue"+IDSuffix+"' min=0 style='width:25px' value=0><select id='lineLengthUnits"+IDSuffix+"' name='lineLengthUnits"+IDSuffix+"'><option value='Feet'>Feet</option><option value='Miles'>Miles</option></select> x <input type='number' id='lineWidthValue' name='lineWidthValue' min=0 style='width:25px' value=0><select id='lineWidthUnits' name='lineWidthUnits'><option value='Feet'>Feet</option><option value='Miles'>Miles</option></select></td>";
 			nextRowIndex++;
 
-			if(checkEffectType()=="Spell"){
-				let lineSizeAHLScalingSelect = createAHLSelect("lineSizeAHLScaling"+IDSuffix);
+			if(scalingData.isScaling){
+				let lineSizeAHLScalingSelect = createScalingInput("lineSizeAHLScaling"+IDSuffix,scalingData);
 
 				let rowLineDimensionsAHL = table.insertRow(nextRowIndex);
 				rowLineDimensionsAHL.id = "rowLineDimensionsAHL"+IDSuffix;
@@ -339,8 +342,8 @@ function createAoETable(tableID,whichShape,IDSuffix){
 			rowPanelsDimensions.innerHTML = "<th><label for='panelsNumber"+IDSuffix+"'>Panel Number and Side Length:</label></th><td><input type='number' id='panelsNumber"+IDSuffix+"' name='panelsNumber"+IDSuffix+"' min=0 style='width:25px' value=10> panels, <input type='number' id='panelsDimensionValue"+IDSuffix+"' name='panelsDimensionValue"+IDSuffix+"' min=0 style='width:25px' value=0><select id='panelsDimensionUnits"+IDSuffix+"' name='panelsDimensionUnits"+IDSuffix+"'><option value='Feet'>Feet</option><option value='Miles'>Miles</option></select></td>";
 			nextRowIndex++;
 
-			if(checkEffectType()=="Spell"){
-				let panelsNumberAHLScalingSelect = createAHLSelect("panelsNumberAHLScaling"+IDSuffix);
+			if(scalingData.isScaling){
+				let panelsNumberAHLScalingSelect = createScalingInput("panelsNumberAHLScaling"+IDSuffix,scalingData);
 
 				let rowPanelsDimensionsAHL = table.insertRow(nextRowIndex);
 				rowPanelsDimensionsAHL.id = "rowPanelsDimensionsAHL"+IDSuffix;
@@ -354,8 +357,8 @@ function createAoETable(tableID,whichShape,IDSuffix){
 			rowSphereDimensions.innerHTML = "<th><label for='sphereDimensionValue"+IDSuffix+"'>Sphere Radius:</label></th><td><input type='number' id='sphereDimensionValue"+IDSuffix+"' name='sphereDimensionValue"+IDSuffix+"' min=0 style='width:25px' value=0><select id='sphereDimensionUnits"+IDSuffix+"' name='sphereDimensionUnits"+IDSuffix+"'><option value='Feet'>Feet</option><option value='Miles'>Miles</option></select></td>";
 			nextRowIndex++;
 
-			if(checkEffectType()=="Spell"){
-				let sphereSizeAHLScalingSelect = createAHLSelect("sphereSizeAHLScaling"+IDSuffix);
+			if(scalingData.isScaling){
+				let sphereSizeAHLScalingSelect = createScalingInput("sphereSizeAHLScaling"+IDSuffix,scalingData);
 
 				let rowSphereDimensionsAHL = table.insertRow(nextRowIndex);
 				rowSphereDimensionsAHL.id = "rowSphereDimensionsAHL"+IDSuffix;
@@ -369,8 +372,8 @@ function createAoETable(tableID,whichShape,IDSuffix){
 			rowWallDimensions.innerHTML = "<th><label for='wallLengthValue"+IDSuffix+"'>Wall Length x Width x Height:</label></th><td><input type='number' id='wallLengthValue"+IDSuffix+"' name='wallLengthValue"+IDSuffix+"' min=0 style='width:25px' value=0><select id='wallLengthUnits"+IDSuffix+"' name='wallLengthUnits"+IDSuffix+"'><option value='Feet'>Feet</option><option value='Miles'>Miles</option></select> x <input type='number' id='wallWidthValue"+IDSuffix+"' name='wallWidthValue"+IDSuffix+"' min=0 style='width:25px' value=0><select id='wallWidthUnits"+IDSuffix+"' name='wallWidthUnits"+IDSuffix+"'><option value='Feet'>Feet</option><option value='Miles'>Miles</option></select> x <input type='number' id='wallHeightValue"+IDSuffix+"' name='wallHeightValue"+IDSuffix+"' min=0 style='width:25px' value=0><select id='wallHeightUnits"+IDSuffix+"' name='wallHeightUnits"+IDSuffix+"'><option value='Feet'>Feet</option><option value='Miles'>Miles</option></select></td>";
 			nextRowIndex++;
 
-			if(checkEffectType()=="Spell"){
-				let wallSizeAHLScalingSelect = createAHLSelect("wallSizeAHLScaling"+IDSuffix);
+			if(scalingData.isScaling){
+				let wallSizeAHLScalingSelect = createScalingInput("wallSizeAHLScaling"+IDSuffix,scalingData);
 
 				let rowWallDimensionsAHL = table.insertRow(nextRowIndex);
 				rowWallDimensionsAHL.id = "rowWallDimensionsAHL"+IDSuffix;
@@ -391,8 +394,9 @@ function createMissilesRows(IDSuffix){
 
 		referenceRow = createTableRow(referenceRow,"rowMissileNumber"+IDSuffix,"<th><label for='MissileNumber"+IDSuffix+"'>Number of Missiles:</label></th><td><input type='number' id='MissileNumber"+IDSuffix+"' name='MissileNumber"+IDSuffix+"' value=1 min=1 class='small-number'><span id='MissileNumberAHLSpan"+IDSuffix+"'></span></td>");
 
-		if(checkEffectType()=="Spell"){
-			let MissilesAHLSelect = createAHLSelect("MissilesAHLScaling"+IDSuffix);
+		let scalingData = needsScalingData();
+		if(scalingData.isScaling){
+			let MissilesAHLSelect = createScalingInput("MissilesAHLScaling"+IDSuffix,scalingData);
 			let MissileAHLSpan = document.getElementById("MissileNumberAHLSpan"+IDSuffix);
 			MissileAHLSpan.innerHTML = " + <input type='number' id='MissileNumberAHL"+IDSuffix+"' name='MissileNumberAHL"+IDSuffix+"' value=1 min=0 style='width:25px'>"+MissilesAHLSelect;
 		}

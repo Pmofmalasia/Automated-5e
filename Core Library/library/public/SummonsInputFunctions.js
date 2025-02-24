@@ -7,6 +7,7 @@ function createSummonRows(idSuffix){
 		deleteInterveningElements(referenceRow,document.getElementById("rowSummonsEnd").nextElementSibling);
 	}
 	else{
+		let scalingData = needsScalingData();
 		if(hasPriorSelection){
 			deleteInterveningElements(referenceRow,document.getElementById("rowSummonNumber"));
 		}
@@ -21,8 +22,8 @@ function createSummonRows(idSuffix){
 		else if(summonChoice == "Criteria"){
 			referenceRow = createTableRow(referenceRow,"rowSummonCRMax","<th><label for='summonCRMax'>Maximum CR of Creature:</th><td><input type='number' id='summonCRMax' name='summonCRMax' min=0 value=2 style='width:25px'><span id='summonCRMaxAHLSpan'></span></td>");
 
-			if(checkEffectType()=="Spell"){
-				let summonCRMaxAHLScalingSelect = createAHLSelect("summonCRMaxAHLScaling");
+			if(scalingData.isScaling){
+				let summonCRMaxAHLScalingSelect = createScalingInput("summonCRMaxAHLScaling",scalingData);
 				document.getElementById("summonCRMaxAHLSpan").innerHTML = "<select id='summonCRMaxAHLScaleHow' name='summonCRMaxAHLScaleHow'><option value='Add'>Plus</option><option value='Multiply'>Times</option></select><input type='number' id='summonCRMaxAHLNum' name='summonCRMaxAHLNum' min=0 value=0 style='width:25px'>"+summonCRMaxAHLScalingSelect;
 			}
 
@@ -39,8 +40,8 @@ function createSummonRows(idSuffix){
 		}
 
 		let summonNumberAHLOptions = "";
-		if(checkEffectType() == "Spell"){
-			let summonNumberAHLScalingSelect = createAHLSelect("summonNumberAHLScaling");
+		if(scalingData.isScaling){
+			let summonNumberAHLScalingSelect = createScalingInput("summonNumberAHLScaling",scalingData);
 
 			summonNumberAHLOptions = "<select id='summonNumberAHLScaleHow' name='summonNumberAHLScaleHow'><option value='Add'>Plus</option><option value='Multiply'>Times</option></select><input type='number' id='summonNumberAHL' name='summonNumberAHL' min='0' style='width:25px' value=0>"+summonNumberAHLScalingSelect;
 		}

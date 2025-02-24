@@ -7,7 +7,6 @@
 [h:lu.FinalClassOptions = ""]
 [h:lu.NewAbilities = json.get(macro.args,"Abilities")]
 [h:lu.SourcebookLibs = pm.GetBookInfo("Library","json")]
-[h:broadcast("aaaaaaaaaaaa")]
 
 [h:lu.AttrPrereqList = pm.GetAttributes("Name","json")]
 [h,foreach(ClassTemp,lu.ClassArray),CODE:{
@@ -46,7 +45,6 @@
 	[h:lu.HPIncrease = if(HowHP == 0,floor(lu.HitDieSize/2)+1,if(HowHP == 1,eval("1d"+lu.HitDieSize),max(eval("1d"+lu.HitDieSize),floor(lu.HitDieSize/2)+1)))]
 }]
 [h:lu.OldConMod = json.get(getProperty("a5e.stat.AtrMods"),"Constitution")]
-[h:broadcast("2")]
 
 [h:lu.SubclassTest = if(json.get(json.path.read(lu.ClassArray,"\$[*][?(@.Name=='"+lu.Class+"')]['SubclassLevel']"),0)==lu.NewLevel,1,0)]
 [h,if(lu.SubclassTest),CODE:{
@@ -62,7 +60,6 @@
 	[h:lu.NewAbilities = json.append(lu.NewAbilities,macro.return)]
 };{}]
 
-[h:broadcast("3")]
 [h:tokenSubrace = js.a5e.RemoveSpecial(getProperty("a5e.stat.Subrace"))]
 [h,if(tokenSubrace != ""),CODE:{
 	[h:"<!-- SubraceIgnoredFeatures specifically removes features from the base race that the subrace does not get (usually when a race that formerly did not have a subrace is given one later) -->"]
@@ -80,7 +77,6 @@
 [h:lu.RaceIDPath = subraceIgnoredFeaturesPath+"(@.Class=='"+js.a5e.RemoveSpecial(getProperty("a5e.stat.Race"))+"' && (@.Subclass=='"+js.a5e.RemoveSpecial(getProperty("a5e.stat.Subrace"))+"' || @.Subclass==''))"]
 [h:lu.RaceIDPathOld = "(@.Class=='"+js.a5e.RemoveSpecial(getProperty("a5e.stat.Race"))+"' && (@.Subclass=='"+js.a5e.RemoveSpecial(getProperty("a5e.stat.Subrace"))+"' || @.Subclass==''))"]
 
-[h:broadcast("4")]
 [h:"<!-- Adds abilities based on class, race, and background that are gained on level up, separately since race and background go off of total level -->"]
 [h:tempNewAbilities = json.path.read(data.getData("addon:","pm.a5e.core","sb.Abilities"),"\$[*][?("+lu.RaceIDPath+" && @.Level=="+(getProperty("a5e.stat.Level")+1)+" && @.GainOnLevel==1)]")]
 
@@ -103,14 +99,12 @@
 	[h,if(needsMacroTest): createMacro(json.set("","label","Manage Fighting Styles","command",'[MACRO("ManageFightingStyles@Lib:pm.a5e.Core"): json.set("","LevelUp",0,"Class","'+lu.Class+'","ParentToken",currentToken())]',"group"," New Macros","color",json.get(ButtonColorData,"Border"),"fontColor",json.get(ButtonColorData,"Title"),"applyToSelected",1,"playerEditable",0,"minWidth",89))]
 };{}]
 
-[h:broadcast("5")]
 [h,MACRO("NewAbilityProcessing@Lib:pm.a5e.Core"): json.set("","Abilities",lu.NewAbilities,"ParentToken",ParentToken)]
 [h:lu.NewAbilities = json.get(macro.return,"Abilities")]
 [h:lu.NewButtons = json.get(macro.return,"Buttons")]
 [h:lu.NewSpells = json.get(macro.return,"Spells")]
 [h,if(json.isEmpty(lu.NewSpells)): lu.NewSpells = "[]"]
 
-[h:broadcast("before old resource")]
 [h:"<!-- Looks up the current amount of max resources for each ability. After all abilities are added and updated, this will be checked again. If there is increase in the in the amount of max resource, the current amount of resource is increased for that amount. This is done instead of just giving the players a long rest in case anyone wants to run a game where leveling can occur without regaining all resources. -->"]
 [h:noFeaturesTest = json.isEmpty(getProperty("a5e.stat.AllFeatures"))]
 [h,if(noFeaturesTest): lu.OldResources = ""; lu.OldResources = json.path.read(getProperty("a5e.stat.AllFeatures"),"\$[*][?(@.ResourceData != null)]","DEFAULT_PATH_LEAF_TO_NULL")]
@@ -119,7 +113,6 @@
 	[h:thisFeatureResource = js.a5e.GetMaximumResources(ability,ParentToken)]
 	[h:lu.OldResourcesMax = json.set(lu.OldResourcesMax,json.get(ability,"Name")+json.get(ability,"Class")+json.get(ability,"Subclass"),thisFeatureResource)]
 }]
-[h:broadcast("before old resource")]
 
 [h:"<!-- Checks to see if there is already a spellcasting ability associated with this class, so that spells will be added later even if it is not the 'correct' level for it by the calculation ceiling(Level*(1/2)*(1/CastingType)). Also needed for cantrips. -->"]
 [h,if(noFeaturesTest): lu.HadSpellcastingTest = 0; lu.HadSpellcastingTest = !json.isEmpty(json.path.read(getProperty("a5e.stat.AllFeatures"),"\$[*][?((@.Name == 'Spellcasting' || @.Name == 'PactMagic') && @.Class=='"+lu.Class+"' && (@.Subclass=='"+json.get(getProperty("a5e.stat.Subclasses"),lu.Class)+"' || @.Subclass == ''))]","DEFAULT_PATH_LEAF_TO_NULL"))]
@@ -183,7 +176,6 @@
 }]
 [h:setProperty("a5e.stat.AllFeatures",json.path.set(getProperty("a5e.stat.AllFeatures"),"\$[*][?(@.Class=='"+lu.Class+"' || @.Race == '"+js.a5e.RemoveSpecial(getProperty("a5e.stat.Race"))+"')]['Level']",lu.NewLevel))]
 [h:"<!-- Adds newly gained resources to the abilities array, see above. If resource existed previously, added resource amount = New difference - old difference. If resource did not exist previously, just sets resource = maxresource. -->"]
-[h:broadcast("before new resource")]
 [h:noFeaturesTest = json.isEmpty(getProperty("a5e.stat.AllFeatures"))]
 [h,if(noFeaturesTest): lu.NewResources = ""; lu.NewResources = json.path.read(getProperty("a5e.stat.AllFeatures"),"\$[*][?(@.ResourceData != null)]","DEFAULT_PATH_LEAF_TO_NULL")]
 [h:lu.NewResourcesMax = ""]
@@ -208,7 +200,6 @@
 		setProperty("a5e.stat.AllFeatures",json.path.set(getProperty("a5e.stat.AllFeatures"),"\$[*][?(@.Name=='"+json.get(ability,"Name")+"' && @.Class=='"+json.get(ability,"Class")+"' && @.Subclass=='"+json.get(ability,"Subclass")+"')]['Resource']",TempNewResources))
 	]
 }]
-[h:broadcast("after new resource")]
 
 [h,if(lu.DisplayNewAbilities != ""): abilityTable = json.append(abilityTable,json.set("","ShowIfCondensed",1,"Header","Abilities Gained","FalseHeader","","FullContents","","RulesContents",lu.DisplayNewAbilities,"RollContents","","DisplayOrder","['Rules','Roll','Full']"))]
 [h:js.a5e.CreateFeatureMacros(lu.NewButtons,ParentToken)]

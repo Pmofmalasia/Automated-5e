@@ -122,7 +122,7 @@ function createUseResourceTypeRows(j,otherArgs){
 	}
 
 	function createFeatureResourceSpecificDetails(){
-		//TODO: Resource - Need ability to do time resource via input (here). Needs a way of pulling the resource info from the chosen resource, which may not exist yet? Might be able to indexOf input and get from featurelist.
+		//TODO: Resource - Need ability to do time resource via input (here). 
 
 		//Note - this function is for (I think) any input specific to the type of resouce being expended - e.g. time resource, which feature is being powered/units for increment/min; hit dice, minimum size (maybe)
 	}

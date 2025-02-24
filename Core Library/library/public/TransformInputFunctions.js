@@ -7,6 +7,7 @@ async function createTransformRows(){
 		deleteInterveningElements(referenceRow,document.getElementById("rowTransformEnd").nextElementSibling);
 	}
 	else{
+		let scalingData = needsScalingData();
 		if(document.getElementById("rowTransformEnd") == null){
 			endRow = createTableRow(referenceRow,"rowTransformEnd","<th colspan=2></th>");
 			endRow.classList.add("section-end");
@@ -50,8 +51,8 @@ async function createTransformRows(){
 					else{
 						CRMaxSpan.innerHTML = "<input type='number' id='TransformCRMax' name='TransformCRMax' min=0 value=2 class='small-number'><span id='TransformCRMaxAHLSpan'></span>";
 
-						if(checkEffectType()=="Spell"){
-							let TransformCRMaxAHLScalingSelect = createAHLSelect("TransformCRMaxAHLScaling");
+						if(scalingData.isScaling){
+							let TransformCRMaxAHLScalingSelect = createScalingInput("TransformCRMaxAHLScaling",scalingData);
 							document.getElementById("TransformCRMaxAHLSpan").innerHTML = "<select id='TransformCRMaxAHLScaleHow' name='TransformCRMaxAHLScaleHow'><option value='Add'>Plus</option><option value='Multiply'>Times</option></select><input type='number' id='TransformCRMaxAHLNum' name='TransformCRMaxAHLNum' min=0 value=0 class='small-number'>"+TransformCRMaxAHLScalingSelect;
 						}
 					}
@@ -90,8 +91,8 @@ async function createTransformRows(){
 					if(HPChoice === "TempHPOther"){
 						referenceRow = createTableRow(referenceRow,"rowTransformTempHP","<th><label for='TransformTempHP'>Temporary HP Gained:</label></th><td><input type='number' id='TransformTempHP' name='TransformTempHP' min=1 class='small-number'><span id='TransformTempHPScalingSpan'></span></td>");
 
-						if(checkEffectType()=="Spell"){
-							let TransformTempHPScalingSelect = createAHLSelect("TransformTempHPScaling");
+						if(scalingData.isScaling){
+							let TransformTempHPScalingSelect = createScalingInput("TransformTempHPScaling",scalingData);
 							document.getElementById("TransformTempHPScalingSpan").innerHTML = "<select id='TransformTempHPScaleHow' name='TransformTempHPScaleHow'><option value='Add'>Plus</option><option value='Multiply'>Times</option></select><input type='number' id='TransformTempHPScaleAmount' name='TransformTempHPScaleAmount' min=0 value=0 class='small-number'>"+TransformTempHPScalingSelect;
 						}
 					}

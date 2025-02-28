@@ -1,29 +1,21 @@
 function createResourceRows(FeatureData){
 	let referenceRow = document.getElementById("rowIsResources");
-	let isResourceChoice = document.getElementById("isResources").value;
+	let isResourceChoice = document.getElementById("isResources").checked;
 
 	if(document.getElementById("rowResourcesEnd") !== null){
 		deleteInterveningElements(referenceRow,document.getElementById("rowResourcesEnd").nextElementSibling);
 	}
 
-	if(isResourceChoice !== ""){
+	if(isResourceChoice){
 		//TODO: FreeSpell - See below
 		//TODO: Resource - Still need a way to make display name = chosen spell name
 
 		let resourceRowData = [];
 		let resourceListeners = [];
-		if(isResourceChoice === "one"){
-			resourceRowData.push({
-				RowID:"rowResource",
-				Contents:"<th><label for='ResourceDisplayName'>Resource Display Name:</label></th><td><input type='text' id='ResourceDisplayName' name='ResourceDisplayName' value='"+FeatureData.DisplayName+"'></td>"
-			});
-		}
-		else{
-			resourceRowData.push({
-				RowID:"rowResource",
-				Contents:"<th><label for='ResourceDisplayName'>Resource Display Name:</label></th><td><input type='text' id='ResourceDisplayName' name='ResourceDisplayName'></td>"
-			});
-		}
+		resourceRowData.push({
+			RowID:"rowResource",
+			Contents:"<th><label for='ResourceDisplayName'>Resource Display Name:</label></th><td><input type='text' id='ResourceDisplayName' name='ResourceDisplayName'></td>"
+		});
 
 		let resourceNumberTypes = "<option value='OtherNumber'>Flat Number</option><option value='Attribute'>Attribute-Based</option><option value='Proficiency'>Proficiency-Based</option><option value='Level'>Level-Based</option><option value='NonlinearLevel'>Nonlinear Level-Based</option>";
 		if(FeatureData.Type === "Class" || FeatureData.Type === "Item"){
@@ -44,7 +36,7 @@ function createResourceRows(FeatureData){
 			functionArgs:{}
 		});
 
-		if(isResourceChoice === "multiple" && FeatureData.Type !== "Item"){
+		if(FeatureData.Type !== "Item"){
 			resourceRowData.push({
 				RowID:"rowResourceGainedLevel",
 				Contents:"<th><label for='ResourceGainedLevel'>Resource Gained at Level:</label></th><td><input type='number' class='small-number' id='ResourceGainedLevel' name='ResourceGainedLevel' value='"+FeatureData.Level+"' min='"+FeatureData.Level+"'></td>"
@@ -81,28 +73,24 @@ function createResourceRows(FeatureData){
 		});
 
 		createMultiRowButtonsInput("Resource",referenceRow,resourceRowData,"Resource",resourceListeners);
-		if(isResourceChoice === "one"){
-			let buttonsRow = document.getElementById("rowResourceButtons");
-			referenceRow = buttonsRow.previousElementSibling;
-			buttonsRow.remove();
-		}
-		else{
-			document.getElementById("AddResourceButton").addEventListener("click",function(){
+		document.getElementById("AddResourceButton").addEventListener("click",function(){
 				let currentNumber = Number(document.getElementById("ResourceNumber").value);
-				document.getElementById("ResourceAmountType"+currentNumber).dispatchEvent(new Event("change"));
+				document.getElementById("ResourceAmountType"+(currentNumber-1)).dispatchEvent(new Event("change"));
 
 				if(currentNumber > 1){
 					document.getElementById("rowMultiResourceEnd"+(currentNumber-2)).classList.add("section-end");
 				}
-			});
-			document.getElementById("RemoveResourceButton").addEventListener("click",function(){
-				let currentNumber = Number(document.getElementById("ResourceNumber").value);
-				if(currentNumber > 0){
-					document.getElementById("rowMultiResourceEnd"+(currentNumber-1)).classList.remove("section-end");
-				}
-			});
-			referenceRow = document.getElementById("rowResourceButtons");
-		}
+		});
+		document.getElementById("RemoveResourceButton").addEventListener("click",function(){
+			let currentNumber = Number(document.getElementById("ResourceNumber").value);
+			if(currentNumber > 0){
+				document.getElementById("rowMultiResourceEnd"+(currentNumber-1)).classList.remove("section-end");
+			}
+		});
+		referenceRow = document.getElementById("rowResourceButtons");
+
+		document.getElementById("ResourceAmountType0").dispatchEvent(new Event("change"));
+		document.getElementById("ResourceDisplayName0").value = FeatureData.DisplayName;
 
 		//Created before addResourceRestorationRows so it can find this row with .nextElementSibling
 		createTableRow(referenceRow,"rowResourcesEnd","<th colspan=2></th>");
@@ -218,8 +206,8 @@ function createResourceSpecialTypeRow(i){
 		referenceElement = createTableRow(referenceElement,"rowResourceSpecialTypeInfo"+i,"<th><label for='ResourceTimeUnits"+i+"'>Units of Time:</label></th><td><select id='ResourceTimeUnits"+i+"' name='ResourceTimeUnits"+i+"'>"+timeUnitsSelect+"</select> (Value Above)</td>");
 	}
 	
+	let currentNumber = Number(document.getElementById("ResourceNumber").value);
 	if(specialResourceType === "Time" || specialResourceType === ""){
-		let currentNumber = Number(document.getElementById("ResourceNumber").value);
 		let needsListener = false;
 		for(let j = 0; j < currentNumber; j++){
 			let scalingSpan = document.getElementById("ResourceSpecialScalingSpan"+j);
@@ -233,6 +221,8 @@ function createResourceSpecialTypeRow(i){
 			document.getElementById("FeatureTierType").removeEventListener("change",createResourceSpecialScaling);
 		}
 	}
+
+	createSpecificResourceSpecialScaling(currentNumber-1);
 }
 
 function createResourceInitialMethodRows(i){
@@ -255,18 +245,22 @@ function createResourceInitialMethodRows(i){
 
 function createResourceSpecialScaling(){
 	let currentNumber = Number(document.getElementById("ResourceNumber").value);
-	let isLevelScaling = document.getElementById("FeatureTierType").value;
 
 	for(let i = 0; i < currentNumber; i++){
-		let scalingSpan = document.getElementById("ResourceSpecialScalingSpan"+i);
-		if(scalingSpan !== null){
-			if(isLevelScaling === ""){
-				scalingSpan.innerHTML = "";
-			}
-			else{
-				let levelScalingSelect = createAHLSelect("ResourceSpecialScalingHow"+i);
-				scalingSpan.innerHTML = " + <input type='number' class='small-number' id='ResourceSpecialScaling"+i+"' name='ResourceSpecialScaling"+i+"'>"+levelScalingSelect;
-			}
+		createSpecificResourceSpecialScaling(i);
+	}
+}
+
+function createSpecificResourceSpecialScaling(i){
+	let scalingSpan = document.getElementById("ResourceSpecialScalingSpan"+i);
+	if(scalingSpan !== null){
+		let isLevelScaling = document.getElementById("FeatureTierType").value;
+		if(isLevelScaling === ""){
+			scalingSpan.innerHTML = "";
+		}
+		else{
+			let levelScalingSelect = createAHLSelect("ResourceSpecialScalingHow"+i);
+			scalingSpan.innerHTML = " + <input type='number' class='small-number' id='ResourceSpecialScaling"+i+"' name='ResourceSpecialScaling"+i+"' value='1'>"+levelScalingSelect;
 		}
 	}
 }
@@ -275,7 +269,6 @@ function addResourceRestorationRows(referenceRow,i){
 	if(i === undefined){
 		i = "";
 	}
-	let isResourceChoice = document.getElementById("isResources").value;
 	let initialReferenceRow = referenceRow;
 
 	let restoreWhenOptions = [
@@ -288,7 +281,7 @@ function addResourceRestorationRows(referenceRow,i){
 		{DisplayName:"Rolling Initiative",Name:"Initiative"},
 		{DisplayName:"Restored by an Item",Name:"Item"}
 	]
-	if(isResourceChoice === "multiple" && i === ""){
+	if(i === ""){
 		restoreWhenOptions.push({DisplayName:"Different for Each Resource",Name:"DifferentByResource"});
 	}
 	let restoreWhenMultiselect = createHTMLMultiselectOptions(restoreWhenOptions,"ResourceRestore"+i);
@@ -299,7 +292,7 @@ function addResourceRestorationRows(referenceRow,i){
 		createRestoreMethodRows(i);
 	});
 
-	if(isResourceChoice === "multiple" && i === ""){
+	if(i === ""){
 		document.getElementById("ResourceRestoreDifferentByResource").addEventListener("change",function(){
 			let resourceNum = Number(document.getElementById("ResourceNumber").value);
 

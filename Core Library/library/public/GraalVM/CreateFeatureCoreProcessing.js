@@ -19,7 +19,7 @@ function coreFeatureProcessing(CoreFeatureData){
 		FeatureData.OverallScaling = breakPoints;
 	}
 
-	if(CoreFeatureData.isResources !== "" && CoreFeatureData.isResources !== undefined){
+	if(CoreFeatureData.isResources !== undefined){
 		let resourceData = resourceProcessing(CoreFeatureData,FeatureData);
 		if(resourceData.FeatureUpdates !== undefined){
 			FeatureData.FeatureUpdates = resourceData.FeatureUpdates;
@@ -74,12 +74,7 @@ function resourceProcessing(CoreFeatureData,FeatureData){
 
 	let resourceNumber = CoreFeatureData.ResourceNumber;
 	if(resourceNumber === undefined){
-		if(CoreFeatureData.isResources === "one"){
-			resourceNumber = 1;
-		}
-		else{
-			resourceNumber = 0;
-		}
+		resourceNumber = 0;
 	}
 	else{
 		resourceNumber = Number(resourceNumber);

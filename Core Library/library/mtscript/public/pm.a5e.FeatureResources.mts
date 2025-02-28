@@ -10,17 +10,19 @@
 
 	[h,if(IdentifierType == "UNKNOWN"),CODE:{
 		[h:tempIdentifier = oldIdentifier]
+		[h:tempResource = json.set(tempResource,"Type","Feature")]
 	};{
 		[h,if(json.get(oldIdentifier,"ResourceKey") != ""):
 			tempIdentifier = json.set(oldIdentifier,"Resource",json.get(oldIdentifier,"ResourceKey"));
 			tempIdentifier = json.remove(oldIdentifier,"Resource")
 		]
+
+		[h:tempResource = json.set(tempResource,
+			"Type",if(json.get(oldIdentifier,"ResourceSource") == "","Feature",json.get(oldIdentifier,"ResourceSource")),
+			"Identifier",tempIdentifier
+		)]		
 	}]
 
-	[h:tempResource = json.set(tempResource,
-		"Type",if(json.get(oldIdentifier,"ResourceSource") == "","Feature",json.get(oldIdentifier,"ResourceSource")),
-		"Identifier",tempIdentifier
-	)]
 	[h:tempResource = json.remove(tempResource,"Resource")]
 	[h,if(json.get(tempResource,"Increment") == ""): tempResource = json.set(tempResource,"Increment",1)]
 	[h,if(json.get(tempResource,"ResourceUsedMax") == ""): tempResource = json.set(tempResource,"ResourceUsedMax",json.get(tempResource,"ResourceUsed"))]
@@ -35,17 +37,19 @@
 
 	[h,if(IdentifierType == "UNKNOWN"),CODE:{
 		[h:tempIdentifier = oldIdentifier]
+		[h:tempResource = json.set(tempResource,"Type","Feature")]
 	};{
 		[h,if(json.get(oldIdentifier,"ResourceKey") != ""):
 			tempIdentifier = json.set(oldIdentifier,"Resource",json.get(oldIdentifier,"ResourceKey"));
 			tempIdentifier = json.remove(oldIdentifier,"Resource")
 		]
+
+		[h:tempResource = json.set(tempResource,
+			"Type",if(json.get(oldIdentifier,"ResourceSource") == "","Feature",json.get(oldIdentifier,"ResourceSource")),
+			"Identifier",tempIdentifier
+		)]		
 	}]
 
-	[h:tempResource = json.set(tempResource,
-		"Type",if(json.get(oldIdentifier,"ResourceSource") == "","Feature",json.get(oldIdentifier,"ResourceSource")),
-		"Identifier",tempIdentifier
-	)]
 	[h:tempResource = json.remove(tempResource,"Resource")]
 	[h,if(json.get(tempResource,"Increment") == ""): tempResource = json.set(tempResource,"Increment",1)]
 	[h,if(json.get(tempResource,"ResourceUsedMax") == ""): tempResource = json.set(tempResource,"ResourceUsedMax",json.get(tempResource,"ResourceUsed"))]

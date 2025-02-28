@@ -398,7 +398,7 @@
 [h,if(isCondition == "Choose" || isCondition == "Mixture"),CODE:{
 	[h,foreach(tempCondition,allBaseConditions),CODE:{
 		[h:tempConditionName = json.get(tempCondition,"Name")]
-		[h,if(json.contains(subeffectData,"ConditionOption"+tempConditionName)): conditionOptions = json.append(conditionOptions,json.set("","Name",tempConditionName,"DisplayName",json.get(tempCondition,"DisplayName"),"Condition","AlwaysAdded",0))]
+		[h,if(json.contains(subeffectData,"ConditionOption"+tempConditionName)): conditionOptions = json.append(conditionOptions,json.set("","Name",tempConditionName,"DisplayName",json.get(tempCondition,"DisplayName"),"Class","Condition","AlwaysAdded",0))]
 		[h:subeffectData = json.remove(subeffectData,"ConditionOption"+tempConditionName)]
 	}]
 

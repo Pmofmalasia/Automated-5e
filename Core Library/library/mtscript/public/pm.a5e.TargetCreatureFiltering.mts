@@ -65,7 +65,6 @@
 		[h,foreach(allegianceType,json.fields(pm.TargetAllegiance)): pm.SelfOnlyTest = if(json.get(pm.TargetAllegiance,allegianceType)==1,0,pm.SelfOnlyTest)]
 		[h:return(!pm.SelfOnlyTest,json.set("","ValidTargets",json.append("",ParentToken),"SelfOnly",1))]		
 	}]
-
 };{
 	[h:pm.TargetSelf = 0]
 }]

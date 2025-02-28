@@ -66,7 +66,6 @@
 [h:sClassSelect = ""]
 [h:sLevelSelect = ""]
 [h:classList = pm.GetClasses("Name","json")]
-
 [h,if(ForcedClass==""),CODE:{
 	[h:ClassOptionsArray = "[]"]
 	[h:pm.PassiveFunction("SpellClass")]
@@ -91,7 +90,7 @@
 	[h:ClassOptionsArray = json.append("",ForcedClass)]
 	[h,if(json.type(ForcedClass) == "UNKNOWN"),CODE:{
 		[h:ClassOptions = json.append("",pm.GetDisplayName(ForcedClass,"sb.Classes"))]
-	};{		
+	};{
 		[h:isClassTest = json.contains(classList,json.get(ForcedClass,"Class"))]
 		[h,if(isClassTest):
 			ClassOptions = json.append("",pm.GetDisplayName(json.get(ForcedClass,"Class"),"sb.Classes"));

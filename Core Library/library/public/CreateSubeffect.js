@@ -42,7 +42,7 @@ function needsScalingData(){
 			for(let i = 0; i < tierNumber; i++){
 				let optionsNumber = Number(document.getElementById("UseResourceType"+i+"Number").value);
 				for(let j = 0; j < optionsNumber; j++){
-					let thisResourceType = document.getElementById("UseResourceType"+i+j);
+					let thisResourceType = document.getElementById("UseResourceType"+i+j).value;
 
 					if(thisResourceType === "SpellSlot"){
 						if(document.getElementById("isNoSpellSlotUseLimit"+i+j).checked){
@@ -483,6 +483,7 @@ function createScalingInput(idPrefix,scalingData){
 	if(!scalingData.isScaling){
 		return "";
 	}
+
 	let scalingTypeSelect = "";
 	let scalingTypes = scalingData.scalingMessage;
 	let multiTypesTest = scalingTypes.length > 1;
@@ -506,10 +507,12 @@ function createScalingInput(idPrefix,scalingData){
 
 	let finalInput = "";
 	if(multiTypesTest){
-		finalInput += "based on ";
+		finalInput += " based on ";
 	}
 
 	finalInput += scalingTypeSelect+scalingSelect;
+
+	return finalInput
 }
 
 function adjustScalingOptions(selection){
@@ -544,7 +547,7 @@ async function createDamageTable(){
 		referenceElement = document.getElementById("Damage");
 		referenceElement = createTableRow(referenceElement,"AdditionButtons","<th text-align='center' colspan='2'><input type='button' id='addDamageType' name='addDamageType' value='Add Type' onclick='addDamageTypeRows()'>  <input type='button' id='removeDamageType' name='removeDamageType' value='Remove Type' onclick='removeDamageTypeRows()'></th>");
 
-		addDamageTypeRows();
+		await addDamageTypeRows();
 	}
 	else{
 		clearUnusedTable("CreateSubeffectTable","Damage","rowCondition");
@@ -553,7 +556,7 @@ async function createDamageTable(){
 }
 
 async function addDamageTypeRows(){
-	let referenceElement = document.getElementById("AdditionButtons").priorElementSibling;
+	let referenceElement = document.getElementById("AdditionButtons").previousElementSibling;
 	let damageTypeNumber = document.getElementById("differentTypes").value;
 	damageTypeNumber++;
 	document.getElementById("differentTypes").value = damageTypeNumber;
@@ -577,8 +580,6 @@ async function addDamageTypeRows(){
 
 	let damageRowHTML = generateDamageRowText(damageTypeNumber,damageTypeOptions,UsePriorDamageButton);
 	referenceElement = createTableRow(referenceElement,"DamageSet"+damageTypeNumber,damageRowHTML);
-
-	referenceElement = createTableRow(referenceElement,"rowModBonus"+damageTypeNumber,"<th>Add Ability Score Modifier:</th><td><input type='checkbox' id='ModBonus"+damageTypeNumber+"' name='ModBonus"+damageTypeNumber+"' value=1></td>");
 
 	let scalingData = needsScalingData();
 	if(scalingData.isScaling){
@@ -1529,7 +1530,6 @@ async function createAffectSpellNameFilterRows(){
 }
 
 async function createAffectSpellTagFilterRows(){
-	let table = document.getElementById("CreateSubeffectTable");
 	let currentTagFilterTypeSelection = document.getElementById("affectSpellTagFilterType").value;
 	let nextRowIndex = document.getElementById("rowAffectSpellTagFilterType").rowIndex + 1;
 

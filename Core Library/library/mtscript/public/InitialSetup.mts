@@ -4,7 +4,7 @@
 [h:RaceOptions = json.path.read(RaceArray,"\$[*].DisplayName")]
 
 [h:charCreationHTML = "<tr><th><label for='charName'>Character Name:</label></th><td><input type='text' id='charName' name='charName' autofocus></td></tr>
-<tr><th text-align='center' colspan='2'><label>Ability Score Selection</label></th></tr>"]
+<tr><th style='text-align:center' colspan='2'><label>Ability Score Selection</label></th></tr>"]
 
 [h:AttributeList = pm.GetAttributes()]
 [h,foreach(TempAttribute,AttributeList): charCreationHTML = charCreationHTML + "<tr><th><label for='"+json.get(TempAttribute,"Name")+"Choice'>"+json.get(TempAttribute,"DisplayName")+":</label></th><td><input type='number' value='10' id='"+json.get(TempAttribute,"Name")+"Choice' name='"+json.get(TempAttribute,"Name")+"Choice' min='1' max='20'></td></tr>"]
@@ -64,6 +64,6 @@
         <option value='Neutral'>Neutral</option>
     </select>
 </td></tr>
-<tr><th text-align='center' colspan='2'><input type='submit' class='theme-fix-submit' id='submitButton' value='Submit'></th></tr><input type='hidden' name='activeToken' id='activeToken' value='"+currentToken()+"'>"]
+<tr><th style='text-align:center' colspan='2'><input type='submit' class='theme-fix-submit' id='submitButton' value='Submit'></th></tr><input type='hidden' name='activeToken' id='activeToken' value='"+currentToken()+"'>"]
 
 [h:html.dialog5("Character Creation","lib://pm.a5e.core/InitialSetup.html?cachelib=false","value="+base64.encode(charCreationHTML)+"; closebutton=0; width=375; height=500")]

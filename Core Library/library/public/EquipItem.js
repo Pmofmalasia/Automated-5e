@@ -181,19 +181,19 @@ async function loadUserData(){
 	let ParentToken = userdata.ParentToken;
 	let Limbs = userdata.Limbs;
 
-	addTableRow(tableID,nextRowIndex,"rowEquipmentHeader","<th text-align='center' colspan='2'>Armor and Held Items</th><input type='hidden' name='ParentToken' id='ParentToken' value='"+ParentToken+"'><input type='hidden' name='Inventory' id='Inventory' value='"+btoa(userdata.Inventory)+"'><input type='hidden' name='LimbNumber' id='LimbNumber' value='"+Limbs.length+"'>");
+	addTableRow(tableID,nextRowIndex,"rowEquipmentHeader","<th style='text-align:center' colspan='2'>Armor and Held Items</th><input type='hidden' name='ParentToken' id='ParentToken' value='"+ParentToken+"'><input type='hidden' name='Inventory' id='Inventory' value='"+btoa(userdata.Inventory)+"'><input type='hidden' name='LimbNumber' id='LimbNumber' value='"+Limbs.length+"'>");
 	nextRowIndex++;
 
-	addTableRow(tableID,nextRowIndex,"rowMagicItemHeader","<th text-align='center' colspan='2'>Magic Item Attunement</th><input type='hidden' name='AttunementNumber' id='AttunementNumber' value='"+userdata.AttunementSlots+"'>");
+	addTableRow(tableID,nextRowIndex,"rowMagicItemHeader","<th style='text-align:center' colspan='2'>Magic Item Attunement</th><input type='hidden' name='AttunementNumber' id='AttunementNumber' value='"+userdata.AttunementSlots+"'>");
 	nextRowIndex++;
 
 	addTableRow(tableID,nextRowIndex,"rowNaturalWeaponsHeader","<th>Default Natural Weapon:</th><td>Unarmed Strike</td>");
 	nextRowIndex++;
 
-	addTableRow(tableID,nextRowIndex,"rowWornItemsHeader","<th text-align='center' colspan='2'>Other Worn Items</th>");
+	addTableRow(tableID,nextRowIndex,"rowWornItemsHeader","<th style='text-align:center' colspan='2'>Other Worn Items</th>");
 	nextRowIndex++;
 
-	addTableRow(tableID,nextRowIndex,"rowSubmit","<th text-align='center' colspan='2'><input type='submit' class='theme-fix-submit' id='submitButton' value='Change Equipment'></th>");
+	addTableRow(tableID,nextRowIndex,"rowSubmit","<th style='text-align:center' colspan='2'><input type='submit' class='theme-fix-submit' id='submitButton' value='Change Equipment'></th>");
 	nextRowIndex++;
 
 	initialEquipmentRows("EquipItemTable",userdata.Inventory,userdata.HeldItems,userdata.Limbs,userdata.EquippedArmor,userdata.AttunementSlots,userdata.NaturalWeapons);

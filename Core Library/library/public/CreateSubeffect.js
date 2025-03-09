@@ -545,7 +545,7 @@ function createAHLSelect(ahlSelectID){
 async function createDamageTable(){
 	if(document.getElementById("isDamage").checked){
 		referenceElement = document.getElementById("Damage");
-		referenceElement = createTableRow(referenceElement,"AdditionButtons","<th text-align='center' colspan='2'><input type='button' id='addDamageType' name='addDamageType' value='Add Type' onclick='addDamageTypeRows()'>  <input type='button' id='removeDamageType' name='removeDamageType' value='Remove Type' onclick='removeDamageTypeRows()'></th>");
+		referenceElement = createTableRow(referenceElement,"AdditionButtons","<th style='text-align:center' colspan='2'><input type='button' id='addDamageType' name='addDamageType' value='Add Type' onclick='addDamageTypeRows()'>  <input type='button' id='removeDamageType' name='removeDamageType' value='Remove Type' onclick='removeDamageTypeRows()'></th>");
 
 		await addDamageTypeRows();
 	}
@@ -604,7 +604,7 @@ function generateDamageRowText(damageTypeNumber,damageTypeOptions,UsePriorDamage
 		modSelectOptions = "<option value='1'>Modifier</option><option value='0' selected>No Modifier</option>";
 	}
 	
-	return "<th text-align='center' colspan='2'><input type='number' id='DamageDieNum"+damageTypeNumber+"' name='DamageDieNum"+damageTypeNumber+"' value=1 min=0 style='width:25px'> d <input type='number' id='DamageDieSize"+damageTypeNumber+"' name='DamageDieSize"+damageTypeNumber+"' value=6 style='width:25px'> <b>+</b> <input type='number' id='DamageFlatBonus"+damageTypeNumber+"' name='DamageFlatBonus"+damageTypeNumber+"' value=0 style='width:25px'> + <select id='ModBonus"+damageTypeNumber+"' name='ModBonus"+damageTypeNumber+"'>"+modSelectOptions+"</select> <select id='DamageType"+damageTypeNumber+"' name='DamageType"+damageTypeNumber+"' onchange='createTypeOptions("+damageTypeNumber+")'>"+damageTypeOptions+"</select> Damage"+UsePriorDamageButton+"</th>";
+	return "<th style='text-align:center' colspan='2'><input type='number' id='DamageDieNum"+damageTypeNumber+"' name='DamageDieNum"+damageTypeNumber+"' value=1 min=0 style='width:25px'> d <input type='number' id='DamageDieSize"+damageTypeNumber+"' name='DamageDieSize"+damageTypeNumber+"' value=6 style='width:25px'> <b>+</b> <input type='number' id='DamageFlatBonus"+damageTypeNumber+"' name='DamageFlatBonus"+damageTypeNumber+"' value=0 style='width:25px'> + <select id='ModBonus"+damageTypeNumber+"' name='ModBonus"+damageTypeNumber+"'>"+modSelectOptions+"</select> <select id='DamageType"+damageTypeNumber+"' name='DamageType"+damageTypeNumber+"' onchange='createTypeOptions("+damageTypeNumber+")'>"+damageTypeOptions+"</select> Damage"+UsePriorDamageButton+"</th>";
 }
 
 async function generateDamageTypeOptions(){
@@ -638,7 +638,7 @@ async function switchToPriorDamage(damageTypeNumber){
 		}
 	}
 
-	document.getElementById("DamageSet"+damageTypeNumber).innerHTML = "<th text-align='center' colspan='2'> <input type='number' id='PriorDamagePercent"+damageTypeNumber+"' name='PriorDamagePercent"+damageTypeNumber+"' min=0 max=100 style='width:30px' value=100>% of <select id='PriorDamageType"+damageTypeNumber+"' name='PriorDamageType"+damageTypeNumber+"'>"+PriorDamageTypeOptions+"</select> Damage dealt as <select id='DamageType"+damageTypeNumber+"' name='DamageType"+damageTypeNumber+"'>"+damageTypeOptions+"</select> Damage, <b>OR</b> <input type='button' id='IndependentDamageButton' name='IndependentDamageButton' value='Indepenent Damage' onclick='switchToIndependentDamage("+damageTypeNumber+")'>";
+	document.getElementById("DamageSet"+damageTypeNumber).innerHTML = "<th style='text-align:center' colspan='2'> <input type='number' id='PriorDamagePercent"+damageTypeNumber+"' name='PriorDamagePercent"+damageTypeNumber+"' min=0 max=100 style='width:30px' value=100>% of <select id='PriorDamageType"+damageTypeNumber+"' name='PriorDamageType"+damageTypeNumber+"'>"+PriorDamageTypeOptions+"</select> Damage dealt as <select id='DamageType"+damageTypeNumber+"' name='DamageType"+damageTypeNumber+"'>"+damageTypeOptions+"</select> Damage, <b>OR</b> <input type='button' id='IndependentDamageButton' name='IndependentDamageButton' value='Indepenent Damage' onclick='switchToIndependentDamage("+damageTypeNumber+")'>";
 }
 
 async function switchToIndependentDamage(damageTypeNumber){
@@ -903,7 +903,7 @@ async function createConditionNonDurationEnd(){
 	let nextRowIndex = document.getElementById("rowIsConditionNonDurationEnd").rowIndex + 1;
 
 	if(hasOtherEndOptions){
-		addTableRow(tableID,nextRowIndex,"rowEndConditionInstancesLabel","<th colspan=2 text-align='center'>Instances When Condition Can End</th>");
+		addTableRow(tableID,nextRowIndex,"rowEndConditionInstancesLabel","<th colspan=2 style='text-align:center'>Instances When Condition Can End</th>");
 		nextRowIndex++;
 
 		addTableRow(tableID,nextRowIndex,"rowConditionNonDurationEndButtons","<th colspan=2><input type='button' value='Add Instance' onclick='addConditionEndInstanceRow()'><input type='button' value='Remove Instance' onclick='removeConditionEndInstanceRow()'><input type='hidden' id='conditionEndInstanceNumber' name='conditionEndInstanceNumber' value=0></th>");

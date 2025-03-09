@@ -15,6 +15,8 @@ function createActiveEffectsRow(){
 		activeEffectsAHL();
 
 		referenceElement = createTableRow(referenceElement,"rowActiveEffectsRandom","<th><label for='isEffectRandom'>Effect is Random:</label></th><td><input type='checkbox' id='isEffectRandom' name='isEffectRandom'></td>");
+
+		referenceElement = createTableRow(referenceElement,"rowActiveEffectsEnd","<th colspan=2></th>");
 	}
 	else if(endRow !== null){
 		deleteInterveningElements(referenceElement,endRow.nextElementSibling);

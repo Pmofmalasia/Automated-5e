@@ -20,6 +20,6 @@
 	[h:HitDieInput = HitDieInput + thisRow]
 }]
 
-[h:HitDieInput = HitDieInput + "<tr id='rowSubmit'><th text-align='center' colspan='2'><input type='submit' class='theme-fix-submit' id='submitButton' value='Spend Hit Dice'><input type='hidden' name='ParentToken' value='"+ParentToken+"'></tr>"]
+[h:HitDieInput = HitDieInput + "<tr id='rowSubmit'><th style='text-align:center' colspan='2'><input type='submit' class='theme-fix-submit' id='submitButton' value='Spend Hit Dice'><input type='hidden' name='ParentToken' value='"+ParentToken+"'></tr>"]
 
 [h:html.dialog5("SpendHitDieInput","lib://pm.a5e.core/SpendHitDieInput.html?cachelib=false","value="+base64.encode(HitDieInput)+"; width=250; height=150; closebutton=0")]

@@ -9,7 +9,7 @@
 [h:allTokenInventories = "{}"]
 [h,foreach(tempToken,TokensInRange): allTokenInventories = json.set(allTokenInventories,tempToken,getProperty("a5e.stat.Inventory",tempToken))]
 
-[h:PickUpItemHTML = "<tr id='rowHeader'><th text-align='center' colspan='2'>Pick Up Items</th></tr><input type='hidden' id='ParentToken' name='ParentToken' value='"+ParentToken+"'><input type='hidden' id='Inventories' value='"+allTokenInventories+"'>"]
+[h:PickUpItemHTML = "<tr id='rowHeader'><th style='text-align:center' colspan='2'>Pick Up Items</th></tr><input type='hidden' id='ParentToken' name='ParentToken' value='"+ParentToken+"'><input type='hidden' id='Inventories' value='"+allTokenInventories+"'>"]
 
 [h:TokensInRangeOptions = ""]
 [h,foreach(tempToken,TokensInRange): TokensInRangeOptions = TokensInRangeOptions + "<option value='"+tempToken+"'></option>"]
@@ -27,6 +27,6 @@
 
 [h:PickUpItemHTML = PickUpItemHTML + "<tr id='rowNumberTaken'><th><label for='NumberTaken'>Number To Take:</label></th><td><input type='number' id='NumberTaken' name='NumberTaken' min=1 value="+json.get(json.get(FirstTokenInventory,0),"Number")+" style='width:35px'> (Maximum "+json.get(json.get(FirstTokenInventory,0),"Number")+")</td></tr>"]
 
-[h:PickUpItemHTML = PickUpItemHTML + "<tr id='rowSubmit'><th text-align='center' colspan='2'><input type='submit' class='theme-fix-submit' id='submitButton' value='Take Item'></th></tr>"]
+[h:PickUpItemHTML = PickUpItemHTML + "<tr id='rowSubmit'><th style='text-align:center' colspan='2'><input type='submit' class='theme-fix-submit' id='submitButton' value='Take Item'></th></tr>"]
 
 [h:html.dialog5("PickUpItem","lib://pm.a5e.core/PickUpItem.html?cachelib=false","value="+base64.encode(PickUpItemHTML)+"; width=500; height=285; closebutton=0")]

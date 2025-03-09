@@ -106,6 +106,8 @@
 [h:pm.PassiveFunction("CondEnd")]
 
 [h,if(0),CODE:{
+	[h:"<!-- TODO: Conditions - Needs ability to run passive feature with the already removed condition (or refactor to be able to run before) -->"]
+	[h:"<!-- TODO: Passive - See above. -->"]
 	[h:oldUnifiedAbilities = a5e.UnifiedAbilities]
 	[h:a5e.UnifiedAbilities = json.path.put(RemovedConditionsFinal,"\$[*]","AbilityType","Condition")]
 	[h:pm.PassiveFunction("CondEndThis")]
@@ -117,7 +119,6 @@
 		[h:abilityTable = json.merge(abilityTable,json.get(RevertTransformationData,"Table"))]
 	}]
 }]
-
 
 [h,if(!json.isEmpty(RemovedConditionsFinal)): abilityTable = json.append(abilityTable,json.set("",
 	"ShowIfCondensed",1,

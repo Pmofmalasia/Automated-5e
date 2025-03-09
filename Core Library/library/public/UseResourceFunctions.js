@@ -77,6 +77,10 @@ async function createUseResourceRows(){
 			createMultiRowButtonsInput("UseResourceType"+i,thisReferenceElement,"<th><label for='UseResourceType"+i+"'>Type of Resource:</label></th><td><select id='UseResourceType"+i+"' name='UseResourceType"+i+"'>"+ResourceTypes+"</select></td>","Resource Option",listeners);
 
 			document.getElementById("UseResourceType"+i+0).dispatchEvent(new Event("change"));
+			document.getElementById("AddUseResourceType"+i+"Button").addEventListener("click",function(){
+				let thisTierResourceNumber = Number(document.getElementById("UseResourceType"+i+"Number").value - 1);
+				createUseResourceTypeRows(thisTierResourceNumber,[i,allResourceNames,allResourceFeatures]);
+			});
 		});
 
 		document.getElementById("AddUseResourceTierButton").dispatchEvent(new Event("click"));

@@ -74,7 +74,7 @@
 [h:LanguageOptions = ut.a5e.GenerateSelectionHTML(AllLanguages)]
 [h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowLanguageKnown0'><th><label for='LanguageKnown0'>Known Language #1:</label></th><td><select id='LanguageKnown0' name='LanguageKnown0' value=1 min=0>"+LanguageOptions+"</select></td></tr>"]
 
-[h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowLanguageKnownButtons'><th text-align='center' colspan='2'><input type='button' id='addLanguageKnown' value='New Language Known' onclick='addLanguageKnownRow()'>  <input type='button' id='removeLanguageKnown' value='Remove Language Known' onclick='removeLanguageKnownRow()'><input type='hidden' id='LanguageKnownNumber' name='LanguageKnownNumber' value=0></th></tr>"]
+[h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowLanguageKnownButtons'><th style='text-align:center' colspan='2'><input type='button' id='addLanguageKnown' value='New Language Known' onclick='addLanguageKnownRow()'>  <input type='button' id='removeLanguageKnown' value='Remove Language Known' onclick='removeLanguageKnownRow()'><input type='hidden' id='LanguageKnownNumber' name='LanguageKnownNumber' value=0></th></tr>"]
 
 [h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowProficiency'><th><label for='Proficiency'>Proficiency Bonus:</label></th><td><input type='number' id='Proficiency' name='Proficiency' min='1' style='width:25px' value='2'></td></tr>"]
 
@@ -98,6 +98,6 @@
 
 [h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowLibrary'><th><label for='Library'>Monster Sourcebook:</label></th><td><select id='Library' name='Library'>"+sourcebookOptions+"</select></td></tr>"]
 
-[h:monsterCreationHTML = monsterCreationHTML + "<tr><th text-align='center' colspan='2'><input type='submit' class='theme-fix-submit' id='submitButton' value='Submit'></th></tr>"]
+[h:monsterCreationHTML = monsterCreationHTML + "<tr><th style='text-align:center' colspan='2'><input type='submit' class='theme-fix-submit' id='submitButton' value='Submit'></th></tr>"]
 
 [h:html.dialog5("Monster Creation","lib://pm.a5e.core/MonsterCreation.html?cachelib=false","value="+base64.encode(monsterCreationHTML)+"; closebutton=0; width=400; height=1050")]

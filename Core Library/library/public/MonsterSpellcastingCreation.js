@@ -121,7 +121,7 @@ async function createSlotInfo() {
 
         let rowSlotSpellTitle = table.insertRow(nextRowIndex);
         rowSlotSpellTitle.id = "rowSlotSpellTitle";
-        rowSlotSpellTitle.innerHTML = "<th colspan='2' text-align='center'>Choose Slot Spells</th><input type='hidden' id='SlotSpellNumber' name='SlotSpellNumber' value=9>";
+        rowSlotSpellTitle.innerHTML = "<th colspan='2' style='text-align:center'>Choose Slot Spells</th><input type='hidden' id='SlotSpellNumber' name='SlotSpellNumber' value=9>";
         nextRowIndex++;
 
         let response = await fetch("macro:pm.a5e.GetBaseSpellData@lib:pm.a5e.Core", {method: "POST", body: ""});
@@ -143,7 +143,7 @@ async function createSlotInfo() {
             
         let rowSlotAdditionButtons = table.insertRow(nextRowIndex);
         rowSlotAdditionButtons.id = "rowSlotAdditionButtons";
-        rowSlotAdditionButtons.innerHTML = "<th text-align='center' colspan='2'><input type='button' id='addSlotSpell' name='addSlotSpell' value='Add' onclick='addSlotSpellRow()'>  <input type='button' id='removeSlotSpell' name='removeSlotSpell' value='Remove' onclick='removeSlotSpellRow()'></th>";
+        rowSlotAdditionButtons.innerHTML = "<th style='text-align:center' colspan='2'><input type='button' id='addSlotSpell' name='addSlotSpell' value='Add' onclick='addSlotSpellRow()'>  <input type='button' id='removeSlotSpell' name='removeSlotSpell' value='Remove' onclick='removeSlotSpellRow()'></th>";
         nextRowIndex++;
     }
     else{

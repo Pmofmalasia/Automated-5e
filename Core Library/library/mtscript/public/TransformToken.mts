@@ -163,8 +163,8 @@
 			[h:allowedItems = "[]"]
 			[h:prohibitedItems = "[]"]	
 		};{
-			[h:allowedItems = json.get(thisFormSettings,"AllowedItems")]
-			[h:prohibitedItems = json.get(thisFormSettings,"ProhibitedItems")]			
+			[h:allowedItems = json.merge("[]",json.get(thisFormSettings,"AllowedItems"))]
+			[h:prohibitedItems = json.merge("[]",json.get(thisFormSettings,"ProhibitedItems"))]
 		}]
 		[h:allItemSettings = json.union(allowedItems,prohibitedItems)]
 
@@ -245,18 +245,9 @@
 	[h:dropOutput = "[]"]
 }]
 
-[h:settingsProperties = json.append("","TargetingStyle","FullAbilityRules","FullSpellRules","DisplaySize","BorderColors","TitleColors")]
-[h:conditionsProperties = json.append("","ConditionList","ConditionGroups","ConditionsSet")]
-[h:alwaysRetainedProps = json.merge(settingsProperties,conditionsProperties)]
-[h,foreach(prop,alwaysRetainedProps),CODE:{
-	[h,if(json.indexOf(NewFormRawPropertyNames,"a5e.stat."+prop) != -1): NewFormRawPropertyNames = json.remove(NewFormRawPropertyNames,json.indexOf(NewFormRawPropertyNames,"a5e.stat."+prop))]
-	[h,if(json.indexOf(OldFormRawPropertyNames,"a5e.stat."+prop) != -1): OldFormRawPropertyNames = json.remove(OldFormRawPropertyNames,json.indexOf(OldFormRawPropertyNames,"a5e.stat."+prop))]
-}]
-
 [h:TokenFromJSON = json.set(TokenFromJSON,"AssociatedCondition",GroupID,"RawPropertyNames",OldFormRawPropertyNames,"NextFormName",NewFormDisplayName)]
 [h:PreviousForms = getProperty("a5e.stat.PreviousForms")]
 [h:PreviousForms = json.merge(json.append("",TokenFromJSON),PreviousForms)]
-
 [h,foreach(macro,json.get(TokenFromJSON,"Macros")),CODE:{
 	[h:thisMacroIndex = getMacroIndexes(json.get(macro,"label"),"json")]
 	[h,foreach(index,thisMacroIndex): removeMacro(index)]
@@ -269,8 +260,12 @@
 [h:setSightType(json.get(NewFormMTProperties,"Sight"))]
 [h:setSize(json.get(NewFormMTProperties,"size"))]
 
+[h:"<!-- NOTE: alwaysRetainedProps is important for any properties that need to be retained regardless of mechanics - all other properties have conditions under which they are NOT retained, and so using any of those pathways will cause these properties to occasionally be overritten. -->"]
+[h:settingsProperties = json.append("","a5e.stat.TargetingStyle","a5e.stat.FullAbilityRules","a5e.stat.FullSpellRules","a5e.stat.DisplaySize","a5e.stat.BorderColors","a5e.stat.TitleColors")]
+[h:conditionsProperties = json.append("","a5e.stat.ConditionList","a5e.stat.ConditionGroups","a5e.stat.ConditionsSet")]
+[h:alwaysRetainedProps = json.merge(settingsProperties,conditionsProperties)]
 [h:finalNewFormProps = json.unique(json.merge(NewFormRawPropertyNames,json.get(TokenFromJSON,"RawPropertyNames")))]
-[h,foreach(prop,finalNewFormProps),CODE:{
+[h,foreach(prop,finalNewFormProps),if(!json.contains(alwaysRetainedProps,prop)),CODE:{
 	[h,if(json.contains(NewFormProperties,prop)):
 		setProperty(prop,json.get(NewFormProperties,prop));
 		setProperty(prop,getPropertyDefault(prop))

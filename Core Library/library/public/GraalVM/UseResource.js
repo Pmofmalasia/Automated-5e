@@ -359,7 +359,7 @@ function expendResource(resources,ParentTokenID){
 			//TODO: Resource - ability for spells to expend more than one resource at once
 
 			let feature = getFeatureProperty(resource.Identifier,ParentToken);
-			let resourceName = resource.Resource;
+			let resourceName = resource.Key;
 			let newResourceAmount = Math.max(feature.Resource[resourceName] - 1,0);
 			feature.Resource[resourceName] = newResourceAmount;
 			setFeatureProperty(feature,ParentToken,["Resource"]);

@@ -12,7 +12,7 @@
 	[h:UniqueBorderColors = ""]
 	[h:UniqueTitleColors = ""]
 };{
-	[h:DisplayClass = if(tempDisplayClass == pm.RemoveSpecial(getProperty("a5e.stat.Race",ParentToken)),"Innate",tempDisplayClass)]
+	[h:DisplayClass = if(tempDisplayClass == js.a5e.RemoveSpecial(getProperty("a5e.stat.Race",ParentToken)),"Innate",tempDisplayClass)]
 	
 	[h:allUniqueBorderColors = getProperty("a5e.stat.BorderColors",ParentToken)]
 	[h,if(json.isEmpty(allUniqueBorderColors)):

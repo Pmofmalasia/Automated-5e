@@ -12,20 +12,17 @@
 [h:CreatureTargetOptionArray = json.get(MixedTypeTargets,"Creature")]
 [h:ObjectTargetOptionArray = json.get(MixedTypeTargets,"Object")]
 [h:EffectTargetOptionArray = json.get(MixedTypeTargets,"Effect")]
+[h:"<!-- TODO: Add prior target and effect targeting to this input -->"]
 
-[h:"<!-- TODO: Incorporate PriorTargets and Effects somehow (though less likely to be needed?). Will also need to add to multiselection resolution as well. Main issue with PriorTargets is distinguishing held object from effect (both stored as objects). Creature vs. object token should be easier since they're strings and it doesn't matter as much. -->"]
+[h:mergedFinalOptions = "[]"]
 [h,if(SingleTarget),CODE:{
     [h:TargetOptions = "[]"]
-	[h:PriorTargetOptionNumber = json.length(PriorTargetOptionArray)]
-	[h:CreatureTargetOptionNumber = 0]
-	[h:ObjectTargetOptionNumber = 0]
-	[h:EffectTargetOptionNumber = json.length(EffectTargetOptionArray)]
 
     [h,foreach(target,CreatureTargetOptionArray),CODE:{
 		[h:AmountTargetIsVisible = canSeeToken(target,targetingOrigin)]
 		[h:CanSeeTest = !json.isEmpty(AmountTargetIsVisible)]
 		[h,if(CanSeeTest || isGMAdjustTarget): TargetOptions = json.append(TargetOptions,getName(target)+" "+getTokenImage("",target))]
-		[h,if(CanSeeTest || isGMAdjustTarget): CreatureTargetOptionNumber = CreatureTargetOptionNumber + 1]
+		[h,if(CanSeeTest || isGMAdjustTarget): mergedFinalOptions = json.append(mergedFinalOptions,target)]
 	}] 
 
     [h,foreach(object,ObjectTargetOptionArray),CODE:{
@@ -43,6 +40,7 @@
 		[h:CanSeeTest = !json.isEmpty(AmountTargetIsVisible)]
 		[h,if(CanSeeTest || isGMAdjustTarget): json.append(TargetOptions,thisTargetDisplay)]
 		[h,if(CanSeeTest || isGMAdjustTarget): ObjectTargetOptionNumber = ObjectTargetOptionNumber + 1]
+		[h,if(CanSeeTest || isGMAdjustTarget): mergedFinalOptions = json.append(mergedFinalOptions,target)]
 	}]
 
     [h,if(isGMAdjustTarget):
@@ -82,7 +80,7 @@
 		[h:AmountTargetIsVisible = canSeeToken(thisTargetToken,targetingOrigin)]
 		[h:CanSeeTest = !json.isEmpty(AmountTargetIsVisible)]
 		[h,if(CanSeeTest || isGMAdjustTarget): tInput = listAppend(tInput," choice"+thisTargetVarName+" |  | "+thisTargetDisplay+" | CHECK ","##")]
-		[h,if(CanSeeTest || isGMAdjustTarget): finalObjectTargetOptions = json.append(finalCreatureTargetOptions,object)]
+		[h,if(CanSeeTest || isGMAdjustTarget): finalObjectTargetOptions = json.append(finalObjectTargetOptions,object)]
 	}]
 
 	[h,if(!isGMAdjustTarget): tInput = listAppend(tInput," choiceUnseen |  | Target(s) Not on List | CHECK ","##")]
@@ -99,22 +97,10 @@
 			thisTargetChoice = TargetChoice0;
 			thisTargetChoice = eval("TargetChoice"+roll.count)
 		]
-		[h:CumulativeTargetNum = PriorTargetOptionNumber]
-		[h,if(thisTargetChoice < CumulativeTargetNum && TargetType == ""): TargetType = "PriorTarget"]
-		[h:CumulativeTargetNum = CumulativeTargetNum + CreatureTargetOptionNumber]
-		[h,if(thisTargetChoice < CumulativeTargetNum && TargetType == ""): TargetType = "Creature"]
-		[h:CumulativeTargetNum = CumulativeTargetNum + ObjectTargetOptionNumber]
-		[h,if(thisTargetChoice < CumulativeTargetNum && TargetType == ""): TargetType = "Object"]
-		[h:CumulativeTargetNum = CumulativeTargetNum + EffectTargetOptionNumber]
-		[h,if(thisTargetChoice < CumulativeTargetNum && TargetType == ""): TargetType = "Effect"]
-	
-		[h:noTargetTest = 0]
-		[h,switch(TargetType):
-			case "PriorTarget": FinalTargetsChosen = json.append(FinalTargetsChosen,json.append("",json.get(PriorTargetOptionArray,thisTargetChoice)));
-			case "Creature": FinalTargetsChosen = json.append(FinalTargetsChosen,json.append("",json.get(CreatureTargetOptionArray,thisTargetChoice)));
-			case "Object": FinalTargetsChosen = json.append(FinalTargetsChosen,json.append("",json.get(ObjectTargetOptionArray,thisTargetChoice)));
-			case "Effect": FinalTargetsChosen = json.append(FinalTargetsChosen,json.append("",json.get(EffectTargetOptionArray,thisTargetChoice)));
-			case "": FinalTargetsChosen = json.append(FinalTargetsChosen,json.append("",if(isGMAdjustTarget,"","x")))
+		
+		[h,if(json.length(mergedFinalOptions) <= thisTargetChoice):
+			FinalTargetsChosen = json.append(FinalTargetsChosen,json.append("",if(isGMAdjustTarget,"","x")));
+			FinalTargetsChosen = json.append(FinalTargetsChosen,json.append("",json.get(mergedFinalOptions,thisTargetChoice)))
 		]
 	}]
 

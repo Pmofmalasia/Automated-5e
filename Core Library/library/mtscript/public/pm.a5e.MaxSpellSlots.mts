@@ -1,6 +1,6 @@
-[h,if(argCount()>0),CODE:{
-	[h:switchToken(arg(0))]
-};{}]
+[h,if(argCount()>0): switchToken(arg(0))]
+[h:ParentToken = currentToken()]
+
 [h:maxSpellLevel = 9]
 [h:SpellSlotDisplay = ""]
 [h,count(maxSpellLevel),CODE:{
@@ -12,16 +12,8 @@
 	]
 }]
 
-[h:unsharedSpellSlots = json.path.read(getProperty("a5e.stat.AllFeatures"),"[*][?(@.ResourceAsSpellSlot==1)]")]
-[h,foreach(feature,unsharedSpellSlots),CODE:{
-	[h:multiResourceTest = json.type(json.get(feature,"Resource"))=="OBJECT"]
-	[h,if(multiResourceTest),CODE:{
-		[h:tempResources = evalMacro(json.get(feature,"ResourceMax"))]
-		[h,foreach(resource,json.fields(tempResources)): SpellSlotDisplay = listAppend(SpellSlotDisplay,resource+": "+json.get(tempResources,resource)," | ")]
-	};{
-		[h:tempResourceName = if(json.get(feature,"ResourceDisplayName")=="",json.get(feature,"DisplayName"),json.get(feature,"ResourceDisplayName"))]
-		[h:SpellSlotDisplay = listAppend(SpellSlotDisplay,tempResourceName+": "+json.get(feature,"ResourceMax")," | ")]
-	}]
-}]
+[h:a5e.UnifiedAbilities = a5e.GatherAbilities(ParentToken)]
+[h:featureSpellSlots = js.a5e.GetFeatureSpellSlots(a5e.UnifiedAbilities,ParentToken)]
+[h,foreach(slot,featureSpellSlots): SpellSlotDisplay = listAppend(SpellSlotDisplay,json.get(slot,"DisplayName")+": "+json.get(slot,"MaxResource")," | ")]
 
-[h:macro.return = SpellSlotDisplay]
+[h:return(0,SpellSlotDisplay)]

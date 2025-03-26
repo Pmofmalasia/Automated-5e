@@ -1,6 +1,3 @@
-[h,if(data.getData("addon:","pm.a5e.core","ct.NewSpell")==""): setLibProperty("ct.NewSpell","{}","Lib:pm.a5e.Core")]
-[h:setLibProperty("ct.NewSpell",json.remove(data.getData("addon:","pm.a5e.core","ct.NewSpell"),getPlayerName()),"Lib:pm.a5e.Core")]
-
 [h:list1through9 = ""]
 [h,c(9): list1through9 = list1through9 + "<option value="+(roll.count+1)+">"+(roll.count+1)+"</option>"]
 
@@ -27,7 +24,7 @@
 
 [h:spellCreationHTML = spellCreationHTML + "<tr><th><span title='Intended for spells where each effect is significantly different, such as Plant Growth, Control Winds, etc. More minor changes like damage type, creature summoned, etc. do not require a distinct effect. If there is more than one effect, input only features of the spell common to all effects.'><label for='EffectsNumber'>Number of Distinct Effects:</label></span></th><td><input type='number' id='EffectsNumber' name='EffectsNumber' min='1' value='1' style='width:25px'> <input type='checkbox' id='RandomEffect' name='RandomEffect'> Chosen Randomly?</td></tr>"]
 
-[h:spellCreationHTML = spellCreationHTML + "<tr id='rowCastingClasses'><th text-align='center' colspan='2'>Appears on Base Spell List For:</th></tr>"]
+[h:spellCreationHTML = spellCreationHTML + "<tr id='rowCastingClasses'><th style='text-align:center' colspan='2'>Appears on Base Spell List For:</th></tr>"]
 
 [h:UniqueSpellListFeatures = json.path.read(data.getData("addon:","pm.a5e.core","sb.Abilities"),"[*][?(@.UniqueSpellList==1)]")]
 [h,foreach(tempFeature,UniqueSpellListFeatures),CODE:{
@@ -47,10 +44,10 @@
 
 [h:spellCreationHTML = spellCreationHTML + "<tr id='rowSourcebook'><th><label for='spellSourcebook'>Spell Sourcebook:</label></th><td><select id='spellSourcebook' name='spellSourcebook'>"+sourcebookOptions+"</select></td></tr>
 
-<tr id='rowDescription'><th text-align='center' colspan='2'><label for='Description'>Full Spell Description:</label></th></tr><tr id='rowSpellTextArea'><th colspan='2'><textarea id='Description' name='Description' rows='10' style='width:100%'></textarea></th></tr>
+<tr id='rowDescription'><th style='text-align:center' colspan='2'><label for='Description'>Full Spell Description:</label></th></tr><tr id='rowSpellTextArea'><th colspan='2'><textarea id='Description' name='Description' rows='10' style='width:100%'></textarea></th></tr>
 
-<tr id='rowAHLDescription'><th text-align='center' colspan='2'><label for='AHLDescription'>At Higher Levels:</label></th></tr><tr id='rowAHLSpellTextArea'><th colspan='2'><textarea id='AHLDescription' name='AHLDescription' rows='3' style='width:100%'></textarea></th></tr>"]
+<tr id='rowAHLDescription'><th style='text-align:center' colspan='2'><label for='AHLDescription'>At Higher Levels:</label></th></tr><tr id='rowAHLSpellTextArea'><th colspan='2'><textarea id='AHLDescription' name='AHLDescription' rows='3' style='width:100%'></textarea></th></tr>"]
 
-[h:spellCreationHTML = spellCreationHTML + "<tr><th text-align='center' colspan='2'><input type='submit' class='theme-fix-submit' id='submitButton' value='Submit'></th></tr>"]
+[h:spellCreationHTML = spellCreationHTML + "<tr><th style='text-align:center' colspan='2'><input type='submit' class='theme-fix-submit' id='submitButton' value='Submit'></th></tr>"]
 
 [h:html.dialog5("Spell Creation","lib://pm.a5e.core/CreateSpell.html?cachelib=false","value="+base64.encode(spellCreationHTML)+"; closebutton=0; width=675; height=1050")]

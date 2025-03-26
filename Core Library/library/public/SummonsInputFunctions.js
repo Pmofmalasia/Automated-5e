@@ -7,6 +7,7 @@ function createSummonRows(idSuffix){
 		deleteInterveningElements(referenceRow,document.getElementById("rowSummonsEnd").nextElementSibling);
 	}
 	else{
+		let scalingData = needsScalingData();
 		if(hasPriorSelection){
 			deleteInterveningElements(referenceRow,document.getElementById("rowSummonNumber"));
 		}
@@ -21,25 +22,16 @@ function createSummonRows(idSuffix){
 		else if(summonChoice == "Criteria"){
 			referenceRow = createTableRow(referenceRow,"rowSummonCRMax","<th><label for='summonCRMax'>Maximum CR of Creature:</th><td><input type='number' id='summonCRMax' name='summonCRMax' min=0 value=2 style='width:25px'><span id='summonCRMaxAHLSpan'></span></td>");
 
-			if(checkEffectType()=="Spell"){
-				let summonCRMaxAHLScalingSelect = createAHLSelect("summonCRMaxAHLScaling");
+			if(scalingData.isScaling){
+				let summonCRMaxAHLScalingSelect = createScalingInput("summonCRMaxAHLScaling",scalingData);
 				document.getElementById("summonCRMaxAHLSpan").innerHTML = "<select id='summonCRMaxAHLScaleHow' name='summonCRMaxAHLScaleHow'><option value='Add'>Plus</option><option value='Multiply'>Times</option></select><input type='number' id='summonCRMaxAHLNum' name='summonCRMaxAHLNum' min=0 value=0 style='width:25px'>"+summonCRMaxAHLScalingSelect;
 			}
 
-			referenceRow = createTableRow(referenceRow,"rowIsCreatureTypeLimitsSummon","<th><label for='isCreatureTypeLimitsSummon'>Filter By Creature Type:</th><td><select id='isCreatureTypeLimitsSummon' name='isCreatureTypeLimitsSummon'><option value=''>No Filter</option><option value='Inclusive'>Include Choices</option><option value='Exclusive'>Exclude Choices</option></select></td>");
-			document.getElementById("isCreatureTypeLimitsSummon").addEventListener("change",function(){
-				createCreatureTypeRows("Summon");
-			});
+			referenceRow = addCreatureTypePrereqRow(referenceRow,"Summon");
 
-			referenceRow = createTableRow(referenceRow,"rowIsCreatureSubtypeLimitsSummon","<th><label for='isCreatureSubtypeLimitsSummon'>Filter By Creature Subtype:</th><td><select id='isCreatureSubtypeLimitsSummon' name='isCreatureSubtypeLimitsSummon'><option value=''>No Filter</option><option value='Inclusive'>Include Choices</option><option value='Exclusive'>Exclude Choices</option></select></td>");
-			document.getElementById("isCreatureSubtypeLimitsSummon").addEventListener("change",function(){
-				createCreatureSubtypeRows("Summon");
-			});
+			referenceRow = addCreatureSubtypePrereqRow(referenceRow,"Summon");
 
-			referenceRow = createTableRow(referenceRow,"rowSizePrereqsSummon","<th><label for='SizePrereqsSummon'>Filter By Creature Size:</th><td><select id='SizePrereqsSummon' name='SizePrereqsSummon'><option value=''>No Filter</option><option value='Range'>Min/Maximum Sizes</option><option value='RelativeMaximum'>Maximum Relative to User's Size</option><option value='RelativeMinimum'>Minimum Relative to User's Size</option><option value='Relative'>Min/Maximum Relative to User's Size</option><option value='Inclusive'>Include Specific Sizes</option><option value='Exclusive'>Exclude Specific Sizes</option></select></td>");
-			document.getElementById("SizePrereqsSummon").addEventListener("change",function(){
-				createSizePrereqRows("Summon");
-			});
+			referenceRow = addSizePrereqRow(referenceRow,"Summon");
 		}
 
 		let summonNumberCROptions = "";
@@ -48,8 +40,8 @@ function createSummonRows(idSuffix){
 		}
 
 		let summonNumberAHLOptions = "";
-		if(checkEffectType() == "Spell"){
-			let summonNumberAHLScalingSelect = createAHLSelect("summonNumberAHLScaling");
+		if(scalingData.isScaling){
+			let summonNumberAHLScalingSelect = createScalingInput("summonNumberAHLScaling",scalingData);
 
 			summonNumberAHLOptions = "<select id='summonNumberAHLScaleHow' name='summonNumberAHLScaleHow'><option value='Add'>Plus</option><option value='Multiply'>Times</option></select><input type='number' id='summonNumberAHL' name='summonNumberAHL' min='0' style='width:25px' value=0>"+summonNumberAHLScalingSelect;
 		}
@@ -119,9 +111,18 @@ function createSummonRows(idSuffix){
 				createSummonOriginRows();
 			});
 
-			referenceRow = createTableRow(referenceRow,"rowSummonsEnd","<th></th><td></td>");
+			referenceRow = createTableRow(referenceRow,"rowSummonsEnd","<th colspan=2></th>");
 			referenceRow.classList.add("section-end");
 		}
+	}
+}
+
+function toggleSummonNumber(){
+	if(document.getElementById("summonNumberCRBased").checked){
+		document.getElementById("summonNumber").setAttribute('disabled','');
+	}
+	else{
+		document.getElementById("summonNumber").removeAttribute('disabled','');
 	}
 }
 

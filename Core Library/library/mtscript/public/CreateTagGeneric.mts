@@ -6,9 +6,9 @@
     " TagLibrary | "+pm.GetBookInfo("DisplayName")+" | Associated Sourcebook | LIST | VALUE=STRING "
 ))]
 
-[h:sourcebookLib = json.get(json.path.read(data.getData("addon:","pm.a5e.core","ms.Sources"),"\$[?(@.Name=='"+pm.RemoveSpecial(TagLibrary)+"')]['Library']"),0)]
+[h:sourcebookLib = json.get(json.path.read(data.getData("addon:","pm.a5e.core","ms.Sources"),"\$[?(@.Name=='"+js.a5e.RemoveSpecial(TagLibrary)+"')]['Library']"),0)]
 
-[h:TagName = pm.RemoveSpecial(TagDisplayName)]
+[h:TagName = js.a5e.RemoveSpecial(TagDisplayName)]
 
 [h:TagData = json.set("",
 	"Name",TagName,

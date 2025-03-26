@@ -1,7 +1,7 @@
 [h:VisionTypeData = macro.args]
 [h:VisionTypeData = pm.a5e.KeyStringsToNumbers(VisionTypeData)]
 [h:VisionTypeDisplayName = json.get(VisionTypeData,"DisplayName")]
-[h:VisionTypeName = pm.RemoveSpecial(VisionTypeDisplayName)]
+[h:VisionTypeName = js.a5e.RemoveSpecial(VisionTypeDisplayName)]
 
 [h:VisionTypeData = json.set(VisionTypeData,"Name",VisionTypeName)]
 

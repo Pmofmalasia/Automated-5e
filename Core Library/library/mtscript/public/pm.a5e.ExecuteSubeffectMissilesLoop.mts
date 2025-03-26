@@ -33,7 +33,7 @@
 
 	[h,foreach(tempDamageType,allDamageData),CODE:{
 		[h:typeOptionTest = json.contains(json.get(allDamageData,roll.count),"DamageTypeOptions")]
-		[h,if(typeOptionTest): allDamageData = json.path.put(allDamageData,"\$["+roll.count+"]","DamageType",pm.RemoveSpecial(eval("DamageTypeSelection"+roll.count)))]
+		[h,if(typeOptionTest): allDamageData = json.path.put(allDamageData,"\$["+roll.count+"]","DamageType",js.a5e.RemoveSpecial(eval("DamageTypeSelection"+roll.count)))]
 	}]
 }]
 
@@ -50,10 +50,10 @@
 			[h:PrimeStatMod = PrimeStatMod]
 		};
 		case "Stat":{
-			[h:PrimeStatMod = json.get(getProperty("a5e.stat.AtrMods"),json.get(thisSubeffectSaveData,"ToHitStat"))]
+			[h:PrimeStatMod = json.get(getProperty("a5e.stat.AtrMods"),json.get(subeffect.AttackData,"ToHitStat"))]
 		};
 		case "SetValue":{
-			[h:attack.ToHitBonus = json.get(thisSubeffectSaveData,"ToHitBonus")]
+			[h:attack.ToHitBonus = json.get(subeffect.AttackData,"ToHitBonus")]
 			[h:attack.ProfTest = 0]
 		};
 		default:{
@@ -74,7 +74,7 @@
 	[h:attack.CritTest = json.get(subeffect.AttackData,"CritTest")]
 	[h:attack.CritFailTest = json.get(subeffect.AttackData,"CritFailTest")]
 
-[h:"<!-- TODO: Will need to reorganize reroll link positioning to collect all info, especially damage -->"]
+[h:"<!-- TODO: Will need to reorganize reroll link positioning to collect all info, especially damage; possibly use strformat method and a passed variable to just collect the data at the end (encoded) -->"]
 	[h:subeffect.AttackReroll = json.set(subeffect.AttackData,"TestType","Attack","Target",subeffect.ThisMissileTargets,"PreviousDamage","{}","AttackNum",-1,"ID",json.get(thisEffectData,"ID"),"ParentToken",ParentToken)]
 	[h:subeffect.AdvRerollLink = macroLinkText("Modifyd20TestBorder@Lib:pm.a5e.Core","self-gm",json.set(subeffect.AttackReroll,"RerollData",json.set("","Advantage",1,"Disadvantage",0,"ForcedAdvantage",1)),ParentToken)]
 	[h:subeffect.DisRerollLink = macroLinkText("Modifyd20TestBorder@Lib:pm.a5e.Core","self-gm",json.set(subeffect.AttackReroll,"RerollData",json.set("","Advantage",0,"Disadvantage",1,"ForcedAdvantage",1)),ParentToken)]
@@ -248,7 +248,7 @@
 	[h:TargetConditionLimitsData = json.get(subeffectData,"TargetConditionLimits")]
 
 	[h:subeffect.TargetConditionOptions = pm.a5e.TargetConditionFiltering(subeffect.ThisMissileTargets,TargetConditionLimitsData)]
-	
+
 	[h,if(json.get(TargetConditionLimitsData,"Number")=="" && json.get(TargetConditionLimitsData,"MustTargetAll")==1):
 		subeffect.ConditionTargets = subeffect.TargetConditionOptions;
 		subeffect.ConditionTargets = pm.a5e.TargetConditionTargeting(subeffect.TargetConditionOptions,json.get(TargetConditionLimitsData,"Number"))
@@ -326,5 +326,16 @@
 		"DisplayOrder","['Rules','Roll','Full']"
 	))]
 };{}]
+
+[h,if(json.get(SubeffectData,"Transform") != ""),CODE:{
+	[h:TransformData = pm.a5e.ExecuteTransform(json.get(SubeffectData,"Transform"),json.set("","AHLTier",AHLTier,"ParentToken",ParentToken,"Targets",subeffect.ThisMissileTargets,"Duration",json.set("","Value",DurationValue,"Units",lower(DurationUnits))))]
+
+	[h:thisEffectData = json.set(thisEffectData,"Transform",json.get(TransformData,"Transform"))]
+	[h:abilityTable = json.merge(abilityTable,json.get(TransformData,"Table"))]
+};{}]
+
+[h,if(json.get(SubeffectData,"isDropItems") == 1),CODE:{
+	[h:thisEffectData = json.set(thisEffectData,"isDropItems",1)]
+}]
 
 [h:pm.a5e.EffectData = json.append(pm.a5e.EffectData,thisEffectData)]

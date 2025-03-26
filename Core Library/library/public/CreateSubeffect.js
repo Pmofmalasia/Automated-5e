@@ -2,12 +2,122 @@ function checkEffectType(){
 	return document.getElementById("EffectType").value;
 }
 
+function needsScalingData(){
+	if(checkEffectType() == "Spell"){
+		if(document.getElementById("ExtraDataSpellLevel") != null){
+			if(document.getElementById("ExtraDataSpellLevel").value == "0"){
+				return {
+					isScaling:true,
+					scalingMessage:["Cantrip Tier"],
+					identifier:["Cantrip"]
+				};			
+			}
+			else{
+				return {
+					isScaling:true,
+					scalingMessage:["Spell Level"],
+					identifier:["SpellSlot"]
+				};
+			}
+		}
+	}
+
+	let scalingData = {
+		isScaling:false,
+		scalingMessage:[],
+		identifier:[]
+	};
+	let FeatureData = JSON.parse(atob(document.getElementById("FeatureData").value));
+	if(FeatureData.OverallScaling !== "" && FeatureData.OverallScaling !== undefined){
+		scalingData.isScaling = true;
+
+		//Allows features with "Inconsistent" scaling to have some components with linear scaling
+		scalingData.scalingMessage.push("Feature Level");
+		scalingData.identifier.push("Level");
+
+		if(FeatureData.OverallScaling === "Inconsistent"){
+			scalingData.scalingMessage.push("Feature Tier");
+			scalingData.identifier.push("Tier");
+		}
+	}
+
+	if(document.getElementById("isUseResource") !== null){
+		if(document.getElementById("isUseResource").checked){
+			let tierNumber = Number(document.getElementById("UseResourceTierNumber").value);
+			for(let i = 0; i < tierNumber; i++){
+				let optionsNumber = Number(document.getElementById("UseResourceType"+i+"Number").value);
+				for(let j = 0; j < optionsNumber; j++){
+					let thisResourceType = document.getElementById("UseResourceType"+i+j).value;
+
+					if(thisResourceType === "SpellSlot"){
+						if(document.getElementById("isNoSpellSlotUseLimit"+i+j).checked){
+							scalingData.isScaling = true;
+							scalingData.scalingMessage.push("Spell Level");
+							scalingData.identifier.push("SpellSlot");
+						}
+						else if(document.getElementById("UseSpellSlotMinimum"+i+j).value !== document.getElementById("UseSpellSlotMaximum"+i+j).value){
+							scalingData.isScaling = true;
+							scalingData.scalingMessage.push("Spell Level");
+							scalingData.identifier.push("SpellSlot");
+						}
+					}
+					else if(thisResourceType === "HitDice"){
+						if(document.getElementById("isNoHitDiceUseLimit"+i+j).checked){
+							scalingData.isScaling = true;
+							scalingData.scalingMessage.push("Hit Dice Spent");
+							scalingData.identifier.push("HitDice");
+						}
+						else if(document.getElementById("UseHitDiceMinimum"+i+j).value !== document.getElementById("UseHitDiceMaximum"+i+j).value){
+							scalingData.isScaling = true;
+							scalingData.scalingMessage.push("Hit Dice Spent");
+							scalingData.identifier.push("HitDice");
+						}	
+					}
+					else if(thisResourceType === "OtherFeature"){
+						//TODO: Resources - Need to add identifiers for other feature resource
+						//TODO: Resources - Items may need a different usable identifier via ObjectID, to be used here (as any item of the correct type would work, ItemID would not be appropriate)
+					}
+					else if(thisResourceType === "ThisFeature"){
+						let featureData = JSON.parse(atob(document.getElementById("FeatureData").value));
+						let resourceData = featureData.ResourceData.Resources;
+						let resourceChoice = document.getElementById("UseFeatureResource"+i+j).value;
+						let resourceIndex = resourceData.findIndex(x => x.Name === resourceChoice);
+						let resourceDisplay = resourceData[resourceIndex].DisplayName;
+
+						let identifier = {
+							Name:featureData.Name,
+							Class:featureData["Class"],
+							Subclass:featureData.Subclass
+						};
+
+						//TODO: Resources - Update to 'this' when implemented
+						if(featureData["Class"] === "Item"){
+							identifier.ItemID = "";
+						}
+
+						if(document.getElementById("isNoFeatureResourceUseLimit"+i+j).checked){
+							scalingData.isScaling = true;
+							scalingData.scalingMessage.push(resourceDisplay+" Spent");
+						}
+						else if(document.getElementById("UseFeatureResourceMinimum"+i+j).value !== document.getElementById("UseFeatureResourceMaximum"+i+j).value){
+							scalingData.isScaling = true;
+							scalingData.scalingMessage.push(resourceDisplay+" Spent");
+						}			
+					}
+				}
+			}
+		}
+	}
+
+	return scalingData;
+}
+
 function createParentSubeffectRows(){
 	let nextRowIndex = document.getElementById("rowParentSubeffect").rowIndex + 1;
 	let ParentSubeffect = getParentSubeffect();
 
 	if(ParentSubeffect == "NONE"){
-		clearUnusedTable("CreateSubeffectTable","rowParentSubeffect","Mitigation");
+		clearUnusedTable("CreateSubeffectTable","rowParentSubeffect","rowParentSubeffectEnd");
 
 		let endRowIndex = document.getElementById("rowUsePriorTargets").rowIndex;
 		document.getElementById(tableID).deleteRow(endRowIndex);
@@ -50,7 +160,7 @@ function createParentSubeffectRows(){
 		addTableRow("CreateSubeffectTable",nextRowIndex,"rowUsePriorTargets","<th><label for='UsePriorTargets'>Use Same Targets as Linked Effect:</label></th><td><input type='checkbox' id='UsePriorTargets' name='UsePriorTargets' onchange='createPriorTargetsRows("+'"CreateSubeffectTable","Prior"'+")'></td>");
 		nextRowIndex++;
 
-		addTableRow("CreateSubeffectTable",nextRowIndex,"rowUsePriorOrigin","<th><label for='UsePriorOrigin'>New Subeffect Originates from Old Target:</label></th><td><input type='checkbox' id='UsePriorOrigin' name='UsePriorOrigin' onchange='createPriorOriginRows("+'"CreateSubeffectTable"'+")'></td>");
+		addTableRow("CreateSubeffectTable",nextRowIndex,"rowUsePriorOrigin","<th><label for='UsePriorOrigin'>New Subeffect Originates from Old Target:</label></th><td><input type='checkbox' id='UsePriorOrigin' name='UsePriorOrigin' onchange='createPriorOriginRows()'></td>");
 		nextRowIndex++;
 	}
 }
@@ -69,37 +179,30 @@ function getParentSubeffect(){
 }
 
 async function createParentPrereqRows(){
-	let nextRowIndex = document.getElementById("rowParentPrereqs").rowIndex + 1;
+	let referenceElement = document.getElementById("rowParentPrereqs");
 	let PrereqChoice = document.getElementById("ParentPrereqs").value;
 	
-	clearUnusedTable("CreateSubeffectTable","rowParentPrereqs","Mitigation");
+	deleteInterveningElements(referenceElement,document.getElementById("rowParentSubeffectEnd"));
 
 	if(PrereqChoice == "AttackHit"){
-		addTableRow("CreateSubeffectTable",nextRowIndex,"rowParentPrereqExtra","<th><label for='PrereqAttackHitMargin'>Must Hit by At Least:</label></th><td><input type='number' id='PrereqAttackHitMargin' name='PrereqAttackHitMargin' min=0 value=0></td>");
-		nextRowIndex++;
+		referenceElement = createTableRow(referenceElement,"rowParentPrereqExtra","<th><label for='PrereqAttackHitMargin'>Must Hit by At Least:</label></th><td><input type='number' id='PrereqAttackHitMargin' name='PrereqAttackHitMargin' min=0 value=0></td>");
 
-		addTableRow("CreateSubeffectTable",nextRowIndex,"rowParentPrereqExtra2","<th><label for='PrereqAttackCrits'>Attack Must Crit:</label></th><td><input type='checkbox' id='PrereqAttackCrits' name='PrereqAttackCrits'></td>");
-		nextRowIndex++;
+		referenceElement = createTableRow(referenceElement,"rowParentPrereqExtra2","<th><label for='PrereqAttackCrits'>Attack Must Crit:</label></th><td><input type='checkbox' id='PrereqAttackCrits' name='PrereqAttackCrits'></td>");
 	}
 	else if(PrereqChoice == "AttackMiss"){
-		addTableRow("CreateSubeffectTable",nextRowIndex,"rowParentPrereqExtra","<th><label for='PrereqAttackMissMargin'>Must Miss by At Least:</label></th><td><input type='number' id='PrereqAttackMissMargin' name='PrereqAttackMissMargin' min=0 value=0></td>");
-		nextRowIndex++;
+		referenceElement = createTableRow(referenceElement,"rowParentPrereqExtra","<th><label for='PrereqAttackMissMargin'>Must Miss by At Least:</label></th><td><input type='number' id='PrereqAttackMissMargin' name='PrereqAttackMissMargin' min=0 value=0></td>");
 	}
 	else if(PrereqChoice == "PassedSave"){
-		addTableRow("CreateSubeffectTable",nextRowIndex,"rowParentPrereqExtra","<th><label for='PrereqSaveSucceedMargin'>Must Succeed by At Least:</label></th><td><input type='number' id='PrereqSaveSucceedMargin' name='PrereqSaveSucceedMargin' min=0 value=0></td>");
-		nextRowIndex++;
+		referenceElement = createTableRow(referenceElement,"rowParentPrereqExtra","<th><label for='PrereqSaveSucceedMargin'>Must Succeed by At Least:</label></th><td><input type='number' id='PrereqSaveSucceedMargin' name='PrereqSaveSucceedMargin' min=0 value=0></td>");
 	}
 	else if(PrereqChoice == "FailedSave"){
-		addTableRow("CreateSubeffectTable",nextRowIndex,"rowParentPrereqExtra","<th><label for='PrereqSaveFailMargin'>Must Fail by At Least:</label></th><td><input type='number' id='PrereqSaveFailMargin' name='PrereqSaveFailMargin' min=0 value=0></td>");
-		nextRowIndex++;
+		referenceElement = createTableRow(referenceElement,"rowParentPrereqExtra","<th><label for='PrereqSaveFailMargin'>Must Fail by At Least:</label></th><td><input type='number' id='PrereqSaveFailMargin' name='PrereqSaveFailMargin' min=0 value=0></td>");
 	}
 	else if(PrereqChoice == "PassedCheck"){
-		addTableRow("CreateSubeffectTable",nextRowIndex,"rowParentPrereqExtra","<th><label for='PrereqCheckSucceedMargin'>Must Succeed by At Least:</label></th><td><input type='number' id='PrereqCheckSucceedMargin' name='PrereqCheckSucceedMargin' min=0 value=0></td>");
-		nextRowIndex++;
+		referenceElement = createTableRow(referenceElement,"rowParentPrereqExtra","<th><label for='PrereqCheckSucceedMargin'>Must Succeed by At Least:</label></th><td><input type='number' id='PrereqCheckSucceedMargin' name='PrereqCheckSucceedMargin' min=0 value=0></td>");
 	}
 	else if(PrereqChoice == "FailedCheck"){
-		addTableRow("CreateSubeffectTable",nextRowIndex,"rowParentPrereqExtra","<th><label for='PrereqCheckFailMargin'>Must Fail by At Least:</label></th><td><input type='number' id='PrereqCheckFailMargin' name='PrereqCheckFailMargin' min=0 value=0></td>");
-		nextRowIndex++;
+		referenceElement = createTableRow(referenceElement,"rowParentPrereqExtra","<th><label for='PrereqCheckFailMargin'>Must Fail by At Least:</label></th><td><input type='number' id='PrereqCheckFailMargin' name='PrereqCheckFailMargin' min=0 value=0></td>");
 	}
 	else if(PrereqChoice == "ConditionApplied"){
 		let ConditionsRequiredOptions = "<option value='All'>All Conditions</option><option value='Any'>Any Condition</option>";
@@ -110,8 +213,7 @@ async function createParentPrereqRows(){
 			ConditionsRequiredOptions = ConditionsRequiredOptions + "<option value='"+tempCondition.Name+"'>"+tempCondition.DisplayName+"</option>";
 		}
 
-		addTableRow("CreateSubeffectTable",nextRowIndex,"rowParentPrereqExtra","<th><label for='PrereqConditionsApplied'>Conditions that Must be Applied:</label></th><td><select id='PrereqConditionsApplied' name='PrereqConditionsApplied'>"+ConditionsRequiredOptions+"</select></td>");
-		nextRowIndex++;
+		referenceElement = createTableRow(referenceElement,"rowParentPrereqExtra","<th><label for='PrereqConditionsApplied'>Conditions that Must be Applied:</label></th><td><select id='PrereqConditionsApplied' name='PrereqConditionsApplied'>"+ConditionsRequiredOptions+"</select></td>");
 	}
 	else if(PrereqChoice == "Damage"){
 		let ParentSubeffect = getParentSubeffect();
@@ -130,162 +232,241 @@ async function createParentPrereqRows(){
 			}
 		}
 
-		addTableRow("CreateSubeffectTable",nextRowIndex,"rowParentPrereqExtra","<th><label for='PrereqDamageDealtMinimum'>Minimum Damage Dealt:</label></th><td><input type='number' id='PrereqDamageDealtMinimum' name='PrereqDamageDealtMinimum' value=1 min=1 style='width:35px'><select id='PrereqDamageDealtType' name='PrereqDamageDealtType'>"+PriorDamageTypeOptions+"</select></td>");
-		nextRowIndex++;
+		referenceElement = createTableRow(referenceElement,"rowParentPrereqExtra","<th><label for='PrereqDamageDealtMinimum'>Minimum Damage Dealt:</label></th><td><input type='number' id='PrereqDamageDealtMinimum' name='PrereqDamageDealtMinimum' value=1 min=1 style='width:35px'><select id='PrereqDamageDealtType' name='PrereqDamageDealtType'>"+PriorDamageTypeOptions+"</select></td>");
 	}
 	else if(PrereqChoice == "Healing"){
-		addTableRow("CreateSubeffectTable",nextRowIndex,"rowParentPrereqExtra","<th><label for='PrereqHealingMinimum'>Minimum Healing Done:</label></th><td><input type='number' id='PrereqHealingMinimum' name='PrereqHealingMinimum' value=1 min=1 style='width:35px'></td>");
-		nextRowIndex++;
+		referenceElement = createTableRow(referenceElement,"rowParentPrereqExtra","<th><label for='PrereqHealingMinimum'>Minimum Healing Done:</label></th><td><input type='number' id='PrereqHealingMinimum' name='PrereqHealingMinimum' value=1 min=1 style='width:35px'></td>");
 	}
 }
 
 async function createMitigationTable(){
 	let tableID = "CreateSubeffectTable";
-	let table = document.getElementById(tableID);
-	let nextMitigationRowIndex = document.getElementById("Mitigation").rowIndex + 1;
+	let referenceRow = document.getElementById("rowMitigation");
+	let howMitigate = document.getElementById("howMitigate").value;
 
-	if(document.getElementById("howMitigate").value == "Attack"){
-		clearUnusedTable(tableID,"Mitigation","Damage");
-
-		if(checkEffectType() == "Spell"){
-			addTableRow(tableID,nextMitigationRowIndex,"rowToHitMethod","<th><label for='ToHitMethod'>Method of Choosing To Hit:</label></th><select id='ToHitMethod' name='ToHitMethod' onchange='createToHitMethodRow("+'"'+tableID+'"'+")'><option value='Stat'>Stat-Based</option><option value='SpellAttack'>Spell Attack Bonus</option><option value='SetValue'>Preset Value</option></select></td>");
-			nextMitigationRowIndex++;
-
-			document.getElementById("rowToHitMethod").setAttribute("hidden","");
-			document.getElementById("ToHitMethod").value = "SpellAttack";
-		}
-		else{
-			addTableRow(tableID,nextMitigationRowIndex,"rowToHitMethod","<th><label for='ToHitMethod'>Method of Choosing To Hit:</label></th><select id='ToHitMethod' name='ToHitMethod' onchange='createToHitMethodRow("+'"'+tableID+'"'+")'><option value='Stat'>Stat-Based</option><option value='SpellAttack'>Spell Attack Bonus</option><option value='SetValue'>Preset Value</option></select></td>");
-			nextMitigationRowIndex++;
-
-			let request = await fetch("macro:pm.GetAttributes@lib:pm.a5e.Core",{method: "POST", body: ""});
-			let AllAttributes = await request.json();
-			let AttributeOptions = createHTMLSelectOptions(AllAttributes);
-
-			addTableRow(tableID,nextMitigationRowIndex,"rowToHitBonus","<th><label for='ToHitStat'>Stat Used:</label></th><select id='ToHitStat' name='ToHitStat'>"+AttributeOptions+"</select></td>");
-			nextMitigationRowIndex++;
-		}
-
-		addTableRow(tableID,nextMitigationRowIndex,"rowMeleeRanged","<th><label for='MeleeRanged'>Melee or Ranged Attack:</label></th><select id='MeleeRanged' name='MeleeRanged'><option value='Melee'>Melee</option><option value='Ranged'>Ranged</option></select></td>");
-		nextMitigationRowIndex++;
-
-		let attackTableRow2 = table.insertRow(nextMitigationRowIndex);nextMitigationRowIndex++;
-		attackTableRow2.innerHTML = "<th>Crit Threshhold:</th><td><input type='number' id='CritThresh' name='CritThresh' max='20' min='1' value='20'></td>";
-
-		addTableRow("CreateSubeffectTable",nextMitigationRowIndex,"rowIsConditionalAdvantage","<th>Conditional (Dis)advantage:</th><input type='checkbox' id='isConditionalAttackAdvantage' name='isConditionalAttackAdvantage' onchange='createConditionalAttackAdvantageRows()'></td>");
-		nextMitigationRowIndex++;
-	
-		addTableRow("CreateSubeffectTable",nextMitigationRowIndex,"rowIgnoreCoverBenefits","<th><label for='IgnoreCoverBenefit'>Ignore Cover Benefits?</label></th><td><input type='checkbox' id='IgnoreCoverBenefit' name='IgnoreCoverBenefit'></td>");
-		nextMitigationRowIndex++;
-	}
-	else if(document.getElementById("howMitigate").value == "Save"){
-		clearUnusedTable("CreateSubeffectTable","Mitigation","Damage");
-		let saveTableRows = table.insertRow(nextMitigationRowIndex);
-
-		let request = await fetch("macro:pm.GetAttributes@lib:pm.a5e.Core",{method: "POST", body: "[]"});
-		let saveTypes = await request.json();
-		let saveOptions = createHTMLSelectOptions(saveTypes);
-
-		saveTableRows.innerHTML = "<th>Save Type:</th><select id='SaveType' name='SaveType'>"+saveOptions+"</select></td>";
-		nextMitigationRowIndex++;
-
-		if(checkEffectType() == "Spell"){
-			addTableRow(tableID,nextMitigationRowIndex,"rowSaveDCMethod","<th><label for='SaveDCMethod'>Method of Choosing Save DC:</label></th><select id='SaveDCMethod' name='SaveDCMethod' onchange='createSaveDCMethodRow("+'"'+tableID+'"'+")'><option value='Stat'>Stat-Based</option><option value='SpellSave'>Spell Attack Bonus</option><option value='SetValue'>Preset Value</option></select></td>");
-			nextMitigationRowIndex++;
-
-			document.getElementById("rowSaveDCMethod").setAttribute("hidden","");
-			document.getElementById("SaveDCMethod").value = "SpellSave";
-		}
-		else{
-			addTableRow(tableID,nextMitigationRowIndex,"rowSaveDCMethod","<th><label for='SaveDCMethod'>Method of Choosing Save DC:</label></th><select id='SaveDCMethod' name='SaveDCMethod' onchange='createSaveDCMethodRow("+'"'+tableID+'"'+")'><option value='Stat'>Stat-Based</option><option value='SpellAttack'>Spell Attack Bonus</option><option value='SetValue'>Preset Value</option></select></td>");
-			nextMitigationRowIndex++;
-
-			addTableRow(tableID,nextMitigationRowIndex,"rowSaveDC","<th><label for='SaveDCStat'>Stat Used:</label></th><select id='SaveDCStat' name='SaveDCStat'>"+saveOptions+"</select></td>");
-			nextMitigationRowIndex++;
-		}
-
-		addTableRow("CreateSubeffectTable",nextMitigationRowIndex,"rowIsConditionalAdvantage","<th>Conditional (Dis)advantage:</th><input type='checkbox' id='isConditionalSaveAdvantage' name='isConditionalSaveAdvantage' onchange='createConditionalSaveAdvantageRows()'></td>");
-		nextMitigationRowIndex++;
-
-		addTableRow("CreateSubeffectTable",nextMitigationRowIndex,"rowIsConditionalAutomaticSave","<th>Conditional Auto-Success/Failure:</th><input type='checkbox' id='isConditionalAutomaticSave' name='isConditionalAutomaticSave' onchange='createConditionalAutomaticSaveRows()'></td>");
-		nextMitigationRowIndex++;
-
-		addTableRow("CreateSubeffectTable",nextMitigationRowIndex,"rowIsChooseFailure","<th>Can Choose to Fail:</th><input type='checkbox' id='isChooseFailure' name='isChooseFailure'></td>");
-		nextMitigationRowIndex++;
-	
-		addTableRow("CreateSubeffectTable",nextMitigationRowIndex,"rowIgnoreCoverBenefits","<th><label for='IgnoreCoverBenefit'>Ignore Cover Benefits?</label></th><td><input type='checkbox' id='IgnoreCoverBenefit' name='IgnoreCoverBenefit'></td>");
-		nextMitigationRowIndex++;
-
-		if(document.getElementById("isDamage").checked){
-			for(let i=1; i <= document.getElementById("differentTypes").value; i++){
-				let rowPrefix = "";
-				if(document.getElementById("isAHL"+i).value == "0"){
-					rowPrefix = "rowIsAHL";
-				}
-				else{
-					rowPrefix = "rowAHLFlatBonus";
-				}
-				let rowToReplaceIndex = document.getElementById(rowPrefix+i).rowIndex;
-				let newSaveMitigationRow = table.insertRow(rowToReplaceIndex+1);
-				newSaveMitigationRow.id = "rowSaveMitigation"+i;
-				newSaveMitigationRow.innerHTML = "<th>Damage on Successful Save:</th><td><select id='saveMitigation"+i+"' name='saveMitigation"+i+"'><option value=2>None</option><option value=1>Half</option><option value=0>Full</option></select></td>";
-			}
-		}
-		
-		if(document.getElementById("isCondition").value != "None"){
-			let nextRowIndex = document.getElementById("rowSummons").rowIndex;
-			let rowConditionSave = table.insertRow(nextRowIndex);
-			rowConditionSave.id = "rowConditionSave";
-			rowConditionSave.innerHTML = "<th><label for='conditionSaveEffect'>Conditions Applied on Save:</label></th><select id='conditionSaveEffect' name='conditionSaveEffect' onchange='createConditionSaveTable()'><option value='0'>All Applied</option><option value='1'>Some Applied</option><option value='2' selected>None Applied</option><option value='Different'>Different Condition Applied</option></select></td>";
-		}
-		
-		if(document.getElementById("isMoveTarget").checked){
-			let moveStartRow = document.getElementById("rowMoveTargetAHLInfo").rowIndex;
-			let rowSavePreventMove = table.insertRow(moveStartRow+1);
-			rowSavePreventMove.id = "rowSavePreventMove";
-			rowSavePreventMove.innerHTML = "<th><label for='savePreventMove'>Save Prevents Movement:</label></th><select id='savePreventMove' name='savePreventMove'><option value=2>Prevent Completely</option><option value=1>Halved Movement</option><option value=0>Move Not Affected</option></select></td></tr>";
-		}
-
-		if(document.getElementById("isSetHP").checked){
-			let savePreventSetHPIndex = document.getElementById("rowSetHPAmount").rowIndex + 1;
-		
-			addTableRow("CreateSubeffectTable",savePreventSetHPIndex,"rowSavePreventSetHP","<th><label for='savePreventSetHP'>Save Prevents HP Change:</label></th><td><input type='checkbox' id='savePreventSetHP' name='savePreventSetHP'></td>");
-		}
-
-		if(document.getElementById("InstantKill").checked){
-			let savePreventInstantKillIndex = document.getElementById("rowInstantKill").rowIndex + 1;
-
-			addTableRow("CreateSubeffectTable",savePreventInstantKillIndex,"rowSavePreventInstantKill","<th><label for='savePreventInstantKill'>Save Prevents Instant Kill:</label></th><td><input type='checkbox' id='savePreventInstantKill' name='savePreventInstantKill'></td>");
-		}
+	if(howMitigate == "None"){
+		deleteInterveningElements(referenceRow,document.getElementById("rowMitigationEnd").nextElementSibling);
 	}
 	else{
-		clearUnusedTable("CreateSubeffectTable","Mitigation","Damage");
+		if(document.getElementById("rowMitigationEnd") == null){
+			let endRow = createTableRow(referenceRow,"rowMitigationEnd","<th colspan='2'></th>");
+			endRow.classList.add("section-end");
+		}
+
+		deleteInterveningElements(referenceRow,document.getElementById("rowMitigationEnd"));
+
+		if(howMitigate == "Attack"){
+			if(checkEffectType() == "Spell"){
+				referenceRow = createTableRow(referenceRow,"rowToHitMethod","<th><label for='ToHitMethod'>Method of Choosing To Hit:</label></th><select id='ToHitMethod' name='ToHitMethod' onchange='createToHitMethodRow("+'"'+tableID+'"'+")'><option value='Stat'>Stat-Based</option><option value='SpellAttack'>Spell Attack Bonus</option><option value='SetValue'>Preset Value</option></select></td>");
+	
+				document.getElementById("rowToHitMethod").setAttribute("hidden","");
+				document.getElementById("ToHitMethod").value = "SpellAttack";
+			}
+			else{
+				referenceRow = createTableRow(referenceRow,"rowToHitMethod","<th><label for='ToHitMethod'>Method of Choosing To Hit:</label></th><select id='ToHitMethod' name='ToHitMethod' onchange='createToHitMethodRow("+'"'+tableID+'"'+")'><option value='Stat'>Stat-Based</option><option value='SpellAttack'>Spell Attack Bonus</option><option value='SetValue'>Preset Value</option></select></td>");
+	
+				let request = await fetch("macro:pm.GetAttributes@lib:pm.a5e.Core",{method: "POST", body: ""});
+				let AllAttributes = await request.json();
+				let AttributeOptions = createHTMLSelectOptions(AllAttributes);
+	
+				referenceRow = createTableRow(referenceRow,"rowToHitBonus","<th><label for='ToHitStat'>Stat Used:</label></th><select id='ToHitStat' name='ToHitStat'>"+AttributeOptions+"</select></td>");
+			}
+	
+			referenceRow = createTableRow(referenceRow,"rowMeleeRanged","<th><label for='MeleeRanged'>Melee or Ranged Attack:</label></th><select id='MeleeRanged' name='MeleeRanged'><option value='Melee'>Melee</option><option value='Ranged'>Ranged</option></select></td>");
+
+			referenceRow = createTableRow(referenceRow,"rowCritThresh","<th>Crit Threshhold:</th><td><input type='number' id='CritThresh' name='CritThresh' max='20' min='1' value='20'></td>");
+	
+			referenceRow = createTableRow(referenceRow,"rowIsConditionalAdvantage","<th>Conditional (Dis)advantage:</th><input type='checkbox' id='isConditionalAttackAdvantage' name='isConditionalAttackAdvantage' onchange='createConditionalAttackAdvantageRows()'></td>");
+		
+			referenceRow = createTableRow(referenceRow,"rowIgnoreCoverBenefits","<th><label for='IgnoreCoverBenefit'>Ignore Cover Benefits?</label></th><td><input type='checkbox' id='IgnoreCoverBenefit' name='IgnoreCoverBenefit'></td>");
+		}
+		else if(howMitigate == "Save"){	
+			let request = await fetch("macro:pm.GetAttributes@lib:pm.a5e.Core",{method: "POST", body: "[]"});
+			let saveTypes = await request.json();
+			let saveOptions = createHTMLSelectOptions(saveTypes);
+		
+			referenceRow = createTableRow(referenceRow,"rowSaveType","<th><label for='SaveType'>Save Type:</label></th><select id='SaveType' name='SaveType'>"+saveOptions+"</select></td>");
+	
+			if(checkEffectType() == "Spell"){
+				referenceRow = createTableRow(referenceRow,"rowSaveDCMethod","<th><label for='SaveDCMethod'>Method of Choosing Save DC:</label></th><select id='SaveDCMethod' name='SaveDCMethod' onchange='createSaveDCMethodRow("+'"'+tableID+'"'+")'><option value='Stat'>Stat-Based</option><option value='SpellSave'>Spell Save DC</option><option value='SetValue'>Preset Value</option></select></td>");
+	
+				document.getElementById("rowSaveDCMethod").setAttribute("hidden","");
+				document.getElementById("SaveDCMethod").value = "SpellSave";
+			}
+			else{
+				referenceRow = createTableRow(referenceRow,"rowSaveDCMethod","<th><label for='SaveDCMethod'>Method of Choosing Save DC:</label></th><select id='SaveDCMethod' name='SaveDCMethod' onchange='createSaveDCMethodRow("+'"'+tableID+'"'+")'><option value='Stat'>Stat-Based</option><option value='SpellAttack'>Spell Save DC</option><option value='SetValue'>Preset Value</option></select></td>");
+	
+				referenceRow = createTableRow(referenceRow,"rowSaveDC","<th><label for='SaveDCStat'>Stat Used:</label></th><select id='SaveDCStat' name='SaveDCStat'>"+saveOptions+"</select></td>");
+			}
+	
+			referenceRow = createTableRow(referenceRow,"rowIsConditionalAdvantage","<th>Conditional (Dis)advantage:</th><input type='checkbox' id='isConditionalSaveAdvantage' name='isConditionalSaveAdvantage' onchange='createConditionalSaveAdvantageRows()'></td>");
+	
+			referenceRow = createTableRow(referenceRow,"rowIsConditionalAutomaticSave","<th>Conditional Auto-Success/Failure:</th><input type='checkbox' id='isConditionalAutomaticSave' name='isConditionalAutomaticSave' onchange='createConditionalAutomaticSaveRows()'></td>");
+	
+			referenceRow = createTableRow(referenceRow,"rowIsChooseFailure","<th><label for='isChooseFailure'>Can Choose to Fail:</label></th><input type='checkbox' id='isChooseFailure' name='isChooseFailure'></td>");
+		
+			referenceRow = createTableRow(referenceRow,"rowIgnoreCoverBenefits","<th><label for='IgnoreCoverBenefit'>Ignore Cover Benefits?</label></th><td><input type='checkbox' id='IgnoreCoverBenefit' name='IgnoreCoverBenefit'></td>");
+	
+			if(document.getElementById("isDamage").checked){
+				for(let i=1; i <= document.getElementById("differentTypes").value; i++){
+					let rowPrefix = "";
+					if(document.getElementById("isAHL"+i).value == "0"){
+						rowPrefix = "rowIsAHL";
+					}
+					else{
+						rowPrefix = "rowAHLFlatBonus";
+					}
+
+					let referenceRow = document.getElementById(rowPrefix+i);
+					referenceRow = createTableRow(referenceRow,"rowSaveMitigation"+i,"<th>Damage on Successful Save:</th><td><select id='saveMitigation"+i+"' name='saveMitigation"+i+"'><option value=2>None</option><option value=1>Half</option><option value=0>Full</option></select></td>");
+				}
+			}
+			
+			if(document.getElementById("isCondition").value != "None"){
+				let referenceRow = document.getElementById("rowSummons").previousElementSibling;
+				referenceRow = createTableRow(referenceRow,"rowConditionSave","<th><label for='conditionSaveEffect'>Conditions Applied on Save:</label></th><select id='conditionSaveEffect' name='conditionSaveEffect' onchange='createConditionSaveTable()'><option value='0'>All Applied</option><option value='1'>Some Applied</option><option value='2' selected>None Applied</option><option value='Different'>Different Condition Applied</option></select></td>");
+			}
+			
+			if(document.getElementById("isMoveTarget").checked){
+				let referenceRow = document.getElementById("rowMoveTargetAHLInfo");
+				referenceRow = createTableRow(referenceRow,"rowSavePreventMove","<th><label for='savePreventMove'>Save Prevents Movement:</label></th><select id='savePreventMove' name='savePreventMove'><option value=2>Prevent Completely</option><option value=1>Halved Movement</option><option value=0>Move Not Affected</option></select></td>");
+			}
+	
+			if(document.getElementById("isSetHP").checked){
+				let referenceRow = document.getElementById("rowSetHPAmount");
+			
+				referenceRow = createTableRow(referenceRow,"rowSavePreventSetHP","<th><label for='savePreventSetHP'>Save Prevents HP Change:</label></th><td><input type='checkbox' id='savePreventSetHP' name='savePreventSetHP'></td>");
+			}
+	
+			if(document.getElementById("InstantKill").checked){
+				let referenceRow = document.getElementById("rowInstantKill");
+	
+				referenceRow = createTableRow(referenceRow,"rowSavePreventInstantKill","<th><label for='savePreventInstantKill'>Save Prevents Instant Kill:</label></th><td><input type='checkbox' id='savePreventInstantKill' name='savePreventInstantKill'></td>");
+			}
+		}
+		else if(howMitigate == "Check" || howMitigate == "ForceCheck"){
+			let request = await fetch("macro:pm.GetSkills@lib:pm.a5e.Core", {method: "POST", body: ""});
+			let checkList = await request.json();
+
+			let requestAttr = await fetch("macro:pm.GetAttributes@lib:pm.a5e.Core", {method: "POST", body: ""});
+			let attributeList = await requestAttr.json();
+
+			let requestTool = await fetch("macro:pm.GetTools@lib:pm.a5e.Core", {method: "POST", body: ""});
+			let toolList = await requestTool.json();
+
+			let checkOptions = createHTMLSelectOptions(checkList) + "<option value='AthleticsAcrobatics'>Athletics or Acrobatics</option>" + createHTMLSelectOptions(attributeList) + "<option value='Multiple'>Multiple Options</option>";
+		
+			if(checkEffectType() == "Spell"){
+				checkOptions = "<option value='SpellAttribute'>Spellcasting Attribute</option>" + checkOptions;
+			}
+
+			referenceRow = createTableRow(referenceRow,"rowCheckType","<th><label for='CheckType'>Check Type:</label></th><span id='CheckTypeInputSpan'><select id='CheckType' name='CheckType'>"+checkOptions+"</select></span></td>");
+			document.getElementById("CheckType").addEventListener("change",function(){
+				let allOptions = attributeList.concat(checkList);
+				let allCheckOptions = createHTMLMultiselectOptions(allOptions,"MitigationCheckType");
+
+				document.getElementById("CheckTypeInputSpan").innerHTML = "<div class='check-multiple' style='width:100%'>"+allCheckOptions+"</div>";
+			});
+
+			referenceRow = createTableRow(referenceRow,"rowCheckDCMethod","<th colspan='2'>Check DC = <input type='number' id='CheckDCBase' name='CheckDCBase' value='10' min='0' class='small-number'> + <select id='CheckDCStatBonus' name='CheckDCStatBonus'>"+createHTMLSelectOptions(attributeList)+createHTMLSelectOptions(checkList)+"</select> + <select id='CheckDCProfBonus' name='CheckDCProfBonus'><option value='Yes'>Proficiency Bonus</option><option value='No'>No Additional Proficiency</option></select><span id='CheckDCEffectLevelBonus'></span></th>");
+
+			function toggleEffectLevelBonus(){
+				let toggleOn = false;
+
+				if(document.getElementById("TargetType") != null){
+					if(document.getElementById("TargetType").value === "Effect"){
+						toggleOn = true;
+					}
+				}
+
+				if(document.getElementById("secondaryTargetType") != null){
+					if(document.getElementById("secondaryTargetType").value === "Effect"){
+						toggleOn = true;
+					}
+
+					document.getElementById("secondaryTargetType").addEventListener("change",toggleEffectLevelBonus);
+				}
+
+				if(document.getElementById("PriorTargetType") != null){
+					//TODO: Needs additional data for prior effects (specifically what their targets were) available to read 
+				}
+
+				let levelBonusSpan = document.getElementById("CheckDCEffectLevelBonus");
+				if(toggleOn){
+					if(document.getElementById("CheckDCLevelBonusModifier") === null){
+						levelBonusSpan.innerHTML = "+ Effect Level x<input type='number' id='CheckDCLevelBonusModifier' name='CheckDCLevelBonusModifier' value='1' min='0' class='small-number'>";						
+					}
+				}
+				else{
+					levelBonusSpan.innerHTML = "";
+				}
+			}
+
+			if(document.getElementById("TargetType") != null){
+				document.getElementById("TargetType").addEventListener("change",toggleEffectLevelBonus);
+			}
+			if(document.getElementById("secondaryTargetType") != null){
+				document.getElementById("secondaryTargetType").addEventListener("change",toggleEffectLevelBonus);
+			}
+			if(document.getElementById("PriorTargetType") != null){
+				document.getElementById("PriorTargetType").addEventListener("change",toggleEffectLevelBonus);
+			}
+
+			toggleEffectLevelBonus();
+
+			if(false){
+			referenceRow = createTableRow(referenceRow,"rowCheckDCMethod","<th><label for='CheckDCMethod'>Method of Choosing Check DC:</label></th><select id='CheckDCMethod' name='CheckDCMethod' onchange='createCheckDCMethodRow()'><option value='SetValue'>Preset Value</option><option value='Stat'>Stat-Based</option><option value='Contested'>Contested Check</option></select></td>");
+
+			document.getElementById("CheckDCMethod").addEventListener("change",function(){
+				let referenceRow = document.getElementById("rowCheckDCMethod");
+				let methodChoice = document.getElementById("CheckDCMethod").value;
+
+				if(referenceRow.nextElementSibling.id === "rowCheckDC"){
+					referenceRow.nextElementSibling.remove();
+				}
+
+				if(methodChoice === "SetValue"){
+
+				}
+				else if(methodChoice === "Stat"){
+					referenceRow = createTableRow(referenceRow,"rowCheckDC","<th><label for='CheckDCStat'>Stat Used:</label></th><select id='isCheckDCStatProficiency'</td>");
+				}
+				else if(methodChoice === "Contested"){
+
+				}
+				else if(methodChoice === "EffectLevel"){
+					referenceRow = createTableRow(referenceRow,"rowCheckDC","<th><label for='CheckDCStat'>Stat Used:</label></th><select id='CheckDCStat' name='CheckDCStat'>"+createHTMLSelectOptions(attributeList)+"</select></td>");
+				}
+			});				
+			}
+
+		}
 	}
 
 	if(document.getElementById("howMitigate").value != "Save"){
 		if(document.getElementById("isDamage").checked){
 			for(let i=1; i <= document.getElementById("differentTypes").value; i++){
-				table.deleteRow(document.getElementById("rowSaveMitigation"+i).rowIndex);
+				document.getElementById("rowSaveMitigation"+i).remove();
 			}
 		}
 		
 		if(document.getElementById("isCondition").value != "None"){
 			if(document.getElementById("rowConditionSave").value == 1){
-				table.deleteRow(document.getElementById("rowConditionsNullified").rowIndex);
+				document.getElementById("rowConditionsNullified").remove();
 			}
-			table.deleteRow(document.getElementById("rowConditionSave").rowIndex);
+			document.getElementById("rowConditionSave").remove();
 		}
 		
 		if(document.getElementById("isMoveTarget").checked){
-			table.deleteRow(document.getElementById("rowSavePreventMove").rowIndex);
+			document.getElementById("rowSavePreventMove").remove();
 		}
 		
 		if(document.getElementById("isSetHP").checked){
-			table.deleteRow(document.getElementById("rowSavePreventSetHP").rowIndex);
+			document.getElementById("rowSavePreventSetHP").remove();
 		}
 		
 		if(document.getElementById("InstantKill").checked){
-			table.deleteRow(document.getElementById("rowSavePreventInstantKill").rowIndex);
+			document.getElementById("rowSavePreventInstantKill").remove();
 		}
 	}
 }
@@ -326,7 +507,54 @@ async function createSaveDCMethodRow(tableID){
 		addTableRow(tableID,nextRowIndex,"rowSaveDC","<th><label for='SaveDC'>Save DC:</label></th><input type='number' id='SaveDC' name='SaveDC' value=0></td>");
 		nextRowIndex++;
 	}
-} 
+}
+
+function createScalingInput(idPrefix,scalingData){
+	if(!scalingData.isScaling){
+		return "";
+	}
+
+	let scalingTypeSelect = "";
+	let scalingTypes = scalingData.scalingMessage;
+	let multiTypesTest = scalingTypes.length > 1;
+	if(multiTypesTest){
+		scalingTypeSelect = "<select id='"+idPrefix+"Type' name='"+idPrefix+"Type'>";
+
+		for(let tempType of scalingTypes){
+			scalingTypeSelect += "<option value='"+tempType+"'>"+tempType+"</option>";
+		}
+
+		scalingTypeSelect += "</select>";
+	}
+	else{
+		scalingTypeSelect = "<input type='hidden' id='"+idPrefix+"Type' name='"+idPrefix+"Type'>";
+	}
+
+	let firstType = scalingTypes[0];
+	let scalingSelect = "<select id='"+idPrefix+"' name='"+idPrefix+"'>";
+
+	scalingSelect += adjustScalingOptions(firstType) + "</select>";
+
+	let finalInput = scalingSelect;
+	if(multiTypesTest){
+		finalInput += " based on ";
+	}
+
+	finalInput += scalingTypeSelect;
+
+	return finalInput
+}
+
+function adjustScalingOptions(selection){
+	let scalingSelect;
+	if(selection === "Spell Level" || selection === "Feature Level"){
+		scalingSelect = "<option value='0'>No Increase</option><option value='1'>Every Level</option><option value='2'>Every Other Level</option><option value='3'>Every Three Levels</option>";
+	}
+	else{
+		scalingSelect += "<option value='0'>No Increase</option><option value='1'>Every Interval</option><option value='2'>Every Other Interval</option><option value='3'>Every Three Intervals</option>";
+	}
+	return scalingSelect;
+}
 
 function createAHLSelect(ahlSelectID){
 	let ahlSelectHTML = "";
@@ -346,13 +574,10 @@ function createAHLSelect(ahlSelectID){
 
 async function createDamageTable(){
 	if(document.getElementById("isDamage").checked){
-		let table = document.getElementById("CreateSubeffectTable");
-		let damageRowIndex = document.getElementById("Damage").rowIndex;
-		let addRemoveButtonsRow = table.insertRow(damageRowIndex+1);
-		addRemoveButtonsRow.id = "AdditionButtons";
-		addRemoveButtonsRow.innerHTML = "<th text-align='center' colspan='2'><input type='button' id='addDamageType' name='addDamageType' value='Add Type' onclick='addDamageTypeRows()'>  <input type='button' id='removeDamageType' name='removeDamageType' value='Remove Type' onclick='removeDamageTypeRows()'></th>";
+		referenceElement = document.getElementById("Damage");
+		referenceElement = createTableRow(referenceElement,"AdditionButtons","<th style='text-align:center' colspan='2'><input type='button' id='addDamageType' name='addDamageType' value='Add Type' onclick='addDamageTypeRows()'>  <input type='button' id='removeDamageType' name='removeDamageType' value='Remove Type' onclick='removeDamageTypeRows()'></th>");
 
-		addDamageTypeRows();
+		await addDamageTypeRows();
 	}
 	else{
 		clearUnusedTable("CreateSubeffectTable","Damage","rowCondition");
@@ -361,8 +586,7 @@ async function createDamageTable(){
 }
 
 async function addDamageTypeRows(){
-	let table = document.getElementById("CreateSubeffectTable");
-	let buttonRowIndex = document.getElementById("AdditionButtons").rowIndex;
+	let referenceElement = document.getElementById("AdditionButtons").previousElementSibling;
 	let damageTypeNumber = document.getElementById("differentTypes").value;
 	damageTypeNumber++;
 	document.getElementById("differentTypes").value = damageTypeNumber;
@@ -385,35 +609,32 @@ async function addDamageTypeRows(){
 	}
 
 	let damageRowHTML = generateDamageRowText(damageTypeNumber,damageTypeOptions,UsePriorDamageButton);
-	let damageRow = table.insertRow(buttonRowIndex);
-	damageRow.id = "DamageSet"+damageTypeNumber;
-	damageRow.innerHTML = damageRowHTML;
-	
-	let modBonusRow = table.insertRow(buttonRowIndex+1);
-	modBonusRow.id = "rowModBonus"+damageTypeNumber;
-	modBonusRow.innerHTML = "<th>Add Ability Score Modifier:</th><td><input type='checkbox' id='ModBonus"+damageTypeNumber+"' name='ModBonus"+damageTypeNumber+"' value=1></td>";
-	
-	let isAHLRow = table.insertRow(buttonRowIndex+2);
-	isAHLRow.id = "rowIsAHL"+damageTypeNumber;
-   
-	if(checkEffectType()=="Spell"){
-		if(document.getElementById("ExtraDataSpellLevel").value == "0"){
-			isAHLRow.innerHTML = "<th>Damage Increases AHL:</th><td><select id='isAHL"+damageTypeNumber+"' name='isAHL"+damageTypeNumber+"' onchange='createAHLDamage("+damageTypeNumber+")'><option value='0'>No Increase</option><option value='1'>Every Interval</option><option value='2'>Every Other Interval</option><option value='3'>Every Three Intervals</option></select></td>";
-		}
-		else{
-			isAHLRow.innerHTML = "<th>Damage Increases AHL:</th><td><select id='isAHL"+damageTypeNumber+"' name='isAHL"+damageTypeNumber+"' onchange='createAHLDamage("+damageTypeNumber+")'><option value='0'>No Increase</option><option value='1'>Every Level</option><option value='2'>Every Other Level</option><option value='3'>Every Three Levels</option></select></td>";
-		}
+	referenceElement = createTableRow(referenceElement,"DamageSet"+damageTypeNumber,damageRowHTML);
+
+	let scalingData = needsScalingData();
+	if(scalingData.isScaling){
+		referenceElement = createTableRow(referenceElement,"rowIsAHL"+damageTypeNumber,"<th>Damage Increases AHL:</th><td><span id='damageAHLSpan"+damageTypeNumber+"'></span></td>");
+		document.getElementById("damageAHLSpan"+damageTypeNumber).innerHTML = createScalingInput("isAHL"+damageTypeNumber,scalingData);
+		document.getElementById("isAHL"+damageTypeNumber).addEventListener("change",function(){
+			createAHLDamage(damageTypeNumber);
+		});
 	}
 
 	if(document.getElementById("howMitigate").value == "Save"){
-		let saveMitigationRow = table.insertRow(buttonRowIndex+3);
-		saveMitigationRow.id = "rowSaveMitigation"+damageTypeNumber;
-		saveMitigationRow.innerHTML = "<th>Damage on Successful Save:</th><td><select id='saveMitigation"+damageTypeNumber+"' name='saveMitigation"+damageTypeNumber+"'><option value=2>None</option><option value=1>Half</option><option value=0>Full</option></select></td>";
+		referenceElement = createTableRow(referenceElement,"rowSaveMitigation"+damageTypeNumber,"<th>Damage on Successful Save:</th><td><select id='saveMitigation"+damageTypeNumber+"' name='saveMitigation"+damageTypeNumber+"'><option value=2>None</option><option value=1>Half</option><option value=0>Full</option></select></td>");
 	}
 }
 
 function generateDamageRowText(damageTypeNumber,damageTypeOptions,UsePriorDamageButton){
-	return "<th text-align='center' colspan='2'><input type='number' id='DamageDieNum"+damageTypeNumber+"' name='DamageDieNum"+damageTypeNumber+"' value=1 min=0 style='width:25px'> d <input type='number' id='DamageDieSize"+damageTypeNumber+"' name='DamageDieSize"+damageTypeNumber+"' value=6 style='width:25px'> <b>+</b> <input type='number' id='DamageFlatBonus"+damageTypeNumber+"' name='DamageFlatBonus"+damageTypeNumber+"' value=0 style='width:25px'><select id='DamageType"+damageTypeNumber+"' name='DamageType"+damageTypeNumber+"' onchange='createTypeOptions("+damageTypeNumber+")'>"+damageTypeOptions+"</select> Damage"+UsePriorDamageButton+"</th>";
+	let modSelectOptions;
+	if(damageTypeNumber === 0){
+		modSelectOptions = "<option value='1' selected>Modifier</option><option value='0'>No Modifier</option>";
+	}
+	else{
+		modSelectOptions = "<option value='1'>Modifier</option><option value='0' selected>No Modifier</option>";
+	}
+	
+	return "<th style='text-align:center' colspan='2'><input type='number' id='DamageDieNum"+damageTypeNumber+"' name='DamageDieNum"+damageTypeNumber+"' value=1 min=0 style='width:25px'> d <input type='number' id='DamageDieSize"+damageTypeNumber+"' name='DamageDieSize"+damageTypeNumber+"' value=6 style='width:25px'> <b>+</b> <input type='number' id='DamageFlatBonus"+damageTypeNumber+"' name='DamageFlatBonus"+damageTypeNumber+"' value=0 style='width:25px'> + <select id='ModBonus"+damageTypeNumber+"' name='ModBonus"+damageTypeNumber+"'>"+modSelectOptions+"</select> <select id='DamageType"+damageTypeNumber+"' name='DamageType"+damageTypeNumber+"' onchange='createTypeOptions("+damageTypeNumber+")'>"+damageTypeOptions+"</select> Damage"+UsePriorDamageButton+"</th>";
 }
 
 async function generateDamageTypeOptions(){
@@ -447,7 +668,7 @@ async function switchToPriorDamage(damageTypeNumber){
 		}
 	}
 
-	document.getElementById("DamageSet"+damageTypeNumber).innerHTML = "<th text-align='center' colspan='2'> <input type='number' id='PriorDamagePercent"+damageTypeNumber+"' name='PriorDamagePercent"+damageTypeNumber+"' min=0 max=100 style='width:30px' value=100>% of <select id='PriorDamageType"+damageTypeNumber+"' name='PriorDamageType"+damageTypeNumber+"'>"+PriorDamageTypeOptions+"</select> Damage dealt as <select id='DamageType"+damageTypeNumber+"' name='DamageType"+damageTypeNumber+"'>"+damageTypeOptions+"</select> Damage, <b>OR</b> <input type='button' id='IndependentDamageButton' name='IndependentDamageButton' value='Indepenent Damage' onclick='switchToIndependentDamage("+damageTypeNumber+")'>";
+	document.getElementById("DamageSet"+damageTypeNumber).innerHTML = "<th style='text-align:center' colspan='2'> <input type='number' id='PriorDamagePercent"+damageTypeNumber+"' name='PriorDamagePercent"+damageTypeNumber+"' min=0 max=100 style='width:30px' value=100>% of <select id='PriorDamageType"+damageTypeNumber+"' name='PriorDamageType"+damageTypeNumber+"'>"+PriorDamageTypeOptions+"</select> Damage dealt as <select id='DamageType"+damageTypeNumber+"' name='DamageType"+damageTypeNumber+"'>"+damageTypeOptions+"</select> Damage, <b>OR</b> <input type='button' id='IndependentDamageButton' name='IndependentDamageButton' value='Indepenent Damage' onclick='switchToIndependentDamage("+damageTypeNumber+")'>";
 }
 
 async function switchToIndependentDamage(damageTypeNumber){
@@ -458,7 +679,7 @@ async function switchToIndependentDamage(damageTypeNumber){
 	document.getElementById("DamageSet"+damageTypeNumber).innerHTML = newInnerHTML;
 }
 
-async function removeDamageTypeRows(){
+function removeDamageTypeRows(){
 	let table = document.getElementById("CreateSubeffectTable");
 	let damageTypeNumber = document.getElementById("differentTypes").value;
 	clearUnusedTable("CreateSubeffectTable","DamageSet"+damageTypeNumber,"AdditionButtons");
@@ -524,19 +745,17 @@ async function createAHLDamage(damageTypeNumber){
 }
 
 async function createConditionTable(){
-	let tableID = document.getElementById("rowCondition").closest("table").id;
-	let table = document.getElementById(tableID);
-	let nextRowIndex = document.getElementById("rowCondition").rowIndex + 1;
+	let referenceElement = document.getElementById("rowCondition");
 	let conditionChoice = document.getElementById("isCondition").value;
 
 	if(conditionChoice == "None"){
-		clearUnusedTable(tableID,"rowCondition","rowSummons");
+		deleteInterveningElements(referenceElement,document.getElementById("rowSummons"));
 	}
 	else{
-		let alreadyAlwaysAddedTest = (table.rows.namedItem("rowConditionsAlwaysAdded") != null);
-		let alreadyOptionsTest = (table.rows.namedItem("rowConditionOptions") != null);
-		let alreadyEndInfoTest = (table.rows.namedItem("rowConditionSameDuration") != null || table.rows.namedItem("rowConditionDuration") != null);
-		let alreadySaveTest = (table.rows.namedItem("rowConditionSave") != null);
+		let alreadyAlwaysAddedTest = (document.getElementById("rowConditionsAlwaysAdded") != null);
+		let alreadyOptionsTest = (document.getElementById("rowConditionOptions") != null);
+		let alreadyEndInfoTest = (document.getElementById("rowConditionSameDuration") != null || document.getElementById("rowConditionDuration") != null);
+		let alreadySaveTest = (document.getElementById("rowConditionSave") != null);
 
 		let endRowId = "";
 
@@ -549,26 +768,23 @@ async function createConditionTable(){
 
 		if(conditionChoice == "All" || conditionChoice == "Mixture"){
 			if(alreadyAlwaysAddedTest){
-				nextRowIndex = (document.getElementById("rowConditionsAlwaysAdded").rowIndex + 1);
+				referenceElement = document.getElementById("rowConditionsAlwaysAdded");
 			}
 			else{
 				let conditionOptions = await createConditionMultipleBoxes("AlwaysAdded","createConditionSaveTable()");
 				conditionOptions = conditionOptions + "<label><input type='checkbox' id='AlwaysAddedEffectSpecific' name='AlwaysAddedEffectSpecific' value=1 onchange='createUniqueConditionRow(1)'><span>Unique Condition</span></label>";
 
-				let rowConditionsAlwaysAdded = table.insertRow(nextRowIndex);
-				rowConditionsAlwaysAdded.id = "rowConditionsAlwaysAdded";
-				rowConditionsAlwaysAdded.innerHTML = "<th><label for='conditionsAlwaysAdded'>Set Conditions:</label></th><td><div class='check-multiple' style='width:100%'>"+conditionOptions+"</div></td>";
-				nextRowIndex++;
+				referenceElement = createTableRow(referenceElement,"rowConditionsAlwaysAdded","<th><label for='conditionsAlwaysAdded'>Set Conditions:</label></th><td><div class='check-multiple' style='width:100%'>"+conditionOptions+"</div></td>");
 			}
 
 			if(alreadyOptionsTest && conditionChoice == "All"){
-				clearUnusedTable(tableID,"rowConditionOptions","rowIsAura");
-				table.deleteRow(document.getElementById("rowConditionOptions").rowIndex);
+				deleteInterveningElements(document.getElementById("rowConditionOptions"),document.getElementById("rowIsAura"));
+				document.getElementById("rowConditionOptions").remove();
 			}
 		}
 		else{
 			if(alreadyAlwaysAddedTest){
-				nextRowIndex = (document.getElementById("rowConditionsAlwaysAdded").rowIndex + 1);
+				referenceElement = document.getElementById("rowConditionsAlwaysAdded");
 			}
 		}
 
@@ -577,64 +793,53 @@ async function createConditionTable(){
 				let conditionOptions = await createConditionMultipleBoxes("ConditionOption","createConditionSaveTable()");
 				conditionOptions = conditionOptions + "<label><input type='checkbox' id='ConditionOptionEffectSpecific' name='ConditionOptionEffectSpecific' value=1 onchange='createUniqueConditionRow(2)'><span>Unique Condition</span></label>";
 
-				let rowConditionOptions = table.insertRow(nextRowIndex);
-				rowConditionOptions.id = "rowConditionOptions";
-				rowConditionOptions.innerHTML = "<th>Condition Options:</th><td><div class='check-multiple' style='width:100%'>"+conditionOptions+"</div></td>";
-				nextRowIndex++;
+				referenceElement = createTableRow(referenceElement,"rowConditionOptions","<th>Condition Options:</th><td><div class='check-multiple' style='width:100%'>"+conditionOptions+"</div></td>");
 
-				let rowConditionOptionsNumber = table.insertRow(nextRowIndex);
-				rowConditionOptionsNumber.id = "rowConditionOptionsNumber";
-				let ConditionOptionsHTML = "<th><label  for='ConditionOptionsNumber'>Number of Options to Choose:</label></th><td><input type='number' id='ConditionOptionsNumber' name='ConditionOptionsNumber' min=1 value=1 style='width:25px'>";
+				referenceElement = createTableRow(referenceElement,"rowConditionOptionsNumber","<th><label  for='ConditionOptionsNumber'>Number of Options to Choose:</label></th><td><input type='number' id='ConditionOptionsNumber' name='ConditionOptionsNumber' min=1 value=1 class='small-number'><span id='ConditionOptionsNumberAHLScaling'></span></td>");
 
-				if(checkEffectType()=="Spell"){
-					let conditionAHLScalingSelect = createAHLSelect("ConditionOptionsNumberAHLScaling");                   
-					ConditionOptionsHTML = ConditionOptionsHTML + " + <input type='number' id='ConditionOptionsNumberAHL' name='ConditionOptionsNumberAHL' min=0 value=0 style='width:25px'>"+conditionAHLScalingSelect;
+				let scalingData = needsScalingData();
+				if(scalingData.isScaling){
+					let conditionAHLScalingSelect = createScalingInput("ConditionOptionsNumberAHLScaling",scalingData);                   
+					let ConditionOptionsHTML = " + <input type='number' id='ConditionOptionsNumberAHL' name='ConditionOptionsNumberAHL' min=0 value=0 class='small-number'>"+conditionAHLScalingSelect;
+					document.getElementById("ConditionOptionsNumberAHLScaling").innerHTML = ConditionOptionsHTML;
 				}
-
-				rowConditionOptionsNumber.innerHTML = ConditionOptionsHTML+"</td>";
-				nextRowIndex++;
 			}
 			else{
-				nextRowIndex = nextRowIndex + (document.getElementById(endRowId).rowIndex - document.getElementById("rowConditionOptions").rowIndex);
+				referenceElement = document.getElementById(endRowId).previousElementSibling;
 			}
 			if(alreadyAlwaysAddedTest && conditionChoice == "Choose"){
 				//ConditionOptions is likely being inserted one row too much when going from all --> choose, so endinfo stuff gets removed here
-				clearUnusedTable(tableID,"rowCondition","rowConditionOptions");
+				deleteInterveningElements(document.getElementById("rowCondition"),document.getElementById("rowConditionOptions"));
 			}
 		}
 
 		if(!alreadyEndInfoTest){
-			addTableRow(tableID,nextRowIndex,"rowIsAura","<th><label for='isAura'>Condition is an Aura:</label></th><td><input type='checkbox' id='isAura' name='isAura' onchange='createAuraRows()'></td>");
-			nextRowIndex++;
-
-			addTableRow(tableID,nextRowIndex,"rowIsAuraEnd","");
+			referenceElement = createTableRow(referenceElement,"rowIsAura","<th><label for='isAura'>Condition is an Aura:</label></th><td><input type='checkbox' id='isAura' name='isAura' onchange='createAuraRows()'></td>");
+			
+			referenceElement = createTableRow(referenceElement,"rowIsAuraEnd","");
 			document.getElementById("rowIsAuraEnd").setAttribute("hidden","");
-			nextRowIndex++;
 
 			createTableRow(document.getElementById("rowIsAuraEnd"),"rowIsConditionTiered","<th><label for='isConditionTiered'>Can Set Condition at Tier Over 1:</label></th><input type='checkbox' id='isConditionTiered' name='isConditionTiered' onchange='createConditionTierRows()'></td>");
-			nextRowIndex++;
-
-			addTableRow(tableID,nextRowIndex,"rowConditionSameDuration","<th><label for='isConditionSameDuration'>Duration is Same as Spell's?</label></th><input type='checkbox' id='isConditionSameDuration' name='isConditionSameDuration' onchange='conditionAlternateDuration()' checked></td>");
-			nextRowIndex++;
+			
+			//TODO: Subeffect - Should expand alternate duration to be able to apply to non-spells
+			referenceElement = createTableRow(referenceElement,"rowConditionSameDuration","<th><label for='isConditionSameDuration'>Duration is Same as Spell's?</label></th><input type='checkbox' id='isConditionSameDuration' name='isConditionSameDuration' onchange='conditionAlternateDuration()' checked></td>");
 
 			if(checkEffectType()!="Spell"){
 				document.getElementById("rowConditionSameDuration").setAttribute("hidden","");
+				document.getElementById("isConditionSameDuration").removeAttribute("checked");
 				conditionAlternateDuration();
-				nextRowIndex++;
+				referenceElement = referenceElement.nextElementSibling;
 			}
-
-			addTableRow(tableID,nextRowIndex,"rowConditionAdvancePoint","<th><label for='ConditionAdvancePoint'>When Duration Advances:</label></th><select id='ConditionAdvancePoint' name='ConditionAdvancePoint'><option value='EndofTurn'>End of Target's Turn</option><option value='StartofTurn'>Start of Target's Turn</option><option value='EndofSetByTurn'>End of User's Turn</option><option value='StartofSetByTurn'>Start of User's Turn</option><option value='StartofSetByTurn'>Not Specified</option></select></td>");
-			nextRowIndex++;
-
-			addTableRow(tableID,nextRowIndex,"rowIsConditionNonDurationEnd","<th><label for='isConditionNonDurationEnd'>May End Separate from Duration?</label></th><input type='checkbox' id='isConditionNonDurationEnd' name='isConditionNonDurationEnd' onchange='createConditionNonDurationEnd()'></td>");
-			nextRowIndex++;
+			
+			referenceElement = createTableRow(referenceElement,"rowConditionAdvancePoint","<th><label for='ConditionAdvancePoint'>When Duration Advances:</label></th><select id='ConditionAdvancePoint' name='ConditionAdvancePoint'><option value='EndofTurn'>End of Target's Turn</option><option value='StartofTurn'>Start of Target's Turn</option><option value='EndofSetByTurn'>End of User's Turn</option><option value='StartofSetByTurn'>Start of User's Turn</option><option value='StartofSetByTurn'>Not Specified</option></select></td>");
+			
+			referenceElement = createTableRow(referenceElement,"rowIsConditionNonDurationEnd","<th><label for='isConditionNonDurationEnd'>May End Separate from Duration?</label></th><input type='checkbox' id='isConditionNonDurationEnd' name='isConditionNonDurationEnd' onchange='createConditionNonDurationEnd()'></td>");
 		}
 
 		if(document.getElementById("howMitigate").value == "Save" && !alreadySaveTest){
-			let saveRowIndex = document.getElementById("rowSummons").rowIndex;
-			let rowConditionSave = table.insertRow(saveRowIndex);
-			rowConditionSave.id = "rowConditionSave";
-			rowConditionSave.innerHTML = "<th><label for='conditionSaveEffect'>Conditions Applied on Save:</label></th><select id='conditionSaveEffect' name='conditionSaveEffect' onchange='createConditionSaveTable()'><option value='0'>All Applied</option><option value='1'>Some Applied</option><option value='2' selected>None Applied</option><option value='Different'>Different Condition Applied</option></select></td>";
+			let saveRowElement = document.getElementById("rowSummons");
+			
+			saveRowElement = createTableRow(saveRowElement,"rowConditionSave","<th><label for='conditionSaveEffect'>Conditions Applied on Save:</label></th><select id='conditionSaveEffect' name='conditionSaveEffect' onchange='createConditionSaveTable()'><option value='0'>All Applied</option><option value='1'>Some Applied</option><option value='2' selected>None Applied</option><option value='Different'>Different Condition Applied</option></select></td>");
 		}
 	}
 }
@@ -685,7 +890,7 @@ async function createUniqueConditionRow(whichStartingPosition){
 	createConditionSaveTable();
 }
 
-async function createMultiUniqueConditionRow(conditionPrefix){
+function createMultiUniqueConditionRow(conditionPrefix){
 	let table = document.getElementById("CreateSubeffectTable");
 	let nextRowIndex = document.getElementById("rowIsEffectSpecificMulti"+conditionPrefix).rowIndex + 1;
 
@@ -699,16 +904,16 @@ async function createMultiUniqueConditionRow(conditionPrefix){
 	}
 }
 
-async function conditionAlternateDuration(){
+function conditionAlternateDuration(){
 	let isSameDuration = false;
-	let nextRowIndex = document.getElementById("rowConditionSameDuration").rowIndex + 1;
+	let referenceElement = document.getElementById("rowConditionSameDuration");
 
 	if(checkEffectType()=="Spell"){
 		isSameDuration = document.getElementById("isConditionSameDuration").checked;
 	}
 
 	if(isSameDuration){
-		clearUnusedTable("CreateSubeffectTable","rowConditionSameDuration","rowConditionAdvancePoint");
+		deleteInterveningElements(referenceElement,document.getElementById("rowConditionAdvancePoint"));
 	}
 	else{
 		let durationOptionsArray = ["Instantaneous","1 Round","1 Minute","10 Minutes","1 Hour","8 Hours","24 Hours","10 Days","Until Dispelled","Custom"];
@@ -716,8 +921,8 @@ async function conditionAlternateDuration(){
 		for(let option of durationOptionsArray){
 			durationOptions = durationOptions + "<option value='"+option+"'>"+option+"</option>";
 		}
-
-		addTableRow("CreateSubeffectTable",nextRowIndex,"rowConditionDuration","<th><label for='ConditionDuration'>Condition Duration:</label></th><select id='ConditionDuration' name='ConditionDuration' onchange='createCustomDurationRows("+'"CreateSubeffectTable","ConditionDuration","rowConditionAdvancePoint"'+")'>"+durationOptions+"</select></td>");
+			
+		referenceElement = createTableRow(referenceElement,"rowConditionDuration","<th><label for='ConditionDuration'>Condition Duration:</label></th><select id='ConditionDuration' name='ConditionDuration' onchange='createCustomDurationRows("+'"ConditionDuration","rowConditionAdvancePoint"'+")'>"+durationOptions+"</select></td>");
 	}
 }
 
@@ -728,7 +933,7 @@ async function createConditionNonDurationEnd(){
 	let nextRowIndex = document.getElementById("rowIsConditionNonDurationEnd").rowIndex + 1;
 
 	if(hasOtherEndOptions){
-		addTableRow(tableID,nextRowIndex,"rowEndConditionInstancesLabel","<th colspan=2 text-align='center'>Instances When Condition Can End</th>");
+		addTableRow(tableID,nextRowIndex,"rowEndConditionInstancesLabel","<th colspan=2 style='text-align:center'>Instances When Condition Can End</th>");
 		nextRowIndex++;
 
 		addTableRow(tableID,nextRowIndex,"rowConditionNonDurationEndButtons","<th colspan=2><input type='button' value='Add Instance' onclick='addConditionEndInstanceRow()'><input type='button' value='Remove Instance' onclick='removeConditionEndInstanceRow()'><input type='hidden' id='conditionEndInstanceNumber' name='conditionEndInstanceNumber' value=0></th>");
@@ -875,11 +1080,11 @@ function removeConditionEndInstanceRow(){
 	}
 }
 
-async function createAuraRows(){
+function createAuraRows(){
 	let tableID = document.getElementById("rowIsAura").closest("table").id;
 
 	if(document.getElementById("isAura").checked){
-		await createTargetingRows(tableID,"rowIsAuraEnd","Aura");
+		createTargetingRows(tableID,"rowIsAuraEnd","Aura");
 
 		document.getElementById("RangeTypeAura").value = "SelfRanged";
 		document.getElementById("RangeTypeAura").onchange();
@@ -902,10 +1107,12 @@ async function createAuraRows(){
 function createConditionTierRows(){
 	let isConditionTiered = document.getElementById("isConditionTiered").checked;
 	if(isConditionTiered){
-		createTableRow(document.getElementById("rowIsConditionTiered"),"rowConditionTier","<th><label for='ConditionTier'>Condition Tier:</label></th><td><input type='number' id='ConditionTier' name='ConditionTier' value=1 min=1 style='width:25px'><span id='ConditionTierAHLSpan'></span></td>");
-		if(checkEffectType() == "Spell"){
-			let tierAHLSelect = createAHLSelect("ConditionTierAHLScaling");
-			document.getElementById("ConditionTierAHLSpan").innerHTML = " + <input type='number' id='ConditionTierAHL' name='ConditionTierAHL' value=1 min=1 style='width:25px'>"+tierAHLSelect;
+		createTableRow(document.getElementById("rowIsConditionTiered"),"rowConditionTier","<th><label for='ConditionTier'>Condition Tier:</label></th><td><input type='number' id='ConditionTier' name='ConditionTier' value=1 min=1 class='small-number'><span id='ConditionTierAHLSpan'></span></td>");
+
+		let scalingData = needsScalingData();
+		if(scalingData.isScaling){
+			let tierAHLSelect = createScalingInput("ConditionTierAHLScaling",scalingData);
+			document.getElementById("ConditionTierAHLSpan").innerHTML = " + <input type='number' id='ConditionTierAHL' name='ConditionTierAHL' value=0 min=0 class='small-number'>"+tierAHLSelect;			
 		}
 	}
 	else{
@@ -988,279 +1195,91 @@ async function createConditionSaveTable(){
 	}
 }
 
-async function createSummonTable(){
-	let table = document.getElementById("CreateSubeffectTable");
-	let nextRowIndex = document.getElementById("rowSummons").rowIndex + 1;
-	let summonsSelection = document.getElementById("isSummons").value;
-	let hadPriorSummonType = table.rows.namedItem("rowSummonNumber") != null;
-
-	if(summonsSelection == "No"){
-		clearUnusedTable("CreateSubeffectTable","rowSummons","rowIsUseResource");
-	}
-	else{
-		if(hadPriorSummonType){
-			clearUnusedTable("CreateSubeffectTable","rowSummons","rowSummonNumber");
-		}
-		if(summonsSelection == "Single"){
-			let rowSingleSummon = table.insertRow(nextRowIndex);
-			rowSingleSummon.id = "rowSingleSummon";
-			rowSingleSummon.innerHTML = "<th><label for='singleSummon'>Name of Summoned Creature:</th><td><input type='text' id='singleSummon' name='singleSummon'></td>";
-			nextRowIndex++;
-		}
-		else if(summonsSelection == "Options"){
-			let rowSummonOptions = table.insertRow(nextRowIndex);
-			rowSummonOptions.id = "rowSummonOptions";
-			rowSummonOptions.innerHTML = "<th><label for='summonOptions'>Summon Options:<br>(One per Row)</th><td><textarea id='summonOptions' name='summonOptions' rows='5'></textarea></td>";
-			nextRowIndex++;
-		}
-		else if(summonsSelection == "Criteria"){
-			let rowSummonCrMax = table.insertRow(nextRowIndex);
-			rowSummonCrMax.id = "rowSummonCrMax";
-			rowSummonCrMax.innerHTML = "<th><label for='summonCrMax'>Maximum CR of Creature:</th><td><input type='number' id='summonCrMax' name='summonCrMax' min=0 value=2 style='width:25px'></td>";
-			nextRowIndex++;
-
-			if(checkEffectType()=="Spell"){
-				let summonCrMaxAHLScalingSelect = createAHLSelect("summonCrMaxAHLScaling");
-
-				let rowSummonCrAHL = table.insertRow(nextRowIndex);
-				rowSummonCrAHL.id = "rowSummonCrAHL";
-				rowSummonCrAHL.innerHTML = "<th><label for='summonCrMaxAHLNum'>CR Increase AHL:</th><td><select id='summonCrMaxAHLScaleHow' name='summonCrMaxAHLScaleHow'><option value='Add'>Add</option><option value='Multiply'>Multiply</option></select><input type='number' id='summonCrMaxAHLNum' name='summonCrMaxAHLNum' min=0 value=0 style='width:25px'>"+summonCrMaxAHLScalingSelect+"</td>";
-				nextRowIndex++;                
-			}
-
-			let request = await fetch("macro:pm.GetCreatureTypes@lib:pm.a5e.Core", {method: "POST", body: ""});
-			let allCreatureTypes = await request.json();
-
-			let creatureTypeOptions = "";
-			for(let tempType of allCreatureTypes){
-				creatureTypeOptions = creatureTypeOptions + "<label><input type='checkbox' id='summonCreatureType"+tempType.Name+"' name='summonCreatureType"+tempType.Name+"' value=1 onchange='createSummonCreatureSubtypeTable("+'"'+tempType.Name+'"'+")'><span>"+tempType.DisplayName+"</span></label>";
-			}
-
-			let rowSummonCreatureType = table.insertRow(nextRowIndex);
-			rowSummonCreatureType.id = "rowSummonCreatureType";
-			rowSummonCreatureType.innerHTML = "<th><label for='summonCreatureType'>Creature Type Required:</th><td><div class='check-multiple' style='width:100%'>"+creatureTypeOptions+"</div></td>";
-			nextRowIndex++;
-			
-			let rowIsSummonCreatureSubtype = table.insertRow(nextRowIndex);
-			rowIsSummonCreatureSubtype.id = "rowIsSummonCreatureSubtype";
-			rowIsSummonCreatureSubtype.innerHTML = "<th><label for='isSummonCreatureSubtype'>Must be subtype of creature selected?</label></th><td><input type='checkbox' id='isSummonCreatureSubtype' name='isSummonCreatureSubtype' onchange='createSummonCreatureSubtypeTable(1)'></td>";
-			nextRowIndex++;
-			//TODO: Add selection of creature subtypes (e.g. devils)
-		}
-
-		let summonNumberOptions = "";
-
-		if(summonsSelection == "SpellEffect"){
-			summonNumberOptions = "<input type='number' id='summonNumber' name='summonNumber' min='1' style='width:25px' value=1>";
-		}
-		else{
-			summonNumberOptions = "<input type='number' id='summonNumber' name='summonNumber' min='1' style='width:25px' value=1> OR <input type='checkbox' id='summonNumberCRBased' name='summonNumberCRBased' onchange='toggleSummonNumber()'> Based on Summon CR";
-		}
-
-		if(!hadPriorSummonType){
-			let rowSummonNumber = table.insertRow(nextRowIndex);
-			rowSummonNumber.id = "rowSummonNumber";
-			rowSummonNumber.innerHTML = "<th><label for='summonNumber'>Number of Summons:</th><td>"+summonNumberOptions+"</td>";
-			nextRowIndex++;
-
-			if(checkEffectType()=="Spell"){
-				let summonNumberAHLScalingSelect = createAHLSelect("summonNumberAHLScaling");
-
-				let rowSummonNumberAHL = table.insertRow(nextRowIndex);
-				rowSummonNumberAHL.id = "rowSummonNumberAHL";
-				rowSummonNumberAHL.innerHTML = "<th><label for='summonNumberAHLScaleHow'>Increased Number AHL:</th><td><select id='summonNumberAHLScaleHow' name='summonNumberAHLScaleHow'><option value='Add'>Add</option><option value='Multiply'>Multiply</option></select><input type='number' id='summonNumberAHL' name='summonNumberAHL' min='0' style='width:25px' value=0>"+summonNumberAHLScalingSelect+"</td>";
-				nextRowIndex++;
-			}
-		}
-	}
-}
-
-async function toggleSummonNumber(){
-	if(document.getElementById("summonNumberCRBased").checked){
-		document.getElementById("summonNumber").setAttribute('disabled','');
-	}
-	else{
-		document.getElementById("summonNumber").removeAttribute('disabled','');
-	}
-}
-
-function createUseResourceRows(){
-	if(document.getElementById("isUseResource").checked){
-		let nextRowIndex = document.getElementById("rowIsUseResource").rowIndex + 1;
-
-		if(checkEffectType()!="Spell"){
-			addTableRow("CreateSubeffectTable",nextRowIndex,"rowIsUseUniqueResource","<th><label for='isUseUniqueResource'>Uses this Feature's Resource:</label></th><td><select id='isUseUniqueResource' name='isUseUniqueResource' onchange='createUniqueResourceRows()'><option value='0'>No</option><option value='1'>Yes, Main</option><option value='2'>Yes, Backup</option></select></td>");
-			nextRowIndex++;
-
-			addTableRow("CreateSubeffectTable",nextRowIndex,"rowIsUseSpellSlots","<th><label for='isUseSpellSlots'>Uses Spell Slots:</label></th><td><select id='isUseSpellSlots' name='isUseSpellSlots' onchange='createUseSpellSlotRows()'><option value='0'>No</option><option value='1'>Yes, Main</option><option value='2'>Yes, Backup</option></select></td>");
-			nextRowIndex++;
-		}
-
-		addTableRow("CreateSubeffectTable",nextRowIndex,"rowIsUseHitDice","<th><label for='isUseHitDice'>Uses Hit Dice:</label></th><td><select id='isUseHitDice' name='isUseHitDice' onchange='createUseHitDiceRows()'><option value='0'>No</option><option value='1'>Yes, Main</option><option value='2'>Yes, Backup</option></select></td>");
-		nextRowIndex++;
-
-		addTableRow("CreateSubeffectTable",nextRowIndex,"rowIsUseOtherFeatureResource","<th><label for='isUseOtherFeatureResource'>Uses Other Feature Resources:</label></th><td><select id='isUseOtherFeatureResource' name='isUseOtherFeatureResource' onchange='createOtherFeatureResourceRows()'><option value='0'>No</option><option value='1'>Yes, Main</option><option value='2'>Yes, Backup</option></select></td>");
-		nextRowIndex++;
-
-		addTableRow("CreateSubeffectTable",nextRowIndex,"rowToggleTimeResource","<th><label for='isToggleTimeResource'>Expends Time Resource:</label></th><td><select id='isToggleTimeResource' name='isToggleTimeResource' onchange=''><option value='0'>No</option><option value='1'>Yes, Turns On</option><option value='2'>Yes, Turns Off</option></select></td>");
-		nextRowIndex++;
-	}
-	else{
-		clearUnusedTable("CreateSubeffectTable","rowIsUseResource","rowUncommonEffects");
-	}
-}
-
-function createUniqueResourceRows(){
-	if(document.getElementById("isUseUniqueResource").value != "0" && document.getElementById("rowUseUniqueResourceRange") == null){
-		let nextRowIndex = document.getElementById("rowIsUseUniqueResource").rowIndex + 1;
-
-		//TODO: Add a check here to see if the feature has multiple resources, if so pick which one to use
-
-		addTableRow("CreateSubeffectTable",nextRowIndex,"rowUseUniqueResourceRange","<th><label for='UseUniqueResourceMin'>Usable Unique Resource at Once:</label></th><td><input type='number' id='UseUniqueResourceMin' name='UseUniqueResourceMin' min=1 value=1 style='width:25px'> - <input type='number' id='UseUniqueResourceMax' name='UseUniqueResourceMax' min=1 value=1 style='width:25px'><input type='checkbox' id='isNoUniqueResourceUseLimit' name='isNoUniqueResourceUseLimit' onchange='toggleFieldEnabled("+'"UseUniqueResourceMax","isNoUniqueResourceUseLimit"'+")'> No Limit</td>");
-		nextRowIndex++;
-
-		addTableRow("CreateSubeffectTable",nextRowIndex,"rowUseUniqueResourceIncrements","<th><label for='UseUniqueResourceIncrements'>Spend Resource in Increments of:</label></th><td><input type='number' id='UseUniqueResourceIncrements' name='UseUniqueResourceIncrements' min=1 value=1 style='width:25px'></td>");
-		nextRowIndex++;
-	}
-	else{
-		if(document.getElementById("isUseUniqueResource").value == "0"){
-			clearUnusedTable("CreateSubeffectTable","rowIsUseUniqueResource","rowIsUseSpellSlots");
-		}
-	}
-}
-
-function createUseSpellSlotRows(){
-	if(document.getElementById("isUseSpellSlots").value != "0" && document.getElementById("rowUseSpellSlotRange") == null){
-		let nextRowIndex = document.getElementById("rowIsUseSpellSlots").rowIndex + 1;
-
-		addTableRow("CreateSubeffectTable",nextRowIndex,"rowUseSpellSlotRange","<th><label for='UseSpellSlotMin'>Range of Usable Spell Slots:</label></th><td><input type='number' id='UseSpellSlotMin' name='UseSpellSlotMin' min=1 value=1 style='width:25px'> - <input type='number' id='UseSpellSlotMax' name='UseSpellSlotMax' min=1 value=9 style='width:25px' disabled><input type='checkbox' id='isNoSpellSlotUseLimit' name='isNoSpellSlotUseLimit' onchange='toggleFieldEnabled("+'"UseSpellSlotMax","isNoSpellSlotUseLimit"'+")' checked> No Limit</td>");
-		nextRowIndex++;
-	}
-	else{
-		clearUnusedTable("CreateSubeffectTable","rowIsUseSpellSlots","rowIsUseHitDice");
-	}
-}
-
-function createUseHitDiceRows(){
-	if(document.getElementById("isUseHitDice").value != "0" && document.getElementById("rowUseHitDiceRange") == null){
-		let nextRowIndex = document.getElementById("rowIsUseHitDice").rowIndex + 1;
-
-		addTableRow("CreateSubeffectTable",nextRowIndex,"rowUseHitDiceRange","<th><label for='UseHitDiceMin'>Range of Usable Hit Dice:</label></th><td><input type='number' id='UseHitDiceMin' name='UseHitDiceMin' min=1 value=1 style='width:25px'> - <input type='number' id='UseHitDiceMax' name='UseHitDiceMax' min=1 value=5 style='width:25px'><input type='checkbox' id='isNoHitDiceUseLimit' name='isNoHitDiceUseLimit' onchange='toggleFieldEnabled("+'"UseHitDiceMax","isNoHitDiceUseLimit"'+")'> No Limit</td>");
-		nextRowIndex++;
-
-		addTableRow("CreateSubeffectTable",nextRowIndex,"rowUseHitDiceIncrements","<th><label for='UseHitDiceIncrements'>Spend Hit Dice in Increments of:</label></th><td><input type='number' id='UseHitDiceIncrements' name='UseHitDiceIncrements' min=1 value=1 style='width:25px'></td>");
-		nextRowIndex++;
-	}
-	else{
-		clearUnusedTable("CreateSubeffectTable","rowIsUseHitDice","rowIsUseOtherFeatureResource");
-	}
-}
-
-function createOtherFeatureResourceRows(){
-	if(document.getElementById("isUseOtherFeatureResource").value != "0"){
-		let nextRowIndex = document.getElementById("rowIsUseOtherFeatureResource").rowIndex + 1;
-
-		//In addition to the UseUniqueResource input above, will need option for using the name only and not subclass info (e.g. Channel Divinity)
-	}
-	else{
-		clearUnusedTable("CreateSubeffectTable","rowIsUseOtherFeatureResource","rowToggleTimeResource");
-	}
-}
-
-async function createUncommonEffectsRows(){
-	let nextRowIndex = document.getElementById("rowUncommonEffects").rowIndex+1;
+function createUncommonEffectsRows(){
+	let referenceRow = document.getElementById("rowUncommonEffects");
 
 	if(document.getElementById("isUncommonEffects").checked){
-		addTableRow("CreateSubeffectTable",nextRowIndex,"rowModifyD20","<th><label for='isModifyD20'>Modifies d20 Tests?</label></th><td><input type='checkbox' id='isModifyD20' name='isModifyD20' onchange='createModifyD20Rows()'></td>");
-		nextRowIndex++;
+		referenceRow = createTableRow(referenceRow,"rowModifyD20","<th><label for='isModifyD20'>Modifies d20 Tests?</label></th><td><input type='checkbox' id='isModifyD20' name='isModifyD20' onchange='createModifyD20Rows()'></td>");
 
-		addTableRow("CreateSubeffectTable",nextRowIndex,"rowModifyD20","<th><label for='isModifyDamageRoll'>Modifies Damage Rolls?</label></th><td><input type='checkbox' id='isModifyDamageRoll' name='isModifyDamageRoll' onchange='createModifyDamageRollRows()'></td>");
-		nextRowIndex++;
+		referenceRow = createTableRow(referenceRow,"rowModifyDamage","<th><label for='isModifyDamageRoll'>Modifies Damage Rolls?</label></th><td><input type='checkbox' id='isModifyDamageRoll' name='isModifyDamageRoll' onchange='createModifyDamageRollRows()'></td>");
 
-		addTableRow("CreateSubeffectTable",nextRowIndex,"rowAffectCondition","<th><label for='isAffectCondition'>Affects Active Conditions?</label></th><td><select id='isAffectCondition' name='isAffectCondition' onchange='createAffectConditionRows()'><option value='No'>No Effect</option><option value='End'>End Conditions</option><option value='Suppress'>Suppress Conditions</option><option value='Shorten'>Shorten Conditions</option><option value='Prolong'>Prolong Conditions</option></select></td>");
-		nextRowIndex++;
+		referenceRow = createTableRow(referenceRow,"rowAffectCondition","<th><label for='isAffectCondition'>Affects Active Conditions?</label></th><td><select id='isAffectCondition' name='isAffectCondition' onchange='createAffectConditionRows()'><option value='No'>No Effect</option><option value='End'>End Conditions</option><option value='Suppress'>Suppress Conditions</option><option value='Shorten'>Shorten Conditions</option><option value='Prolong'>Prolong Conditions</option></select></td>");
 
-		addTableRow("CreateSubeffectTable",nextRowIndex,"rowAffectSpell","<th><label for='isAffectSpell'>Affects Spell Effects?</label></th><td><select id='isAffectSpell' name='isAffectSpell' onchange='createAffectSpellRows()'><option value='No'>No Effect</option><option value='End'>End Spells</option><option value='Suppress'>Suppress Spells</option><option value='Shorten'>Shorten Spells</option><option value='Prolong'>Prolong Spells</option></select></td>");
-		nextRowIndex++;
+		referenceRow = createTableRow(referenceRow,"rowAffectSpell","<th><label for='isAffectSpell'>Affects Spell Effects?</label></th><td><select id='isAffectSpell' name='isAffectSpell' onchange='createAffectSpellRows()'><option value='No'>No Effect</option><option value='End'>End Spells</option><option value='Suppress'>Suppress Spells</option><option value='Shorten'>Shorten Spells</option><option value='Prolong'>Prolong Spells</option></select></td>");
 
-		addTableRow("CreateSubeffectTable",nextRowIndex,"rowIsLight","<th><label for='isLight'>Creates a Light or Darkness?</label></th><td><input type='checkbox' id='isLight' name='isLight' onchange='toggleLightTable("+'"rowIsLight","rowIsMoveTarget"'+")'></td>");
-		nextRowIndex++;
+		referenceRow = createTableRow(referenceRow,"rowIsLight","<th><label for='isLight'>Creates a Light or Darkness?</label></th><td><input type='checkbox' id='isLight' name='isLight' onchange='toggleLightTable("+'"rowIsLight","rowIsMoveTarget"'+")'></td>");
 
-		addTableRow("CreateSubeffectTable",nextRowIndex,"rowIsMoveTarget","<th><label for='isMoveTarget'>Moves the Target?</label></th><td><input type='checkbox' id='isMoveTarget' name='isMoveTarget' value=1 onchange='createMoveTargetTable()'></td>");
-		nextRowIndex++;
+		referenceRow = createTableRow(referenceRow,"rowIsMoveTarget","<th><label for='isMoveTarget'>Moves the Target?</label></th><td><input type='checkbox' id='isMoveTarget' name='isMoveTarget' value=1 onchange='createMoveTargetTable()'></td>");
 
-		addTableRow("CreateSubeffectTable",nextRowIndex,"rowIsTransform","<th><label for='isTransform'>Transform Target?</label></th><td><input type='checkbox' id='isTransform' name='isTransform' onchange='createTransformRows()'></td>");
-		nextRowIndex++;
+		referenceRow = createTableRow(referenceRow,"rowIsTransform","<th><label for='isTransform'>Transform Target?</label></th><td><select id='isTransform' name='isTransform' onchange='createTransformRows()'><option value=''>No</option><option value='Single'>Single Specific Creature</option><option value='Options'>Creature from List</option><option value='Unique'>Creature Unique to Feature</option><option value='Criteria'>Creature Based on Criteria</option><option value='Cosmetic'>Change Appearance Only</option></select></td>");
 		
-		addTableRow("CreateSubeffectTable",nextRowIndex,"rowSetHP","<th><label for='isSetHP'>Set Target's Current HP?</label></th><td><input type='checkbox' id='isSetHP' name='isSetHP' onchange='createSetHPRows()'></td>");
-		nextRowIndex++;
+		referenceRow = createTableRow(referenceRow,"rowSetHP","<th><label for='isSetHP'>Set Target's Current HP?</label></th><td><input type='checkbox' id='isSetHP' name='isSetHP' onchange='createSetHPRows()'></td>");
+		
+		referenceRow = createTableRow(referenceRow,"rowIsDropItems","<th><label for='isDropItems'>Target Drops Held Items?</label></th><td><input type='checkbox' id='isDropItems' name='isDropItems'></td>");
+		document.getElementById("isDropItems").addEventListener("change",function(ev){
+			createDropHeldItemRows();
+		});
 
-		addTableRow("CreateSubeffectTable",nextRowIndex,"rowInstantKill","<th><label for='InstantKill'>Instantly Kills Target?</label></th><td><input type='checkbox' id='InstantKill' name='InstantKill' onchange='createInstantKillRows()'></td>");
-		nextRowIndex++;
+		referenceRow = createTableRow(referenceRow,"rowInstantKill","<th><label for='InstantKill'>Instantly Kills Target?</label></th><td><input type='checkbox' id='InstantKill' name='InstantKill' onchange='createInstantKillRows()'></td>");
 
-		addTableRow("CreateSubeffectTable",nextRowIndex,"rowIsDifficultTerrain","<th><label for='isDifficultTerrain'>Creates Difficult Terrain?</label></th><td><input type='checkbox' id='isDifficultTerrain' name='isDifficultTerrain' onchange='createDifficultTerrainRows("+'"CreateSubeffectTable"'+")'></td>");
-		nextRowIndex++;
+		referenceRow = createTableRow(referenceRow,"rowIsDifficultTerrain","<th><label for='isDifficultTerrain'>Creates Difficult Terrain?</label></th><td><input type='checkbox' id='isDifficultTerrain' name='isDifficultTerrain' onchange='createDifficultTerrainRows("+'"CreateSubeffectTable"'+")'></td>");
 
-		addTableRow("CreateSubeffectTable",nextRowIndex,"rowIsCreateObject","<th><label for='isCreateObject'>Creates an Object?</label></th><td><select id='isCreateObject' name='isCreateObject' onchange='createCreateObjectTable()'><option value='No'>No</option><option value='Unique'>Unique Item</option><option value='Specific'>Specific Item</option><option value='Type'>Items by Criteria</select></td>");
-		nextRowIndex++;
+		referenceRow = createTableRow(referenceRow,"rowIsCreateObject","<th><label for='isCreateObject'>Creates an Object?</label></th><td><select id='isCreateObject' name='isCreateObject' onchange='createCreateObjectTable()'><option value='No'>No</option><option value='Unique'>Unique Item</option><option value='Specific'>Specific Item</option><option value='Type'>Items by Criteria</select></td>");
 
-		addTableRow("CreateSubeffectTable",nextRowIndex,"rowIsWeaponAttack","<th><label for='isWeaponAttack'>Makes a Weapon Attack?</label></th><td><input type='checkbox' id='isWeaponAttack' name='isWeaponAttack' value=1 onchange='createWeaponAttackTable()'></td>");
-		nextRowIndex++;
+		referenceRow = createTableRow(referenceRow,"rowIsWeaponAttack","<th><label for='isWeaponAttack'>Makes a Weapon Attack?</label></th><td><input type='checkbox' id='isWeaponAttack' name='isWeaponAttack' value=1 onchange='createWeaponAttackTable()'></td>");
 
 		let effectType = checkEffectType();
 		if(effectType == "Object" || effectType == "Weapon"){
-			addTableRow("CreateSubeffectTable",nextRowIndex,"rowIsActivateItem","<th><label for='isActivateItem'>Activates this Item:</label></th><td><select id='isActivateItem' name='isActivateItem'><option value=''>No Effect</option><option value='Activate'>Activate Item</option><option value='Deactivate'>Deactivate Item</option><option value='Toggle'>Toggle Activation</option></select></td>");
+			referenceRow = createTableRow(referenceRow,"rowIsActivateItem","<th><label for='isActivateItem'>Activates this Item:</label></th><td><select id='isActivateItem' name='isActivateItem'><option value=''>No Effect</option><option value='Activate'>Activate Item</option><option value='Deactivate'>Deactivate Item</option><option value='Toggle'>Toggle Activation</option></select></td>");
 		}
+		
+		referenceRow = createTableRow(referenceRow,"rowUncommonEffectsEnd","<th colspan='2'></th>");
+		referenceRow.classList.add("section-end");
 	}
 	else{
-		clearUnusedTable("CreateSubeffectTable","rowUncommonEffects","Range");
+		deleteInterveningElements(referenceRow,document.getElementById("rowUncommonEffectsEnd").nextElementSibling);
 	}
 }
 
 async function createModifyD20Rows(){
-	let nextRowIndex = document.getElementById("rowModifyD20").rowIndex + 1;
+	let referenceElement = document.getElementById("rowModifyD20");
 
 	if(document.getElementById("isModifyD20").checked){
-		addTableRow("CreateSubeffectTable",nextRowIndex,"rowIsModifyAttack","<th><label for='affectEffectAffectsAll'>Must Affect All Possible Effects:</label></th><td><input type='checkbox' id='affectEffectAffectsAll' name='affectEffectAffectsAll'> (This is incomplete and I forgot to come back to it at some point)</td>");
-		nextRowIndex++;
+		referenceElement = createTableRow(referenceElement,"rowIsAffectAll","<th><label for='affectEffectAffectsAll'>Must Affect All Possible Effects:</label></th><td><input type='checkbox' id='affectEffectAffectsAll' name='affectEffectAffectsAll'> (This is incomplete and I forgot to come back to it at some point)</td>");
 
-		addTableRow("CreateSubeffectTable",nextRowIndex,"rowModifyD20Number","<th><label for='affectEffectNumber'>Number to Remove:</label></th><td><input type='number' id='affectEffectNumber' name='affectEffectNumber' min=0 style='width:25px' value=1><input type='checkbox' name='affectEffectNumberUnlimited' id='affectEffectNumberUnlimited' onchange='toggleFieldEnabled("+'"affectEffectNumber","affectEffectNumberUnlimited"'+")'>Unlimited?</td>");
-		nextRowIndex++;
+		referenceElement = createTableRow(referenceElement,"rowModifyD20Number","<th><label for='affectEffectNumber'>Number to Remove:</label></th><td><input type='number' id='affectEffectNumber' name='affectEffectNumber' min=0 class='small-number' value=1><input type='checkbox' name='affectEffectNumberUnlimited' id='affectEffectNumberUnlimited' onchange='toggleFieldEnabled("+'"affectEffectNumber","affectEffectNumberUnlimited"'+")'>Unlimited?</td>");
 
-		if(checkEffectType()=="Spell"){
-			let affectEffectNumberAHLScalingSelect = createAHLSelect("affectEffectNumberAHLScaling");
+		let scalingData = needsScalingData();
+		if(scalingData.isScaling){
+			let affectEffectNumberAHLScalingSelect = createScalingInput("affectEffectNumberAHLScaling",scalingData);
 
-			addTableRow("CreateSubeffectTable",nextRowIndex,"rowModifyD20NumberAHL","<th><label for='affectEffectNumberAHL'>Number Affected Increase AHL:</th><td><input type='number' id='affectEffectNumberAHL' name='affectEffectNumberAHL' min=0 value=0 style='width:25px'>"+affectEffectNumberAHLScalingSelect+"</td>");
-			nextRowIndex++;
+			referenceElement = createTableRow(referenceElement,"rowModifyD20NumberAHL","<th><label for='affectEffectNumberAHL'>Number Affected Increase AHL:</th><td><input type='number' id='affectEffectNumberAHL' name='affectEffectNumberAHL' min=0 value=0 class='small-number'><span id='affectEffectNumberAHLScalingSpan'>"+affectEffectNumberAHLScalingSelect+"</span></td>");		
 		}
 
-		addTableRow("CreateSubeffectTable",nextRowIndex,"rowModifyD20Number","<th><label for='affectEffectAffectsAll'>Must Affect All Possible Effects:</label></th><td><input type='checkbox' id='affectEffectAffectsAll' name='affectEffectAffectsAll'></td>");
-		nextRowIndex++;
+		referenceElement = createTableRow(referenceElement,"rowModifyD20Number","<th><label for='affectEffectAffectsAll'>Must Affect All Possible Effects:</label></th><td><input type='checkbox' id='affectEffectAffectsAll' name='affectEffectAffectsAll'></td>");
 
-		addTableRow("CreateSubeffectTable",nextRowIndex,"rowModifyD20NameFilterType","<th><label for='affectEffectNameFilterType'>Valid Spells By Name:</label></th><td><select id='affectEffectNameFilterType' name='affectEffectNameFilterType' onchange='createModifyD20NameFilterRows()'><option value='All'>All Spells</option><option value='Inclusive'>Must Be Specific Spell(s)</option><option value='Exclusive'>Cannot Be Specific Spell(s)</option><option value='Mixture'>Mixture of Both Above</option></select></td>");
-		nextRowIndex++;
+		referenceElement = createTableRow(referenceElement,"rowModifyD20NameFilterType","<th><label for='affectEffectNameFilterType'>Valid Spells By Name:</label></th><td><select id='affectEffectNameFilterType' name='affectEffectNameFilterType' onchange='createModifyD20NameFilterRows()'><option value='All'>All Spells</option><option value='Inclusive'>Must Be Specific Spell(s)</option><option value='Exclusive'>Cannot Be Specific Spell(s)</option><option value='Mixture'>Mixture of Both Above</option></select></td>");
 
-		addTableRow("CreateSubeffectTable",nextRowIndex,"rowModifyD20TagFilterType","<th><label for='affectEffectTagFilterType'>Valid Spells By Type:</label></th><td><select id='affectEffectTagFilterType' name='affectEffectTagFilterType' onchange='createModifyD20TagFilterRows()'><option value='All'>All Types</option><option value='Inclusive'>Must Be Specific Type(s)</option><option value='Exclusive'>Cannot Be Specific Type(s)</option><option value='Mixture'>Mixture of Both Above</option></select></td>");
-		nextRowIndex++;
+		referenceElement = createTableRow(referenceElement,"rowModifyD20TagFilterType","<th><label for='affectEffectTagFilterType'>Valid Spells By Type:</label></th><td><select id='affectEffectTagFilterType' name='affectEffectTagFilterType' onchange='createModifyD20TagFilterRows()'><option value='All'>All Types</option><option value='Inclusive'>Must Be Specific Type(s)</option><option value='Exclusive'>Cannot Be Specific Type(s)</option><option value='Mixture'>Mixture of Both Above</option></select></td>");
 
 		if(checkEffectType()=="Spell"){
-			addTableRow("CreateSubeffectTable",nextRowIndex,"rowModifyD20LevelMax","<th><label for='affectEffectLevelMax'>Maximum Level Affected:</label></th><td><input type='number' id='affectEffectLevelMax' name='affectEffectLevelMax' min=0 value=1 style='width:25px'> OR <select id='affectEffectLevelMaxAlternate' name='affectEffectLevelMaxAlternate'><option value='None'>No Alternative</option><option value='CastLevel'>Spell Slot Level</option><option value='NoMax'>No Maximum</option></select></td>");
-			nextRowIndex++;
+			referenceElement = createTableRow(referenceElement,"rowModifyD20LevelMax","<th><label for='affectEffectLevelMax'>Maximum Level Affected:</label></th><td><input type='number' id='affectEffectLevelMax' name='affectEffectLevelMax' min=0 value=1 style='width:25px'> OR <select id='affectEffectLevelMaxAlternate' name='affectEffectLevelMaxAlternate'><option value='None'>No Alternative</option><option value='CastLevel'>Spell Slot Level</option><option value='NoMax'>No Maximum</option></select></td>");
 		}
 		else{
-			addTableRow("CreateSubeffectTable",nextRowIndex,"rowModifyD20LevelMax","<th><label for='affectEffectLevelMax'>Maximum Level Affected:</label></th><td><input type='number' id='affectEffectLevelMax' name='affectEffectLevelMax' min=0 value=1 style='width:25px'><input type='checkbox' name='affectEffectNumberUnlimited' id='affectEffectNumberUnlimited' onchange='toggleFieldEnabled("+'"affectEffectNumber","affectEffectNumberUnlimited"'+")'>Unlimited?</td>");
-			nextRowIndex++;
+			referenceElement = createTableRow(referenceElement,"rowModifyD20LevelMax","<th><label for='affectEffectLevelMax'>Maximum Level Affected:</label></th><td><input type='number' id='affectEffectLevelMax' name='affectEffectLevelMax' min=0 value=1 style='width:25px'><input type='checkbox' name='affectEffectNumberUnlimited' id='affectEffectNumberUnlimited' onchange='toggleFieldEnabled("+'"affectEffectNumber","affectEffectNumberUnlimited"'+")'>Unlimited?</td>");
 		}
-		
-		addTableRow("CreateSubeffectTable",nextRowIndex,"rowIsModifyD20LevelMaxOverride","<th><label for='isModifyD20LevelMaxOverride'>May Affect Spells Over Maximum Level?</label></th><td><input type='checkbox' id='isModifyD20LevelMaxOverride' name='isModifyD20LevelMaxOverride' onchange='createModifyD20LevelMaxOverrideRows()'></td>");
-		nextRowIndex++;
+
+		referenceElement = createTableRow(referenceElement,"rowIsModifyD20LevelMaxOverride","<th><label for='isModifyD20LevelMaxOverride'>May Affect Spells Over Maximum Level?</label></th><td><input type='checkbox' id='isModifyD20LevelMaxOverride' name='isModifyD20LevelMaxOverride' onchange='createModifyD20LevelMaxOverrideRows()'></td>");
+
+		referenceElement = createTableRow(referenceElement,"rowModifyD20End","<th colspan='2'></th>");
+		referenceElement.classList.add("section-end");
 	}
-	else{
-		clearUnusedTable("CreateSubeffectTable","rowModifyD20","rowAffectCondition");
+	else if(document.getElementById("rowModifyD20End") != null){
+		deleteInterveningElements(document.getElementById("rowModifyD20"),document.getElementById("rowModifyD20End"));
 	}
 }
 
-async function createModifyD20TypeRows(){
+function createModifyD20TypeRows(){
 	
 }
 
@@ -1273,11 +1292,12 @@ async function createAffectConditionRows(){
 		addTableRow("CreateSubeffectTable",nextRowIndex,"rowAffectConditionNumber","<th><label for='affectConditionNumber'>Number to Remove:</label></th><td><input type='number' id='affectConditionNumber' name='affectConditionNumber' min=0 style='width:25px' value=1><input type='checkbox' name='affectConditionNumberUnlimited' id='affectConditionNumberUnlimited' onchange='toggleFieldEnabled("+'"affectConditionNumber","affectConditionNumberUnlimited"'+")'>Unlimited?</td>");
 		nextRowIndex++;
 
-		if(checkEffectType()=="Spell"){
-			let affectConditionNumberAHLScalingSelect = createAHLSelect("affectConditionNumberAHLScaling");
+		let scalingData = needsScalingData();
+		if(scalingData.isScaling){
+			let affectConditionNumberAHLScalingSelect = createScalingInput("affectConditionNumberAHLScaling",scalingData);
 
-			addTableRow("CreateSubeffectTable",nextRowIndex,"rowAffectConditionNumberAHL","<th><label for='affectConditionNumberAHL'>Number Affected Increase AHL:</th><td><input type='number' id='affectConditionNumberAHL' name='affectConditionNumberAHL' min=0 value=0 style='width:25px'>"+affectConditionNumberAHLScalingSelect+"</td>");
-			nextRowIndex++;
+			addTableRow("CreateSubeffectTable",nextRowIndex,"rowAffectConditionNumberAHL","<th><label for='affectConditionNumberAHL'>Number Affected Increase AHL:</th><td><input type='number' id='affectConditionNumberAHL' name='affectConditionNumberAHL' min=0 value=0 class='small-number'><span id='affectConditionNumberAHLScalingSpan'>"+affectConditionNumberAHLScalingSelect+"</span></td>");
+			nextRowIndex++;			
 		}
 
 		addTableRow("CreateSubeffectTable",nextRowIndex,"rowAffectConditionAffectsAll","<th><label for='affectConditionAffectsAll'>Must Affect All Possible Conditions:</label></th><td><input type='checkbox' id='affectConditionAffectsAll' name='affectConditionAffectsAll'></td>");
@@ -1320,8 +1340,8 @@ async function createAffectConditionNameFilterRows(){
 			conditionExcludeOptions = conditionExcludeOptions + "<label><input type='checkbox' id='affectConditionNameFilterExclusive"+tempCondition.Name+"' name='affectConditionNameFilterExclusive"+tempCondition.Name+"' value=1><span>"+tempCondition.DisplayName+"</span></label>";
 		}
 
-		let alreadyInclusiveTest = (table.rows.namedItem("rowInclusiveAffectConditionNames") != null);
-		let alreadyExclusiveTest = (table.rows.namedItem("rowExclusiveAffectConditionNames") != null);
+		let alreadyInclusiveTest = (document.getElementById("rowInclusiveAffectConditionNames") != null);
+		let alreadyExclusiveTest = (document.getElementById("rowExclusiveAffectConditionNames") != null);
 
 		if(currentNameFilterTypeSelection == "Inclusive" || currentNameFilterTypeSelection == "Mixture"){
 			if(alreadyInclusiveTest){
@@ -1376,8 +1396,8 @@ async function createAffectConditionTagFilterRows(){
 			conditionTagExcludeOptions = conditionTagExcludeOptions + "<label><input type='checkbox' id='affectConditionTagFilterExclusive"+tempTag.Name+"' name='affectConditionTagFilterExclusive"+tempTag.Name+"' value=1><span>"+tempTag.DisplayName+"</span></label>";
 		}
 
-		let alreadyInclusiveTest = (table.rows.namedItem("rowInclusiveAffectConditionTags") != null);
-		let alreadyExclusiveTest = (table.rows.namedItem("rowExclusiveAffectConditionTags") != null);
+		let alreadyInclusiveTest = (document.getElementById("rowInclusiveAffectConditionTags") != null);
+		let alreadyExclusiveTest = (document.getElementById("rowExclusiveAffectConditionTags") != null);
 
 		if(currentTagFilterTypeSelection == "Inclusive" || currentTagFilterTypeSelection == "Mixture"){
 			if(alreadyInclusiveTest){
@@ -1442,11 +1462,13 @@ async function createAffectSpellRows(){
 		addTableRow("CreateSubeffectTable",nextRowIndex,"rowAffectSpellNumber","<th><label for='affectSpellNumber'>Number to Remove:</label></th><td><input type='number' id='affectSpellNumber' name='affectSpellNumber' min=0 style='width:25px' value=1><input type='checkbox' name='affectSpellNumberUnlimited' id='affectSpellNumberUnlimited' onchange='toggleFieldEnabled("+'"affectSpellNumber","affectSpellNumberUnlimited"'+")'>Unlimited?</td>");
 		nextRowIndex++;
 
-		if(checkEffectType()=="Spell"){
-			let affectSpellNumberAHLScalingSelect = createAHLSelect("affectSpellNumberAHLScaling");
 
-			addTableRow("CreateSubeffectTable",nextRowIndex,"rowAffectSpellNumberAHL","<th><label for='affectSpellNumberAHL'>Number Affected Increase AHL:</th><td><input type='number' id='affectSpellNumberAHL' name='affectSpellNumberAHL' min=0 value=0 style='width:25px'>"+affectSpellNumberAHLScalingSelect+"</td>");
-			nextRowIndex++;
+		let scalingData = needsScalingData();
+		if(scalingData.isScaling){
+			let affectSpellNumberAHLScalingSelect = createScalingInput("affectSpellNumberAHLScaling",scalingData);
+
+			addTableRow("CreateSubeffectTable",nextRowIndex,"rowAffectSpellNumberAHL","<th><label for='affectSpellNumberAHL'>Number Affected Increase AHL:</th><td><input type='number' id='affectSpellNumberAHL' name='affectSpellNumberAHL' min=0 value=0 class='small-number'><span id='affectSpellNumberAHLScalingSpan'>"+affectSpellNumberAHLScalingSelect+"</span></td>");
+			nextRowIndex++;			
 		}
 
 		addTableRow("CreateSubeffectTable",nextRowIndex,"rowAffectSpellAffectsAll","<th><label for='affectSpellAffectsAll'>Must Affect All Possible Spells:</label></th><td><input type='checkbox' id='affectSpellAffectsAll' name='affectSpellAffectsAll'></td>");
@@ -1472,10 +1494,13 @@ async function createAffectSpellRows(){
 		
 		addTableRow("CreateSubeffectTable",nextRowIndex,"rowIsAffectSpellLevelMaxOverride","<th><label for='isAffectSpellLevelMaxOverride'>May Affect Spells Over Maximum Level?</label></th><td><input type='checkbox' id='isAffectSpellLevelMaxOverride' name='isAffectSpellLevelMaxOverride' onchange='createAffectSpellLevelMaxOverrideRows()'></td>");
 		nextRowIndex++;
+
+		let referenceRow = createTableRow(document.getElementById("rowIsAffectSpellLevelMaxOverride"),"rowAffectSpellEnd","<th colspan=2></th>");
+		referenceRow.classList.add("section-end");
 	}
 	else{
 		document.getElementById("isAffectCondition").removeAttribute("disabled","");
-		clearUnusedTable("CreateSubeffectTable","rowAffectSpell","rowLightType");
+		clearUnusedTable("CreateSubeffectTable","rowAffectSpell","rowAffectSpellEnd");
 	}
 }
 
@@ -1500,8 +1525,8 @@ async function createAffectSpellNameFilterRows(){
 			spellExcludeOptions = spellExcludeOptions + "<label><input type='checkbox' id='affectSpellNameFilterExclusive"+tempSpell.Name+"' name='affectSpellNameFilterExclusive"+tempSpell.Name+"' value=1><span>"+tempSpell.DisplayName+"</span></label>";
 		}
 
-		let alreadyInclusiveTest = (table.rows.namedItem("rowInclusiveAffectSpellNames") != null);
-		let alreadyExclusiveTest = (table.rows.namedItem("rowExclusiveAffectSpellNames") != null);
+		let alreadyInclusiveTest = (document.getElementById("rowInclusiveAffectSpellNames") != null);
+		let alreadyExclusiveTest = (document.getElementById("rowExclusiveAffectSpellNames") != null);
 
 		if(currentNameFilterTypeSelection == "Inclusive" || currentNameFilterTypeSelection == "Mixture"){
 			if(alreadyInclusiveTest){
@@ -1535,7 +1560,6 @@ async function createAffectSpellNameFilterRows(){
 }
 
 async function createAffectSpellTagFilterRows(){
-	let table = document.getElementById("CreateSubeffectTable");
 	let currentTagFilterTypeSelection = document.getElementById("affectSpellTagFilterType").value;
 	let nextRowIndex = document.getElementById("rowAffectSpellTagFilterType").rowIndex + 1;
 
@@ -1555,8 +1579,8 @@ async function createAffectSpellTagFilterRows(){
 			spellTagExcludeOptions = spellTagExcludeOptions + "<label><input type='checkbox' id='affectSpellTagFilterExclusive"+tempTag.Name+"' name='affectSpellTagFilterExclusive"+tempTag.Name+"' value=1><span>"+tempTag.DisplayName+"</span></label>";
 		}
 
-		let alreadyInclusiveTest = (table.rows.namedItem("rowInclusiveAffectSpellTags") != null);
-		let alreadyExclusiveTest = (table.rows.namedItem("rowExclusiveAffectSpellTags") != null);
+		let alreadyInclusiveTest = (document.getElementById("rowInclusiveAffectSpellTags") != null);
+		let alreadyExclusiveTest = (document.getElementById("rowExclusiveAffectSpellTags") != null);
 
 		if(currentTagFilterTypeSelection == "Inclusive" || currentTagFilterTypeSelection == "Mixture"){
 			if(alreadyInclusiveTest){
@@ -1590,66 +1614,84 @@ async function createAffectSpellTagFilterRows(){
 }
 
 async function createMoveTargetTable(){
-	let table = document.getElementById("CreateSubeffectTable");
-	let nextRowIndex = document.getElementById("rowIsMoveTarget").rowIndex+1;
+	let referenceRow = document.getElementById("rowIsMoveTarget");
 
 	if(document.getElementById("isMoveTarget").checked){
-		let rowMoveTargetInfo = table.insertRow(nextRowIndex);
-		rowMoveTargetInfo.id = "rowMoveTargetInfo";
-		rowMoveTargetInfo.innerHTML = "<th><label for='moveTargetValue'>Distance Target Moved:</label></th><input type='number' id='moveTargetValue' name='moveTargetValue' min=0 value=10 style='width:25px'><select id='moveTargetUnits' name='moveTargetUnits'><option value='Feet'>Feet</option><option value='Miles'>Miles</option><option value='Unlimited'>Unlimited</option></select><select id='moveTargetDirection' name='moveTargetDirection'><option value='Choice'>User's Choice</option><option value='Away'>Away From User</option><option value='Towards'>Towards User</option><option value='Random4'>Random, 4 Directions</option><option value='Random8'>Random, 8 Directions</option></select></td></tr>";
-		nextRowIndex++;
+		referenceRow = createTableRow(referenceRow,"rowMoveTargetInfo","<th><label for='moveTargetValue'>Distance Target Moved:</label></th><input type='number' id='moveTargetValue' name='moveTargetValue' min=0 value=10 style='width:25px'><select id='moveTargetUnits' name='moveTargetUnits'><option value='Feet'>Feet</option><option value='Miles'>Miles</option><option value='Unlimited'>Unlimited</option></select><select id='moveTargetDirection' name='moveTargetDirection'><option value='Choice'>User's Choice</option><option value='Away'>Away From User</option><option value='Towards'>Towards User</option><option value='Random4'>Random, 4 Directions</option><option value='Random8'>Random, 8 Directions</option></select></td>");
 
-		if(checkEffectType()=="Spell"){
-			let moveTargetAHLScalingSelect = createAHLSelect("moveTargetAHLScaling");
+		let scalingData = needsScalingData();
+		if(scalingData.isScaling){
+			let moveTargetAHLScalingSelect = createScalingInput("moveTargetAHLScaling",scalingData);
 
-			let rowMoveTargetAHLInfo = table.insertRow(nextRowIndex);
-			rowMoveTargetAHLInfo.id = "rowMoveTargetAHLInfo";
-			rowMoveTargetAHLInfo.innerHTML = "<th><label for='moveTargetAHLValue'>Increased Distance AHL:</label></th><input type='number' id='moveTargetAHLValue' name='moveTargetAHLValue' min=0 value=0 style='width:25px'>"+moveTargetAHLScalingSelect+"</td></tr>";
-			nextRowIndex++;
+			referenceRow = createTableRow(referenceRow,"rowMoveTargetAHLInfo","<th><label for='moveTargetAHLValue'>Increased Distance AHL:</label></th><input type='number' id='moveTargetAHLValue' name='moveTargetAHLValue' min=0 value=0 class='small-number'><span id='moveTargetAHLScalingSpan'>"+moveTargetAHLScalingSelect+"</span></td>");			
 		}
 
-		let rowMoveTargetType = table.insertRow(nextRowIndex);
-		rowMoveTargetType.id = "rowMoveTargetType";
-		rowMoveTargetType.innerHTML = "<th><label for='moveTargetType'>Type of Movement:</label></th><select id='moveTargetType' name='moveTargetType'><option value='Physical'>Physical Movement</option><option value='Teleportation'>Teleportation</option><option value='Extraplanar'>Extraplanar Teleportation</option></select></td></tr>";
-		nextRowIndex++;
+		referenceRow = createTableRow(referenceRow,"rowMoveTargetType","<th><label for='moveTargetType'>Type of Movement:</label></th><select id='moveTargetType' name='moveTargetType'><option value='Physical'>Physical Movement</option><option value='Teleportation'>Teleportation</option><option value='Extraplanar'>Extraplanar Teleportation</option></select></td>");
 
 		if(document.getElementById("howMitigate").value == "Save"){
-			let rowSavePreventMove = table.insertRow(nextRowIndex);
-			rowSavePreventMove.id = "rowSavePreventMove";
-			rowSavePreventMove.innerHTML = "<th><label for='savePreventMove'>Save Prevents Movement:</label></th><select id='savePreventMove' name='savePreventMove'><option value=2>Prevent Completely</option><option value=1>Halved Movement</option><option value=0>Move Not Affected</option></select></td></tr>";
-			nextRowIndex++;
+			referenceRow = createTableRow(referenceRow,"rowSavePreventMove","<th><label for='savePreventMove'>Save Prevents Movement:</label></th><select id='savePreventMove' name='savePreventMove'><option value=2>Prevent Completely</option><option value=1>Halved Movement</option><option value=0>Move Not Affected</option></select></td>");
 		}
+
+		referenceRow = createTableRow(referenceRow,"rowMoveTargetEnd","<th colspan=2></th>");
+		referenceRow.classList.add("section-end");
 	}
 	else{
-		clearUnusedTable("CreateSubeffectTable","rowIsMoveTarget","rowIsTransform");
+		deleteInterveningElements(referenceRow,document.getElementById("rowMoveTargetEnd").nextElementSibling);
 	}
 }
 
 function createSetHPRows(){
-	let nextRowIndex = document.getElementById("rowSetHP").rowIndex + 1;
+	let referenceRow = document.getElementById("rowSetHP");
 
 	if(document.getElementById("isSetHP").checked){
-		addTableRow("CreateSubeffectTable",nextRowIndex,"rowSetHPAmount","<th><label for='SetHPAmount'>Set Target HP to:</label></th><td><input type='number' id='SetHPAmount' name='SetHPAmount' min=0 style='width:25px' value=0></td>");
-		nextRowIndex++;
+		referenceRow = createTableRow(referenceRow,"rowSetHPAmount","<th><label for='SetHPAmount'>Set Target HP to:</label></th><td><input type='number' id='SetHPAmount' name='SetHPAmount' min=0 style='width:25px' value=0></td>");
 
 		if(document.getElementById("howMitigate").value=="Save"){
-			addTableRow("CreateSubeffectTable",nextRowIndex,"rowSavePreventSetHP","<th><label for='savePreventSetHP'>Save Prevents HP Change:</label></th><td><input type='checkbox' id='savePreventSetHP' name='savePreventSetHP'></td>");
-			nextRowIndex++;
+			referenceRow = createTableRow(referenceRow,"rowSavePreventSetHP","<th><label for='savePreventSetHP'>Save Prevents HP Change:</label></th><td><input type='checkbox' id='savePreventSetHP' name='savePreventSetHP'></td>");
 		}
+	
+		referenceRow = createTableRow(referenceRow,"rowSetHPEnd","<th colspan=2></th>");
+		referenceRow.classList.add("section-end");
 	}
 	else{
-		clearUnusedTable("CreateSubeffectTable","rowSetHP","rowInstantKill");
+		deleteInterveningElements(referenceRow,document.getElementById("rowSetHPEnd").nextElementSibling);
+	}
+}
+
+function createDropHeldItemRows(){
+	if(document.getElementById("isDropItems").checked){
+		let mitigationChoice = document.getElementById("howMitigate");
+		mitigationChoice.addEventListener("change",createDropItemsResolution);
+
+		createDropItemsResolution();
+	}
+	else{
+		document.getElementById("howMitigate").removeEventListener("change",createDropItemsResolution);
+		if(document.getElementById("rowIsSavePreventDrop") != null){
+			document.getElementById("rowIsSavePreventDrop").remove();
+		}
+	}
+}
+
+function createDropItemsResolution(){
+	let referenceRow = document.getElementById("rowIsDropItems");
+	let mitigationChoice = document.getElementById("howMitigate");
+
+	if(mitigationChoice.value == "Save"){
+		referenceRow = createTableRow(referenceRow,"rowIsSavePreventDrop","<th><label for='isSavePreventDrop'>Successful Save Prevents Dropping Items:</label></th><td><input type='checkbox' id='isSavePreventDrop' name='isSavePreventDrop' checked></td>");
+	}
+	else if(document.getElementById("rowIsSavePreventDrop") != null){
+		document.getElementById("rowIsSavePreventDrop").remove();
 	}
 }
 
 function createInstantKillRows(){
-	let nextRowIndex = document.getElementById("rowInstantKill").rowIndex + 1;
+	let referenceRow = document.getElementById("rowInstantKill");
 	if(document.getElementById("howMitigate").value=="Save" && document.getElementById("InstantKill").checked){
-		addTableRow("CreateSubeffectTable",nextRowIndex,"rowSavePreventInstantKill","<th><label for='savePreventInstantKill'>Save Prevents Instant Kill:</label></th><td><input type='checkbox' id='savePreventInstantKill' name='savePreventInstantKill'></td>");
-		nextRowIndex++;  
+		referenceRow = createTableRow(referenceRow,"rowSavePreventInstantKill","<th><label for='savePreventInstantKill'>Save Prevents Instant Kill:</label></th><td><input type='checkbox' id='savePreventInstantKill' name='savePreventInstantKill'></td>");
 	}
 	else if(document.getElementById("rowSavePreventInstantKill") != null){
-		document.getElementById("CreateSubeffectTable").deleteRow(nextRowIndex);
+		document.getElementById("rowSavePreventInstantKill").remove();
 	}
 }
 
@@ -1720,7 +1762,219 @@ async function loadUserData() {
 	let userdata = atob(await MapTool.getUserData());
 	document.getElementById('CreateSubeffectTable').innerHTML = userdata;
 
-	createTargetingRows("CreateSubeffectTable","rowNeedsNewSubeffect","");
+	createTargetingRows("CreateSubeffectTable","rowMitigation","");
 }
 
 setTimeout(loadUserData, 1);
+
+//TODO: AI-generated code, needs validation, addition of targeting data, and (at minimum) triggering of onchange/onpress events for dynamic inputs
+async function populateDynamicInput(jsonData) {
+    const data = JSON.parse(jsonData);
+
+    if (data.EffectType) {
+        document.getElementById("EffectType").value = data.EffectType;
+    }
+
+    if (data.FeatureData) {
+        document.getElementById("FeatureData").value = btoa(JSON.stringify(data.FeatureData));
+    }
+
+    if (data.UseTime) {
+        document.getElementById("UseTime").value = data.UseTime;
+    }
+
+    if (data.Duration) {
+        document.getElementById("Duration").value = data.Duration;
+    }
+
+    if (data.Concentration) {
+        document.getElementById("isConcentration").checked = data.Concentration;
+    }
+
+    if (data.ConcentrationLostLevel) {
+        document.getElementById("ConcentrationLostLevel").value = data.ConcentrationLostLevel;
+    }
+
+    if (data.ParentSubeffect) {
+        document.getElementById("ParentSubeffect").value = data.ParentSubeffect;
+    }
+
+    if (data.ParentSubeffectRequirements) {
+        document.getElementById("ParentPrereqs").value = data.ParentSubeffectRequirements.Requirement;
+        if (data.ParentSubeffectRequirements.Margin) {
+            document.getElementById("PrereqAttackHitMargin").value = data.ParentSubeffectRequirements.Margin;
+        }
+        if (data.ParentSubeffectRequirements.MustCrit) {
+            document.getElementById("PrereqAttackCrits").checked = data.ParentSubeffectRequirements.MustCrit;
+        }
+    }
+
+    if (data.SaveData) {
+        document.getElementById("SaveType").value = data.SaveData.SaveType;
+        document.getElementById("SaveDCMethod").value = data.SaveData.DCMethod;
+        if (data.SaveData.DCStat) {
+            document.getElementById("SaveDCStat").value = data.SaveData.DCStat;
+        }
+        if (data.SaveData.DC) {
+            document.getElementById("SaveDC").value = data.SaveData.DC;
+        }
+        if (data.SaveData.IgnoreCover) {
+            document.getElementById("IgnoreCoverBenefit").checked = data.SaveData.IgnoreCover;
+        }
+    }
+
+    if (data.Attack) {
+        document.getElementById("MeleeRanged").value = data.Attack.MeleeRanged;
+        document.getElementById("CritThresh").value = data.Attack.CritThresh;
+        document.getElementById("ToHitMethod").value = data.Attack.ToHitMethod;
+        if (data.Attack.ToHitStat) {
+            document.getElementById("ToHitStat").value = data.Attack.ToHitStat;
+        }
+        if (data.Attack.ToHitBonus) {
+            document.getElementById("ToHitBonus").value = data.Attack.ToHitBonus;
+        }
+        if (data.Attack.IgnoreCover) {
+            document.getElementById("IgnoreCoverBenefit").checked = data.Attack.IgnoreCover;
+        }
+    }
+
+    if (data.Damage) {
+        document.getElementById("isDamage").checked = true;
+        document.getElementById("differentTypes").value = data.Damage.length;
+        data.Damage.forEach((damage, index) => {
+            const damageTypeNumber = index + 1;
+            document.getElementById(`DamageType${damageTypeNumber}`).value = damage.DamageType;
+            document.getElementById(`DamageDieNum${damageTypeNumber}`).value = damage.DamageDieNumber;
+            document.getElementById(`DamageDieSize${damageTypeNumber}`).value = damage.DamageDieSize;
+            document.getElementById(`DamageFlatBonus${damageTypeNumber}`).value = damage.DamageFlatBonus;
+            document.getElementById(`ModBonus${damageTypeNumber}`).checked = damage.IsModBonus;
+            if (damage.AHLScaling) {
+                document.getElementById(`isAHL${damageTypeNumber}`).value = damage.AHLScaling;
+                document.getElementById(`AHLDieSize${damageTypeNumber}`).value = damage.AHLDieSize;
+                document.getElementById(`AHLDieNum${damageTypeNumber}`).value = damage.AHLDieNum;
+                document.getElementById(`AHLFlatBonus${damageTypeNumber}`).value = damage.AHLFlatBonus;
+            }
+        });
+    }
+
+    if (data.ConditionInfo) {
+        document.getElementById("isCondition").value = "Choose";
+        data.ConditionInfo.Conditions.forEach(condition => {
+            document.getElementById(`ConditionOption${condition.Name}`).checked = true;
+        });
+        if (data.ConditionInfo.EndInfo) {
+            document.getElementById("isConditionSameDuration").checked = data.ConditionInfo.EndInfo.UseMainDuration;
+            document.getElementById("ConditionAdvancePoint").value = data.ConditionInfo.EndInfo.AdvancePoint;
+        }
+    }
+
+    if (data.Summon) {
+        document.getElementById("isSummons").value = "Yes";
+        document.getElementById("SummonType").value = data.Summon.Type;
+        document.getElementById("SummonName").value = data.Summon.Name;
+    }
+
+    if (data.UseResource) {
+        document.getElementById("isUseResource").checked = true;
+        document.getElementById("UseResourceType").value = data.UseResource.Type;
+        document.getElementById("UseResourceAmount").value = data.UseResource.Amount;
+    }
+
+    if (data.Lights) {
+        document.getElementById("isLight").checked = true;
+        document.getElementById("LightType").value = data.Lights.Type;
+        document.getElementById("LightRadius").value = data.Lights.Radius;
+    }
+
+    if (data.Movement) {
+        document.getElementById("isMoveTarget").checked = true;
+        document.getElementById("moveTargetValue").value = data.Movement.Value;
+        document.getElementById("moveTargetUnits").value = data.Movement.Units;
+        document.getElementById("moveTargetDirection").value = data.Movement.Direction;
+        document.getElementById("moveTargetType").value = data.Movement.Type;
+        if (data.Movement.AHLScaling) {
+            document.getElementById("moveTargetAHLScaling").value = data.Movement.AHLScaling;
+            document.getElementById("moveTargetAHLValue").value = data.Movement.AHLValue;
+        }
+    }
+
+    if (data.Transform) {
+        document.getElementById("isTransform").value = data.Transform.Type;
+        document.getElementById("TransformName").value = data.Transform.Name;
+    }
+
+    if (data.SetHPAmount) {
+        document.getElementById("isSetHP").checked = true;
+        document.getElementById("SetHPAmount").value = data.SetHPAmount;
+    }
+
+    if (data.DropItems) {
+        document.getElementById("isDropItems").checked = true;
+    }
+
+    if (data.InstantKill) {
+        document.getElementById("InstantKill").checked = true;
+    }
+
+    if (data.DifficultTerrain) {
+        document.getElementById("isDifficultTerrain").checked = true;
+        document.getElementById("DifficultTerrainMultiplier").value = data.DifficultTerrain.Multiplier;
+        document.getElementById("DifficultTerrainDistanceValue").value = data.DifficultTerrain.Value;
+        document.getElementById("DifficultTerrainDistanceUnits").value = data.DifficultTerrain.Units;
+    }
+
+    if (data.CreateObject) {
+        document.getElementById("isCreateObject").value = data.CreateObject.Type;
+        document.getElementById("CreatedObject").value = data.CreateObject.Name;
+    }
+
+    // Populate targeting data
+    if (data.TargetLimits) {
+        const targetLimits = data.TargetLimits;
+
+        if (targetLimits.TargetType) {
+            document.getElementById("TargetType").value = targetLimits.TargetType;
+            document.getElementById("TargetType").dispatchEvent(new Event('change'));
+        }
+
+        if (targetLimits.Range) {
+            document.getElementById("Range").value = targetLimits.Range;
+        }
+
+        if (targetLimits.AoE) {
+            document.getElementById("AoE").value = targetLimits.AoE;
+            document.getElementById("AoE").dispatchEvent(new Event('change'));
+        }
+
+        if (targetLimits.TargetNumber) {
+            document.getElementById("TargetNumber").value = targetLimits.TargetNumber;
+        }
+
+        if (targetLimits.TargetNumberUnlimited) {
+            document.getElementById("isTargetNumberUnlimited").checked = targetLimits.TargetNumberUnlimited;
+            document.getElementById("isTargetNumberUnlimited").dispatchEvent(new Event('change'));
+        }
+
+        if (targetLimits.TargetConditions) {
+            targetLimits.TargetConditions.forEach(condition => {
+                document.getElementById(`TargetCondition${condition}`).checked = true;
+            });
+        }
+
+        if (targetLimits.TargetTags) {
+            targetLimits.TargetTags.forEach(tag => {
+                document.getElementById(`TargetTag${tag}`).checked = true;
+            });
+        }
+
+        if (targetLimits.TargetingMethod) {
+            document.getElementById("TargetingMethod").value = targetLimits.TargetingMethod;
+        }
+
+        if (targetLimits.TargetingMethodOptions) {
+            targetLimits.TargetingMethodOptions.forEach(option => {
+                document.getElementById(`TargetingMethodOption${option}`).checked = true;
+            });
+        }
+    }
+}

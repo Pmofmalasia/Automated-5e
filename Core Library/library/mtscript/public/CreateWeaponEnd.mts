@@ -1,4 +1,4 @@
-[h:WeaponData = json.get(data.getData("addon:","pm.a5e.core","ct.NewWeapon"),getPlayerName())]
+[h:WeaponData = json.get(macro.args,"FeatureData")]
 [h:WeaponName = json.get(WeaponData,"Name")]
 [h:weaponSourcebook = json.get(WeaponData,"Sourcebook")]
 
@@ -22,7 +22,6 @@
 [h:WeaponData = json.remove(WeaponData,"Effects")]
 [h:WeaponData = json.remove(WeaponData,"isEffectRandom")]
 
-[h:setLibProperty("ct.NewWeapon",json.remove(data.getData("addon:","pm.a5e.core","ct.NewWeapon"),getPlayerName()),"Lib:pm.a5e.Core")]
 [h:ParentToken = json.get(macro.args,"ParentToken")]
 
 [h,if(ParentToken == ""),CODE:{

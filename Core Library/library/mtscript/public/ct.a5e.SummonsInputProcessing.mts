@@ -5,11 +5,43 @@
 [h:SummonFilter = "{}"]
 [h,switch(isSummons),CODE:
 	case "UniqueEffect":{
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 		[h:SummonFilter = json.set(SummonFilter,"CreatureNameInclusive",json.get(inputData,"Name"))]
+		[h:"<!-- Change this to NOT use bestiary instead? And divert away from using filters at all, since spell effects don't seem like they should be stored in the bestiary. -->"]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	};
 	case "Single":{
 		[h:SummonDisplayName = pm.EvilChars(json.get(inputData,"singleSummon"))]
-		[h:SummonName = pm.RemoveSpecial(SummonDisplayName)]
+		[h:SummonName = js.a5e.RemoveSpecial(SummonDisplayName)]
 		[h:SummonFilter = json.set(SummonFilter,"CreatureNameInclusive",json.append("",SummonName))]
 		[h:inputData = json.remove(inputData,"singleSummon")]
 	};
@@ -18,7 +50,7 @@
 		[h:SummonOptions = "[]"]
 		[h,foreach(summonOption,tempSummonOptions),CODE:{
 			[h:tempDisplayName = pm.EvilChars(decode(summonOption))]
-			[h:tempName = pm.RemoveSpecial(tempDisplayName)]
+			[h:tempName = js.a5e.RemoveSpecial(tempDisplayName)]
 			[h:SummonOptions = json.append(SummonOptions,tempName)]
 		}]
 		[h:SummonFilter = json.set(SummonFilter,"CreatureNameInclusive",SummonOptions)]

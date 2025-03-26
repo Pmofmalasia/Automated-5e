@@ -21,14 +21,14 @@
 
 [h:ab.UpdateLevelOptions = string(ab.Level)]
 [h,count(20-ab.Level): ab.UpdateLevelOptions = listAppend(ab.UpdateLevelOptions,ab.Level+roll.count+1)]
-[h:ab.SourceLib = json.get(json.path.read(data.getData("addon:","pm.a5e.core","ms.Sources"),"[?(@.Name=='"+pm.RemoveSpecial(ab.Source)+"')]['Library']"),0)]
+[h:ab.SourceLib = json.get(json.path.read(data.getData("addon:","pm.a5e.core","ms.Sources"),"[?(@.Name=='"+js.a5e.RemoveSpecial(ab.Source)+"')]['Library']"),0)]
 [h:ab.Master=""]
 [h:ab.DisplayName = ab.Name]
-[h:ab.Name = pm.RemoveSpecial(ab.Name)]
+[h:ab.Name = js.a5e.RemoveSpecial(ab.Name)]
 [h:ab.Final = json.set("",
 	"Name",ab.Name,
 	"DisplayName",ab.DisplayName,
-	"Class",pm.RemoveSpecial(ab.Class),
+	"Class",js.a5e.RemoveSpecial(ab.Class),
 	"Type","Class",
 	"Level",ab.Level,
 	"GainOnLevel",ab.OnLevel,
@@ -44,7 +44,7 @@
 	if(ab.Replace," ab.ReplaceCreated | No,Yes,Yes - Same Class/Subclass Combo | Is the feature you would like to replace already added to the core library? | RADIO | SELECT=2","")
 ))]
 
-[h:ab.Subclass = if(ab.Subclass == "None","",pm.RemoveSpecial(ab.Subclass))]
+[h:ab.Subclass = if(ab.Subclass == "None","",js.a5e.RemoveSpecial(ab.Subclass))]
 [h:ab.Final = json.set(ab.Final,"Subclass",ab.Subclass)]
 
 [h,if(ab.HasMaster),CODE:{
@@ -56,13 +56,13 @@
 		[h:abort(input(ab.MasterInput))]
 
 		[h,if(ab.MasterCreated==2): ab.MasterClass = ab.Class]
-		[h,if(ab.MasterCreated==2): ab.MasterSubclass = ab.Subclass; ab.MasterSubclass = pm.RemoveSpecial(ab.MasterSubclass)]
+		[h,if(ab.MasterCreated==2): ab.MasterSubclass = ab.Subclass; ab.MasterSubclass = js.a5e.RemoveSpecial(ab.MasterSubclass)]
 		[h:ab.MasterOptions = json.toList(json.path.read(data.getData("addon:","pm.a5e.core","sb.Abilities"),"[?(@.Class=='"+ab.MasterClass+"' && (@.Subclass==''|| @.Subclass=='"+ab.MasterSubclass+"'))]['DisplayName']"))]
 
 		[h:abort(input(
 			" ab.MasterName | "+ab.MasterOptions+" | Name of Master Feature | LIST | VALUE=STRING "))]
 
-		[h:ab.MasterFeature = json.set("","Name",pm.RemoveSpecial(ab.MasterName),"DisplayName",ab.MasterName,"Class",ab.MasterClass,"Subclass",if(ab.MasterSubclass=="None","",pm.RemoveSpecial(ab.MasterSubclass)))]
+		[h:ab.MasterFeature = json.set("","Name",js.a5e.RemoveSpecial(ab.MasterName),"DisplayName",ab.MasterName,"Class",ab.MasterClass,"Subclass",if(ab.MasterSubclass=="None","",js.a5e.RemoveSpecial(ab.MasterSubclass)))]
 	};{
 		[h:abort(input(
 			" ab.MasterName | -- Name Here -- | Enter master feature name ",
@@ -75,7 +75,7 @@
 			" ab.MasterSubclass | None,"+pm.GetSubclasses(ab.Class,"DisplayName")+" | Subclass associated with Master Feature | LIST | VALUE=STRING "
 			))]
 	
-		[h:ab.MasterFeature = json.set("","Name",pm.RemoveSpecial(ab.MasterName),"DisplayName",ab.MasterName,"Class",ab.MasterClass,"Subclass",if(ab.MasterSubclass=="None","",pm.RemoveSpecial(ab.MasterSubclass)))]
+		[h:ab.MasterFeature = json.set("","Name",js.a5e.RemoveSpecial(ab.MasterName),"DisplayName",ab.MasterName,"Class",ab.MasterClass,"Subclass",if(ab.MasterSubclass=="None","",js.a5e.RemoveSpecial(ab.MasterSubclass)))]
 	}]
 	
 	[h:ab.Final = json.set(ab.Final,"Master",ab.MasterFeature)]
@@ -92,13 +92,13 @@
 		[h:abort(input(ab.ReplaceInput))]
 
 		[h,if(ab.ReplaceCreated==2): ab.ReplaceClass = ab.Class]
-		[h,if(ab.ReplaceCreated==2): ab.ReplaceSubclass = ab.Subclass; ab.ReplaceSubclass = pm.RemoveSpecial(ab.ReplaceSubclass)]
+		[h,if(ab.ReplaceCreated==2): ab.ReplaceSubclass = ab.Subclass; ab.ReplaceSubclass = js.a5e.RemoveSpecial(ab.ReplaceSubclass)]
 		[h:ab.ReplaceOptions = json.toList(json.path.read(data.getData("addon:","pm.a5e.core","sb.Abilities"),"[?(@.Class=='"+ab.ReplaceClass+"' && (@.Subclass==''|| @.Subclass=='"+ab.ReplaceSubclass+"'))]['DisplayName']"))]
 
 		[h:abort(input(
 		" ab.ReplaceName | "+ab.ReplaceOptions+" | Name of Replaced Feature | LIST | VALUE=STRING "))]
 
-		[h:ab.ReplacedFeature = json.set("","Name",pm.RemoveSpecial(ab.ReplaceName),"DisplayName",ab.ReplaceName,"Class",ab.ReplaceClass,"Subclass",if(ab.ReplaceSubclass=="None","",pm.RemoveSpecial(ab.ReplaceSubclass)))]
+		[h:ab.ReplacedFeature = json.set("","Name",js.a5e.RemoveSpecial(ab.ReplaceName),"DisplayName",ab.ReplaceName,"Class",ab.ReplaceClass,"Subclass",if(ab.ReplaceSubclass=="None","",js.a5e.RemoveSpecial(ab.ReplaceSubclass)))]
 	};{
 		[h:abort(input(
 			" ab.ReplaceName | -- Name Here -- | Enter replaced feature name ",
@@ -111,7 +111,7 @@
 			" ab.ReplaceSubclass | None,"+pm.GetSubclasses(ab.Class,"DisplayName")+" | Class associated with Replaced Feature | LIST | VALUE=STRING "
 			))]
 	
-		[h:ab.ReplacedFeature = json.set("","Name",pm.RemoveSpecial(ab.ReplaceName),"DisplayName",ab.ReplaceName,"Class",ab.ReplaceClass,"Subclass",if(ab.ReplaceSubclass=="None","",pm.RemoveSpecial(ab.ReplaceSubclass)))]
+		[h:ab.ReplacedFeature = json.set("","Name",js.a5e.RemoveSpecial(ab.ReplaceName),"DisplayName",ab.ReplaceName,"Class",ab.ReplaceClass,"Subclass",if(ab.ReplaceSubclass=="None","",js.a5e.RemoveSpecial(ab.ReplaceSubclass)))]
 	}]
 	
 	[h:ab.Final = json.set(ab.Final,"Replace",ab.ReplacedFeature)]	

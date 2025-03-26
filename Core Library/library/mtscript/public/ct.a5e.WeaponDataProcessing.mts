@@ -19,13 +19,13 @@
 
 [h:allWeaponDamage = "[]"]
 [h,count(json.get(WeaponData,"WeaponDamageInstanceNumber")),CODE:{
-	[h:"<!-- TODO: Currently no functionality for choosing among multiple damage types, consider implementing? -->"]
+	[h:"<!-- TODO: Damage - Currently no functionality for choosing among multiple damage types -->"]
 	[h:thisDamageObject = json.set("",
 		"DamageType",json.get(WeaponData,"WeaponDamageType"+roll.count),
 		"DamageDieNumber",number(json.get(WeaponData,"WeaponDamageDieNumber"+roll.count)),
 		"DamageDieSize",number(json.get(WeaponData,"WeaponDamageDieSize"+roll.count)),
 		"DamageFlatBonus",json.get(WeaponData,"WeaponDamageBonus"+roll.count),
-		"IsModBonus",json.contains(WeaponData,"WeaponAddDmgMod"+roll.count)
+		"IsModBonus",json.get(WeaponData,"WeaponAddDmgMod"+roll.count)
 	)]
 
 	[h:allWeaponDamage = json.append(allWeaponDamage,thisDamageObject)]

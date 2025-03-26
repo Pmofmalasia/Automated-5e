@@ -5,8 +5,9 @@
 [h:FeatureName = json.get(FeatureData,"Name")]
 [h:FeatureClass = json.get(FeatureData,"Class")]
 [h:FeatureSubclass = json.get(FeatureData,"Subclass")]
+[h:a5e.UnifiedAbilities = a5e.GatherAbilities(ParentToken)]
 
-[h:abilityTable = pm.a5e.GenerateFeatureTooltip(FeatureData,1)]
+[h:abilityTable = pm.a5e.GenerateFeatureTooltip(ParentToken,FeatureData,a5e.UnifiedAbilities,json.set("","NeedsNonEffectData",1))]
 [h:FeatureDisplayName = json.get(FeatureData,"DisplayName")]
 [h:FeatureFalseName = json.get(FeatureData,"FalseName")]
 [h,if(FeatureFalseName == ""),switch(FeatureClass):

@@ -4,8 +4,8 @@
 [h:Flavor = json.get(SaveInputData,"Flavor")]
 [h:switchToken(ParentToken)]
 
-[h:EffectIDChoice = json.get(SaveInputData,"EffectIDChoice")]
-[h,if(EffectIDChoice == ""),CODE:{
+[h:EffectChoice = json.get(SaveInputData,"EffectChoice")]
+[h,if(EffectChoice == ""),CODE:{
 	[h:OutputOptions = json.get(SaveInputData,"OutputOptions")]
 	[h:SaveChoice = json.get(SaveInputData,"SaveChoice")]
 	[h:SituationalBonus = json.get(SaveInputData,"SituationalBonus")]
@@ -54,7 +54,9 @@
 
 	[h,MACRO("GatherOutputComponents@Lib:pm.a5e.Core"): AllOutputComponents]
 };{
-	[h:EffectToResolve = json.get(json.path.read(data.getData("addon:","pm.a5e.core","gd.Effects"),"[*][?(@.ID =='"+EffectIDChoice+"')]"),0)]
+	[h:EffectToResolve = base64.decode(EffectChoice)]
+
+	[h,if(json.contains(SaveInputData,"isChooseFailure")): EffectToResolve = json.set(EffectToResolve,"ForcedModifications",json.set("","isForcedResult","AutoFailure"))]
 
 	[h,MACRO("ResolveEffectsBorder@Lib:pm.a5e.Core"): json.set(EffectToResolve,"SpecificTargets",ParentToken)]
 

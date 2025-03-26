@@ -139,7 +139,6 @@
 	}
 ]
 
-
 [h,if(ConditionSetBy!=""),CODE:{
 	[h:switchToken(ConditionSetBy)]
 	[h:"<!-- New group test needs to be done on SetBy token but not target token because group may have already been created by another target going through this macro. -->"]

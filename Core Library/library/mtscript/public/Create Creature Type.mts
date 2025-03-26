@@ -3,10 +3,10 @@
 	" ct.Source | "+pm.GetBookInfo("DisplayName")+" | Which sourcebook is the creature type from | LIST | VALUE=STRING "
 	))]
 
-[h:ct.SourcebookLib = json.get(json.path.read(data.getData("addon:","pm.a5e.core","ms.Sources"),"[?(@.Name=='"+pm.RemoveSpecial(ct.Source)+"')]['Library']"),0)]
+[h:ct.SourcebookLib = json.get(json.path.read(data.getData("addon:","pm.a5e.core","ms.Sources"),"[?(@.Name=='"+js.a5e.RemoveSpecial(ct.Source)+"')]['Library']"),0)]
 
 [h:ct.Data = json.set("",
-			"Name",pm.RemoveSpecial(ct.Name),
+			"Name",js.a5e.RemoveSpecial(ct.Name),
 			"DisplayName",ct.Name,
 			"Library",ct.SourcebookLib
 			)]

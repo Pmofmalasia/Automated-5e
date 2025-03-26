@@ -18,7 +18,6 @@
 };{
     [h,MACRO("Spellcasting@Lib:pm.a5e.Core"): pm.SpellData]
     [h:ReturnData = macro.return]
-	[h:pm.a5e.BaseEffectData = json.set(pm.a5e.BaseEffectData,"SpellData",json.get(ReturnData,"SpellData"))]
 
     [h:spellDataTable = json.get(ReturnData,"Table")]
     [h,if(FeatureDescription!=""): spellDataTable = json.append(spellDataTable,pm.a5e.CreateBasicTableLine(json.get(currentFeatureInfo,"DisplayName"),FeatureDescription))]
@@ -27,7 +26,8 @@
     [h:FeatureDescription = json.get(ReturnData,"Description")]
     [h:FeatureAbridgedDescription = json.get(ReturnData,"AbridgedDescription")]
 
-    [h,MACRO("Build Effect@Lib:pm.a5e.Core"): json.set("","CurrentEffects",pm.a5e.EffectData,"ToMerge",json.get(ReturnData,"Effect"),"BaseEffect",pm.a5e.BaseEffectData,"WhichEffect",whichEffect)]
+	[h:newEffectData = json.path.put(json.get(ReturnData,"Effect"),"\$[*]","SpellData",json.get(ReturnData,"SpellData"))]
+    [h,MACRO("Build Effect@Lib:pm.a5e.Core"): json.set("","CurrentEffects",pm.a5e.EffectData,"ToMerge",newEffectData,"BaseEffect",pm.a5e.BaseEffectData,"WhichEffect",whichEffect)]
 
     [h:pm.a5e.EffectData = macro.return]
 }]

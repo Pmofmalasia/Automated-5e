@@ -2,8 +2,12 @@
 [h:tooltipData = macro.args]
 [h:ParentToken = json.get(tooltipData,"ParentToken")]
 
+[h:TokenSkills = getProperty("a5e.stat.Skills")]
+[h:TokenTools = getProperty("a5e.stat.Tools")]
+[h:TokenModifiers = getProperty("a5e.stat.AtrMods")]
+[h:TokenProficiency = getProperty("a5e.stat.Proficiency")]
 [h,foreach(TempSkill,pm.GetSkills()),CODE:{
-	[h:ProfType = json.get(getProperty("a5e.stat.Skills"),json.get(TempSkill,"Name"))]
+	[h:ProfType = json.get(TokenSkills,json.get(TempSkill,"Name"))]
 	[h,switch(ProfType):
 		case 1: ProfString = " (Proficient)";
 		case 2: ProfString = " (Expert)";
@@ -16,7 +20,27 @@
 		"Header",json.get(TempSkill,"DisplayName")+" ("+substring(json.get(TempSkill,"Attribute"),0,3)+")",
 		"FalseHeader","",
 		"FullContents","",
-		"RulesContents",pm.PlusMinus(json.get(getProperty("a5e.stat.AtrMods"),json.get(TempSkill,"Attribute"))+(ProfType*getProperty("a5e.stat.Proficiency")),1)+ProfString,
+		"RulesContents",pm.PlusMinus(json.get(TokenModifiers,json.get(TempSkill,"Attribute"))+(ProfType*TokenProficiency),1)+ProfString,
+		"RollContents","",
+		"DisplayOrder","['Rules','Roll','Full']"
+	))]
+}]
+
+[h,foreach(TempTool,pm.GetTools()),CODE:{
+	[h:ProfType = json.get(TokenTools,json.get(TempTool,"Name"))]
+	[h,switch(ProfType):
+		case 1: ProfString = " (Proficient)";
+		case 2: ProfString = " (Expert)";
+		case "0.5": ProfString = " (Half Proficient)";
+		default: ProfString = "";
+	]
+
+	[h:abilityTable = json.append(abilityTable,json.set("",
+		"ShowIfCondensed",1,
+		"Header",json.get(TempTool,"DisplayName")+" ("+substring(json.get(TempTool,"Attribute"),0,3)+")",
+		"FalseHeader","",
+		"FullContents","",
+		"RulesContents",pm.PlusMinus(json.get(TokenModifiers,json.get(TempTool,"Attribute"))+(ProfType*TokenProficiency),1)+ProfString,
 		"RollContents","",
 		"DisplayOrder","['Rules','Roll','Full']"
 	))]
@@ -27,7 +51,7 @@
 	"Header",json.get(TempAttribute,"DisplayName"),
 	"FalseHeader","",
 	"FullContents","",
-	"RulesContents",pm.PlusMinus(json.get(getProperty("a5e.stat.AtrMods"),json.get(TempAttribute,"Name")),1),
+	"RulesContents",pm.PlusMinus(json.get(TokenModifiers,json.get(TempAttribute,"Name")),1),
 	"RollContents","",
 	"DisplayOrder","['Rules','Roll','Full']"
 ))]

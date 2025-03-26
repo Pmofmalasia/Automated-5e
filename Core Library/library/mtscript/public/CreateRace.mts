@@ -1,7 +1,7 @@
 [h:RaceCreationData = macro.args]
 [h:RaceOrSubrace = json.get(RaceCreationData,"RaceOrSubrace")]
 
-[h:RaceInputHTML = "<tr id='rowHeader'><th text-align='center' colspan='2'>Create "+RaceOrSubrace+"</th></tr>"]
+[h:RaceInputHTML = "<tr id='rowHeader'><th style='text-align:center' colspan='2'>Create "+RaceOrSubrace+"</th></tr>"]
 
 [h:RaceInputHTML = RaceInputHTML + "<tr id='rowDisplayName'><th><label for='DisplayName'>"+RaceOrSubrace+" Name:</label></th><td><input type='text' id='DisplayName' name='DisplayName' autofocus></td></tr>"]
 
@@ -35,7 +35,7 @@
 
 [h:RaceInputHTML = RaceInputHTML + "<tr id='rowSwimSpeed'><th><label for='BaseSwimSpeed'>Base Swimming Speed:</label></th><td><input type='number' id='BaseSwimSpeed' name='BaseSwimSpeed' min=0 value=0 style='width:25px'></td></tr>"]
 
-[h:RaceInputHTML = RaceInputHTML + "<tr id='rowLimbs'><th><label for='Limbs'>Limb Configuration:</label></th><td><select id='Limbs' name='Limbs'><option value='Biped'>Bipedal (2 Arms)</option><option value='Quadriped'>Quadripedal</option><option value='Custom'>Other Configuration</option></select></td></tr>"]
+[h:RaceInputHTML = RaceInputHTML + "<tr id='rowLimbs'><th><label for='Limbs'>Limb Configuration:</label></th><td><select id='Limbs' name='Limbs'><option value='Biped'>Bipedal (2 Arms)</option><option value='Quadriped'>Quadripedal</option><option value='None'>No Limbs</option><option value='Custom'>Other Configuration</option></select></td></tr>"]
 
 [h:RaceInputHTML = RaceInputHTML + "<tr id='rowIsVision'><th><label for='isVision'>Gives Special Vision:</label></th><td><input type='checkbox' id='isVision' name='isVision' onchange='createVisionRows("+'"rowLanguageOptions"'+")'></td></tr>"]
 
@@ -45,7 +45,7 @@
 [h:LanguageOptions = ut.a5e.GenerateSelectionHTML(AllLanguages)]
 [h:RaceInputHTML = RaceInputHTML + "<tr id='rowLanguageKnown0'><th><label for='LanguageKnown0'>Known Language #1:</label></th><td><select id='LanguageKnown0' name='LanguageKnown0' value=1 min=0>"+LanguageOptions+"</select></td></tr>"]
 
-[h:RaceInputHTML = RaceInputHTML + "<tr id='rowLanguageKnownButtons'><th text-align='center' colspan='2'><input type='button' id='addLanguageKnown' value='New Language Known' onclick='addLanguageKnownRow()'>  <input type='button' id='removeLanguageKnown' value='Remove Language Known' onclick='removeLanguageKnownRow()'><input type='hidden' id='LanguageKnownNumber' name='LanguageKnownNumber' value=0></th></tr>"]
+[h:RaceInputHTML = RaceInputHTML + "<tr id='rowLanguageKnownButtons'><th style='text-align:center' colspan='2'><input type='button' id='addLanguageKnown' value='New Language Known' onclick='addLanguageKnownRow()'>  <input type='button' id='removeLanguageKnown' value='Remove Language Known' onclick='removeLanguageKnownRow()'><input type='hidden' id='LanguageKnownNumber' name='LanguageKnownNumber' value=0></th></tr>"]
 
 [h:RaceInputHTML = RaceInputHTML + "<tr id='rowIsFeatChoice'><th><label for='FeatChoice'>Grants a Feat at Level 1:</label></th><td><input type='checkbox' id='FeatChoice' name='FeatChoice'></td></tr>"]
 
@@ -61,6 +61,6 @@
 
 [h:RaceInputHTML = RaceInputHTML + "<tr id='rowLibrary'><th><label for='Library'>"+RaceOrSubrace+" Sourcebook:</label></th><td><select id='Library' name='Library'>"+sourcebookOptions+"</select></td></tr>"]
 
-[h:RaceInputHTML = RaceInputHTML + "<tr id='rowSubmit'><th text-align='center' colspan='2'><input type='submit' class='theme-fix-submit' id='submitButton' value='Submit'></th></tr>"]
+[h:RaceInputHTML = RaceInputHTML + "<tr id='rowSubmit'><th style='text-align:center' colspan='2'><input type='submit' class='theme-fix-submit' id='submitButton' value='Submit'></th></tr>"]
 
 [h:html.dialog5("RaceCreation","lib://pm.a5e.core/CreateRace.html?cachelib=false","value="+base64.encode(RaceInputHTML)+"; closebutton=0; width=500; height=500")]

@@ -1,6 +1,6 @@
 [h:objectData = macro.args]
 [h:objectData = pm.a5e.KeyStringsToNumbers(objectData)]
-[h:ObjectName = pm.RemoveSpecial(json.get(objectData,"DisplayName"))]
+[h:ObjectName = js.a5e.RemoveSpecial(json.get(objectData,"DisplayName"))]
 [h:objectData = json.set(objectData,"Name",ObjectName)]
 [h:objectType = json.get(objectData,"Type")]
 [h:newTemplateTest = 0]
@@ -13,12 +13,12 @@
 [h,if(json.contains(objectData,"isNewTemplate"+objectType)),CODE:{
 	[h:newTemplateTest = 1]
 	[h:newTemplateDisplayName = json.get(objectData,"NewTypeName"+objectType)]
-	[h:newTemplateName = pm.RemoveSpecial(newTemplateDisplayName)]
+	[h:newTemplateName = js.a5e.RemoveSpecial(newTemplateDisplayName)]
 	[h:objectData = json.set(objectData,objectType+"Type",newTemplateName)]
 	[h:objectData = json.remove(objectData,"NewTypeName"+objectType)]
 	[h:objectData = json.remove(objectData,"isNewTemplate"+objectType)]
 };{
-	[h,if(json.get(objectData,objectType+"Type")=="@@NewType"): objectData = json.set(objectData,objectType+"Type",pm.RemoveSpecial(json.get(objectData,"NewTypeName"+objectType)))]
+	[h,if(json.get(objectData,objectType+"Type")=="@@NewType"): objectData = json.set(objectData,objectType+"Type",js.a5e.RemoveSpecial(json.get(objectData,"NewTypeName"+objectType)))]
 	[h:objectData = json.remove(objectData,"NewTypeName"+objectType)]
 }]
 
@@ -178,7 +178,7 @@
 	[h:objectData = json.set(objectData,"isCursed",json.contains(objectData,"isCursed"))]
 };{}]
 
-[h,if(objectType=="LightSource"),CODE:{
+[h,if(objectType == "LightSource"),CODE:{
 	[h:returnLightData = ct.a5e.LightDataProcessing(objectData,"Type")]
 	[h:lightData = json.get(returnLightData,"Light")]
 	[h:objectData = json.get(returnLightData,"Subeffect")]
@@ -189,13 +189,26 @@
 			[h:allObjects = pm.a5e.GetCoreData("sb.Objects")]
 			[h:oilFlaskData = json.get(json.path.read(allObjects,"\$[*][?(@.Name == 'OilFlask')]"),0)]
 			[h:oilFlaskID = json.get(oilFlaskData,"ObjectID")]
-			[h:objectData = json.set(objectData,"TimeResourceRechargeItem",json.append("",oilFlaskID))]
+
+			[h:lightRestorationData = json.set("",
+				"Item",json.append("",json.set("",
+					"Name","LightDuration"+ObjectName,
+					"Method","Full",
+					"Identifier",oilFlaskID
+			)))]
 		};
 		case "None":{
-
+			[h:lightRestorationData = "{}"]
 		};
 		default:{
 			[h:"<!-- TODO: Add some resolution for looking up other specific items here -->"]
+
+			[h:lightRestorationData = json.set("",
+				"Item",json.append("",json.set("",
+					"Name","LightDuration"+ObjectName,
+					"Method","Full",
+					"Identifier","TO_BE_DETERMINED_VIA_TODO"
+			)))]
 		}
 	]
 
@@ -205,9 +218,17 @@
 	[h:lightDurationData = macro.return]
 	[h:objectData = json.get(lightDurationData,"OutputData")]
 	[h:lightDurationData = json.get(lightDurationData,"DurationInfo")]
-	[h:lightTimeResource = json.set("",json.get(lightDurationData,"Units"),json.get(lightDurationData,"Value"))]
-	[h:objectData = json.set(objectData,"TimeResourceMax",lightTimeResource,"TimeResource",lightTimeResource,"TimeResourceActive",0)]
 
+	[h:lightResource = json.set("",
+		"Name","LightDuration"+ObjectName,
+		"DisplayName","Light Duration: "+json.get(objectData,"DisplayName"),
+		"Base",json.get(lightDurationData,"Value"),
+		"TimeUnits",json.get(lightDurationData,"Units")
+	)]
+
+	[h:lightResourceData = json.set("","Resources",lightResource,"Restoration",lightRestorationData)]
+
+[h:"<!-- TODO: Resource - Change this to not be hardcoded? -->"]
 	[h:objectData = json.set(objectData,"isPassiveFunction",1)]
 	[h:lightActivationEffect = json.set("",
 		"EffectDisplayName","Light "+json.get(objectData,"DisplayName"),
@@ -218,17 +239,19 @@
 		"Subeffects",json.append("",json.set("",
 			"RangeType","Touch",
 			"isActivateItem","Activate",
-			"UseResource",json.set("",
-				"TimeResource",json.set("",
-					"isTimeActive",1,
-					"Resource",json.set("",
-						"Name",ObjectName,
-						"Class","Item",
-						"Subclass","",
-						"ResourceSource","Item"
-					)
+			"UseResource",json.append("",json.set("",
+				"Type","Time",
+				"ResourceUsed",1,
+				"Increment",1,
+				"Powering","this",
+				"Activate",1,
+				"Identifier",json.set("",
+					"Name",ObjectName,
+					"Class","Item",
+					"Subclass","",
+					"ResourceSource","Item"
 				)
-			)
+			))
 		))
 	)]
 	[h:lightDeactivationEffect = json.set("",
@@ -240,17 +263,19 @@
 		"Subeffects",json.append("",json.set("",
 			"RangeType","Touch",
 			"isActivateItem","Deactivate",
-			"UseResource",json.set("",
-				"TimeResource",json.set("",
-					"isTimeActive",0,
-					"Resource",json.set("",
-						"Name",ObjectName,
-						"Class","Item",
-						"Subclass","",
-						"ResourceSource","Item"
-					)
+			"UseResource",json.append("",json.set("",
+				"Type","Time",
+				"ResourceUsed",0,
+				"Increment",0,
+				"Powering","this",
+				"Activate",0,
+				"Identifier",json.set("",
+					"Name",ObjectName,
+					"Class","Item",
+					"Subclass","",
+					"ResourceSource","Item"
 				)
-			)
+			))
 		))
 	)]
 
@@ -258,12 +283,13 @@
 };{
 	[h:lightActivationEffect = ""]
 	[h:lightDeactivationEffect = ""]
+	[h:lightRestorationData = "{}"]
 }]
 
 [h,if(objectType=="Tool"),CODE:{
 	[h,if(json.contains(objectData,"isNewToolSubtypeTemplate")),CODE:{
 		[h:newToolDisplayName = json.get(objectData,"NewToolTypeDisplayName")]
-		[h:newToolName = pm.RemoveSpecial(newToolDisplayName)]
+		[h:newToolName = js.a5e.RemoveSpecial(newToolDisplayName)]
 		[h:newToolData = json.set("",
 			"Name",newToolName,
 			"DisplayName",newToolDisplayName,
@@ -351,77 +377,111 @@
 [h:objectData = json.remove(objectData,"isLeaveBehindContainer")]
 
 [h,if(json.contains(objectData,"isActivatable")),CODE:{
-	[h:objectData = json.set(objectData,"isActivatable",json.contains(objectData,"isActivatable"))]
-	[h,switch(json.get(objectData,"ActivationUseTime")):
-		case "Free": objectData = json.set(objectData,"ActivationTime","","ActivationTimeUnits","");
-		case "Item Interaction": objectData = json.set(objectData,"ActivationTime",1,"ActivationTimeUnits","interaction");
-		case "Action": objectData = json.set(objectData,"ActivationTime",1,"ActivationTimeUnits","action");
-		case "Bonus Action": objectData = json.set(objectData,"ActivationTime",1,"ActivationTimeUnits","bonus");
-		case "Reaction": objectData = json.set(objectData,"ActivationTime",1,"ActivationTimeUnits","reaction");
-		case "1 Minute": objectData = json.set(objectData,"ActivationTime",1,"ActivationTimeUnits","minute");
-		case "10 Minutes": objectData = json.set(objectData,"ActivationTime",10,"ActivationTimeUnits","minute");
-		case "1 Hour": objectData = json.set(objectData,"ActivationTime",1,"ActivationTimeUnits","hour");
-		case "8 Hours": objectData = json.set(objectData,"ActivationTime",8,"ActivationTimeUnits","hour");
-		case "12 Hours": objectData = json.set(objectData,"ActivationTime",12,"ActivationTimeUnits","hour");
-		case "24 Hours": objectData = json.set(objectData,"ActivationTime",24,"ActivationTimeUnits","hour")
-	]
-	[h:objectData = json.remove(objectData,"ActivationUseTime")]
+	[h:ActivationEffect = json.set("",
+		"Name","Activate"+ObjectName,
+		"DisplayName","Activate "+json.get(objectData,"DisplayName"),
+		"ValidActivationState",0
+	)]
+	[h:DeactivationEffect = json.set("",
+		"Name","Deactivate"+ObjectName,
+		"DisplayName","Deactivate "+json.get(objectData,"DisplayName"),
+		"ValidActivationState",1
+	)]
+
+	[h:ActivationTimeData = ct.a5e.UseTimeProcessing(objectData,"Activation")]
+	[h:objectData = json.get(ActivationTimeData,"Subeffect")]
+	[h:ActivationEffect = json.set(ActivationEffect,"UseTime",json.get(ActivationTimeData,"UseTime"))]
+
+	[h,if(json.get(objectData,"UseTimeDeactivation") == "Same"),CODE:{
+		[h:DeactivationEffect = json.set(DeactivationEffect,"UseTime",json.get(ActivationTimeData,"UseTime"))]
+		[h:objectData = json.remove(objectData,"UseTimeDeactivation")]
+	};{
+		[h:DeactivationTimeData = ct.a5e.UseTimeProcessing(objectData,"Deactivation")]
+		[h:objectData = json.get(DeactivationTimeData,"Subeffect")]
+		[h:DeactivationEffect = json.set(DeactivationEffect,"UseTime",json.get(DeactivationTimeData,"UseTime"))]
+	}]
 
 	[h,switch(json.get(objectData,"ActivationComponents")):
-		case "None": objectData = json.set(objectData,"ActivationVerbalComponent",0,"ActivationSomaticComponent",0);
-		case "Verbal": objectData = json.set(objectData,"ActivationVerbalComponent",1,"ActivationSomaticComponent",0);
-		case "Somatic": objectData = json.set(objectData,"ActivationVerbalComponent",0,"ActivationSomaticComponent",1);
-		case "Both": objectData = json.set(objectData,"ActivationVerbalComponent",1,"ActivationSomaticComponent",1)
+		case "None": ActivationEffect = json.set(ActivationEffect,"vComp",0,"sComp",0);
+		case "Verbal": ActivationEffect = json.set(ActivationEffect,"vComp",1,"sComp",0);
+		case "Somatic": ActivationEffect = json.set(ActivationEffect,"vComp",0,"sComp",1);
+		case "Both": ActivationEffect = json.set(ActivationEffect,"vComp",1,"sComp",1)
 	]
 	[h:objectData = json.remove(objectData,"ActivationComponents")]
 
-	[h,if(json.get(objectData,"isMagical")),CODE:{
-		[h:"<!-- TODO: Merge any already present activation effects here, if there's a light also. -->"]
-		[h,if(lightActivationEffect != ""): objectData = json.set(objectData,"ActivationEffects",json.append("",lightActivationEffect))]
-		[h,if(lightDeactivationEffect != ""): objectData = json.set(objectData,"DeactivationEffects",json.append("",lightDeactivationEffect))]
+	[h:ActivationSubeffect = json.set("",
+		"TargetNumber",1,
+		"RangeType","Touch",
+		"isActivateItem","Activate"
+	)]
+	[h:DeactivationSubeffect = json.set("",
+		"TargetNumber",1,
+		"RangeType","Touch",
+		"isActivateItem","Deactivate"
+	)]
+	
+	[h,if(json.get(objectData,"isActivationEffect") != ""),CODE:{
+		[h:"<!-- Will eventually contain processing for effects that occur on activation, outside of just turning on a passive effect. See CreateObject.js todo comment. -->"]
 	};{}]
+	[h:objectData = json.remove(objectData,"isActivationEffect")]
+
+	[h,if(json.get(objectData,"ActivationTimeResourceUsed") != ""),CODE:{
+		[h:activationResourceData = json.set("",
+			"Name",ObjectName,
+			"Class","Item",
+			"Subclass","",
+			"ItemID","this",
+			"Resource",json.get(objectData,"ActivationTimeResourceUsed")
+		)]
+
+		[h:ActivationUseResource = json.set("",
+			"ResourceUsed",1,
+			"Increment",1,
+			"Activate",1,
+			"Powering","this",
+			"Type","Time",
+			"Identifier",activationResourceData
+		)]
+		[h:DeactivationUseResource = json.set("",
+			"ResourceUsed",0,
+			"Increment",0,
+			"Activate",0,
+			"Powering","this",
+			"Type","Time",
+			"Identifier",activationResourceData
+		)]
+
+		[h:ActivationSubeffect = json.set(ActivationSubeffect,"UseResource",json.append("",json.append("",ActivationUseResource)))]
+		[h:DeactivationSubeffect = json.set(DeactivationSubeffect,"UseResource",json.append("",json.append("",DeactivationUseResource)))]
+	};{}]
+	[h:objectData = json.remove(objectData,"ActivationTimeResourceUsed")]
+
+	[h:allActivationSubeffects = json.append("",ActivationSubeffect)]
+	[h:allDeactivationSubeffects = json.append("",DeactivationSubeffect)]
+
+	[h,if(lightActivationEffect != "" && json.get(objectData,"isMagical")),CODE:{
+		[h:lightActivationSubeffects = json.get(lightActivationEffect,"Subeffects")]
+		[h:lightDeactivationSubeffects = json.get(lightDeactivationEffect,"Subeffects")]
+
+		[h:allActivationSubeffects = json.merge(allActivationSubeffects,lightActivationSubeffects)]
+		[h:allDeactivationSubeffects = json.merge(allDeactivationSubeffects,lightDeactivationSubeffects)]
+	};{}]
+
+	[h:ActivationEffect = json.set(ActivationEffect,"Subeffects",allActivationSubeffects)]
+	[h:DeactivationEffect = json.set(DeactivationEffect,"Subeffects",allDeactivationSubeffects)]
+	[h:allActivationEffects = json.append("",ActivationEffect,DeactivationEffect)]
+
+	[h:objectData = json.set(objectData,
+		"ActivationEffects",allActivationEffects,
+		"ActivationEffectMetadata",json.set("","ChoiceMethod","ActivationState")
+	)]
 };{
+	[h:"<!-- NOTE: Why the isMagical test? Because lighting a mundane light is 'using' an item, while turning on a magical one is (usually) 'activating' an item, which is technically a separate action. Ew. -->"]
 	[h,if(json.get(objectData,"isMagical")),CODE:{
 		[h,if(lightActivationEffect != ""): objectData = json.set(objectData,"ActivationEffects",json.append("",lightActivationEffect))]
 		[h,if(lightDeactivationEffect != ""): objectData = json.set(objectData,"DeactivationEffects",json.append("",lightDeactivationEffect))]
 	};{}]
 }]
-
-[h,switch(json.get(objectData,"isCharges")),CODE:
-	case "None":{};
-	case "One":{
-		[h:objectData = json.set(objectData,"MaxResource","[r:"+json.get(objectData,"MaxResource")+"]")]
-	};
-	case "Multiple":{
-		[h:MaxResourceString = "[r:json.set(''"]
-		[h:ResourceDisplayNames = "{}"]
-		[h,count(json.get(objectData,"MultiResourceNumber") + 1),CODE:{
-			[h:tempResourceDisplayName = json.get(objectData,"ResourceDisplayName"+roll.count)]
-			[h:tempResourceName = pm.RemoveSpecial(tempResourceDisplayName)]
-			[h:MaxResourceString = MaxResourceString + ",'" + tempResourceName + "'," + json.get(objectData,"MaxResource"+roll.count)]
-			[h:ResourceDisplayNames = json.set(ResourceDisplayNames,tempResourceName+ tempResourceDisplayName)]
-
-			[h:objectData = json.remove(objectData,"ResourceDisplayName"+roll.count)]
-			[h:objectData = json.remove(objectData,"MaxResource"+roll.count)]
-		}]
-		[h:MaxResourceString = MaxResourceString + ")]"]
-
-		[h:objectData = json.set(objectData,
-			"MaxResource",MaxResourceString,
-			"ResourceDisplayName",ResourceDisplayNames
-		)]
-		[h:objectData = json.remove(objectData,"MultiResourceNumber")]
-	}
-]
-
-[h,if(json.get(objectData,"isCharges") != "None"),CODE:{
-	[h:RestoreInstances = json.append("","ShortRest","LongRest","Dawn","Dusk","StartTurn","Initiative","Item")]
-	[h,foreach(instance,RestoreInstances),CODE:{
-		[h,if(json.contains(objectData,"Restore"+instance)): objectData = json.set(objectData,"Restore"+instance,1)]	
-	}]
-};{}]
-
-[h:"<!-- TODO: Add Depleted Effects here -->"]
 
 [h,if(json.contains(objectData,"isDuration")),CODE:{
 	[h:objectDuration = json.set("",json.get(objectData,"customDurationUnits"),json.get(objectData,"customDurationValue"))]
@@ -446,85 +506,30 @@
 	[h:objectData = json.remove(objectData,"isSpellcastingFocus")]
 };{}]
 
-[h:objectSpellsAllowed = "[]"]
-[h:differentSpellsNumber = number(json.get(objectData,"CastSpellNumber"))]
-[h,count(json.contains(objectData,"isCastSpells") * differentSpellsNumber),CODE:{
-	[h:thisSpellLevel = json.get(objectData,"CastSpellLevel"+roll.count)]
-	[h:thisSpellData = json.set("",
-		"Name",pm.RemoveSpecial(json.get(objectData,"CastSpellName"+roll.count)),
-		"Level",thisSpellLevel
-	)]
-	[h:thisSpellResourceUsed = json.get(objectData,"CastSpellResource"+roll.count)]
-
-	[h:objectData = json.remove(objectData,"CastSpellResource"+roll.count)]
-	[h:objectData = json.remove(objectData,"CastSpellName"+roll.count)]
-	[h:objectData = json.remove(objectData,"CastSpellLevel"+roll.count)]
-
-	[h,if(json.contains(objectData,"CanAHLSpell"+roll.count)):
-		isAHLAllowed = json.get(objectData,"CanAHLSpell"+roll.count);
-		isAHLAllowed = 0
-	]
-
-	[h:NoResourceUsedTest = or(json.get(objectData,"isCharges") == "None",and(thisSpellResourceUsed == 0,!isAHLAllowed))]
-	[h,if(!NoResourceUsedTest),CODE:{
-		[h:resourceIdentifiers = json.set("","Name",ObjectName,"Class","Item","Subclass","","ResourceSource","Item")]
-		[h:thisSpellResource = json.set("",
-			"Resource",resourceIdentifiers,
-			"ResourceUsed",thisSpellResourceUsed
-		)]
-
-		[h,if(isAHLAllowed):
-			thisSpellResource = json.set(thisSpellResource,
-				"Increment",json.get(objectData,"SpellResourceAHL"+roll.count),
-				"ResourceUsedMax",(9-thisSpellLevel)*json.get(objectData,"SpellResourceAHL"+roll.count) + thisSpellResourceUsed);
-			thisSpellResource = json.set(thisSpellResource,
-				"Increment",1,
-				"ResourceUsedMax",thisSpellResourceUsed)
-		]
-
-		[h,if(json.contains(objectData,"CastSpellResourceKey"+roll.count)): thisSpellResource = json.set(thisSpellResource,"ResourceKey",pm.RemoveSpecial(json.get(objectData,"CastSpellResourceKey"+roll.count)))]
-
-		[h:FinalResourceData = json.set("","Feature",thisSpellResource)]
-		[h:thisSpellData = json.set(thisSpellData,"UseResource",FinalResourceData)]
-
-		[h:objectData = json.remove(objectData,"SpellResourceAHL"+roll.count)]
-		[h:objectData = json.remove(objectData,"CanAHLSpell"+roll.count)]
-		[h:objectData = json.remove(objectData,"CastSpellResourceKey"+roll.count)]
-	};{}]
-
-	[h:objectSpellsAllowed = json.append(objectSpellsAllowed,thisSpellData)]
-}]
-
 [h,if(json.contains(objectData,"isCastSpells")),CODE:{
-	[h:objectData = json.set(objectData,"ItemSpellcasting",objectSpellsAllowed)]
-	[h:calcModifierHow = json.get(objectData,"CastSpellModifierHow")]
-	[h:objectData = json.remove(objectData,"CastSpellModifierHow")]
-	[h:objectData = json.set(objectData,"ItemSpellcastingModifierMethod",calcModifierHow)]
-	[h,switch(calcModifierHow),CODE:
-		case "SetValue":{
-			[h:objectData = json.set(objectData,"ItemSpellcastingModifier",json.get(objectData,"CastSpellFlatModifier"))]
-			[h:objectData = json.remove(objectData,"CastSpellFlatModifier")]
-		};
-		case "Stat":{
-			[h:AllowedStats = "[]"]
-			[h:AllStats = pm.GetAttributes("Name","json")]
-			[h,foreach(stat,AllStats): AllowedStats = if(json.contains(objectData,"CastSpellStat"+stat),json.append(AllowedStats,stat),AllowedStats)]
-			[h,foreach(stat,AllStats): objectData = json.remove(objectData,"CastSpellStat"+stat)]
-			[h:objectData = json.set(objectData,"ItemSpellcastingPrimeStatOptions",AllowedStats)]
-		};
-		case "SpecificClass":{
-			[h:AllowedClasses = "[]"]
-			[h:AllClasses = pm.GetClasses("Name","json")]
-			[h,foreach(tempClass,AllClasses): AllowedClasses = if(json.contains(objectData,"CastSpellClass"+tempClass),json.append(AllowedClasses,tempClass),AllowedClasses)]
-			[h,foreach(tempClass,AllClasses): objectData = json.remove(objectData,"CastSpellClass"+tempClass)]
-			[h:objectData = json.set(objectData,"ItemSpellcastingClassOptions",AllowedClasses)]
-		};
-		default:{}
-	]
+	[h:objectData = ct.a5e.CastSpellsProcessing(objectData)]
 };{}]
-[h:objectData = json.remove(objectData,"isCharges")]
 [h:objectData = json.remove(objectData,"isCastSpells")]
 [h:objectData = json.remove(objectData,"CastSpellNumber")]
+
+[h,if(json.get(objectData,"isResources") != ""),CODE:{
+	[h:objectResourceData = js.ct.a5e.ResourceProcessing(objectData,json.set(objectData,"Type","Item"))]
+	[h,if(json.get(objectResourceData,"FeatureUpdates") != ""),CODE:{
+		[h:objectData = json.set(objectData,"FeatureUpdates",json.get(objectResourceData,"FeatureUpdates"))]
+		[h:objectResourceData = json.remove(objectResourceData,"FeatureUpdates")]
+	};{}]
+
+[h:"<!-- MAYDO: Bugfix: This will cause errors if a FeatureUpdate is performed on a resource that also has a separate light resource (the light resource will be overwritten). I don't think anyone will ever encounter this. -->"]
+	[h,if(!json.isEmpty(lightResourceData)): objectResourceData = ct.a5e.MergeResourceData(objectResourceData,lightResourceData)]
+
+	[h:objectData = json.set(objectData,"ResourceData",objectResourceData)]
+	[h:objectData = ct.a5e.PruneResourceKeys(objectData)]
+};{
+	[h,if(!json.isEmpty(lightResourceData)): objectData = json.set(objectData,"ResourceData",lightResourceData)]
+}]
+[h:objectData = json.remove(objectData,"isResources")]
+
+[h:"<!-- TODO: Item: Add Depleted Effects here -->"]
 
 [h:ChosenMaterials = "[]"]
 [h:AllMaterials = pm.a5e.GetCoreData("sb.ObjectMaterials","Name","json")]
@@ -557,7 +562,6 @@
 [h:objectData = json.remove(objectData,"isDefaultMaxHP")]
 
 [h:objectData = json.set(objectData,
-	"isWearable",json.contains(objectData,"isWearable"),
 	"isLockable",json.contains(objectData,"isLockable"),
 	"NeedsLock",json.contains(objectData,"NeedsLock"),
 	"isFlammable",json.contains(objectData,"isFlammable"),
@@ -565,6 +569,13 @@
 	"isStackable",json.contains(objectData,"isStackable"),
 	"isConsumable",json.contains(objectData,"isConsumable")
 )]
+
+[h:wornHeld = json.get(objectData,"wornHeld")]
+[h,if(wornHeld != ""),CODE:{
+	[h,if(wornHeld == "Worn"): objectData = json.set(objectData,"isWorn",1)]
+	[h,if(wornHeld == "Held"): objectData = json.set(objectData,"isHeld",1)]
+};{}]
+[h:objectData = json.remove(objectData,"wornHeld")]
 
 [h:MaterialTags = pm.a5e.GetCoreData("sb.MaterialTags")]
 [h:ObjectTags = pm.a5e.GetCoreData("sb.ObjectTags")]
@@ -625,15 +636,14 @@
 	
 		[h:objectData = json.set(objectData,"NewTemplate",newTemplateTest)]
 
-		[h:setLibProperty("ct.NewObject",json.set(data.getData("addon:","pm.a5e.core","ct.NewObject"),getPlayerName(),objectData),"Lib:pm.a5e.Core")]
-
 		[h:"<!-- TODO: Remove objectType==Weapon when the better system for implementing WeaponEffects is implemented -->"]
 		[h,MACRO("CreateSubeffect@Lib:pm.a5e.Core"): json.set("",
 			"WhichSubeffect",1+(objectType=="Weapon"),
 			"WhichEffect",1,
 			"EffectsNumber",ActiveEffectsNumber,
 			"EffectChoiceMethod",json.get(objectData,"EffectChoiceMethod"),
-			"EffectType","Object"
+			"EffectType","Object",
+			"FeatureData",objectData
 		)]
 	};{
 		[h,if(json.get(objectData,"tempLightEffects")!=""): objectData = json.set(objectData,"Effects",json.get(objectData,"tempLightEffects"))]

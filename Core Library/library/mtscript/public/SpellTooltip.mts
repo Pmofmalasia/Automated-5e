@@ -72,7 +72,7 @@
 	"DisplayOrder","['Rules','Roll','Full']"
 ))]
 
-[h:abilityTable = json.merge(abilityTable,pm.a5e.GenerateFeatureTooltip(SpellData,0))]
+[h:abilityTable = json.merge(abilityTable,pm.a5e.GenerateFeatureTooltip(ParentToken,SpellData,a5e.UnifiedAbilities,json.set("","NeedsNonEffectData",0)))]
 
 [h:SpellDescription = base64.decode(json.get(SpellData,"Description"))]
 [h:SpellAHLDescription = base64.decode(json.get(SpellData,"AHLDescription"))]

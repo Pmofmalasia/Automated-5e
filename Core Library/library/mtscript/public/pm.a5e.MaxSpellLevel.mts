@@ -10,8 +10,10 @@
 ]
 
 [h,if(UseUnsharedSlotsTest),CODE:{
-	[h:MatchingUnsharedLevels = json.path.read(getProperty("a5e.stat.AllFeatures"),"\$[*][?(@.ResourceSpellLevel!=null && @.ResourceAsSpellSlot == 1 && @.IsActive>0)]","DEFAULT_PATH_LEAF_TO_NULL")]
-	[h,foreach(slotType,MatchingUnsharedLevels): CastingLevel = CastingLevel + evalMacro(json.get(slotType,"ResourceSpellLevel"))*2]
+	[h:ParentToken = currentToken()]
+	[h:a5e.UnifiedAbilities = a5e.GatherAbilities(ParentToken)]
+	[h:MatchingUnsharedLevels = js.a5e.GetFeatureSpellSlots(a5e.UnifiedAbilities,ParentToken)]
+	[h,foreach(slotType,MatchingUnsharedLevels): CastingLevel = CastingLevel + json.get(slotType,"SlotLevel")*2]
 };{}]
 
-[h:macro.return = ceiling(CastingLevel/2)]
+[h:return(0,ceiling(CastingLevel/2))]

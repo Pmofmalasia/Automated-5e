@@ -1,5 +1,5 @@
-[h:abilityName = pm.RemoveSpecial(abilityName)]
-[h:abilitySubclass = pm.RemoveSpecial(abilitySubclass)]
+[h:abilityName = js.a5e.RemoveSpecial(abilityName)]
+[h:abilitySubclass = js.a5e.RemoveSpecial(abilitySubclass)]
 [h:abilityPriorData = arg(0)]
 [h:abilityInfo = abilityPriorData]
 [h:ParentToken = json.get(abilityPriorData,"ParentToken")]

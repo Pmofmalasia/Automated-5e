@@ -3,13 +3,12 @@ function toggleLightTable(startRowID,endRowID,idSuffix){
 	if(arguments.length > 2){
 		finalIDSuffix = idSuffix;
 	}
-	let tableID = document.getElementById(startRowID).closest("table").id;
 
 	if(document.getElementById("isLight"+finalIDSuffix).checked){
 		createLightTable(startRowID,endRowID,finalIDSuffix);
 	}
 	else{
-		clearUnusedTable(tableID,startRowID,endRowID);
+		deleteInterveningElements(document.getElementById(startRowID),document.getElementById(endRowID));
 	}
 }
 
@@ -18,28 +17,23 @@ function createLightTable(startRowID,endRowID,idSuffix){
 	if(arguments.length > 2){
 		finalIDSuffix = idSuffix;
 	}
-	let tableID = document.getElementById(startRowID).closest("table").id;
 
-	let nextRowIndex = document.getElementById(startRowID).rowIndex+1;
+	let referenceElement = document.getElementById(startRowID);
 
-	clearUnusedTable(tableID,startRowID,endRowID);
+	deleteInterveningElements(referenceElement,document.getElementById(endRowID));
 
-	addTableRow(tableID,nextRowIndex,"rowLightHeader"+finalIDSuffix,"<th colspan=2 style='text-align:center'>Light Configurations<input type='hidden' value=0 id='LightConfigurationNumber"+finalIDSuffix+"' name='LightConfigurationNumber"+finalIDSuffix+"'></th>");
-	nextRowIndex++;
+	referenceElement = createTableRow(referenceElement,"rowLightHeader"+finalIDSuffix,"<th colspan=2 style='text-align:center'>Light Configurations<input type='hidden' value=0 id='LightConfigurationNumber"+finalIDSuffix+"' name='LightConfigurationNumber"+finalIDSuffix+"'></th>");
 
-	addTableRow(tableID,nextRowIndex,"rowLightButtons"+finalIDSuffix,"<th colspan=2 style='text-align:center'><input type='button' value='Add Configuration' onclick='addLightConfigurationRow("+'"'+finalIDSuffix+'"'+")'><input type='button' value='Remove Configuration' onclick='removeLightConfigurationRow("+'"'+finalIDSuffix+'"'+")'></th>");
-	nextRowIndex++;
+	referenceElement = createTableRow(referenceElement,"rowLightButtons"+finalIDSuffix,"<th colspan=2 style='text-align:center'><input type='button' value='Add Configuration' onclick='addLightConfigurationRow("+'"'+finalIDSuffix+'"'+")'><input type='button' value='Remove Configuration' onclick='removeLightConfigurationRow("+'"'+finalIDSuffix+'"'+")'></th>");
 
 	addLightConfigurationRow(finalIDSuffix);
 }
 
 function addLightConfigurationRow(idSuffix){
-	let tableID = document.getElementById("rowLightButtons"+idSuffix).closest("table").id;
-	let nextRowIndex = document.getElementById("rowLightButtons"+idSuffix).rowIndex;
+	let referenceElement = document.getElementById("rowLightButtons"+idSuffix).previousElementSibling;
 	let whichConfiguration = Number(document.getElementById("LightConfigurationNumber"+idSuffix).value);
 
-	addTableRow(tableID,nextRowIndex,"rowLightConfiguration"+whichConfiguration+idSuffix,"<td colspan=2 style='text-align:center'><select id='lightType"+whichConfiguration+idSuffix+"' name='lightType"+whichConfiguration+idSuffix+"' onchange='adjustLightTypeOptions("+whichConfiguration+',"'+idSuffix+'"'+")'><option value='Bright'>Bright Light</option><option value='Dim'>Dim Light</option><option value='BrightDim'>Bright + Dim Light</option><option value='Darkness'>Darkness</option><option value='Obscure'>Heavily Obscures</option><option value='Covered'>None (Covered)</option></select><b>:</b> <span id='LightConfiguration"+whichConfiguration+idSuffix+"'><input type='hidden' id='lightDistanceValue"+whichConfiguration+idSuffix+"' name='lightDistanceValue"+whichConfiguration+idSuffix+"' min=0 value=0 style='width:25px'><input type='hidden' id='lightDistanceUnits"+whichConfiguration+idSuffix+"' name='lightDistanceUnits"+whichConfiguration+idSuffix+"' value='Feet'><input type='hidden' id='LightShape"+whichConfiguration+idSuffix+"' name='LightShape"+whichConfiguration+idSuffix+"' value='Sphere'></span><span id='LightShapeSpan"+whichConfiguration+idSuffix+"'></span><span id='LightExtraData"+whichConfiguration+idSuffix+"'></span></td>");
-	nextRowIndex++;
+	referenceElement = createTableRow(referenceElement,"rowLightConfiguration"+whichConfiguration+idSuffix,"<td colspan=2 style='text-align:center'><select id='lightType"+whichConfiguration+idSuffix+"' name='lightType"+whichConfiguration+idSuffix+"' onchange='adjustLightTypeOptions("+whichConfiguration+',"'+idSuffix+'"'+")'><option value='Bright'>Bright Light</option><option value='Dim'>Dim Light</option><option value='BrightDim'>Bright + Dim Light</option><option value='Darkness'>Darkness</option><option value='Obscure'>Heavily Obscures</option><option value='Covered'>None (Covered)</option></select><b>:</b> <span id='LightConfiguration"+whichConfiguration+idSuffix+"'><input type='hidden' id='lightDistanceValue"+whichConfiguration+idSuffix+"' name='lightDistanceValue"+whichConfiguration+idSuffix+"' min=0 value=0 style='width:25px'><input type='hidden' id='lightDistanceUnits"+whichConfiguration+idSuffix+"' name='lightDistanceUnits"+whichConfiguration+idSuffix+"' value='Feet'><input type='hidden' id='LightShape"+whichConfiguration+idSuffix+"' name='LightShape"+whichConfiguration+idSuffix+"' value='Sphere'></span><span id='LightShapeSpan"+whichConfiguration+idSuffix+"'></span><span id='LightExtraData"+whichConfiguration+idSuffix+"'></span></td>");
 
 	document.getElementById("LightConfigurationNumber"+idSuffix).value = whichConfiguration + 1;
 	toggleUseTimeLightConfiguration(idSuffix);
@@ -172,11 +166,9 @@ function removeLightConfigurationRow(idSuffix){
 function toggleUseTimeLightConfiguration(idSuffix){
 	let configurationNumber = Number(document.getElementById("LightConfigurationNumber"+idSuffix).value);
 	let buttonsRow = document.getElementById("rowLightButtons"+idSuffix);
-	let tableID = buttonsRow.closest("table").id;
 
 	if(configurationNumber > 1 && document.getElementById("rowUseTimeLightConfiguration"+idSuffix) == null){
 		let endRowID = buttonsRow.nextElementSibling.id;
-		let nextRowIndex = buttonsRow.rowIndex + 1;
 
 		let UseTimeOptionsArray = ["Free","Item Interaction","Action","Bonus Action","Reaction","1 Minute","10 Minutes","1 Hour","8 Hours","12 Hours","24 Hours","Custom"];
 		let UseTimeOptions = "";
@@ -184,7 +176,7 @@ function toggleUseTimeLightConfiguration(idSuffix){
 			UseTimeOptions = UseTimeOptions + "<option value='"+tempOption+"'>"+tempOption+"</option>";
 		}
 
-		addTableRow(tableID,nextRowIndex,"rowUseTimeLightConfiguration"+idSuffix,"<th><label for='UseTimeLightConfiguration"+idSuffix+"'>Time to Change Light:</label></th><td><select id='UseTimeLightConfiguration"+idSuffix+"' name='UseTimeLightConfiguration"+idSuffix+"' onchange='createCustomUseTimeRows("+'"'+tableID+'","UseTimeLightConfiguration'+idSuffix+'","'+endRowID+'"'+")'>"+UseTimeOptions+"</select></td>");
+		createTableRow(buttonsRow,"rowUseTimeLightConfiguration"+idSuffix,"<th><label for='UseTimeLightConfiguration"+idSuffix+"'>Time to Change Light:</label></th><td><select id='UseTimeLightConfiguration"+idSuffix+"' name='UseTimeLightConfiguration"+idSuffix+"' onchange='createCustomUseTimeRows("+'"UseTimeLightConfiguration'+idSuffix+'","'+endRowID+'"'+")'>"+UseTimeOptions+"</select></td>");
 	}
 	else if(configurationNumber <= 1 && document.getElementById("rowUseTimeLightConfiguration"+idSuffix) != null){
 		let useTimeRowIDs = ["rowUseTimeLightConfiguration"+idSuffix,"rowCustomUseTimeLightConfiguration"+idSuffix,"rowUseTimeLightConfiguration"+idSuffix+"ReactionDescription"];

@@ -45,7 +45,7 @@ async function createAttributeSelectionRows(endRowID,idSuffix){
 			nextRowIndex = document.getElementById("rowEndPresetAttributes").rowIndex + 1;
 		}
 
-		addTableRow(tableID,nextRowIndex,"rowChosenAttributeButtons","<th text-align='center' colspan='2'><input type='button' id='addAttributeChoice' value='New Attribute Bonus' onclick='addAttributeChoiceRow()'>  <input type='button' id='removeAttributeChoice' value='Remove Attribute Bonus' onclick='removeAttributeChoiceRow()'><input type='hidden' id='AttributeChoiceNumber' name='AttributeChoiceNumber' value=0></th>");
+		addTableRow(tableID,nextRowIndex,"rowChosenAttributeButtons","<th style='text-align:center' colspan='2'><input type='button' id='addAttributeChoice' value='New Attribute Bonus' onclick='addAttributeChoiceRow()'>  <input type='button' id='removeAttributeChoice' value='Remove Attribute Bonus' onclick='removeAttributeChoiceRow()'><input type='hidden' id='AttributeChoiceNumber' name='AttributeChoiceNumber' value=0></th>");
 		nextRowIndex++;
 
 		addAttributeChoiceRow();
@@ -69,7 +69,7 @@ async function createAttributeSelectionRows(endRowID,idSuffix){
 				clearUnusedTable(tableID,"rowAttributeAllocationMethod",endRowID);
 			}
 
-			addTableRow(tableID,nextRowIndex,"rowChosenAttributeButtons","<th text-align='center' colspan='2'><input type='button' id='addAttributeChoice' value='New Attribute Bonus' onclick='addAttributeChoiceRow()'>  <input type='button' id='removeAttributeChoice' value='Remove Attribute Bonus' onclick='removeAttributeChoiceRow()'><input type='hidden' id='AttributeChoiceNumber' name='AttributeChoiceNumber' value=0></th>");
+			addTableRow(tableID,nextRowIndex,"rowChosenAttributeButtons","<th style='text-align:center' colspan='2'><input type='button' id='addAttributeChoice' value='New Attribute Bonus' onclick='addAttributeChoiceRow()'>  <input type='button' id='removeAttributeChoice' value='Remove Attribute Bonus' onclick='removeAttributeChoiceRow()'><input type='hidden' id='AttributeChoiceNumber' name='AttributeChoiceNumber' value=0></th>");
 			nextRowIndex++;
 	
 			addAttributeChoiceRow();

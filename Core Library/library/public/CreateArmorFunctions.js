@@ -3,7 +3,7 @@ async function createArmorRows(ArmorOrShield,IDSuffix){
 
 	let referenceRow = document.getElementById("rowObjectType"+IDSuffix);
 
-	document.getElementById("isWearable").checked = true;
+	document.getElementById("wornHeld").value = "Worn";
 
 	let allArmorTypes = "";
 	if(ArmorOrShield == "Armor"){
@@ -19,12 +19,14 @@ async function createArmorRows(ArmorOrShield,IDSuffix){
 
 	let ArmorTypeOptions = createHTMLSelectOptions(allArmorTypes);
 
-	referenceRow = createTableRow(referenceRow,"rowArmorType","<th><label for='ArmorType'>Armor Type:</label></th><td><select id='ArmorType' name='ArmorType' onchange='armorTemplateUpdate("+'"'+ArmorOrShield+'"'+")'><option value='@@NewType'>New Type</option>"+ArmorTypeOptions+"</select></td>");
-
-	if(document.getElementById("ArmorType").value == "@@NewType"){
-		createNewTemplateRows(referenceRow,ArmorOrShield);
-		referenceRow = document.getElementById("rowIsNewTemplate"+ArmorOrShield);
+	if(ArmorOrShield == "Armor"){
+		ArmorTypeOptions = "<option value='@@NewType'>New Type</option>"+ArmorTypeOptions;
 	}
+	else{
+		ArmorTypeOptions += "<option value='@@NewType'>New Type</option>";
+	}
+
+	referenceRow = createTableRow(referenceRow,"rowArmorType","<th><label for='ArmorType'>Armor Type:</label></th><td><select id='ArmorType' name='ArmorType' onchange='armorTemplateUpdate("+'"'+ArmorOrShield+'"'+")'><option value='@@NewType'>New Type</option>"+ArmorTypeOptions+"</select></td>");
 
 	let StartingAC;
 	if(ArmorOrShield == "Armor"){
@@ -51,9 +53,16 @@ async function armorTemplateUpdate(ArmorOrShield){
 
 	if(document.getElementById("ArmorType").value == "@@NewType"){
 		createNewTemplateRows(referenceRow,ArmorOrShield);
+		
+		if(ArmorOrShield == "Armor"){
+			StartingAC = 11;
+		}
+		else{
+			StartingAC = 2;
+		}
 	}
 	else{
-		clearUnusedTable("CreateObjectTable","rowArmorType","rowArmorBaseAC");
+		deleteInterveningElements(referenceRow,document.getElementById("rowArmorBaseAC"));
 		
 		let request = await fetch("macro:pm.a5e.GetCoreData@lib:pm.a5e.Core", {method: "POST", body: "['sb."+ArmorOrShield+"Types']"});
 		let allArmorTypes = await request.json();

@@ -11,7 +11,7 @@
 		};
 		case "PersonalChat":{
 			[h:PlayerDisplayName = getPlayerName()]
-			[h:PlayerName = pm.RemoveSpecial(PlayerDisplayName)]
+			[h:PlayerName = js.a5e.RemoveSpecial(PlayerDisplayName)]
 			[h:data.setData("addon:","pm.a5e.core","PlayerChatSettings",json.remove(data.getData("addon:","pm.a5e.core","PlayerChatSettings"),PlayerName))]
 			[h:isTooltip = 0]
 
@@ -24,7 +24,7 @@
 		};
 		case "PersonalTooltip":{
 			[h:PlayerDisplayName = getPlayerName()]
-			[h:PlayerName = pm.RemoveSpecial(PlayerDisplayName)]
+			[h:PlayerName = js.a5e.RemoveSpecial(PlayerDisplayName)]
 			[h:data.setData("addon:","pm.a5e.core","PlayerTooltipSettings",json.remove(data.getData("addon:","pm.a5e.core","PlayerTooltipSettings"),PlayerName))]
 			[h:isTooltip = 1]
 
@@ -70,7 +70,7 @@
 		};
 		case "PersonalChat":{
 			[h:PlayerDisplayName = getPlayerName()]
-			[h:PlayerName = pm.RemoveSpecial(PlayerDisplayName)]
+			[h:PlayerName = js.a5e.RemoveSpecial(PlayerDisplayName)]
 			[h:allPlayerChatSettings = data.getData("addon:","pm.a5e.core","PlayerChatSettings")]
 			[h:allPlayerChatSettings = json.set(allPlayerChatSettings,PlayerName,thisPlayerChatSettings)]
 			[h:data.setData("addon:","pm.a5e.core","PlayerChatSettings",allPlayerChatSettings)]
@@ -91,7 +91,7 @@
 				"isTooltipMouseover",json.contains(SettingsData,"isTooltipMouseover")
 			)]
 			[h:PlayerDisplayName = getPlayerName()]
-			[h:PlayerName = pm.RemoveSpecial(PlayerDisplayName)]
+			[h:PlayerName = js.a5e.RemoveSpecial(PlayerDisplayName)]
 			[h:allPlayerChatSettings = data.getData("addon:","pm.a5e.core","PlayerTooltipSettings")]
 			[h:allPlayerChatSettings = json.set(allPlayerChatSettings,PlayerName,thisPlayerChatSettings)]
 			[h:data.setData("addon:","pm.a5e.core","PlayerTooltipSettings",allPlayerChatSettings)]

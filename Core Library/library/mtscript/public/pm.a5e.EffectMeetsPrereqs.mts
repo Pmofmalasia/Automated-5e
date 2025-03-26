@@ -24,8 +24,8 @@
 			case "ConditionsApplied - Doesn't Exist": thisInstanceMeetsAllPrereqs = pm.a5e.EffectConditionsAppliedPrereqs(EffectToCheck,json.get(instance,"ConditionsApplied"));
 			case "Movement - Doesn't Exist": "";
 			case "Targets - Doesn't Exist": "<!-- Note: Will need additional steps for Target prereq than just jumping to CreaturePrereq as will need to account for more general things like target number, other target types (object, effects), etc. Likely will have a TargetsPrereq that calls to CreaturePrereq. -->";
-			case "User": thisInstanceMeetsAllPrereqs = pm.a5e.CreaturePrereqs(json.get(EffectToCheck,"ParentToken"),json.get(instance,"User"),ParentToken);
-			case "ThisToken": thisInstanceMeetsAllPrereqs = pm.a5e.CreaturePrereqs(ParentToken,json.get(instance,"ThisToken"));
+			case "User": thisInstanceMeetsAllPrereqs = js.a5e.FilterCreatures(json.append("",json.get(EffectToCheck,"ParentToken")),json.get(instance,"User"),ParentToken);
+			case "ThisToken": thisInstanceMeetsAllPrereqs = js.a5e.FilterCreatures(json.append("",ParentToken),json.get(instance,"ThisToken"));
 			case "NestedPrerequisites": thisInstanceMeetsAllPrereqs = pm.a5e.thisInstanceMeetsAllPrereqs(EffectToCheck,json.get(instance,"NestedPrerequisites"),ParentToken);
 			default: ""
 		]

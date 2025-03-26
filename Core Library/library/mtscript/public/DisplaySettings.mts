@@ -9,7 +9,7 @@
 	case "PersonalChat":{
 		[h:allPlayerChatSettings = data.getData("addon:","pm.a5e.core","PlayerChatSettings")]
 		[h:PlayerDisplayName = getPlayerName()]
-		[h:PlayerName = pm.RemoveSpecial(PlayerDisplayName)]
+		[h:PlayerName = js.a5e.RemoveSpecial(PlayerDisplayName)]
 		[h:thisPlayerChatSettings = json.get(allPlayerChatSettings,PlayerName)]
 		[h,if(thisPlayerChatSettings == ""):
 			activeChatSettings = data.getData("addon:","pm.a5e.core","ChatSettings");
@@ -26,7 +26,7 @@
 	case "PersonalTooltip":{
 		[h:allPlayerChatSettings = data.getData("addon:","pm.a5e.core","PlayerTooltipSettings")]
 		[h:PlayerDisplayName = getPlayerName()]
-		[h:PlayerName = pm.RemoveSpecial(PlayerDisplayName)]
+		[h:PlayerName = js.a5e.RemoveSpecial(PlayerDisplayName)]
 		[h:thisPlayerChatSettings = json.get(allPlayerChatSettings,PlayerName)]
 		[h,if(thisPlayerChatSettings == ""):
 			activeChatSettings = data.getData("addon:","pm.a5e.core","TooltipSettings");
@@ -42,7 +42,7 @@
 [h:FontOptionsHTML = ""]
 [h,foreach(font,FontOptions): FontOptionsHTML = FontOptionsHTML + "<option value'"+font+"'>"+font+"</option>"]
 
-[h:DisplaySettingsHTML = "<tr id='rowHeader'><th text-align='center' colspan='2'>"+Title+"</th><input type='hidden' id='SettingsDestination' name='SettingsDestination' value='"+SettingsDestination+"'></tr>"]
+[h:DisplaySettingsHTML = "<tr id='rowHeader'><th style='text-align:center' colspan='2'>"+Title+"</th><input type='hidden' id='SettingsDestination' name='SettingsDestination' value='"+SettingsDestination+"'></tr>"]
 
 [h:DisplaySettingsHTML = DisplaySettingsHTML + "<tr id='rowResetToDefault'><th><label for='isResetToDefault'>Reset to Defaults:</label></th><td><input type='checkbox' id='isResetToDefault' name='isResetToDefault'></td></tr>"]
 
@@ -62,7 +62,7 @@
 
 [h:DisplaySettingsHTML = DisplaySettingsHTML + "<tr id='rowTitleFont'><th><label for='TitleFont'>Title Font:</label></th><td><select id='TitleFont' name='TitleFont'>"+FontOptionsHTML+"</select></td></tr>"]
 
-[h:DisplaySettingsHTML = DisplaySettingsHTML + "<tr id='rowColorHeader'><th text-align='center' colspan='2'>Dark Mode Settings</th></tr>"]
+[h:DisplaySettingsHTML = DisplaySettingsHTML + "<tr id='rowColorHeader'><th style='text-align:center' colspan='2'>Dark Mode Settings</th></tr>"]
 
 [h:DisplaySettingsHTML = DisplaySettingsHTML + "<tr id='rowDarkBackground'><th><label for='DarkBackground'>Dark Mode Background Color:</label></th><td><input type='color' id='DarkBackground' name='DarkBackground' value='"+json.get(currentChatColors,"DarkBackground")+"'></td></tr>"]
 
@@ -86,7 +86,7 @@
 
 [h:DisplaySettingsHTML = DisplaySettingsHTML + "<tr id='rowDarkLinkText'><th><label for='DarkLinkText'>Dark Mode Link Color:</label></th><td><input type='color' id='DarkLinkText' name='DarkLinkText' value='"+json.get(currentChatColors,"DarkLinkText")+"'></td></tr>"]
 
-[h:DisplaySettingsHTML = DisplaySettingsHTML + "<tr id='rowColorHeader'><th text-align='center' colspan='2'>Light Mode Settings</th></tr>"]
+[h:DisplaySettingsHTML = DisplaySettingsHTML + "<tr id='rowColorHeader'><th style='text-align:center' colspan='2'>Light Mode Settings</th></tr>"]
 
 [h:DisplaySettingsHTML = DisplaySettingsHTML + "<tr id='rowLightBackground'><th><label for='LightBackground'>Light Mode Background Color:</label></th><td><input type='color' id='LightBackground' name='LightBackground' value='"+json.get(currentChatColors,"LightBackground")+"'></td></tr>"]
 
@@ -110,6 +110,6 @@
 
 [h:DisplaySettingsHTML = DisplaySettingsHTML + "<tr id='rowLightLinkText'><th><label for='LightLinkText'>Light Mode Link Color:</label></th><td><input type='color' id='LightLinkText' name='LightLinkText' value='"+json.get(currentChatColors,"LightLinkText")+"'></td></tr>"]
 
-[h:DisplaySettingsHTML = DisplaySettingsHTML + "<tr id='rowSubmit'><th text-align='center' colspan='2'><input type='submit' class='theme-fix-submit' id='submitButton' value='Submit'></tr>"]
+[h:DisplaySettingsHTML = DisplaySettingsHTML + "<tr id='rowSubmit'><th style='text-align:center' colspan='2'><input type='submit' class='theme-fix-submit' id='submitButton' value='Submit'></tr>"]
 
 [h:html.dialog5("DisplaySettings","lib://pm.a5e.core/DisplaySettings.html?cachelib=false","value="+base64.encode(DisplaySettingsHTML)+"; closebutton=0; height=800")]

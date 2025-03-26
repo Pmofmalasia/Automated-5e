@@ -1,6 +1,5 @@
-async function createInnateInfo() {
-    let table = document.getElementById("MonsterSpellcastingCreationTable");
-    let nextRowIndex = document.getElementById("rowisInnateSpellcasting").rowIndex + 1;
+async function createInnateInfo(){
+	let referenceElement = document.getElementById("rowisInnateSpellcasting");
 
     if(document.getElementById("isInnateSpellcasting").checked){
         let request = await fetch("macro:pm.GetAttributes@lib:pm.a5e.Core", {method: "POST", body: ""});
@@ -13,15 +12,9 @@ async function createInnateInfo() {
             StatOptions = StatOptions + "<option value='"+abilityScoreName+"'>"+abilityScoreDisplayName+"</option>";
         }
 
-        let rowInnateStat = table.insertRow(nextRowIndex);
-        rowInnateStat.id = "rowInnateStat";
-        rowInnateStat.innerHTML = "<th><label for='InnateStat'>Innate Spellcasting Stat:</label></th><td><select id='InnateStat' name='InnateStat'>"+StatOptions+"</select></td>";
-        nextRowIndex++;
+		referenceElement = createTableRow(referenceElement,"rowInnateStat","<th><label for='InnateStat'>Innate Spellcasting Stat:</label></th><td><select id='InnateStat' name='InnateStat'>"+StatOptions+"</select></td>");
 
-        let rowInnateSpellTitle = table.insertRow(nextRowIndex);
-        rowInnateSpellTitle.id = "rowInnateSpellTitle";
-        rowInnateSpellTitle.innerHTML = "<th colspan='2' text-align='center'>Choose Innate Spells</th><input type='hidden' id='InnateSpellNumber' name='InnateSpellNumber' value=0>";
-        nextRowIndex++;
+		referenceElement = createTableRow(referenceElement,"rowInnateSpellTitle","<th colspan='2' style='text-align:center'>Choose Innate Spells</th>");
 
         let response = await fetch("macro:pm.a5e.GetBaseSpellData@lib:pm.a5e.Core", {method: "POST", body: ""});
         let SpellList = await response.json();
@@ -33,55 +26,30 @@ async function createInnateInfo() {
             SpellOptions = SpellOptions + "<option value='"+SpellName+"'>"+SpellDisplayName+"</option>";
         }
 
-        let rowInnateSpell0 = table.insertRow(nextRowIndex);
-        rowInnateSpell0.id = "rowInnateSpell0";
-        rowInnateSpell0.innerHTML = "<th colspan='2' text-align='center'>Level <input type='number' id='InnateSpell0Level' name='InnateSpell0Level' style='width:25px'><select id='InnateSpell0' name='InnateSpell0' onchange='setDefaultInnateLevel(0)'>"+SpellOptions+"</select>, <input type='number' id='InnateSpell0Resource' name='InnateSpell0Resource' min=1 value=1 style='width:25px'> times per <select id='InnateSpell0Restoration' name='InnateSpell0Restoration'><option value='Short'>Short Rest</option><option value='Long' selected>Long Rest</option></select></th>";
-        nextRowIndex++;
-        
-        let rowInnateAdditionButtons = table.insertRow(nextRowIndex);
-        rowInnateAdditionButtons.id = "rowInnateAdditionButtons";
-        rowInnateAdditionButtons.innerHTML = "<th text-align='center' colspan='2'><input type='button' id='addInnateSpell' name='addInnateSpell' value='Add' onclick='addInnateSpellRow()'>  <input type='button' id='removeInnateSpell' name='removeInnateSpell' value='Remove' onclick='removeInnateSpellRow()'></th>";
-        nextRowIndex++;
+		let innateInputListeners = [
+			{
+				elementID:"InnateSpell",
+				listener:"change",
+				functionName:"setDefaultInnateLevel",
+				functionArgs:[]
+			},
+			{
+				elementID:"InnateSpellRestoration",
+				listener:"change",
+				functionName:"toggleAtWill",
+				functionArgs:[]
+			}
+		]
+		createMultiRowButtonsInput("InnateSpell",referenceElement,"<th colspan='2' style='text-align:center'>Level <input type='number' id='InnateSpellLevel' name='InnateSpellLevel' style='width:25px'><select id='InnateSpell' name='InnateSpell'>"+SpellOptions+"</select>: <span id='InnateSpellResourceSpan'><input type='number' id='InnateSpellResource' name='InnateSpellResource' min=1 value=1 class='small-number'> time(s) per </span><select id='InnateSpellRestoration' name='InnateSpellRestoration'><option value='Long'>Long Rest</option><option value='Short'>Short Rest</option><option value='AtWill'>At Will</option></select></th>","Spell",innateInputListeners);
 
-        setDefaultInnateLevel(0);
+		document.getElementById("InnateSpell0").dispatchEvent(new Event("change"));
+		document.getElementById("AddInnateSpellButton").addEventListener("click",function(){
+			setDefaultInnateLevel(Number(document.getElementById("InnateSpellNumber").value) - 1);
+		});
     }
     else{
         clearUnusedTable("rowIsInnateSpellcasting","rowisSlotSpellcasting");
     } 
-}
-
-async function addInnateSpellRow(){
-    let table = document.getElementById("MonsterSpellcastingCreationTable");
-    let nextRowIndex = document.getElementById("rowInnateSpellTitle").rowIndex + 1;
-    let nextInnateNumber = 0;
-    while(nextRowIndex != document.getElementById("rowInnateAdditionButtons").rowIndex){
-        nextRowIndex++;
-        nextInnateNumber++;
-    }
-
-    let response = await fetch("macro:pm.a5e.GetBaseSpellData@lib:pm.a5e.Core", {method: "POST", body: ""});
-    let SpellList = await response.json();
-
-    let SpellOptions = "";
-    for(let tempSpell of SpellList){
-        let SpellName = tempSpell.Name;
-        let SpellDisplayName = tempSpell.DisplayName;
-        SpellOptions = SpellOptions + "<option value='"+SpellName+"'>"+SpellDisplayName+"</option>";
-    }
-
-    let rowNewInnateSpell = table.insertRow(nextRowIndex);
-    rowNewInnateSpell.id = "rowInnateSpell"+nextInnateNumber;
-    rowNewInnateSpell.innerHTML = "<th colspan='2' text-align='center'>Level <input type='number' id='InnateSpell"+nextInnateNumber+"Level' name='InnateSpell"+nextInnateNumber+"Level' style='width:25px'><select id='InnateSpell"+nextInnateNumber+"' name='InnateSpell"+nextInnateNumber+"' onchange='setDefaultInnateLevel("+nextInnateNumber+")'>"+SpellOptions+"</select>, <input type='number' id='InnateSpell"+nextInnateNumber+"Resource' name='InnateSpell"+nextInnateNumber+"Resource' min=1 value=1 style='width:25px'> times per <select id='InnateSpell"+nextInnateNumber+"Restoration' name='InnateSpell"+nextInnateNumber+"Restoration'><option value='Short'>Short Rest</option><option value='Long' selected>Long Rest</option></select></th>";
-    nextRowIndex++;
-
-    document.getElementById("InnateSpellNumber").value = nextInnateNumber;
-}
-
-async function removeInnateSpellRow(){
-    let table = document.getElementById("MonsterSpellcastingCreationTable");
-    let currentInnateNumber = document.getElementById("InnateSpellNumber").value;
-    table.deleteRow(document.getElementById("rowInnateSpell"+currentInnateNumber).rowIndex);
-    document.getElementById("InnateSpellNumber").value = currentInnateNumber - 1;
 }
 
 async function setDefaultInnateLevel(whichSpell){
@@ -96,7 +64,19 @@ async function setDefaultInnateLevel(whichSpell){
         }
     }
     
-    document.getElementById("InnateSpell"+whichSpell+"Level").value = SpellLevel;
+    document.getElementById("InnateSpellLevel"+whichSpell).value = SpellLevel;
+}
+
+function toggleAtWill(whichSpell){
+	let restorationChoice = document.getElementById("InnateSpellRestoration"+whichSpell).value;
+	let resourceSpan = document.getElementById("InnateSpellResourceSpan"+whichSpell);
+
+	if(restorationChoice === "AtWill"){
+		resourceSpan.innerHTML = "";
+	}
+	else if(resourceSpan.innerHTML === ""){
+		resourceSpan.innerHTML = "<input type='number' id='InnateSpellResource' name='InnateSpellResource' min=1 value=1 class='small-number'> time(s) per ";
+	}
 }
 
 async function createSlotInfo() {
@@ -141,7 +121,7 @@ async function createSlotInfo() {
 
         let rowSlotSpellTitle = table.insertRow(nextRowIndex);
         rowSlotSpellTitle.id = "rowSlotSpellTitle";
-        rowSlotSpellTitle.innerHTML = "<th colspan='2' text-align='center'>Choose Slot Spells</th><input type='hidden' id='SlotSpellNumber' name='SlotSpellNumber' value=9>";
+        rowSlotSpellTitle.innerHTML = "<th colspan='2' style='text-align:center'>Choose Slot Spells</th><input type='hidden' id='SlotSpellNumber' name='SlotSpellNumber' value=9>";
         nextRowIndex++;
 
         let response = await fetch("macro:pm.a5e.GetBaseSpellData@lib:pm.a5e.Core", {method: "POST", body: ""});
@@ -163,7 +143,7 @@ async function createSlotInfo() {
             
         let rowSlotAdditionButtons = table.insertRow(nextRowIndex);
         rowSlotAdditionButtons.id = "rowSlotAdditionButtons";
-        rowSlotAdditionButtons.innerHTML = "<th text-align='center' colspan='2'><input type='button' id='addSlotSpell' name='addSlotSpell' value='Add' onclick='addSlotSpellRow()'>  <input type='button' id='removeSlotSpell' name='removeSlotSpell' value='Remove' onclick='removeSlotSpellRow()'></th>";
+        rowSlotAdditionButtons.innerHTML = "<th style='text-align:center' colspan='2'><input type='button' id='addSlotSpell' name='addSlotSpell' value='Add' onclick='addSlotSpellRow()'>  <input type='button' id='removeSlotSpell' name='removeSlotSpell' value='Remove' onclick='removeSlotSpellRow()'></th>";
         nextRowIndex++;
     }
     else{

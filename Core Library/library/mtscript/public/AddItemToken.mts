@@ -8,6 +8,7 @@
 	movedWithContainerTest = !json.isEmpty(json.path.read(PriorInventory,"\$[*][?(@.ItemID == '"+json.get(AddedItem,"StoredIn")+"')]"));
 	movedWithContainerTest = 0
 ]
+
 [h:StackingTest = json.get(AddedItem,"isStackable")]
 [h,if(StackingTest && !movedWithContainerTest):
 	equivalentItem = pm.a5e.GetEquivalentItem(AddedItem,PriorInventory);

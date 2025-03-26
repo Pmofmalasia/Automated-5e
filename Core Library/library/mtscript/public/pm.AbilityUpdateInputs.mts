@@ -429,7 +429,7 @@
 			ab.disCurrentSpellsBars,
 			" ab.SpellClass | 1 | Add another spell | CHECK "
 		))]
-		[h:ab.SpellList = json.append(ab.SpellList,pm.RemoveSpecial(ab.TempSpellName))]
+		[h:ab.SpellList = json.append(ab.SpellList,js.a5e.RemoveSpecial(ab.TempSpellName))]
 		[h:ab.disCurrentSpells = listAppend(ab.disCurrentSpells," junkVar | "+ab.TempSpellName+" |  | LABEL | SPAN = TRUE ","##")]
 	}]
 	[h:ab.Final = json.set(ab.Final,"SpellList",ab.SpellList,"CallSpellClass",1)]
@@ -496,7 +496,7 @@
 			))]
 		[h:abort(input(if(ab.CastTime=="Custom"," ab.CastTime |  | Enter custom casting time ","")))]
 		[h:ab.Marker = if(ab.Marker=="-- Ignore/Blank for None --","",ab.Marker)]
-		[h:ab.NewButtons = json.append(ab.NewButtons,json.set("","UseTime",if(ab.CastTime=="None","",ab.CastTime),"Marker",ab.Marker,"Class",ab.Class,"Subclass",ab.Subclass,"Name",pm.RemoveSpecial(ab.ButtonName),"DisplayName",ab.ButtonName,"Library",json.get(ab.Updates,"Library")))]
+		[h:ab.NewButtons = json.append(ab.NewButtons,json.set("","UseTime",if(ab.CastTime=="None","",ab.CastTime),"Marker",ab.Marker,"Class",ab.Class,"Subclass",ab.Subclass,"Name",js.a5e.RemoveSpecial(ab.ButtonName),"DisplayName",ab.ButtonName,"Library",json.get(ab.Updates,"Library")))]
 	}]
 	[h:ab.Final = json.set(ab.Final,"ButtonInfo",ab.NewButtons)]
 };{}]

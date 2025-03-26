@@ -33,9 +33,9 @@
 	[h:ConditionTagsChosen = json.append(ConditionTagsChosen,macro.return)]
 };{}]
 
-[h:cn.SourceLib = json.get(json.path.read(data.getData("addon:","pm.a5e.core","ms.Sources"),"[*][?(@.Name=='"+pm.RemoveSpecial(cn.Source)+"')]['Library']"),0)]
+[h:cn.SourceLib = json.get(json.path.read(data.getData("addon:","pm.a5e.core","ms.Sources"),"[*][?(@.Name=='"+js.a5e.RemoveSpecial(cn.Source)+"')]['Library']"),0)]
 [h:cn.DisplayName = cn.Name]
-[h:cn.Name = pm.RemoveSpecial(cn.Name)]
+[h:cn.Name = js.a5e.RemoveSpecial(cn.Name)]
 [h:cn.Final = json.set("",
 	"Name",cn.Name,
 	"DisplayName",cn.DisplayName,
@@ -63,7 +63,7 @@
 ]
 [h:abort(input(cn.TypeInput))]
 
-[h:cn.Final = json.set(cn.Final,"Class",pm.RemoveSpecial(cn.Class))]
+[h:cn.Final = json.set(cn.Final,"Class",js.a5e.RemoveSpecial(cn.Class))]
 
 [h,SWITCH(cn.Type),CODE:
 	case 1:{
@@ -89,7 +89,7 @@
 ]
 [h:abort(input(cn.TypeInput))]
 
-[h:cn.Subclass = if(cn.Subclass == "None","",pm.RemoveSpecial(cn.Subclass))]
+[h:cn.Subclass = if(cn.Subclass == "None","",js.a5e.RemoveSpecial(cn.Subclass))]
 [h:cn.Final = json.set(cn.Final,"Subclass",cn.Subclass)]
 
 [h,if(cn.HasMaster && or(cn.Type == 1, cn.Type == 2)),CODE:{
@@ -101,13 +101,13 @@
 		[h:abort(input(cn.MasterInput))]
 
 		[h,if(cn.MasterCreated==2): cn.MasterClass = cn.Class]
-		[h,if(cn.MasterCreated==2): cn.MasterSubclass = cn.Subclass; cn.MasterSubclass = pm.RemoveSpecial(cn.MasterSubclass)]
+		[h,if(cn.MasterCreated==2): cn.MasterSubclass = cn.Subclass; cn.MasterSubclass = js.a5e.RemoveSpecial(cn.MasterSubclass)]
 		[h:cn.MasterOptions = json.toList(json.path.read(data.getData("addon:","pm.a5e.core","sb.Abilities"),"[*][?(@.Class=='"+cn.MasterClass+"' && (@.Subclass==''|| @.Subclass=='"+cn.MasterSubclass+"'))]['DisplayName']"))]
 
 		[h:abort(input(
 			" cn.MasterName | "+cn.MasterOptions+" | Name of Master Feature | LIST | VALUE=STRING "))]
 
-		[h:cn.MasterFeature = json.set("","Name",pm.RemoveSpecial(cn.MasterName),"DisplayName",cn.MasterName,"Class",cn.MasterClass,"Subclass",if(cn.MasterSubclass=="None","",pm.RemoveSpecial(cn.MasterSubclass)))]
+		[h:cn.MasterFeature = json.set("","Name",js.a5e.RemoveSpecial(cn.MasterName),"DisplayName",cn.MasterName,"Class",cn.MasterClass,"Subclass",if(cn.MasterSubclass=="None","",js.a5e.RemoveSpecial(cn.MasterSubclass)))]
 	};{
 		[h:abort(input(
 			" cn.MasterName | -- Name Here -- | Enter master feature name ",
@@ -120,7 +120,7 @@
 			" cn.MasterSubclass | None,"+pm.GetSubclasses(cn.Class,"DisplayName")+" | Subclass associated with Master Feature | LIST | VALUE=STRING "
 			))]
 
-		[h:cn.MasterFeature = json.set("","Name",pm.RemoveSpecial(cn.MasterName),"DisplayName",cn.MasterName,"Class",cn.MasterClass,"Subclass",if(cn.MasterSubclass=="None","",pm.RemoveSpecial(cn.MasterSubclass)))]
+		[h:cn.MasterFeature = json.set("","Name",js.a5e.RemoveSpecial(cn.MasterName),"DisplayName",cn.MasterName,"Class",cn.MasterClass,"Subclass",if(cn.MasterSubclass=="None","",js.a5e.RemoveSpecial(cn.MasterSubclass)))]
 	}]
 
 	[h:cn.Final = json.set(cn.Final,"Master",cn.MasterFeature)]

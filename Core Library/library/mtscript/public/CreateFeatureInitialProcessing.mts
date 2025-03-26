@@ -1,12 +1,15 @@
 [h:featureInputData = macro.args]
 [h:FeatureType = json.get(featureInputData,"FeatureType")]
 [h:featureInputData = pm.a5e.KeyStringsToNumbers(featureInputData)]
+[h:ParentToken = json.get(featureInputData,"ParentToken")]
 
 [h:FeatureDisplayName = pm.EvilChars(json.get(featureInputData,"DisplayName"))]
-[h:FeatureName = pm.RemoveSpecial(FeatureDisplayName)]
+[h:FeatureName = js.a5e.RemoveSpecial(FeatureDisplayName)]
 [h:FeatureClass = json.get(featureInputData,"FeatureClass")]
 [h:FeatureSubclass = json.get(featureInputData,"FeatureSubclass")]
 [h:FeatureLib = json.get(featureInputData,"Sourcebook")]
+
+[h,if(FeatureType == "MonsterFeature" && json.contains(featureInputData,"isMonsterFeatureUnique")): FeatureSubclass = json.get(featureInputData,"MonsterFeatureUniqueSelection")]
 
 [h:newFeatureData = json.set("",
 	"DisplayName",FeatureDisplayName,
@@ -14,7 +17,8 @@
 	"Class",FeatureClass,
 	"Subclass",FeatureSubclass,
 	"Type",FeatureType,
-	"Library",FeatureLib
+	"Library",FeatureLib,
+	"ParentToken",ParentToken
 )]
 
 [h,if(json.get(featureInputData,"Level") != ""),CODE:{
@@ -30,7 +34,7 @@
 [h:newFeatureData = json.set(newFeatureData,"isMultifeature",json.contains(featureInputData,"isMultifeature"))]
 
 [h,if(json.contains(featureInputData,"hasMaster")),CODE:{
-	[h:MasterFeatureData = ct.a5e.AutocompletedFeatureProcessing(featureInputData,"Main")]
+	[h:MasterFeatureData = ct.a5e.AutocompletedFeatureProcessing(featureInputData,"MainFeature")]
 	[h:newFeatureData = json.set(newFeatureData,"Master",json.get(MasterFeatureData,"Feature"))]
 };{}]
 
@@ -49,7 +53,7 @@
 
 	[h,if(json.contains(featureInputData,"NewConditionTag")),CODE:{
 		[h:conditionTagDisplayName = pm.EvilChars(json.get(featureInputData,"NewConditionTag"))]
-		[h:conditionTagName = pm.RemoveSpecial(conditionTagDisplayName)]
+		[h:conditionTagName = js.a5e.RemoveSpecial(conditionTagDisplayName)]
 		[h:conditionTagData = json.set("",
 			"DisplayName",conditionTagDisplayName,
 			"Name",conditionTagName,
@@ -93,7 +97,7 @@
 
 
 
-[h:"<!-- For fighting styles: Will defer this to the end of creation so things that aren't fully made don't get added -->"]
+[h:"<!-- TODO: Creation - For fighting styles: Will defer this to the end of creation so things that aren't fully made don't get added -->"]
 [h,if(0),CODE:{
 	[h:LibHasPreviousData = !json.isEmpty(json.path.read(getLibProperty("sb.Abilities","Lib:"+FeatureLib),"\$[*][?(@.Name=='"+json.get(tempGroup,"Name")+"' && @.Class=='"+json.get(tempGroup,"Class")+"' && @.Subclass=='"+json.get(tempGroup,"Subclass")+"')]['FightingStyleList']"))]
 	[h,switch(CanUseFSTest+""+LibHasPreviousData),CODE:
@@ -110,8 +114,32 @@
 	]
 };{}]
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 [h,if(json.contains(featureInputData,"isReplaceFeature")),CODE:{
-	[h:ReplaceFeatureData = ct.a5e.AutocompletedFeatureProcessing(featureInputData,"Replace")]
+	[h:ReplaceFeatureData = ct.a5e.AutocompletedFeatureProcessing(featureInputData,"ReplaceFeature")]
 	[h:newFeatureData = json.set(newFeatureData,"Replace",json.get(ReplaceFeatureData,"Feature"))]
 };{}]
 
@@ -170,7 +198,8 @@
 	};{}]
 	
 	[h,if(json.contains(featureInputData,"isFeatureFeaturePrereq")),CODE:{
-		[h:FeaturePrereqData = ct.a5e.AutocompletedFeatureProcessing(featureInputData,"FeatureFeaturePrereq")]
+		[h:FeaturePrereqData = ct.a5e.AutocompletedFeatureProcessing(featureInputData,"FeatureFeaturePrereqFeature")]
+		[h:"<!-- Buffalo buffalo buffalo -->"]
 		[h:featurePrerequisites = json.set(featurePrerequisites,"Feature",json.get(FeaturePrereqData,"Feature"))]
 	};{}]
 	
@@ -247,7 +276,7 @@
 	
 	[h,switch(json.get(featureInputData,"isSpellFeaturePrereq")),CODE:
 		case "Specific":{
-			[h:SpellPrereqData = ct.a5e.AutocompletedFeatureProcessing(featureInputData,"FeaturePrereqSpecific",json.set("","Type","Spell"))]
+			[h:SpellPrereqData = ct.a5e.AutocompletedFeatureProcessing(featureInputData,"FeaturePrereqSpecificSpell","Spell")]
 			[h:chosenSpellName = json.get(json.get(SpellPrereqData,"Feature"),"Name")]
 			[h:featurePrerequisites = json.set(featurePrerequisites,"SpecificSpell",json.append("",chosenSpellName))]
 		};

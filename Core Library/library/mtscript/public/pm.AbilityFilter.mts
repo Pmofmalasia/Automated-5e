@@ -26,7 +26,7 @@
 			));
 		default: ab.FeatureClass = ab.FeatureType
 	]
-	[h:ab.FeatureClass = pm.RemoveSpecial(ab.FeatureClass)]
+	[h:ab.FeatureClass = js.a5e.RemoveSpecial(ab.FeatureClass)]
 };{
 	[h:ab.FeatureClass = ab.PresetClass]
 }]
@@ -50,7 +50,7 @@
 			));
 		default: ab.FeatureSubclass = ""
 	]
-	[h:ab.FeatureSubclass = if(ab.FeatureSubclass=="None","",pm.RemoveSpecial(ab.FeatureSubclass))]
+	[h:ab.FeatureSubclass = if(ab.FeatureSubclass=="None","",js.a5e.RemoveSpecial(ab.FeatureSubclass))]
 };{
 	[h:ab.FeatureSubclass = if(ab.PresetSubclass=="None","",ab.PresetSubclass)]
 }]
@@ -60,4 +60,4 @@
 	"ab.FeatureName | "+json.toList(json.path.read(data.getData("addon:","pm.a5e.core","sb.Abilities"),"[*][?(@.Class=='"+ab.FeatureClass+"' && @.Subclass=='"+ab.FeatureSubclass+"')]['DisplayName']"))+" | Choose a Feature | RADIO | VALUE=STRING "
 ))]
 
-[h:macro.return = json.set("","Name",pm.RemoveSpecial(ab.FeatureName),"DisplayName",ab.FeatureName,"Type",ab.FeatureType,"Class",ab.FeatureClass,"Subclass",ab.FeatureSubclass)]
+[h:macro.return = json.set("","Name",js.a5e.RemoveSpecial(ab.FeatureName),"DisplayName",ab.FeatureName,"Type",ab.FeatureType,"Class",ab.FeatureClass,"Subclass",ab.FeatureSubclass)]

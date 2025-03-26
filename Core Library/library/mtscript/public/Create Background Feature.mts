@@ -21,16 +21,16 @@
 
 [h:ab.UpdateLevelOptions = string(ab.Level)]
 [h,count(20-ab.Level): ab.UpdateLevelOptions = listAppend(ab.UpdateLevelOptions,ab.Level+roll.count+1)]
-[h:ab.SourceLib = json.get(json.path.read(data.getData("addon:","pm.a5e.core","ms.Sources"),"\$[?(@.Name=='"+pm.RemoveSpecial(ab.Source)+"')]['Library']"),0)]
+[h:ab.SourceLib = json.get(json.path.read(data.getData("addon:","pm.a5e.core","ms.Sources"),"\$[?(@.Name=='"+js.a5e.RemoveSpecial(ab.Source)+"')]['Library']"),0)]
 [h:ab.Master=""]
 [h:ab.DisplayName = ab.Name]
-[h:ab.Name = pm.RemoveSpecial(ab.Name)]
+[h:ab.Name = js.a5e.RemoveSpecial(ab.Name)]
 [h:ab.Final = json.set("",
 	"Name",ab.Name,
 	"DisplayName",ab.DisplayName,
 	"Type","Background",
 	"Class","Background",
-	"Subclass",pm.RemoveSpecial(ab.Class),
+	"Subclass",js.a5e.RemoveSpecial(ab.Class),
 	"Level",ab.Level,
 	"GainOnLevel",ab.OnLevel,
 	"Optional",ab.Optional,
@@ -54,14 +54,14 @@
 		[h:abort(input(
 			" ab.MasterName | "+ab.MasterOptions+" | Name of Master Feature | LIST | VALUE=STRING "))]
 
-		[h:ab.MasterFeature = json.set("","Name",pm.RemoveSpecial(ab.MasterName),"DisplayName",ab.MasterName,"Class","Background","Subclass",ab.MasterClass)]
+		[h:ab.MasterFeature = json.set("","Name",js.a5e.RemoveSpecial(ab.MasterName),"DisplayName",ab.MasterName,"Class","Background","Subclass",ab.MasterClass)]
 	};{
 		[h:abort(input(
 			" ab.MasterName | -- Name Here -- | Enter master feature name ",
 			" ab.MasterClass | "+ab.BackgroundList+" | Background associated with Master Feature | LIST | VALUE=STRING "
 		))]
 	
-		[h:ab.MasterFeature = json.set("","Name",pm.RemoveSpecial(ab.MasterName),"DisplayName",ab.MasterName,"Class","Background","Subclass",ab.MasterClass)]
+		[h:ab.MasterFeature = json.set("","Name",js.a5e.RemoveSpecial(ab.MasterName),"DisplayName",ab.MasterName,"Class","Background","Subclass",ab.MasterClass)]
 	}]
 	
 	[h:ab.Final = json.set(ab.Final,"Master",ab.MasterFeature)]	
@@ -82,14 +82,14 @@
 			" ab.ReplaceName | "+ab.ReplaceOptions+" | Name of Replaced Feature | LIST | VALUE=STRING "
 		))]
 
-		[h:ab.ReplacedAbility = json.set("","Name",pm.RemoveSpecial(ab.ReplaceName),"DisplayName",ab.ReplaceName,"Class","Background","Subclass",ab.ReplaceClass)]
+		[h:ab.ReplacedAbility = json.set("","Name",js.a5e.RemoveSpecial(ab.ReplaceName),"DisplayName",ab.ReplaceName,"Class","Background","Subclass",ab.ReplaceClass)]
 	};{
 		[h:abort(input(
 			" ab.ReplaceName | -- Name Here -- | Enter replaced feature name ",
 			" ab.ReplaceClass | "+ab.BackgroundList+" | Choose an associated background | LIST | VALUE=STRING "
 		))]
 	
-		[h:ab.ReplacedAbility = json.set("","Name",pm.RemoveSpecial(ab.ReplaceName),"DisplayName",ab.ReplaceName,"Class","Background","Subclass",ab.ReplaceClass)]
+		[h:ab.ReplacedAbility = json.set("","Name",js.a5e.RemoveSpecial(ab.ReplaceName),"DisplayName",ab.ReplaceName,"Class","Background","Subclass",ab.ReplaceClass)]
 	}]
 	
 	[h:ab.Final = json.set(ab.Final,"Replace",ab.ReplacedAbility)]	

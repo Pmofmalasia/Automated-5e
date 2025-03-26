@@ -4,9 +4,9 @@
     " conditionTagLibrary | "+pm.GetBookInfo("DisplayName")+" | Associated Sourcebook | LIST | VALUE=STRING "
 ))]
 
-[h:sourcebookLib = json.get(json.path.read(data.getData("addon:","pm.a5e.core","ms.Sources"),"\$[?(@.Name=='"+pm.RemoveSpecial(conditionTagLibrary)+"')]['Library']"),0)]
+[h:sourcebookLib = json.get(json.path.read(data.getData("addon:","pm.a5e.core","ms.Sources"),"\$[?(@.Name=='"+js.a5e.RemoveSpecial(conditionTagLibrary)+"')]['Library']"),0)]
 
-[h:conditionTagName = pm.RemoveSpecial(conditionTagDisplayName)]
+[h:conditionTagName = js.a5e.RemoveSpecial(conditionTagDisplayName)]
 
 [h:conditionTagData = json.set("",
 	"Name",conditionTagName,

@@ -1,14 +1,13 @@
 function chooseSpecialEffectNumber(){
 	let SpecialEffectChoice = document.getElementById("SpecialEffects").value;
+	let referenceElement = document.getElementById("rowSpecialEffects");
 
 	if(SpecialEffectChoice == "None" || SpecialEffectChoice == "SameSubeffect"){
-		clearUnusedTable("MonsterWeaponCreationTable","rowSpecialEffects","rowSubmit");
+		deleteInterveningElements(referenceElement,document.getElementById("rowSubmit"));
 	}
 	else{
-		let nextRowIndex = document.getElementById("rowSpecialEffects").rowIndex + 1;
 
-		addTableRow("MonsterWeaponCreationTable",nextRowIndex,"rowEffectNumber","<th><label for='EffectsNumber'>Number of Effects:</label></th><td><input type='number' id='EffectsNumber' name='EffectsNumber' min=1 value=1></td>");
-		nextRowIndex++;
+		referenceElement = createTableRow(referenceElement,"rowEffectNumber","<th><label for='EffectsNumber'>Number of Effects:</label></th><td><input type='number' id='EffectsNumber' name='EffectsNumber' min=1 value=1></td>");
 	}
 }
 
@@ -16,7 +15,7 @@ async function loadUserData() {
     let userdata = atob(await MapTool.getUserData());
     document.getElementById('MonsterWeaponCreationTable').innerHTML = userdata;
 
-	await createWeaponTableRows("MonsterWeaponCreationTable","rowWeaponName");
+	await createWeaponTableRows("rowWeaponName");
 }
 
 setTimeout(loadUserData, 1);

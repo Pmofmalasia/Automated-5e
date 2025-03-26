@@ -110,6 +110,14 @@
 		"DisplayOrder","['Rules','Roll','Full']"
 	))]
 
+
+
+
+
+
+
+
+
 	[h:"<!-- TODO: Advance from features (cooldowns) and restore resource, or whatever other method is used to track -->"]
 	[h:validAbilities = json.path.read(getProperty("a5e.stat.AllFeatures"),"\$[*][?(@.Cooldown != null && @.Cooldown.round != null)]","DEFAULT_PATH_LEAF_TO_NULL")]
 	[h:EndedCooldowns = "[]"]

@@ -7,7 +7,7 @@
 		[h:sourcePath = "\$[*][?(@.Name=='"+json.get(resourceInfo,"Name")+"' && @.Class=='"+json.get(resourceInfo,"Class")+"' && @.Subclass=='"+json.get(resourceInfo,"Subclass")+"')]"]
 	};
 	case "Condition":{
-		[h:sourceProperty = "a5e.stat.Conditions"]
+		[h:sourceProperty = "a5e.stat.ConditionList"]
 		[h:sourcePath = "\$[*][?(@.Name=='"+json.get(resourceInfo,"Name")+"' && @.Class=='"+json.get(resourceInfo,"Class")+"' && @.Subclass=='"+json.get(resourceInfo,"Subclass")+"')]"]
 	};
 	case "Item":{

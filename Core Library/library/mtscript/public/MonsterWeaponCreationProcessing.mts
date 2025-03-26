@@ -3,17 +3,20 @@
 [h:ParentToken = json.get(MonsterWeaponData,"ParentToken")]
 [h:switchToken(ParentToken)]
 
-[h:MonsterWeaponData = json.set(MonsterWeaponData,"Name",pm.RemoveSpecial(json.get(MonsterWeaponData,"DisplayName")))]
+[h:MonsterWeaponData = json.set(MonsterWeaponData,"Name",js.a5e.RemoveSpecial(json.get(MonsterWeaponData,"DisplayName")))]
 
 [h,if(json.get(MonsterWeaponData,"WeaponType")=="@@NewType"),CODE:{
-	[h:MonsterWeaponData = json.set(MonsterWeaponData,"WeaponType",pm.RemoveSpecial(json.get(MonsterWeaponData,"NewTypeNameWeapon")))]
+	[h:MonsterWeaponData = json.set(MonsterWeaponData,"WeaponType",js.a5e.RemoveSpecial(json.get(MonsterWeaponData,"NewTypeNameWeapon")))]
 	[h:MonsterWeaponData = json.remove(MonsterWeaponData,"NewTypeNameWeapon")]
 	[h:MonsterWeaponData = json.remove(MonsterWeaponData,"isNewTemplateWeapon")]
 };{}]
 
 [h:MonsterWeaponData = ct.a5e.WeaponDataProcessing(MonsterWeaponData)]
 
-[h:MonsterWeaponData = json.set(MonsterWeaponData,"Type","Weapon")]
+[h:MonsterWeaponData = json.set(MonsterWeaponData,
+	"Type","Weapon",
+	"isStackable",0	
+)]
 
 [h:closeDialog("MonsterWeaponCreation")]
 
@@ -42,14 +45,13 @@
 	)]
 	[h:MonsterWeaponData = json.set(MonsterWeaponData,"Effects",json.append("",json.set("","Subeffects",json.append("",DummyWeaponSubeffect))))]
 
-    [h:AllWeaponData = json.set(data.getData("addon:","pm.a5e.core","ct.NewWeapon"),getPlayerName(),MonsterWeaponData)]
-    [h:setLibProperty("ct.NewWeapon",AllWeaponData,"Lib:pm.a5e.Core")]
     [h,MACRO("CreateSubeffect@Lib:pm.a5e.Core"): json.set("",
         "EffectType","Weapon",
 		"EffectsNumber",EffectsNumber,
         "WhichSubeffect",WhichSubeffect,
         "ParentToken",currentToken(),
-		"ExtraData",json.set("","WeaponSpecialEffectChoice",json.get(MonsterWeaponData,"SpecialEffects"))
+		"ExtraData",json.set("","WeaponSpecialEffectChoice",json.get(MonsterWeaponData,"SpecialEffects")),
+		"FeatureData",MonsterWeaponData
     )]
 };{
 	[h:MonsterWeaponData = json.remove(MonsterWeaponData,"ParentToken")]
@@ -82,6 +84,6 @@
 
 		[h:createMacro(NewWeaponMacroProps)]		
 	};{
-		[h,MACRO:("AddItemToken@Lib:pm.a5e.Core"): json.set("","Item",MonsterWeaponData,"ParentToken",ParentToken,"NumberAdded",1)]
+		[h,MACRO("AddItemToken@Lib:pm.a5e.Core"): json.set("","Item",MonsterWeaponData,"ParentToken",ParentToken,"NumberAdded",1)]
 	}]
 }]

@@ -44,7 +44,7 @@
 			[h:abort(input(" capClass | "+pm.GetClasses("DisplayName",",")+",Chosen Class | Max Level Capped by Highest Spell Slot Level in | LIST | VALUE=STRING "))]
 			[h,if(capClass=="Chosen Class"):
 				capClass = "Chosen_Class";
-				capClass = pm.RemoveSpecial(capClass)
+				capClass = js.a5e.RemoveSpecial(capClass)
 			]
 			[h:SpellOptions = json.set(SpellOptions,"LevelBasedMaxLevel",capClass)]
 		};
@@ -68,7 +68,7 @@
             [h:abort(input(" capClass | "+pm.GetClasses("DisplayName",",")+",Chosen Class | Max Level Capped by Highest Spell Slot Level in | LIST | VALUE=STRING "))]
             [h,if(capClass=="Chosen Class"):
                 capClass = "Chosen_Class";
-                capClass = pm.RemoveSpecial(capClass)
+                capClass = js.a5e.RemoveSpecial(capClass)
             ]
             [h:SpellOptions = json.set(SpellOptions,"LevelBasedMaxLevel",capClass)]
         };

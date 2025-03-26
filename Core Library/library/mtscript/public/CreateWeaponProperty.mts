@@ -4,11 +4,11 @@
 ))]
 
 [h:wea.TypeData = json.set("",
-	"Name",pm.RemoveSpecial(wea.Name),
+	"Name",js.a5e.RemoveSpecial(wea.Name),
 	"DisplayName",wea.Name
 )]
 
-[h:wea.SourcebookLib = json.get(json.path.read(data.getData("addon:","pm.a5e.core","ms.Sources"),"\$[?(@.Name=='"+pm.RemoveSpecial(wea.Source)+"')]['Library']"),0)]
+[h:wea.SourcebookLib = json.get(json.path.read(data.getData("addon:","pm.a5e.core","ms.Sources"),"\$[?(@.Name=='"+js.a5e.RemoveSpecial(wea.Source)+"')]['Library']"),0)]
 [h:setLibProperty("sb.WeaponProperties",json.append(getLibProperty("sb.WeaponProperties","Lib:"+wea.SourcebookLib),wea.TypeData),"Lib:"+wea.SourcebookLib)]
 
 [r:wea.Name+" weapon property from the sourcebook "+wea.Source+" created."]

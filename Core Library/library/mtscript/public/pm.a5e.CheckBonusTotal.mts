@@ -1,7 +1,7 @@
 [h:d20Data = arg(0)]
 [h:d20Type = json.get(d20Data,"Type")]
 
-[h:CurrentSkill = pm.RemoveSpecial(json.get(d20Data,"Skill"))]
+[h:CurrentSkill = js.a5e.RemoveSpecial(json.get(d20Data,"Skill"))]
 
 [h,if(CurrentSkill == "NoSkillSelected"),CODE:{
 	[h:ProfType = 0]

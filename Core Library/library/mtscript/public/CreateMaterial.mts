@@ -19,13 +19,13 @@
 };{}]
 
 [h:mat.MaterialData = json.set("",
-	"Name",pm.RemoveSpecial(mat.Name),
+	"Name",js.a5e.RemoveSpecial(mat.Name),
 	"DisplayName",mat.Name,
 	"AC",mat.AC,
 	"Tags",MaterialTagsChosen
 )]
 
-[h:mat.SourcebookLib = json.get(json.path.read(data.getData("addon:","pm.a5e.core","ms.Sources"),"\$[?(@.Name=='"+pm.RemoveSpecial(mat.Source)+"')]['Library']"),0)]
+[h:mat.SourcebookLib = json.get(json.path.read(data.getData("addon:","pm.a5e.core","ms.Sources"),"\$[?(@.Name=='"+js.a5e.RemoveSpecial(mat.Source)+"')]['Library']"),0)]
 [h:setLibProperty("sb.ObjectMaterials",json.append(getLibProperty("sb.ObjectMaterials","Lib:"+mat.SourcebookLib),mat.MaterialData),"Lib:"+mat.SourcebookLib)]
 
 [r:mat.Name+" material from the sourcebook "+mat.Source+" created."]

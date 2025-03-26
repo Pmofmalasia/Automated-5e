@@ -4,6 +4,7 @@
 [h,if(Effects == ""): Effects = "[]"]
 [h:switchToken(ParentToken)]
 
+[h:newMacros = "[]"]
 [h,foreach(ability,pm.AbilityList),CODE:{
 	[h:pm.CastTimeNote = if(or(json.get(ability,"UseTime")=="",lower(json.get(ability,"UseTime"))=="action"),""," <b>("+json.get(ability,"UseTime")+")</b>")]
 	[h:pm.NewMacroLabel = json.get(ability,"DisplayName")+if(json.get(ability,"Marker")=="",""," "+json.get(ability,"Marker"))+pm.CastTimeNote]
@@ -37,5 +38,7 @@
 		"tooltip",pm.NewMacroTooltip,
 		"delim","json"
 	)]
-	[h:createMacro(pm.NewMacroProps)]
+	[h:newMacros = json.append(newMacros,createMacro(pm.NewMacroProps))]
 }]
+
+[h:return(0,newMacros)]

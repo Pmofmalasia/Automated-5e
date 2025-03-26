@@ -14,7 +14,7 @@
 [h:CreatureSubtypes = pm.a5e.GetCreatureSubtypes(firstCreatureType,"DisplayName")]
 [h:allSubtypes = json.unique(json.merge(matchingRaces,CreatureSubtypes))]
 [h:creatureSubtypeOptions = ""]
-[h,foreach(tempSubtype,allSubtypes): creatureSubtypeOptions = creatureSubtypeOptions + "<option value='"+pm.RemoveSpecial(tempSubtype)+"'>"+tempSubtype+"</option>"]
+[h,foreach(tempSubtype,allSubtypes): creatureSubtypeOptions = creatureSubtypeOptions + "<option value='"+js.a5e.RemoveSpecial(tempSubtype)+"'>"+tempSubtype+"</option>"]
 [h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowCreatureSubtype'><th><label for='CreatureSubtype'>Creature Subtype/Race:</label></th><td><select id='CreatureSubtype' name='CreatureSubtype'><option value=''>None</option>"+creatureSubtypeOptions+"</select></td></tr>"]
 
 [h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowAlignment'><th><label for='Alignment'>Alignment:</label></th><td>
@@ -37,7 +37,7 @@
 
 [h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowMaxHP'><th><label for='MaxHP'>Maximum HP:</label></th><td><input type='number' id='MaxHP' name='MaxHP' min='1' style='width:40px'></td></tr>"]
 
-[h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowHitDie'><th><label for='HitDieNum'>Total Hit Dice:</label></th><td><input type='number' id='HitDieNum' name='HitDieNum' min='1' style='width:25px'> d <input type='number' id='HitDieSize' name='HitDieSize' min='1' style='width:25px'> + <input type='number' id='HitDieBonus' name='HitDieBonus' min='0' style='width:25px'></td></tr>"]
+[h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowHitDie'><th><label for='HitDieNum'>Total Hit Dice:</label></th><td><input type='number' id='HitDieNum' name='HitDieNum' min='1' style='width:25px'> d <input type='number' id='HitDieSize' name='HitDieSize' min='1' style='width:25px'> + <input type='number' id='HitDieBonus' name='HitDieBonus' style='width:25px'></td></tr>"]
 
 [h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowSpeed'><th><label for='Speed'>Walking Speed:</label></th><td><input type='number' id='Speed' name='Speed' min='0' style='width:25px' value='30'></td></tr>"]
 
@@ -64,7 +64,7 @@
 [h:baseConditionOptions = ut.a5e.GenerateSelectionHTML(allConditions,1,"ConditionImmunity")]
 [h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowConditionImmunities'><th>Condition Immunities:</th><td><div class='check-multiple' id='ConditionImmunities' style='width:100%; height='100px'>"+baseConditionOptions+"</div></td></tr>"]
 
-[h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowLimbs'><th><label for='Limbs'>Limb Configuration:</label></th><td><select id='Limbs' name='Limbs'><option value='Biped'>Bipedal (2 Arms)</option><option value='Quadriped'>Quadripedal</option><option value='Custom'>Other Configuration</option></select></td></tr>"]
+[h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowLimbs'><th><label for='Limbs'>Limb Configuration:</label></th><td><select id='Limbs' name='Limbs'><option value='Biped'>Bipedal (2 Arms)</option><option value='Quadriped'>Quadripedal</option><option value='None'>No Limbs</option><option value='Custom'>Other Configuration</option></select></td></tr>"]
 
 [h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowIsVision'><th><label for='isVision'>Gives Special Vision:</label></th><td><input type='checkbox' id='isVision' name='isVision' onchange='createVisionRows("+'"rowLanguageOptions"'+")'></td></tr>"]
 
@@ -74,7 +74,7 @@
 [h:LanguageOptions = ut.a5e.GenerateSelectionHTML(AllLanguages)]
 [h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowLanguageKnown0'><th><label for='LanguageKnown0'>Known Language #1:</label></th><td><select id='LanguageKnown0' name='LanguageKnown0' value=1 min=0>"+LanguageOptions+"</select></td></tr>"]
 
-[h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowLanguageKnownButtons'><th text-align='center' colspan='2'><input type='button' id='addLanguageKnown' value='New Language Known' onclick='addLanguageKnownRow()'>  <input type='button' id='removeLanguageKnown' value='Remove Language Known' onclick='removeLanguageKnownRow()'><input type='hidden' id='LanguageKnownNumber' name='LanguageKnownNumber' value=0></th></tr>"]
+[h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowLanguageKnownButtons'><th style='text-align:center' colspan='2'><input type='button' id='addLanguageKnown' value='New Language Known' onclick='addLanguageKnownRow()'>  <input type='button' id='removeLanguageKnown' value='Remove Language Known' onclick='removeLanguageKnownRow()'><input type='hidden' id='LanguageKnownNumber' name='LanguageKnownNumber' value=0></th></tr>"]
 
 [h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowProficiency'><th><label for='Proficiency'>Proficiency Bonus:</label></th><td><input type='number' id='Proficiency' name='Proficiency' min='1' style='width:25px' value='2'></td></tr>"]
 
@@ -98,6 +98,6 @@
 
 [h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowLibrary'><th><label for='Library'>Monster Sourcebook:</label></th><td><select id='Library' name='Library'>"+sourcebookOptions+"</select></td></tr>"]
 
-[h:monsterCreationHTML = monsterCreationHTML + "<tr><th text-align='center' colspan='2'><input type='submit' class='theme-fix-submit' id='submitButton' value='Submit'></th></tr>"]
+[h:monsterCreationHTML = monsterCreationHTML + "<tr><th style='text-align:center' colspan='2'><input type='submit' class='theme-fix-submit' id='submitButton' value='Submit'></th></tr>"]
 
 [h:html.dialog5("Monster Creation","lib://pm.a5e.core/MonsterCreation.html?cachelib=false","value="+base64.encode(monsterCreationHTML)+"; closebutton=0; width=400; height=1050")]

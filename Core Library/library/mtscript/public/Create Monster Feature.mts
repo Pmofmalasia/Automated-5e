@@ -12,10 +12,10 @@
 	" ab.LegendaryAction |  | Is Feature a Legendary Action | CHECK "
 ))]
 
-[h:ab.SourceLib = json.get(json.path.read(data.getData("addon:","pm.a5e.core","ms.Sources"),"\$[?(@.Name=='"+pm.RemoveSpecial(ab.Source)+"')]['Library']"),0)]
+[h:ab.SourceLib = json.get(json.path.read(data.getData("addon:","pm.a5e.core","ms.Sources"),"\$[?(@.Name=='"+js.a5e.RemoveSpecial(ab.Source)+"')]['Library']"),0)]
 [h:ab.Master=""]
 [h:ab.DisplayName = ab.Name]
-[h:ab.Name = pm.RemoveSpecial(ab.Name)]
+[h:ab.Name = js.a5e.RemoveSpecial(ab.Name)]
 [h:ab.Final = json.set("",
 	"Name",ab.Name,
 	"DisplayName",ab.DisplayName,
@@ -29,7 +29,7 @@
 )]
 
 [h,if(ab.IsUnique):
-    ab.Final = json.set(ab.Final,"Subclass",pm.RemoveSpecial(getName()));
+    ab.Final = json.set(ab.Final,"Subclass",js.a5e.RemoveSpecial(getName()));
     ab.Final = json.set(ab.Final,"Subclass","")
 ]
 
@@ -40,6 +40,7 @@
             " LegendaryActionNumber | 0,1,2,3,4,5,6 | Legendary Actions | LIST | SELECT=3 "
         ))]
 
+[h:"<!-- Hardcoded: ResourceData -->"]
         [h:LegendaryActionFeature = json.set("",
             "Name","LegendaryActions",
             "DisplayName","Legendary Actions",
@@ -50,8 +51,17 @@
             "Optional",0,
             "MultiFeature",0,
             "Library","SRD",
-            "Resource",LegendaryActionNumber,
-            "MaxResource","[r:"+LegendaryActionNumber+"]"
+            "Resource",json.set("","LegendaryActions",LegendaryActionNumber),
+            "ResourceData",json.set("",
+				"Restoration",json.set("",
+					"StartTurn",json.set("","Method","Full"),
+					"ShortRest",json.set("","Method","Full"),
+					"LongRest",json.set("","Method","Full")),
+				"Resources",json.set("",
+					"Name","LegendaryActions",
+					"DisplayName","Legendary Actions",
+					"MaxResource",json.set("","Base",LegendaryActionNumber)
+			))
         )]
 
         [h:setProperty("a5e.stat.AllFeatures",json.append(getProperty("a5e.stat.AllFeatures"),LegendaryActionFeature))]
@@ -70,19 +80,18 @@
 
 [h:HasActiveEffects = json.contains(ab.Final,"ButtonInfo")]
 [h,if(HasActiveEffects),CODE:{
-	[h:setLibProperty("ct.NewFeature",json.set(data.getData("addon:","pm.a5e.core","ct.NewFeature"),getPlayerName(),ab.Final),"Lib:pm.a5e.Core")]
-
 	[h,MACRO("CreateSubeffect@Lib:pm.a5e.Core"): json.set("",
 		"WhichSubeffect",1,
 		"WhichEffect",1,
 		"EffectsNumber",json.length(json.get(ab.Final,"ButtonInfo")),
 		"EffectType","Feature",
 		"ParentToken",currentToken(),
+		"FeatureData",ab.Final,
 		"ExtraData",json.set("","FeatureType","MonsterFeature","UniqueMonsterFeature",ab.IsUnique)
 	)]
 };{
 	[h:setProperty("a5e.stat.AllFeatures",json.append(getProperty("a5e.stat.AllFeatures"),json.set(ab.Final,"IsActive",1)))]
-	[r:ab.DisplayName+" monster feature from the sourcebook "+ab.Source+" created."]
+	[h:broadcast(ab.DisplayName+" monster feature from the sourcebook "+ab.Source+" created.")]
 
 	[h,if(!ab.IsUnique),CODE:{
 		[h:setLibProperty("sb.MonsterFeatures",json.sort(json.append(getLibProperty("sb.MonsterFeatures","Lib:"+ab.SourceLib),ab.Final),"a","Class","Subclass","Level","DisplayName"),"Lib:"+ab.SourceLib)]

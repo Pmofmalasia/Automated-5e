@@ -1,0 +1,141 @@
+Feature - ResourceData Key:
+{
+	"Restoration":{
+		"RESTORATION_INSTANCE":[{
+			"Name":"STRING: Optional ResourceName of resource to restore - if blank, all resources of the feature will be restored.",
+			"Method":"STRING: Fixed, Rolled, Chance, UpTo, Attribute, Proficiency, or Full",
+			"DieNumber":"NUMBER: For 'Rolled' or 'Chance' methods",
+			"DieSize":"Same as above",
+			"Bonus":"NUMBER: For Rolled, Chance, Attribute, or Proficiency",
+			"Amount":"NUMBER: For Fixed or UpTo",
+			"Target":"NUMBER: For Chance, number that must be rolled to restore",
+			"Multiplier":"NUMBER: For Attribute or Proficiency",
+			"Identifier":"STRING | OBJECT: Identifier for object used to restore resource",
+			"RESTORATION_INSTANCE_OPTIONS (not a key)":["ShortRest","LongRest","Dawn","Dusk","StartTurn","EndTurn","Initiative","Item"]
+		},{
+			"NOTE:":"Can just be an object instead of an array of objects if only one type of restoration is needed for that instance (most cases)"
+		}]
+	},
+	"Resources":{
+		"RESOURCE_NAME":{
+			"Name":"STRING: ResourceName (same as parent key)",
+			"DisplayName":"STRING: self explanatory",
+			"Base":"NUMBER: Base amount - OPTIONAL, not set if relies entirely on calculations",
+			"Minimum":"NUMBER: Optional minimum amount of resource you can have (for calculated ones)",
+			"Attribute":{
+				"Attribute":"STRING or OBJECT: Attribute modifier used to calculate, PrimeStat to use chosen primary stat for feature; OBJECT if there are multiple options for attribute to be selected (NOTE: This structure doesn't exist - it's for calculating PrimeStat. May be good to actually have for resources though).",
+				"Attribute_OBJECT_METHOD":{
+					"Stats":"ARRAY: String names of stats",
+					"EvalMethod":"STRING: max, min, or choose - method of choosing among stats in Stats key."
+				},
+				"Modifier":"STRING: Add, Multiply, or Divide",
+				"ModifierAmount":"NUMBER: Amount to do the above with"
+			},
+			"Level":{
+				"Modifier":"STRING: Add, Multiply, or Divide",
+				"ModifierAmount":"NUMBER: Amount to do the above with",
+				"ScalingLevels":[
+					{
+						"Level":"NUMBER: Level at which 'Amount' is used for resource amount",
+						"Amount":"NUMBER: Amount of resource at corresponding level"
+					}
+				]
+			},
+			"ClassLevel":{
+				"Modifier":"STRING: Add, Multiply, or Divide",
+				"ModifierAmount":"NUMBER: Amount to do the above with",
+				"ScalingLevels":[
+					{
+						"Level":"NUMBER: Class level at which 'Amount' is used for resource amount",
+						"Amount":"NUMBER: Amount of resource at corresponding class level"
+					}
+				]
+			},
+			"ConditionTier":{
+				"Modifier":"STRING: Add, Multiply, or Divide",
+				"ModifierAmount":"NUMBER: Amount to do the above with"
+			},
+			"Proficiency":{
+				"Modifier":"STRING: Add, Multiply, or Divide",
+				"ModifierAmount":"NUMBER: Amount to do the above with"
+			},
+			"SlotLevel":{
+				"Level":"NUMBER: Base level of spell slot",
+				"Scaling":"STRING: Add, Multiply, or Divide base by scaling amount",
+				"ScalingAmount":"NUMBER: Amount to do the above with",
+				"Maximum":"NUMBER (OPTIONAL): Maximum spell level"
+			},
+			"DieSize":{
+				"Size":"NUMBER: Base size of die",
+				"Scaling":"STRING: Add, Multiply, or Divide base by scaling amount",
+				"ScalingAmount":"NUMBER: Amount to do the above with"
+			},
+			"TimeUnits":"STRING: Optional units of time (required for TimeResource)"
+		}
+	}
+}
+
+Feature - Resource Key:
+{
+	"RESOURCE_NAME":"NUMBER: Amount of current resource",
+	"RESOURCE_NAME":{
+		"Type":"STRING: Type of special resource (currently only Time)",
+		"Duration":"NUMBER: Duration remaining in rounds",
+		"isActive":"BOOLEAN: Yes/no currently powering something and counting down.",
+		"Powering":[
+			{
+				"Feature":"STRING | OBJECT: 'this' for this feature, identifier object for another feature",
+				"Minimum":"NUMBER: Minimum resource expended per use",
+				"Increment":"NUMBER: Resource is expended in increments of some number (e.g. spend in minutes instead of by the round)",
+				"ExpendedThisUse":"NUMBER: Amount expended so far, for use with the above two keys."
+			}
+		]
+	}
+}
+
+Subeffect - UseResource Key:
+[[{
+	"OVERALL_STRUCTURE":"Array of arrays of objects. Each object contains information on how each resource is used. The outer array assigns priority for each resource to be used (e.g. all resources in index 0 must be expended before using resources in index 1). Inner array is solely used for containing the objects, all resources within are equal in terms of priority."
+},{
+	"Type":"STRING: Type of resource used - Feature, SpellSlot, HitDice, or Time. Notes: SpellSlot checks for shared and feature spell slots; feature could potentially be used for feature spell slots, time resources, etc. to ignore the special aspects of those." - Change to SourceType/Type split?,
+	"ResourceUsed":"NUMBER: Base amount of resource used. For time resources, denotes minimum amount that must be taken away per use (e.g. use at minimum 5 minutes of time)",
+	"ResourceUsedMax":"NUMBER: Maximum amount of resource that can be spent.",
+	"SpellLevelMin":"NUMBER: Minimum spell level allowed to spend (for SpellSlot resources)",
+	"SpellLevelMax":"NUMBER | Empty: Maximum spell level allowed to spend. Empty if no limit. Unused if not a SpellSlot resource.",
+	"Increment":"NUMBER: Increment resource can be spent in, if not just a flat number",
+	"Activate":"NUMBER/BOOL: Activates (1) or deactivates (0) chosen resource - for time resources",
+	"Powering":"OBJECT | STRING: Object = Identifiers for a separate feature that is activated/deactivated when active. | String = 'this' is the only option - designates feature/item associated with the resource.",
+	"Identifier":{
+		"NOTE":"For feature/item/etc. resources only.",
+		"Resource":"STRING: Name of resource",
+		"Name":"STRING: Name of feature",
+		"Class":"STRING: Class of feature",
+		"Subclass":"STRING: You get it.",
+		"ItemID":"STRING: ItemID for items. May have it be set to 'this' to use the resource of the object used, needs work though. Currently not set until the item exists (because the ItemID doesn't exist until then)"
+	}
+}]]
+
+Code - calculateResourceData Output:
+{
+	"NOTE - NOT A KEY":"Output may be just this object (for a single resource calculated) or an object with keys of resource names containing this object for each resource",
+	"DisplayName":"STRING: Self explanatory.",
+	"MaxResource":"NUMBER | OBJECT: Most resources are numbers - amount of max resource. Time resources are objects (and potentially others in the future).",
+	"MaxResource (Object)":{
+		"Type":"STRING: Type of special resource (currently only Time)",
+		"Duration":"NUMBER: Duration in rounds (for time resources)",
+		"ExpendedThisUse":"NUMBER: Amount of resource expended so far this activation (time resources)",
+		"isActive":"NUMBER/BOOL: If time resource is active or not",
+	},
+	"SourceType":"STRING (optional): Where the resource comes from: Item, Feature, Condition, ItemCondition, HitDice, SpellSlot",
+	"Type":"STRING: Special resource type, if any. Current types: SpellSlot, HitDie, Die, Time",
+	"SlotLevel":"NUMBER: Level of resource spell slot (optional)",
+	"DieSize":"NUMBER: Size of resource die (optional)"
+}
+
+Code - getFeatureSpellSlots Output:
+{
+	"SAME AS ABOVE, BUT":"With additional keys as follows",
+	"Identifier":"OBJECT: Identifier for feature (standard name/class/subclass/ItemID/whatever)",
+	"CurrentResource":"NUMBER | OBJECT: Current amount of resource, type dependent on resource type (object only for Time resources currently)",
+	"Resource":"STRING: Name of resource"
+}

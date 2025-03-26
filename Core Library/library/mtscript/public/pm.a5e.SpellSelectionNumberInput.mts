@@ -45,7 +45,7 @@
 		[h:tempFilter = 1]
 	};
 	case "Attribute Based": {
-		[h:tempFilter = "max(1,json.get(getProperty('a5e.stat.AtrMods'),'"+pm.RemoveSpecial(ab.FilterChoice)+"')"+if(ab.MultiplierChoice=="1","","*"+ab.MultiplierChoice)+")"]
+		[h:tempFilter = "max(1,json.get(getProperty('a5e.stat.AtrMods'),'"+js.a5e.RemoveSpecial(ab.FilterChoice)+"')"+if(ab.MultiplierChoice=="1","","*"+ab.MultiplierChoice)+")"]
 	};
 	case "Other Flat Number": {
 		[h:tempFilter = ab.FilterChoice]
@@ -68,7 +68,7 @@
 		[h:tempFilter = "getProperty('a5e.stat.Proficiency')*"+ab.FilterChoice]
 	};
 	case "Proficiency Plus Attribute Based": {
-		[h:tempFilter = if(RoundingDirection=="Down","floor","ceiling")+"(("+levelMultiplier+")*pm.GetAbilityLevel(json.set('','Name','"+json.get(ab.FilterInfo,"Name")+"','Class','"+json.get(ab.FilterInfo,"Class")+"','Subclass','"+json.get(ab.FilterInfo,"Subclass")+"'))+("+primestatMultiplier+")*json.get(getProperty('a5e.stat.AtrMods'),'"+pm.RemoveSpecial(AttributeChoice)+"'))"]
+		[h:tempFilter = if(RoundingDirection=="Down","floor","ceiling")+"(("+levelMultiplier+")*pm.GetAbilityLevel(json.set('','Name','"+json.get(ab.FilterInfo,"Name")+"','Class','"+json.get(ab.FilterInfo,"Class")+"','Subclass','"+json.get(ab.FilterInfo,"Subclass")+"'))+("+primestatMultiplier+")*json.get(getProperty('a5e.stat.AtrMods'),'"+js.a5e.RemoveSpecial(AttributeChoice)+"'))"]
 	};
 	case "Custom": {
 		[h:tempFilter = ab.FilterChoice]

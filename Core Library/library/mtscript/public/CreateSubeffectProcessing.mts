@@ -2,21 +2,27 @@
 [h:EffectType = json.get(subeffectData,"EffectType")]
 [h:EffectsNumber = json.get(subeffectData,"EffectsNumber")]
 [h:subeffectData = json.remove(subeffectData,"EffectsNumber")]
-[h:subeffectData = json.remove(subeffectData,"EffectType")]
 [h:isPersistentEffect = json.contains(subeffectData,"isPersistentEffect")]
 [h:subeffectData = json.remove(subeffectData,"isPersistentEffect")]
+[h:FeatureData = json.get(subeffectData,"FeatureData")]
+[h,if(FeatureData == ""): FeatureData = "{}"; FeatureData = base64.decode(FeatureData)]
+[h:subeffectData = json.remove(subeffectData,"FeatureData")]
 
 [h:subeffectData = pm.a5e.KeyStringsToNumbers(subeffectData)]
 
 [h:thisSubeffectNum = number(json.get(subeffectData,"WhichSubeffect"))]
 [h:subeffectData = json.remove(subeffectData,"WhichSubeffect")]
 
-[h:CurrentFeatureData = data.getData("addon:","pm.a5e.core","ct.New"+if(isPersistentEffect,"Persistent","")+EffectType)]
-[h,if(CurrentFeatureData == ""): CurrentFeatureData = "{}"]
-[h:thisPlayerCurrentFeatureData = json.get(CurrentFeatureData,getPlayerName())]
-[h,if(thisPlayerCurrentFeatureData == ""): thisPlayerCurrentFeatureData = "{}"]
+[h,if(isPersistentEffect),CODE:{
+	[h:allMainEffectData = json.get(FeatureData,"Effects")]
+	[h:MainEffectsLastIndex = json.length(allMainEffectData)-1]
+	[h:allMainSubeffectsData = json.get(json.get(allMainEffectData,MainEffectsLastIndex),"Subeffects")]
+	[h:MainSubeffectsLastIndex = json.length(allMainSubeffectsData)-1]
 
-[h:allEffectData = json.get(thisPlayerCurrentFeatureData,"Effects")]
+	[h:allEffectData = json.get(json.get(allMainSubeffectsData,MainSubeffectsLastIndex),"PersistentEffects")]
+};{
+	[h:allEffectData = json.get(FeatureData,"Effects")]
+}]
 [h,if(allEffectData!=""),CODE:{
 	[h,if(thisSubeffectNum > 1):
 		currentEffectData = json.get(allEffectData,json.length(allEffectData)-1);
@@ -26,15 +32,16 @@
 	[h:currentEffectData = "{}"]
 }]
 
-[h:FeatureName = json.get(thisPlayerCurrentFeatureData,"Name")]
-[h:FeatureDisplayName = json.get(thisPlayerCurrentFeatureData,"DisplayName")]
+[h:FeatureName = json.get(FeatureData,"Name")]
+[h:FeatureDisplayName = json.get(FeatureData,"DisplayName")]
 
+[h:"<!-- NOTE: Presence of UseTime key is a stand-in for being a new effect (as opposed to a linked subeffect, which would not have an associated UseTime). -->"]
 [h,if(json.contains(subeffectData,"UseTime")),CODE:{
 	[h,if(json.contains(subeffectData,"EffectDisplayName")),CODE:{
 		[h:EffectDisplayName = json.get(subeffectData,"EffectDisplayName")]
 		[h:currentEffectData = json.set(currentEffectData,
 			"DisplayName",EffectDisplayName,
-			"Name",pm.RemoveSpecial(EffectDisplayName)
+			"Name",js.a5e.RemoveSpecial(EffectDisplayName)
 		)]
 
 		[h:subeffectData = json.remove(subeffectData,"EffectDisplayName")]
@@ -296,7 +303,7 @@
 			"DamageDieNumber",number(json.get(subeffectData,"DamageDieNum"+whichType)),
 			"DamageDieSize",number(json.get(subeffectData,"DamageDieSize"+whichType)),
 			"DamageFlatBonus",number(json.get(subeffectData,"DamageFlatBonus"+whichType)),
-			"IsModBonus",json.contains(subeffectData,"ModBonus"+whichType)
+			"IsModBonus",json.get(subeffectData,"ModBonus"+whichType)
 		)]
 	};{
 		[h,if(json.get(subeffectData,"PriorDamageType"+whichType) == "TotalDamage"):
@@ -353,7 +360,7 @@
 	case "Spell": ConditionIdentificationInfo = json.set("","Class","Spell","Subclass",FeatureName);
 	case "Weapon": ConditionIdentificationInfo = json.set("","Class","Item","Subclass",FeatureName);
 	case "Object": ConditionIdentificationInfo = json.set("","Class","Item","Subclass",FeatureName);
-	case "Feature": ConditionIdentificationInfo = json.set("","Class",json.get(thisPlayerCurrentFeatureData,"Class"),"Subclass",json.get(thisPlayerCurrentFeatureData,"Subclass"));
+	case "Feature": ConditionIdentificationInfo = json.set("","Class",json.get(FeatureData,"Class"),"Subclass",json.get(FeatureData,"Subclass"));
 	default: ConditionIdentificationInfo = json.set("","Class","","Subclass","")
 ]
 
@@ -377,8 +384,8 @@
 		};
 		case "11":{
 			[h:conditionNames = json.fromList(encode(json.get(subeffectData,"AlwaysAddedEffectSpecificNames")),"%0A")]
-			[h,foreach(tempCondition,conditionNames): conditionsAlwaysAdded = json.append(conditionsAlwaysAdded,json.set(ConditionIdentificationInfo,"Name",pm.RemoveSpecial(pm.EvilChars(decode(tempCondition))),"DisplayName",decode(tempCondition)))]
-			[h,foreach(tempCondition,conditionNames): EffectSpecificConditions = json.append(EffectSpecificConditions,json.set(ConditionIdentificationInfo,"Name",pm.RemoveSpecial(tempCondition),"DisplayName",decode(tempCondition)))]
+			[h,foreach(tempCondition,conditionNames): conditionsAlwaysAdded = json.append(conditionsAlwaysAdded,json.set(ConditionIdentificationInfo,"Name",js.a5e.RemoveSpecial(pm.EvilChars(decode(tempCondition))),"DisplayName",decode(tempCondition)))]
+			[h,foreach(tempCondition,conditionNames): EffectSpecificConditions = json.append(EffectSpecificConditions,json.set(ConditionIdentificationInfo,"Name",js.a5e.RemoveSpecial(tempCondition),"DisplayName",decode(tempCondition)))]
 			[h:subeffectData = json.remove(subeffectData,"isEffectSpecificAlwaysAddedMultiple")]
 			[h:subeffectData = json.remove(subeffectData,"AlwaysAddedEffectSpecificNames")]
 		};
@@ -391,7 +398,7 @@
 [h,if(isCondition == "Choose" || isCondition == "Mixture"),CODE:{
 	[h,foreach(tempCondition,allBaseConditions),CODE:{
 		[h:tempConditionName = json.get(tempCondition,"Name")]
-		[h,if(json.contains(subeffectData,"ConditionOption"+tempConditionName)): conditionOptions = json.append(conditionOptions,json.set("","Name",tempConditionName,"DisplayName",json.get(tempCondition,"DisplayName"),"Condition","AlwaysAdded",0))]
+		[h,if(json.contains(subeffectData,"ConditionOption"+tempConditionName)): conditionOptions = json.append(conditionOptions,json.set("","Name",tempConditionName,"DisplayName",json.get(tempCondition,"DisplayName"),"Class","Condition","AlwaysAdded",0))]
 		[h:subeffectData = json.remove(subeffectData,"ConditionOption"+tempConditionName)]
 	}]
 
@@ -402,8 +409,8 @@
 		};
 		case "11":{
 			[h:conditionNames = json.fromList(encode(json.get(subeffectData,"ConditionOptionEffectSpecificNames")),"%0A")]
-			[h,foreach(tempCondition,conditionNames): conditionOptions = json.append(conditionOptions,json.set(ConditionIdentificationInfo,"Name",pm.RemoveSpecial(pm.EvilChars(decode(tempCondition))),"DisplayName",decode(tempCondition)))]
-			[h,foreach(tempCondition,conditionNames): EffectSpecificConditions = json.append(EffectSpecificConditions,json.set(ConditionIdentificationInfo,"Name",pm.RemoveSpecial(pm.EvilChars(decode(tempCondition))),"DisplayName",decode(tempCondition)))]
+			[h,foreach(tempCondition,conditionNames): conditionOptions = json.append(conditionOptions,json.set(ConditionIdentificationInfo,"Name",js.a5e.RemoveSpecial(pm.EvilChars(decode(tempCondition))),"DisplayName",decode(tempCondition)))]
+			[h,foreach(tempCondition,conditionNames): EffectSpecificConditions = json.append(EffectSpecificConditions,json.set(ConditionIdentificationInfo,"Name",js.a5e.RemoveSpecial(pm.EvilChars(decode(tempCondition))),"DisplayName",decode(tempCondition)))]
 			[h:subeffectData = json.remove(subeffectData,"isEffectSpecificConditionOptionMultiple")]
 			[h:subeffectData = json.remove(subeffectData,"ConditionOptionEffectSpecificNames")]
 		};
@@ -500,7 +507,7 @@
 [h:isSummons = json.get(subeffectData,"isSummons")]
 [h,if(isSummons != "No"),CODE:{
 	[h:summonReturnData = ct.a5e.SummonsInputProcessing(subeffectData)]
-	[h:subeffectData = json.get(summonReturnData,"Subeffect")]
+	[h:subeffectData = json.get(summonReturnData,"Input")]
 	[h:SummonData = json.get(summonReturnData,"Summon")]
 
 	[h:subeffectData = json.set(subeffectData,"Summon",SummonData)]
@@ -508,109 +515,10 @@
 [h:subeffectData = json.remove(subeffectData,"isSummons")]
 
 [h,if(json.contains(subeffectData,"isUseResource")),CODE:{
-	[h:ResourceData = "{}"]
 	[h:subeffectData = json.remove(subeffectData,"isUseResource")]
-
-	[h:"<!-- NOTE: Item resources do not set their ItemIDs yet because they don't exist until the item is added. This will occur in AddItemProcessing or similar functions. -->"]
-
-	[h,if(json.get(subeffectData,"isUseUniqueResource") > 0),CODE:{
-		[h:UniqueResourceIdentificationData = json.set("",
-			"Name",FeatureName,
-			"Class",json.get(thisPlayerCurrentFeatureData,"Class"),
-			"Subclass",json.get(thisPlayerCurrentFeatureData,"Subclass")
-		)]
-
-		[h,switch(EffectType):
-			case "Object": UniqueResourceIdentificationData = json.set(UniqueResourceIdentificationData,"ResourceSource","Item");
-			case "Weapon": UniqueResourceIdentificationData = json.set(UniqueResourceIdentificationData,"ResourceSource","Item");
-			case "Condition": UniqueResourceIdentificationData = json.set(UniqueResourceIdentificationData,"ResourceSource","Condition");
-			default: UniqueResourceIdentificationData = json.set(UniqueResourceIdentificationData,"ResourceSource","Feature")
-		]
-
-		[h:UniqueResourceData = json.set("",
-			"Resource",UniqueResourceIdentificationData,
-			"ResourceUsed",json.get(subeffectData,"UseUniqueResourceMin"),
-			"Increment",json.get(subeffectData,"UseUniqueResourceIncrements")
-		)]
-		[h:subeffectData = json.remove(subeffectData,"UseUniqueResourceMin")]
-		[h:subeffectData = json.remove(subeffectData,"UseUniqueResourceIncrements")]
-
-		[h,if(json.contains(subeffectData,"isNoUniqueResourceUseLimit")):
-			UniqueResourceData = json.set(UniqueResourceData,"ResourceUsedMax",99999);
-			UniqueResourceData = json.set(UniqueResourceData,"ResourceUsedMax",json.get(subeffectData,"UseUniqueResourceMax"))
-		]
-		[h:subeffectData = json.remove(subeffectData,"isNoUniqueResourceUseLimit")]
-		[h:subeffectData = json.remove(subeffectData,"UseUniqueResourceMax")]
-
-		[h,if(json.contains(subeffectData,"UseUniqueResourceKey")): UniqueResourceData = json.set(UniqueResourceData,"ResourceKey",json.get(subeffectData,"UseUniqueResourceKey"))]
-		[h:subeffectData = json.remove(subeffectData,"UseUniqueResourceKey")]
-
-		[h,if(json.get(subeffectData,"isUseUniqueResource") == 1):
-			ResourceData = json.set(ResourceData,"Feature",UniqueResourceData);
-			ResourceData = json.set(ResourceData,"FeatureBackup",UniqueResourceData)
-		]
-	};{}]
-	[h:subeffectData = json.remove(subeffectData,"isUseUniqueResource")]
-
-	[h,if(json.get(subeffectData,"isUseSpellSlots") > 0),CODE:{
-		[h:SpellResourceData = json.set("",
-			"Option",json.get(subeffectData,"isUseSpellSlots"),
-			"SpellLevelMin",json.get(subeffectData,"UseSpellSlotMin")
-		)]
-		[h:subeffectData = json.remove(subeffectData,"UseSpellSlotMin")]
-
-		[h,if(!json.contains(subeffectData,"isNoSpellSlotUseLimit")): SpellResourceData = json.set(SpellResourceData,"SpellLevelMax",json.get(subeffectData,"UseSpellSlotMax"))]
-		[h:subeffectData = json.remove(subeffectData,"isNoSpellSlotUseLimit")]
-		[h:subeffectData = json.remove(subeffectData,"UseSpellSlotMax")]
-
-		[h:ResourceData = json.set(ResourceData,"SpellSlots",SpellResourceData)]
-	};{}]
-	[h:subeffectData = json.remove(subeffectData,"isUseSpellSlots")]
-
-	[h,if(json.get(subeffectData,"isUseHitDice") > 0),CODE:{
-		[h:HitDiceData = json.set("",
-			"Option",json.get(subeffectData,"isUseHitDice"),
-			"ResourceUsed",json.get(subeffectData,"UseHitDiceMin"),
-			"Increment",json.get(subeffectData,"UseHitDiceIncrements")
-		)]
-		[h:subeffectData = json.remove(subeffectData,"UseHitDiceMin")]
-		[h:subeffectData = json.remove(subeffectData,"UseHitDiceIncrements")]
-
-		[h,if(json.contains(subeffectData,"isNoHitDiceUseLimit")):
-			HitDiceData = json.set(HitDiceData,"ResourceUsedMax",99999);
-			HitDiceData = json.set(HitDiceData,"ResourceUsedMax",json.get(subeffectData,"UseHitDiceMax"))
-		]
-		[h:subeffectData = json.remove(subeffectData,"isNoHitDiceUseLimit")]
-		[h:subeffectData = json.remove(subeffectData,"UseHitDiceMax")]
-
-		[h:ResourceData = json.set(ResourceData,"HitDice",HitDiceData)]
-	};{}]
-	[h:subeffectData = json.remove(subeffectData,"isUseHitDice")]
-
-	[h:"<!-- TODO: Add resource selection from feature other than the one being created (for any resource and for time resource) -->"]
-	[h:subeffectData = json.remove(subeffectData,"isUseOtherFeatureResource")]
-	
-	[h,if(json.get(subeffectData,"isToggleTimeResource") > 0),CODE:{
-		[h:UniqueResourceIdentificationData = json.set("",
-			"Name",FeatureName,
-			"Class",json.get(thisPlayerCurrentFeatureData,"Class"),
-			"Subclass",json.get(thisPlayerCurrentFeatureData,"Subclass")
-		)]
-
-		[h,switch(EffectType):
-			case "Object": UniqueResourceIdentificationData = json.set(UniqueResourceIdentificationData,"ResourceSource","Item");
-			case "Weapon": UniqueResourceIdentificationData = json.set(UniqueResourceIdentificationData,"ResourceSource","Item");
-			case "Condition": UniqueResourceIdentificationData = json.set(UniqueResourceIdentificationData,"ResourceSource","Condition");
-			default: UniqueResourceIdentificationData = json.set(UniqueResourceIdentificationData,"ResourceSource","Feature")
-		]
-
-		[h:TimeResourceData = json.set("","isTimeActive",if(json.get(subeffectData,"isToggleTimeResource") == 2,0,1),"Resource",UniqueResourceIdentificationData)]
-		[h:subeffectData = json.remove(subeffectData,"isToggleTimeResource")]
-
-		[h:ResourceData = json.set(ResourceData,"TimeResource",TimeResourceData)]
-	};{}]
-
-	[h:subeffectData = json.set(subeffectData,"UseResource",ResourceData)]
+	[h:UseResourceData = ct.a5e.UseResourceProcessing(subeffectData)]
+	[h:subeffectData = json.get(UseResourceData,"InputData")]
+	[h:subeffectData = json.set(subeffectData,"UseResource",json.get(UseResourceData,"Resource"))]
 };{}]
 
 [h:subeffectData = json.remove(subeffectData,"isUncommonEffects")]
@@ -729,7 +637,7 @@
 			"AHLScaling",0,
 			"AHLValue",0)
 	]
-	
+
 	[h:subeffectData = json.remove(subeffectData,"isMoveTarget")]
 	[h:subeffectData = json.remove(subeffectData,"moveTargetValue")]
 	[h:subeffectData = json.remove(subeffectData,"moveTargetUnits")]
@@ -743,11 +651,28 @@
 [h,if(json.get(subeffectData,"savePreventMove") != ""): SaveData = json.set(SaveData,"MoveResisted",json.get(subeffectData,"savePreventMove"))]
 [h:subeffectData = json.remove(subeffectData,"savePreventMove")]
 
+[h,if(json.get(subeffectData,"isTransform") != ""),CODE:{
+	[h:TransformReturnData = ct.a5e.TransformInputProcessing(subeffectData,FeatureData)]
+	[h:subeffectData = json.get(TransformReturnData,"Input")]
+	[h:TransformData = json.get(TransformReturnData,"Transform")]
+	[h:subeffectData = json.set(subeffectData,"Transform",TransformData)]
+
+	[h,if(json.contains(subeffectData,"PreventTransform")): SaveData = json.set(SaveData,"TransformResisted",1)]
+	[h:subeffectData = json.remove(subeffectData,"PreventTransform")]
+};{}]
+
 [h,if(json.contains(subeffectData,"isSetHP")),CODE:{
+	[h:"<!-- Note: SetHPAmount key is used for SetHP data and is already set from input -->"]
 	[h,if(json.contains(subeffectData,"savePreventSetHP")): SaveData = json.set(SaveData,"SetHPResisted",1)]
 
 	[h:subeffectData = json.remove(subeffectData,"isSetHP")]
 	[h:subeffectData = json.remove(subeffectData,"savePreventSetHP")]
+};{}]
+
+[h,if(json.contains(subeffectData,"isDropItems")),CODE:{
+	[h,if(json.contains(subeffectData,"isSavePreventDrop")): SaveData = json.set(SaveData,"DropItemsResisted",1)]
+
+	[h:subeffectData = json.remove(subeffectData,"isSavePreventDrop")]
 };{}]
 
 [h,if(json.contains(subeffectData,"InstantKill")),CODE:{
@@ -791,7 +716,6 @@
 [h:subeffectData = json.remove(subeffectData,"isCreateObject")]
 
 [h,if(json.get(subeffectData,"isActivateItem") == ""): subeffectData = json.remove(subeffectData,"isActivateItem")]
-
 [h:GeneralTargetingReturn = ct.a5e.GeneralTargetingProcessing(subeffectData,"")]
 [h:subeffectData = json.get(GeneralTargetingReturn,"Subeffect")]
 [h:GeneralTargetingData = json.get(GeneralTargetingReturn,"Targeting")]
@@ -825,6 +749,7 @@
 [h:subeffectData = json.remove(subeffectData,"MainEffectsNumber")]
 [h:subeffectData = json.remove(subeffectData,"MainNeedsNewSubeffect")]
 [h:subeffectData = json.remove(subeffectData,"PersistentEffectsNumber")]
+[h:subeffectData = json.remove(subeffectData,"EffectType")]
 
 [h:ExtraDataKeys = json.fromList(json.get(subeffectData,"ExtraDataKeys"))]
 [h:extraData = ""]
@@ -836,9 +761,14 @@
 
 [h,if(needsPersistentEffect == "Same"),CODE:{
 	[h:subeffectData = json.set(subeffectData,"PersistentEffects",1)]
-	[h:needsPersistentEffect = 0]
+	[h:needsPersistentEffectTest = 0]
 };{
-	[h,if(needsPersistentEffect == "Different"): needsPersistentEffect = 1]
+	[h,if(needsPersistentEffect == "Different"),CODE:{
+		[h:subeffectData = json.set(subeffectData,"PersistentEffects","")]
+		[h:needsPersistentEffectTest = 1]
+	};{
+		[h:needsPersistentEffectTest = 0]
+	}]
 }]
 
 [h:thisEffectSubeffectData = json.get(currentEffectData,"Subeffects")]
@@ -851,10 +781,17 @@
 	allEffectData = json.set(allEffectData,json.length(allEffectData)-1,currentEffectData)
 ]
 
-[h:thisPlayerCurrentFeatureData = json.set(thisPlayerCurrentFeatureData,"Effects",allEffectData)]
+[h,if(isPersistentEffect),CODE:{
+	[h:needsPutTest = json.contains(json.get(allMainSubeffectsData,MainSubeffectsLastIndex),"PersistentEffects")]
+	[h,if(needsPutTest):
+		FeatureData = json.path.put(FeatureData,"\$['Effects']["+MainEffectsLastIndex+"]['Subeffects']["+MainSubeffectsLastIndex+"]","PersistentEffects",allEffectData);
+		FeatureData = json.path.set(FeatureData,"\$['Effects']["+MainEffectsLastIndex+"]['Subeffects']["+MainSubeffectsLastIndex+"]['PersistentEffects']",allEffectData)
+	]
+};{
+	[h:FeatureData = json.set(FeatureData,"Effects",allEffectData)]
+}]
 
-[h:setLibProperty("ct.New"+if(isPersistentEffect,"Persistent","")+EffectType,json.set(CurrentFeatureData,getPlayerName(),thisPlayerCurrentFeatureData),"Lib:pm.a5e.Core")]
-[h:baseFeatureData = thisPlayerCurrentFeatureData]
+[h:baseFeatureData = json.set("","FeatureData",FeatureData)]
 [h:lastEffectTest = json.length(allEffectData) == EffectsNumber]
 
 [h,if(NeedsNewSubeffect),CODE:{
@@ -883,15 +820,6 @@
 		"EffectsNumber",PersistentEffectsNumber,
 		"WhichSubeffect",1
 	)]
-
-	[h:initialFeatureData = json.set("",
-		"Name",FeatureName,
-		"DisplayName",FeatureDisplayName,
-		"Class",json.get(thisPlayerCurrentFeatureData,"Class"),
-		"Subclass",json.get(thisPlayerCurrentFeatureData,"Subclass")
-	)]
-
-	[h:setLibProperty("ct.NewPersistent"+EffectType,json.set(data.getData("addon:","pm.a5e.core","ct.NewPersistent"+EffectType),getPlayerName(),initialFeatureData),"Lib:pm.a5e.Core")]
 };{
 	[h,if(isPersistentEffect): baseFeatureData = json.set(baseFeatureData,
 		"isPersistentEffect",1,
@@ -900,20 +828,12 @@
 	)]
 }]
 
+[h:closeDialog("SubeffectCreation")]
 [h,if(lastEffectTest && !NeedsNewSubeffect),CODE:{
 	[h,if(isPersistentEffect),CODE:{
-		[h:MainFeatureData = data.getData("addon:","pm.a5e.core","ct.New"+EffectType)]
-		[h:thisPlayerMainFeatureData = json.get(MainFeatureData,getPlayerName())]
-
-		[h:allMainEffectData = json.get(thisPlayerMainFeatureData,"Effects")]
-		[h:MainEffectsLastIndex = json.length(allMainEffectData)-1]
-		[h:allMainSubeffectsData = json.get(json.get(allMainEffectData,MainEffectsLastIndex),"Subeffects")]
-		[h:MainSubeffectsLastIndex = json.length(allMainSubeffectsData)-1]
-	
-		[h:MainFeatureData = json.path.put(thisPlayerMainFeatureData,"\$['Effects']["+MainEffectsLastIndex+"]['Subeffects']["+MainSubeffectsLastIndex+"]","PersistentEffects",allEffectData)]
-		[h:setLibProperty("ct.New"+EffectType,json.set(MainFeatureData,getPlayerName(),thisPlayerMainFeatureData),"Lib:pm.a5e.Core")]
-	
+		[h:"<!-- Switches back to non-persistent effect if lastEffectTest for persistent effects is true -->"]
 		[h:lastEffectTest = (json.length(allMainEffectData) >= MainEffectsNumber)]
+
 		[h:baseFeatureData = json.set(baseFeatureData,
 			"EffectsNumber",MainEffectsNumber,
 			"WhichSubeffect",if(MainNeedsNewSubeffect,MainSubeffectsLastIndex+1,1),
@@ -923,14 +843,12 @@
 		)]
 	};{}]
 
-	[h:closeDialog("SubeffectCreation")]
-	[h,if(lastEffectTest && !MainNeedsNewSubeffect && !needsPersistentEffect),CODE:{
-		[h,MACRO("CreateFeatureCoreFinalInput@Lib:pm.a5e.Core"): json.set("","EffectType",EffectType,"ExtraData",extraData,"ParentToken",ParentToken)]
+	[h,if(lastEffectTest && !MainNeedsNewSubeffect && !needsPersistentEffectTest),CODE:{
+		[h,MACRO("CreateFeatureCoreFinalInput@Lib:pm.a5e.Core"): json.set("","EffectType",EffectType,"ExtraData",extraData,"ParentToken",ParentToken,"FeatureData",FeatureData)]
 		[h:return(0,macro.return)]
 	};{
 		[h,MACRO("CreateSubeffect@Lib:pm.a5e.Core"): baseFeatureData]
 	}]
 };{
-	[h:closeDialog("SubeffectCreation")]
 	[h,MACRO("CreateSubeffect@Lib:pm.a5e.Core"): baseFeatureData]
 }]

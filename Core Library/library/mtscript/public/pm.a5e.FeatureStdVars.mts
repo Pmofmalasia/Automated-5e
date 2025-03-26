@@ -1,5 +1,5 @@
-[h:abilityName = pm.RemoveSpecial(abilityName)]
-[h:abilitySubclass = pm.RemoveSpecial(abilitySubclass)]
+[h:abilityName = js.a5e.RemoveSpecial(abilityName)]
+[h:abilitySubclass = js.a5e.RemoveSpecial(abilitySubclass)]
 [h:abilityInfo = json.path.read(getProperty("a5e.stat.AllFeatures"),"\$[*][?("+pm.a5e.PathFeatureFilter(json.set("","Name",abilityName,"Class",abilityClass,"Subclass",abilitySubclass))+")]")]
 [h:abilityPriorData = arg(0)]
 [h:ParentToken=json.get(abilityPriorData,"ParentToken")]

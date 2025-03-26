@@ -1,5 +1,7 @@
-[h:SubeffectData = arg(0)]
-[h:FeatureData = arg(1)]
+[h:ParentToken = arg(0)]
+[h:SubeffectData = arg(1)]
+[h:FeatureData = arg(2)]
+[h:a5e.UnifiedAbilities = arg(3)]
 [h:IsTooltip = 1]
 [h:abilityTable = "[]"]
 
@@ -7,7 +9,7 @@
 [h:displayTier = if(json.get(FeatureData,"Class") == "Spell",if(json.get(FeatureData,"Level") == 0,"Tier","Level"),"Tier")]
 
 [h,if(json.contains(SubeffectData,"UseResource")),CODE:{
-	[h:subeffect.ResourceData = pm.a5e.UseResource(json.get(SubeffectData,"UseResource"),IsTooltip)]
+	[h:subeffect.ResourceData = js.a5e.UseResourceTooltip(json.get(SubeffectData,"UseResource"),a5e.UnifiedAbilities,ParentToken)]
 
 	[h:abilityTable = json.merge(abilityTable,json.get(subeffect.ResourceData,"Table"))]
 };{}]

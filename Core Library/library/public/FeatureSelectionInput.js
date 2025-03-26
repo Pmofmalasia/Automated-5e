@@ -344,13 +344,9 @@ async function createFeatureInputRow(startRowID,idPrefix,Header,FeatureType){
 		}		
 	}
 
-	addTableRow(tableID,nextRowIndex,"row"+idPrefix+"Feature","<th><label for='"+idPrefix+"Feature'>"+Header+":</label></th><td class='autocomplete-table'><input type='text' id='"+idPrefix+"Feature' name='"+idPrefix+"Feature'><span id='"+idPrefix+"FeatureValidationSpan'></span></td>");
+	addTableRow(tableID,nextRowIndex,"row"+idPrefix+"Feature","<th><label for='"+idPrefix+"Feature'>"+Header+":</label></th><td class='autocomplete-table'><input type='text' id='"+idPrefix+"Feature' name='"+idPrefix+"Feature'><span id='ValidationSpan"+idPrefix+"Feature'></span></td>");
 
-	document.getElementById(idPrefix+"Feature").addEventListener("change",function(e){
-		validateFeatureAutocomplete(idPrefix+"Feature",btoa(JSON.stringify(allFeatureOptions)));
-	});
-
-	autocomplete(document.getElementById(idPrefix+"Feature"),finalFeatureOptions);
+	autocomplete(document.getElementById(idPrefix+"Feature"),finalFeatureOptions,allFeatureOptions);
 }
 
 async function createSpellInputRow(startRowID,idPrefix,Header){
@@ -365,13 +361,9 @@ async function createSpellInputRow(startRowID,idPrefix,Header){
 		allSpellOptionsDisplay.push(spell.DisplayName);
 	}
 
-	addTableRow(tableID,nextRowIndex,"row"+idPrefix+"Spell","<th><label for='"+idPrefix+"Spell'>"+Header+":</label></th><td class='autocomplete-table'><input type='text' id='"+idPrefix+"Spell' name='"+idPrefix+"Spell'><span id='"+idPrefix+"SpellValidationSpan'></span></td>");
+	addTableRow(tableID,nextRowIndex,"row"+idPrefix+"Spell","<th><label for='"+idPrefix+"Spell'>"+Header+":</label></th><td class='autocomplete-table'><input type='text' id='"+idPrefix+"Spell' name='"+idPrefix+"Spell'><span id='ValidationSpan"+idPrefix+"Spell'></span></td>");
 
-	document.getElementById(idPrefix+"Spell").addEventListener("change",function(e){
-		validateFeatureAutocomplete(idPrefix+"Spell",btoa(JSON.stringify(allSpellOptions)));
-	});
-
-	autocomplete(document.getElementById(idPrefix+"Spell"),allSpellOptionsDisplay);
+	autocomplete(document.getElementById(idPrefix+"Spell"),allSpellOptionsDisplay,allSpellOptions);
 }
 
 //TODO: Add check if has a resource, remove if no MaxResource key. If no valid features, replace select options with 'No Valid Features' (or any other key using SearchKey arg)

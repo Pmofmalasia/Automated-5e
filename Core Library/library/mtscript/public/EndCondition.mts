@@ -105,6 +105,21 @@
 
 [h:pm.PassiveFunction("CondEnd")]
 
+[h,if(0),CODE:{
+	[h:"<!-- TODO: Conditions - Needs ability to run passive feature with the already removed condition (or refactor to be able to run before) -->"]
+	[h:"<!-- TODO: Passive - See above. -->"]
+	[h:oldUnifiedAbilities = a5e.UnifiedAbilities]
+	[h:a5e.UnifiedAbilities = json.path.put(RemovedConditionsFinal,"\$[*]","AbilityType","Condition")]
+	[h:pm.PassiveFunction("CondEndThis")]
+	[h:a5e.UnifiedAbilities = oldUnifiedAbilities]
+};{
+	[h,foreach(condition,RemovedConditionsFinal),if(json.get(condition,"CondEndThis") != ""),CODE:{
+		[h:CondEndThisEffect = json.get(condition,"CondEndThis")]
+		[h,if(json.get(CondEndThisEffect,"RevertTransformation") != ""): RevertTransformationData = js.a5e.RevertTransformation(json.get(condition,"GroupID"),ParentToken); RevertTransformationData = "{}"]
+		[h:abilityTable = json.merge(abilityTable,json.get(RevertTransformationData,"Table"))]
+	}]
+}]
+
 [h,if(!json.isEmpty(RemovedConditionsFinal)): abilityTable = json.append(abilityTable,json.set("",
 	"ShowIfCondensed",1,
 	"Header","Conditions Removed",
@@ -115,4 +130,4 @@
 	"DisplayOrder","['Rules','Roll','Full']"
 ))]
 
-[h:macro.return = json.set("","Table",abilityTable,"Removed",RemovedConditionsFinal)]
+[h:return(0,json.set("","Table",abilityTable,"Removed",RemovedConditionsFinal))]

@@ -30,9 +30,8 @@
 	};{
 		[h:TimeData = json.set(TimeData,"minute",0)]
 	}]
-	
-	[h:TimeData = json.set(TimeData,"round",0)]
-	[h:timeInRounds = 0]
+
+	[h:TimeData = json.set(TimeData,"round",timeInRounds)]
 };{}]
 
 [h:timeDisplayArray = "[]"]

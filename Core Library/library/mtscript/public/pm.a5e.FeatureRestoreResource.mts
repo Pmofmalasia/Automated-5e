@@ -1,11 +1,6 @@
 [h:pm.ResourceInfo = arg(1)]
 [h:pm.a5e.FeatureComponentStdVars(arg(0))]
 
-[h,if(argCount()>2):
-	resourceData = pm.a5e.UseResource(pm.ResourceInfo,IsTooltip,arg(2));
-	resourceData = pm.a5e.UseResource(pm.ResourceInfo,IsTooltip)
-]
-
 [h:abilityTable = json.merge(abilityTable,json.get(resourceData,"Table"))]
 
 [h:return(!IsTooltip)]

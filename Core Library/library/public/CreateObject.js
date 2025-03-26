@@ -1,17 +1,19 @@
-async function createObjectSubtypeRows(tableID,IDSuffix){
-	if(arguments.length === 1){IDSuffix = "";}
+async function createObjectSubtypeRows(IDSuffix){
+	if(arguments.length === 0){IDSuffix = "";}
+	let referenceElement = document.getElementById("rowObjectType"+IDSuffix);
 	//Reset selections
-	clearUnusedTable(tableID,"rowObjectType"+IDSuffix,"rowSize");
+	let endRow = document.getElementById("rowObjectTypeEnd");
+	deleteInterveningElements(referenceElement,endRow);
+
 	let improvisedWeaponSelection = document.getElementById("isImprovisedWeapon");
 	improvisedWeaponSelection.removeAttribute("disabled","");
 	document.getElementById("isSpellcastingFocus").checked = false;
 	document.getElementById("isSpellcastingFocus").dispatchEvent(new Event("change"));
 
-	let nextRowIndex = document.getElementById("rowObjectType"+IDSuffix).rowIndex+1;
 	let ObjectType = document.getElementById("Type"+IDSuffix).value;
 
 	if(ObjectType == "Weapon"){
-		createWeaponTableRows(tableID,"rowObjectType"+IDSuffix);
+		createWeaponTableRows("rowObjectType"+IDSuffix);
 		improvisedWeaponSelection.checked = false;
 		improvisedWeaponSelection.dispatchEvent(new Event("change"));
 		improvisedWeaponSelection.setAttribute("disabled","");
@@ -28,7 +30,7 @@ async function createObjectSubtypeRows(tableID,IDSuffix){
 		createArmorRows(ArmorOrShield,IDSuffix);
 	}
 	else if(ObjectType == "Ammunition"){
-		document.getElementById("isWearable").checked = true;
+		document.getElementById("wornHeld").value = "Worn";
 		document.getElementById("isStackable").checked = true;
 		
 		let request = await fetch("macro:pm.a5e.GetCoreData@lib:pm.a5e.Core", {method: "POST", body: "['sb.AmmunitionTypes']"});
@@ -39,73 +41,60 @@ async function createObjectSubtypeRows(tableID,IDSuffix){
 			AmmunitionTypeOptions = AmmunitionTypeOptions + "<option value='"+tempAmmunitionType.Name+"'>"+tempAmmunitionType.DisplayName+"</option>";
 		}
 
-		addTableRow(tableID,nextRowIndex,"rowAmmunitionType","<th><label for='AmmunitionType'>Ammunition Type:</label></th><td><select id='AmmunitionType' name='AmmunitionType' onchange='createAmmunitionTypeRows()'><option value='@@NewType'>New Type</option>"+AmmunitionTypeOptions+"</select></td>");
-		nextRowIndex++;
+		referenceElement = createTableRow(referenceElement,"rowAmmunitionType","<th><label for='AmmunitionType'>Ammunition Type:</label></th><td><select id='AmmunitionType' name='AmmunitionType' onchange='createAmmunitionTypeRows()'><option value='@@NewType'>New Type</option>"+AmmunitionTypeOptions+"</select></td>");
 		
 		if(document.getElementById("AmmunitionType").value == "@@NewType"){
 			createAmmunitionTypeRows();
-			nextRowIndex++;
-			nextRowIndex++;
+			referenceElement = endRow.previousElementSibling;
 		}
 
-		addTableRow(tableID,nextRowIndex,"rowAmmunitionDamageHeader","<th style='text-align:center' colspan='2'>Additional Damage:<input type='hidden' id='AmmunitionDamageInstanceNumber' name='AmmunitionDamageInstanceNumber' value=0></th>");
-		nextRowIndex++;
+		referenceElement = createTableRow(referenceElement,"rowAmmunitionDamageHeader","<th style='text-align:center' colspan='2'>Additional Damage:<input type='hidden' id='AmmunitionDamageInstanceNumber' name='AmmunitionDamageInstanceNumber' value=0></th>");
 
-		addTableRow(tableID,nextRowIndex,"rowAmmunitionDamageInstanceButtons","<th style='text-align:center' colspan='2'><input type='button' id='addDamageType' name='addDamageType' value='Add Type' onclick='addDamageTypeRows("+'"'+tableID+'","Ammunition"'+")'> <input type='button' id='removeDamageType' name='removeDamageType' value='Remove Type' onclick='removeDamageTypeRows("+'"Ammunition"'+")'></th>");
-		nextRowIndex++;
+		referenceElement = createTableRow(referenceElement,"rowAmmunitionDamageInstanceButtons","<th style='text-align:center' colspan='2'><input type='button' id='addDamageType' name='addDamageType' value='Add Type' onclick='addDamageTypeRows("+'"Ammunition"'+")'> <input type='button' id='removeDamageType' name='removeDamageType' value='Remove Type' onclick='removeDamageTypeRows("+'"Ammunition"'+")'></th>");
 
-		addTableRow(tableID,nextRowIndex,"rowMagicBonus","<th><label for='MagicBonus'>Magic Bonus:</label></th><td>+ <input type='number' id='MagicBonus' name='MagicBonus' min='0' value='0' style='width:25px' onchange='MagicBonusChanges()'></td>");
-		nextRowIndex++;
+		referenceElement = createTableRow(referenceElement,"rowMagicBonus","<th><label for='MagicBonus'>Magic Bonus:</label></th><td>+ <input type='number' id='MagicBonus' name='MagicBonus' min='0' value='0' style='width:25px' onchange='MagicBonusChanges()'></td>");
 	}
 	else if(ObjectType == "AdventuringGear"){
 		//Nothing happens, this is the miscellaneous category
-		document.getElementById("isWearable").checked = false;
+		document.getElementById("wornHeld").value = "";
 		document.getElementById("isStackable").checked = true;
 	}
 	else if(ObjectType == "Clothing"){
-		document.getElementById("isWearable").checked = true;
+		document.getElementById("wornHeld").value = "Worn";
 		document.getElementById("isStackable").checked = true;
 		let request = await fetch("macro:pm.a5e.GetCoreData@lib:pm.a5e.Core", {method: "POST", body: "['sb.ClothingTypes']"});
 		let allClothingTypes = await request.json();
 		let ClothingTypeSelection = createHTMLSelectOptions(allClothingTypes);
 
-		addTableRow(tableID,nextRowIndex,"rowClothingType","<th><label for='ClothingType'>Clothing Type:</label></th><td><select id='ClothingType' name='ClothingType'>"+ClothingTypeSelection+"</select></td>");
-		nextRowIndex++;
+		referenceElement = createTableRow(referenceElement,"rowClothingType","<th><label for='ClothingType'>Clothing Type:</label></th><td><select id='ClothingType' name='ClothingType'>"+ClothingTypeSelection+"</select></td>");
 	}
 	else if(ObjectType == "Container"){
-		document.getElementById("isWearable").checked = false;
+		document.getElementById("wornHeld").value = "";
 		document.getElementById("isStackable").checked = true;
 
-		addTableRow(tableID,nextRowIndex,"rowContainerWeightCapacity","<th><label for='ContainterWeightCapacity'>Weight Capacity:</label></th><td><input type='number' id='ContainterWeightCapacity' name='ContainterWeightCapacity' min=0 step=0.1 style='width:35px'>lbs. <input type='checkbox' id='isContainterWeightCapacity' name='isContainterWeightCapacity' onchange='toggleFieldEnabled("+'"ContainterWeightCapacity","isContainterWeightCapacity"'+")'> No limit</td>");
-		nextRowIndex++;
+		referenceElement = createTableRow(referenceElement,"rowContainerWeightCapacity","<th><label for='ContainterWeightCapacity'>Weight Capacity:</label></th><td><input type='number' id='ContainterWeightCapacity' name='ContainterWeightCapacity' min=0 step=0.1 style='width:35px'>lbs. <input type='checkbox' id='isContainterWeightCapacity' name='isContainterWeightCapacity' onchange='toggleFieldEnabled("+'"ContainterWeightCapacity","isContainterWeightCapacity"'+")'> No limit</td>");
 	
-		addTableRow(tableID,nextRowIndex,"rowContainerSolidVolumeCapacity","<th><label for='ContainterSolidVolumeCapacity'>Solid Volume Capacity:</label></th><td><input type='number' id='ContainterSolidVolumeCapacity' name='ContainterSolidVolumeCapacity' min=0 step=0.1 style='width:35px'><select id='ContainterSolidVolumeCapacityUnits' name='ContainterSolidVolumeCapacityUnits'><option value='cubicfeet'>Cubic Feet</option><option value='cubicyard'>Cubic Yards</option></select><input type='checkbox' id='isContainterSolidVolumeCapacity' name='isContainterSolidVolumeCapacity' onchange='toggleFieldEnabled(["+'"ContainterSolidVolumeCapacity","ContainterSolidVolumeCapacityUnits"],"isContainterSolidVolumeCapacity"'+")'>No Solids</td>");
-		nextRowIndex++;
+		referenceElement = createTableRow(referenceElement,"rowContainerSolidVolumeCapacity","<th><label for='ContainterSolidVolumeCapacity'>Solid Volume Capacity:</label></th><td><input type='number' id='ContainterSolidVolumeCapacity' name='ContainterSolidVolumeCapacity' min=0 step=0.1 style='width:35px'><select id='ContainterSolidVolumeCapacityUnits' name='ContainterSolidVolumeCapacityUnits'><option value='cubicfeet'>Cubic Feet</option><option value='cubicyard'>Cubic Yards</option></select><input type='checkbox' id='isContainterSolidVolumeCapacity' name='isContainterSolidVolumeCapacity' onchange='toggleFieldEnabled(["+'"ContainterSolidVolumeCapacity","ContainterSolidVolumeCapacityUnits"],"isContainterSolidVolumeCapacity"'+")'>No Solids</td>");
 
-		addTableRow(tableID,nextRowIndex,"rowContainerFluidVolumeCapacity","<th><label for='ContainterFluidVolumeCapacity'>Fluid Volume Capacity:</label></th><td><input type='number' id='ContainterFluidVolumeCapacity' name='ContainterFluidVolumeCapacity' min=0 step=0.1 style='width:35px'><select id='ContainterFluidVolumeCapacityUnits' name='ContainterFluidVolumeCapacityUnits'><option value='ounce'>Ounces</option><option value='pint'>Pints</option><option value='gallon'>Gallons</option><option value='milliliter'>Milliliters</option><option value='liter'>Liters</option></select><input type='checkbox' id='isContainterFluidVolumeCapacity' name='isContainterFluidVolumeCapacity' onchange='toggleFieldEnabled(["+'"ContainterFluidVolumeCapacity","ContainterFluidVolumeCapacityUnits"],"isContainterFluidVolumeCapacity"'+")'>No Fluids</td>");
-		nextRowIndex++;
+		referenceElement = createTableRow(referenceElement,"rowContainerFluidVolumeCapacity","<th><label for='ContainterFluidVolumeCapacity'>Fluid Volume Capacity:</label></th><td><input type='number' id='ContainterFluidVolumeCapacity' name='ContainterFluidVolumeCapacity' min=0 step=0.1 style='width:35px'><select id='ContainterFluidVolumeCapacityUnits' name='ContainterFluidVolumeCapacityUnits'><option value='ounce'>Ounces</option><option value='pint'>Pints</option><option value='gallon'>Gallons</option><option value='milliliter'>Milliliters</option><option value='liter'>Liters</option></select><input type='checkbox' id='isContainterFluidVolumeCapacity' name='isContainterFluidVolumeCapacity' onchange='toggleFieldEnabled(["+'"ContainterFluidVolumeCapacity","ContainterFluidVolumeCapacityUnits"],"isContainterFluidVolumeCapacity"'+")'>No Fluids</td>");
 
-		addTableRow(tableID,nextRowIndex,"rowContainerIgnoreWeight","<th><label for='isContainerIgnoreWeight'>Ignore Weight of Contents:</label></th><td><input type='checkbox' id='isContainerIgnoreWeight' name='isContainerIgnoreWeight'></td>");
-		nextRowIndex++;
+		referenceElement = createTableRow(referenceElement,"rowContainerIgnoreWeight","<th><label for='isContainerIgnoreWeight'>Ignore Weight of Contents:</label></th><td><input type='checkbox' id='isContainerIgnoreWeight' name='isContainerIgnoreWeight'></td>");
 
-		addTableRow(tableID,nextRowIndex,"rowContainerStorageTime","<th><label for='ContainerStorageTime'>Time to Store/Remove Contents:</label></th><td><select id='ContainerStorageTime' name='ContainerStorageTime' onchange='createNonstandardStorageRows("+'"'+tableID+'"'+")'><option value=''>Both are Item Interactions</option><option value='Action'>Both are Actions</option><option value='Custom'>Other</option></select></td>");
-		nextRowIndex++;
+		referenceElement = createTableRow(referenceElement,"rowContainerStorageTime","<th><label for='ContainerStorageTime'>Time to Store/Remove Contents:</label></th><td><select id='ContainerStorageTime' name='ContainerStorageTime' onchange='createNonstandardStorageRows()'><option value=''>Both are Item Interactions</option><option value='Action'>Both are Actions</option><option value='Custom'>Other</option></select></td>");
 	}
 	else if(ObjectType == "Hazard" || ObjectType == "Trap"){
-		document.getElementById("isWearable").checked = false;
+		document.getElementById("wornHeld").value = "";
 		document.getElementById("isStackable").checked = true;
 	}
 	else if(ObjectType == "LightSource"){
-		document.getElementById("isWearable").checked = true;
+		document.getElementById("wornHeld").value = "Held";
 		document.getElementById("isStackable").checked = false;
 
-		addTableRow(tableID,nextRowIndex,"rowLightFuel","<th><label for='LightFuel'>Light Can be Refueled:</label></th><td><select id='LightFuel' name='LightFuel'><option value=''>None</option><option value='Oil'>Oil Flask</option><option value='Other'>Other Fuel</option></select></td>");
-		nextRowIndex++;
+		referenceElement = createTableRow(referenceElement,"rowLightFuel","<th><label for='LightFuel'>Light Can be Refueled:</label></th><td><select id='LightFuel' name='LightFuel'><option value=''>None</option><option value='Oil'>Oil Flask</option><option value='Other'>Other Fuel</option></select></td>");
 
 		createLightTable("rowObjectType"+IDSuffix,"rowLightFuel",IDSuffix);
 
-		createCustomDurationRows(tableID,"LightDuration","rowSize");
-		nextRowIndex++;
+		createCustomDurationRows("LightDuration","rowObjectTypeEnd");
 		let lightDurationRow = document.getElementById("rowCustomLightDuration");
 		lightDurationRow.firstElementChild.firstElementChild.innerHTML = "Maximum Light Duration:";
 		document.getElementById("customLightDurationValue").value = 4;
@@ -122,11 +111,38 @@ async function createObjectSubtypeRows(tableID,IDSuffix){
 		document.getElementById("lightType"+IDSuffix).dispatchEvent(new Event("change"));
 	}
 	else if(ObjectType == "Potion"){
-		document.getElementById("isWearable").checked = false;
+		document.getElementById("wornHeld").value = "";
 		document.getElementById("isStackable").checked = true;
 	}
+	else if(ObjectType === "Poison"){
+		document.getElementById("wornHeld").value = "";
+		document.getElementById("isStackable").checked = true;
+
+		referenceElement = createTableRow(referenceElement,"rowPoisonAdministrationRoute","<th><label for='PoisonAdministrationRoute'>Administration Route:</label></th><td><select id='PoisonAdministrationRoute' name='PoisonAdministrationRoute'><option value='Contact'>Contact</option><option value='Ingested'>Ingested</option><option value='Inhaled'>Inhaled</option><option value='Injury'>Injury</option></select></td>");
+
+		referenceElement = createTableRow(referenceElement,"rowPoisonEnd","<th colspan=2></th>");
+		referenceElement.classList.add("section-end");
+	
+		document.getElementById("PoisonAdministrationRoute").addEventListener("change",function(){
+			let PoisonChoice = this.value;
+			let referenceElement = document.getElementById("rowPoisonAdministrationRoute");
+			deleteInterveningElements(referenceElement,document.getElementById("rowPoisonEnd"));
+
+			//TODO: Need to decide if I should link targeting to the poison type (as described below) or just make people reinput it each time (easier for programming)
+
+
+
+			//TODO: For injury/contact, add details about what it can be applied to (e.g. surfaces (for contact), weapons, number of pieces of ammunition, traps, etc.); and how long it lasts when applied (e.g. duration vs. uses (single hit, no time limit by default))
+
+			//For inhaled, should create an AoE (cloud of gas, default 5ft cube) and then maybe how long it lingers for (default instantaneous)
+
+			//For ingested, should be able to apply it to food/water? But in actual play that would make no sense because nobody would have food tokens. Likely keep as just an active effect.
+
+			//For injury/contact, effect should be targeting an item (limits above) and putting a condition on it that does a thing.
+		});
+	}
 	else if(ObjectType == "Rod"){
-		document.getElementById("isWearable").checked = true;
+		document.getElementById("wornHeld").value = "Held";
 		document.getElementById("isStackable").checked = false;
 	
 		document.getElementById("isSpellcastingFocus").checked = true;
@@ -134,17 +150,17 @@ async function createObjectSubtypeRows(tableID,IDSuffix){
 		document.getElementById("SpellcastingFocusTypeArcane").checked = true;
 	}
 	else if(ObjectType == "Scroll"){
-		document.getElementById("isWearable").checked = false;
+		document.getElementById("wornHeld").value = "";
 		document.getElementById("isStackable").checked = true;
 	}
 	else if(ObjectType == "SpellcastingFocus"){
-		document.getElementById("isWearable").checked = true;
+		document.getElementById("wornHeld").value = "Held";
 		document.getElementById("isStackable").checked = false;
 		document.getElementById("isSpellcastingFocus").checked = true;
 		document.getElementById("isSpellcastingFocus").dispatchEvent(new Event("change"));
 	}
 	else if(ObjectType == "Staff"){
-		document.getElementById("isWearable").checked = true;
+		document.getElementById("wornHeld").value = "Held";
 		document.getElementById("isStackable").checked = false;
 	
 		document.getElementById("isSpellcastingFocus").checked = true;
@@ -152,27 +168,25 @@ async function createObjectSubtypeRows(tableID,IDSuffix){
 		document.getElementById("SpellcastingFocusTypeArcane").checked = true;
 	}
 	else if(ObjectType == "Tool"){
-		document.getElementById("isWearable").checked = false;
+		document.getElementById("wornHeld").value = "Held";
 		document.getElementById("isStackable").checked = false;
 
 		let request = await fetch("macro:pm.a5e.GetCoreData@lib:pm.a5e.Core", {method: "POST", body: "['sb.ToolTypes']"});
 		let allToolTypes = await request.json();
 		let ToolTypeSelection = createHTMLSelectOptions(allToolTypes);
 
-		addTableRow(tableID,nextRowIndex,"rowToolType","<th><label for='ToolType'>Tool Type:</label></th><td><select id='ToolType' name='ToolType' onchange='updateToolSubtypeOptions("+'"'+tableID+'"'+")'>"+ToolTypeSelection+"<option value=''>None</option></select></td>");
-		nextRowIndex++;
+		referenceElement = createTableRow(referenceElement,"rowToolType","<th><label for='ToolType'>Tool Type:</label></th><td><select id='ToolType' name='ToolType' onchange='updateToolSubtypeOptions()'>"+ToolTypeSelection+"<option value=''>None</option></select></td>");
 
-		addTableRow(tableID,nextRowIndex,"rowToolSubtype","<th><label for='ToolSubtype'>Tool Subtype:</label></th><td><select id='ToolSubtype' name='ToolSubtype' onchange='createNewToolRows("+'"'+tableID+'"'+")'><option value=''>New Tool</option></select></td>");
-		nextRowIndex++;
+		referenceElement = createTableRow(referenceElement,"rowToolSubtype","<th><label for='ToolSubtype'>Tool Subtype:</label></th><td><select id='ToolSubtype' name='ToolSubtype' onchange='createNewToolRows()'><option value=''>New Tool</option></select></td>");
 
-		updateToolSubtypeOptions(tableID);
+		updateToolSubtypeOptions();
 	}
 	else if(ObjectType == "Vehicle"){
-		document.getElementById("isWearable").checked = false;
+		document.getElementById("wornHeld").value = "";
 		document.getElementById("isStackable").checked = false;
 	}
 	else if(ObjectType == "Wand"){
-		document.getElementById("isWearable").checked = true;
+		document.getElementById("wornHeld").value = "Held";
 		document.getElementById("isStackable").checked = false;
 	
 		document.getElementById("isSpellcastingFocus").checked = true;
@@ -180,7 +194,7 @@ async function createObjectSubtypeRows(tableID,IDSuffix){
 		document.getElementById("SpellcastingFocusTypeArcane").checked = true;
 	}
 	else if(ObjectType == "Wondrous"){
-		document.getElementById("isWearable").checked = false;
+		document.getElementById("wornHeld").value = "";
 		document.getElementById("isStackable").checked = false;
 
 		let request = await fetch("macro:pm.a5e.GetCoreData@lib:pm.a5e.Core", {method: "POST", body: "['sb.ObjectTypes']"});
@@ -193,8 +207,7 @@ async function createObjectSubtypeRows(tableID,IDSuffix){
 		let ObjectTypeSelection = createHTMLSelectOptions(nonWondrousTypes);
 		ObjectTypeSelection = "<option value=''>No Other</option>" + ObjectTypeSelection;
 
-		addTableRow(tableID,nextRowIndex,"rowObjectWondrousType","<th><label for='WondrousType'>Wondrous Object Type:</label></th><td><select id='WondrousType' name='WondrousType' onchange='createObjectSubtypeRows("+'"CreateObjectTable","Wondrous"'+")'>"+ObjectTypeSelection+"</select></td>");
-		nextRowIndex++;
+		referenceElement = createTableRow(referenceElement,"rowObjectTypeWondrous","<th><label for='TypeWondrous'>Wondrous Object Type:</label></th><td><select id='TypeWondrous' name='TypeWondrous' onchange='createObjectSubtypeRows("+'"Wondrous"'+")'>"+ObjectTypeSelection+"</select></td>");
 	}
 }
 
@@ -205,7 +218,7 @@ async function createAmmunitionTypeRows(){
 		createNewTemplateRows(referenceRow,"Ammunition");
 	}
 	else{
-		clearUnusedTable("CreateObjectTable","rowAmmunitionType","rowAmmunitionDamageHeader");
+		deleteInterveningElements(referenceRow,document.getElementById("rowAmmunitionDamageHeader"));
 		
 		let request = await fetch("macro:pm.a5e.GetCoreData@lib:pm.a5e.Core", {method: "POST", body: "['sb.AmmunitionTypes']"});
 		let allAmmunitionTypes = await request.json();
@@ -219,12 +232,12 @@ async function createAmmunitionTypeRows(){
 		}
 
 		if(AmmunitionTypeData.AmmunitionDamage != null){
-			clearUnusedTable("CreateObjectTable","rowAmmunitionDamageHeader","rowAmmunitionDamageInstanceButtons");
+			deleteInterveningElements(document.getElementById("rowAmmunitionDamageHeader"),document.getElementById("rowAmmunitionDamageInstanceButtons"));
 			document.getElementById("AmmunitionDamageInstanceNumber").value = 0;
 			let i = 0;
 
 			for(let tempInstance of AmmunitionTypeData.AmmunitionDamage){
-				await addDamageTypeRows("CreateObjectTable","Ammunition");
+				await addDamageTypeRows("Ammunition");
 				document.getElementById("AmmunitionDamageType"+i).value = tempInstance.DamageType;
 				document.getElementById("AmmunitionDamageDieNumber"+i).value = tempInstance.DamageDieNumber;
 				document.getElementById("AmmunitionDamageDieSize"+i).value = tempInstance.DamageDieSize;
@@ -242,8 +255,8 @@ async function createAmmunitionTypeRows(){
 	}
 }
 
-function createNonstandardStorageRows(tableID){
-	let nextRowIndex = document.getElementById("rowContainerStorageTime").rowIndex + 1;
+function createNonstandardStorageRows(){
+	let referenceElement = document.getElementById("rowContainerStorageTime").rowIndex;
 
 	if(document.getElementById("ContainerStorageTime").value == "Custom"){
 		let UseTimeOptionsArray = ["Free","Item Interaction","Action","Bonus Action","Reaction","1 Minute","10 Minutes","1 Hour","8 Hours","12 Hours","24 Hours"];
@@ -252,28 +265,14 @@ function createNonstandardStorageRows(tableID){
 			UseTimeOptions = UseTimeOptions + "<option value='"+tempOption+"'>"+tempOption+"</option>";
 		}
 
-		addTableRow(tableID,nextRowIndex,"rowStorageRemovalTime","<th><label for='StorageRemovalTime'>Time to Remove from Container:</label></th><td><select id='StorageRemovalTime' name='StorageRemovalTime'>"+UseTimeOptions+"</select><input type='checkbox' id='StorageCannotRemove' name='StorageCannotRemove' onchange='toggleFieldEnabled("+'"StorageRemovalTime","StorageCannotRemove"'+")'> <label for='StorageCannotRemove'>Cannot Remove Items?</label></td>");
+		referenceElement = createTableRow(referenceElement,"rowStorageRemovalTime","<th><label for='StorageRemovalTime'>Time to Remove from Container:</label></th><td><select id='StorageRemovalTime' name='StorageRemovalTime'>"+UseTimeOptions+"</select><input type='checkbox' id='StorageCannotRemove' name='StorageCannotRemove' onchange='toggleFieldEnabled("+'"StorageRemovalTime","StorageCannotRemove"'+")'> <label for='StorageCannotRemove'>Cannot Remove Items?</label></td>");
 		document.getElementById("StorageRemovalTime").value = "Item Interaction";
-		nextRowIndex++;
 
-		addTableRow(tableID,nextRowIndex,"rowStorageAddTime","<th><label for='StorageAddToTime'>Time to Put in Container:</label></th><td><select id='StorageAddToTime' name='StorageAddToTime'>"+UseTimeOptions+"</select><input type='checkbox' id='StorageCannotAddTo' name='StorageCannotAddTo' onchange='toggleFieldEnabled("+'"StorageAddToTime","StorageCannotAddTo"'+")'> <label for='StorageCannotAddTo'>Cannot Store Items?</label></td>");
+		referenceElement = createTableRow(referenceElement,"rowStorageAddTime","<th><label for='StorageAddToTime'>Time to Put in Container:</label></th><td><select id='StorageAddToTime' name='StorageAddToTime'>"+UseTimeOptions+"</select><input type='checkbox' id='StorageCannotAddTo' name='StorageCannotAddTo' onchange='toggleFieldEnabled("+'"StorageAddToTime","StorageCannotAddTo"'+")'> <label for='StorageCannotAddTo'>Cannot Store Items?</label></td>");
 		document.getElementById("StorageAddToTime").value = "Item Interaction";
-		nextRowIndex++;
 	}
 	else{
-		clearUnusedTable("CreateObjectTable","rowContainerStorageTime","rowSize");
-	}
-}
-
-function createConsumableRows(tableID){
-	if(document.getElementById("isConsumable").checked){
-		let nextRowIndex = document.getElementById("rowIsConsumable").rowIndex + 1;
-
-		addTableRow(tableID,nextRowIndex,"rowIsLeaveBehindContainer","<th><label for='isLeaveBehindContainer'>Leaves Behind a Container?</label></th><td><input type='checkbox' id='isLeaveBehindContainer' name='isLeaveBehindContainer' onchange='createLeaveBehindContainerRow("+'"'+tableID+'"'+")'></td>");
-		nextRowIndex++;
-	}
-	else{
-		clearUnusedTable(tableID,"rowIsConsumable","rowIsActivatable");
+		deleteInterveningElements(document.getElementById("rowContainerStorageTime"),document.getElementById("rowObjectTypeEnd"));
 	}
 }
 
@@ -302,7 +301,7 @@ function createNonstandardEquipRows(){
 		referenceRow = createTableRow(referenceRow,"rowDropTime","<th><label for='DropTime'>Drop Time:</label></th><td><select id='DropTime' name='DropTime'>"+UseTimeOptions+"</select></td>");
 		document.getElementById("DropTime").value = "Free";
 
-		referenceRow = createTableRow(referenceRow,"rowNonstandardEquipEnd","<th></th><td></td>");
+		referenceRow = createTableRow(referenceRow,"rowNonstandardEquipEnd","<th colspan=2></th>");
 		referenceRow.classList.add("section-end");
 	}
 	else if(document.getElementById("isNonstandardEquip").value !== "Custom" && document.getElementById("rowNonstandardEquipEnd") !== null){
@@ -310,22 +309,36 @@ function createNonstandardEquipRows(){
 	}
 }
 
-function createConsumableRows(tableID){
-	if(document.getElementById("isConsumable").checked){
-		let nextRowIndex = document.getElementById("rowIsConsumable").rowIndex + 1;
+function createConsumableRows(){
+	let referenceElement = document.getElementById("rowIsConsumable");
 
-		addTableRow(tableID,nextRowIndex,"rowIsLeaveBehindContainer","<th><label for='isLeaveBehindContainer'>Leaves Behind a Container?</label></th><td><input type='checkbox' id='isLeaveBehindContainer' name='isLeaveBehindContainer' onchange='createLeaveBehindContainerRow("+'"'+tableID+'"'+")'></td>");
-		nextRowIndex++;
+	let endRow = document.getElementById("rowConsumableEnd");
+	if(endRow === null){
+		endRow = referenceElement.nextElementSibling;
 	}
 	else{
-		clearUnusedTable(tableID,"rowIsConsumable","rowIsActivatable");
+		endRow = endRow.nextElementSibling;
+	}
+	deleteInterveningElements(referenceElement,endRow);
+
+	if(document.getElementById("isConsumable").checked){
+		referenceElement = createTableRow(referenceElement,"rowIsLeaveBehindContainer","<th><label for='isLeaveBehindContainer'>Leaves Behind a Container?</label></th><td><input type='checkbox' id='isLeaveBehindContainer' name='isLeaveBehindContainer'></td>");
+
+		document.getElementById("isLeaveBehindContainer").addEventListener("change",createLeaveBehindContainerRow);
+
+		referenceElement = createTableRow(referenceElement,"rowConsumableEnd","<th></th><td></td>");
+		referenceElement.setAttribute("hidden","");
 	}
 }
 
-async function createLeaveBehindContainerRow(tableID){
-	if(document.getElementById("isLeaveBehindContainer").checked){
-		let nextRowIndex = document.getElementById("rowIsLeaveBehindContainer").rowIndex + 1;
+async function createLeaveBehindContainerRow(){
+	let referenceElement = document.getElementById("rowIsLeaveBehindContainer");
 
+	if(referenceElement.nextElementSibling.id === "rowContainerLeftBehind"){
+		referenceElement.nextElementSibling.remove();
+	}
+
+	if(document.getElementById("isLeaveBehindContainer").checked){
 		let request = await fetch("macro:pm.a5e.GetCoreData@lib:pm.a5e.Core", {method: "POST", body: "['sb.Objects']"});
 		let allObjects = await request.json();
 		let ContainerOptions = [];
@@ -336,15 +349,11 @@ async function createLeaveBehindContainerRow(tableID){
 		}
 		let ContainerSelection = createHTMLSelectOptions(ContainerOptions,"ObjectID");
 
-		addTableRow(tableID,nextRowIndex,"rowContainerLeftBehind","<th><label for='ContainerLeftBehind'>Container Left Behind:</label></th><td><select id='ContainerLeftBehind' name='ContainerLeftBehind'>"+ContainerSelection+"</select></td>");
-		nextRowIndex++;
-	}
-	else{
-		clearUnusedTable(tableID,"rowIsLeaveBehindContainer","rowIsActivatable");
+		referenceElement = createTableRow(referenceElement,"rowContainerLeftBehind","<th><label for='ContainerLeftBehind'>Container Left Behind:</label></th><td><select id='ContainerLeftBehind' name='ContainerLeftBehind'>"+ContainerSelection+"</select></td>");
 	}
 }
 
-async function updateToolSubtypeOptions(tableID){
+async function updateToolSubtypeOptions(){
 	let requestTools = await fetch("macro:pm.a5e.GetCoreData@lib:pm.a5e.Core", {method: "POST", body: "['sb.Tools']"});
 	let allTools = await requestTools.json();
 
@@ -357,100 +366,66 @@ async function updateToolSubtypeOptions(tableID){
 	document.getElementById("ToolSubtype").innerHTML = ToolSelection+"<option value=''>New Tool</option>";
 
 	if((ToolSelection == "" && document.getElementById("rowNewToolType") != null) || ToolSelection != ""){
-		createNewToolRows(tableID);
+		createNewToolRows();
 	}
 }
 
-function createNewToolRows(tableID){
+function createNewToolRows(){
 	if(document.getElementById("ToolSubtype").value == ""){
-		let nextRowIndex = document.getElementById("rowToolSubtype").rowIndex + 1;
+		let referenceElement = document.getElementById("rowToolSubtype");
 
-		addTableRow(tableID,nextRowIndex,"rowNewToolType","<th><label for='NewToolTypeDisplayName'>New Tool Subtype Name:</label></th><td><input type='text' id='NewToolTypeDisplayName' name='NewToolTypeDisplayName'></td>");
-		nextRowIndex++;
+		referenceElement = createTableRow(referenceElement,"rowNewToolType","<th><label for='NewToolTypeDisplayName'>New Tool Subtype Name:</label></th><td><input type='text' id='NewToolTypeDisplayName' name='NewToolTypeDisplayName'></td>");
 
-		addTableRow(tableID,nextRowIndex,"rowIsNewToolSubtypeTemplate","<th><label for='isNewToolSubtypeTemplate'>Add as Template:</label></th><td><input type='checkbox' id='isNewToolSubtypeTemplate' name='isNewToolSubtypeTemplate'></td>");
-		nextRowIndex++;
+		referenceElement = createTableRow(referenceElement,"rowIsNewToolSubtypeTemplate","<th><label for='isNewToolSubtypeTemplate'>Add as Template:</label></th><td><input type='checkbox' id='isNewToolSubtypeTemplate' name='isNewToolSubtypeTemplate'></td>");
 	}
 	else{
-		clearUnusedTable(tableID,"rowToolSubtype","rowSize");
+		deleteInterveningElements(document.getElementById("rowToolSubtype"),document.getElementById("rowObjectTypeEnd"));
 	}
 }
 
 function createActivatableRows(){
-	let tableID = document.getElementById("rowIsActivatable").closest("table").id;
-	let nextRowIndex = document.getElementById("rowIsActivatable").rowIndex + 1;
+	let referenceElement = document.getElementById("rowIsActivatable");
 
 	if(document.getElementById("isActivatable").checked){
-		addTableRow(tableID,nextRowIndex,"rowIsActivationEffect","<th><label for='isActivationEffect'>Instantaneous Effect on Activation/Deactivation:</label></th><td><select id='isActivationEffect' name='isActivationEffect' onchange='createActivationEffectRows()'><option value=''>No (Passive Only)</option><option value='Activation'>Activation Only</option><option value='Deactivation'>Deactivation Only</option><option value='Both'>Both</option><select></td>");
-		nextRowIndex++;
+		referenceElement = createTableRow(referenceElement,"rowIsActivationEffect","<th><label for='isActivationEffect'>Instantaneous Effect on Activation/Deactivation:</label></th><td><select id='isActivationEffect' name='isActivationEffect' onchange='createActivationEffectRows()'><option value=''>No (Passive Only)</option><option value='Activation'>Activation Only</option><option value='Deactivation'>Deactivation Only</option><option value='Both'>Both</option><select></td>");
 
-		let UseTimeOptionsArray = ["Free","Item Interaction","Action","Bonus Action","Reaction","1 Minute","10 Minutes","1 Hour","8 Hours","12 Hours","24 Hours"];
+		let UseTimeOptionsArray = ["Free","Item Interaction","Action","Bonus Action","Reaction","1 Minute","10 Minutes","1 Hour","8 Hours","12 Hours","24 Hours","Custom"];
 		let UseTimeOptions = "";
 		for(let tempOption of UseTimeOptionsArray){
 			UseTimeOptions = UseTimeOptions + "<option value='"+tempOption+"'>"+tempOption+"</option>";
 		}
 
-		addTableRow(tableID,nextRowIndex,"rowActivationUseTime","<th><label for='ActivationUseTime'>Activation Time:</label></th><td><select id='ActivationUseTime' name='ActivationUseTime'>"+UseTimeOptions+"</select></td>");
-		document.getElementById("ActivationUseTime").value = "Bonus Action";
-		nextRowIndex++;
+		referenceElement = createTableRow(referenceElement,"rowUseTimeActivation","<th><label for='UseTimeActivation'>Activation Time:</label></th><td><select id='UseTimeActivation' name='UseTimeActivation'>"+UseTimeOptions+"</select></td>");
+		document.getElementById("UseTimeActivation").value = "Bonus Action";
+		document.getElementById("UseTimeActivation").addEventListener("change",function(){
+			createCustomUseTimeRows("UseTimeActivation","rowActivationComponents");
+		})
 
-		addTableRow(tableID,nextRowIndex,"rowActivationComponents","<th><label for='ActivationComponents'>Activation Requirements:</label></th><td><select id='ActivationComponents' name='ActivationComponents'><option value='None'>No Components</option><option value='Verbal'>Command Word (Verbal)</option><option value='Somatic'>Interaction (Somatic)</option><option value='Both'>Verbal and Somatic</option></select></td>");
-		nextRowIndex++;
+		referenceElement = createTableRow(referenceElement,"rowUseTimeDeactivation","<th><label for='UseTimeDeactivation'>Deactivation Time:</label></th><td><select id='UseTimeDeactivation' name='UseTimeDeactivation'><option value='Same'>Same as Activation</option>"+UseTimeOptions+"</select></td>");
+		document.getElementById("UseTimeDeactivation").addEventListener("change",function(){
+			createCustomUseTimeRows("UseTimeDeactivation","rowDeactivationComponents");
+		})
 
-		activationTimeResourceRow(tableID);
+		referenceElement = createTableRow(referenceElement,"rowActivationComponents","<th><label for='ActivationComponents'>Activation Requirements:</label></th><td><select id='ActivationComponents' name='ActivationComponents'><option value='None'>No Components</option><option value='Verbal'>Command Word (Verbal)</option><option value='Somatic'>Interaction (Somatic)</option><option value='Both'>Verbal and Somatic</option></select></td>");
 
+		if(document.getElementById("rowIsActivatableEnd") === null){
+			referenceElement = createTableRow(referenceElement,"rowIsActivatableEnd","<th colspan=2 class='section-end'></th>");
+		}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//Next thing to do: Create ActivationEffects and DeactivationEffects. Simple lights automatically add one that turns the light off/on if one is not made for you. ActivateItem runs effect through ExecuteEffect. Need to sort out having multiple places where subeffects can be created (fine in JSON, hard for input tracking the data)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+		activationTimeResourceRow();
 	}
 	else{
-		clearUnusedTable("CreateObjectTable","rowIsActivatable","rowIsCharges");
+		deleteInterveningElements(document.getElementById("rowIsActivatable"),document.getElementById("rowIsActivatableEnd").nextElementSibling);
 	}
 }
 
 function createActivationEffectRows(){
-
+	if(!document.getElementById("isActivatable").checked){
+		
+	}
+	else if(document.getElementById("isActivationEffect").value != ""){
+		//TODO: Items - Create ActivationEffects and DeactivationEffects. Simple lights automatically add one that turns the light off/on if one is not made for you. ActivateItem runs effect through ExecuteEffect. Need to sort out having multiple places where subeffects can be created (fine in JSON, hard for input tracking the data)
+	}
 }
 
 function activationTimeResourceRow(){
@@ -459,405 +434,299 @@ function activationTimeResourceRow(){
 	if(!document.getElementById("isActivatable").checked){
 		
 	}
-	else if(document.getElementById("isActivationEffect").value != ""){
-		
-	}
 	else{
-		let timeResource = document.getElementById("rowIsTimeResource");
-		if(timeResource != null){
-			needsTimeRow = timeResource.checked;
-		}
+		let resourceChoice = document.getElementById("isResources").value;
+		needsTimeRow = resourceChoice !== "";
 
 		let lightDuration = document.getElementById("customLightDurationValue");
 		if(lightDuration != null){
 			needsTimeRow = !lightDuration.disabled;
 		}
 	}
-	
-	if(needsTimeRow){
-		let nextRowIndex = document.getElementById("rowActivationComponents").rowIndex + 1;
-		let tableID = document.getElementById("rowActivationComponents").closest("table").id;
-		addTableRow(tableID,nextRowIndex,"rowActivationUseTimeResource","<th><label for='isActivationUseTimeResource'>Activation Uses Time Resource:</label></th><td><input type='checkbox' id='isActivationUseTimeResource' name='isActivationUseTimeResource'></td>");
-	}
-	else if(document.getElementById("rowActivationUseTimeResource") != null){
-		document.getElementById("rowActivationUseTimeResource").remove();
-	}
-}
 
-function createChargesRows(tableID){
-	if(document.getElementById("isCharges").value == "None"){
-		clearUnusedTable(tableID,"rowIsCharges","rowObjectDuration");
+	let timeResourceOptions = getInProgressResourceOptions({SpecialType:"Time"});
+
+	let referenceElement = document.getElementById("rowActivationComponents");
+	referenceElement = createTableRow(referenceElement,"rowActivationTimeResourceUsed","<th><label for='ActivationTimeResourceUsed'>Activation Uses Time Resource:</label></th><td><select id='ActivationTimeResourceUsed' name='ActivationTimeResourceUsed'><option value=''>None</option>"+timeResourceOptions+"</select></td>");
+
+	//TODO: Resource - Gotta do a whole bunch of ass-covering here to prevent issues when changing resource amounts/names after the fact
+
+	let resourceNum = document.getElementById("ResourceNumber");
+	if(resourceNum === null){
+		resourceNum = 1;
 	}
 	else{
-		let nextRowIndex = document.getElementById("rowIsCharges").rowIndex+1;
-		if(document.getElementById("isCharges").value == "One"){
-			addTableRow(tableID,nextRowIndex,"rowMaxCharges","<th><label for='MaxResource'>Maximum Number of Charges:</label></th><td><input type='number' id='MaxResource' name='MaxResource' min='0' value='0' style='width:35px'></td>");
-			nextRowIndex++;
-		}
-		else{
-			addTableRow(tableID,nextRowIndex,"rowMultiResource0","<th style='text-align:center' colspan='2'><input type='hidden' id='MultiResourceNumber' name='MultiResourceNumber' value='0'><label for='ResourceDisplayName0'>Resource #1 Name:</label><input type='text' id='ResourceDisplayName0' name='ResourceDisplayName0'> Maximum Charges:<input type='number' id='MaxResource0' name='MaxResource0' min='0' value='0' style='width:35px'></th>");
-			nextRowIndex++;
-			
-			addTableRow(tableID,nextRowIndex,"rowMultiResourceButtons","<th style='text-align:center' colspan='2'><input type='button' value='Add Resource' onclick='addMultiResourceRows("+'"'+tableID+'"'+")'>  <input type='button' value='Remove Resource' onclick='removeMultiResourceRows("+'"'+tableID+'"'+")'></th>");
-			nextRowIndex++;
-		}
-
-		if(document.getElementById("rowRestoreWhen") == null){
-			addTableRow(tableID,nextRowIndex,"rowRestoreWhen","<th>Instances When Resource Recharges:</th><td><div class='check-multiple' style='width:100%'><label><input type='checkbox' id='RestoreShortRest' name='RestoreShortRest'><span>Short Rest</span></label><label><input type='checkbox' id='RestoreLongRest' name='RestoreLongRest'><span>Long Rest</span></label><label><input type='checkbox' id='RestoreDawn' name='RestoreDawn'><span>Dawn</span></label><label><input type='checkbox' id='RestoreDusk' name='RestoreDusk'><span>Dusk</span></label><label><input type='checkbox' id='RestoreStartTurn' name='RestoreStartTurn'><span>Start of Turn</span></label><label><input type='checkbox' id='RestoreInitiative' name='RestoreInitiative'><span>Rolling Initiative</span></label><label><input type='checkbox' id='RestoreItem' name='RestoreItem'><span>Charged by an Item</span></label></div></td>");
-			nextRowIndex++;
-
-			addTableRow(tableID,nextRowIndex,"rowRestoreMethod","<th><label for='RestoreMethod'>Recharge Method:</label></th><td><select id='RestoreMethod' name='RestoreMethod' onchange='createRestoreMethodRows()'><option value='Full'>Fully Recharge</option><option value='Fixed'>Fixed Amount Regained</option><option value='Rolled'>Rolled Amount</option><option value='Chance'>Chance to Recharge</option><option value='Attribute'>Based on Attribute</option><option value='Proficiency'>Based on Proficiency</option></select></td>");
-			nextRowIndex++;
-
-			addTableRow(tableID,nextRowIndex,"rowInitialChargesMethod","<th><label for='InitialChargesMethod'>Charges When Gained:</label></th><td><select id='InitialChargesMethod' name='InitialChargesMethod' onchange='createInitialChargesMethodRows()'><option value='Full'>Fully Charged</option><option value='Fixed'>Fixed Amount</option><option value='Rolled'>Rolled Amount</option></select></td>");
-			nextRowIndex++;
-
-			addTableRow(tableID,nextRowIndex,"rowHasDepletedEffect","<th><label for='HasDepletedEffect'>Effect Occurs when Charges Depleted:</label></th><td><input type='checkbox' id='HasDepletedEffect' name='HasDepletedEffect' onchange='createChargeDepletedRows()'></td>");
-			nextRowIndex++;			
-		}
-		else if(document.getElementById("isCharges").value == "One"){
-			clearUnusedTable(tableID,"rowMaxCharges","rowRestoreWhen");
-		}
-		else if(document.getElementById("isCharges").value == "Multiple"){
-			clearUnusedTable(tableID,"rowMultiResourceButtons","rowRestoreWhen");
-		}
+		resourceNum = Number(resourceNum.value);
 	}
+
+	trackResourceOptionChanges(document.getElementById("ActivationTimeResourceUsed"),{SpecialType:"Time"});
 }
 
-function createDurationRows(tableID,endRowID){
+function createDurationRows(endRowID){
+	let referenceElement = document.getElementById("rowObjectDuration");
 	if(document.getElementById("isDuration").checked){
-		let nextRowIndex = document.getElementById("rowObjectDuration").rowIndex + 1;
+		createCustomDurationRows("ObjectDuration",endRowID);
 
-		createCustomDurationRows(tableID,"ObjectDuration",endRowID);
-		nextRowIndex++;
-
-		addTableRow(tableID,nextRowIndex,"rowIsPerishable","<th><label for='isPerishable'>Destroy Object when Unusable?</label></th><td><input type='checkbox' id='isPerishable' name='isPerishable'></td>");
-		nextRowIndex++;
+		referenceElement = createTableRow(referenceElement,"rowIsPerishable","<th><label for='isPerishable'>Destroy Object when Unusable?</label></th><td><input type='checkbox' id='isPerishable' name='isPerishable'></td>");
 	}
 	else{
-		clearUnusedTable(tableID,"rowObjectDuration",endRowID);
+		deleteInterveningElements(referenceElement,document.getElementById(endRowID));
 	}
 }
 
-function addMultiResourceRows(tableID){
-	let NewResourceNumber = Number(document.getElementById("MultiResourceNumber").value);
-	NewResourceNumber = NewResourceNumber + 1;
-	let nextRowIndex = document.getElementById("rowMultiResource"+(NewResourceNumber - 1)).rowIndex + 1;
-	document.getElementById("MultiResourceNumber").value = NewResourceNumber;
-	
-	addTableRow(tableID,nextRowIndex,"rowMultiResource"+NewResourceNumber,"<th style='text-align:center' colspan='2'><label for='ResourceDisplayName"+NewResourceNumber+"'>Resource #"+(NewResourceNumber+1)+" Name:</label> <input type='text' id='ResourceDisplayName"+NewResourceNumber+"' name='ResourceDisplayName"+NewResourceNumber+"'> Maximum Charges:<input type='number' id='MaxResource"+NewResourceNumber+"' name='MaxResource"+NewResourceNumber+"' min='0' value='0' style='width:35px'></th>");
-	nextRowIndex++;
-
-	//TODO: Needs addition of resource types: Dice, Time, and Spell Slot
-}
-
-function removeMultiResourceRows(tableID){
-	let lastResourceRowID = document.getElementById("rowMultiResourceButtons").rowIndex - 1;
-	document.getElementById(tableID).deleteRow(lastResourceRowID);
-	let NewResourceNumber = Number(document.getElementById("MultiResourceNumber").value);
-	NewResourceNumber = NewResourceNumber - 1;
-	document.getElementById("MultiResourceNumber").value = NewResourceNumber;
-}
-
-async function createRestoreMethodRows(){
-	let tableID = document.getElementById("rowRestoreMethod").closest("table").id;
-	clearUnusedTable(tableID,"rowRestoreMethod","rowInitialChargesMethod");
-	let nextRowIndex = document.getElementById("rowRestoreMethod").rowIndex+1;
-
-	if(document.getElementById("RestoreMethod").value == "Fixed"){
-		addTableRow(tableID,nextRowIndex,"rowRestoreAmount","<th><label for='RestoreAmount'>Amount Recharged:</label></th><td><input type='number' id='RestoreAmount' name='RestoreAmount' min='0' value='1' style='width:35px'></td>");
-	}
-	else if(document.getElementById("RestoreMethod").value == "Rolled"){
-		addTableRow(tableID,nextRowIndex,"rowRestoreAmount","<th><label for='RestoreAmountDieNumber'>Amount Recharged:</label></th><td><input type='number' id='RestoreAmountDieNumber' name='RestoreAmountDieNumber' min='0' value='1' style='width:25px'> d <input type='number' id='RestoreAmountDieSize' name='RestoreAmountDieSize' min='0' value='6' style='width:25px'> + <input type='number' id='RestoreAmountBonus' name='RestoreAmountBonus' value=0 style='width:25px'></td>");
-	}
-	else if(document.getElementById("RestoreMethod").value == "Chance"){
-		addTableRow(tableID,nextRowIndex,"rowRestoreChance","<th><label for='RestoreChanceDieNumber'>Dice Rolled:</label></th><td><input type='number' id='RestoreChanceDieNumber' name='RestoreChanceDieNumber' min='0' value='1' style='width:25px'> d <input type='number' id='RestoreChanceDieSize' name='RestoreChanceDieSize' min='0' value='6' style='width:25px'> + <input type='number' id='RestoreChanceBonus' name='RestoreChanceBonus' value=0 style='width:25px'></td>");
-		
-		addTableRow(tableID,nextRowIndex,"rowRestoreChanceTarget","<th><label for='RestoreChanceTarget'>Minimum Successful Recharge Roll:</label></th><td><input type='number' id='RestoreChanceTarget' name='RestoreChanceTarget' min='0' value='5' style='width:25px'></td>");
-	}
-	else if(document.getElementById("RestoreMethod").value == "Attribute"){
-		let request = await fetch("macro:pm.GetAttributes@lib:pm.a5e.Core", {method: "POST", body: ""});
-		let attributeList = await request.json();
-		let AttributeOptions = "";
-		for(let tempAttribute of attributeList){
-			AttributeOptions = AttributeOptions + "<option value='"+tempAttribute.Name+"'>"+tempAttribute.DisplayName+"</option>";
-		}
-
-		addTableRow(tableID,nextRowIndex,"rowRestoreAmount","<th><label for='RestoreAmountMultiplier'>Amount Recharged:</label></th><td>(<input type='number' id='RestoreAmountMultiplier' name='RestoreAmountMultiplier' min='0' value='1' style='width:25px'> * <select id='RestoreAmountAttribute' name='RestoreAmountAttribute'>"+AttributeOptions+"</select>) + <input type='number' id='RestoreAmountBonus' name='RestoreAmountBonus' value=0 style='width:25px'></td>");
-	}
-	else if(document.getElementById("RestoreMethod").value == "Proficiency"){
-		addTableRow(tableID,nextRowIndex,"rowRestoreAmount","<th><label for='RestoreAmountMultiplier'>Amount Recharged:</label></th><td>(<input type='number' id='RestoreAmountMultiplier' name='RestoreAmountMultiplier' min='0' value='1' style='width:25px'> * Proficiency) + <input type='number' id='RestoreAmountBonus' name='RestoreAmountBonus' value=0 style='width:25px'></td>");
-	}
-}
-
-async function createInitialChargesMethodRows(){
-	let tableID = document.getElementById("rowInitialChargesMethod").closest("table").id;
-	clearUnusedTable(tableID,"rowInitialChargesMethod","rowHasDepletedEffect");
-	let nextRowIndex = document.getElementById("rowInitialChargesMethod").rowIndex+1;
-
-	if(document.getElementById("InitialChargesMethod").value == "Fixed"){
-		addTableRow(tableID,nextRowIndex,"rowInitialChargesAmount","<th><label for='InitialChargesAmount'>Initial Charges:</label></th><td><input type='number' id='InitialChargesAmount' name='InitialChargesAmount' min='0' value='1' style='width:35px'></td>");
-	}
-	else if(document.getElementById("InitialChargesMethod").value == "Rolled"){
-		addTableRow(tableID,nextRowIndex,"rowInitialChargesAmount","<th><label for='InitialChargesAmountDieNumber'>Initial Charges:</label></th><td><input type='number' id='InitialChargesAmountDieNumber' name='InitialChargesAmountDieNumber' min='0' value='1' style='width:25px'> d <input type='number' id='InitialChargesAmountDieSize' name='InitialChargesAmountDieSize' min='0' value='6' style='width:25px'> + <input type='number' id='InitialChargesAmountBonus' name='InitialChargesAmountBonus' value=0 style='width:25px'></td>");
-	}
-}
-
-async function createSpellcastingFocusRows(tableID,endRowID){
+async function createSpellcastingFocusRows(endRowID){
+	let referenceElement = document.getElementById("rowIsSpellcastingFocus");
 	if(document.getElementById("isSpellcastingFocus").checked){
-		let nextRowIndex = document.getElementById("rowIsSpellcastingFocus").rowIndex + 1;
 
 		let request = await fetch("macro:pm.a5e.GetCoreData@lib:pm.a5e.Core", {method: "POST", body: "['sb.SpellcastingFocusTypes']"});
 		allFocusTypes = await request.json();
 		focusTypeOptions = createHTMLMultiselectOptions(allFocusTypes,"SpellcastingFocusType");
 
-		addTableRow(tableID,nextRowIndex,"rowSpellcastingFocusType","<th>Spellcasting Focus Type(s):</th><td><div class='check-multiple' style='width:100%'>"+focusTypeOptions+"</div></td>");
-		nextRowIndex++;
+		referenceElement = createTableRow(referenceElement,"rowSpellcastingFocusType","<th>Spellcasting Focus Type(s):</th><td><div class='check-multiple' style='width:100%'>"+focusTypeOptions+"</div></td>");
 	}
 	else{
-		clearUnusedTable(tableID,"rowIsSpellcastingFocus",endRowID);
+		deleteInterveningElements(referenceElement,document.getElementById(endRowID));
 	}	
 }
 
-async function createCastSpellsRows(tableID){
-	let nextRowIndex = document.getElementById("rowIsCastSpells").rowIndex + 1;
+async function createCastSpellsRows(){
+	let referenceElement = document.getElementById("rowIsCastSpells");
 
 	if(document.getElementById("isCastSpells").checked){
-		addTableRow(tableID,nextRowIndex,"rowSpellButtons","<th style='text-align:center' colspan='2'><input type='button' value='Add Spell' onclick='addSpellSelectionRows("+'"'+tableID+'"'+")'>  <input type='button' value='Remove Spell' onclick='removeSpellSelectionRows("+'"'+tableID+'"'+")'></th>");
-		nextRowIndex++;
+		let spellcastingRows = [];
+		let spellcastingListeners = [];
 
-		addSpellSelectionRows(tableID);
-			
-		addTableRow(tableID,nextRowIndex,"rowCastSpellModifierHow","<th>Spell Attack/DC Modifier Method:</th><td><select id='CastSpellModifierHow' name='CastSpellModifierHow' onchange='createCastSpellModifierRows("+'"'+tableID+'"'+")'><option value='AnyClass'>Any Class Spell Modifier</option><option value='SpecificClass'>Specific Class Spell Modifier</option><option value='SetValue'>Preset Modifier</option><option value='Stat'>Based on a Stat</option></select></td>");
-		nextRowIndex++;
+		let request = await fetch("macro:pm.a5e.GetBaseSpellData@lib:pm.a5e.Core", {"method":"POST","body":""});
+		let allSpells = await request.json();
+		allSpellOptions = createHTMLSelectOptions(allSpells);
+
+		spellcastingRows.push({
+			RowID:"rowCastSpell",
+			Contents:"<th style='text-align:center' colspan='2' id='headerCastSpell'>Cast <select id='CastSpellName' name='CastSpellName'>"+allSpellOptions+"</select><span id='CastSpellLevelInput'></span></th>"
+		});
+		spellcastingListeners.push({
+			elementID:"CastSpellName",
+			listener:"change",
+			functionName:"adjustSpellLevelOptions",
+			functionArgs:{}
+		});
+
+		createMultiRowButtonsInput("CastSpell",referenceElement,spellcastingRows,"Spell",spellcastingListeners);
+
+		let addSpellButton = document.getElementById("AddCastSpellButton");
+		addSpellButton.addEventListener("change",function(){
+			if(document.getElementById("isResources").value !== ""){
+				let currentNumber = Number(document.getElementById("CastSpellNumber").value);
+				addItemSpellcastingCharges(currentNumber - 1);
+			}
+		});
+
+		await adjustSpellLevelOptions(0);
+
+		document.getElementById("isResources").addEventListener("change",toggleItemSpellcastingCharges);
+		toggleItemSpellcastingCharges();
+
+		referenceElement = document.getElementById("rowCastSpellButtons");
+
+		referenceElement = createTableRow(referenceElement,"rowCastSpellModifierHow","<th>Spell Attack/DC Modifier Method:</th><td><select id='CastSpellModifierHow' name='CastSpellModifierHow' onchange='createCastSpellModifierRows()'><option value='AnyClass'>Any Class Spell Modifier</option><option value='SpecificClass'>Specific Class Spell Modifier</option><option value='SetValue'>Preset Modifier</option><option value='Stat'>Based on a Stat</option></select></td>");
+
+		referenceElement = createTableRow(referenceElement,"rowCastSpellEnd","<th colspan = 2></th>");
+		referenceElement.classList.add("section-end");
 
 		//TODO: Add any modifications to spells
 	}
 	else{
-		clearUnusedTable(tableID,"rowIsCastSpells","rowIsImprovisedWeapon");
+		deleteInterveningElements(referenceElement,document.getElementById("rowCastSpellEnd").nextElementSibling);
+
+		document.getElementById("isResources").removeEventListener("change",toggleItemSpellcastingCharges);
 	}
 }
 
-async function createImprovisedWeaponRows(tableID){
-	if(document.getElementById("isImprovisedWeapon").checked){
-		await createWeaponTableRows(tableID,"rowIsImprovisedWeapon");
-		document.getElementById("rowWeaponType").remove();
-		document.getElementById("rowNewTypeNameWeapon").remove();
-		document.getElementById("rowIsNewTemplateWeapon").remove();
-		document.getElementById("rowWeaponClass").remove();
-	}
-	else{
-		clearUnusedTable(tableID,"rowIsImprovisedWeapon","rowIsStackable");
-	}
-}
-
-async function addSpellSelectionRows(tableID){
-	let nextRowIndex = document.getElementById("rowSpellButtons").rowIndex;
-	let SpellNumber = Number(document.getElementById("CastSpellNumber").value);
-	let request = await fetch("macro:pm.a5e.GetBaseSpellData@lib:pm.a5e.Core", {"method":"POST","body":""});
-	let allSpells = await request.json();
-	allSpellOptions = createHTMLSelectOptions(allSpells);
-	let firstSpellData = allSpells[0];
-	let firstSpellLevel = Number(firstSpellData.Level);
-
-	let levelInput = "<span id='CastSpellLevelInput"+SpellNumber+"'>";
-	let AHLInput = "<span id='CastSpellAHLInput"+SpellNumber+"'>";
-	if(firstSpellLevel == 0){
-		levelInput = levelInput + "<input type='hidden' id='CastSpellLevel"+SpellNumber+"' name='CastSpellLevel"+SpellNumber+"' value=0>";
-		AHLInput = "<input type='hidden' id='CanAHLSpell"+SpellNumber+"' name='CanAHLSpell"+SpellNumber+"' value=0>";
-	}
-	else{
-		levelInput = levelInput + " at level <select id='CastSpellLevel"+SpellNumber+"' name='CastSpellLevel"+SpellNumber+"'>";
-		for(let i=firstSpellLevel; i<=9; i++){
-			levelInput = levelInput + "<option value='"+i+"'>"+i+"</option>";
-		}
-		levelInput = levelInput + "</select>";
-
-		AHLInput = "; <select id='CanAHLSpell"+SpellNumber+"' name='CanAHLSpell"+SpellNumber+"' onchange='toggleSpellAHLResource("+SpellNumber+")'><option value='0'>Cannot</option><option value='1'>Can</option></select> spend <input type='number' id='SpellResourceAHL"+SpellNumber+"' name='SpellResourceAHL"+SpellNumber+"' style='width:25px' value='0' disabled> charge(s) per higher level.";
-	}
-	levelInput = levelInput + "</span>";
-	AHLInput = AHLInput + "</span>";
-
-	addTableRow(tableID,nextRowIndex,"rowCastSpell"+SpellNumber+"","<th style='text-align:center' colspan='2' id='headerCastSpell"+SpellNumber+"'>Cast <select id='CastSpellName"+SpellNumber+"' name='CastSpellName"+SpellNumber+"' onchange='adjustSpellLevelOptions("+SpellNumber+")'>"+allSpellOptions+"</select>"+levelInput+"</th>");
-	nextRowIndex++;
-
-	if(document.getElementById("isCharges").value!="None"){
-		let ChargesInput = "<span id='CastSpellResourceUsed"+SpellNumber+"'>";
-		if(document.getElementById("isCharges").value == "Multiple"){
-			let ResourceNumber = Number(document.getElementById("MultiResourceNumber").value);
-			let ResourceOptions = "";
-			for(let i=0; i<=ResourceNumber; i++){
-				let thisResourceDisplayName = document.getElementById("ResourceDisplayName"+i).value;
-				thisResourceName = thisResourceDisplayName.split("'").join("");
-				ResourceOptions = ResourceOptions + "<option value='"+thisResourceName+"'>"+thisResourceDisplayName+"</option>";
-			}
-			ChargesInput = ChargesInput + "<select id='CastSpellResourceKey"+SpellNumber+"' name='CastSpellResourceKey"+SpellNumber+"'>"+ResourceOptions+"</select>";
-		}
-		else{
-			ChargesInput = ChargesInput + "charge(s)";
-		}
-		ChargesInput = ChargesInput + "</span>";
-
-		addTableRow(tableID,nextRowIndex,"rowCastSpellResource"+SpellNumber+"","<th style='text-align:center' colspan='2' id='headerCastSpellResource"+SpellNumber+"'>Uses <input type='number' id='CastSpellResource"+SpellNumber+"' name='CastSpellResource"+SpellNumber+"' style='width:25px' value=1> "+ChargesInput+AHLInput+"</th>");
-		nextRowIndex++;		
-	}
-
-	SpellNumber++;
-	document.getElementById("CastSpellNumber").value = SpellNumber;
-}
-
-function removeSpellSelectionRows(tableID){
-	let SpellNumber = Number(document.getElementById("CastSpellNumber").value) - 1;
-
-	let finalRowPrefix;
-	if(document.getElementById("isCharges").value=="None"){
-		finalRowPrefix = "rowCastSpell";
-	}
-	else{
-		finalRowPrefix = "rowSpellResource"
-	}
-
-	clearUnusedTable(tableID,finalRowPrefix+(SpellNumber-1),"rowSpellButtons");
-	document.getElementById("CastSpellNumber").value = SpellNumber;
-}
-
-async function adjustSpellLevelOptions(SpellNumber){
+async function adjustSpellLevelOptions(i){
 	let request = await fetch("macro:pm.a5e.GetBaseSpellData@lib:pm.a5e.Core", {"method":"POST","body":""});
 	let allSpells = await request.json();
 
-	let WhichSpell = document.getElementById("CastSpellName"+SpellNumber).selectedIndex;
+	let WhichSpell = document.getElementById("CastSpellName"+i).selectedIndex;
 	let SpellData = allSpells[WhichSpell];
 	let SpellLevel = Number(SpellData.Level);
-	document.getElementById("CastSpellLevel"+SpellNumber).selectedIndex = 0;
-	let PriorSpellLevel = document.getElementById("CastSpellLevel"+SpellNumber).value;
+	let priorLevelInput = document.getElementById("CastSpellLevel"+i);
+	let PriorSpellLevel;
+	if(priorLevelInput !== null){
+		PriorSpellLevel = Number(priorLevelInput.value);
+	}
+	else{
+		PriorSpellLevel = null;
+	}
 
-	if(PriorSpellLevel != SpellLevel){
+	if(PriorSpellLevel !== SpellLevel){
 		let levelInput = "";
-		let AHLInput = "";
-		if(SpellLevel == 0){
-			levelInput = "<input type='hidden' id='CastSpellLevel"+SpellNumber+"' name='CastSpellLevel"+SpellNumber+"' value=0>";
-			document.getElementById("CastSpellLevelInput"+SpellNumber).innerHTML = levelInput;
-
-			if(document.getElementById("isCharges").value != "None"){
-				let SpellResourceRowText = document.getElementById("rowSpellResource"+SpellNumber).innerHTML;
-				SpellResourceRowText = SpellResourceRowText.split(";")[0];
-				AHLInput = "<input type='hidden' id='CanAHLSpell"+SpellNumber+"' name='CanAHLSpell"+SpellNumber+"' value=0>";
-				SpellResourceRowText = SpellResourceRowText + AHLInput;
-				document.getElementById("rowSpellResource"+SpellNumber).innerHTML = SpellResourceRowText;				
-			}
+		if(SpellLevel === 0){
+			levelInput = "<input type='hidden' id='CastSpellLevel"+i+"' name='CastSpellLevel"+i+"' value=0>";
+			document.getElementById("CastSpellLevelInput"+i).innerHTML = levelInput;
 		}
 		else{
 			let levelOptions;
-			for(let i=SpellLevel; i<=9; i++){
-				levelOptions = levelOptions + "<option value='"+i+"'>"+i+"</option>";
+			for(let j=SpellLevel; j<=9; j++){
+				levelOptions = levelOptions + "<option value='"+j+"'>"+j+"</option>";
 			}
 
-			if(PriorSpellLevel == 0){
-				levelInput = " at level <select id='CastSpellLevel"+SpellNumber+"' name='CastSpellLevel"+SpellNumber+"'>"+levelOptions+ "</select>";
-				document.getElementById("CastSpellLevelInput"+SpellNumber).innerHTML = levelInput;
-
-				if(document.getElementById("isCharges").value != "None"){
-					AHLInput = "; <select id='CanAHLSpell"+SpellNumber+"' name='CanAHLSpell"+SpellNumber+"' onchange='toggleSpellAHLResource("+SpellNumber+")'><option value='"+SpellNumber+"'>Cannot</option><option value='1'>Can</option></select> spend <input type='number' id='SpellResourceAHL"+SpellNumber+"' name='SpellResourceAHL"+SpellNumber+"' style='width:25px' value='"+SpellNumber+"' disabled> charge(s) per higher level.";
-					document.getElementById("CanAHLSpell"+SpellNumber).remove();
-
-					document.getElementById("headerSpellResource"+SpellNumber).innerHTML = document.getElementById("headerSpellResource"+SpellNumber).innerHTML + AHLInput;
-				}
+			if(PriorSpellLevel === 0 || PriorSpellLevel === null){
+				levelInput = " at level <select id='CastSpellLevel"+i+"' name='CastSpellLevel"+i+"'>"+levelOptions+ "</select>";
+				document.getElementById("CastSpellLevelInput"+i).innerHTML = levelInput;
 			}
 			else{
-				document.getElementById("CastSpellLevel"+SpellNumber).innerHTML = levelOptions;
+				document.getElementById("CastSpellLevel"+i).innerHTML = levelOptions;
 			}
+		}
+
+		updateItemSpellAHL(i);
+	}
+}
+
+function toggleItemSpellcastingCharges(){
+	let spellOptionsNumber = Number(document.getElementById("CastSpellNumber").value);
+	let resourceChoice = document.getElementById("isResources").value;
+	if(resourceChoice === ""){
+		for(let i = 0; i < spellOptionsNumber; i++){
+			let thisSpellResourceRow = document.getElementById("rowCastSpellResource"+i);
+			if(thisSpellResourceRow !== null){
+				thisSpellResourceRow.remove();
+			}
+		}
+	}
+	else if(document.getElementById("rowCastSpellResource0") === null){
+		for(let i = 0; i < spellOptionsNumber; i++){
+			addItemSpellcastingCharges(i);
 		}
 	}
 }
 
-function toggleSpellAHLResource(SpellNumber){
-	if(document.getElementById("CanAHLSpell"+SpellNumber).value == 0){
-		document.getElementById("SpellResourceAHL"+SpellNumber).setAttribute("disabled","");
+function addItemSpellcastingCharges(i){
+	let referenceElement = document.getElementById("rowCastSpell"+i);
+	let castSpellResourceOptions = getInProgressResourceOptions();
+
+	referenceElement = createTableRow(referenceElement,"rowCastSpellResource"+i,"<th style='text-align:center' colspan='2' id='headerCastSpellResource"+i+"'>Uses <input type='number' id='CastSpellResource"+i+"' name='CastSpellResource"+i+"' style='width:25px' value=1> <select id='CastSpellResourceKey"+i+"' name='CastSpellResourceKey"+i+"'><option value=''>No Resource</option>"+castSpellResourceOptions+"</select><span id='CastSpellAHLInput"+i+"'></span></th>");
+
+	trackResourceOptionChanges(document.getElementById("CastSpellResourceKey"+i));
+
+	updateItemSpellAHL(i);
+}
+
+async function updateItemSpellAHL(i){
+	let AHLSpan = document.getElementById("CastSpellAHLInput"+i);
+	if(AHLSpan === null){
+		return;
+	}
+
+	let request = await fetch("macro:pm.a5e.GetBaseSpellData@lib:pm.a5e.Core", {"method":"POST","body":""});
+	let allSpells = await request.json();
+
+	let WhichSpell = document.getElementById("CastSpellName"+i).selectedIndex;
+	let SpellData = allSpells[WhichSpell];
+	let SpellLevel = Number(SpellData.Level);
+
+	if(SpellLevel === 0){
+		AHLSpan.innerHTML = "";
 	}
 	else{
-		document.getElementById("SpellResourceAHL"+SpellNumber).removeAttribute("disabled","");
+		AHLSpan.innerHTML = "; <select id='CanAHLSpell"+i+"' name='CanAHLSpell"+i+"'><option value='0'>Cannot</option><option value='1'>Can</option></select> spend <input type='number' id='SpellResourceAHL"+i+"' name='SpellResourceAHL"+i+"' class='small-number' value='0' disabled> charge(s) per additional level.";
+
+		document.getElementById("CanAHLSpell"+i).addEventListener("change",function(){
+			toggleSpellAHLResource(i);
+		});
 	}
 }
 
-async function createCastSpellModifierRows(tableID){
-	clearUnusedTable(tableID,"rowCastSpellModifierHow","rowIsStackable");
-	let nextRowIndex = document.getElementById("rowCastSpellModifierHow").rowIndex + 1;
+function toggleSpellAHLResource(i){
+	if(document.getElementById("CanAHLSpell"+i).value == 0){
+		document.getElementById("SpellResourceAHL"+i).setAttribute("disabled","");
+	}
+	else{
+		document.getElementById("SpellResourceAHL"+i).removeAttribute("disabled","");
+	}
+}
+
+async function createCastSpellModifierRows(){
+	let referenceElement = document.getElementById("rowCastSpellModifierHow");
+	deleteInterveningElements(referenceElement,document.getElementById("rowIsStackable"));
 
 	if(document.getElementById("CastSpellModifierHow").value == "SetValue"){
-		addTableRow(tableID,nextRowIndex,"rowCastSpellModifier","<th>Spell Flat Modifier:</th><td><input type='number' id='CastSpellFlatModifier' name='CastSpellFlatModifier' style='width:25px'></td>");
-		nextRowIndex++;
+		referenceElement = createTableRow(referenceElement,"rowCastSpellModifier","<th>Spell Flat Modifier:</th><td><input type='number' id='CastSpellFlatModifier' name='CastSpellFlatModifier' style='width:25px'></td>");
 	}
 	else if(document.getElementById("CastSpellModifierHow").value == "SpecificClass"){
 		let request = await fetch("macro:pm.GetClasses@Lib:pm.a5e.Core",{"method":"POST","body":""});
 		let allClasses = await request.json();
 		let allClassOptions = createHTMLMultiselectOptions(allClasses,"CastSpellClass");
 
-		addTableRow(tableID,nextRowIndex,"rowCastSpellModifier","<th>Allowed Casting Classes:</th><td><div class='check-multiple' style='width:100%'>"+allClassOptions+"</div></td>");
-		nextRowIndex++;
+		referenceElement = createTableRow(referenceElement,"rowCastSpellModifier","<th>Allowed Casting Classes:</th><td><div class='check-multiple' style='width:100%'>"+allClassOptions+"</div></td>");
 	}
 	else if(document.getElementById("CastSpellModifierHow").value == "Stat"){
 		let request = await fetch("macro:pm.GetAttributes@Lib:pm.a5e.Core",{"method":"POST","body":""});
 		let AllAttributes = await request.json();
 		let allAttributeOptions = createHTMLMultiselectOptions(AllAttributes,"CastSpellStat");
 
-		addTableRow(tableID,nextRowIndex,"rowCastSpellModifier","<th>Allowed Casting Stats:</th><td><div class='check-multiple' style='width:100%'>"+allAttributeOptions+"</div></td>");
-		nextRowIndex++;
+		referenceElement = createTableRow(referenceElement,"rowCastSpellModifier","<th>Allowed Casting Stats:</th><td><div class='check-multiple' style='width:100%'>"+allAttributeOptions+"</div></td>");
 	}
 }
 
-function createObjectACHPRows(tableID,endRowID){
-	clearUnusedTable(tableID,"rowIsCustomACHP",endRowID);
-	if(document.getElementById("isCustomACHP").checked){
-		let nextRowIndex = document.getElementById("rowIsCustomACHP").rowIndex + 1;
-
-		addTableRow(tableID,nextRowIndex,"rowObjectCustomAC","<th><label for='AC'>Object AC:</th><td><input type='number' value=10 min=0 style='width:25px' id='AC' name='AC'><input type='checkbox' id='isDefaultAC' name='isDefaultAC' onchange='toggleFieldEnabled("+'"AC","isDefaultAC"'+")'> <label for='isDefaultAC'>Use Default?</label></td>");
-		nextRowIndex++;
-		
-		addTableRow(tableID,nextRowIndex,"rowObjectCustomAC","<th><label for='MaxHP'>Object HP:</th><td><input type='number' value=10 min=1 id='MaxHP' style='width:25px' name='MaxHP'><input type='checkbox' id='isDefaultMaxHP' name='isDefaultMaxHP' onchange='toggleFieldEnabled("+'"MaxHP","isDefaultMaxHP"'+")'> <label for='isDefaultMaxHP'>Use Default?</label></td>");
-		nextRowIndex++;
-	}
-}
-
-function createLockRows(tableID){
-	if(document.getElementById("isLockable").checked){
-		let nextRowIndex = document.getElementById("rowIsLockable").rowIndex + 1;
-
-		addTableRow(tableID,nextRowIndex,"rowLockDC","<th><label for='LockDC'>DC to Pick Lock</th><td><input type='number' id='LockDC' name='LockDC' value=10 min=1 style='width:30px'><input type='checkbox' id='NeedsLock' name='NeedsLock' onchange='toggleFieldEnabled("+'"LockDC","NeedsLock"'+")'>Needs Separate Lock?</td>");
-		nextRowIndex++;
+async function createImprovisedWeaponRows(){
+	if(document.getElementById("isImprovisedWeapon").checked){
+		await createWeaponTableRows("rowIsImprovisedWeapon");
+		document.getElementById("rowWeaponType").remove();
+		document.getElementById("rowNewTypeNameWeapon").remove();
+		document.getElementById("rowIsNewTemplateWeapon").remove();
+		document.getElementById("rowWeaponClass").remove();
 	}
 	else{
-		clearUnusedTable(tableID,"rowIsLockable","rowIsFlammable");
+		deleteInterveningElements(document.getElementById("rowIsImprovisedWeapon"),document.getElementById("rowIsStackable"));
+	}
+}
+
+function createObjectACHPRows(endRowID){
+	let referenceElement = document.getElementById("rowIsCustomACHP");
+	deleteInterveningElements(referenceElement,endRowID);
+	if(document.getElementById("isCustomACHP").checked){
+		referenceElement = createTableRow(referenceElement,"rowObjectCustomAC","<th><label for='AC'>Object AC:</th><td><input type='number' value=10 min=0 style='width:25px' id='AC' name='AC'><input type='checkbox' id='isDefaultAC' name='isDefaultAC' onchange='toggleFieldEnabled("+'"AC","isDefaultAC"'+")'> <label for='isDefaultAC'>Use Default?</label></td>");
+		
+		referenceElement = createTableRow(referenceElement,"rowObjectCustomAC","<th><label for='MaxHP'>Object HP:</th><td><input type='number' value=10 min=1 id='MaxHP' style='width:25px' name='MaxHP'><input type='checkbox' id='isDefaultMaxHP' name='isDefaultMaxHP' onchange='toggleFieldEnabled("+'"MaxHP","isDefaultMaxHP"'+")'> <label for='isDefaultMaxHP'>Use Default?</label></td>");
+	}
+}
+
+function createLockRows(){
+	let referenceElement = document.getElementById("rowIsLockable");
+	if(document.getElementById("isLockable").checked){
+		referenceElement = createTableRow(referenceElement,"rowLockDC","<th><label for='LockDC'>DC to Pick Lock</th><td><input type='number' id='LockDC' name='LockDC' value=10 min=1 style='width:30px'><input type='checkbox' id='NeedsLock' name='NeedsLock' onchange='toggleFieldEnabled("+'"LockDC","NeedsLock"'+")'>Needs Separate Lock?</td>");
+	}
+	else{
+		deleteInterveningElements(referenceElement,document.getElementById("rowIsFlammable"));
 	}
 }
 
 function createActiveEffectsRow(){
-	let nextRowIndex = document.getElementById("rowHasActiveEffects").rowIndex + 1;
+	let referenceElement = document.getElementById("rowHasActiveEffects");
 	let ActiveEffectsSelection = document.getElementById("HasActiveEffects").checked;
 
 	if(ActiveEffectsSelection){
-		addTableRow("CreateObjectTable",nextRowIndex,"rowActiveEffectsNumber","<th><label for='ActiveEffectsNumber'>Number of Effects:</label></th><td><input type='number' id='ActiveEffectsNumber' name='ActiveEffectsNumber' value='1' min='1' style='width:25px' onchange='createEffectChoiceMethodRow()'></td>");
-		nextRowIndex++;
+		referenceElement = createTableRow(referenceElement,"rowActiveEffectsNumber","<th><label for='ActiveEffectsNumber'>Number of Effects:</label></th><td><input type='number' id='ActiveEffectsNumber' name='ActiveEffectsNumber' value='1' min='1' style='width:25px' onchange='createEffectChoiceMethodRow()'></td>");
 
-		addTableRow("CreateObjectTable",nextRowIndex,"rowActiveEffectsRandom","<th><label for='isEffectRandom'>Effect is Random:</label></th><td><input type='checkbox' id='isEffectRandom' name='isEffectRandom'></td>");
-		nextRowIndex++;
+		referenceElement = createTableRow(referenceElement,"rowActiveEffectsRandom","<th><label for='isEffectRandom'>Effect is Random:</label></th><td><input type='checkbox' id='isEffectRandom' name='isEffectRandom'></td>");
 	}
 	else{
-		clearUnusedTable("CreateObjectTable","rowHasActiveEffects","rowSourcebook");
+		deleteInterveningElements(referenceElement,document.getElementById("rowSourcebook"));
 	}
 }
 
 function createEffectChoiceMethodRow(){
-	let nextRowIndex = document.getElementById("rowActiveEffectsNumber").rowIndex + 1;
-	let tableID = document.getElementById("rowActiveEffectsNumber").closest("table").id;
+	let referenceElement = document.getElementById("rowActiveEffectsNumber");
 	let currentEffectsNumber = document.getElementById("ActiveEffectsNumber").value;
 	
 	if(currentEffectsNumber > 1){
 		if(document.getElementById("rowEffectChoiceMethod") == null){
-			addTableRow(tableID,nextRowIndex,"rowEffectChoiceMethod","<th><label for='EffectChoiceMethod'>Method of Choosing Effect:</label></th><td><select id='EffectChoiceMethod' name='EffectChoiceMethod' onchange='createAdditionalEffectMethodRows()'><option value=''>User Choice</option><option value='Random'>Random</option><option value='Target'>Target Dependent</option><option value='StoredValue'>Based on Prior Choice</option><option value='OutsideRoll'>Based on Outside Roll</option><option value='ResourceType'>Type of Resource Used</option><option value='ItemActivationState'>Item Activation State</option></select></td>");
+			referenceElement = createTableRow(referenceElement,"rowEffectChoiceMethod","<th><label for='EffectChoiceMethod'>Method of Choosing Effect:</label></th><td><select id='EffectChoiceMethod' name='EffectChoiceMethod' onchange='createAdditionalEffectMethodRows()'><option value=''>User Choice</option><option value='Random'>Random</option><option value='Target'>Target Dependent</option><option value='StoredValue'>Based on Prior Choice</option><option value='OutsideRoll'>Based on Outside Roll</option><option value='ResourceType'>Type of Resource Used</option><option value='ItemActivationState'>Item Activation State</option></select></td>");
 		}
 	}
 	else if(document.getElementById("rowEffectChoiceMethod") != null){
-		clearUnusedTable(tableID,"rowActiveEffectsNumber","rowSourcebook");
+		deleteInterveningElements(referenceElement,document.getElementById("rowSourcebook"));
 	}
 }
 
@@ -865,7 +734,15 @@ async function loadUserData() {
 	let userdata = atob(await MapTool.getUserData());
 	document.getElementById('CreateObjectTable').innerHTML = userdata;
 
-	createObjectSubtypeRows('CreateObjectTable','Type');
+	createObjectSubtypeRows('Type');
+
+	document.getElementById("isResources").addEventListener("change",function(){
+		let ItemData = {
+			DisplayName:document.getElementById("DisplayName").value,
+			Type:"Item"
+		};
+		createResourceRows(ItemData);
+	});
 }
 
 setTimeout(loadUserData, 1);

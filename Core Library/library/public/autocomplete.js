@@ -1,5 +1,8 @@
-function autocomplete(inp, arr) {
+function autocomplete(inp, arr, validation, options) {
 	let currentFocus;
+	if(options === undefined){
+		options = {};
+	}
 
 	inp.addEventListener("input", function(e) {
 		let val = this.value;
@@ -106,29 +109,51 @@ function autocomplete(inp, arr) {
 	document.addEventListener("click", function (e) {
 		closeAllLists(e.target);
 	});
+
+	if(validation !== undefined){
+		inp.addEventListener("change",function(){
+			validateFeatureAutocomplete(inp.id,validation,options.validationPath);
+		});
+	}
 }
 
-function validateFeatureAutocomplete(inputID,featureList){
+function validateFeatureAutocomplete(inputID,featureList,validationPath){
 	let currentInput = document.getElementById(inputID).value;
 	if(currentInput == ""){
-		document.getElementById(inputID+"ValidationSpan").innerHTML = "";
+		document.getElementById("ValidationSpan"+inputID).innerHTML = "";
 		return;
 	}
 
-	featureList = JSON.parse(atob(featureList));
+	if(validationPath === undefined){
+		validationPath = ["DisplayName"];
+	}
+
 	let featureOptions = [];
 	for(let feature of featureList){
-		if(feature.DisplayName == currentInput){
+		let validationValue = feature;
+
+		for(let key of validationPath){
+			if(key === "@"){
+				key = removeSpecialCharacters(currentInput);
+			}
+			validationValue = validationValue[key];
+			
+			if(validationValue === undefined){
+				break;
+			}
+		}
+
+		if(validationValue === currentInput){
 			featureOptions.push(feature);
 		}
 	}
 
 	if(featureOptions.length == 0){
-		document.getElementById(inputID+"ValidationSpan").innerHTML = ": Feature not found!"
+		document.getElementById("ValidationSpan"+inputID).innerHTML = ": Feature not found!";
 	}
 	else if(featureOptions.length == 1){
 		let matchingFeature = featureOptions[0];
-		document.getElementById(inputID+"ValidationSpan").innerHTML = "<input type='hidden' id='"+inputID+"NameValidated' name='"+inputID+"NameValidated' value='"+matchingFeature["Name"]+"'><input type='hidden' id='"+inputID+"ClassValidated' name='"+inputID+"ClassValidated' value='"+matchingFeature["Class"]+"'><input type='hidden' id='"+inputID+"SubclassValidated' name='"+inputID+"SubclassValidated' value='"+matchingFeature["Subclass"]+"'>";
+		document.getElementById("ValidationSpan"+inputID).innerHTML = "<input type='hidden' id='"+inputID+"NameValidated' name='"+inputID+"NameValidated' value='"+matchingFeature["Name"]+"'><input type='hidden' id='"+inputID+"ClassValidated' name='"+inputID+"ClassValidated' value='"+matchingFeature["Class"]+"'><input type='hidden' id='"+inputID+"SubclassValidated' name='"+inputID+"SubclassValidated' value='"+matchingFeature["Subclass"]+"'>";
 	}
 	else{
 		let featureOptionsSelect = "<option value='Any'>Any Class/Subclass</option>";
@@ -138,6 +163,6 @@ function validateFeatureAutocomplete(inputID,featureList){
 			featureOptionsSelect = featureOptionsSelect + "<option value="+i+">"+feature.Subclass+" "+feature["Class"]+"</option>";
 		}
 
-		document.getElementById(inputID+"ValidationSpan").innerHTML = ": <select id='"+inputID+"ClassChoice' name='"+inputID+"ClassChoice'>"+featureOptionsSelect+"</select><input type='hidden' id='"+inputID+"ClassOptions' name='"+inputID+"ClassOptions' value='"+btoa(featureOptions)+"'>";
+		document.getElementById("ValidationSpan"+inputID).innerHTML = ": <select id='"+inputID+"ClassChoice' name='"+inputID+"ClassChoice'>"+featureOptionsSelect+"</select><input type='hidden' id='"+inputID+"ClassOptions' name='"+inputID+"ClassOptions' value='"+btoa(featureOptions)+"'>";
 	}
 }

@@ -98,9 +98,10 @@
 [h:data.setData("addon:","pm.a5e.core","LanguageSourcebooks",'{}')]
 [h:data.setData("addon:","pm.a5e.core","AttributeSourcebooks",'{}')]
 [h:data.setData("addon:","pm.a5e.core","BackgroundSourcebooks",'{}')]
+[h:data.setData("addon:","pm.a5e.core","a5e.settings.ReasonableTransformations",json.set("","allForms","{}"))]
 
 [h:data.setData("addon:","pm.a5e.core","gd.Effects",'[]')]
 [h:data.setData("addon:","pm.a5e.core","gd.ExperienceTable",json.append("",0,300,900,2700,6500,14000,23000,34000,48000,64000,85000,100000,120000,140000,165000,195000,225000,265000,305000,355000))]
 
-[broadcast("First-time setup complete.")]
+[h:broadcast("First-time setup complete.")]
 [h:"<!-- TODO: Add link to Gather Sourcebook Effects here since it cannot be called in on(First)Init in an addon -->"]

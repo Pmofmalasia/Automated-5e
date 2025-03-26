@@ -21,7 +21,7 @@
 
 [h:personalizedTooltipSettings = data.getData("addon:","pm.a5e.core","PlayerTooltipSettings")]
 [h:player = getPlayerName()]
-[h:playerName = pm.RemoveSpecial(player)]
+[h:playerName = js.a5e.RemoveSpecial(player)]
 [h,if(json.contains(personalizedTooltipSettings,playerName)):
 	finalTooltipSettings = json.merge(DefaultTooltipSettings,json.get(personalizedTooltipSettings,playerName));
 	finalTooltipSettings = DefaultTooltipSettings

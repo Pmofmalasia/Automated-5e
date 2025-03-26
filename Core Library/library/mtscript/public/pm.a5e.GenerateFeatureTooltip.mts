@@ -1,11 +1,17 @@
-[h:FeatureData = arg(0)]
-[h:needsNoneffectData = arg(1)]
+[h:ParentToken = arg(0)]
+[h:FeatureData = arg(1)]
+[h:a5e.UnifiedAbilities = arg(2)]
+[h,if(argCount() > 3):
+	options = arg(3);
+	options = "{}"
+]
+[h:NeedsNonEffectData = number(json.get(options,"NeedsNonEffectData"))]
 
 [h:"<!-- Test for using 'Tier' vs. 'Level' in AHL display - Non-spells and cantrips use 'Tier' -->"]
 [h:displayTier = if(json.get(FeatureData,"Class") == "Spell",if(json.get(FeatureData,"Level") == 0,"Tier","Level"),"Tier")]
 
 [h:abilityTable = "[]"]
-[h,if(needsNoneffectData),CODE:{
+[h,if(NeedsNonEffectData),CODE:{
 	[h:"<!-- Add meta-info here -->"]
 };{
 	[h:"<!-- Bypassed for things like spells, weapons, etc. that have a more specific layout for things not in the 'Effects' key -->"]
@@ -87,7 +93,7 @@
 	[h:thisEffectSubeffects = json.get(effect,"Subeffects")]
 	[h:subeffectsNum = json.length(thisEffectSubeffects)]
 	[h,foreach(subeffect,thisEffectSubeffects),CODE:{
-		[h:abilityTable = json.merge(abilityTable,pm.a5e.GenerateSubeffectTooltip(subeffect,FeatureData))]
+		[h:abilityTable = json.merge(abilityTable,pm.a5e.GenerateSubeffectTooltip(ParentToken,subeffect,FeatureData,a5e.UnifiedAbilities))]
 	}]
 }]
 

@@ -15,11 +15,11 @@
 	[h:isDefaultOne = and(json.length(validHitDieSizes) == 1,thisDieSizeNum != 0)]
 	[h:spendOptions = "<option value=0>0</option>"]
 	[h,count(thisDieSizeNum): spendOptions = spendOptions + "<option value="+(roll.count+1)+">"+(roll.count+1)+"</option>"]
-	[h:thisRow = "<tr id='rowSpend"+dieSize+"'><th><label for='"+dieSize+"Num'>"+substring(dieSize,1)+"s Spent:</label></th><td><select value='"+if(isDefaultOne,"1","")+"' name='"+dieSize+"Num' id='"+dieSize+"Num'>"+spendOptions+"</select></td></tr>"]
+	[h:thisRow = "<tr id='rowSpend"+dieSize+"'><th><label for='"+dieSize+"Num'>d"+dieSize+"s Spent:</label></th><td><select value='"+if(isDefaultOne,"1","")+"' name='"+dieSize+"Num' id='"+dieSize+"Num'>"+spendOptions+"</select></td></tr>"]
 
 	[h:HitDieInput = HitDieInput + thisRow]
 }]
 
-[h:HitDieInput = HitDieInput + "<tr id='rowSubmit'><th text-align='center' colspan='2'><input type='submit' class='theme-fix-submit' id='submitButton' value='Spend Hit Dice'><input type='hidden' name='ParentToken' value='"+ParentToken+"'></tr>"]
+[h:HitDieInput = HitDieInput + "<tr id='rowSubmit'><th style='text-align:center' colspan='2'><input type='submit' class='theme-fix-submit' id='submitButton' value='Spend Hit Dice'><input type='hidden' name='ParentToken' value='"+ParentToken+"'></tr>"]
 
 [h:html.dialog5("SpendHitDieInput","lib://pm.a5e.core/SpendHitDieInput.html?cachelib=false","value="+base64.encode(HitDieInput)+"; width=250; height=150; closebutton=0")]

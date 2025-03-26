@@ -27,16 +27,16 @@
 };{
     [h:SubraceSelection = json.get(newCharData,"subraceChoice")]
 	[h,if(SubraceSelection == "Base"),CODE:{
-		[h:chosenSubrace = ""]
+		[h:chosenSubraceName = ""]
 		[h:lu.NewAbilities = json.append("",json.set(json.get(RaceSelection,"Traits"),"Size",sizeChoice))]
 	};{
 		[h:chosenSubrace = json.get(SubraceArray,SubraceSelection)]
-		[h:lu.NewAbilities = json.append("",json.set(json.get(chosenSubrace,"Traits"),"Size",sizeChoice))]		
+		[h:lu.NewAbilities = json.append("",json.set(json.get(chosenSubrace,"Traits"),"Size",sizeChoice))]
+		[h:chosenSubraceName = json.get(chosenSubrace,"DisplayName")]	
 	}]
 
-    [h:setProperty("a5e.stat.Subrace",json.get(chosenSubrace,"DisplayName"))]
+    [h:setProperty("a5e.stat.Subrace",chosenSubraceName)]
 }]
-
 
 [h,switch(json.get(newCharData,"Alignment")),CODE:
     case "Lawful Good":{

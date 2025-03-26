@@ -66,7 +66,6 @@
 [h:sClassSelect = ""]
 [h:sLevelSelect = ""]
 [h:classList = pm.GetClasses("Name","json")]
-
 [h,if(ForcedClass==""),CODE:{
 	[h:ClassOptionsArray = "[]"]
 	[h:pm.PassiveFunction("SpellClass")]
@@ -91,7 +90,7 @@
 	[h:ClassOptionsArray = json.append("",ForcedClass)]
 	[h,if(json.type(ForcedClass) == "UNKNOWN"),CODE:{
 		[h:ClassOptions = json.append("",pm.GetDisplayName(ForcedClass,"sb.Classes"))]
-	};{		
+	};{
 		[h:isClassTest = json.contains(classList,json.get(ForcedClass,"Class"))]
 		[h,if(isClassTest):
 			ClassOptions = json.append("",pm.GetDisplayName(json.get(ForcedClass,"Class"),"sb.Classes"));
@@ -114,11 +113,11 @@
 		[h,if((1+roll.count)>=SpellLevel && json.get(a5e.stat.SpellSlots,roll.count+1)>0): LevelOptions = json.append(LevelOptions,if(roll.count==0,"1st",if(roll.count==1,"2nd",if(roll.count==2,"3rd",(roll.count+1)+"th")))+" Level")]
 		[h,if((1+roll.count)>=SpellLevel && json.get(a5e.stat.SpellSlots,roll.count+1)>0): LevelOptionData = json.append(LevelOptionData,json.set("","Name",(roll.count+1),"ResourceType","Spell Slots"))]
 	}]
-	
-	[h:resourcesAsSpellSlot = json.path.read(getProperty("a5e.stat.AllFeatures"),"[*][?(@.ResourceAsSpellSlot==1)]")]
-	[h,foreach(resource,resourcesAsSpellSlot),CODE:{
-		[h,if(json.get(resource,"Resource")>0): LevelOptions = json.append(LevelOptions,json.get(resource,"DisplayName"))]
-		[h,if(json.get(resource,"Resource")>0): LevelOptionData = json.append(LevelOptionData,json.set(resource,"ResourceType","FeatureSpell"))]
+
+	[h:featureSpellSlots = js.a5e.GetFeatureSpellSlots(a5e.UnifiedAbilities,ParentToken)]
+	[h,foreach(resource,featureSpellSlots),if(json.get(resource,"CurrentResource") > 0 && json.get(resource,"SlotLevel") >= SpellLevel),CODE:{
+		[h:LevelOptions = json.append(LevelOptions,json.get(resource,"DisplayName"))]
+		[h:LevelOptionData = json.append(LevelOptionData,json.set(resource,"ResourceType","FeatureSpell"))]
 	}]
 	
 	[h:LevelOptions = json.append(LevelOptions,"Free")]
@@ -132,10 +131,26 @@
 		[h:chosenLevel = -1]
 	}]
 };{
+	[h:"<!-- TODO: Resource - Allow forced spell slot usage to use resource spell slots, if they match -->"]
+	[h:"<!-- TODO: FreeSpell - See below -->"]
+	[h:"<!-- TODO: Resource - Need functionality for features that give X free castings of a spell, but also allow using spell slots. Currently, issue is that there is no way to link the spell being cast to which resource it is associated with (by name of resource). Hypothetically the spell name could be used for static options (e.g. Misty Step in Fey Touched) but would not work for chosen options (1st level spell in Fey Touched). -->"]
 	[h,if(json.type(ForcedLevel)=="UNKNOWN"),CODE:{
 		[h:LevelOptions = if(ForcedLevel==1,"1st",if(ForcedLevel==2,"2nd",if(ForcedLevel==3,"3rd",ForcedLevel+"th")))+" Level"]
 		[h:LevelOptionData = json.append("",json.set("","Name",ForcedLevel,"ResourceType","Spell Slots"))]
 	};{
+		[h:ForcedResourceKey = json.get(ForcedLevel,"ResourceKey")]
+		[h,if(ForcedResourceKey == ""): ForcedResourceKey = json.get(ForcedLevel,"Name")]
+
+		[h:ForcedLevelSearch = json.path.read(a5e.UnifiedAbilities,"\$[*][?("+pm.a5e.PathFeatureFilter(ForcedLevel)+")]")]
+		[h,if(!json.isEmpty(ForcedLevelSearch)): tempForcedLevel = json.get(ForcedLevelSearch,0)]
+		[h,if(!json.isEmpty(ForcedLevelSearch)): currentResource = json.get(json.get(tempForcedLevel,"Resource"),ForcedResourceKey)]
+		[h,if(!json.isEmpty(ForcedLevelSearch)): tempForcedLevel = js.a5e.CalculateResourceData(tempForcedLevel,ParentToken,json.set("","resource",ForcedResourceKey))]
+		[h,if(!json.isEmpty(ForcedLevelSearch)): ForcedLevel = json.set(tempForcedLevel,
+			"Identifier",ForcedLevel,
+			"CurrentResource",currentResource,
+			"Resource",ForcedResourceKey
+		)]
+
 		[h:LevelOptions = json.get(ForcedLevel,"DisplayName")]
 		[h:LevelOptionData = json.append("",json.set(ForcedLevel,"ResourceType","FeatureSpell"))]
 	}]
@@ -212,11 +227,15 @@
 			[h:eLevel = number(json.get(sLevelSelectData,"Name"))]
 		};
 		case "FeatureSpell":{
-			[h:eLevel = evalMacro(json.get(sLevelSelectData,"ResourceSpellLevel"))]
+			[h:eLevel = json.get(sLevelSelectData,"SlotLevel")]
 		};
 		case "Ritual":{
 			[h:eLevel = SpellLevel]
 			[h:CastAsRitual = 1]
+		};
+		case "None":{
+			[h:eLevel = SpellLevel]
+			[h:FreeCasting = 1]
 		};
 		default:{
 			[h:eLevel = SpellLevel]
@@ -245,8 +264,6 @@
 [h:SpellAHLDescription = base64.decode(json.get(FinalSpellData,"AHLDescription"))]
 [h:CompleteSpellDescription = SpellDescription+if(SpellAHLDescription=="","","<br><br>"+if(IsCantrip,"","<b><i>At Higher Levels.</b></i> "))+SpellAHLDescription]
 
-[h:IsOngoing=json.get(FinalSpellData,"IsOngoing")]
-[h:IsCheck=json.get(FinalSpellData,"IsCheck")]
 [h:isConcentration = json.get(FinalSpellData,"isConcentration")]
 [h:ConcentrationLostLevel = json.get(FinalSpellData,"ConcentrationLostLevel")]
 
@@ -399,8 +416,10 @@
 [h:FinalSpellData = json.set(FinalSpellData,
 	"Source",sSource,
 	"PrimeStat",PrimeStat,
-	"sClassSelect",sClassSelect
+	"sClassSelect",sClassSelect,
+	"SlotUsed",if(IsCantrip,0,eLevel)
 )]
+[h:FinalSpellData = json.remove(FinalSpellData,"Subeffects")]
 [h:SpellDataWithSelections = json.set(FinalSpellData,
 	"Class","Spell",
 	"DisplayClass","zzSpell",
@@ -410,17 +429,26 @@
 
 [h:pm.PassiveFunction("AfterSpell")]
 
-[h,if(IsCantrip),CODE:{};{
+[h,if(IsCantrip || FreeCasting == 1),CODE:{};{
 	[h,switch(json.get(sLevelSelectData,"ResourceType")),CODE:
 		case "Spell Slots":{
-			[h,if(FreeCasting!=1): setProperty("a5e.stat.SpellSlots",json.set(getProperty("a5e.stat.SpellSlots"),eLevel,json.get(getProperty("a5e.stat.SpellSlots"),eLevel)-1))]
+			[h:FeatureSpellIdentifier = json.get(sLevelSelectData,"Identifier")]
+			[h:FeatureSourceData = json.append("",json.set("","Level",eLevel,"Type","SpellSlot"))]
 		};
 		case "FeatureSpell":{
-			[h,if(FreeCasting!=1): setProperty("a5e.stat.AllFeatures",json.path.set(getProperty("a5e.stat.AllFeatures"),"\$[*][?(@.Name=='"+json.get(sLevelSelectData,"Name")+"' && @.Class=='"+json.get(sLevelSelectData,"Class")+"' && @.Subclass=='"+json.get(sLevelSelectData,"Subclass")+"')]['Resource']",json.get(sLevelSelectData,"Resource")-1))]
+			[h:FeatureSpellIdentifier = json.get(sLevelSelectData,"Identifier")]
+			[h:FeatureSpellResourceKey = json.get(sLevelSelectData,"Resource")]
+			[h:FeatureSourceData = json.append("",json.set("",
+				"Feature",FeatureSpellIdentifier,
+				"Key",FeatureSpellResourceKey,
+				"Type","Feature",
+				"Amount",1
+			))]
 		};
-		default:{
-		}
+		default:{}
 	]
+
+	[h:ResourceUsedData = js.a5e.ExpendResource(FeatureSourceData,ParentToken)]
 }]
 
 [h:SpellDescriptionData = json.set("",
@@ -435,4 +463,4 @@
 [h:SpellDescriptionFinal = if(sRulesShow==0,"Show full spell text to: <a style='color:%{LinkTextColor};' href='"+sDescriptionLink+"'>Self</a> <a style='color:%{LinkTextColor};' href='"+sDescriptionAllLink+"'>Everyone</a>",CompleteSpellDescription)]
 
 [h:ReturnData = json.set(NonSpellData,"SpellData",FinalSpellData,"Slot",if(IsCantrip,0,eLevel),"Source",sSource,"Class",sClassSelect,"Effect",pm.a5e.EffectData,"Table",abilityTable,"FullDescription",CompleteSpellDescription,"Description",SpellDescriptionFinal,"AbridgedDescription",SpellDescriptionFinal,"ShowFullRules",sRulesShow)]
-[h:macro.return = ReturnData]
+[h:return(0,ReturnData)]

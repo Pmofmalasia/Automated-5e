@@ -36,7 +36,7 @@
 		case "Base Condition": ab.ConditionClass = "Condition";
 		default: ab.ConditionClass = ab.ConditionType
 	]
-	[h:ab.ConditionClass = pm.RemoveSpecial(ab.ConditionClass)]
+	[h:ab.ConditionClass = js.a5e.RemoveSpecial(ab.ConditionClass)]
 };{
 	[h:ab.ConditionClass = ab.PresetClass]
 }]
@@ -60,7 +60,7 @@
 			));
 		default: ab.ConditionSubclass = ""
 	]
-	[h:ab.ConditionSubclass = if(ab.ConditionSubclass=="None","",pm.RemoveSpecial(ab.ConditionSubclass))]
+	[h:ab.ConditionSubclass = if(ab.ConditionSubclass=="None","",js.a5e.RemoveSpecial(ab.ConditionSubclass))]
 };{
 	[h:ab.ConditionSubclass = if(ab.PresetSubclass=="None","",ab.PresetSubclass)]
 }]
@@ -73,4 +73,4 @@
 	"ab.ConditionName | "+json.toList(json.path.read(data.getData("addon:","pm.a5e.core","sb.Conditions"),"[*][?(@.Class=='"+ab.ConditionClass+"' && @.Subclass=='"+ab.ConditionSubclass+"')]['DisplayName']"))+" | Choose a Condition | RADIO | VALUE=STRING "
 ))]
 
-[h:macro.return = json.set("","Name",pm.RemoveSpecial(ab.ConditionName),"DisplayName",ab.ConditionName,"Type",ab.ConditionType,"Class",ab.ConditionClass,"Subclass",ab.ConditionSubclass,"AddAnother",goAgane)]
+[h:macro.return = json.set("","Name",js.a5e.RemoveSpecial(ab.ConditionName),"DisplayName",ab.ConditionName,"Type",ab.ConditionType,"Class",ab.ConditionClass,"Subclass",ab.ConditionSubclass,"AddAnother",goAgane)]

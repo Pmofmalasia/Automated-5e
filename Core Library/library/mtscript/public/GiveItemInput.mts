@@ -3,7 +3,7 @@
 [h:switchToken(ParentToken)]
 
 [h:CurrentInventory = getProperty("a5e.stat.Inventory")]
-[h:GiveItemInputHTML = "<tr id='rowHeader'><th text-align='center' colspan='2'>Give or Drop Items</th></tr><input type='hidden' id='ParentToken' name='ParentToken' value='"+ParentToken+"'><input type='hidden' id='Inventory' value='"+CurrentInventory+"'>"]
+[h:GiveItemInputHTML = "<tr id='rowHeader'><th style='text-align:center' colspan='2'>Give or Drop Items</th></tr><input type='hidden' id='ParentToken' name='ParentToken' value='"+ParentToken+"'><input type='hidden' id='Inventory' value='"+CurrentInventory+"'>"]
 
 [h:TokensInRange = getTokens("json",json.set("",
 		"range",json.set("",
@@ -23,6 +23,6 @@
 
 [h:GiveItemInputHTML = GiveItemInputHTML + "<tr id='rowNumberGiven'><th><label for='NumberGiven'>Number Given:</label></th><td><input type='number' id='NumberGiven' name='NumberGiven' min=1 value="+json.get(json.get(CurrentInventory,0),"Number")+" style='width:35px'> (Maximum "+json.get(json.get(CurrentInventory,0),"Number")+")</td></tr>"]
 
-[h:GiveItemInputHTML = GiveItemInputHTML + "<tr id='rowSubmit'><th text-align='center' colspan='2'><input type='submit' class='theme-fix-submit' id='submitButton' value='Give Item'></th></tr>"]
+[h:GiveItemInputHTML = GiveItemInputHTML + "<tr id='rowSubmit'><th style='text-align:center' colspan='2'><input type='submit' class='theme-fix-submit' id='submitButton' value='Give Item'></th></tr>"]
 
 [h:html.dialog5("GiveItemInput","lib://pm.a5e.core/GiveItem.html?cachelib=false","value="+base64.encode(GiveItemInputHTML)+"; width=500; height=285; closebutton=0")]

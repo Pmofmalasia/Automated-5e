@@ -11,6 +11,7 @@
 ))]
 [h:sourcebookData = json.get(allSourcebooks,sourcebookChoice)]
 [h:Library = json.get(sourcebookData,"Library")]
+[h:newBestiaryEntries = json.path.put(newBestiaryEntries,"\$[*]","Library",Library)]
 [h:sourcebookName = json.get(sourcebookData,"DisplayName")]
 [h:newEntryNames = json.path.read(newBestiaryEntries,"\$[*]['Name']")]
 

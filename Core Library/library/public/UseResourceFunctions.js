@@ -150,6 +150,7 @@ function createUseResourceTypeRows(j,otherArgs){
 	else if(choice === "OtherFeature"){
 		referenceElement = createTableRow(referenceElement,"rowUseFeatureResource"+i+j,"<th><label for='UseFeatureResourceDisplayName"+i+j+"'>Resource Spent:</label></th><td class='autocomplete-table'><input type='text' id='UseFeatureResourceDisplayName"+i+j+"' name='UseFeatureResourceDisplayName"+i+j+"'><span id='ValidationSpanUseFeatureResourceDisplayName"+i+j+"'></span></td>");
 
+		//TODO: Resources - validation does not seem to be working here.
 		let autocompleteOptions = {
 			validationPath:["ResourceData","Resources","@","DisplayName"]
 		};
@@ -164,22 +165,20 @@ function createUseResourceTypeRows(j,otherArgs){
 	else if(choice === "ThisFeature"){
 		let featureData = JSON.parse(atob(document.getElementById("FeatureData").value));
 		let resourceData = featureData.ResourceData.Resources;
-		let resourceNames = Object.keys(resourceData);
-
-		if(resourceNames.length > 1){
+		if(resourceData.length > 1){
 			let nameOptions = "";
-			for(let resource of resourceNames){
-				nameOptions += "<option value='"+resource+">"+resourceData[resource].DisplayName+"</option>";
+			for(let k = 0; k < resourceData.length; k++){
+				nameOptions += "<option value='"+resourceData[k].Name+"'>"+resourceData[k].DisplayName+"</option>";
 			}
 
 			referenceElement = createTableRow(referenceElement,"rowUseFeatureResource"+i+j,"<th><label for='UseFeatureResource"+i+j+"'>Use Which Resource:</label></th><td><select id='UseFeatureResource"+i+j+"' name='UseFeatureResource"+i+j+"'>"+nameOptions+"</select></td>");
 		}
 		else{
-			referenceElement = createTableRow(referenceElement,"rowUseFeatureResource"+i+j,"<th><input type='hidden' id='UseFeatureResource"+i+j+"' name='UseFeatureResource"+i+j+"' value='"+resourceNames[0]+"'></th><td></td>");
+			referenceElement = createTableRow(referenceElement,"rowUseFeatureResource"+i+j,"<th><input type='hidden' id='UseFeatureResource"+i+j+"' name='UseFeatureResource"+i+j+"' value='"+resourceData[0].Name+"'></th><td></td>");
 
 			referenceElement.setAttribute("hidden","");
 		}
-		
+
 		addFeatureResourceGeneralDetails(i+""+j);
 
 		document.getElementById("UseFeatureResource"+i+j).addEventListener("change",function(){

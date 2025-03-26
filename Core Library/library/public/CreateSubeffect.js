@@ -8,13 +8,15 @@ function needsScalingData(){
 			if(document.getElementById("ExtraDataSpellLevel").value == "0"){
 				return {
 					isScaling:true,
-					scalingMessage:["Cantrip Tier"]
+					scalingMessage:["Cantrip Tier"],
+					identifier:["Cantrip"]
 				};			
 			}
 			else{
 				return {
 					isScaling:true,
-					scalingMessage:["Spell Level"]
+					scalingMessage:["Spell Level"],
+					identifier:["SpellSlot"]
 				};
 			}
 		}
@@ -22,17 +24,20 @@ function needsScalingData(){
 
 	let scalingData = {
 		isScaling:false,
-		scalingMessage:[]
+		scalingMessage:[],
+		identifier:[]
 	};
 	let FeatureData = JSON.parse(atob(document.getElementById("FeatureData").value));
 	if(FeatureData.OverallScaling !== "" && FeatureData.OverallScaling !== undefined){
 		scalingData.isScaling = true;
 
-		if(FeatureData.OverallScaling === "Consistent"){
-			scalingData.scalingMessage.push("Feature Level");
-		}
-		else{
+		//Allows features with "Inconsistent" scaling to have some components with linear scaling
+		scalingData.scalingMessage.push("Feature Level");
+		scalingData.identifier.push("Level");
+
+		if(FeatureData.OverallScaling === "Inconsistent"){
 			scalingData.scalingMessage.push("Feature Tier");
+			scalingData.identifier.push("Tier");
 		}
 	}
 
@@ -48,30 +53,55 @@ function needsScalingData(){
 						if(document.getElementById("isNoSpellSlotUseLimit"+i+j).checked){
 							scalingData.isScaling = true;
 							scalingData.scalingMessage.push("Spell Level");
+							scalingData.identifier.push("SpellSlot");
 						}
 						else if(document.getElementById("UseSpellSlotMinimum"+i+j).value !== document.getElementById("UseSpellSlotMaximum"+i+j).value){
 							scalingData.isScaling = true;
 							scalingData.scalingMessage.push("Spell Level");
+							scalingData.identifier.push("SpellSlot");
 						}
 					}
 					else if(thisResourceType === "HitDice"){
 						if(document.getElementById("isNoHitDiceUseLimit"+i+j).checked){
 							scalingData.isScaling = true;
-							scalingData.scalingMessage.push("Resource Spent");
+							scalingData.scalingMessage.push("Hit Dice Spent");
+							scalingData.identifier.push("HitDice");
 						}
 						else if(document.getElementById("UseHitDiceMinimum"+i+j).value !== document.getElementById("UseHitDiceMaximum"+i+j).value){
 							scalingData.isScaling = true;
-							scalingData.scalingMessage.push("Resource Spent");
+							scalingData.scalingMessage.push("Hit Dice Spent");
+							scalingData.identifier.push("HitDice");
 						}	
 					}
-					else if(thisResourceType === "OtherFeature" || thisResourceType === "ThisFeature"){
+					else if(thisResourceType === "OtherFeature"){
+						//TODO: Resources - Need to add identifiers for other feature resource
+						//TODO: Resources - Items may need a different usable identifier via ObjectID, to be used here (as any item of the correct type would work, ItemID would not be appropriate)
+					}
+					else if(thisResourceType === "ThisFeature"){
+						let featureData = JSON.parse(atob(document.getElementById("FeatureData").value));
+						let resourceData = featureData.ResourceData.Resources;
+						let resourceChoice = document.getElementById("UseFeatureResource"+i+j).value;
+						let resourceIndex = resourceData.findIndex(x => x.Name === resourceChoice);
+						let resourceDisplay = resourceData[resourceIndex].DisplayName;
+
+						let identifier = {
+							Name:featureData.Name,
+							Class:featureData["Class"],
+							Subclass:featureData.Subclass
+						};
+
+						//TODO: Resources - Update to 'this' when implemented
+						if(featureData["Class"] === "Item"){
+							identifier.ItemID = "";
+						}
+
 						if(document.getElementById("isNoFeatureResourceUseLimit"+i+j).checked){
 							scalingData.isScaling = true;
-							scalingData.scalingMessage.push("Resource Spent");
+							scalingData.scalingMessage.push(resourceDisplay+" Spent");
 						}
 						else if(document.getElementById("UseFeatureResourceMinimum"+i+j).value !== document.getElementById("UseFeatureResourceMaximum"+i+j).value){
 							scalingData.isScaling = true;
-							scalingData.scalingMessage.push("Resource Spent");
+							scalingData.scalingMessage.push(resourceDisplay+" Spent");
 						}			
 					}
 				}
@@ -505,12 +535,12 @@ function createScalingInput(idPrefix,scalingData){
 
 	scalingSelect += adjustScalingOptions(firstType) + "</select>";
 
-	let finalInput = "";
+	let finalInput = scalingSelect;
 	if(multiTypesTest){
 		finalInput += " based on ";
 	}
 
-	finalInput += scalingTypeSelect+scalingSelect;
+	finalInput += scalingTypeSelect;
 
 	return finalInput
 }

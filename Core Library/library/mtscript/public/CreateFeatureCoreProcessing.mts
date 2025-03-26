@@ -2,6 +2,7 @@
 [h:CoreFeatureData = pm.a5e.KeyStringsToNumbers(CoreFeatureData)]
 
 [h:FeatureData = js.ct.a5e.CreateFeatureCoreProcessing(CoreFeatureData)]
+[h:closeDialog("CreateFeatureCore")]
 [h,if(json.contains(FeatureData,"ActiveEffects")),CODE:{
 	[h:ActiveEffectsData = json.get(FeatureData,"ActiveEffects")]
 

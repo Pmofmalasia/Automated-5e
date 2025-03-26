@@ -40,7 +40,7 @@ function createResourceRows(FeatureData){
 			resourceRowData.push({
 				RowID:"rowResourceGainedLevel",
 				Contents:"<th><label for='ResourceGainedLevel'>Resource Gained at Level:</label></th><td><input type='number' class='small-number' id='ResourceGainedLevel' name='ResourceGainedLevel' value='"+FeatureData.Level+"' min='"+FeatureData.Level+"'></td>"
-			});			
+			});	
 		}
 
 		resourceRowData.push({
@@ -285,7 +285,7 @@ function addResourceRestorationRows(referenceRow,i){
 		restoreWhenOptions.push({DisplayName:"Different for Each Resource",Name:"DifferentByResource"});
 	}
 	let restoreWhenMultiselect = createHTMLMultiselectOptions(restoreWhenOptions,"ResourceRestore"+i);
-	referenceRow = createTableRow(referenceRow,"rowResourceRestore"+i,"<th>When Resource is Restored:</th><td><div class='check-multiple'>"+restoreWhenMultiselect+"</div></td>");
+	referenceRow = createTableRow(referenceRow,"rowResourceRestore"+i,"<th>When Resource is Restored:</th><td><div class='check-multiple' style='width:100%'>"+restoreWhenMultiselect+"</div></td>");
 
 	referenceRow = createTableRow(referenceRow,"rowResourceRestoreMethod"+i,"<th><label for='ResourceRestoreMethod"+i+"'>How Resource is Restored:</label></th><td><select id='ResourceRestoreMethod"+i+"' name='ResourceRestoreMethod"+i+"'><option value='Full'>Fully Recharge</option><option value='Fixed'>Fixed Amount Regained</option><option value='Rolled'>Rolled Amount</option><option value='Chance'>Chance to Restore</option><option value='UpTo'>Restore Up to Amount</option><option value='Attribute'>Based on Attribute</option><option value='Proficiency'>Based on Proficiency</option></select></td>");
 	document.getElementById("ResourceRestoreMethod"+i).addEventListener("change",function(){

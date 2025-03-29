@@ -160,6 +160,7 @@ function dropItem(ev){
 	let dropTarget = ev.target.closest("tr");
 
 	let movedRowID = ev.dataTransfer.getData("text");
+	ev.dataTransfer.dropEffect = "move";
 	let movedRow = document.getElementById(movedRowID);
 	let movedItemID = idFromRowID(movedRowID);
 	let oldIndex = Number(movedRow.rowIndex);
@@ -625,18 +626,26 @@ function createGeneralEquipButtons(){
 
 	let EquipItemButton = document.createElement("button");
 	EquipItemButton.className = "equipment-button";
+	EquipItemButton.id = "EquipItemButton";
 	EquipItemButton.innerHTML = "<span title='Click to equip armor, or drag and drop to wear or take off a specific set of armor.'><img src='lib://pm.a5e.core/InterfaceImages/Equip_Armor.png'></span>";
 	EquipItemButton.addEventListener("click",function(){
 
 	});
+	EquipItemButton.addEventListener("drop", equipItem);
+	EquipItemButton.addEventListener("dragover", handleEquipItemDragOver);
+	EquipItemButton.addEventListener("dragleave", handleEquipItemDragLeave);
 	buttonDIV.insertAdjacentElement("beforeend",EquipItemButton);
 
 	let HoldItemButton = document.createElement("button");
 	HoldItemButton.className = "equipment-button";
+	HoldItemButton.id = "HoldItemButton";
 	HoldItemButton.innerHTML = "<span title='Click to adjust all held items, or drag and drop to hold or stow a specific item.'><img src='lib://pm.a5e.core/InterfaceImages/Hold.png'></span>";
 	HoldItemButton.addEventListener("click",function(){
 
 	});
+	HoldItemButton.addEventListener("drop", holdItem);
+	HoldItemButton.addEventListener("dragover", handleHoldItemDragOver);
+	HoldItemButton.addEventListener("dragleave", handleHoldItemDragLeave);
 	buttonDIV.insertAdjacentElement("beforeend",HoldItemButton);
 
 	let WearItemButton = document.createElement("button");
@@ -656,7 +665,7 @@ function createGeneralEquipButtons(){
 	AttunementItemButton.addEventListener("drop",function(){
 
 	});
-	AttunementItemButton.addEventListener("dragover",allowDrop(e));
+	AttunementItemButton.addEventListener("dragover",allowDrop);
 	buttonDIV.insertAdjacentElement("beforeend",AttunementItemButton);
 }
 
@@ -666,13 +675,111 @@ async function loadUserData(){
 
 	ParentToken = userdata.ParentToken;
 	Inventory = userdata.Inventory;
+	let requestLimbs = fetch("macro:pm.a5e.Limbs@lib:pm.a5e.Core", {method: "POST", body: JSON.stringify([ParentToken])});
+	Limbs = await requestLimbs.json();
 	maxColumnDepth = 1;
 	extraRowNum = 2;
 	debug = false;
-	
+
 	createInventoryTable();
 	createGeneralEquipButtons();
 	document.title = "Inventory: "+userdata.TokenName;
 }
 
 setTimeout(loadUserData, 1);
+
+async function equipItem(ev) {
+    ev.preventDefault();	
+	let itemRow = document.getElementById(ev.dataTransfer.getData("text"));
+	let itemId = idFromRowID(itemRow.id);
+    let itemData = getItemData(itemId);
+
+    if (itemData.Type === "Armor") {
+        await fetch()
+    } else {
+        console.log("Item is not armor and cannot be equipped.");
+    }
+}
+
+function handleEquipItemDragOver(ev) {
+    ev.preventDefault();
+	let itemRow = document.getElementById(ev.dataTransfer.getData("text"));
+	let itemId = idFromRowID(itemRow.id);
+    let itemData = getItemData(itemId);
+
+    if (itemData.Type !== "Armor") {
+        ev.dataTransfer.dropEffect = "none";
+        document.getElementById("EquipItemButton").innerHTML = "<span title='Item cannot be equipped'><img src='lib://pm.a5e.core/InterfaceImages/Off_Limits.png'></span>";
+    } else {
+        ev.dataTransfer.dropEffect = "move";
+    }
+}
+
+function handleEquipItemDragLeave(ev) {
+    document.getElementById("EquipItemButton").innerHTML = "<span title='Click to equip armor, or drag and drop to wear or take off a specific set of armor.'><img src='lib://pm.a5e.core/InterfaceImages/Equip_Armor.png'></span>";
+}
+
+function handleHoldItemDragOver(ev) {
+    ev.preventDefault();
+    const itemId = ev.dataTransfer.getData("text").replace("rowItemID", "");
+    const itemData = getItemData(itemId);
+
+    if (itemData.Type !== "Weapon" && itemData.Type !== "Shield") {
+        ev.dataTransfer.dropEffect = "none";
+        document.getElementById("HoldItemButton").innerHTML = "<span title='Item cannot be held'><img src='lib://pm.a5e.core/InterfaceImages/Off_Limits.png'></span>";
+    } else if(Limbs.length > 1){
+        ev.dataTransfer.dropEffect = "move";
+        createRadialHoldButtons(itemData);
+    }
+	else {
+        ev.dataTransfer.dropEffect = "move";
+		holdItem(ev,0);
+	}
+}
+
+function handleHoldItemDragLeave(ev) {
+    document.getElementById("HoldItemButton").innerHTML = "<span title='Click to adjust all held items, or drag and drop to hold or stow a specific item.'><img src='lib://pm.a5e.core/InterfaceImages/Hold.png'></span>";
+    removeRadialHoldButtons();
+}
+
+function createRadialHoldButtons(itemData) {
+    let holdButton = document.getElementById("HoldItemButton");
+    let numHands = Math.max(1,Limbs.length);
+    let angleStep = 360 / numHands;
+
+    for (let i = 1; i <= numHands; i++) {
+        let angle = angleStep * i;
+        let button = document.createElement("button");
+        button.className = "hold-hand-button";
+        button.style.position = "absolute";
+        button.style.transform = `rotate(${angle}deg) translate(50px) rotate(-${angle}deg)`;
+        button.style.zIndex = 1000;
+        button.id = `HoldHandButton${i}`;
+
+        let handImage = itemData.HeldInHands && itemData.HeldInHands.includes(i) ? `Hold_${i}` : `Hold_Empty_${i}`;
+        button.innerHTML = `<img src='lib://pm.a5e.core/InterfaceImages/${handImage}.png'>`;
+        button.addEventListener("drop", (ev) => holdItem(ev, i));
+        button.addEventListener("dragover", allowDrop);
+
+        holdButton.insertAdjacentElement("afterend", button);
+    }
+}
+
+function removeRadialHoldButtons() {
+    let buttons = document.querySelectorAll(".hold-hand-button");
+    buttons.forEach(button => button.remove());
+}
+
+function holdItem(ev, handNumber) {
+    ev.preventDefault();
+    let itemId = ev.dataTransfer.getData("text").replace("rowItemID", "");
+    let itemData = getItemData(itemId);
+
+    if (itemData.Type === "Weapon" || itemData.Type === "Shield") {
+        // Logic to hold the item in the specified hand
+        console.log(`Holding item: ${itemData.DisplayName} in hand ${handNumber}`);
+        // Add your hold item logic here
+    } else {
+        console.log("Item is not a weapon or shield and cannot be held.");
+    }
+}

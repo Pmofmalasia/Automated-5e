@@ -9,54 +9,9 @@
 [h:NewInventory = json.path.set(CurrentInventory,"\$[*][?(@.isWorn == 1 || @.isHeld == 1 || @.isAttunement == 1)]['IsActive']",0)]
 [h:NewInventory = json.path.set(NewInventory,"\$[*][?(@.isAttunement == 1)]['AttunedTo']","")]
 
-[h:OldArmorChoice = getProperty("a5e.stat.EquippedArmor")]
 [h:ArmorChoice = json.get(EquipItemData,"ArmorChoice")]
-[h:setProperty("a5e.stat.EquippedArmor",ArmorChoice)]
-[h,if(ArmorChoice!=""): NewInventory = json.path.set(NewInventory,"\$[*][?(@.ItemID == '"+ArmorChoice+"')]['IsActive']",1)]
-
-[h:ArmorTableLine = json.set("",
-	"ShowIfCondensed",0,
-	"Header","Armor",
-	"FalseHeader","",
-	"FullContents","",
-	"RollContents","",
-	"DisplayOrder","['Rules','Roll','Full']"
-)]
-
-[h,switch((OldArmorChoice == "")+""+(ArmorChoice == "")),CODE:
-	case "01":{
-		[h:OldArmorName = json.get(json.path.read(NewInventory,"\$[*][?(@.ItemID == '"+OldArmorChoice+"')]['DisplayName']"),0)]
-
-		[h:ArmorTableLine = json.set(ArmorTableLine,
-			"RulesContents",OldArmorName+" Unequipped",
-			"ShowIfCondensed",1
-		)]
-	};
-	case "10":{
-		[h:ArmorName = json.get(json.path.read(NewInventory,"\$[*][?(@.ItemID == '"+ArmorChoice+"')]['DisplayName']"),0)]
-
-		[h:ArmorTableLine = json.set(ArmorTableLine,
-			"RulesContents",ArmorName+" Equipped",
-			"ShowIfCondensed",1
-		)]
-	};
-	case "11":{
-		[h:ArmorTableLine = json.set(ArmorTableLine,
-			"RulesContents","Unarmored",
-			"ShowIfCondensed",0
-		)]
-	};
-	case "00":{
-		[h:ArmorName = json.get(json.path.read(NewInventory,"\$[*][?(@.ItemID == '"+ArmorChoice+"')]['DisplayName']"),0)]
-
-		[h:ArmorTableLine = json.set(ArmorTableLine,
-			"RulesContents",ArmorName+" Equipped",
-			"ShowIfCondensed",(OldArmorChoice != ArmorChoice)
-		)]
-	}
-]
-
-[h:abilityTable = json.append(abilityTable,ArmorTableLine)]
+[h:EquipArmorData = pm.a5e.EquipArmor(ArmorChoice,ParentToken)]
+[h:abilityTable = json.append(abilityTable,json.get(EquipArmorData,"Table"))]
 
 [h:LimbNumber = json.get(EquipItemData,"LimbNumber")]
 [h:LimbInfo = pm.a5e.Limbs(ParentToken)]

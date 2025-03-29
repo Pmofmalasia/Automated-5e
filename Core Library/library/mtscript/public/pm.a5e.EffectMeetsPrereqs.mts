@@ -26,9 +26,12 @@
 			case "Targets - Doesn't Exist": "<!-- Note: Will need additional steps for Target prereq than just jumping to CreaturePrereq as will need to account for more general things like target number, other target types (object, effects), etc. Likely will have a TargetsPrereq that calls to CreaturePrereq. -->";
 			case "User": thisInstanceMeetsAllPrereqs = js.a5e.FilterCreatures(json.append("",json.get(EffectToCheck,"ParentToken")),json.get(instance,"User"),ParentToken);
 			case "ThisToken": thisInstanceMeetsAllPrereqs = js.a5e.FilterCreatures(json.append("",ParentToken),json.get(instance,"ThisToken"));
-			case "NestedPrerequisites": thisInstanceMeetsAllPrereqs = pm.a5e.thisInstanceMeetsAllPrereqs(EffectToCheck,json.get(instance,"NestedPrerequisites"),ParentToken);
+			case "NestedPrerequisites": thisInstanceMeetsAllPrereqs = pm.a5e.EffectMeetsPrereqs(EffectToCheck,json.get(instance,"NestedPrerequisites"),ParentToken);
 			default: ""
 		]
+		
+		[h:"<!-- TODO: Passive - Temporary solution for when return is a list of valid tokens instead of just yes/no does it activate (the former should probably be the default so this info is not lost and can be referenced later) -->"]
+		[h,if(json.type(thisInstanceMeetsAllPrereqs) != "UNKNOWN"): thisInstanceMeetsAllPrereqs = !json.isEmpty(thisInstanceMeetsAllPrereqs)]
 	}]
 	[h:anyInstanceMeetsPrereqs = max(anyInstanceMeetsPrereqs,thisInstanceMeetsAllPrereqs)]
 }]

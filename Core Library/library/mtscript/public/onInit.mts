@@ -95,6 +95,7 @@
 [h:defineFunction("pm.a5e.GetContainerContents","pm.a5e.GetContainerContents@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.a5e.GetEquivalentItem","pm.a5e.GetEquivalentItem@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.a5e.TransferItemAdjustments","pm.a5e.TransferItemAdjustments@Lib:pm.a5e.Core")]
+[h:defineFunction("pm.a5e.EquipArmor","pm.a5e.EquipArmor@Lib:pm.a5e.Core")]
 
 [h:"<!-- Functions for Abilities -->"]
 [h:defineFunction("pm.a5e.MergeTieredConditions","pm.a5e.MergeTieredConditions@Lib:pm.a5e.Core")]

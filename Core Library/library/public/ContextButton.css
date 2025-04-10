@@ -27,7 +27,7 @@
 .equipment-button button{
 	height: 54px;
 	width: 54px;
-	border: 2px solid #000000;
+	border: 2px solid #ffffff;
 	border-radius: 8px;
 	padding: 0px;
 }
@@ -39,8 +39,6 @@
 }
 
 .equipment-button div{
-	position: fixed;
-	bottom: 10px;
 	width: 100%;
 }
 

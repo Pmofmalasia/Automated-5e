@@ -9,9 +9,37 @@
 [h:NewInventory = json.path.set(CurrentInventory,"\$[*][?(@.isWorn == 1 || @.isHeld == 1 || @.isAttunement == 1)]['IsActive']",0)]
 [h:NewInventory = json.path.set(NewInventory,"\$[*][?(@.isAttunement == 1)]['AttunedTo']","")]
 
+[h:AttunementNumber = json.get(EquipItemData,"AttunementNumber")]
+[h:NewAttunedItems = "[]"]
+[h,count(AttunementNumber),CODE:{
+	[h:thisAttunementChoice = json.get(EquipItemData,"AttunementChoice"+roll.count)]
+	[h,if(thisAttunementChoice != ""),CODE:{
+		[h:NewAttunedItems = json.append(NewAttunedItems,thisAttunementChoice)]
+		[h:NewInventory = json.path.set(NewInventory,"\$[*][?(@.ItemID == '"+thisAttunementChoice+"')]['AttunedTo']",ParentToken)]
+		[h:NewInventory = json.path.set(NewInventory,"\$[*][?(@.ItemID == '"+thisAttunementChoice+"')]['IsActive']",1)]
+
+		[h:thisAttunedItemName = json.get(json.path.read(NewInventory,"\$[*][?(@.ItemID == '"+thisAttunementChoice+"')]['DisplayName']"),0)]
+		[h:abilityTable = json.append(abilityTable,json.set("",
+			"ShowIfCondensed",1,
+			"Header","Attunement Slot #"+(roll.count+1),
+			"FalseHeader","",
+			"FullContents","",
+			"RulesContents",thisAttunedItemName,
+			"RollContents","",
+			"DisplayOrder","['Rules','Roll','Full']"
+		))]
+	}]
+}]
+
+[h:setProperty("a5e.stat.AttunedItems",NewAttunedItems)]
+[h:"<!-- Note: This property should be used instead of just json.path.reading the inventory because attuned items may be dropped or given to other tokens despite still being attuned. -->"]
+[h:"<!-- TODO: Allow aforementioned attuned items that are used by other tokens to be selected to continue attunement (in equipment input). -->"]
+[h:setProperty("a5e.stat.Inventory",NewInventory)]
+
 [h:ArmorChoice = json.get(EquipItemData,"ArmorChoice")]
 [h:EquipArmorData = pm.a5e.EquipArmor(ArmorChoice,ParentToken)]
-[h:abilityTable = json.append(abilityTable,json.get(EquipArmorData,"Table"))]
+[h:abilityTable = json.merge(abilityTable,json.get(EquipArmorData,"Table"))]
+[h:NewInventory = getProperty("a5e.stat.Inventory")]
 
 [h:LimbNumber = json.get(EquipItemData,"LimbNumber")]
 [h:LimbInfo = pm.a5e.Limbs(ParentToken)]
@@ -91,32 +119,6 @@
 	[h:abilityTable = json.append(abilityTable,thisLimbTableLine)]
 }]
 [h:setProperty("a5e.stat.HeldItems",NewHeldItems)]
-
-[h:AttunementNumber = json.get(EquipItemData,"AttunementNumber")]
-[h:NewAttunedItems = "[]"]
-[h,count(AttunementNumber),CODE:{
-	[h:thisAttunementChoice = json.get(EquipItemData,"AttunementChoice"+roll.count)]
-	[h,if(thisAttunementChoice != ""),CODE:{
-		[h:NewAttunedItems = json.append(NewAttunedItems,thisAttunementChoice)]
-		[h:NewInventory = json.path.set(NewInventory,"\$[*][?(@.ItemID == '"+thisAttunementChoice+"')]['AttunedTo']",ParentToken)]
-		[h:NewInventory = json.path.set(NewInventory,"\$[*][?(@.ItemID == '"+thisAttunementChoice+"')]['IsActive']",1)]
-
-		[h:thisAttunedItemName = json.get(json.path.read(NewInventory,"\$[*][?(@.ItemID == '"+thisAttunementChoice+"')]['DisplayName']"),0)]
-		[h:abilityTable = json.append(abilityTable,json.set("",
-			"ShowIfCondensed",1,
-			"Header","Attunement Slot #"+(roll.count+1),
-			"FalseHeader","",
-			"FullContents","",
-			"RulesContents",thisAttunedItemName,
-			"RollContents","",
-			"DisplayOrder","['Rules','Roll','Full']"
-		))]
-	}]
-}]
-
-[h:setProperty("a5e.stat.AttunedItems",NewAttunedItems)]
-[h:"<!-- Note: This property should be used instead of just json.path.reading the inventory because attuned items may be dropped or given to other tokens despite still being attuned. -->"]
-[h:"<!-- TODO: Allow aforementioned attuned items that are used by other tokens to be selected to continue attunement (in equipment input). -->"]
 
 [h,if(json.contains(EquipItemData,"DefaultNaturalWeapon")),CODE:{
 	[h:CurrentNaturalWeapons = getProperty("a5e.stat.NaturalWeapons")]

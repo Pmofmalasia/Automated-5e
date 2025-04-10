@@ -21,10 +21,14 @@
 			width:100%;
 			border-collapse: collapse;
 		}
-		.footer{
+		footer{
 			position: sticky;
-			bottom: 10px;
+			bottom: 0px;
 			width: 100%;
+			background-color: var(--mt-theme-color-background);
+		}
+		.no-drag{
+			pointer-events: none;
 		}
     </style>
 </head>
@@ -34,11 +38,14 @@
 		<table id="InventoryTable">
 			
 		</table>
-		<div class="equipment-button" id="EquipmentButtons">
-			
-		</div>
+
 	</div>
     </form>
     <script type="text/javascript"  src="lib://pm.a5e.core/GeneralJSFunctions.js?cachelib=false"></script>
     <script type="text/javascript"  src="lib://pm.a5e.core/ShowInventory.js?cachelib=false" async=false></script>
 </body>
+<footer>
+	<div class="equipment-button" id="EquipmentButtons">
+		
+	</div>
+</footer>

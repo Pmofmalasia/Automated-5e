@@ -33,7 +33,7 @@
 
 [h:setProperty("a5e.stat.AttunedItems",NewAttunedItems)]
 [h:"<!-- Note: This property should be used instead of just json.path.reading the inventory because attuned items may be dropped or given to other tokens despite still being attuned. -->"]
-[h:"<!-- TODO: Allow aforementioned attuned items that are used by other tokens to be selected to continue attunement (in equipment input). -->"]
+[h:"<!-- TODO: Equipment: Allow aforementioned attuned items that are used by other tokens to be selected to continue attunement (in equipment input). -->"]
 [h:setProperty("a5e.stat.Inventory",NewInventory)]
 
 [h:ArmorChoice = json.get(EquipItemData,"ArmorChoice")]
@@ -43,60 +43,29 @@
 
 [h:LimbNumber = json.get(EquipItemData,"LimbNumber")]
 [h:LimbInfo = pm.a5e.Limbs(ParentToken)]
-[h:OldHeldItems = getProperty("a5e.stat.HeldItems")]
-[h:NewHeldItems = "[]"]
+[h:drawStowTableLines = "[]"]
+[h:heldItemNames = "[]"]
+[h:stowedItemNames = "[]"]
+[h:multipleLimbsChangedTest = 0]
 [h,count(LimbNumber),CODE:{
-	[h:oldLimbChoice = json.get(OldHeldItems,roll.count)]
+	[h:HeldItems = getProperty("a5e.stat.HeldItems")]
+	[h:oldLimbChoice = json.get(HeldItems,roll.count)]
 	[h:thisLimbChoice = json.get(EquipItemData,"Limb"+roll.count+"Choice")]
-	[h:NewHeldItems = json.append(NewHeldItems,thisLimbChoice)]
-	[h,if(thisLimbChoice != ""): NewInventory = json.path.set(NewInventory,"\$[*][?(@.ItemID == '"+thisLimbChoice+"')]['IsActive']",1)]
+	[h,if(thisLimbChoice != oldLimbChoice && thisLimbChoice != ""),CODE:{
+		[h:thisLimbHeldItemData = pm.a5e.HoldItem(thisLimbChoice,roll.count,ParentToken)]
+		[h:drawStowTableLines = json.get(thisLimbHeldItemData,"Table")]
+		[h:heldItemNames = json.append(heldItemNames,json.get(thisLimbHeldItemData,"ItemDisplayName"))]
+		[h:stowedItem = json.get(thisLimbHeldItemData,"StowedItemDisplayName")]
+		[h,if(stowedItem != ""): stowedItemNames = json.append(stowedItemNames,stowedItem)]
+		[h:multipleLimbsChangedTest = multipleLimbsChangedTest + 1]
+	};{}]
 
-	[h:thisLimbTableLine = json.set("",
-		"ShowIfCondensed",0,
-		"Header",json.path.read(LimbInfo,"\$.["+roll.count+"].DisplayName"),
-		"FalseHeader","",
-		"FullContents","",
-		"RollContents","",
-		"DisplayOrder","['Rules','Roll','Full']"
-	)]
-
-	[h,switch((oldLimbChoice == "")+""+(thisLimbChoice == "")),CODE:
-		case "01":{
-			[h:oldLimbName = json.get(json.path.read(NewInventory,"\$[*][?(@.ItemID == '"+oldLimbChoice+"')]['DisplayName']"),0)]
-
-			[h:thisLimbTableLine = json.set(thisLimbTableLine,
-				"RulesContents",oldLimbName+" Unequipped",
-				"ShowIfCondensed",1
-			)]
-		};
-		case "10":{
-			[h:thisLimbName = json.get(json.path.read(NewInventory,"\$[*][?(@.ItemID == '"+thisLimbChoice+"')]['DisplayName']"),0)]
-
-			[h:thisLimbTableLine = json.set(thisLimbTableLine,
-				"RulesContents",thisLimbName+" Equipped",
-				"ShowIfCondensed",1
-			)]
-		};
-		case "11":{
-			[h:thisLimbTableLine = json.set(thisLimbTableLine,
-				"RulesContents","Free Hand",
-				"ShowIfCondensed",0
-			)]
-		};
-		case "00":{
-			[h:thisLimbName = json.get(json.path.read(NewInventory,"\$[*][?(@.ItemID == '"+thisLimbChoice+"')]['DisplayName']"),0)]
-			[h:oldLimbName = json.get(json.path.read(NewInventory,"\$[*][?(@.ItemID == '"+oldLimbChoice+"')]['DisplayName']"),0)]
-
-			[h,if(oldLimbChoice == thisLimbChoice):
-				thisLimbTableLine = json.set(thisLimbTableLine,
-					"RulesContents",thisLimbName,
-					"ShowIfCondensed",0);
-				thisLimbTableLine = json.set(thisLimbTableLine,
-					"RulesContents",thisLimbName+" replaces "+oldLimbName,
-					"ShowIfCondensed",1)
-			]
-		}
-	]
+	[h,if(thisLimbChoice != oldLimbChoice && thisLimbChoice == ""),CODE:{
+		[h:thisLimbHeldItemData = pm.a5e.StowItem(oldLimbChoice,roll.count,ParentToken)]
+		[h:drawStowTableLines = json.get(thisLimbHeldItemData,"Table")]
+		[h:stowedItemNames = json.append(stowedItemNames,json.get(thisLimbHeldItemData,"ItemDisplayName"))]
+		[h:multipleLimbsChangedTest = multipleLimbsChangedTest + 1]
+	};{}]
 
 	[h,if(json.contains(EquipItemData,"AmmunitionChoiceLimb"+roll.count)),CODE:{
 		[h:OldAmmunitionChoiceID = json.path.read(NewInventory,"\$[*][?(@.ItemID == '"+thisLimbChoice+"')]['AmmunitionID']")]
@@ -118,7 +87,33 @@
 
 	[h:abilityTable = json.append(abilityTable,thisLimbTableLine)]
 }]
-[h:setProperty("a5e.stat.HeldItems",NewHeldItems)]
+[h,switch(multipleLimbsChangedTest),CODE:
+	case 0:{};
+	case 1:{
+		[h:abilityTable = json.merge(abilityTable,drawStowTableLines)]
+	};
+	default:{
+		[h,if(!json.isEmpty(heldItemNames)): abilityTable = json.append(abilityTable,json.set("",
+			"ShowIfCondensed",1,
+			"Header","Held Items",
+			"FalseHeader","",
+			"FullContents","",
+			"RulesContents",pm.a5e.CreateDisplayList(heldItemNames,"and"),
+			"RollContents","",
+			"DisplayOrder","['Rules','Roll','Full']"
+		))]
+
+		[h,if(!json.isEmpty(stowedItemNames)): abilityTable = json.append(abilityTablejson.set("",
+			"ShowIfCondensed",1,
+			"Header","Stowed Items",
+			"FalseHeader","",
+			"FullContents","",
+			"RulesContents",pm.a5e.CreateDisplayList(stowedItemNames,"and"),
+			"RollContents","",
+			"DisplayOrder","['Rules','Roll','Full']"
+		))]
+	}
+]
 
 [h,if(json.contains(EquipItemData,"DefaultNaturalWeapon")),CODE:{
 	[h:CurrentNaturalWeapons = getProperty("a5e.stat.NaturalWeapons")]
@@ -128,14 +123,26 @@
 	[h:setProperty("a5e.stat.NaturalWeapons",FinalNaturalWeapons)]
 }]
 
+[h:setProperty("a5e.stat.Inventory",NewInventory)]
+
 [h:AllWearables = json.path.read(NewInventory,"\$[*][?(@.isWorn == 1)]")]
 [h:WornItemNames = "[]"]
+[h:UnwornItemNames = "[]"]
 [h,foreach(wearableItem,AllWearables),CODE:{
 	[h:thisItemID = json.get(wearableItem,"ItemID")]
-	[h,if(json.contains(EquipItemData,"WearableChoice"+thisItemID)),CODE:{
-		[h:NewInventory = json.path.set(NewInventory,"\$[*][?(@.ItemID == '"+thisItemID+"')]['IsActive']",1)]
-		[h:WornItemNames = json.merge(WornItemNames,json.path.read(NewInventory,"\$[*][?(@.ItemID == '"+thisItemID+"')]['DisplayName']"))]
-	};{}]
+	[h:thisWearChoice = json.contains(EquipItemData,"WearableChoice"+thisItemID)]
+	[h:itemCurrentlyWorn = number(json.get(wearableItem,"CurrentlyWorn"))]
+	[h,switch((itemCurrentlyWorn == thisWearChoice)+""+(thisWearChoice)),CODE:
+		case "01":{
+			[h:thisWearData = pm.a5e.WearItem(thisItemID,ParentToken)]
+			[h:WornItemNames = json.append(WornItemNames,json.get(wearableItem,"DisplayName"))]
+		};
+		case "00":{
+			[h:thisWearData = pm.a5e.UnwearItem(thisItemID,ParentToken)]
+			[h:UnwornItemNames = json.append(UnwornItemNames,json.get(wearableItem,"DisplayName"))]
+		};
+		default:{};
+	]
 }]
 
 [h,if(!json.isEmpty(WornItemNames)): abilityTable = json.append(abilityTable,json.set("",
@@ -148,7 +155,16 @@
 	"DisplayOrder","['Rules','Roll','Full']"
 ))]
 
-[h:setProperty("a5e.stat.Inventory",NewInventory)]
+[h,if(!json.isEmpty(UnwornItemNames)): abilityTable = json.append(abilityTable,json.set("",
+	"ShowIfCondensed",1,
+	"Header","Items No Longer Worn",
+	"FalseHeader","",
+	"FullContents","",
+	"RulesContents",pm.a5e.CreateDisplayList(UnwornItemNames,"and"),
+	"RollContents","",
+	"DisplayOrder","['Rules','Roll','Full']"
+))]
+
 [h:closeDialog("Equipment")]
 
 [h,if(json.isEmpty(abilityTable)):

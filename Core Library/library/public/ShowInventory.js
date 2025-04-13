@@ -125,7 +125,7 @@ async function createInventoryTable(){
 		allItemRows = allItemRows + "<tr class='"+thisRowClass+"' draggable='true' ondragstart='dragItem(event)' ondrop='dropItem(event)' ondragover='allowDrop(event)' id='rowItemID"+Item.ItemID+"'>"+thisRowInnerHTML+"</tr>";
 	}
 
-	let InventoryTableHTML = "<tr id='rowInventoryHeader' style='position:sticky; top:15px' class='inventory-list'><th></th><th id='NameHeader' style = 'text-align:left;' colspan='1'>Item</th><th style = 'text-align:right'>Number</th><th style = 'text-align:right'>Weight</th><th style = 'text-align:right'>Context Menu</th></tr><tr id='rowSpacer' class='spacer-row' style='height:10px'></tr><input type='hidden' id='draggedItemID' value=''>" + allItemRows;
+	let InventoryTableHTML = "<tr id='rowInventoryHeader' style='position:sticky; top:0px; z-index:99' class='inventory-list'><th></th><th id='NameHeader' style = 'text-align:left;' colspan='1'>Item</th><th style = 'text-align:right'>Number</th><th style = 'text-align:right'>Weight</th><th style = 'text-align:right'>Context Menu</th></tr><tr id='rowSpacer' class='spacer-row' style='height:10px'></tr><input type='hidden' id='draggedItemID' value=''>" + allItemRows;
 
 	InventoryTableHTML = InventoryTableHTML + "<tr class='weight-data' id='rowWeightHeaders' ondrop='dropItem(event)' ondragover='allowDrop(event)'><th></th><th id='WeightHeader' style = 'text-align:left' colspan='1'>Weight Data</th><th style = 'text-align:right'>Current Weight</th><th style = 'text-align:right'>Carry Capacity</th><th style = 'text-align:right'>Push Capacity</th></tr>";
 
@@ -614,6 +614,8 @@ setTimeout(loadUserData, 1);
 
 function createGeneralEquipButtons(){
 	let buttonDIV = document.getElementById("EquipmentButtons");
+	buttonDIV.style.display = "block";
+	buttonDIV.style.justifyContent = "space-evenly";
 
 	let GiveItemButton = document.createElement("button");
 	GiveItemButton.className = "equipment-button";
@@ -621,6 +623,8 @@ function createGeneralEquipButtons(){
 	GiveItemButton.addEventListener("click",async function(){
 		await fetch("macro:GiveItemInput@Lib:pm.a5e.Core",{method: "POST", body:JSON.stringify({"ParentToken":ParentToken})});
 	});
+	GiveItemButton.addEventListener("dragover",allowDrop);
+	//GiveItemButton.addEventListener("drop",dropSpecificItem);
 	buttonDIV.insertAdjacentElement("beforeend",GiveItemButton);
 
 	let TakeItemButton = document.createElement("button");
@@ -634,16 +638,16 @@ function createGeneralEquipButtons(){
 	let SplitItemButton = document.createElement("button");
 	SplitItemButton.className = "equipment-button";
 	SplitItemButton.innerHTML = "<span title='Drag an item over to split it into two separate stacks.'><img src='lib://pm.a5e.core/InterfaceImages/Split.png'></span>";
-	SplitItemButton.addEventListener("click",function(){
-		
-	});
+	SplitItemButton.addEventListener("dragover",allowDrop);
+	//SplitItemButton.addEventListener("drop",splitItemStack);
 	buttonDIV.insertAdjacentElement("beforeend",SplitItemButton);
 
 	let AttunementItemButton = document.createElement("button");
 	AttunementItemButton.className = "equipment-button";
-	AttunementItemButton.innerHTML = "<span class='no-drag' title='Click to adjust all attunement slots, or drag and drop to attune to a specific item.'><img class='no-drag' src='lib://pm.a5e.core/InterfaceImages/Attunement.png'></span>";
+	AttunementItemButton.innerHTML = "<span id='AttunementItemButtonImage' class='no-drag' title='Click to adjust all attunement slots, or drag and drop to attune to a specific item.'><img id='AttunementItemButtonImage' class='no-drag' src='lib://pm.a5e.core/InterfaceImages/Attunement.png'></span>";
 	AttunementItemButton.addEventListener("drop",attuneToItem);
 	AttunementItemButton.addEventListener("dragenter",handleAttunementDragEnter);
+	AttunementItemButton.addEventListener("dragleave",handleAttunementDragLeave);
 	AttunementItemButton.addEventListener("dragover", allowDrop);
 	buttonDIV.insertAdjacentElement("beforeend",AttunementItemButton);
 
@@ -674,15 +678,16 @@ function createGeneralEquipButtons(){
 
 	let WearItemButton = document.createElement("button");
 	WearItemButton.className = "equipment-button";
-	WearItemButton.innerHTML = "<span title='Click to adjust all worn items, or drag and drop to wear or take off a specific item.'><img src='lib://pm.a5e.core/InterfaceImages/Wear.png'></span>";
-	WearItemButton.addEventListener("click",function(){
-
-	});
+	WearItemButton.innerHTML = "<span class='no-drag' title='Click to adjust all worn items, or drag and drop to wear or take off a specific item.'><img class='no-drag' id='WearItemButtonImage' src='lib://pm.a5e.core/InterfaceImages/Wear.png'></span>";
+	WearItemButton.addEventListener("drop", wearItem);
+	WearItemButton.addEventListener("dragenter", handleWearItemDragEnter);
+	WearItemButton.addEventListener("dragover", allowDrop);
+	WearItemButton.addEventListener("dragleave", handleWearItemDragLeave);
 	buttonDIV.insertAdjacentElement("beforeend",WearItemButton);
 
 	let ThrowItemButton = document.createElement("button");
 	ThrowItemButton.className = "equipment-button";
-	ThrowItemButton.innerHTML = "<span title='Click to throw any item, or drag an item over to throw that specific item.'><img src='lib://pm.a5e.core/InterfaceImages/Throw.png'></span>";
+	ThrowItemButton.innerHTML = "<span class='no-drag' title='Click to throw any item, or drag an item over to throw that specific item.'><img class='no-drag' src='lib://pm.a5e.core/InterfaceImages/Throw.png'></span>";
 	ThrowItemButton.addEventListener("click",function(){
 
 	});
@@ -716,10 +721,30 @@ function resetEquipmentButtons(){
 }
 
 function handleAttunementDragEnter(ev){
+	if(document.getElementById("AttunementButtonContainer")){
+		return;
+	}
+	
+    let ItemID = idFromRowID(document.getElementById("draggedItemID").value);
+    let itemData = getItemData(ItemID);
+    
+	if(itemData.isAttunement == 1){
+		createAdditionalAttuneButtons(itemData);
+	}
+	else{
+		document.getElementById("AttunementItemButtonImage").src = "lib://pm.a5e.core/InterfaceImages/Prohibit_Overlay.png";
+	}
+}
+
+function handleAttunementDragLeave(ev){
+	document.getElementById("AttunementItemButtonImage").src = "lib://pm.a5e.core/InterfaceImages/Attunement.png";
+}
+
+function createAdditionalAttuneButtons(itemData){
 
 }
 
-function attuneToItem(ev){
+function attuneToItem(ev, slotNumber){
 
 }
 
@@ -791,19 +816,35 @@ function removeAdditionalHoldButtons() {
     }
 }
 
-function holdItem(ev, handNumber) {
+async function holdItem(ev, handNumber) {
 	if(handNumber == null) handNumber = 0;
-	ev.preventDefault();
-    let ItemID = idFromRowID(document.getElementById("draggedItemID").value);
-    let itemData = getItemData(ItemID);
 
-    if (itemData.Type === "Weapon" || itemData.Type === "Shield") {
-        // Logic to hold the item in the specified hand
-        console.log(`Holding item: ${itemData.DisplayName} in hand ${handNumber}`);
-        // Add your hold item logic here
-    } else {
-        console.log("Item is not a weapon or shield and cannot be held.");
-    }
+    let ItemID = idFromRowID(document.getElementById("draggedItemID").value);
+
+	let currentHand = HeldItems.indexOf(ItemID);
+	if(currentHand === -1){
+		heldData = await fetch("macro:pm.a5e.HoldItem@lib:pm.a5e.Core", {method: "POST", body: JSON.stringify([ItemID,handNumber,ParentToken])});
+		heldData = JSON.parse(await heldData.json());
+		Inventory = heldData.Inventory;		
+		HeldItems = heldData.HeldItems;
+	}
+	else if(currentHand === handNumber){
+		heldData = await fetch("macro:pm.a5e.StowItem@lib:pm.a5e.Core", {method: "POST", body: JSON.stringify([ItemID,handNumber,ParentToken])});
+		heldData = JSON.parse(await heldData.json());
+		Inventory = heldData.Inventory;
+
+		HeldItems[handNumber] =  "";
+	}
+	else{
+		if(HeldItems[handNumber] != ""){
+			heldData = await fetch("macro:pm.a5e.StowItem@lib:pm.a5e.Core", {method: "POST", body: JSON.stringify([ItemID,handNumber,ParentToken])});
+			heldData = JSON.parse(await heldData.json());
+			Inventory = heldData.Inventory;			
+		}
+
+		HeldItems[handNumber] = ItemID;
+		HeldItems[currentHand] = "";
+	}
 }
 
 function handleEquipItemDragEnter(ev) {
@@ -833,20 +874,23 @@ async function equipItem(ev) {
     let itemData = getItemData(ItemID);
 
 	if(ItemID == EquippedArmor){
-		await fetch("macro:pm.a5e.UnequipArmor@lib:pm.a5e.Core", {method: "POST", body: JSON.stringify([ItemID,ParentToken])});
+		let equipData = await fetch("macro:pm.a5e.UnequipArmor@lib:pm.a5e.Core", {method: "POST", body: JSON.stringify([ItemID,ParentToken])});
+		equipData = JSON.parse(await equipData.json());
+		Inventory = equipData.Inventory;
 		EquippedArmor = "";
 	}
     else if (itemData.Type === "Armor") {
-       await fetch("macro:pm.a5e.EquipArmor@lib:pm.a5e.Core", {method: "POST", body: JSON.stringify([ItemID,ParentToken])});
+       let equipData = await fetch("macro:pm.a5e.EquipArmor@lib:pm.a5e.Core", {method: "POST", body: JSON.stringify([ItemID,ParentToken])});
+	   equipData = JSON.parse(await equipData.json());
+	   Inventory = equipData.Inventory;
 	   EquippedArmor = ItemID;
     } else {
-        console.log("Item is not armor and cannot be equipped.");
+        console.log(itemData.DisplayName+" is not armor and cannot be equipped.");
     }
 	document.getElementById("EquipItemButtonImage").src = "lib://pm.a5e.core/InterfaceImages/Equip_Armor.png";
 }
 
 function handleWearItemDragEnter(ev) {
-    ev.preventDefault();
 	let ItemID = idFromRowID(document.getElementById("draggedItemID").value);
     let itemData = getItemData(ItemID);
 
@@ -862,24 +906,24 @@ function handleWearItemDragEnter(ev) {
 }
 
 function handleWearItemDragLeave(ev) {
-    ev.preventDefault();
 	document.getElementById("WearItemButtonImage").src = "lib://pm.a5e.core/InterfaceImages/Wear.png";
 }
 
 async function wearItem(ev) {
-    ev.preventDefault();
 	let ItemID = idFromRowID(document.getElementById("draggedItemID").value);
     let itemData = getItemData(ItemID);
 
-	if(ItemID == EquippedArmor){
-		await fetch("macro:pm.a5e.UnequipArmor@lib:pm.a5e.Core", {method: "POST", body: JSON.stringify([ItemID,ParentToken])});
-		EquippedArmor = "";
+	if(itemData.CurrentlyWorn == 1){
+		let wearData = await fetch("macro:pm.a5e.UnwearItem@lib:pm.a5e.Core", {method: "POST", body: JSON.stringify([ItemID,ParentToken])});
+		wearData = JSON.parse(await wearData.json());
+		Inventory = wearData.Inventory;
 	}
-    else if (itemData.Type === "Armor") {
-       await fetch("macro:pm.a5e.EquipArmor@lib:pm.a5e.Core", {method: "POST", body: JSON.stringify([ItemID,ParentToken])});
-	   EquippedArmor = ItemID;
+    else if (itemData.isWorn == 1) {
+		let wearData = await fetch("macro:pm.a5e.WearItem@lib:pm.a5e.Core", {method: "POST", body: JSON.stringify([ItemID,ParentToken])});
+		wearData = JSON.parse(await wearData.json());
+		Inventory = wearData.Inventory;
     } else {
-        console.log("Item is not armor and cannot be equipped.");
+        console.log(itemData.DisplayName+" is not wearable.");
     }
 	document.getElementById("WearItemButtonImage").src = "lib://pm.a5e.core/InterfaceImages/Wear.png";
 }

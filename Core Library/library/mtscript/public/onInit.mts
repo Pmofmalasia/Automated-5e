@@ -97,6 +97,10 @@
 [h:defineFunction("pm.a5e.TransferItemAdjustments","pm.a5e.TransferItemAdjustments@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.a5e.EquipArmor","pm.a5e.EquipArmor@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.a5e.UnequipArmor","pm.a5e.UnequipArmor@Lib:pm.a5e.Core")]
+[h:defineFunction("pm.a5e.WearItem","pm.a5e.WearItem@Lib:pm.a5e.Core")]
+[h:defineFunction("pm.a5e.UnwearItem","pm.a5e.UnwearItem@Lib:pm.a5e.Core")]
+[h:defineFunction("pm.a5e.HoldItem","pm.a5e.HoldItem@Lib:pm.a5e.Core")]
+[h:defineFunction("pm.a5e.StowItem","pm.a5e.StowItem@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.a5e.CheckAttunement","pm.a5e.CheckAttunement@Lib:pm.a5e.Core")]
 
 [h:"<!-- Functions for Abilities -->"]

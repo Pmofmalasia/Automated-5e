@@ -62,5 +62,6 @@
 
 [h:return(0,json.set("",
 	"Success",1,
-	"Table",json.append("",ArmorTableLine)
+	"Table",json.append("",ArmorTableLine),
+	"Inventory",inventory
 ))]

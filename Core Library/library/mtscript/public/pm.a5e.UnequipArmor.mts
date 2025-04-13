@@ -20,6 +20,7 @@
 		"RulesContents",removedArmorDisplayName+" Unequipped",
 		"FullContents","",
 		"RollContents","",
-		"DisplayOrder","['Rules','Roll','Full']"
-)))]
+		"DisplayOrder","['Rules','Roll','Full']")),
+	"Inventory",inventory
+)]
 [h:return(0,returnData)]

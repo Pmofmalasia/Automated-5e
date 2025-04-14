@@ -5,7 +5,6 @@ async function createInventoryTable(){
 
 	for(let Item of Inventory){
 		let DisplayName = Item.DisplayName;
-			if(debug){console.log(DisplayName);}
 	
 		//TODO: Need to set initial spacing here
 		let thisItemID = Item.ItemID;
@@ -29,7 +28,6 @@ async function createInventoryTable(){
 			TotalWeight = ItemNumber * Weight;
 		}
 		let displayWeight = Math.round(TotalWeight);
-	if(debug){console.log("2");}
 	
 		let NumberDisplay = "";
 		if(Item.ResourceData == undefined){
@@ -37,7 +35,6 @@ async function createInventoryTable(){
 		}
 		else{
 			let ResourceData = await MTFunction("js.a5e.CalculateResourceData",[Item,ParentToken]);
-			if(debug){console.log("3");}
 			let resourceNames = Object.keys(ResourceData);
 			let isFirst = true;
 			for(let tempResourceName of resourceNames){
@@ -69,7 +66,6 @@ async function createInventoryTable(){
 				NumberDisplay += thisResourceDisplay;
 			}
 		}
-		if(debug){console.log("4");}
 
 		//Note: Cannot change this class even if it no longer needs different styling in the future, as it is used to calculate maxColumnDepth
 		let spacerCell = "<td class='inventory-spacer' id='Spacer"+thisItemID+"' colspan='"+currentDepth+"'>";
@@ -81,7 +77,6 @@ async function createInventoryTable(){
 		let thisRowContextButtons = "<span class='context-button'>";
 	
 		let isActive = Item.IsActive > 0;
-		if(debug){console.log("5");}
 	
 		if(Item.isActivatable == 1){
 			let buttonImage;
@@ -99,25 +94,21 @@ async function createInventoryTable(){
 			}
 			thisRowContextButtons = thisRowContextButtons + buttonTitle + "<button id='Activate"+thisItemID+"' type='button' onclick='toggleActivation("+'"'+thisItemID+'"'+")'><img src='lib://pm.a5e.core/InterfaceImages/"+buttonImage+".png'></button></span> ";
 		}
-		if(debug){console.log("6");}
 	
 		let useItemTest = (typeof Item.Effects == "object" && isActive);
 		let bypassActiveTest = (Item.EffectChoiceMethod == "ItemActivationState");
 		if(useItemTest || bypassActiveTest){
 			thisRowContextButtons = thisRowContextButtons + " <span id='UseTitle"+thisItemID+" title='Use Item'><button type='button' id='Use"+thisItemID+"' onclick='useItem("+'"'+thisItemID+'"'+")'><img src='lib://pm.a5e.core/InterfaceImages/Use.png'></button></span> ";
 		}
-		if(debug){console.log("7");}
 	
 		if(typeof Item.ItemSpellcasting == "object" && isActive){
 			thisRowContextButtons = thisRowContextButtons + " <span id='CastTitle"+thisItemID+"' title='Cast Spell'><button type='button' id='Cast"+thisItemID+"' onclick='castSpell("+'"'+thisItemID+'"'+")'><img src='lib://pm.a5e.core/InterfaceImages/Cast_Spell.png'></button></span> ";
 		}
-		if(debug){console.log("8");}
 	
 		thisRowContextButtons = thisRowContextButtons + " <span id='RulesTitle"+thisItemID+"' title='Show Rules'><button type='button' id='Rules"+thisItemID+"' onclick='showRules("+'"'+thisItemID+'"'+")'><img src='lib://pm.a5e.core/InterfaceImages/Rules.png'></button></span> ";
 	
 		thisRowContextButtons = thisRowContextButtons+"</span>";
-	
-		if(debug){console.log("9");}
+
 		let thisRowInnerHTML = spacerCell+"<td id='Name"+thisItemID+"' style='text-align:left' colspan='1'>"+DisplayName+"</td><td style='text-align:right'>"+NumberDisplay+"</td><td style='text-align:right'><span title='"+Weight+" Each'>"+displayWeight+"<input type='hidden' id='Weight"+thisItemID+"' value="+TotalWeight+"></span></td><td style='text-align:right'>"+thisRowContextButtons+"</td>";
 
 		allItemsWeight = allItemsWeight + TotalWeight;
@@ -601,6 +592,8 @@ async function loadUserData(){
 	HeldItems = await MTFunction("getProperty",["a5e.stat.HeldItems",ParentToken]);
 	EquippedArmor = await MTFunction("getProperty",["a5e.stat.EquippedArmor",ParentToken]);
 	AttunedItems = await MTFunction("getProperty",["a5e.stat.AttunedItems",ParentToken]);
+	//<!-- TODO: Equipment: Include actual calcuation of number of attuned items when possible 
+	AttunementSlots = 3;
 	maxColumnDepth = 1;
 	extraRowNum = 2;
 	debug = false;
@@ -614,8 +607,9 @@ setTimeout(loadUserData, 1);
 
 function createGeneralEquipButtons(){
 	let buttonDIV = document.getElementById("EquipmentButtons");
-	buttonDIV.style.display = "block";
+	buttonDIV.style.display = "flex";
 	buttonDIV.style.justifyContent = "space-evenly";
+	buttonDIV.style.flexWrap = "wrap";
 
 	let GiveItemButton = document.createElement("button");
 	GiveItemButton.className = "equipment-button";
@@ -644,7 +638,8 @@ function createGeneralEquipButtons(){
 
 	let AttunementItemButton = document.createElement("button");
 	AttunementItemButton.className = "equipment-button";
-	AttunementItemButton.innerHTML = "<span id='AttunementItemButtonImage' class='no-drag' title='Click to adjust all attunement slots, or drag and drop to attune to a specific item.'><img id='AttunementItemButtonImage' class='no-drag' src='lib://pm.a5e.core/InterfaceImages/Attunement.png'></span>";
+	AttunementItemButton.id = "AttuneButton";
+	AttunementItemButton.innerHTML = "<span class='no-drag' title='Click to adjust all attunement slots, or drag and drop to attune to a specific item.'><img id='AttunementItemButtonImage' class='no-drag' src='lib://pm.a5e.core/InterfaceImages/Attunement.png'></span>";
 	AttunementItemButton.addEventListener("drop",attuneToItem);
 	AttunementItemButton.addEventListener("dragenter",handleAttunementDragEnter);
 	AttunementItemButton.addEventListener("dragleave",handleAttunementDragLeave);
@@ -740,8 +735,49 @@ function handleAttunementDragLeave(ev){
 	document.getElementById("AttunementItemButtonImage").src = "lib://pm.a5e.core/InterfaceImages/Attunement.png";
 }
 
-function createAdditionalAttuneButtons(itemData){
+function createAdditionalAttuneButtons(itemData) {
+    let attuneButton = document.getElementById("AttuneButton");
+    let numAttuneSlots = AttunementSlots;
 
+    let buttonContainer = document.createElement("div");
+    buttonContainer.className = "attunement-button-container";
+	buttonContainer.tabindex = -1;
+    buttonContainer.style.position = "relative";
+    buttonContainer.style.left = `${attuneButton.offsetLeft + attuneButton.offsetWidth / 2}px`;
+    buttonContainer.style.transform = "translateX(-50%)";
+    buttonContainer.style.display = "flex";
+    buttonContainer.style.justifyContent = "center";
+    buttonContainer.style.marginTop = "0px";
+    buttonContainer.style.borderWidth = "10px";
+    buttonContainer.id = "AttunementButtonContainer";
+
+    for (let i = 0; i < numAttuneSlots; i++) {
+        let button = document.createElement("button");
+        button.className = "attunement-button";
+        button.style.margin = "2px";
+        button.id = `AttunementButton${i}`;
+        button.tabindex = -1;
+
+		let attuneImage;
+		let thisSlotItem = AttunedItems[i];
+		if(thisSlotItem == ""){
+			attuneImage = "Attunement_Add";
+		}
+		else if(thisSlotItem == itemData.ItemID){
+			attuneImage = "Attunement_Remove";
+		}
+		else{
+			attuneImage = "Attunement_" + (i + 1);
+		}
+
+        button.innerHTML = `<img src='lib://pm.a5e.core/InterfaceImages/${attuneImage}.png'>`;
+        button.addEventListener("drop", (ev) => attuneToItem(ev, i));
+        button.addEventListener("dragover", allowDrop);
+
+        buttonContainer.appendChild(button);
+    }
+
+    document.getElementById("EquipmentButtons").insertAdjacentElement("beforeend", buttonContainer);
 }
 
 function attuneToItem(ev, slotNumber){
@@ -766,8 +802,8 @@ function handleHoldItemDragEnter(ev) {
 	}
 }
 
-function createAdditionalHoldButtons() {
-    let holdButton = document.getElementById("HoldItemButton");
+function createAdditionalHoldButtons(itemData){
+	let holdButton = document.getElementById("HoldItemButton");
     let numHands = Math.max(1, Limbs.length);
 
     let buttonContainer = document.createElement("div");
@@ -804,7 +840,7 @@ function createAdditionalHoldButtons() {
         buttonContainer.appendChild(button);
     }
 
-    holdButton.insertAdjacentElement("afterend", buttonContainer);
+    document.getElementById("EquipmentButtons").insertAdjacentElement("beforeend", buttonContainer);
 }
 
 function removeAdditionalHoldButtons() {

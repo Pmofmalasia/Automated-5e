@@ -24,6 +24,30 @@
 	transform: translateY(2px);
 }
 
+.header-button {
+	display: inline-block;
+}
+  .header-button button {
+	border: 0px;
+	padding: 0px;
+	height: 20px;
+	width: 20px;
+}
+
+.header-button button:hover{
+	color: #FFFFFF;
+}
+  
+.header-button img{
+	height: 20px;
+	width: 20px;
+	border: 0px;
+}
+
+.header-button button:active{
+	transform: translateY(2px);
+}
+
 .equipment-button button{
 	height: 54px;
 	width: 54px;

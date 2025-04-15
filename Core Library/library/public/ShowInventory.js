@@ -116,7 +116,7 @@ async function createInventoryTable(){
 		allItemRows = allItemRows + "<tr class='"+thisRowClass+"' draggable='true' ondragstart='dragItem(event)' ondrop='dropItem(event)' ondragover='allowDrop(event)' id='rowItemID"+Item.ItemID+"'>"+thisRowInnerHTML+"</tr>";
 	}
 
-	let InventoryTableHTML = "<tr id='rowInventoryHeader' style='position:sticky; top:0px; z-index:99' class='inventory-list'><th></th><th id='NameHeader' style = 'text-align:left;' colspan='1'>Item</th><th style = 'text-align:right'>Number</th><th style = 'text-align:right'>Weight</th><th style = 'text-align:right'>Context Menu</th></tr><tr id='rowSpacer' class='spacer-row' style='height:10px'></tr><input type='hidden' id='draggedItemID' value=''>" + allItemRows;
+	let InventoryTableHTML = "<tr id='rowInventoryHeader' style='position:sticky; top:0px; z-index:99' class='inventory-list'><th class='header-button'><button type='button' id='SettingsButton' onclick='chooseSettings()'><img src='lib://pm.a5e.core/InterfaceImages/Settings.png'></button></th><th id='NameHeader' style = 'text-align:left;' colspan='1'>Item</th><th style = 'text-align:right'>Number</th><th style = 'text-align:right'>Weight</th><th style = 'text-align:right'>Context Menu</th></tr><tr id='rowSpacer' class='spacer-row' style='height:10px'></tr><input type='hidden' id='draggedItemID' value=''>" + allItemRows;
 
 	InventoryTableHTML = InventoryTableHTML + "<tr class='weight-data' id='rowWeightHeaders' ondrop='dropItem(event)' ondragover='allowDrop(event)'><th></th><th id='WeightHeader' style = 'text-align:left' colspan='1'>Weight Data</th><th style = 'text-align:right'>Current Weight</th><th style = 'text-align:right'>Carry Capacity</th><th style = 'text-align:right'>Push Capacity</th></tr>";
 

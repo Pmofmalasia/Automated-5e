@@ -4,7 +4,7 @@
 
 [h:inventory = getProperty("a5e.stat.Inventory")]
 [h:wornItemData = json.get(json.path.read(inventory,"\$[*][?(@.ItemID == '"+wornItemID+"')]"),0)]
-[h:wornItemData = json.set(wornItemData,"CurrentlyWorn",0)]
+[h:wornItemData = json.set(wornItemData,"isWorn",0)]
 [h:inventory = json.path.set(inventory,"\$[*][?(@.ItemID == '"+wornItemID+"')]",wornItemData)]
 [h:setProperty("a5e.stat.Inventory",inventory)]
 

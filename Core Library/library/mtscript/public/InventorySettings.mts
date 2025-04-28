@@ -23,8 +23,9 @@ isIdentifyButton | "+json.get(CurrentSettings,"isIdentifyButton)+" | Identify It
 isCurseButton | "+json.get(CurrentSettings,"isCurseButton)+" | Curse Item | CHECK ## 
 isItemLevelButton | "+json.get(CurrentSettings,"isItemLevelButton)+" | Item Leveling Button | CHECK ## 
 isRechargeButton | "+json.get(CurrentSettings,"isRechargeButton)+" | Recharge Item | CHECK ## 
-junkVar |  | -------- Button Settings -------- | LABEL | SPAN=TRUE ## 
-isPlayerIdentifyItems | "+json.get(CurrentSettings,"isPlayerIdentifyItems)+" | Allow Players to Identify Items | CHECK"]
+junkVar |  | -------- Other Settings -------- | LABEL | SPAN=TRUE ## 
+isPlayerIdentifyItems | "+json.get(CurrentSettings,"isPlayerIdentifyItems)+" | Allow Players to Identify Items | CHECK ## 
+isSendAllToChat | "+json.get(CurrentSettings,"isSendAllToChat)+" | Send All Equipment Changes to GM | CHECK"]
 
 [h:abort(input(
 	if(isGM(),GMSettings,""),

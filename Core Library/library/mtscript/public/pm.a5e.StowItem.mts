@@ -7,10 +7,12 @@
 [h:currentHand = json.indexOf(allHeldItems,stowedItemID)]
 [h,if(currentHand != whichHand || currentHand == -1): return(0,json.set("","Success",0))]
 
+[h:allHeldItems = json.set(allHeldItems,whichHand,"")]
+[h:allHeldItems = getProperty("a5e.stat.HeldItems")]
+
 [h:inventory = getProperty("a5e.stat.Inventory")]
-[h:allHeldItems = json.set(allHeldItems,whichHand,stowedItemID)]
 [h:stowedItemData = json.get(json.path.read(inventory,"\$[*][?(@.ItemID == '"+stowedItemID+"')]"),0)]
-[h,if(json.get(stowedItemData,"isHeld") == 1),CODE:{
+[h,if(json.get(stowedItemData,"mustHold") == 1),CODE:{
 	[h:stowedItemData = json.set(stowedItemData,"IsActive",0)]
 	[h:inventory = json.path.set(inventory,"\$[*][?(@.ItemID == '"+stowedItemID+"')]",stowedItemData)]
 };{}]

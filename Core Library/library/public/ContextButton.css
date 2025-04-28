@@ -1,12 +1,16 @@
+:root{
+	--dragover-border-color: var(--mt-theme-color-actions-green-dark);
+}
+
 .context-button {
-  display: inline-block;
+  	display: inline-block;
 }
 .context-button button {
-  border: 2px solid #000000;
-  border-radius: 8px;
-  padding: 0px;
-  height: 30px;
-  width: 30px;
+	border: 2px solid #000000;
+	border-radius: 8px;
+	padding: 0px;
+	height: 30px;
+	width: 30px;
 }
 
 .context-button button:hover{
@@ -25,52 +29,76 @@
 }
 
 .header-button {
-	display: inline-block;
+	width: 54px;
+	background-color:var(--mt-theme-color-button-pressed-background);
 }
-  .header-button button {
-	border: 0px;
+
+.header-button button {
+	border: 2px solid #000000;
+	background-color: #000000;
+	border-radius: 4px;
 	padding: 0px;
-	height: 20px;
-	width: 20px;
+	height: 25px;
+	width: 25px;
 }
 
 .header-button button:hover{
-	color: #FFFFFF;
-}
-  
-.header-button img{
-	height: 20px;
-	width: 20px;
-	border: 0px;
+	border: 2px solid var(--dragover-border-color);
 }
 
 .header-button button:active{
+	border: 2px solid #FFFFFF;
 	transform: translateY(2px);
+}
+
+.header-button img{
+	height: 22px;
+	width: 22px;
+	border: 0px;
+	vertical-align: middle;
+	text-align: center;
+}
+
+.equipment-button{
+	background-color:var(--mt-theme-color-button-pressed-background);
+	margin: 0px;
+	padding: 3px;
+	width: 100%;
+	display: flex;
+	justify-content: space-evenly;
+	flex-wrap: wrap;
 }
 
 .equipment-button button{
 	height: 54px;
 	width: 54px;
-	border: 2px solid #ffffff;
+	border: 2px solid #000000;
 	border-radius: 8px;
 	padding: 0px;
+	vertical-align: middle;
+	background-color: black;
 }
 
 .equipment-button img{
-	height: 50px;
-	width: 50px;
+	height: 49px;
+	width: 49px;
 	border: 0px;
+	vertical-align: middle;
+	text-align: center;
 }
 
-.equipment-button div{
-	width: 100%;
+.equipment-button button:hover{
+	border: 2px solid var(--dragover-border-color);
 }
 
 .equipment-button button:active{
 	border: 2px solid #FFFFFF;
+	border-radius: 8px;
 	transform: translateY(2px);
 }
 
-.equipment-button button:hover{
-	border: 2px solid #777777;
+.valid-drop {
+	border: 2px solid var(--dragover-border-color) !important;
+	border-radius: 8px !important;
+	padding: 0px !important;
 }

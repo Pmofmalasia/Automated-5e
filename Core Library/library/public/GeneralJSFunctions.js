@@ -282,6 +282,25 @@ async function mtSetProperty(property,value,token){
 	return result;
 }
 
+function roll(num,sides){
+	let total = 0;
+	for(let i = 0; i<num; i++){
+		let thisRoll = Math.floor(Math.random() *sides) + 1;
+		total += thisRoll;
+	}
+
+	return total;
+}
+
+function isNumeric(str){
+	if(typeof str !== "string") return false;
+	return (!isNaN(str) && !isNaN(parseFloat(str)));
+}
+
+function generateItemID(){
+	return roll(1,10000) + "a5e" + Date.now();
+}
+
 function removeSpecialCharacters(input){
 	return input.replace(/[^a-zA-Z0-9]/g, '');
 }

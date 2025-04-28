@@ -1,7 +1,8 @@
-async function createInventoryTable(){
+async function createInventoryTable(scrollPosition){
 	let allItemsWeight = 0;
 	let allItemRows = "";
 	let containerDepths = {};
+	let closedContainers = [];
 
 	for(let Item of Inventory){
 		let DisplayName = Item.DisplayName;
@@ -70,6 +71,28 @@ async function createInventoryTable(){
 		//Note: Cannot change this class even if it no longer needs different styling in the future, as it is used to calculate maxColumnDepth
 		let spacerCell = "<td class='inventory-spacer' id='Spacer"+thisItemID+"' colspan='"+currentDepth+"'>";
 		if(Item.Type == "Container" || Array.isArray(Item.Contents)){
+			let containerState = Item.isOpen;
+			if(containerState == undefined){
+				containerState = "open";
+			}
+
+			if(containerState !== "open"){
+				let outerContainer = "";
+				let currentContainer = Item;
+				while(outerContainer !== undefined){
+					outerContainer = getItemData(currentContainer.StoredIn);
+					if(outerContainer === undefined){
+						closedContainers.push(thisItemID);						
+					}
+					else if(closedContainers.includes(outerContainer.ItemID)){
+						break;
+					}
+					else{
+						currentContainer = outerContainer;
+					}
+				}
+			}
+
 			spacerCell = spacerCell + "<span class='context-button'><span id='ContainerTitle"+thisItemID+"' title='Close Container, or Drag an Item to Store'><button type='button' id='Container"+thisItemID+"' onclick='toggleContainer("+'"'+thisItemID+'"'+")' ondrop='dropStoreItem(event,"+'"'+thisItemID+'"'+")' ondragover='allowDrop(event)' value='open'><img src='lib://pm.a5e.core/InterfaceImages/Container_Open.png'></button></span></span>";
 		}
 		spacerCell = spacerCell + "</td>";
@@ -81,20 +104,17 @@ async function createInventoryTable(){
 		if(Item.isActivatable == 1){
 			let buttonImage;
 			let buttonTitle;
-			let needsActivation;
 			if(isActive){
 				buttonImage = "Deactivate_Item";
 				buttonTitle = " <span id='ActivateTitle"+thisItemID+"' title='Deactivate Item'><input type='hidden' id='needsActivation"+thisItemID+"' value=0>"
-				needsActivation = 0;
 			}
 			else{
 				buttonImage = "Activate_Item";
 				buttonTitle = " <span id='ActivateTitle"+thisItemID+"' title='Activate Item'><input type='hidden' id='needsActivation"+thisItemID+"' value=1>"
-				needsActivation = 1;
 			}
 			thisRowContextButtons = thisRowContextButtons + buttonTitle + "<button id='Activate"+thisItemID+"' type='button' onclick='toggleActivation("+'"'+thisItemID+'"'+")'><img src='lib://pm.a5e.core/InterfaceImages/"+buttonImage+".png'></button></span> ";
 		}
-	
+
 		let useItemTest = (typeof Item.Effects == "object" && isActive);
 		let bypassActiveTest = (Item.EffectChoiceMethod == "ItemActivationState");
 		if(useItemTest || bypassActiveTest){
@@ -116,7 +136,7 @@ async function createInventoryTable(){
 		allItemRows = allItemRows + "<tr class='"+thisRowClass+"' draggable='true' ondragstart='dragItem(event)' ondrop='dropItem(event)' ondragover='allowDrop(event)' id='rowItemID"+Item.ItemID+"'>"+thisRowInnerHTML+"</tr>";
 	}
 
-	let InventoryTableHTML = "<tr id='rowInventoryHeader' style='position:sticky; top:0px; z-index:99' class='inventory-list'><th class='header-button'><button type='button' id='SettingsButton' onclick='chooseSettings()'><img src='lib://pm.a5e.core/InterfaceImages/Settings.png'></button></th><th id='NameHeader' style = 'text-align:left;' colspan='1'>Item</th><th style = 'text-align:right'>Number</th><th style = 'text-align:right'>Weight</th><th style = 'text-align:right'>Context Menu</th></tr><tr id='rowSpacer' class='spacer-row' style='height:10px'></tr><input type='hidden' id='draggedItemID' value=''>" + allItemRows;
+	let InventoryTableHTML = "<tr id='rowInventoryHeader' style='position:sticky; top:0px; z-index:99' class='inventory-list'><th class='header-button'><button type='button' id='SettingsButton' onclick='chooseSettings()'><img src='lib://pm.a5e.core/InterfaceImages/Settings.png'></button></th><th id='NameHeader' style = 'text-align:left;' colspan='1'>Item</th><th style = 'text-align:right'>Number</th><th id='WeightMainHeader' style = 'text-align:right'>Weight</th><th style = 'text-align:right'>Context Menu</th></tr><tr id='rowSpacer' class='spacer-row' style='height:10px'></tr><input type='hidden' id='draggedItemID' value=''><input type='hidden' id='currentSort' value=''>" + allItemRows;
 
 	InventoryTableHTML = InventoryTableHTML + "<tr class='weight-data' id='rowWeightHeaders' ondrop='dropItem(event)' ondragover='allowDrop(event)'><th></th><th id='WeightHeader' style = 'text-align:left' colspan='1'>Weight Data</th><th style = 'text-align:right'>Current Weight</th><th style = 'text-align:right'>Carry Capacity</th><th style = 'text-align:right'>Push Capacity</th></tr>";
 
@@ -128,7 +148,26 @@ async function createInventoryTable(){
 
 	document.getElementById("InventoryTable").innerHTML = InventoryTableHTML;
 
+	document.getElementById("NameHeader").addEventListener("click",function(){
+		sortInventory("name");
+	});
+	document.getElementById("WeightMainHeader").addEventListener("click",function(){
+		sortInventory("weight");
+	});
+
 	updateContainerIndenting();
+
+	//Will create issues with nested closed containers being visually reopened when the outer one is opened - need to go in and fix that
+	for(let container of closedContainers){
+		toggleContainer(container);
+	}
+
+	if(scrollPosition !== null){
+		window.scrollTo({
+			"top":scrollPosition,
+			"behavior":"instant"
+		});
+	}
 }
 
 function dragItem(ev){
@@ -260,19 +299,29 @@ function allowDrop(ev){
 }
 
 function toggleContainer(ContainerID){
-	//TODO: In the future, some possible behavior to introduce - left click affects only the layer clicked - e.g. any contained container will not be collapsed (though still hidden). Conversely, right click affects contained containers. For example, right clicking an open container followed by left clicking it would result in the containers within being closed when revealed (technically closed on the initial right click, but not visible).
 	let ContainerData = getItemData(ContainerID);
 	let containedItems = ContainerData.Contents;
 	let containerButton = document.getElementById("Container"+ContainerID);
 	let isOpen = containerButton.value == "open";
 
-	//TODO: Have open/closed status on the container itself, allowing open/closed to persist across inventory openings
-
 	let containerSpacerSpan = Number(document.getElementById("rowItemID"+ContainerID).firstElementChild.colSpan);
 	let nextRow = document.getElementById("rowItemID"+ContainerID).nextElementSibling;
 	let NextSpacerSpan = Number(nextRow.firstElementChild.colSpan);
 
+	function newClosedContainerTest(nextRow){
+		let nextRowItemData = getItemData(idFromRowID(nextRow.id));
+		if((nextRowItemData.isOpen === "closed" || nextRowItemData.isOpen === "locked")){
+			return {
+				"spacer":NextSpacerSpan,
+				"newstart":true
+			}
+		}
+		return false;
+	}
+
 	if(isOpen){
+		//<!-- TODO: Inventory: Add locking container as an option
+		ContainerData.isOpen = "closed";
 		containerButton.value = "closed";
 		containerButton.innerHTML = "<img src='lib://pm.a5e.core/InterfaceImages/Container_Closed.png'>";
 
@@ -283,15 +332,52 @@ function toggleContainer(ContainerID){
 		}
 	}
 	else{
+		ContainerData.isOpen = "open";
 		containerButton.value = "open";
 		containerButton.innerHTML = "<img src='lib://pm.a5e.core/InterfaceImages/Container_Open.png'>";
 
+		let closedSpacerSpan = -1;
+		let newStart = false;
+		let updatedData = newClosedContainerTest(nextRow);
+		if(updatedData != false){
+			closedSpacerSpan = updatedData.spacer;
+			newStart = updatedData.newstart;
+		}
 		while(NextSpacerSpan > containerSpacerSpan){
-			nextRow.removeAttribute("hidden","");
+			if(closedSpacerSpan < NextSpacerSpan && closedSpacerSpan != -1){
+				//if within a nested closed container, do not open that container/do not reveal items
+			}
+			else if(newStart){
+				newStart = false;
+				nextRow.removeAttribute("hidden","");
+			}
+			else{
+				nextRow.removeAttribute("hidden","");
+				updatedData = newClosedContainerTest(nextRow);
+				if(updatedData != false){
+					closedSpacerSpan = updatedData.spacer;
+					newStart = updatedData.newstart;
+				}
+				else{
+					newStart = false;
+					closedSpacerSpan = -1;
+				}
+			}
+			
 			nextRow = nextRow.nextElementSibling;
 			NextSpacerSpan = Number(nextRow.firstElementChild.colSpan);
+
+			if(closedSpacerSpan === -1){
+				updatedData = newClosedContainerTest(nextRow);
+				if(updatedData != false){
+					closedSpacerSpan = updatedData.spacer;
+					newStart = updatedData.newstart;
+				}
+			}
 		}
 	}
+
+	setItemData(ContainerData);
 }
 
 function storeItem(ItemID,ContainerID){
@@ -467,7 +553,6 @@ async function useItem(ItemID){
 		
 		//compare resultingInventory with Inventory here to find differences, then update those rows
 	} catch (error) {
-		console.log("HI");
 		console.log(error.message);
 	}
 }
@@ -497,6 +582,26 @@ function getItemData(ItemID){
 		return Inventory.ItemID == ItemID;
 	});
 	return itemData[0];
+}
+
+function setItemData(Item,key,value){
+	//accepts either full item object (key/value not used) or itemID, key to change, and value to change key to
+	let itemID;
+	if(typeof Item === "string"){
+		itemID = Item;
+		Item = getItemData(itemID);
+		Item[key] = value;
+	}
+	else{
+		itemID = Item.ItemID;
+	}
+
+	let itemIndex = Inventory.findIndex(obj => obj.ItemID === itemID);
+	if(itemIndex !== -1){
+		Inventory[itemIndex] = Item;
+	}
+
+	updateInventory();
 }
 
 function idFromRowID(rowID){
@@ -587,13 +692,12 @@ async function loadUserData(){
 
 	ParentToken = userdata.ParentToken;
 	Inventory = userdata.Inventory;
-	let requestLimbs = await fetch("macro:pm.a5e.Limbs@lib:pm.a5e.Core", {method: "POST", body: JSON.stringify([ParentToken])});
-	Limbs = await requestLimbs.json();
-	HeldItems = await MTFunction("getProperty",["a5e.stat.HeldItems",ParentToken]);
-	EquippedArmor = await MTFunction("getProperty",["a5e.stat.EquippedArmor",ParentToken]);
-	AttunedItems = await MTFunction("getProperty",["a5e.stat.AttunedItems",ParentToken]);
+	Limbs = userdata.Limbs;
+	HeldItems = userdata.HeldItems;
+	EquippedArmor = userdata.EquippedArmor;
+	AttunedItems = userdata.AttunedItems;
 	//<!-- TODO: Equipment: Include actual calcuation of number of attuned items when possible 
-	AttunementSlots = 3;
+	AttunementSlots = userdata.AttunementSlots;
 	maxColumnDepth = 1;
 	extraRowNum = 2;
 	debug = false;
@@ -606,43 +710,65 @@ async function loadUserData(){
 setTimeout(loadUserData, 1);
 
 function createGeneralEquipButtons(){
-	let buttonDIV = document.getElementById("EquipmentButtons");
-	buttonDIV.style.display = "flex";
-	buttonDIV.style.justifyContent = "space-evenly";
-	buttonDIV.style.flexWrap = "wrap";
+	let itemButtonDIV = document.getElementById("ItemButtons");
+	itemButtonDIV.classList.add("equipment-button");
 
 	let GiveItemButton = document.createElement("button");
 	GiveItemButton.className = "equipment-button";
+	GiveItemButton.id = "GiveItemButton";
 	GiveItemButton.innerHTML = "<span title='Click to select an item, or drag and drop an item from the list to give that item.'><img src='lib://pm.a5e.core/InterfaceImages/Give.png'></span>";
 	GiveItemButton.addEventListener("click",async function(){
 		await fetch("macro:GiveItemInput@Lib:pm.a5e.Core",{method: "POST", body:JSON.stringify({"ParentToken":ParentToken})});
 	});
 	GiveItemButton.addEventListener("dragover",allowDrop);
+	GiveItemButton.addEventListener("dragenter",handleEnterValidDrop);
+	GiveItemButton.addEventListener("dragleave",handleLeaveValidDrop);
 	//GiveItemButton.addEventListener("drop",dropSpecificItem);
-	buttonDIV.insertAdjacentElement("beforeend",GiveItemButton);
+	itemButtonDIV.insertAdjacentElement("beforeend",GiveItemButton);
 
 	let TakeItemButton = document.createElement("button");
 	TakeItemButton.className = "equipment-button";
+	TakeItemButton.id = "TakeItemButton";
 	TakeItemButton.innerHTML = "<span title='Click to pick up an item from the ground.'><img src='lib://pm.a5e.core/InterfaceImages/Take.png'></span>";
 	TakeItemButton.addEventListener("click",async function(){
 		await fetch("macro:PickUpItem@Lib:pm.a5e.Core",{method: "POST", body:JSON.stringify({"ParentToken":ParentToken})});
 	});
-	buttonDIV.insertAdjacentElement("beforeend",TakeItemButton);
+	itemButtonDIV.insertAdjacentElement("beforeend",TakeItemButton);
 
 	let SplitItemButton = document.createElement("button");
 	SplitItemButton.className = "equipment-button";
-	SplitItemButton.innerHTML = "<span title='Drag an item over to split it into two separate stacks.'><img src='lib://pm.a5e.core/InterfaceImages/Split.png'></span>";
+	SplitItemButton.id = "SplitItemButton";
+	SplitItemButton.innerHTML = "<span class='no-drag' title='Drag an item over to split it into two separate stacks.'><img id='SplitItemButtonImage' class='no-drag' src='lib://pm.a5e.core/InterfaceImages/Split.png'></span>";
 	SplitItemButton.addEventListener("dragover",allowDrop);
-	//SplitItemButton.addEventListener("drop",splitItemStack);
-	buttonDIV.insertAdjacentElement("beforeend",SplitItemButton);
+	SplitItemButton.addEventListener("dragenter",handleSplitDragEnter);
+	SplitItemButton.addEventListener("dragleave",handleSplitDragLeave);
+	SplitItemButton.addEventListener("drop",handleSplitItemDrop);
+	itemButtonDIV.insertAdjacentElement("beforeend",SplitItemButton);
+
+	let CombineItemButton = document.createElement("button");
+	CombineItemButton.className = "equipment-button";
+	CombineItemButton.id = "CombineItemButton";
+	CombineItemButton.innerHTML = "<span class='no-drag' title='Drag and drop equivalent items to combine their stacks.'><img id='CombineItemButtonImage' class='no-drag' src='lib://pm.a5e.core/InterfaceImages/Combine.png'></span>";
+	if(false){
+		CombineItemButton.addEventListener("dragover",allowDrop);
+		CombineItemButton.addEventListener("dragenter",handleCombineDragEnter);
+		CombineItemButton.addEventListener("dragleave",handleCombineDragLeave);
+		GiveItemButton.addEventListener("dragenter",handleEnterValidDrop);
+		GiveItemButton.addEventListener("dragleave",handleLeaveValidDrop);
+		CombineItemButton.addEventListener("drop",handleCombineItemDrop);
+	}
+	itemButtonDIV.insertAdjacentElement("beforeend",CombineItemButton);		
+
+	let buttonDIV = document.getElementById("EquipmentButtons");
+	buttonDIV.classList.add("equipment-button");
 
 	let AttunementItemButton = document.createElement("button");
 	AttunementItemButton.className = "equipment-button";
-	AttunementItemButton.id = "AttuneButton";
+	AttunementItemButton.id = "AttuneItemButton";
 	AttunementItemButton.innerHTML = "<span class='no-drag' title='Click to adjust all attunement slots, or drag and drop to attune to a specific item.'><img id='AttunementItemButtonImage' class='no-drag' src='lib://pm.a5e.core/InterfaceImages/Attunement.png'></span>";
 	AttunementItemButton.addEventListener("drop",attuneToItem);
-	AttunementItemButton.addEventListener("dragenter",handleAttunementDragEnter);
-	AttunementItemButton.addEventListener("dragleave",handleAttunementDragLeave);
+	AttunementItemButton.addEventListener("dragenter",handleAttunementParentDragEnter);
+	AttunementItemButton.addEventListener("dragleave",handleAttunementParentDragLeave);
 	AttunementItemButton.addEventListener("dragover", allowDrop);
 	buttonDIV.insertAdjacentElement("beforeend",AttunementItemButton);
 
@@ -654,7 +780,7 @@ function createGeneralEquipButtons(){
 
 	});
 	HoldItemButton.addEventListener("drop", holdItem);
-	HoldItemButton.addEventListener("dragenter", handleHoldItemDragEnter);
+	HoldItemButton.addEventListener("dragenter", handleHoldItemParentDragEnter);
 	HoldItemButton.addEventListener("dragover", allowDrop);
 	buttonDIV.insertAdjacentElement("beforeend",HoldItemButton);
 
@@ -673,6 +799,7 @@ function createGeneralEquipButtons(){
 
 	let WearItemButton = document.createElement("button");
 	WearItemButton.className = "equipment-button";
+	WearItemButton.id = "WearItemButton";
 	WearItemButton.innerHTML = "<span class='no-drag' title='Click to adjust all worn items, or drag and drop to wear or take off a specific item.'><img class='no-drag' id='WearItemButtonImage' src='lib://pm.a5e.core/InterfaceImages/Wear.png'></span>";
 	WearItemButton.addEventListener("drop", wearItem);
 	WearItemButton.addEventListener("dragenter", handleWearItemDragEnter);
@@ -682,6 +809,7 @@ function createGeneralEquipButtons(){
 
 	let ThrowItemButton = document.createElement("button");
 	ThrowItemButton.className = "equipment-button";
+	ThrowItemButton.id = "ThrowItemButton";
 	ThrowItemButton.innerHTML = "<span class='no-drag' title='Click to throw any item, or drag an item over to throw that specific item.'><img class='no-drag' src='lib://pm.a5e.core/InterfaceImages/Throw.png'></span>";
 	ThrowItemButton.addEventListener("click",function(){
 
@@ -689,9 +817,20 @@ function createGeneralEquipButtons(){
 	buttonDIV.insertAdjacentElement("beforeend",ThrowItemButton);
 
 	//counter detects if dragleave is a "true" dragleave event, or if it is just dragging over a child element. dragenter triggers first and increments, dragleave decrements. If 0, it has moved all the way out of the element.
-	document.getElementById("EquipmentButtons").counter = 0;
+	buttonDIV.counter = 0;
 	buttonDIV.addEventListener("dragleave",handleContextButtonDragLeave);
 	buttonDIV.addEventListener("dragenter",handleContextButtonDragEnter);
+}
+
+function getDraggedItemID(){
+	return idFromRowID(document.getElementById("draggedItemID").value);
+}
+
+function handleEnterValidDrop(ev){
+	ev.target.classList.add("valid-drop");
+}
+function handleLeaveValidDrop(ev){
+	ev.target.classList.remove("valid-drop");
 }
 
 function handleContextButtonDragEnter(ev){
@@ -713,17 +852,142 @@ function handleContextButtonDragLeave(ev){
 
 function resetEquipmentButtons(){
 	removeAdditionalHoldButtons();
+	removeAdditionalAttunementButtons();
 }
 
-function handleAttunementDragEnter(ev){
+function handleSplitItemDrop(ev){
+	let ItemID = getDraggedItemID();
+    let itemData = getItemData(ItemID);
+	let itemNumber = Number(itemData.Number);
+
+	let splitItemContainer = document.createElement("div");
+	splitItemContainer.classList.add("split-item-container");
+	splitItemContainer.id = "SplitItemContainer";
+	splitItemContainer.style.textAlign = "center";
+	document.getElementById("ItemButtons").insertAdjacentElement("beforebegin",splitItemContainer);
+
+	let splitItemSliderContainer = document.createElement("div");
+	splitItemSliderContainer.classList.add("split-item-container");
+	splitItemSliderContainer.id = "SplitItemSliderContainer";
+	splitItemSliderContainer.style.textAlign = "center";
+	document.getElementById("ItemButtons").insertAdjacentElement("beforebegin",splitItemSliderContainer);
+
+	let splitItemConfirmContainer = document.createElement("div");
+	splitItemConfirmContainer.classList.add("split-item-container");
+	splitItemConfirmContainer.id = "SplitItemConfirmContainer";
+	splitItemConfirmContainer.style.textAlign = "center";
+	document.getElementById("ItemButtons").insertAdjacentElement("beforebegin",splitItemConfirmContainer);
+
+	let nameSpan = document.createElement("span");
+	nameSpan.innerHTML = "Splitting "+itemData.DisplayName+" Stack: ";
+	splitItemContainer.insertAdjacentElement("beforeend",nameSpan);
+
+	let splitNumInput = document.createElement("input");
+	splitNumInput.type = "number";
+	splitNumInput.id = "ItemSplitAmount";
+	splitNumInput.min = 0;
+	splitNumInput.max = itemNumber;
+	splitNumInput.value = 0;
+	splitNumInput.classList.add("small-number");
+	splitNumInput.addEventListener("change",function(){
+		document.getElementById("ItemSplitAmountRange").value = this.value;
+	});
+	splitItemContainer.insertAdjacentElement("beforeend",splitNumInput);
+
+	let splitNumRangeInput = document.createElement("input");
+	splitNumRangeInput.type = "range";
+	splitNumRangeInput.id = "ItemSplitAmountRange";
+	splitNumRangeInput.min = 0;
+	splitNumRangeInput.max = itemNumber;
+	splitNumRangeInput.value = 0;
+	splitNumRangeInput.classList.add("small-number");
+	splitNumRangeInput.addEventListener("change",function(){
+		document.getElementById("ItemSplitAmount").value = this.value;
+	});
+	splitItemSliderContainer.insertAdjacentElement("beforeend",splitNumRangeInput);
+
+	let splitNumConfirm = document.createElement("input");
+	splitNumConfirm.type = "button";
+	splitNumConfirm.value = "Split";
+	splitNumConfirm.addEventListener("click",function(){
+		splitItem(ItemID);
+	});
+	splitItemConfirmContainer.insertAdjacentElement("beforeend",splitNumConfirm);
+
+	let splitNumCancel = document.createElement("input");
+	splitNumCancel.type = "button";
+	splitNumCancel.value = "Cancel";
+	splitNumCancel.addEventListener("click",splitItemCancel);
+	splitItemConfirmContainer.insertAdjacentElement("beforeend",splitNumCancel);
+}
+
+function handleSplitDragEnter(ev){
+	let ItemID = getDraggedItemID();
+    let itemData = getItemData(ItemID);
+
+	if(itemData.isStackable == 0 || itemData.Number == 1){
+        ev.dataTransfer.dropEffect = "none";
+		document.getElementById("SplitItemButtonImage").src = "lib://pm.a5e.core/InterfaceImages/Prohibit_Overlay.png";
+	}
+	else{
+		//TODO: valid-drop class only applying border to image? Maybe equipment-button class is superceding?
+		handleEnterValidDrop(ev);
+	}
+}
+
+function handleSplitDragLeave(ev){
+	document.getElementById("SplitItemButtonImage").src = "lib://pm.a5e.core/InterfaceImages/Split.png";
+	ev.target.classList.remove("valid-drop");
+}
+
+function splitItem(itemID){
+	let itemData = getItemData(itemID);
+	let newStackSize = document.getElementById("ItemSplitAmount").value;
+	if(!isNumeric(newStackSize)){
+		//TODO: give angry warning about using numbers
+		return;
+	}
+	newStackSize = Number(newStackSize);
+	let oldStackSize = itemData.Number - newStackSize;
+
+	if(newStackSize !== 0 && oldStackSize !== 0){
+		itemData.Number = oldStackSize;
+		setItemData(itemData);
+		let oldItemIndex = Inventory.findIndex(obj => obj.ItemID === itemID);
+
+		let newItemData = Object.assign({},itemData);
+		newItemData.Number = newStackSize;
+		newItemData.ItemID = generateItemID();
+		Inventory.splice((oldItemIndex+1),0,newItemData);
+
+		let containerID = newItemData.StoredIn;
+		if(containerID != "" && containerID != undefined){
+			let containerData = getItemData(containerID);
+			containerData.Contents.push()
+			setItemData(containerData);
+		}
+	}
+	
+	splitItemCancel();
+	createInventoryTable(window.scrollY);
+}
+
+function splitItemCancel(){
+	document.getElementById("SplitItemContainer").remove();
+	document.getElementById("SplitItemSliderContainer").remove();
+	document.getElementById("SplitItemConfirmContainer").remove();
+}
+
+function handleAttunementParentDragEnter(ev){
 	if(document.getElementById("AttunementButtonContainer")){
 		return;
 	}
 	
-    let ItemID = idFromRowID(document.getElementById("draggedItemID").value);
+    let ItemID = getDraggedItemID();
     let itemData = getItemData(ItemID);
     
 	if(itemData.isAttunement == 1){
+		ev.target.classList.add("valid-drop");
 		createAdditionalAttuneButtons(itemData);
 	}
 	else{
@@ -731,20 +995,18 @@ function handleAttunementDragEnter(ev){
 	}
 }
 
-function handleAttunementDragLeave(ev){
+function handleAttunementParentDragLeave(ev){
 	document.getElementById("AttunementItemButtonImage").src = "lib://pm.a5e.core/InterfaceImages/Attunement.png";
+	ev.target.classList.remove("valid-drop");
 }
 
-function createAdditionalAttuneButtons(itemData) {
-    let attuneButton = document.getElementById("AttuneButton");
+function createAdditionalAttuneButtons() {
     let numAttuneSlots = AttunementSlots;
 
     let buttonContainer = document.createElement("div");
     buttonContainer.className = "attunement-button-container";
 	buttonContainer.tabindex = -1;
     buttonContainer.style.position = "relative";
-    buttonContainer.style.left = `${attuneButton.offsetLeft + attuneButton.offsetWidth / 2}px`;
-    buttonContainer.style.transform = "translateX(-50%)";
     buttonContainer.style.display = "flex";
     buttonContainer.style.justifyContent = "center";
     buttonContainer.style.marginTop = "0px";
@@ -752,46 +1014,112 @@ function createAdditionalAttuneButtons(itemData) {
     buttonContainer.id = "AttunementButtonContainer";
 
     for (let i = 0; i < numAttuneSlots; i++) {
-        let button = document.createElement("button");
-        button.className = "attunement-button";
-        button.style.margin = "2px";
-        button.id = `AttunementButton${i}`;
-        button.tabindex = -1;
-
-		let attuneImage;
-		let thisSlotItem = AttunedItems[i];
-		if(thisSlotItem == ""){
-			attuneImage = "Attunement_Add";
-		}
-		else if(thisSlotItem == itemData.ItemID){
-			attuneImage = "Attunement_Remove";
-		}
-		else{
-			attuneImage = "Attunement_" + (i + 1);
-		}
-
-        button.innerHTML = `<img src='lib://pm.a5e.core/InterfaceImages/${attuneImage}.png'>`;
-        button.addEventListener("drop", (ev) => attuneToItem(ev, i));
-        button.addEventListener("dragover", allowDrop);
-
+		let button = addAttunementButton(i);
         buttonContainer.appendChild(button);
+		button.dispatchEvent(new Event("dragenter"));
+		button.classList.remove("valid-drop");
+		button.removeEventListener("dragenter",handleAttunementDragEnter);
+		button.removeEventListener("dragleave",handleAttunementDragLeave);
     }
 
     document.getElementById("EquipmentButtons").insertAdjacentElement("beforeend", buttonContainer);
 }
 
-function attuneToItem(ev, slotNumber){
+function addAttunementButton(i){
+	let button = document.createElement("button");
+	button.className = "attunement-button";
+	button.style.margin = "2px";
+	button.id = `AttunementButton${i}`;
+	button.attuneSlot = i;
+	button.tabindex = -1;
 
+	let attuneImage;
+	if(AttunedItems[i] == undefined){
+		attuneImage = "Attunement_Empty_" + (i + 1);
+	}
+	else{
+		attuneImage = "Attunement_" + (i + 1);
+	}
+	
+	button.innerHTML = `<img src='lib://pm.a5e.core/InterfaceImages/${attuneImage}.png'>`;
+
+	button.addEventListener("drop", (ev) => attuneToItem(ev, i));
+	button.addEventListener("dragover", allowDrop);
+	button.addEventListener("dragenter", handleAttunementDragEnter);
+	button.addEventListener("dragleave", handleAttunementDragLeave);
+	button.addEventListener("dragenter",handleEnterValidDrop);
+	button.addEventListener("dragleave",handleLeaveValidDrop);
+
+	return button;
+	//TODO: Will need to remove the handleValidDrop events if all buttons are shown at once, as it will otherwise recognize everything as valid
 }
 
-function handleHoldItemDragEnter(ev) {
+function handleAttunementDragEnter(ev){
+	let itemID = getDraggedItemID();
+	let itemData = getItemData(itemID)
+
+	if(itemData.isAttunement != 1){
+		button.innerHTML = "<img src='lib://pm.a5e.core/InterfaceImages/Prohibit_Overlay.png'>";
+
+		return;
+	}
+
+	button.classList.add("valid-drop");
+
+	let button = ev.target;
+	let i = Number(button.attuneSlot);
+
+	let attuneImage;
+	let thisSlotItem = AttunedItems[i];
+	if(thisSlotItem == undefined){
+		attuneImage = "Attunement_Empty_Add";
+	}
+	else if(thisSlotItem == itemID){
+		attuneImage = "Attunement_Remove";
+	}
+	else{
+		attuneImage = "Attunement_Add";
+	}
+
+	button.innerHTML = `<img src='lib://pm.a5e.core/InterfaceImages/${attuneImage}.png'>`;
+}
+
+function handleAttunementDragLeave(ev){
+	let button = ev.target;
+	let i = Number(button.attuneSlot);
+	let thisSlotItem = AttunedItems[i];
+
+	let attuneImage;
+	if(thisSlotItem == undefined){
+		attuneImage = "Attunement_Empty_"+(i+1);
+	}
+	else{
+		attuneImage = "Attunement_"+(i+1);
+	}
+
+	button.innerHTML = `<img src='lib://pm.a5e.core/InterfaceImages/${attuneImage}.png'>`;
+}
+
+function attuneToItem(ev, slotNumber){
+
+	removeAdditionalAttunementButtons();
+}
+
+function removeAdditionalAttunementButtons(){
+    let buttonContainer = document.getElementById("AttunementButtonContainer");
+    if (buttonContainer) {
+        buttonContainer.remove();
+    }
+}
+
+function handleHoldItemParentDragEnter(ev) {
     ev.preventDefault();
 
 	if(document.getElementById("HoldHandButtonContainer")){
 		return;
 	}
 
-    let ItemID = idFromRowID(document.getElementById("draggedItemID").value);
+    let ItemID = getDraggedItemID();
     let itemData = getItemData(ItemID);
 
     if(Limbs.length > 1){
@@ -802,50 +1130,93 @@ function handleHoldItemDragEnter(ev) {
 	}
 }
 
-function createAdditionalHoldButtons(itemData){
-	let holdButton = document.getElementById("HoldItemButton");
+function createAdditionalHoldButtons(){
     let numHands = Math.max(1, Limbs.length);
 
     let buttonContainer = document.createElement("div");
-    buttonContainer.className = "hold-hand-button-container";
+	buttonContainer.classList.add("equipment-button");
 	buttonContainer.tabindex = -1;
     buttonContainer.style.position = "relative";
-    buttonContainer.style.left = `${holdButton.offsetLeft + holdButton.offsetWidth / 2}px`;
-    buttonContainer.style.transform = "translateX(-50%)";
     buttonContainer.style.display = "flex";
     buttonContainer.style.justifyContent = "center";
     buttonContainer.style.marginTop = "0px";
-    buttonContainer.style.borderWidth = "10px";
     buttonContainer.id = "HoldHandButtonContainer";
 
-    for (let i = 0; i < numHands; i++) {
-        let button = document.createElement("button");
-        button.className = "hold-hand-button";
-        button.style.margin = "2px";
-        button.id = `HoldHandButton${i}`;
-        button.tabindex = -1;
-
-		let handImage;
-		if(HeldItems[i] == ""){
-			handImage = "Hold_Empty_" + (i + 1);
-		}
-		else{
-			handImage = "Hold_" + (i + 1);
-		}
-
-        button.innerHTML = `<img src='lib://pm.a5e.core/InterfaceImages/${handImage}.png'>`;
-        button.addEventListener("drop", (ev) => holdItem(ev, i));
-        button.addEventListener("dragover", allowDrop);
-
+	for(i = 0; i < numHands; i++){
+		button = createHoldButton(i);
         buttonContainer.appendChild(button);
-    }
+		button.dispatchEvent(new Event("dragenter"));
+		button.classList.remove("valid-drop");
+		button.removeEventListener("dragenter",handleHoldItemDragEnter);
+		button.removeEventListener("dragleave",handleHoldItemDragLeave);
+	}
 
     document.getElementById("EquipmentButtons").insertAdjacentElement("beforeend", buttonContainer);
 }
 
-function removeAdditionalHoldButtons() {
-	document.getElementById("HoldItemButtonImage").src = "lib://pm.a5e.core/InterfaceImages/Hold.png";
+function createHoldButton(i){
+	let button = document.createElement("button");
+	button.className = "hold-hand-button";
+	button.style.margin = "2px";
+	button.id = `HoldHandButton${i}`;
+	button.handSlot = i;
+	button.tabindex = -1;
 
+	let handImage;
+	if(HeldItems[i] == ""){
+		handImage = "Hold_Empty_" + (i + 1);
+	}
+	else{
+		handImage = "Hold_" + (i + 1);
+	}
+
+	button.innerHTML = `<img src='lib://pm.a5e.core/InterfaceImages/${handImage}.png'>`;
+	button.addEventListener("drop", (ev) => holdItem(ev, i));
+	button.addEventListener("dragover", allowDrop);
+	button.addEventListener("dragenter", handleHoldItemDragEnter);
+	button.addEventListener("dragleave", handleHoldItemDragLeave);
+	button.addEventListener("dragenter",handleEnterValidDrop);
+	button.addEventListener("dragleave",handleLeaveValidDrop);
+
+	return button;
+}
+
+function handleHoldItemDragEnter(){
+	let itemID = getDraggedItemID();
+	let button = ev.target;
+	let i = Number(button.handSlot);
+
+	let handImage;
+	let thisSlotItem = HeldItems[i];
+	if(thisSlotItem == ""){
+		handImage = "Hold_Empty_Add";
+	}
+	else if(thisSlotItem == itemID){
+		handImage = "Hold_Remove";
+	}
+	else{
+		handImage = "Hold_Add";
+	}
+
+	button.innerHTML = `<img src='lib://pm.a5e.core/InterfaceImages/${handImage}.png'>`
+}
+
+function handleHoldItemDragLeave(){
+	let button = ev.target;
+	let i = Number(button.handSlot);
+	let thisSlotItem = HeldItems[i];
+
+	if(thisSlotItem == ""){
+		handImage = "Hold_Empty_"+(i+1);
+	}
+	else{
+		handImage = "Hold_"+(i+1);
+	}
+
+	button.innerHTML = `<img src='lib://pm.a5e.core/InterfaceImages/${handImage}.png'>`
+}
+
+function removeAdditionalHoldButtons() {
     let buttonContainer = document.getElementById("HoldHandButtonContainer");
     if (buttonContainer) {
         buttonContainer.remove();
@@ -855,18 +1226,18 @@ function removeAdditionalHoldButtons() {
 async function holdItem(ev, handNumber) {
 	if(handNumber == null) handNumber = 0;
 
-    let ItemID = idFromRowID(document.getElementById("draggedItemID").value);
+    let ItemID = getDraggedItemID();
 
 	let currentHand = HeldItems.indexOf(ItemID);
 	if(currentHand === -1){
 		heldData = await fetch("macro:pm.a5e.HoldItem@lib:pm.a5e.Core", {method: "POST", body: JSON.stringify([ItemID,handNumber,ParentToken])});
-		heldData = JSON.parse(await heldData.json());
+		heldData = await heldData.json();
 		Inventory = heldData.Inventory;		
 		HeldItems = heldData.HeldItems;
 	}
 	else if(currentHand === handNumber){
 		heldData = await fetch("macro:pm.a5e.StowItem@lib:pm.a5e.Core", {method: "POST", body: JSON.stringify([ItemID,handNumber,ParentToken])});
-		heldData = JSON.parse(await heldData.json());
+		heldData = await heldData.json();
 		Inventory = heldData.Inventory;
 
 		HeldItems[handNumber] =  "";
@@ -874,92 +1245,108 @@ async function holdItem(ev, handNumber) {
 	else{
 		if(HeldItems[handNumber] != ""){
 			heldData = await fetch("macro:pm.a5e.StowItem@lib:pm.a5e.Core", {method: "POST", body: JSON.stringify([ItemID,handNumber,ParentToken])});
-			heldData = JSON.parse(await heldData.json());
+			heldData = await heldData.json();
 			Inventory = heldData.Inventory;			
 		}
 
 		HeldItems[handNumber] = ItemID;
 		HeldItems[currentHand] = "";
 	}
+
+	removeAdditionalHoldButtons();
 }
 
 function handleEquipItemDragEnter(ev) {
     ev.preventDefault();
-	let ItemID = idFromRowID(document.getElementById("draggedItemID").value);
+	let ItemID = getDraggedItemID();
     let itemData = getItemData(ItemID);
 
     if (itemData.Type !== "Armor") {
         ev.dataTransfer.dropEffect = "none";
 		document.getElementById("EquipItemButtonImage").src = "lib://pm.a5e.core/InterfaceImages/Prohibit_Overlay.png";
-    } else if(ItemID == EquippedArmor){
-		document.getElementById("EquipItemButtonImage").src = "lib://pm.a5e.core/InterfaceImages/Equip_Armor_Remove.png";
-	}
-	else {
-		document.getElementById("EquipItemButtonImage").src = "lib://pm.a5e.core/InterfaceImages/Equip_Armor_Add.png";
     }
+	else{
+		ev.target.classList.add("valid-drop");
+	
+		if(ItemID == EquippedArmor){
+			document.getElementById("EquipItemButtonImage").src = "lib://pm.a5e.core/InterfaceImages/Equip_Armor_Remove.png";
+		}
+		else {
+			document.getElementById("EquipItemButtonImage").src = "lib://pm.a5e.core/InterfaceImages/Equip_Armor_Add.png";
+		}
+	}
 }
 
 function handleEquipItemDragLeave(ev) {
     ev.preventDefault();
 	document.getElementById("EquipItemButtonImage").src = "lib://pm.a5e.core/InterfaceImages/Equip_Armor.png";
+	ev.target.classList.remove("valid-drop");
 }
 
 async function equipItem(ev) {
     ev.preventDefault();
-	let ItemID = idFromRowID(document.getElementById("draggedItemID").value);
+	let ItemID = getDraggedItemID();
     let itemData = getItemData(ItemID);
 
 	if(ItemID == EquippedArmor){
 		let equipData = await fetch("macro:pm.a5e.UnequipArmor@lib:pm.a5e.Core", {method: "POST", body: JSON.stringify([ItemID,ParentToken])});
-		equipData = JSON.parse(await equipData.json());
+		equipData = await equipData.json();
 		Inventory = equipData.Inventory;
 		EquippedArmor = "";
 	}
     else if (itemData.Type === "Armor") {
        let equipData = await fetch("macro:pm.a5e.EquipArmor@lib:pm.a5e.Core", {method: "POST", body: JSON.stringify([ItemID,ParentToken])});
-	   equipData = JSON.parse(await equipData.json());
+	   equipData = await equipData.json();
 	   Inventory = equipData.Inventory;
 	   EquippedArmor = ItemID;
     } else {
         console.log(itemData.DisplayName+" is not armor and cannot be equipped.");
     }
 	document.getElementById("EquipItemButtonImage").src = "lib://pm.a5e.core/InterfaceImages/Equip_Armor.png";
+	ev.target.classList.remove("valid-drop");
 }
 
 function handleWearItemDragEnter(ev) {
-	let ItemID = idFromRowID(document.getElementById("draggedItemID").value);
+	let ItemID = getDraggedItemID();
     let itemData = getItemData(ItemID);
 
-    if(itemData.isWorn != 1) {
+    if(itemData.isWearable != 1) {
         ev.dataTransfer.dropEffect = "none";
 		document.getElementById("WearItemButtonImage").src = "lib://pm.a5e.core/InterfaceImages/Prohibit_Overlay.png";
-    } else if(itemData.CurrentlyWorn == 1){
-		document.getElementById("WearItemButtonImage").src = "lib://pm.a5e.core/InterfaceImages/Wear_Remove.png";
-	}
-	else {
-		document.getElementById("WearItemButtonImage").src = "lib://pm.a5e.core/InterfaceImages/Wear_Add.png";
     }
+	else{
+		ev.target.classList.add("valid-drop");
+
+		if(itemData.isWorn == 1){
+			document.getElementById("WearItemButtonImage").src = "lib://pm.a5e.core/InterfaceImages/Wear_Remove.png";
+		}
+		else {
+			document.getElementById("WearItemButtonImage").src = "lib://pm.a5e.core/InterfaceImages/Wear_Add.png";
+		}
+	} 
 }
 
 function handleWearItemDragLeave(ev) {
 	document.getElementById("WearItemButtonImage").src = "lib://pm.a5e.core/InterfaceImages/Wear.png";
+	ev.target.classList.remove("valid-drop");
 }
 
 async function wearItem(ev) {
-	let ItemID = idFromRowID(document.getElementById("draggedItemID").value);
+	let ItemID = getDraggedItemID();
     let itemData = getItemData(ItemID);
 
-	if(itemData.CurrentlyWorn == 1){
+	if(itemData.isWorn == 1){
 		let wearData = await fetch("macro:pm.a5e.UnwearItem@lib:pm.a5e.Core", {method: "POST", body: JSON.stringify([ItemID,ParentToken])});
-		wearData = JSON.parse(await wearData.json());
+		wearData = await wearData.json();
 		Inventory = wearData.Inventory;
 	}
-    else if (itemData.isWorn == 1) {
+    else if (itemData.isWearable == 1) {
 		let wearData = await fetch("macro:pm.a5e.WearItem@lib:pm.a5e.Core", {method: "POST", body: JSON.stringify([ItemID,ParentToken])});
-		wearData = JSON.parse(await wearData.json());
+		wearData = await wearData.json();
 		Inventory = wearData.Inventory;
     } else {
         console.log(itemData.DisplayName+" is not wearable.");
     }
 	document.getElementById("WearItemButtonImage").src = "lib://pm.a5e.core/InterfaceImages/Wear.png";
+	ev.target.classList.remove("valid-drop");
 }

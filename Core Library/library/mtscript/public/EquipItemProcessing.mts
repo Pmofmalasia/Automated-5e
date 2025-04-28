@@ -6,7 +6,7 @@
 [h:ItemChoiceID = json.get(EquipItemData,"ItemChoice")]
 [h:CurrentInventory = getProperty("a5e.stat.Inventory")]
 
-[h:NewInventory = json.path.set(CurrentInventory,"\$[*][?(@.isWorn == 1 || @.isHeld == 1 || @.isAttunement == 1)]['IsActive']",0)]
+[h:NewInventory = json.path.set(CurrentInventory,"\$[*][?(@.isWearable == 1 || @.mustHold == 1 || @.isAttunement == 1)]['IsActive']",0)]
 [h:NewInventory = json.path.set(NewInventory,"\$[*][?(@.isAttunement == 1)]['AttunedTo']","")]
 
 [h:AttunementNumber = json.get(EquipItemData,"AttunementNumber")]
@@ -67,7 +67,9 @@
 		[h:multipleLimbsChangedTest = multipleLimbsChangedTest + 1]
 	};{}]
 
-	[h,if(json.contains(EquipItemData,"AmmunitionChoiceLimb"+roll.count)),CODE:{
+	[h:ammoTest = json.contains(EquipItemData,"AmmunitionChoiceLimb"+roll.count)]
+	[h:"<!-- Temporarily deactivated while in progress -->"]
+	[h,if(0),CODE:{
 		[h:OldAmmunitionChoiceID = json.path.read(NewInventory,"\$[*][?(@.ItemID == '"+thisLimbChoice+"')]['AmmunitionID']")]
 		[h,if(json.isEmpty(OldAmmunitionChoiceID)):
 			OldAmmunitionChoiceID = "";
@@ -83,10 +85,10 @@
 		]
 		[h,if(AmmunitionChoiceID != ""): thisLimbTableLine = json.set(thisLimbTableLine,"Rules",json.get(thisLimbTableLine,"Rules") + " using " + AmmunitionName)]
 		[h,if(AmmunitionChoiceID != OldAmmunitionChoiceID): thisLimbTableLine = json.set(thisLimbTableLine,"ShowIfCondensed",1)]
-	};{}]
-
-	[h:abilityTable = json.append(abilityTable,thisLimbTableLine)]
+		[h:abilityTable = json.append(abilityTable,thisLimbTableLine)]
+	};{}]	
 }]
+
 [h,switch(multipleLimbsChangedTest),CODE:
 	case 0:{};
 	case 1:{
@@ -125,14 +127,14 @@
 
 [h:setProperty("a5e.stat.Inventory",NewInventory)]
 
-[h:AllWearables = json.path.read(NewInventory,"\$[*][?(@.isWorn == 1)]")]
+[h:AllWearables = json.path.read(NewInventory,"\$[*][?(@.isWearable == 1)]")]
 [h:WornItemNames = "[]"]
 [h:UnwornItemNames = "[]"]
 [h,foreach(wearableItem,AllWearables),CODE:{
 	[h:thisItemID = json.get(wearableItem,"ItemID")]
 	[h:thisWearChoice = json.contains(EquipItemData,"WearableChoice"+thisItemID)]
-	[h:itemCurrentlyWorn = number(json.get(wearableItem,"CurrentlyWorn"))]
-	[h,switch((itemCurrentlyWorn == thisWearChoice)+""+(thisWearChoice)),CODE:
+	[h:itemisWorn = number(json.get(wearableItem,"isWorn"))]
+	[h,switch((itemisWorn == thisWearChoice)+""+(thisWearChoice)),CODE:
 		case "01":{
 			[h:thisWearData = pm.a5e.WearItem(thisItemID,ParentToken)]
 			[h:WornItemNames = json.append(WornItemNames,json.get(wearableItem,"DisplayName"))]

@@ -2,9 +2,9 @@
 [h:GivenToToken = arg(1)]
 [h:TakenFromToken = arg(2)]
 
-[h:"<!-- TODO: Will need to be fleshed out more if there is more distinction between active due to attuned vs. worn vs. held -->"]
+[h:"<!-- TODO: Equipment: Will need to be fleshed out more if there is more distinction between active due to attuned vs. worn vs. held -->"]
 
-[h,if(json.get(TradedItem,"isWorn") == 1 || json.get(TradedItem,"isHeld") == 1),CODE:{
+[h,if(json.get(TradedItem,"isWearable") == 1 || json.get(TradedItem,"mustHold") == 1),CODE:{
 	[h:TradedItem = json.set(TradedItem,"IsActive",0)]
 };{
 	[h,if(json.get(TradedItem,"isAttunement") == 1): TradedItem = json.set(TradedItem,"IsActive",(json.get(TradedItem,"AttunedTo") == GivenToToken))]

@@ -572,8 +572,8 @@
 
 [h:wornHeld = json.get(objectData,"wornHeld")]
 [h,if(wornHeld != ""),CODE:{
-	[h,if(wornHeld == "Worn"): objectData = json.set(objectData,"isWorn",1)]
-	[h,if(wornHeld == "Held"): objectData = json.set(objectData,"isHeld",1)]
+	[h,if(wornHeld == "Worn"): objectData = json.set(objectData,"isWearable",1)]
+	[h,if(wornHeld == "Held"): objectData = json.set(objectData,"mustHold",1)]
 };{}]
 [h:objectData = json.remove(objectData,"wornHeld")]
 

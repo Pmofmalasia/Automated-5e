@@ -10,7 +10,7 @@
 	[h,if(json.contains(WeaponProperties,"Ammunition")): InitializedItem = json.set(InitializedItem,"AmmunitionID","")]
 };{}]
 
-[h,if(json.get(InitializedItem,"isWorn")==1 || json.get(InitializedItem,"isHeld")==1 || json.get(InitializedItem,"isAttunement") == 1):
+[h,if(json.get(InitializedItem,"isWearable")==1 || json.get(InitializedItem,"mustHold")==1 || json.get(InitializedItem,"isAttunement") == 1):
 	InitializedItem = json.set(InitializedItem,"IsActive",0);
 	InitializedItem = json.set(InitializedItem,"IsActive",1)	
 ]

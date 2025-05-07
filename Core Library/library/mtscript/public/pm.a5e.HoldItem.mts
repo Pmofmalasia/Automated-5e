@@ -23,8 +23,7 @@
 
 [h:heldItemData = json.get(json.path.read(inventory,"\$[*][?(@.ItemID == '"+heldItemID+"')]"),0)]
 [h,if(json.get(heldItemData,"mustHold") == 1),CODE:{
-	[h:AttunementTest = pm.a5e.CheckAttunement(heldItemData,ParentToken)]
-	[h,if(AttunementTest): heldItemData = json.set(heldItemData,"IsActive",1)]
+	[h:heldItemData = json.set(heldItemData,"IsActive",pm.a5e.EvalItemActive(heldItemData,ParentToken))]
 	[h:inventory = json.path.set(inventory,"\$[*][?(@.ItemID == '"+heldItemID+"')]",heldItemData)]
 };{}]
 [h:heldItemDisplayName = json.get(heldItemData,"DisplayName")]

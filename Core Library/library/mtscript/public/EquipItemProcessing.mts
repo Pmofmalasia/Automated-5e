@@ -10,26 +10,53 @@
 [h:NewInventory = json.path.set(NewInventory,"\$[*][?(@.isAttunement == 1)]['AttunedTo']","")]
 
 [h:AttunementNumber = json.get(EquipItemData,"AttunementNumber")]
-[h:NewAttunedItems = "[]"]
+[h:needsAttuneOutput = 0]
+[h:needsUnattuneOutput = 0]
+[h:AttunedItemDisplayNames = "[]"]
+[h:UnattunedItemDisplayNames = "[]"]
 [h,count(AttunementNumber),CODE:{
+	[h:OldAttunedItems = getProperty("a5e.stat.AttunedItems")]
 	[h:thisAttunementChoice = json.get(EquipItemData,"AttunementChoice"+roll.count)]
-	[h,if(thisAttunementChoice != ""),CODE:{
-		[h:NewAttunedItems = json.append(NewAttunedItems,thisAttunementChoice)]
-		[h:NewInventory = json.path.set(NewInventory,"\$[*][?(@.ItemID == '"+thisAttunementChoice+"')]['AttunedTo']",ParentToken)]
-		[h:NewInventory = json.path.set(NewInventory,"\$[*][?(@.ItemID == '"+thisAttunementChoice+"')]['IsActive']",1)]
+	[h,if(roll.count < json.length(OldAttunedItems)): 
+		oldAttunementChoice = json.get(OldAttunedItems,roll.count);
+		oldAttunementChoice = ""
+	]
 
-		[h:thisAttunedItemName = json.get(json.path.read(NewInventory,"\$[*][?(@.ItemID == '"+thisAttunementChoice+"')]['DisplayName']"),0)]
-		[h:abilityTable = json.append(abilityTable,json.set("",
-			"ShowIfCondensed",1,
-			"Header","Attunement Slot #"+(roll.count+1),
-			"FalseHeader","",
-			"FullContents","",
-			"RulesContents",thisAttunedItemName,
-			"RollContents","",
-			"DisplayOrder","['Rules','Roll','Full']"
-		))]
+	[h,if(thisAttunementChoice != "" && thisAttunementChoice != oldAttunementChoice),CODE:{
+		[h:attuneData = pm.a5e.AttuneItem(thisAttunementChoice,roll.count,ParentToken)]
+		[h:needsAttuneOutput = 1]
+		[h:unattunedItemDisplayName = json.get(attuneData,"UnattunedItemDisplayName")]
+		[h,if(unattunedItemDisplayName != ""): UnattunedItemDisplayNames = json.append(UnattunedItemDisplayNames,unattunedItemDisplayName)]
+		[h,if(unattunedItemDisplayName != ""): needsUnattuneOutput = 1]
+	}]
+
+	[h,if(thisAttunementChoice == "" && oldAttunementChoice != ""),CODE:{
+		[h:unattuneData = pm.a5e.UnattuneItem(oldAttunementChoice,roll.count,ParentToken)]
+		[h:needsUnattuneOutput = 1]
+		[h:unattunedItemDisplayName = json.get(unattuneData,"ItemDisplayName")]
+		[h:UnattunedItemDisplayNames = json.append(UnattunedItemDisplayNames,unattunedItemDisplayName)]
 	}]
 }]
+
+[h,if(needsAttuneOutput): abilityTable = json.append(abilityTable,json.set("",
+	"ShowIfCondensed",1,
+	"Header","Attuned Items",
+	"FalseHeader","",
+	"FullContents","",
+	"RulesContents",pm.a5e.CreateDisplayList(AttunedItemDisplayNames,"and"),
+	"RollContents","",
+	"DisplayOrder","['Rules','Roll','Full']"
+))]
+
+[h,if(needsUnattuneOutput): abilityTable = json.append(abilityTable,json.set("",
+	"ShowIfCondensed",1,
+	"Header","Unattuned Items",
+	"FalseHeader","",
+	"FullContents","",
+	"RulesContents",pm.a5e.CreateDisplayList(UnattunedItemDisplayNames,"and"),
+	"RollContents","",
+	"DisplayOrder","['Rules','Roll','Full']"
+))]
 
 [h:setProperty("a5e.stat.AttunedItems",NewAttunedItems)]
 [h:"<!-- Note: This property should be used instead of just json.path.reading the inventory because attuned items may be dropped or given to other tokens despite still being attuned. -->"]

@@ -837,7 +837,7 @@ async function createConditionTable(){
 		}
 
 		if(document.getElementById("howMitigate").value == "Save" && !alreadySaveTest){
-			let saveRowElement = document.getElementById("rowSummons");
+			let saveRowElement = document.getElementById("rowSummons").previousElementSibling;
 			
 			saveRowElement = createTableRow(saveRowElement,"rowConditionSave","<th><label for='conditionSaveEffect'>Conditions Applied on Save:</label></th><select id='conditionSaveEffect' name='conditionSaveEffect' onchange='createConditionSaveTable()'><option value='0'>All Applied</option><option value='1'>Some Applied</option><option value='2' selected>None Applied</option><option value='Different'>Different Condition Applied</option></select></td>");
 		}

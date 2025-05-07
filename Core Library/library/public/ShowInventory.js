@@ -829,6 +829,7 @@ function getDraggedItemID(){
 function handleEnterValidDrop(ev){
 	ev.target.classList.add("valid-drop");
 }
+
 function handleLeaveValidDrop(ev){
 	ev.target.classList.remove("valid-drop");
 }
@@ -853,12 +854,16 @@ function handleContextButtonDragLeave(ev){
 function resetEquipmentButtons(){
 	removeAdditionalHoldButtons();
 	removeAdditionalAttunementButtons();
+	splitItemCancel();
+	combineItemCancel();
 }
 
 function handleSplitItemDrop(ev){
 	let ItemID = getDraggedItemID();
     let itemData = getItemData(ItemID);
 	let itemNumber = Number(itemData.Number);
+
+	splitItemCancel();
 
 	let splitItemContainer = document.createElement("div");
 	splitItemContainer.classList.add("split-item-container");
@@ -973,15 +978,122 @@ function splitItem(itemID){
 }
 
 function splitItemCancel(){
-	document.getElementById("SplitItemContainer").remove();
-	document.getElementById("SplitItemSliderContainer").remove();
-	document.getElementById("SplitItemConfirmContainer").remove();
+	if(document.getElementById("SplitItemContainer")){
+		document.getElementById("SplitItemContainer").remove();
+		document.getElementById("SplitItemSliderContainer").remove();
+		document.getElementById("SplitItemConfirmContainer").remove();		
+	}
+}
+
+function handleCombineItemDrop(ev){
+	let ItemID = getDraggedItemID();
+    let itemData = getItemData(ItemID);
+	let itemNumber = Number(itemData.Number);
+
+	combineItemCancel();
+
+	let combineItemContainer = document.createElement("div");
+	combineItemContainer.classList.add("combine-item-container");
+	combineItemContainer.id = "CombineItemContainer";
+	combineItemContainer.style.textAlign = "center";
+	document.getElementById("ItemButtons").insertAdjacentElement("beforebegin",combineItemContainer);
+
+	let combineItemConfirmContainer = document.createElement("div");
+	combineItemConfirmContainer.classList.add("combine-item-container");
+	combineItemConfirmContainer.id = "CombineItemConfirmContainer";
+	combineItemConfirmContainer.style.textAlign = "center";
+	document.getElementById("ItemButtons").insertAdjacentElement("beforebegin",combineItemConfirmContainer);
+
+	let nameSpan = document.createElement("span");
+	nameSpan.innerHTML = "Combining "+itemData.DisplayName+" Stacks - Current Total: ";
+	combineItemContainer.insertAdjacentElement("beforeend",nameSpan);
+	let numberSpan = document.createElement("span");
+	numberSpan.innerHTML = itemNumber;
+	combineItemContainer.insertAdjacentElement("beforeend",numberSpan);
+
+	let combineNumInput = document.createElement("input");
+	combineNumInput.type = "hidden";
+	combineNumInput.id = "ItemCombineAmount";
+	combineNumInput.value = itemNumber;
+	combineItemContainer.insertAdjacentElement("beforeend",combineNumInput);
+
+	let combineNumConfirm = document.createElement("input");
+	combineNumConfirm.type = "button";
+	combineNumConfirm.value = "Combine";
+	combineNumConfirm.addEventListener("click",function(){
+		combineItem(ItemID);
+	});
+	combineItemConfirmContainer.insertAdjacentElement("beforeend",combineNumConfirm);
+
+	let combineNumCancel = document.createElement("input");
+	combineNumCancel.type = "button";
+	combineNumCancel.value = "Cancel";
+	combineNumCancel.addEventListener("click",combineItemCancel);
+	combineItemConfirmContainer.insertAdjacentElement("beforeend",combineNumCancel);
+}
+
+function handleCombineDragEnter(ev){
+	let ItemID = getDraggedItemID();
+    let itemData = getItemData(ItemID);
+
+	if(itemData.isStackable == 0 || itemData.Number == 1){
+        ev.dataTransfer.dropEffect = "none";
+		document.getElementById("CombineItemButtonImage").src = "lib://pm.a5e.core/InterfaceImages/Prohibit_Overlay.png";
+	}
+	else{
+		handleEnterValidDrop(ev);
+	}
+}
+
+function handleCombineDragLeave(ev){
+	document.getElementById("CombineItemButtonImage").src = "lib://pm.a5e.core/InterfaceImages/Combine.png";
+	ev.target.classList.remove("valid-drop");
+}
+
+function combineItem(itemID){
+	let itemData = getItemData(itemID);
+	let newStackSize = document.getElementById("ItemCombineAmount").value;
+	if(!isNumeric(newStackSize)){
+		return;
+	}
+	newStackSize = Number(newStackSize);
+	let oldStackSize = itemData.Number - newStackSize;
+
+	if(newStackSize !== 0 && oldStackSize !== 0){
+		itemData.Number = oldStackSize;
+		setItemData(itemData);
+		let oldItemIndex = Inventory.findIndex(obj => obj.ItemID === itemID);
+
+		let newItemData = Object.assign({},itemData);
+		newItemData.Number = newStackSize;
+		newItemData.ItemID = generateItemID();
+		Inventory.splice((oldItemIndex+1),0,newItemData);
+
+		let containerID = newItemData.StoredIn;
+		if(containerID != "" && containerID != undefined){
+			let containerData = getItemData(containerID);
+			containerData.Contents.push()
+			setItemData(containerData);
+		}
+	}
+	
+	combineItemCancel();
+	createInventoryTable(window.scrollY);
+}
+
+function combineItemCancel(){
+	if(document.getElementById("CombineItemContainer")){
+		document.getElementById("CombineItemContainer").remove();
+		document.getElementById("CombineItemSliderContainer").remove();
+		document.getElementById("CombineItemConfirmContainer").remove();		
+	}
 }
 
 function handleAttunementParentDragEnter(ev){
 	if(document.getElementById("AttunementButtonContainer")){
 		return;
 	}
+	resetEquipmentButtons();
 	
     let ItemID = getDraggedItemID();
     let itemData = getItemData(ItemID);
@@ -1100,7 +1212,35 @@ function handleAttunementDragLeave(ev){
 	button.innerHTML = `<img src='lib://pm.a5e.core/InterfaceImages/${attuneImage}.png'>`;
 }
 
-function attuneToItem(ev, slotNumber){
+async function attuneToItem(ev, slotNumber){
+	if(slotNumber == null) slotNumber = 0;
+
+    let ItemID = getDraggedItemID();
+
+	let currentSlot = AttunedItems.indexOf(ItemID);
+	if(currentSlot === -1){
+		let attunedData = await fetch("macro:pm.a5e.AttuneItem@lib:pm.a5e.Core", {method: "POST", body: JSON.stringify([ItemID,slotNumber,ParentToken])});
+		attunedData = await attunedData.json();
+		Inventory = attunedData.Inventory;		
+		AttunedItems = attunedData.AttunedItems;
+	}
+	else if(currentSlot === slotNumber){
+		let attunedData = await fetch("macro:pm.a5e.UnattuneItem@lib:pm.a5e.Core", {method: "POST", body: JSON.stringify([ItemID,slotNumber,ParentToken])});
+		attunedData = await attunedData.json();
+		Inventory = attunedData.Inventory;
+
+		AttunedItems[slotNumber] =  "";
+	}
+	else{
+		if(AttunedItems[slotNumber] != ""){
+			let attunedData = await fetch("macro:pm.a5e.UnattuneItem@lib:pm.a5e.Core", {method: "POST", body: JSON.stringify([ItemID,slotNumber,ParentToken])});
+			attunedData = await attunedData.json();
+			Inventory = attunedData.Inventory;			
+		}
+
+		AttunedItems[slotNumber] = ItemID;
+		AttunedItems[currentSlot] = "";
+	}
 
 	removeAdditionalAttunementButtons();
 }
@@ -1118,6 +1258,7 @@ function handleHoldItemParentDragEnter(ev) {
 	if(document.getElementById("HoldHandButtonContainer")){
 		return;
 	}
+	resetEquipmentButtons();
 
     let ItemID = getDraggedItemID();
     let itemData = getItemData(ItemID);
@@ -1230,13 +1371,13 @@ async function holdItem(ev, handNumber) {
 
 	let currentHand = HeldItems.indexOf(ItemID);
 	if(currentHand === -1){
-		heldData = await fetch("macro:pm.a5e.HoldItem@lib:pm.a5e.Core", {method: "POST", body: JSON.stringify([ItemID,handNumber,ParentToken])});
+		let heldData = await fetch("macro:pm.a5e.HoldItem@lib:pm.a5e.Core", {method: "POST", body: JSON.stringify([ItemID,handNumber,ParentToken])});
 		heldData = await heldData.json();
 		Inventory = heldData.Inventory;		
 		HeldItems = heldData.HeldItems;
 	}
 	else if(currentHand === handNumber){
-		heldData = await fetch("macro:pm.a5e.StowItem@lib:pm.a5e.Core", {method: "POST", body: JSON.stringify([ItemID,handNumber,ParentToken])});
+		let heldData = await fetch("macro:pm.a5e.StowItem@lib:pm.a5e.Core", {method: "POST", body: JSON.stringify([ItemID,handNumber,ParentToken])});
 		heldData = await heldData.json();
 		Inventory = heldData.Inventory;
 
@@ -1244,7 +1385,7 @@ async function holdItem(ev, handNumber) {
 	}
 	else{
 		if(HeldItems[handNumber] != ""){
-			heldData = await fetch("macro:pm.a5e.StowItem@lib:pm.a5e.Core", {method: "POST", body: JSON.stringify([ItemID,handNumber,ParentToken])});
+			let heldData = await fetch("macro:pm.a5e.StowItem@lib:pm.a5e.Core", {method: "POST", body: JSON.stringify([ItemID,handNumber,ParentToken])});
 			heldData = await heldData.json();
 			Inventory = heldData.Inventory;			
 		}

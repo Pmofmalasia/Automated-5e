@@ -101,7 +101,10 @@
 [h:defineFunction("pm.a5e.UnwearItem","pm.a5e.UnwearItem@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.a5e.HoldItem","pm.a5e.HoldItem@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.a5e.StowItem","pm.a5e.StowItem@Lib:pm.a5e.Core")]
-[h:defineFunction("pm.a5e.CheckAttunement","pm.a5e.CheckAttunement@Lib:pm.a5e.Core")]
+[h:defineFunction("pm.a5e.AttuneItem","pm.a5e.AttuneItem@Lib:pm.a5e.Core")]
+[h:defineFunction("pm.a5e.UnattuneItem","pm.a5e.UnattuneItem@Lib:pm.a5e.Core")]
+[h:defineFunction("pm.a5e.EvalItemActive","pm.a5e.EvalItemActive@Lib:pm.a5e.Core")]
+[h:defineFunction("pm.a5e.ItemCanBeActive","pm.a5e.ItemCanBeActive@Lib:pm.a5e.Core")]
 
 [h:"<!-- Functions for Abilities -->"]
 [h:defineFunction("pm.a5e.MergeTieredConditions","pm.a5e.MergeTieredConditions@Lib:pm.a5e.Core")]

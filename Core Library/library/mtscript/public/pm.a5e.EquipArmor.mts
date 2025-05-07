@@ -17,8 +17,8 @@
 [h:activateArmorTest = (newArmorID != "")]
 [h,if(activateArmorTest),CODE:{
 	[h:newArmorData = json.get(json.path.read(inventory,"\$[*][?(@.ItemID == '"+newArmorID+"')]"),0)]
-	[h:AttunementTest = pm.a5e.CheckAttunement(newArmorData,ParentToken)]
-	[h,if(AttunementTest): newArmorData = json.set(newArmorData,"IsActive",1)]
+	[h:newArmorData = json.set(newArmorData,"isWorn",1)]
+	[h:newArmorData = json.set(newArmorData,"IsActive",pm.a5e.EvalItemActive(newArmorData,ParentToken))]
 	[h:newArmorDisplayName = json.get(newArmorData,"DisplayName")]
 	[h:inventory = json.path.set(inventory,"\$[*][?(@.ItemID == '"+newArmorID+"')]",newArmorData)]
 };{

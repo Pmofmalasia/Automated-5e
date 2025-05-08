@@ -1,7 +1,6 @@
 function useResource(resourceList,unifiedFeatures,ParentTokenID){
 	let ParentToken = MapTool.tokens.getTokenByID(ParentTokenID);
 	let resourceOptions = [];
-
 	if(typeof resourceList === "string"){
 		resourceList = Array.from(JSON.parse(resourceList));
 	}

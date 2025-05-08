@@ -6,9 +6,6 @@
 [h:ItemChoiceID = json.get(EquipItemData,"ItemChoice")]
 [h:CurrentInventory = getProperty("a5e.stat.Inventory")]
 
-[h:NewInventory = json.path.set(CurrentInventory,"\$[*][?(@.isWearable == 1 || @.mustHold == 1 || @.isAttunement == 1)]['IsActive']",0)]
-[h:NewInventory = json.path.set(NewInventory,"\$[*][?(@.isAttunement == 1)]['AttunedTo']","")]
-
 [h:AttunementNumber = json.get(EquipItemData,"AttunementNumber")]
 [h:needsAttuneOutput = 0]
 [h:needsUnattuneOutput = 0]
@@ -58,15 +55,9 @@
 	"DisplayOrder","['Rules','Roll','Full']"
 ))]
 
-[h:setProperty("a5e.stat.AttunedItems",NewAttunedItems)]
-[h:"<!-- Note: This property should be used instead of just json.path.reading the inventory because attuned items may be dropped or given to other tokens despite still being attuned. -->"]
-[h:"<!-- TODO: Equipment: Allow aforementioned attuned items that are used by other tokens to be selected to continue attunement (in equipment input). -->"]
-[h:setProperty("a5e.stat.Inventory",NewInventory)]
-
 [h:ArmorChoice = json.get(EquipItemData,"ArmorChoice")]
 [h:EquipArmorData = pm.a5e.EquipArmor(ArmorChoice,ParentToken)]
 [h:abilityTable = json.merge(abilityTable,json.get(EquipArmorData,"Table"))]
-[h:NewInventory = getProperty("a5e.stat.Inventory")]
 
 [h:LimbNumber = json.get(EquipItemData,"LimbNumber")]
 [h:LimbInfo = pm.a5e.Limbs(ParentToken)]
@@ -152,9 +143,7 @@
 	[h:setProperty("a5e.stat.NaturalWeapons",FinalNaturalWeapons)]
 }]
 
-[h:setProperty("a5e.stat.Inventory",NewInventory)]
-
-[h:AllWearables = json.path.read(NewInventory,"\$[*][?(@.isWearable == 1)]")]
+[h:AllWearables = json.path.read(getProperty("a5e.stat.Inventory"),"\$[*][?(@.isWearable == 1)]")]
 [h:WornItemNames = "[]"]
 [h:UnwornItemNames = "[]"]
 [h,foreach(wearableItem,AllWearables),CODE:{

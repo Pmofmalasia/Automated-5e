@@ -23,6 +23,7 @@ function calculateResourceData(feature,ParentToken,options){
 	let finalResourceData = {};
 
 	let featureResourceData = feature.ResourceData;
+
 	if(featureResourceData === undefined){
 		//Legacy code for pre-core feature input rework
 		let rawMaxResource = feature.MaxResource;
@@ -97,7 +98,9 @@ function calculateResourceData(feature,ParentToken,options){
 			let AttributeBonus = 0;
 			if(AttributeData !== undefined){
 				//TODO: getProperty Bugfix
-				let allAttributes = JSON.parse(ParentToken.getProperty("a5e.stat.Attributes"));
+				if(false){
+					let allAttributes = JSON.parse(ParentToken.getProperty("a5e.stat.Attributes"));
+				}
 				let allAttributeModifiers = JSON.parse(MTScript.execMacro(`[r:getProperty("a5e.stat.AtrMods","${ParentToken.getId()}")]`));
 
 				let AttributeModifier = AttributeData.Modifier;

@@ -11,7 +11,10 @@
 [h,if(currentSlot > -1): allAttunedItems = json.set(allAttunedItems,currentSlot,"")]
 [h:setProperty("a5e.stat.AttunedItems",allAttunedItems)]
 
-[h:itemToUnattuneID = json.get(allAttunedItems,whichSlot)]
+[h,if(json.length(allAttunedItems) <= whichSlot):
+	itemToUnattuneID = "";
+	itemToUnattuneID = json.get(allAttunedItems,whichSlot)
+]
 [h,if(itemToUnattuneID != ""):
 	unattunedItemData = pm.a5e.UnattuneItem(itemToUnattuneID,whichSlot,ParentToken);
 	unattunedItemData = "{}"	

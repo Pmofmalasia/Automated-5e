@@ -113,6 +113,8 @@ function gatherFeatures(ParentToken,options){
 		let tokenAuras = gatherFeaturesThisToken(token,true);
 		for(let auraFeature of tokenAuras){
 			let auraData = auraFeature.Aura;
+			if(auraData === undefined) continue;
+
 			let validAuraTargets = JSON.parse(MTScript.execMacro(`[h:FilteredTargets = pm.a5e.TargetCreatureFiltering(json.set("","ParentToken","${token}","List",json.append("","${ParentToken}"),"Range",${JSON.stringify(auraData.Range)},${JSON.stringify(auraData.TargetLimits.Creature)}"]`)).ValidTargets;
 
 			if(validAuraTargets.indexOf(ParentToken.getId()) !== -1){

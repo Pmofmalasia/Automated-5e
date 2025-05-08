@@ -9,7 +9,7 @@
 	[h:itemID = itemArg]
 	[h:inventory = getProperty("a5e.stat.Inventory")]
 	[h:itemData = json.path.read(inventory,"\$[*][?(@.ItemID == '"+itemID+"')]")]
-	[h,return(!json.isEmpty(itemData),0)]
+	[h:return(!json.isEmpty(itemData),0)]
 	[h:itemData = json.get(itemData,0)]
 }]
 

@@ -96,6 +96,23 @@
 	border-radius: 8px;
 	transform: translateY(2px);
 }
+.status-button {
+  	display: inline-block;
+}
+
+.status-button button {
+	border: 2px solid #000000;
+	border-radius: 8px;
+	padding: 0px;
+	height: 30px;
+	width: 30px;
+}
+
+.status-button img{
+	height: 26px;
+	width: 26px;
+	border: 0px;
+}
 
 .valid-drop {
 	border: 2px solid var(--dragover-border-color) !important;

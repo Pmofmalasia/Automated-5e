@@ -3,6 +3,23 @@
 	color: var(--mt-theme-color-foreground);
 }
 
+.inventory-list th,td:first-of-type{
+	max-width: min-content;
+}
+
+.equipment-list th{
+	background-color:var(--mt-theme-color-button-pressed-background);
+	color: var(--mt-theme-color-foreground);
+}
+
+.equipment-list th,td{
+	padding: 7px;
+}
+
+.equipment-list th,td:first-of-type{
+	max-width: min-content;
+}
+
 .spacer-row{
 	min-height: 4px;
 }
@@ -11,10 +28,6 @@
 	background-color:var(--mt-theme-color-button-pressed-background);
 	color: var(--mt-theme-color-foreground);
 	min-width: 20px;
-}
-
-.inventory-list th,td:first-of-type{
-	max-width: min-content;
 }
 
 .inventory-spacer{
@@ -33,4 +46,36 @@
 .footer{
 	background-color:var(--mt-theme-color-button-pressed-background);
 	color: var(--mt-theme-color-foreground);
+}
+
+.tabs{
+	margin-bottom: 0px;
+}
+
+.tabs input[type='button'] {
+	z-index: 1;
+	border-top-right-radius: 7px;
+	border-top-left-radius: 7px;
+	border-width: 0px;
+	padding: 5px;
+	margin: 0px;
+	background-color: var(--mt-theme-color-actions-green-dark);
+	font-family: var(--mt-theme-h2-font-family);
+	font-size: var(--mt-theme-h2-font-size);
+	width: 49%;
+}
+
+.tabs input[type='button'].active-tab{
+	background-color:var(--mt-theme-color-button-pressed-background);
+	color: var(--mt-theme-color-foreground);
+}
+
+.tabs label {
+	text-align: center;
+	line-height: 40px;
+}
+
+.tabs input[type='button']:hover{
+	background-color: var(--mt-theme-color-foreground);
+	color: var(--mt-theme-color-button-pressed-background);
 }

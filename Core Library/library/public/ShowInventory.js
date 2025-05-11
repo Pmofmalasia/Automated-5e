@@ -687,75 +687,96 @@ function getContainer(containedRow){
 }
 
 function buildEquipmentTable(scrollPosition){
-	table = document.getElementById("InventoryTable");
+	let table = document.getElementById("InventoryTable");
 	
-	headerRow = document.createElement("tr");
+	let headerRow = document.createElement("tr");
 	headerRow.id = "rowEquipmentHeader";
 	headerRow.style.position = "sticky";
 	headerRow.style.top = "0px";
 	headerRow.style.zIndex = 99;
-	headerRow.classList.add("inventory-list");
+	headerRow.padding = "7px";
 	table.insertAdjacentElement("afterbegin",headerRow);
 
-	nameHeader = document.createElement("th");
+	let nameHeader = document.createElement("th");
 	nameHeader.id = "NameHeader";
 	nameHeader.style.textAlign = "left";
 	nameHeader.innerHTML = "Item";
 	headerRow.insertAdjacentElement("beforeend",nameHeader);
 
-	statusHeader = document.createElement("th");
+	let statusHeader = document.createElement("th");
 	statusHeader.id = "StatusHeader";
 	statusHeader.style.textAlign = "left";
 	statusHeader.innerHTML = "Status";
 	headerRow.insertAdjacentElement("beforeend",statusHeader);
 
-	contextHeader = document.createElement("th");
+	let contextHeader = document.createElement("th");
 	contextHeader.id = "ContextHeader";
 	contextHeader.style.textAlign = "left";
 	contextHeader.innerHTML = "Context Menu";
 	headerRow.insertAdjacentElement("beforeend",contextHeader);
 
-	rowAttunementHeader = document.createElement("tr");
-	rowAttunementHeader.id = "rowAttunement";
-	rowAttunementHeader.classList.add("inventory-list");
+	let rowAttunement = document.createElement("tr");
+	rowAttunement.id = "rowAttunement";
+	table.insertAdjacentElement("beforeend",rowAttunement);
+	let rowAttunementHeader = document.createElement("th");
 	rowAttunementHeader.style.textAlign = "center";
 	rowAttunementHeader.innerHTML = "Attunable Items";
-	table.insertAdjacentElement("afterend",rowAttunementHeader);
+	rowAttunementHeader.colSpan = 3;
+	rowAttunement.insertAdjacentElement("beforeend",rowAttunementHeader);
 
-	rowArmorHeader = document.createElement("tr");
-	rowArmorHeader.id = "rowArmor";
-	rowArmorHeader.classList.add("inventory-list");
+	let rowArmor = document.createElement("tr");
+	rowArmor.id = "rowArmor";
+	table.insertAdjacentElement("beforeend",rowArmor);
+	let rowArmorHeader = document.createElement("th");
 	rowArmorHeader.style.textAlign = "center";
 	rowArmorHeader.innerHTML = "Armor";
-	table.insertAdjacentElement("afterend",rowArmorHeader);
+	rowArmorHeader.colSpan = 3;
+	rowArmor.insertAdjacentElement("beforeend",rowArmorHeader);
 
-	rowWeaponHeader = document.createElement("tr");
-	rowWeaponHeader.id = "rowWeapon";
-	rowWeaponHeader.classList.add("inventory-list");
+	let rowWeapon = document.createElement("tr");
+	rowWeapon.id = "rowWeapon";
+	table.insertAdjacentElement("beforeend",rowWeapon);
+	let rowWeaponHeader = document.createElement("th");
 	rowWeaponHeader.style.textAlign = "center";
 	rowWeaponHeader.innerHTML = "Weapons";
-	table.insertAdjacentElement("afterend",rowWeaponHeader);
+	rowWeaponHeader.colSpan = 3;
+	rowWeapon.insertAdjacentElement("beforeend",rowWeaponHeader);
 
-	rowCastingFocusHeader = document.createElement("tr");
-	rowCastingFocusHeader.id = "rowCastingFocus";
-	rowCastingFocusHeader.classList.add("inventory-list");
+	let rowCastingFocus = document.createElement("tr");
+	rowCastingFocus.id = "rowCastingFocus";
+	table.insertAdjacentElement("beforeend",rowCastingFocus);
+	let rowCastingFocusHeader = document.createElement("th");
 	rowCastingFocusHeader.style.textAlign = "center";
 	rowCastingFocusHeader.innerHTML = "Casting Foci";
-	table.insertAdjacentElement("afterend",rowCastingFocusHeader);
+	rowCastingFocusHeader.colSpan = 3;
+	rowCastingFocus.insertAdjacentElement("beforeend",rowCastingFocusHeader);
 
-	rowWornHeader = document.createElement("tr");
-	rowWornHeader.id = "rowWorn";
-	rowWornHeader.classList.add("inventory-list");
+	let rowWorn = document.createElement("tr");
+	rowWorn.id = "rowWorn";
+	table.insertAdjacentElement("beforeend",rowWorn);
+	let rowWornHeader = document.createElement("th");
 	rowWornHeader.style.textAlign = "center";
 	rowWornHeader.innerHTML = "Wearable Items";
-	table.insertAdjacentElement("afterend",rowWornHeader);
+	rowWornHeader.colSpan = 3;
+	rowWorn.insertAdjacentElement("beforeend",rowWornHeader);
 
-	rowAmmunitionHeader = document.createElement("tr");
-	rowAmmunitionHeader.id = "rowAmmunition";
-	rowAmmunitionHeader.classList.add("inventory-list");
+	let rowHeld = document.createElement("tr");
+	rowHeld.id = "rowHeld";
+	table.insertAdjacentElement("beforeend",rowHeld);
+	let rowHeldHeader = document.createElement("th");
+	rowHeldHeader.style.textAlign = "center";
+	rowHeldHeader.innerHTML = "Miscellaneous Holdable Items";
+	rowHeldHeader.colSpan = 3;
+	rowHeld.insertAdjacentElement("beforeend",rowHeldHeader);
+
+	let rowAmmunition = document.createElement("tr");
+	rowAmmunition.id = "rowAmmunition";
+	table.insertAdjacentElement("beforeend",rowAmmunition);
+	let rowAmmunitionHeader = document.createElement("th");
 	rowAmmunitionHeader.style.textAlign = "center";
 	rowAmmunitionHeader.innerHTML = "Ammunition";
-	table.insertAdjacentElement("afterend",rowAmmunitionHeader);
+	rowAmmunitionHeader.colSpan = 3;
+	rowAmmunition.insertAdjacentElement("beforeend",rowAmmunitionHeader);
 	
 	for(let item of Inventory){
 		let thisItemID = item.ItemID;
@@ -772,6 +793,7 @@ function buildEquipmentTable(scrollPosition){
 
 		let statusCell = document.createElement("td");
 		statusCell.style.textAlign = "right";
+		statusCell.classList.add("status-button");
 		thisLine.insertAdjacentElement("beforeend",statusCell);
 
 		let contextCell = document.createElement("td");
@@ -781,88 +803,201 @@ function buildEquipmentTable(scrollPosition){
 		if(item.isAttunement == "1"){
 			let attunementLine = thisLine.cloneNode(true);
 			attunementLine.id = "rowAttunement"+thisItemID;
+			let attunementStatus = attunementLine.firstElementChild.nextElementSibling;
+			attunementStatus.id = "AttunementStatus"+thisItemID;
 			if(AttunedItems.includes(thisItemID)){
-				attunementLine.firstElementChild.nextElementSibling.innerHTML = "Attuned";
+				attunementStatus.innerHTML = "<button><img src='lib://pm.a5e.core/InterfaceImages/Valid.png'></button>";
 			}
 			else{
-				attunementLine.firstElementChild.nextElementSibling.innerHTML = "Not Attuned";
+				attunementStatus.innerHTML = "<button><img src='lib://pm.a5e.core/InterfaceImages/Invalid.png'></button>";
 			}
-			rowAttunementHeader.insertAdjacentElement("afterend",attunementLine);
+			rowAttunement.insertAdjacentElement("afterend",attunementLine);
 		}
 
 		if(item.Type === "Armor"){
 			let armorLine = thisLine.cloneNode(true);
 			armorLine.id = "rowArmor"+thisItemID;
+			let armorStatus = armorLine.firstElementChild.nextElementSibling;
+			armorStatus.id = "ArmorStatus"+thisItemID;
 			if(EquippedArmor === thisItemID){
-				armorLine.firstElementChild.nextElementSibling.innerHTML = "Equipped";
+				armorStatus.innerHTML = "<button><img src='lib://pm.a5e.core/InterfaceImages/Valid.png'></button>";
 			}
 			else{
-				armorLine.firstElementChild.nextElementSibling.innerHTML = "Not Equipped";
+				armorStatus.innerHTML = "<button><img src='lib://pm.a5e.core/InterfaceImages/Invalid.png'></button>";
 			}
-			rowArmorHeader.insertAdjacentElement("afterend",armorLine);
+			rowArmor.insertAdjacentElement("afterend",armorLine);
 		}
 
 		if(item.Type == "Weapon"){
 			let weaponLine = thisLine.cloneNode(true);
 			weaponLine.id = "rowWeapon"+thisItemID;
+			let weaponStatus = weaponLine.firstElementChild.nextElementSibling;
+			weaponStatus.id = "WeaponStatus"+thisItemID;
 			if(HeldItems.includes(thisItemID)){
-				weaponLine.firstElementChild.nextElementSibling.innerHTML = "Held";
+				weaponStatus.innerHTML = "<button><img src='lib://pm.a5e.core/InterfaceImages/Valid.png'></button>";
 			}
 			else{
-				weaponLine.firstElementChild.nextElementSibling.innerHTML = "Not Held";
+				weaponStatus.innerHTML = "<button><img src='lib://pm.a5e.core/InterfaceImages/Invalid.png'></button>";
 			}
-			rowWeaponHeader.insertAdjacentElement("afterend",weaponLine);
+			rowWeapon.insertAdjacentElement("afterend",weaponLine);
 		}
 
 		if(item.Type == "CastingFocus"){
 			let focusLine = thisLine.cloneNode(true);
 			focusLine.id = "rowCastingFocus"+thisItemID;
+			let focusStatus = focusLine.firstElementChild.nextElementSibling;
+			focusStatus.id = "CastingFocusStatus"+thisItemID;
 			if(HeldItems.includes(thisItemID)){
-				focusLine.firstElementChild.nextElementSibling.innerHTML = "Held";
+				focusStatus.innerHTML = "<button><img src='lib://pm.a5e.core/InterfaceImages/Valid.png'></button>";
 			}
 			else{
-				focusLine.firstElementChild.nextElementSibling.innerHTML = "Not Held";
+				focusStatus.innerHTML = "<button><img src='lib://pm.a5e.core/InterfaceImages/Invalid.png'></button>";
 			}
-			rowCastingFocusHeader.insertAdjacentElement("afterend",focusLine);
+			rowCastingFocus.insertAdjacentElement("afterend",focusLine);
 		}
 
 		if(item.isWearable == "1" && item.Type != "Armor"){
-			let weaponLine = thisLine.cloneNode(true);
-			weaponLine.id = "rowWeapon"+thisItemID;
+			let wornLine = thisLine.cloneNode(true);
+			wornLine.id = "rowWorn"+thisItemID;
+			let wornStatus = wornLine.firstElementChild.nextElementSibling;
+			wornStatus.id = "WornStatus"+thisItemID;
 			if(item.isWorn == "1"){
-				weaponLine.firstElementChild.nextElementSibling.innerHTML = "Worn";
+				wornStatus.innerHTML = "<button><img src='lib://pm.a5e.core/InterfaceImages/Valid.png'></button>";
 			}
 			else{
-				weaponLine.firstElementChild.nextElementSibling.innerHTML = "Not Worn";
+				wornStatus.innerHTML = "<button><img src='lib://pm.a5e.core/InterfaceImages/Invalid.png'></button>";
 			}
-			rowWeaponHeader.insertAdjacentElement("afterend",weaponLine);
+			rowWorn.insertAdjacentElement("afterend",wornLine);
 		}
 
 		if(item.mustHold == "1" && item.Type != "Weapon" && item.Type != "CastingFocus"){
-			let weaponLine = thisLine.cloneNode(true);
-			weaponLine.id = "rowWeapon"+thisItemID;
+			let heldLine = thisLine.cloneNode(true);
+			heldLine.id = "rowHeld"+thisItemID;
+			let heldStatus = heldLine.firstElementChild.nextElementSibling;
+			heldStatus.id = "HeldStatus"+thisItemID;
 			if(HeldItems.includes(thisItemID)){
-				weaponLine.firstElementChild.nextElementSibling.innerHTML = "Held";
+				heldStatus.innerHTML = "<button><img src='lib://pm.a5e.core/InterfaceImages/Valid.png'></button>";
 			}
 			else{
-				weaponLine.firstElementChild.nextElementSibling.innerHTML = "Not Held";
+				heldStatus.innerHTML = "<button><img src='lib://pm.a5e.core/InterfaceImages/Invalid.png'></button>";
 			}
-			rowWeaponHeader.insertAdjacentElement("afterend",weaponLine);
+			rowHeld.insertAdjacentElement("afterend",heldLine);
 		}
 
 		if(item.Type == "Ammunition"){
+			//TODO: Equipment: Determine method of displaying/confirming whether ammo is used by any weapons (or is the default ammo)
 			let ammunitionLine = thisLine.cloneNode(true);
 			ammunitionLine.id = "rowAmmunition"+thisItemID;
+			let ammunitionStatus = ammunitionLine.firstElementChild.nextElementSibling;
+			ammunitionStatus.id = "AmmunitionStatus"+thisItemID;
 			if(false){
-				ammunitionLine.firstElementChild.nextElementSibling.innerHTML = "Held";
+				ammunitionStatus.innerHTML = "<button><img src='lib://pm.a5e.core/InterfaceImages/Valid.png'></button>";
 			}
 			else{
-				ammunitionLine.firstElementChild.nextElementSibling.innerHTML = "Not Used";
+				ammunitionStatus.innerHTML = "<button><img src='lib://pm.a5e.core/InterfaceImages/Invalid.png'></button>";
 			}
-			rowAmmunitionHeader.insertAdjacentElement("afterend",ammunitionLine);
+			rowAmmunition.insertAdjacentElement("afterend",ammunitionLine);
 		}
 
 		thisLine.remove();
+	}
+
+	if(rowAttunement.nextElementSibling.id === "rowArmor"){
+		rowAttunement.setAttribute("hidden","");
+	}
+
+	if(rowArmor.nextElementSibling.id === "rowWeapon"){
+		rowArmor.setAttribute("hidden","");
+	}
+
+	if(rowWeapon.nextElementSibling.id === "rowCastingFocus"){
+		rowWeapon.setAttribute("hidden","");
+	}
+
+	if(rowCastingFocus.nextElementSibling.id === "rowWorn"){
+		rowCastingFocus.setAttribute("hidden","");
+	}
+
+	if(rowWorn.nextElementSibling.id === "rowHeld"){
+		rowWorn.setAttribute("hidden","");
+	}
+
+	if(rowHeld.nextElementSibling.id === "rowAmmunition"){
+		rowHeld.setAttribute("hidden","");
+	}
+
+	if(rowAmmunition.nextElementSibling === null){
+		rowAmmunition.setAttribute("hidden","");
+	}
+}
+
+function updateEquipmentStatuses(){
+	for(let item of Inventory){
+		let thisItemID = item.ItemID;
+
+		if(item.isAttunement == "1"){
+			if(AttunedItems.contains(thisItemID)){
+				document.getElementById("AttunementStatus"+thisItemID).innerHTML = "<button><img src='lib://pm.a5e.core/InterfaceImages/Valid.png'></button>";
+			}
+			else{
+				document.getElementById("AttunementStatus"+thisItemID).innerHTML = "<button><img src='lib://pm.a5e.core/InterfaceImages/Invalid.png'></button>";
+			}
+		}
+
+		if(item.Type == "Armor"){
+			if(EquippedArmor === thisItemID){
+				document.getElementById("ArmorStatus"+thisItemID).innerHTML = "<button><img src='lib://pm.a5e.core/InterfaceImages/Valid.png'></button>";
+			}
+			else{
+				document.getElementById("ArmorStatus"+thisItemID).innerHTML = "<button><img src='lib://pm.a5e.core/InterfaceImages/Invalid.png'></button>";
+			}
+		}
+
+		if(item.Type == "Weapon"){
+			if(HeldItems.includes(thisItemID)){
+				document.getElementById("WeaponStatus"+thisItemID).innerHTML = "<button><img src='lib://pm.a5e.core/InterfaceImages/Valid.png'></button>";
+			}
+			else{
+				document.getElementById("WeaponStatus"+thisItemID).innerHTML = "<button><img src='lib://pm.a5e.core/InterfaceImages/Invalid.png'></button>";
+			}
+		}
+
+		if(item.Type == "CastingFocus"){
+			if(HeldItems.includes(thisItemID)){
+				document.getElementById("CastingFocusStatus"+thisItemID).innerHTML = "<button><img src='lib://pm.a5e.core/InterfaceImages/Valid.png'></button>";
+			}
+			else{
+				document.getElementById("CastingFocusStatus"+thisItemID).innerHTML = "<button><img src='lib://pm.a5e.core/InterfaceImages/Invalid.png'></button>";
+			}
+		}
+
+		if(item.isWearable == "1" && item.Type != "Armor"){
+			if(item.isWorn == "1"){
+				document.getElementById("WearStatus"+thisItemID).innerHTML = "<button><img src='lib://pm.a5e.core/InterfaceImages/Valid.png'></button>";
+			}
+			else{
+				document.getElementById("WearStatus"+thisItemID).innerHTML = "<button><img src='lib://pm.a5e.core/InterfaceImages/Invalid.png'></button>";
+			}
+		}
+
+		if(item.mustHold == "1" && item.Type != "Weapon" && item.Type != "CastingFocus"){
+			if(HeldItems.includes(thisItemID)){
+				document.getElementById("HeldStatus"+thisItemID).innerHTML = "<button><img src='lib://pm.a5e.core/InterfaceImages/Valid.png'></button>";
+			}
+			else{
+				document.getElementById("HeldStatus"+thisItemID).innerHTML = "<button><img src='lib://pm.a5e.core/InterfaceImages/Invalid.png'></button>";
+			}
+		}
+
+		if(item.Type == "Ammunition"){
+			//TODO: Equipment: Determine method of displaying/confirming whether ammo is used by any weapons (or is the default ammo)
+			if(false){
+				document.getElementById("AmmunitionStatus"+thisItemID).innerHTML = "<button><img src='lib://pm.a5e.core/InterfaceImages/Valid.png'></button>";
+			}
+			else{
+				document.getElementById("AmmunitionStatus"+thisItemID).innerHTML = "<button><img src='lib://pm.a5e.core/InterfaceImages/Invalid.png'></button>";
+			}
+		}
 	}
 }
 
@@ -884,7 +1019,40 @@ async function loadUserData(){
 
 	createInventoryTable();
 	createGeneralEquipButtons();
+	document.getElementById("tabFullInventory").classList.add("active-tab");
+	document.getElementById("tabFullInventory").addEventListener("click",showInventory);
+	document.getElementById("tabEquipment").addEventListener("click",showEquipment);
 	document.title = "Inventory: "+userdata.TokenName;
+}
+
+function showInventory(){
+	let tabFullInventory = document.getElementById("tabFullInventory");
+	if(tabFullInventory.classList.contains("active-tab")) return;
+	
+	let table = document.getElementById("InventoryTable");
+	table.classList.remove("equipment-list");
+	table.classList.add("inventory-list");
+
+	document.getElementById("tabEquipment").classList.remove("active-tab");
+	tabFullInventory.classList.add("active-tab");
+
+	document.getElementById("InventoryTable").innerHTML = "";
+	createInventoryTable();
+}
+
+function showEquipment(){
+	let tabEquipment = document.getElementById("tabEquipment");
+	if(tabEquipment.classList.contains("active-tab")) return;
+	
+	let table = document.getElementById("InventoryTable");
+	table.classList.remove("inventory-list");
+	table.classList.add("equipment-list");
+
+	document.getElementById("tabFullInventory").classList.remove("active-tab");
+	tabEquipment.classList.add("active-tab");
+
+	document.getElementById("InventoryTable").innerHTML = "";
+	buildEquipmentTable();
 }
 
 setTimeout(loadUserData, 1);
@@ -1671,3 +1839,5 @@ async function wearItem(ev) {
 	document.getElementById("WearItemButtonImage").src = "lib://pm.a5e.core/InterfaceImages/Wear.png";
 	ev.target.classList.remove("valid-drop");
 }
+
+setTimeout(loadUserData, 1);

@@ -31,11 +31,12 @@
 			pointer-events: none;
 		}
     </style>
-	<div class="section-tabs">
-		<button id="tabFullInventory">Full Inventory</button><button id="tabEquipment">Equipment</button>
-	</div>
 </head>
 <body>
+	<div class="tabs">
+		<input type="button" id="tabFullInventory" value="Full Inventory">
+		<input type="button" id="tabEquipment" value="Equipment">
+	</div>
     <form name="Inventory" id="Inventory" onsubmit="submitData()" method="json">
 	  <div>	
 		<table id="InventoryTable">

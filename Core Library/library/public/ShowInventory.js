@@ -133,7 +133,7 @@ async function createInventoryTable(scrollPosition){
 
 		allItemsWeight = allItemsWeight + TotalWeight;
 
-		allItemRows = allItemRows + "<tr class='"+thisRowClass+"' draggable='true' ondragstart='dragItem(event)' ondrop='dropItem(event)' ondragover='allowDrop(event)' id='rowItemID"+Item.ItemID+"'>"+thisRowInnerHTML+"</tr>";
+		allItemRows = allItemRows + "<tr class='"+thisRowClass+"' draggable='true' ondragstart='dragItem(event)' ondrop='dropItem(event)' ondragover='allowDrop(event)' id='rowItemID"+Item.ItemID+"' ItemID='"+Item.ItemID+"'>"+thisRowInnerHTML+"</tr>";
 	}
 
 	let InventoryTableHTML = "<tr id='rowInventoryHeader' style='position:sticky; top:0px; z-index:99' class='inventory-list'><th class='header-button'><button type='button' id='SettingsButton' onclick='chooseSettings()'><img src='lib://pm.a5e.core/InterfaceImages/Settings.png'></button></th><th id='NameHeader' style = 'text-align:left;' colspan='1'>Item</th><th style = 'text-align:right'>Number</th><th id='WeightMainHeader' style = 'text-align:right'>Weight</th><th style = 'text-align:right'>Context Menu</th></tr><tr id='rowSpacer' class='spacer-row' style='height:10px'></tr><input type='hidden' id='draggedItemID' value=''><input type='hidden' id='currentSort' value=''>" + allItemRows;
@@ -605,7 +605,13 @@ function setItemData(Item,key,value){
 }
 
 function idFromRowID(rowID){
-	return rowID.substring(9);
+	let itemID = document.getElementById(rowID).ItemID;
+	if(itemID == undefined){
+		return rowID.substring(9);
+	}
+	else{
+		return itemID;
+	}
 }
 
 //moves item visually on table
@@ -715,6 +721,12 @@ function buildEquipmentTable(scrollPosition){
 	contextHeader.innerHTML = "Context Menu";
 	headerRow.insertAdjacentElement("beforeend",contextHeader);
 
+	let draggedItemInput = document.createElement("input");
+	draggedItemInput.type = "hidden";
+	draggedItemInput.value = "";
+	draggedItemInput.id = "draggedItemID";
+	headerRow.insertAdjacentElement("beforeend",draggedItemInput);
+
 	let rowAttunement = document.createElement("tr");
 	rowAttunement.id = "rowAttunement";
 	table.insertAdjacentElement("beforeend",rowAttunement);
@@ -783,8 +795,6 @@ function buildEquipmentTable(scrollPosition){
 
 		let thisLine = document.createElement("tr");
 		thisLine.draggable = true;
-		thisLine.addEventListener("dragstart",dragItem);
-		thisLine.ItemID = thisItemID;
 
 		let nameCell = document.createElement("td");
 		nameCell.style.textAlign = "left";
@@ -802,7 +812,9 @@ function buildEquipmentTable(scrollPosition){
 
 		if(item.isAttunement == "1"){
 			let attunementLine = thisLine.cloneNode(true);
+			attunementLine.addEventListener("dragstart",dragItem);
 			attunementLine.id = "rowAttunement"+thisItemID;
+			attunementLine.ItemID = thisItemID;
 			let attunementStatus = attunementLine.firstElementChild.nextElementSibling;
 			attunementStatus.id = "AttunementStatus"+thisItemID;
 			if(AttunedItems.includes(thisItemID)){
@@ -816,6 +828,8 @@ function buildEquipmentTable(scrollPosition){
 
 		if(item.Type === "Armor"){
 			let armorLine = thisLine.cloneNode(true);
+			armorLine.addEventListener("dragstart",dragItem);
+			armorLine.ItemID = thisItemID;
 			armorLine.id = "rowArmor"+thisItemID;
 			let armorStatus = armorLine.firstElementChild.nextElementSibling;
 			armorStatus.id = "ArmorStatus"+thisItemID;
@@ -830,6 +844,8 @@ function buildEquipmentTable(scrollPosition){
 
 		if(item.Type == "Weapon"){
 			let weaponLine = thisLine.cloneNode(true);
+			weaponLine.addEventListener("dragstart",dragItem);
+			weaponLine.ItemID = thisItemID;
 			weaponLine.id = "rowWeapon"+thisItemID;
 			let weaponStatus = weaponLine.firstElementChild.nextElementSibling;
 			weaponStatus.id = "WeaponStatus"+thisItemID;
@@ -844,6 +860,8 @@ function buildEquipmentTable(scrollPosition){
 
 		if(item.Type == "CastingFocus"){
 			let focusLine = thisLine.cloneNode(true);
+			focusLine.addEventListener("dragstart",dragItem);
+			focusLine.ItemID = thisItemID;
 			focusLine.id = "rowCastingFocus"+thisItemID;
 			let focusStatus = focusLine.firstElementChild.nextElementSibling;
 			focusStatus.id = "CastingFocusStatus"+thisItemID;
@@ -858,6 +876,8 @@ function buildEquipmentTable(scrollPosition){
 
 		if(item.isWearable == "1" && item.Type != "Armor"){
 			let wornLine = thisLine.cloneNode(true);
+			wornLine.addEventListener("dragstart",dragItem);
+			wornLine.ItemID = thisItemID;
 			wornLine.id = "rowWorn"+thisItemID;
 			let wornStatus = wornLine.firstElementChild.nextElementSibling;
 			wornStatus.id = "WornStatus"+thisItemID;
@@ -872,6 +892,8 @@ function buildEquipmentTable(scrollPosition){
 
 		if(item.mustHold == "1" && item.Type != "Weapon" && item.Type != "CastingFocus"){
 			let heldLine = thisLine.cloneNode(true);
+			heldLine.addEventListener("dragstart",dragItem);
+			heldLine.ItemID = thisItemID;
 			heldLine.id = "rowHeld"+thisItemID;
 			let heldStatus = heldLine.firstElementChild.nextElementSibling;
 			heldStatus.id = "HeldStatus"+thisItemID;
@@ -887,6 +909,8 @@ function buildEquipmentTable(scrollPosition){
 		if(item.Type == "Ammunition"){
 			//TODO: Equipment: Determine method of displaying/confirming whether ammo is used by any weapons (or is the default ammo)
 			let ammunitionLine = thisLine.cloneNode(true);
+			ammunitionLine.addEventListener("dragstart",dragItem);
+			ammunitionLine.ItemID = thisItemID;
 			ammunitionLine.id = "rowAmmunition"+thisItemID;
 			let ammunitionStatus = ammunitionLine.firstElementChild.nextElementSibling;
 			ammunitionStatus.id = "AmmunitionStatus"+thisItemID;
@@ -1839,5 +1863,3 @@ async function wearItem(ev) {
 	document.getElementById("WearItemButtonImage").src = "lib://pm.a5e.core/InterfaceImages/Wear.png";
 	ev.target.classList.remove("valid-drop");
 }
-
-setTimeout(loadUserData, 1);

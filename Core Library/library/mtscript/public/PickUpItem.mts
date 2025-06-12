@@ -2,7 +2,7 @@
 [h:ParentToken = json.get(PickUpItemData,"ParentToken")]
 [h:switchToken(ParentToken)]
 
-[h:TokensInRange = getTokens("json",json.set("","range",json.set("","distancePerCell",1,"upto",5),"layer",json.append("","TOKEN","OBJECT"),"propertyType","A5EObject"))]
+[h:TokensInRange = getTokens("json",json.set("","range",json.set("","distancePerCell",1,"upto",5,"token",ParentToken),"layer",json.append("","TOKEN","OBJECT"),"propertyType","A5EObject"))]
 
 [h:assert(!json.isEmpty(TokensInRange),"There is nothing within 5 feet to pick up!")]
 

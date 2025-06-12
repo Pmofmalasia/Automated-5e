@@ -11,16 +11,17 @@
 [h:needsUnattuneOutput = 0]
 [h:AttunedItemDisplayNames = "[]"]
 [h:UnattunedItemDisplayNames = "[]"]
+[h:safeCount = 0]
 [h,count(AttunementNumber),CODE:{
 	[h:OldAttunedItems = getProperty("a5e.stat.AttunedItems")]
-	[h:thisAttunementChoice = json.get(EquipItemData,"AttunementChoice"+roll.count)]
-	[h,if(roll.count < json.length(OldAttunedItems)): 
-		oldAttunementChoice = json.get(OldAttunedItems,roll.count);
+	[h:thisAttunementChoice = json.get(EquipItemData,"AttunementChoice"+safeCount)]
+	[h,if(safeCount < json.length(OldAttunedItems)): 
+		oldAttunementChoice = json.get(OldAttunedItems,safeCount);
 		oldAttunementChoice = ""
 	]
 
 	[h,if(thisAttunementChoice != "" && thisAttunementChoice != oldAttunementChoice),CODE:{
-		[h:attuneData = pm.a5e.AttuneItem(thisAttunementChoice,roll.count,ParentToken)]
+		[h:attuneData = pm.a5e.AttuneItem(thisAttunementChoice,safeCount,ParentToken)]
 		[h:needsAttuneOutput = 1]
 		[h:unattunedItemDisplayName = json.get(attuneData,"UnattunedItemDisplayName")]
 		[h,if(unattunedItemDisplayName != ""): UnattunedItemDisplayNames = json.append(UnattunedItemDisplayNames,unattunedItemDisplayName)]
@@ -28,11 +29,13 @@
 	}]
 
 	[h,if(thisAttunementChoice == "" && oldAttunementChoice != ""),CODE:{
-		[h:unattuneData = pm.a5e.UnattuneItem(oldAttunementChoice,roll.count,ParentToken)]
+		[h:unattuneData = pm.a5e.UnattuneItem(oldAttunementChoice,safeCount,ParentToken)]
 		[h:needsUnattuneOutput = 1]
 		[h:unattunedItemDisplayName = json.get(unattuneData,"ItemDisplayName")]
 		[h:UnattunedItemDisplayNames = json.append(UnattunedItemDisplayNames,unattunedItemDisplayName)]
 	}]
+	
+	[h:safeCount = safeCount + 1]
 }]
 
 [h,if(needsAttuneOutput): abilityTable = json.append(abilityTable,json.set("",
@@ -65,12 +68,13 @@
 [h:heldItemNames = "[]"]
 [h:stowedItemNames = "[]"]
 [h:multipleLimbsChangedTest = 0]
+[h:safeCount = 0]
 [h,count(LimbNumber),CODE:{
 	[h:HeldItems = getProperty("a5e.stat.HeldItems")]
-	[h:oldLimbChoice = json.get(HeldItems,roll.count)]
-	[h:thisLimbChoice = json.get(EquipItemData,"Limb"+roll.count+"Choice")]
+	[h:oldLimbChoice = json.get(HeldItems,safeCount)]
+	[h:thisLimbChoice = json.get(EquipItemData,"Limb"+safeCount+"Choice")]
 	[h,if(thisLimbChoice != oldLimbChoice && thisLimbChoice != ""),CODE:{
-		[h:thisLimbHeldItemData = pm.a5e.HoldItem(thisLimbChoice,roll.count,ParentToken)]
+		[h:thisLimbHeldItemData = pm.a5e.HoldItem(thisLimbChoice,safeCount,ParentToken)]
 		[h:drawStowTableLines = json.get(thisLimbHeldItemData,"Table")]
 		[h:heldItemNames = json.append(heldItemNames,json.get(thisLimbHeldItemData,"ItemDisplayName"))]
 		[h:stowedItem = json.get(thisLimbHeldItemData,"StowedItemDisplayName")]
@@ -79,13 +83,13 @@
 	};{}]
 
 	[h,if(thisLimbChoice != oldLimbChoice && thisLimbChoice == ""),CODE:{
-		[h:thisLimbHeldItemData = pm.a5e.StowItem(oldLimbChoice,roll.count,ParentToken)]
+		[h:thisLimbHeldItemData = pm.a5e.StowItem(oldLimbChoice,safeCount,ParentToken)]
 		[h:drawStowTableLines = json.get(thisLimbHeldItemData,"Table")]
 		[h:stowedItemNames = json.append(stowedItemNames,json.get(thisLimbHeldItemData,"ItemDisplayName"))]
 		[h:multipleLimbsChangedTest = multipleLimbsChangedTest + 1]
 	};{}]
 
-	[h:ammoTest = json.contains(EquipItemData,"AmmunitionChoiceLimb"+roll.count)]
+	[h:ammoTest = json.contains(EquipItemData,"AmmunitionChoiceLimb"+safeCount)]
 	[h:"<!-- Temporarily deactivated while in progress -->"]
 	[h,if(0),CODE:{
 		[h:OldAmmunitionChoiceID = json.path.read(NewInventory,"\$[*][?(@.ItemID == '"+thisLimbChoice+"')]['AmmunitionID']")]
@@ -93,9 +97,9 @@
 			OldAmmunitionChoiceID = "";
 			OldAmmunitionChoiceID = json.get(OldAmmunitionChoiceID,0)
 		]
-		[h:AmmunitionChoiceID = json.get(EquipItemData,"AmmunitionChoiceLimb"+roll.count)]
+		[h:AmmunitionChoiceID = json.get(EquipItemData,"AmmunitionChoiceLimb"+safeCount)]
 		[h:NewInventory = json.path.set(NewInventory,"\$[*][?(@.ItemID == '"+thisLimbChoice+"')]['AmmunitionID']",AmmunitionChoiceID)]
-		[h:EquipItemData = json.remove(EquipItemData,"AmmunitionChoiceLimb"+roll.count)]
+		[h:EquipItemData = json.remove(EquipItemData,"AmmunitionChoiceLimb"+safeCount)]
 
 		[h,if(AmmunitionChoiceID != ""):
 			AmmunitionName = json.get(json.path.read(NewInventory,"\$[*][?(@.ItemID == '"+AmmunitionChoiceID+"')]['DisplayName']"),0);
@@ -104,7 +108,8 @@
 		[h,if(AmmunitionChoiceID != ""): thisLimbTableLine = json.set(thisLimbTableLine,"Rules",json.get(thisLimbTableLine,"Rules") + " using " + AmmunitionName)]
 		[h,if(AmmunitionChoiceID != OldAmmunitionChoiceID): thisLimbTableLine = json.set(thisLimbTableLine,"ShowIfCondensed",1)]
 		[h:abilityTable = json.append(abilityTable,thisLimbTableLine)]
-	};{}]	
+	};{}]
+	[h:safeCount = safeCount + 1]
 }]
 
 [h,switch(multipleLimbsChangedTest),CODE:

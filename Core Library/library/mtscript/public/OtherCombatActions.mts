@@ -9,7 +9,7 @@
 	[h:switchToken(ParentToken)]
 	[h:UsableLimbs = pm.a5e.Limbs(ParentToken)]
 
-	[h:UsableLimbOptions = json.path.read(UsableLimbs,"[*]['DisplayName']")]
+	[h:UsableLimbOptions = json.path.read(UsableLimbs,"\$[*]['DisplayName']")]
 	[h:abort(input(
 		" HandChoice | "+UsableLimbOptions+" | Throw from Which Hand | LIST | DELIMITER=JSON "
 	))]
@@ -19,7 +19,7 @@
 	[h,if(addButton),CODE:{
 		[h:pm.NewMacroLabel = "Throw "+json.get(UsableLimbOptions,HandChoice)+" Weapon"]
 		[h:pm.NewMacroCommand = '[macro("SingleAttack@Lib:pm.a5e.Core"): json.set("","Hand",'+HandChoice+',"ParentToken",currentToken(),"Throw",1)]']
-		[h:pm.NewMacroTooltip = '[macro("AttackMacroTooltip@Lib:pm.a5e.Core"): json.set("","Hand",'+HandChoice+',"ParentToken",currentToken(),"Throw",1)]']
+		[h:pm.NewMacroTooltip = '[macro("SingleAttack@Lib:pm.a5e.Core"): json.set("","Hand",'+HandChoice+',"ParentToken",currentToken(),"Throw",1,"IsTooltip",1)]']
 		[h:pm.NewMacroProps = json.set("",
 			"applyToSelected",0,
 			"autoExecute",1,

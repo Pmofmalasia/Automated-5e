@@ -26,6 +26,7 @@
 }]
 
 [h:setProperty("a5e.stat.Inventory",inventory)]
+[h:pm.a5e.UpdateOtherInventories(ParentToken,"all")]
 
 [h:ArmorTableLine = json.set("",
 	"ShowIfCondensed",0,

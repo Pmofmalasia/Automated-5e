@@ -8,7 +8,7 @@
 [h,if(currentHand != whichHand || currentHand == -1): return(0,json.set("","Success",0))]
 
 [h:allHeldItems = json.set(allHeldItems,whichHand,"")]
-[h:allHeldItems = getProperty("a5e.stat.HeldItems")]
+[h:setProperty("a5e.stat.HeldItems",allHeldItems)]
 
 [h:inventory = getProperty("a5e.stat.Inventory")]
 [h:stowedItemData = json.get(json.path.read(inventory,"\$[*][?(@.ItemID == '"+stowedItemID+"')]"),0)]
@@ -17,6 +17,7 @@
 	[h:inventory = json.path.set(inventory,"\$[*][?(@.ItemID == '"+stowedItemID+"')]",stowedItemData)]
 };{}]
 [h:setProperty("a5e.stat.Inventory",inventory)]
+[h:pm.a5e.UpdateOtherInventories(ParentToken,"all")]
 
 [h:stowedItemDisplayName = json.get(stowedItemData,"DisplayName")]
 

@@ -77,8 +77,10 @@
 			"GiveTo",ParentToken
 		)]
 		[h:restoreItemLink = macroLinkText("TradeItem@Lib:pm.a5e.Core","gm",RestorationData,ParentToken)]
-		[h,if(!isSuppressOutput): broadcast("<a href='"+restoreItemLink+"'>Return Item to "+getName(ParentToken)+"?</a>","gm")]		
+		[h,if(!isSuppressOutput): broadcast("<a href='"+restoreItemLink+"'>Return Item to "+getName(ParentToken)+"?</a>","gm")]
 	}]
 }]
+
+[h:pm.a5e.UpdateOtherInventories(ParentToken,"all")]
 
 [h:return(0,json.set("","Item",ItemData,"ItemRemaining",NewInventoryNumber))]

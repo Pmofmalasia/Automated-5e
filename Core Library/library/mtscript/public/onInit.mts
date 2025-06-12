@@ -103,6 +103,7 @@
 [h:defineFunction("pm.a5e.StowItem","pm.a5e.StowItem@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.a5e.AttuneItem","pm.a5e.AttuneItem@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.a5e.UnattuneItem","pm.a5e.UnattuneItem@Lib:pm.a5e.Core")]
+[h:defineFunction("pm.a5e.ChooseThrowHand","pm.a5e.ChooseThrowHand@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.a5e.EvalItemActive","pm.a5e.EvalItemActive@Lib:pm.a5e.Core")]
 [h:defineFunction("pm.a5e.ItemCanBeActive","pm.a5e.ItemCanBeActive@Lib:pm.a5e.Core")]
 
@@ -338,6 +339,9 @@
 [h:defineFunction("pm.a5e.CheckBonusTotal","pm.a5e.CheckBonusTotal@Lib:pm.a5e.Core",0,0)]
 [h:defineFunction("pm.a5e.SaveProperties","pm.a5e.SaveProperties@Lib:pm.a5e.Core",0,0)]
 [h:defineFunction("pm.a5e.SaveBonusTotal","pm.a5e.SaveBonusTotal@Lib:pm.a5e.Core",0,0)]
+
+[h:"<!-- Functions for the Inventory -->"]
+[h:defineFunction("pm.a5e.UpdateOtherInventories","pm.a5e.UpdateOtherInventories@Lib:pm.a5e.Core")]
 
 [h:"<!-- Functions for Trusted Bypass -->"]
 [h:defineFunction("pm.SwitchToken","pm.SwitchToken@Lib:pm.a5e.Core",0,0)]

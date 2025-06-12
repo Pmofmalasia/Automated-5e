@@ -19,4 +19,6 @@
 
 [h,MACRO("ItemSpellcasting@Lib:pm.a5e.Core"): json.set(ItemData,"ItemSpellChoice",SpellChoice)]
 
+[h:pm.a5e.UpdateOtherInventories(ParentToken,"all")]
+
 [h:return(0,json.append("",ItemID))]

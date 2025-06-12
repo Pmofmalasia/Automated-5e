@@ -7,6 +7,7 @@
 [h:wornItemData = json.set(wornItemData,"isWorn",0)]
 [h:inventory = json.path.set(inventory,"\$[*][?(@.ItemID == '"+wornItemID+"')]",wornItemData)]
 [h:setProperty("a5e.stat.Inventory",inventory)]
+[h:pm.a5e.UpdateOtherInventories(ParentToken,"all")]
 
 [h:wornItemDisplayName = json.get(wornItemData,"DisplayName")]
 [h:wearItemTableLine = json.set("",

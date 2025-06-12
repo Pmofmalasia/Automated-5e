@@ -228,4 +228,5 @@
 	]
 
 	[h:setProperty("a5e.stat.Inventory",json.path.set(getProperty("a5e.stat.Inventory",ParentToken),"\$[*][?(@.ItemID == '"+subeffect.ItemID+"')]['IsActive']",finalActivationState),ParentToken)]
+	[h:pm.a5e.UpdateOtherInventories(ParentToken,"all")]
 };{}]

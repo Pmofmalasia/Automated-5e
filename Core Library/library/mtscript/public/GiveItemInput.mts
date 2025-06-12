@@ -1,4 +1,6 @@
 [h:GiveItemData = macro.args]
+[h:GivenItemID = json.get(GiveItemData,"ItemID")]
+[h:GivenItemNumber = json.get(GiveItemData,"ItemNumber")]
 [h:ParentToken = json.get(GiveItemData,"ParentToken")]
 [h:switchToken(ParentToken)]
 
@@ -17,11 +19,15 @@
 
 [h:GiveItemInputHTML = GiveItemInputHTML + "<tr id='rowGiveToChoice'><th><label for='GiveToChoice'>Give Item To:</label></th><td><select id='GiveToChoice' name='GiveToChoice' onchange='createIsLeaveBehindRow()'>"+TokensInRangeOptions+"<option value=''>Drop Item</option></select></td></tr>"]
 
-[h:ItemOptions = ""]
-[h,foreach(tempItem,CurrentInventory): ItemOptions = ItemOptions + "<option value='"+json.get(tempItem,"ItemID")+"'>"+json.get(tempItem,"DisplayName")+"</option>"]
-[h:GiveItemInputHTML = GiveItemInputHTML + "<tr id='rowItemChoice'><th><label for='ItemChoice'>Item To Give:</label></th><td><select id='ItemChoice' name='ItemChoice' onchange='adjustMaxNumber()'>"+ItemOptions+"</select></td></tr>"]
+[h,if(GivenItemID == ""),CODE:{
+	[h:ItemOptions = ""]
+	[h,foreach(tempItem,CurrentInventory): ItemOptions = ItemOptions + "<option value='"+json.get(tempItem,"ItemID")+"'>"+json.get(tempItem,"DisplayName")+"</option>"]
+	[h:GiveItemInputHTML = GiveItemInputHTML + "<tr id='rowItemChoice'><th><label for='ItemChoice'>Item To Give:</label></th><td><select id='ItemChoice' name='ItemChoice' onchange='adjustMaxNumber()'>"+ItemOptions+"</select></td></tr>"]
 
-[h:GiveItemInputHTML = GiveItemInputHTML + "<tr id='rowNumberGiven'><th><label for='NumberGiven'>Number Given:</label></th><td><input type='number' id='NumberGiven' name='NumberGiven' min=1 value="+json.get(json.get(CurrentInventory,0),"Number")+" style='width:35px'> (Maximum "+json.get(json.get(CurrentInventory,0),"Number")+")</td></tr>"]
+	[h:GiveItemInputHTML = GiveItemInputHTML + "<tr id='rowNumberGiven'><th><label for='NumberGiven'>Number Given:</label></th><td><input type='number' id='NumberGiven' name='NumberGiven' min=1 value="+json.get(json.get(CurrentInventory,0),"Number")+" style='width:35px'> (Maximum "+json.get(json.get(CurrentInventory,0),"Number")+")</td></tr>"]
+};{
+	[h:GiveItemInputHTML = GiveItemInputHTML + "<input type='hidden' id='ItemChoice' name='ItemChoice' value='"+GivenItemID+"'><input type='hidden' id='NumberGiven' name='NumberGiven' value='"+GivenItemNumber+"'>"]
+}]
 
 [h:GiveItemInputHTML = GiveItemInputHTML + "<tr id='rowSubmit'><th style='text-align:center' colspan='2'><input type='submit' class='theme-fix-submit' id='submitButton' value='Give Item'></th></tr>"]
 

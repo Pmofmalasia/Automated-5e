@@ -433,7 +433,7 @@
 	[h,switch(json.get(sLevelSelectData,"ResourceType")),CODE:
 		case "Spell Slots":{
 			[h:FeatureSpellIdentifier = json.get(sLevelSelectData,"Identifier")]
-			[h:FeatureSourceData = json.append("",json.set("","Level",eLevel,"Type","SpellSlot"))]
+			[h:FeatureSourceData = json.append("",json.set("","SlotLevel",eLevel,"Type","SpellSlot"))]
 		};
 		case "FeatureSpell":{
 			[h:FeatureSpellIdentifier = json.get(sLevelSelectData,"Identifier")]

@@ -11,7 +11,7 @@
 	[h:isMagical = 0]
 	[h,if(spellInfo != ""): isMagical = 1]
 	[h,if(weaponInfo != ""): isMagical = max(json.get(weaponInfo,"isMagical"),isMagical)]
-	
+
 	[h,if(affectsMagical == 1): meetsGeneralPrereqs = min(meetsGeneralPrereqs,isMagical)]
 	[h,if(affectsPhysical == 1): meetsGeneralPrereqs = min(meetsGeneralPrereqs,!isMagical)]
 };{}]

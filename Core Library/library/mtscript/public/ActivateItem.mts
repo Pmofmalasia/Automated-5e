@@ -8,11 +8,6 @@
 [h:isActivationSuccessful = 1]
 [h:return(isActivationSuccessful,"")]
 
-[h,if(0),CODE:{
-	[h:ActivatedItemInventory = json.path.set(getProperty("a5e.stat.Inventory"),"\$[*][?(@.ItemID=='"+ActivatedItemID+"')]['IsActive']",ActivateItem)]
-	[h:setProperty("a5e.stat.Inventory",ActivatedItemInventory)]
-};{}]
-
 [h:ItemData = json.path.read(getProperty("a5e.stat.Inventory"),"\$[*][?(@.ItemID == '"+ActivatedItemID+"')]")]
 [h:assert(!json.isEmpty(ItemData),"This item is no longer in your inventory!")]
 [h:ItemData = json.get(ItemData,0)]

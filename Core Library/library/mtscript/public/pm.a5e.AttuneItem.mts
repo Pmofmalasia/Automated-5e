@@ -33,6 +33,7 @@
 [h:attunedItemData = json.set(attunedItemData,"AttunedTo",ParentToken)]
 [h:inventory = json.path.set(inventory,"\$[*][?(@.ItemID == '"+attunedItemID+"')]",attunedItemData)]
 [h:setProperty("a5e.stat.Inventory",inventory)]
+[h:pm.a5e.UpdateOtherInventories(ParentToken,"all")]
 
 [h:attunedItemDisplayName = json.get(attunedItemData,"DisplayName")]
 [h:unattunedItemDisplayName = json.get(unattunedItemData,"ItemDisplayName")]

@@ -13,9 +13,11 @@
 
 [h:MonsterWeaponData = ct.a5e.WeaponDataProcessing(MonsterWeaponData)]
 
+[h:"<!-- Note: Defaults to nonmagical as 5e monsters gain magical weapons via the Magical Weapons feature. May need to change if 5.5e does this differently. -->"]
 [h:MonsterWeaponData = json.set(MonsterWeaponData,
 	"Type","Weapon",
-	"isStackable",0	
+	"isStackable",0,
+	"isMagical",0
 )]
 
 [h:closeDialog("MonsterWeaponCreation")]

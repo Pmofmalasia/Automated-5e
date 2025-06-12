@@ -29,6 +29,8 @@
 [h:heldItemDisplayName = json.get(heldItemData,"DisplayName")]
 [h:setProperty("a5e.stat.Inventory",inventory)]
 
+[h:pm.a5e.UpdateOtherInventories(ParentToken,"all")]
+
 [h:stowedItemDisplayName = json.get(stowedItemData,"ItemDisplayName")]
 [h,if(stowedItemDisplayName == ""):
 	tableLineDisplay = heldItemDisplayName;

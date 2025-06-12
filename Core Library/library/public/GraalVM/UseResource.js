@@ -145,7 +145,7 @@ function useResourceOptions(resourceOptions){
 				for(let level of Object.keys(sharedSpellLevels)){
 					thisResourceSecondaryOptionsInput.push("Level "+level);
 					thisResourceSecondaryOptionsData.push({
-						Type:"SharedSpell",
+						Type:"SpellSlot",
 						SlotLevel:level
 					});
 				}
@@ -332,7 +332,7 @@ function expendResource(resources,ParentTokenID){
 				DisplayOrder:["Rules","Roll","Full"]
 			});
 		}
-		else if(resource.Type === "SharedSpell"){
+		else if(resource.Type === "SpellSlot"){
 			let currentSpellSlots = JSON.parse(ParentToken.getProperty("a5e.stat.SpellSlots"));
 			let spentLevel = resource.SlotLevel;
 			currentSpellSlots[spentLevel] = Math.max(currentSpellSlots[spentLevel] - 1,0);

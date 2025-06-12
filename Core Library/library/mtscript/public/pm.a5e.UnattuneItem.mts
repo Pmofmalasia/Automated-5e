@@ -15,6 +15,7 @@
 [h:attunedItemData = json.set(attunedItemData,"IsActive",0)]
 [h:inventory = json.path.set(inventory,"\$[*][?(@.ItemID == '"+attunedItemID+"')]",attunedItemData)]
 [h:setProperty("a5e.stat.Inventory",inventory)]
+[h:pm.a5e.UpdateOtherInventories(ParentToken,"all")]
 
 [h:attunedItemDisplayName = json.get(attunedItemData,"DisplayName")]
 

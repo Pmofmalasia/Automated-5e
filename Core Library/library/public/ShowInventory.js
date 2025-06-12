@@ -136,7 +136,7 @@ async function createInventoryTable(scrollPosition){
 		allItemRows = allItemRows + "<tr class='"+thisRowClass+"' draggable='true' ondragstart='dragItem(event)' ondrop='dropItem(event)' ondragover='allowDrop(event)' id='rowItemID"+Item.ItemID+"' ItemID='"+Item.ItemID+"'>"+thisRowInnerHTML+"</tr>";
 	}
 
-	let InventoryTableHTML = "<tr id='rowInventoryHeader' style='position:sticky; top:0px; z-index:99' class='inventory-list'><th class='header-button'><button type='button' id='SettingsButton' onclick='chooseSettings()'><img src='lib://pm.a5e.core/InterfaceImages/Settings.png'></button></th><th id='NameHeader' style = 'text-align:left;' colspan='1'>Item</th><th style = 'text-align:right'>Number</th><th id='WeightMainHeader' style = 'text-align:right'>Weight</th><th style = 'text-align:right'>Context Menu</th></tr><tr id='rowSpacer' class='spacer-row' style='height:10px'></tr><input type='hidden' id='draggedItemID' value=''><input type='hidden' id='currentSort' value=''>" + allItemRows;
+	let InventoryTableHTML = "<tr id='rowInventoryHeader' style='position:sticky; top:0px; z-index:99' class='inventory-list'><th class='header-button'><button type='button' id='SettingsButton' onclick='chooseSettings()'><img src='lib://pm.a5e.core/InterfaceImages/Settings.png'></button></th><th id='NameHeader' style = 'text-align:left;' colspan='1'>Item</th><th style = 'text-align:right'>Number</th><th id='WeightMainHeader' style = 'text-align:right'>Weight</th><th style = 'text-align:right'>Actions</th></tr><tr id='rowSpacer' class='spacer-row' style='height:10px'></tr><input type='hidden' id='draggedItemID' value=''><input type='hidden' id='currentSort' value=''>" + allItemRows;
 
 	InventoryTableHTML = InventoryTableHTML + "<tr class='weight-data' id='rowWeightHeaders' ondrop='dropItem(event)' ondragover='allowDrop(event)'><th></th><th id='WeightHeader' style = 'text-align:left' colspan='1'>Weight Data</th><th style = 'text-align:right'>Current Weight</th><th style = 'text-align:right'>Carry Capacity</th><th style = 'text-align:right'>Push Capacity</th></tr>";
 
@@ -531,16 +531,20 @@ async function toggleActivation(ItemID){
 	let request = await fetch("macro:ActivateItem@Lib:pm.a5e.Core", {method: "POST", body: JSON.stringify(submitData)});
 	let activationResult = await request.text();
 
-	if(activationResult == 1){
-		document.getElementById("Activate"+ItemID).innerHTML = "<img src='lib://pm.a5e.core/InterfaceImages/Deactivate_Item.png'>";
-		document.getElementById("needsActivation"+ItemID).value = 0;
-		document.getElementById("ActivateTitle"+ItemID).title = "Deactivate Item";
+	if(false){
+		//now performed as part of UDF UpdateOtherInventories
+		if(activationResult == 1){
+			document.getElementById("Activate"+ItemID).innerHTML = "<img src='lib://pm.a5e.core/InterfaceImages/Deactivate_Item.png'>";
+			document.getElementById("needsActivation"+ItemID).value = 0;
+			document.getElementById("ActivateTitle"+ItemID).title = "Deactivate Item";
+		}
+		else{
+			document.getElementById("Activate"+ItemID).innerHTML = "<img src='lib://pm.a5e.core/InterfaceImages/Activate_Item.png'>";
+			document.getElementById("needsActivation"+ItemID).value = 1;
+			document.getElementById("ActivateTitle"+ItemID).title = "Activate Item";
+		}		
 	}
-	else{
-		document.getElementById("Activate"+ItemID).innerHTML = "<img src='lib://pm.a5e.core/InterfaceImages/Activate_Item.png'>";
-		document.getElementById("needsActivation"+ItemID).value = 1;
-		document.getElementById("ActivateTitle"+ItemID).title = "Activate Item";
-	}
+
 }
 
 async function useItem(ItemID){
@@ -656,6 +660,8 @@ function rearrangeInventory(oldIndex,newIndex,itemsMovedNum){
 
 async function updateInventory(){
 	mtSetProperty("a5e.stat.Inventory",JSON.stringify(Inventory),ParentToken);
+
+	MTFunction("pm.a5e.UpdateOtherInventories",[ParentToken,"not-self"]);
 }
 
 function getNextUnstoredRow(originRow,exitAllContainers){
@@ -718,7 +724,7 @@ function buildEquipmentTable(scrollPosition){
 	let contextHeader = document.createElement("th");
 	contextHeader.id = "ContextHeader";
 	contextHeader.style.textAlign = "left";
-	contextHeader.innerHTML = "Context Menu";
+	contextHeader.innerHTML = "Actions";
 	headerRow.insertAdjacentElement("beforeend",contextHeader);
 
 	let draggedItemInput = document.createElement("input");
@@ -1028,18 +1034,10 @@ function updateEquipmentStatuses(){
 async function loadUserData(){
 	let userdata = atob(await MapTool.getUserData());
 	userdata = JSON.parse(userdata);
+	setGlobals(userdata);
 
-	ParentToken = userdata.ParentToken;
-	Inventory = userdata.Inventory;
-	Limbs = userdata.Limbs;
-	HeldItems = userdata.HeldItems;
-	EquippedArmor = userdata.EquippedArmor;
-	AttunedItems = userdata.AttunedItems;
-	//<!-- TODO: Equipment: Include actual calcuation of number of attuned items when possible 
-	AttunementSlots = userdata.AttunementSlots;
 	maxColumnDepth = 1;
 	extraRowNum = 2;
-	debug = false;
 
 	createInventoryTable();
 	createGeneralEquipButtons();
@@ -1047,6 +1045,17 @@ async function loadUserData(){
 	document.getElementById("tabFullInventory").addEventListener("click",showInventory);
 	document.getElementById("tabEquipment").addEventListener("click",showEquipment);
 	document.title = "Inventory: "+userdata.TokenName;
+}
+
+function setGlobals(userData){
+	ParentToken = userData.ParentToken;
+	Inventory = userData.Inventory;
+	Limbs = userData.Limbs;
+	HeldItems = userData.HeldItems;
+	EquippedArmor = userData.EquippedArmor;
+	AttunedItems = userData.AttunedItems;
+	//<!-- TODO: Equipment: Include actual calcuation of number of attuned items when possible 
+	AttunementSlots = userData.AttunementSlots;
 }
 
 function showInventory(){
@@ -1079,6 +1088,19 @@ function showEquipment(){
 	buildEquipmentTable();
 }
 
+function refreshInventory(userData){
+	setGlobals(userData);
+
+	let scrollPosition = window.scrollY;
+	if(document.getElementById("tabFullInventory").classList.contains("active-tab")){
+		createInventoryTable(scrollPosition);
+	}
+	else{
+		document.getElementById("tabEquipment").classList.remove("active-tab");
+		showEquipment(scrollPosition);
+	}
+}
+
 setTimeout(loadUserData, 1);
 
 function createGeneralEquipButtons(){
@@ -1095,7 +1117,7 @@ function createGeneralEquipButtons(){
 	GiveItemButton.addEventListener("dragover",allowDrop);
 	GiveItemButton.addEventListener("dragenter",handleEnterValidDrop);
 	GiveItemButton.addEventListener("dragleave",handleLeaveValidDrop);
-	//GiveItemButton.addEventListener("drop",dropSpecificItem);
+	GiveItemButton.addEventListener("drop",dropSpecificItem);
 	itemButtonDIV.insertAdjacentElement("beforeend",GiveItemButton);
 
 	let TakeItemButton = document.createElement("button");
@@ -1137,7 +1159,7 @@ function createGeneralEquipButtons(){
 	let AttunementItemButton = document.createElement("button");
 	AttunementItemButton.className = "equipment-button";
 	AttunementItemButton.id = "AttuneItemButton";
-	AttunementItemButton.innerHTML = "<span class='no-drag' title='Click to adjust all attunement slots, or drag and drop to attune to a specific item.'><img id='AttunementItemButtonImage' class='no-drag' src='lib://pm.a5e.core/InterfaceImages/Attunement.png'></span>";
+	AttunementItemButton.innerHTML = "<span class='no-drag' title='Drag and drop to attune to a specific item.'><img id='AttunementItemButtonImage' class='no-drag' src='lib://pm.a5e.core/InterfaceImages/Attunement.png'></span>";
 	AttunementItemButton.addEventListener("drop",attuneToItem);
 	AttunementItemButton.addEventListener("dragenter",handleAttunementParentDragEnter);
 	AttunementItemButton.addEventListener("dragleave",handleAttunementParentDragLeave);
@@ -1147,10 +1169,7 @@ function createGeneralEquipButtons(){
 	let HoldItemButton = document.createElement("button");
 	HoldItemButton.className = "equipment-button";
 	HoldItemButton.id = "HoldItemButton";
-	HoldItemButton.innerHTML = "<span class='no-drag' title='Click to adjust all held items, or drag and drop to hold or stow a specific item.'><img class='no-drag' id='HoldItemButtonImage' src='lib://pm.a5e.core/InterfaceImages/Hold.png'></span>";
-	HoldItemButton.addEventListener("click",function(){
-
-	});
+	HoldItemButton.innerHTML = "<span class='no-drag' title='Drag and drop to hold or stow a specific item.'><img class='no-drag' id='HoldItemButtonImage' src='lib://pm.a5e.core/InterfaceImages/Hold.png'></span>";
 	HoldItemButton.addEventListener("drop", holdItem);
 	HoldItemButton.addEventListener("dragenter", handleHoldItemParentDragEnter);
 	HoldItemButton.addEventListener("dragover", allowDrop);
@@ -1159,7 +1178,7 @@ function createGeneralEquipButtons(){
 	let EquipItemButton = document.createElement("button");
 	EquipItemButton.className = "equipment-button";
 	EquipItemButton.id = "EquipItemButton";
-	EquipItemButton.innerHTML = "<span class='no-drag' title='Click to equip armor, or drag and drop to wear or take off a specific set of armor.'><img class='no-drag' id='EquipItemButtonImage' src='lib://pm.a5e.core/InterfaceImages/Equip_Armor.png'></span>";
+	EquipItemButton.innerHTML = "<span class='no-drag' title='Drag and drop to don or doff a specific set of armor.'><img class='no-drag' id='EquipItemButtonImage' src='lib://pm.a5e.core/InterfaceImages/Equip_Armor.png'></span>";
 	EquipItemButton.addEventListener("click",function(){
 
 	});
@@ -1172,7 +1191,7 @@ function createGeneralEquipButtons(){
 	let WearItemButton = document.createElement("button");
 	WearItemButton.className = "equipment-button";
 	WearItemButton.id = "WearItemButton";
-	WearItemButton.innerHTML = "<span class='no-drag' title='Click to adjust all worn items, or drag and drop to wear or take off a specific item.'><img class='no-drag' id='WearItemButtonImage' src='lib://pm.a5e.core/InterfaceImages/Wear.png'></span>";
+	WearItemButton.innerHTML = "<span class='no-drag' title='Drag and drop to wear or take off a specific item.'><img class='no-drag' id='WearItemButtonImage' src='lib://pm.a5e.core/InterfaceImages/Wear.png'></span>";
 	WearItemButton.addEventListener("drop", wearItem);
 	WearItemButton.addEventListener("dragenter", handleWearItemDragEnter);
 	WearItemButton.addEventListener("dragover", allowDrop);
@@ -1182,10 +1201,11 @@ function createGeneralEquipButtons(){
 	let ThrowItemButton = document.createElement("button");
 	ThrowItemButton.className = "equipment-button";
 	ThrowItemButton.id = "ThrowItemButton";
-	ThrowItemButton.innerHTML = "<span class='no-drag' title='Click to throw any item, or drag an item over to throw that specific item.'><img class='no-drag' src='lib://pm.a5e.core/InterfaceImages/Throw.png'></span>";
-	ThrowItemButton.addEventListener("click",function(){
-
-	});
+	ThrowItemButton.innerHTML = "<span class='no-drag' title='Drag an item over to throw that specific item.'><img class='no-drag' id='ThrowItemButtonImage' src='lib://pm.a5e.core/InterfaceImages/Throw.png'></span>";
+	ThrowItemButton.addEventListener("drop", throwItem);
+	ThrowItemButton.addEventListener("dragenter", handleThrowItemDragEnter);
+	ThrowItemButton.addEventListener("dragover", allowDrop);
+	ThrowItemButton.addEventListener("dragleave", handleThrowItemDragLeave);
 	buttonDIV.insertAdjacentElement("beforeend",ThrowItemButton);
 
 	//counter detects if dragleave is a "true" dragleave event, or if it is just dragging over a child element. dragenter triggers first and increments, dragleave decrements. If 0, it has moved all the way out of the element.
@@ -1196,14 +1216,6 @@ function createGeneralEquipButtons(){
 
 function getDraggedItemID(){
 	return idFromRowID(document.getElementById("draggedItemID").value);
-}
-
-function handleEnterValidDrop(ev){
-	ev.target.classList.add("valid-drop");
-}
-
-function handleLeaveValidDrop(ev){
-	ev.target.classList.remove("valid-drop");
 }
 
 function handleContextButtonDragEnter(ev){
@@ -1228,6 +1240,26 @@ function resetEquipmentButtons(){
 	removeAdditionalAttunementButtons();
 	splitItemCancel();
 	combineItemCancel();
+}
+
+function handleEnterValidDrop(ev){
+	ev.target.classList.add("valid-drop");
+}
+
+function handleLeaveValidDrop(ev){
+	ev.target.classList.remove("valid-drop");
+}
+
+async function dropSpecificItem(ev){
+    let ItemID = getDraggedItemID();
+	let ItemData = getItemData(ItemID);
+
+	let dropData = {
+		ParentToken:ParentToken,
+		ItemID:ItemID,
+		ItemNumber:ItemData.Number
+	}
+	await fetch("macro:GiveItemInput@lib:pm.a5e.Core", {method: "POST", body: JSON.stringify(dropData)});
 }
 
 function handleSplitItemDrop(ev){
@@ -1347,6 +1379,8 @@ function splitItem(itemID){
 	
 	splitItemCancel();
 	createInventoryTable(window.scrollY);
+
+	MTFunction("pm.a5e.UpdateOtherInventories",[ParentToken,"not-self"]);
 }
 
 function splitItemCancel(){
@@ -1451,6 +1485,8 @@ function combineItem(itemID){
 	
 	combineItemCancel();
 	createInventoryTable(window.scrollY);
+
+	MTFunction("pm.a5e.UpdateOtherInventories",[ParentToken,"not-self"]);
 }
 
 function combineItemCancel(){
@@ -1592,16 +1628,11 @@ async function attuneToItem(ev, slotNumber){
 	let currentSlot = AttunedItems.indexOf(ItemID);
 	if(currentSlot === -1){
 		let attunedData = await fetch("macro:pm.a5e.AttuneItem@lib:pm.a5e.Core", {method: "POST", body: JSON.stringify([ItemID,slotNumber,ParentToken])});
-		attunedData = await attunedData.json();
-		Inventory = attunedData.Inventory;		
-		AttunedItems = attunedData.AttunedItems;
 	}
 	else if(currentSlot === slotNumber){
 		let attunedData = await fetch("macro:pm.a5e.UnattuneItem@lib:pm.a5e.Core", {method: "POST", body: JSON.stringify([ItemID,slotNumber,ParentToken])});
 		attunedData = await attunedData.json();
 		Inventory = attunedData.Inventory;
-
-		AttunedItems[slotNumber] =  "";
 	}
 	else{
 		if(AttunedItems[slotNumber] != ""){
@@ -1612,6 +1643,8 @@ async function attuneToItem(ev, slotNumber){
 
 		AttunedItems[slotNumber] = ItemID;
 		AttunedItems[currentSlot] = "";
+
+		MTFunction("pm.a5e.UpdateOtherInventories",[ParentToken,"not-self"]);
 	}
 
 	removeAdditionalAttunementButtons();
@@ -1744,16 +1777,9 @@ async function holdItem(ev, handNumber) {
 	let currentHand = HeldItems.indexOf(ItemID);
 	if(currentHand === -1){
 		let heldData = await fetch("macro:pm.a5e.HoldItem@lib:pm.a5e.Core", {method: "POST", body: JSON.stringify([ItemID,handNumber,ParentToken])});
-		heldData = await heldData.json();
-		Inventory = heldData.Inventory;		
-		HeldItems = heldData.HeldItems;
 	}
 	else if(currentHand === handNumber){
 		let heldData = await fetch("macro:pm.a5e.StowItem@lib:pm.a5e.Core", {method: "POST", body: JSON.stringify([ItemID,handNumber,ParentToken])});
-		heldData = await heldData.json();
-		Inventory = heldData.Inventory;
-
-		HeldItems[handNumber] =  "";
 	}
 	else{
 		if(HeldItems[handNumber] != ""){
@@ -1764,6 +1790,8 @@ async function holdItem(ev, handNumber) {
 
 		HeldItems[handNumber] = ItemID;
 		HeldItems[currentHand] = "";
+
+		MTFunction("pm.a5e.UpdateOtherInventories",[ParentToken,"not-self"]);
 	}
 
 	removeAdditionalHoldButtons();
@@ -1803,15 +1831,9 @@ async function equipItem(ev) {
 
 	if(ItemID == EquippedArmor){
 		let equipData = await fetch("macro:pm.a5e.UnequipArmor@lib:pm.a5e.Core", {method: "POST", body: JSON.stringify([ItemID,ParentToken])});
-		equipData = await equipData.json();
-		Inventory = equipData.Inventory;
-		EquippedArmor = "";
 	}
     else if (itemData.Type === "Armor") {
        let equipData = await fetch("macro:pm.a5e.EquipArmor@lib:pm.a5e.Core", {method: "POST", body: JSON.stringify([ItemID,ParentToken])});
-	   equipData = await equipData.json();
-	   Inventory = equipData.Inventory;
-	   EquippedArmor = ItemID;
     } else {
         console.log(itemData.DisplayName+" is not armor and cannot be equipped.");
     }
@@ -1850,16 +1872,39 @@ async function wearItem(ev) {
 
 	if(itemData.isWorn == 1){
 		let wearData = await fetch("macro:pm.a5e.UnwearItem@lib:pm.a5e.Core", {method: "POST", body: JSON.stringify([ItemID,ParentToken])});
-		wearData = await wearData.json();
-		Inventory = wearData.Inventory;
 	}
     else if (itemData.isWearable == 1) {
 		let wearData = await fetch("macro:pm.a5e.WearItem@lib:pm.a5e.Core", {method: "POST", body: JSON.stringify([ItemID,ParentToken])});
-		wearData = await wearData.json();
-		Inventory = wearData.Inventory;
     } else {
         console.log(itemData.DisplayName+" is not wearable.");
     }
 	document.getElementById("WearItemButtonImage").src = "lib://pm.a5e.core/InterfaceImages/Wear.png";
+	ev.target.classList.remove("valid-drop");
+}
+
+function handleThrowItemDragEnter(ev) {
+	let ItemID = getDraggedItemID();
+    let itemData = getItemData(ItemID);
+
+    if(itemData.Type != "Weapon") {
+        ev.dataTransfer.dropEffect = "none";
+		document.getElementById("ThrowItemButtonImage").src = "lib://pm.a5e.core/InterfaceImages/Prohibit_Overlay.png";
+    }
+	else{
+		ev.target.classList.add("valid-drop");
+	} 
+}
+
+function handleThrowItemDragLeave(ev) {
+	document.getElementById("ThrowItemButtonImage").src = "lib://pm.a5e.core/InterfaceImages/Throw.png";
+	ev.target.classList.remove("valid-drop");
+}
+
+async function throwItem(ev) {
+	let ItemID = getDraggedItemID();
+
+	let throwData = await fetch("macro:ThrowWeapon@lib:pm.a5e.Core", {method: "POST", body: JSON.stringify({ParentToken:ParentToken,ItemID:ItemID})});
+
+	document.getElementById("ThrowItemButtonImage").src = "lib://pm.a5e.core/InterfaceImages/Throw.png";
 	ev.target.classList.remove("valid-drop");
 }

@@ -43,4 +43,7 @@
 }]
 
 [h:setProperty("a5e.stat.Inventory",NewInventory)]
+
+[h:pm.a5e.UpdateOtherInventories(ParentToken,"all")]
+
 [h:return(0,NewInventory)]

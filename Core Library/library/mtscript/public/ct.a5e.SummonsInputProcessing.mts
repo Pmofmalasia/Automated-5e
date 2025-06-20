@@ -65,13 +65,13 @@
 		};{}]
 		[h:inputData = json.remove(inputData,"isCreatureTypeLimitsSummon")]
 
-		[h,if(json.get(inputData,"isCreatureSubtypeLimitsSummon") != ""),CODE:{
-			[h:CreatureSubtypeReturnData = ct.a5e.CreatureSubtypeLimitsProcessing(inputData,"Summon")]
-			[h:inputData = json.get(CreatureSubtypeReturnData,"InputData")]
-			[h:ExclusiveInclusive = json.get(inputData,"isCreatureSubtypeLimitsSummon")]
-			[h:SummonFilter = json.set(SummonFilter,"Subtype"+ExclusiveInclusive,json.get(CreatureSubtypeReturnData,"CreatureSubtypes"))]
+		[h,if(json.get(inputData,"isCreatureTagLimitsSummon") != ""),CODE:{
+			[h:CreatureTagReturnData = ct.a5e.CreatureTagLimitsProcessing(inputData,"Summon")]
+			[h:inputData = json.get(CreatureTagReturnData,"InputData")]
+			[h:ExclusiveInclusive = json.get(inputData,"isCreatureTagLimitsSummon")]
+			[h:SummonFilter = json.set(SummonFilter,"CreatureTag"+ExclusiveInclusive,json.get(CreatureTagReturnData,"CreatureTags"))]
 		};{}]
-		[h:inputData = json.remove(inputData,"isCreatureSubtypeLimitsSummon")]
+		[h:inputData = json.remove(inputData,"isCreatureTagLimitsSummon")]
 
 		[h,if(json.get(inputData,"SizePrereqsSummon") != ""),CODE:{
 			[h:SizePrereqReturnData = ct.a5e.SizePrerequisiteProcessing(inputData,"Summon")]

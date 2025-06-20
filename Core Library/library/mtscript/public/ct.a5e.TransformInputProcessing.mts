@@ -46,13 +46,13 @@
 		};{}]
 		[h:inputData = json.remove(inputData,"isCreatureTypeLimitsTransform")]
 
-		[h,if(json.get(inputData,"isCreatureSubtypeLimitsTransform") != ""),CODE:{
-			[h:CreatureSubtypeReturnData = ct.a5e.CreatureSubtypeLimitsProcessing(inputData,"Transform")]
-			[h:inputData = json.get(CreatureSubtypeReturnData,"InputData")]
-			[h:ExclusiveInclusive = json.get(inputData,"isCreatureSubtypeLimitsTransform")]
-			[h:TransformFilter = json.set(TransformFilter,"Subtype"+ExclusiveInclusive,json.get(CreatureSubtypeReturnData,"CreatureSubtypes"))]
+		[h,if(json.get(inputData,"isCreatureTagLimitsTransform") != ""),CODE:{
+			[h:CreatureTagReturnData = ct.a5e.CreatureTagLimitsProcessing(inputData,"Transform")]
+			[h:inputData = json.get(CreatureTagReturnData,"InputData")]
+			[h:ExclusiveInclusive = json.get(inputData,"isCreatureTagLimitsTransform")]
+			[h:TransformFilter = json.set(TransformFilter,"CreatureTag"+ExclusiveInclusive,json.get(CreatureTagReturnData,"CreatureTags"))]
 		};{}]
-		[h:inputData = json.remove(inputData,"isCreatureSubtypeLimitsTransform")]
+		[h:inputData = json.remove(inputData,"isCreatureTagLimitsTransform")]
 
 		[h,if(json.get(inputData,"SizePrereqsTransform") != ""),CODE:{
 			[h:SizePrereqReturnData = ct.a5e.SizePrerequisiteProcessing(inputData,"Transform")]

@@ -170,7 +170,6 @@ function filterCreatures(creatureList,filter,comparitorTokenID){
 				isValid = (compareSizes(minimumSize,thisTokenSize) <= 0);
 			}
 			else if(prereq === "TypeInclusive"){
-				//TODO: Prerequisites: Need to implement CountsAs effects
 				let thisComparisonInfo = filter[prereq];
 				
 				if(Array.isArray(thisComparisonInfo)){
@@ -192,25 +191,25 @@ function filterCreatures(creatureList,filter,comparitorTokenID){
 					isValid = thisComparisonInfo != creatureProps["a5e.stat.CreatureType"]; 
 				}
 			}
-			else if(prereq === "SubtypeInclusive"){
+			else if(prereq === "CreatureTagInclusive"){
 				let thisComparisonInfo = filter[prereq];
 
 				if(Array.isArray(thisComparisonInfo)){
 					thisComparisonInfo = Array.from(thisComparisonInfo);
-					isValid = thisComparisonInfo.includes(creatureProps["a5e.stat.Race"]);
+					isValid = thisComparisonInfo.includes(creatureProps["a5e.stat.Race"]) || thisComparisonInfo.includes(creatureProps["a5e.stat.Subrace"]) || !jsonIsEmpty(jsonIntersection(thisComparisonInfo,creatureProps["a5e.stat.CreatureTags"]));
 				}
 				else{
-					isValid = thisComparisonInfo == creatureProps["a5e.stat.Race"]; 
+					isValid = (thisComparisonInfo == creatureProps["a5e.stat.Race"] || thisComparisonInfo == creatureProps["a5e.stat.Subrace"] || creatureProps["a5e.stat.CreatureTags"].includes(thisComparisonInfo)); 
 				}
 			}
-			else if(prereq === "SubtypeExclusive"){
+			else if(prereq === "CreatureTagExclusive"){
 				let thisComparisonInfo = filter[prereq];
 
 				if(Array.isArray(thisComparisonInfo)){
-					isValid = !thisComparisonInfo.includes(creatureProps["a5e.stat.Race"]);
+					isValid = !thisComparisonInfo.includes(creatureProps["a5e.stat.Race"]) && !thisComparisonInfo.includes(creatureProps["a5e.stat.Subrace"]) && jsonIsEmpty(jsonIntersection(thisComparisonInfo,creatureProps["a5e.stat.CreatureTags"]));
 				}
 				else{
-					isValid = thisComparisonInfo != creatureProps["a5e.stat.Race"]; 
+					isValid = (thisComparisonInfo != creatureProps["a5e.stat.Race"] && thisComparisonInfo != creatureProps["a5e.stat.Subrace"] && !creatureProps["a5e.stat.CreatureTags"].includes(thisComparisonInfo)); 
 				}
 			}
 			else if(prereq === "CreatureNameInclusive"){

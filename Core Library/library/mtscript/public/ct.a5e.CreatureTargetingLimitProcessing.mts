@@ -14,13 +14,13 @@
 };{}]
 [h:subeffectData = json.remove(subeffectData,"isCreatureTypeLimits"+dataKeySuffix)]
 
-[h,if(json.get(subeffectData,"isCreatureSubtypeLimits"+dataKeySuffix) != ""),CODE:{
-	[h:CreatureSubtypeReturnData = ct.a5e.CreatureSubtypeLimitsProcessing(subeffectData,dataKeySuffix)]
-	[h:subeffectData = json.get(CreatureSubtypeReturnData,"InputData")]
-	[h:ExclusiveInclusive = json.get(subeffectData,"isCreatureSubtypeLimits"+dataKeySuffix)]
-	[h:creatureTargetData = json.set(creatureTargetData,"Subtype"+ExclusiveInclusive,json.get(CreatureSubtypeReturnData,"CreatureSubtypes"))]
+[h,if(json.get(subeffectData,"isCreatureTagLimits"+dataKeySuffix) != ""),CODE:{
+	[h:CreatureTagReturnData = ct.a5e.CreatureTagLimitsProcessing(subeffectData,dataKeySuffix)]
+	[h:subeffectData = json.get(CreatureTagReturnData,"InputData")]
+	[h:ExclusiveInclusive = json.get(subeffectData,"isCreatureTagLimits"+dataKeySuffix)]
+	[h:creatureTargetData = json.set(creatureTargetData,"CreatureTag"+ExclusiveInclusive,json.get(CreatureTagReturnData,"CreatureTags"))]
 };{}]
-[h:subeffectData = json.remove(subeffectData,"isCreatureSubtypeLimits"+dataKeySuffix)]
+[h:subeffectData = json.remove(subeffectData,"isCreatureTagLimits"+dataKeySuffix)]
 
 [h,if(json.get(subeffectData,"SizePrereqs"+dataKeySuffix) != ""),CODE:{
 	[h:SizePrereqReturnData = ct.a5e.SizePrerequisiteProcessing(subeffectData,dataKeySuffix)]

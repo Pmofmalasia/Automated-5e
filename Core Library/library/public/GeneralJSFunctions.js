@@ -143,6 +143,35 @@ function createHTMLMultiselectOptions(inputData,prefix,changeFunction,extraArgum
 	return finalOptions;
 }
 
+async function getCombinedCreatureTags(isFiltered){
+	if(isFiltered == undefined) isFiltered = false;
+
+	let allRaces = await fetch("macro:pm.GetRaces@Lib:pm.a5e.Core", {method: "POST", body: ""});
+	allRaces = await allRaces.json();
+
+	let subraces = await fetch("macro:pm.a5e.GetCoreData@Lib:pm.a5e.Core", {method: "POST", body: "['sb.Subraces']"});
+	subraces = await subraces.json();
+
+	let CreatureTags = await fetch("macro:pm.a5e.GetCreatureTags@Lib:pm.a5e.Core", {method: "POST", body: ""});
+	CreatureTags = await CreatureTags.json();
+
+	let allTags = allRaces.concat(subraces).concat(CreatureTags);
+	allTags = sortData(allTags);
+
+	if(!isFiltered) return allTags;
+
+	allTagsFiltered = [];
+	allTagNames = [];
+	for(let tag of allTags){
+		if(!allTagNames.includes(tag.Name)){
+			allTagsFiltered.push(tag);
+			allTagNames.push(tag.Name);
+		}
+	}
+
+	return allTagsFiltered;
+}
+
 function timeDisplay(timeData){
 	let timeDisplay = "";
 	if(!["free","interaction","action","bonus","reaction"].includes(timeData.Units)){

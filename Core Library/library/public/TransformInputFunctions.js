@@ -66,9 +66,9 @@ async function createTransformRows(){
 					createCreatureTypeRows("Transform");
 				});
 
-				referenceRow = createTableRow(referenceRow,"rowIsCreatureSubtypeLimitsTransform","<th><label for='isCreatureSubtypeLimitsTransform'>Filter By Creature Subtype:</th><td><select id='isCreatureSubtypeLimitsTransform' name='isCreatureSubtypeLimitsTransform'><option value=''>No Filter</option><option value='Inclusive'>Include Choices</option><option value='Exclusive'>Exclude Choices</option></select></td>");
-				document.getElementById("isCreatureSubtypeLimitsTransform").addEventListener("change",function(){
-					createCreatureSubtypeRows("Transform");
+				referenceRow = createTableRow(referenceRow,"rowIsCreatureTagLimitsTransform","<th><label for='isCreatureTagLimitsTransform'>Filter By Creature Tag:</th><td><select id='isCreatureTagLimitsTransform' name='isCreatureTagLimitsTransform'><option value=''>No Filter</option><option value='Inclusive'>Include Choices</option><option value='Exclusive'>Exclude Choices</option></select></td>");
+				document.getElementById("isCreatureTagLimitsTransform").addEventListener("change",function(){
+					createCreatureTagRows("Transform");
 				});
 
 				referenceRow = createTableRow(referenceRow,"rowSizePrereqsTransform","<th><label for='SizePrereqsTransform'>Filter By Creature Size:</th><td><select id='SizePrereqsTransform' name='SizePrereqsTransform'><option value=''>No Filter</option><option value='Range'>Min/Maximum Sizes</option><option value='RelativeMaximum'>Maximum Relative to User's Size</option><option value='RelativeMinimum'>Minimum Relative to User's Size</option><option value='Relative'>Min/Maximum Relative to User's Size</option><option value='Inclusive'>Include Specific Sizes</option><option value='Exclusive'>Exclude Specific Sizes</option></select></td>");

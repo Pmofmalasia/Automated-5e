@@ -44,32 +44,27 @@ async function createCreatureTypeRows(IDSuffix){
 	}
 }
 
-function addCreatureSubtypePrereqRow(insertAfter,IDSuffix){
+function addCreatureTagPrereqRow(insertAfter,IDSuffix){
 	if(IDSuffix === undefined){
 		IDSuffix = "";
 	}
 
-	referenceRow = createTableRow(insertAfter,"rowIsCreatureSubtypeLimits"+IDSuffix,"<th><label for='isCreatureSubtypeLimits"+IDSuffix+"'>Limit By Creature Subtype:</th><td><select id='isCreatureSubtypeLimits"+IDSuffix+"' name='isCreatureSubtypeLimits"+IDSuffix+"'><option value=''>No Limit</option><option value='Inclusive'>Include Choices</option><option value='Exclusive'>Exclude Choices</option></select></td>");
-	document.getElementById("isCreatureSubtypeLimits"+IDSuffix).addEventListener("change",function(){
-		createCreatureSubtypeRows(IDSuffix);
+	referenceRow = createTableRow(insertAfter,"rowIsCreatureTagLimits"+IDSuffix,"<th><label for='isCreatureTagLimits"+IDSuffix+"'>Limit By Creature Tag:</th><td><select id='isCreatureTagLimits"+IDSuffix+"' name='isCreatureTagLimits"+IDSuffix+"'><option value=''>No Limit</option><option value='Inclusive'>Include Choices</option><option value='Exclusive'>Exclude Choices</option></select></td>");
+	document.getElementById("isCreatureTagLimits"+IDSuffix).addEventListener("change",function(){
+		createCreatureTagRows(IDSuffix);
 	});
 
 	return referenceRow;
 }
 
-async function createCreatureSubtypeRows(IDSuffix){
-	let limitsChoice = document.getElementById("isCreatureSubtypeLimits"+IDSuffix).value;
-	let referenceRow = document.getElementById("rowIsCreatureSubtypeLimits"+IDSuffix);
+async function createCreatureTagRows(IDSuffix){
+	let limitsChoice = document.getElementById("isCreatureTagLimits"+IDSuffix).value;
+	let referenceRow = document.getElementById("rowIsCreatureTagLimits"+IDSuffix);
 	
-	if(limitsChoice != "" && document.getElementById("rowCreatureSubtypeLimits"+IDSuffix) == null){
-		let request = await fetch("macro:pm.GetRaces@lib:pm.a5e.Core", {method: "POST", body: ""});
-		let allCreatureRaces = await request.json();
-		let requestSubtypes = await fetch("macro:pm.a5e.GetCoreData@lib:pm.a5e.Core", {method: "POST", body: "['sb.CreatureSubtypes']"});
-		let allCreatureSubtypes = await requestSubtypes.json();
-		allCreatureSubtypes = allCreatureRaces.concat(allCreatureSubtypes);
-		allCreatureSubtypes = sortData(allCreatureSubtypes);
+	if(limitsChoice != "" && document.getElementById("rowCreatureTagLimits"+IDSuffix) == null){
+		let allTags = await getCombinedCreatureTags(true);
 
-		let CreatureSubtypeOptions = createHTMLMultiselectOptions(allCreatureSubtypes,"CreatureSubtypeLimits"+IDSuffix);
+		let CreatureTagOptions = createHTMLMultiselectOptions(allTags,"CreatureTagLimits"+IDSuffix);
 		let limitsChoiceDisplay;
 		if(limitsChoice == "Exclusive"){
 			limitsChoiceDisplay = "Prohibited";
@@ -78,7 +73,7 @@ async function createCreatureSubtypeRows(IDSuffix){
 			limitsChoiceDisplay = "Allowed";
 		}
 
-		referenceRow = createTableRow(referenceRow,"rowCreatureSubtypeLimits"+IDSuffix,"<th><span id='CreatureSubtypeLimitsSpan"+IDSuffix+"'>"+limitsChoiceDisplay+"</span> Creature Types:</th><td><div class='check-multiple' style='width:100%'>"+CreatureSubtypeOptions+"</div></td>");
+		referenceRow = createTableRow(referenceRow,"rowCreatureTagLimits"+IDSuffix,"<th><span id='CreatureTagLimitsSpan"+IDSuffix+"'>"+limitsChoiceDisplay+"</span> Creature Tags:</th><td><div class='check-multiple' style='width:100%'>"+CreatureTagOptions+"</div></td>");
 	}
 	else if(limitsChoice == ""){
 		referenceRow.nextElementSibling.remove();
@@ -91,7 +86,7 @@ async function createCreatureSubtypeRows(IDSuffix){
 		else{
 			limitsChoiceDisplay = "Allowed";
 		}
-		document.getElementById("CreatureSubtypeLimitsSpan"+IDSuffix).innerHTML = limitsChoiceDisplay;
+		document.getElementById("CreatureTagLimitsSpan"+IDSuffix).innerHTML = limitsChoiceDisplay;
 	}
 }
 

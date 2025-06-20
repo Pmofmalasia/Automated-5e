@@ -29,7 +29,7 @@ function createSummonRows(idSuffix){
 
 			referenceRow = addCreatureTypePrereqRow(referenceRow,"Summon");
 
-			referenceRow = addCreatureSubtypePrereqRow(referenceRow,"Summon");
+			referenceRow = addCreatureTagPrereqRow(referenceRow,"Summon");
 
 			referenceRow = addSizePrereqRow(referenceRow,"Summon");
 		}

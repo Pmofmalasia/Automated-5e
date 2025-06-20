@@ -74,7 +74,7 @@
 			"fontColor","white",
 			"fontSize","1.00em",
 			"includeLabel",0,
-			"group","Combat",
+			"group","01. Combat",
 			"sortBy","",
 			"label",json.get(MonsterWeaponData,"DisplayName"),
 			"maxWidth","",

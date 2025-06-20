@@ -111,6 +111,10 @@ function jsonUniqueMTScript(data,keys){
 	return JSON.stringify(uniqueEntries);
 }
 
+function jsonIntersection(array1,array2){
+	return array1.filter(Set.prototype.has, new Set(array2));;
+}
+
 function getFeatureScalingLevel(feature){
 	if(feature.OverallScaling === undefined){
 		return feature.Level;

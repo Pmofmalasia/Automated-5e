@@ -17,7 +17,7 @@
 [h:CreatureTypeOptions = ut.a5e.GenerateSelectionHTML(CreatureTypes)]
 [h:RaceInputHTML = RaceInputHTML + "<tr id='rowCreatureType'><th><label for='CreatureType'>Creature Type:</label></th><td><select id='CreatureType' name='CreatureType'>"+CreatureTypeOptions+"</select></td></tr>"]
 
-[h:RaceInputHTML = RaceInputHTML + "<tr id='rowRaceCountsAs'><th><label for='RaceCountsAs'>Counts as Other Race:</label></th><td><select id='RaceCountsAs' name='RaceCountsAs'><option value=''>None</option>"+RaceOptions+"</select></td></tr>"]
+[h:RaceInputHTML = RaceInputHTML + "<tr id='rowIsCreatureTag'><th><label for='isCreatureTag'>Counts as Other Race(s):</label></th><td><input type='checkbox' id='isCreatureTag' name='isCreatureTag' onchange='createCreatureTagRows()'></td></tr>"]
 
 [h:RaceInputHTML = RaceInputHTML + "<tr id='rowLifespan'><th><label for='Lifespan'>Average Lifespan:</label></th><td><input type='number' id='Lifespan' name='Lifespan' style='width:30px' value=100></td></tr>"]
 

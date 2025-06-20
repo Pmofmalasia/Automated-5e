@@ -460,7 +460,7 @@ function createCreatureTargetTable(startRowID,IDSuffix){
 
 	referenceRow = addCreatureTypePrereqRow(referenceRow,IDSuffix);
 
-	referenceRow = addCreatureSubtypePrereqRow(referenceRow,IDSuffix);
+	referenceRow = addCreatureTagPrereqRow(referenceRow,IDSuffix);
 
 	referenceRow = addSizePrereqRow(referenceRow,IDSuffix);
 

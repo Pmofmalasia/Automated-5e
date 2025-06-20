@@ -38,6 +38,8 @@
     [h:setProperty("a5e.stat.Subrace",chosenSubraceName)]
 }]
 
+[h,if(json.get(RaceSelection,"CreatureTags") != ""): setProperty("a5e.stat.CreatureTags",json.get(RaceSelection,"CreatureTags"))]
+
 [h,switch(json.get(newCharData,"Alignment")),CODE:
     case "Lawful Good":{
         [h:alignmentOrder = "Lawful"]

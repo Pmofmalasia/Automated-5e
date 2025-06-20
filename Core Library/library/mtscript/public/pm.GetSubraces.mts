@@ -3,8 +3,7 @@
 [h,if(pm.KeyChoice==""),CODE:{
 	[h:pm.Subraces = json.path.read(data.getData("addon:","pm.a5e.core","sb.Subraces"),"\$[*][?(@.Race=='"+pm.Race+"')]")]
 };{
-	[h:pm.Subraces = json.path.read(data.getData("addon:","pm.a5e.core","sb.Subraces"),"\$[*][?(@.Race=='"+pm.Race+"')]['"+
-pm.KeyChoice+"']")]
+	[h:pm.Subraces = json.path.read(data.getData("addon:","pm.a5e.core","sb.Subraces"),"\$[*][?(@.Race=='"+pm.Race+"')]['"+pm.KeyChoice+"']")]
 }]
 
 [h,if(argCount() > 2): pm.Delim = if(pm.KeyChoice=="","json",arg(2)); pm.Delim = if(pm.KeyChoice=="","json",",")]

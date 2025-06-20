@@ -53,8 +53,19 @@
 [h:RaceData = json.remove(RaceData,"BaseClimbSpeed")]
 [h:RaceData = json.remove(RaceData,"BaseFlySpeed")]
 [h:RaceData = json.remove(RaceData,"BaseSwimSpeed")]
-
-[h,if(json.get(RaceData,"RaceCountsAs") == ""): RaceData = json.remove(RaceData,"RaceCountsAs")]
+[h,if(json.contains(RaceData,"isCreatureTag")),CODE:{
+	[h:chosenCreatureTags = "[]"]
+	[h:PCRaces = pm.GetRaces("Name","json")]
+	[h:PCSubraces = pm.a5e.GetCoreData("sb.Subraces","Name","json")]
+	[h:CreatureTags = pm.a5e.GetCreatureTags("","Name","json")]
+	[h:allCreatureTags = json.unique(json.merge(PCRaces,PCSubraces,CreatureTags))]
+	[h,foreach(tag,allCreatureTags),if(json.contains(RaceData,"CreatureTag"+tag)),CODE:{
+		[h:chosenCreatureTags = json.append(chosenCreatureTags,tag)]
+		[h:RaceData = json.remove(RaceData,"CreatureTag"+tag)]
+	}]
+	[h:RaceData = json.set(RaceData,"CreatureTags",chosenCreatureTags)]
+	[h:RaceData = json.remove(RaceData,"isCreatureTag")]
+};{}]
 
 [h,if(json.get(RaceData,"Size") == "Choose"),CODE:{
 	[h:RaceData = json.remove(RaceData,"Size")]

@@ -92,7 +92,7 @@
 [h:data.setData("addon:","pm.a5e.core","sb.SpellLists",'{}')]
 [h:data.setData("addon:","pm.a5e.core","sb.MonsterFeatures",'[]')]
 [h:data.setData("addon:","pm.a5e.core","sb.Bestiary",'[]')]
-[h:data.setData("addon:","pm.a5e.core","sb.CreatureSubtypes",'[]')]
+[h:data.setData("addon:","pm.a5e.core","sb.CreatureTags",'[]')]
 
 [h:data.setData("addon:","pm.a5e.core","LanguageOptions",'{"Standard":1,"Exotic":1,"Monstrous":0,"Secret":0}')]
 [h:data.setData("addon:","pm.a5e.core","LanguageSourcebooks",'{}')]

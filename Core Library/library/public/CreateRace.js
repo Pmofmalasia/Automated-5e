@@ -20,8 +20,13 @@ async function setRaceDefaults(){
 
 	document.getElementById("CreatureType").value = thisRaceData.CreatureType;
 
-	if(thisRaceData.RaceCountsAs != undefined){
-		document.getElementById("RaceCountsAs").value = thisRaceData.RaceCountsAs;
+	if(thisRaceData.CreatureTags != undefined){
+		document.getElementById("isCreatureTag").checked = true;
+		document.getElementById("isCreatureTag").dispatchEvent(new Event("change"));
+
+		for(let tag of document.getElementById("rowCreatureTags").allTags){
+			document.getElementById("CreatureTag"+tag).checked = thisRaceData.CreatureTags.includes(tag);
+		}
 	}
 
 	document.getElementById("Lifespan").value = thisRaceTraits.CallLifespan.Base;
@@ -258,6 +263,24 @@ async function setRaceDefaults(){
 	}
 	else{
 		document.getElementById("FeatChoice").removeAttribute("checked","");
+	}
+}
+
+async function createCreatureTagRows() {
+	let creatureTagsRow = document.getElementById("rowCreatureTags");
+	if(document.getElementById("isCreatureTag").checked){
+		if(creatureTagsRow != null) return;
+
+		let allTags = await getCombinedCreatureTags(true);
+		let tagInput = createHTMLMultiselectOptions(allTags,"CreatureTag");
+
+		createTableRow(document.getElementById("rowIsCreatureTag"),"rowCreatureTags","<th>Creature Tags/Races:</th><td><div class='check-multiple' style='width:100%'>"+tagInput+"</div></td>");
+		document.getElementById("rowCreatureTags").allTags = allTags;
+	}
+	else{
+		if(creatureTagsRow != null){
+			creatureTagsRow.remove();
+		}
 	}
 }
 

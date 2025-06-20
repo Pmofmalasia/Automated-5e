@@ -55,6 +55,7 @@
 [h:newBestiary = json.merge(oldBestiary,newBestiaryEntries)]
 [h:newBestiary = json.sort(newBestiary,"a","Name")]
 
+[h:"<!-- TODO: Need to rewrite the copytoken logic to allow for updating/copying tokens on the bestiary map -->"]
 [h:newEntryList = ""]
 [h,foreach(NPC,newBestiaryEntries),CODE:{
 	[h:thisNPCName = json.get(json.get(NPC,"MTProperties"),"name")]

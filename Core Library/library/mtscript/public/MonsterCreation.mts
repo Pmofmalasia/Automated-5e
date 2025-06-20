@@ -6,16 +6,16 @@
 [h:creatureTypeOptions = ""]
 [h,foreach(tempType,creatureTypeArray): creatureTypeOptions = creatureTypeOptions + "<option value='"+json.get(tempType,"Name")+"'>"+json.get(tempType,"DisplayName")+"</option>"]
 [h:creatureTypeOptions = creatureTypeOptions + "<option value='Multiple'>Multiple</option>"]
-[h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowCreatureType'><th><label for='CreatureType'>Creature Type:</label></th><td><select id='CreatureType' name='CreatureType' onchange='creatureTypeSelectionChanges()'>"+creatureTypeOptions+"</select></td></tr>"]
+[h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowCreatureType'><th><label for='CreatureType'>Creature Type:</label></th><td><select id='CreatureType' name='CreatureType'>"+creatureTypeOptions+"</select></td></tr>"]
 
-[h:firstCreatureType = json.get(creatureTypeArray,0)]
-[h:PCRaces = pm.GetRaces()]
-[h:matchingRaces = json.path.read(PCRaces,"\$[*][?(@.CreatureType=='"+firstCreatureType+"')]['DisplayName']")]
-[h:CreatureSubtypes = pm.a5e.GetCreatureSubtypes(firstCreatureType,"DisplayName")]
-[h:allSubtypes = json.unique(json.merge(matchingRaces,CreatureSubtypes))]
-[h:creatureSubtypeOptions = ""]
-[h,foreach(tempSubtype,allSubtypes): creatureSubtypeOptions = creatureSubtypeOptions + "<option value='"+js.a5e.RemoveSpecial(tempSubtype)+"'>"+tempSubtype+"</option>"]
-[h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowCreatureSubtype'><th><label for='CreatureSubtype'>Creature Subtype/Race:</label></th><td><select id='CreatureSubtype' name='CreatureSubtype'><option value=''>None</option>"+creatureSubtypeOptions+"</select></td></tr>"]
+[h:PCRaces = pm.GetRaces("DisplayName","json")]
+[h:PCSubraces = pm.a5e.GetCoreData("sb.Subraces","DisplayName","json")]
+[h:CreatureTags = pm.a5e.GetCreatureTags("","DisplayName","json")]
+[h:allCreatureTags = json.sort(json.unique(json.merge(PCRaces,PCSubraces,CreatureTags)))]
+[h:creatureTagOptions = ""]
+[h,foreach(tag,allCreatureTags): creatureTagOptions = creatureTagOptions + "<label><input type='checkbox' id='CreatureTag"+js.a5e.RemoveSpecial(tag)+"' name='CreatureTag"+js.a5e.RemoveSpecial(tag)+"'><span>"+tag+"</span></label>"]
+
+[h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowCreatureTag'><th>Creature Tag/Race:</th><td><div class='check-multiple' style='width:100%'>"+creatureTagOptions+"</div></td></tr>"]
 
 [h:monsterCreationHTML = monsterCreationHTML + "<tr id='rowAlignment'><th><label for='Alignment'>Alignment:</label></th><td>
     <select id='Alignment' name='Alignment'>

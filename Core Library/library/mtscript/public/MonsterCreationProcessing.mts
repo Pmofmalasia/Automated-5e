@@ -9,9 +9,16 @@
 [h:setName(MonsterDisplayName)]
 [h:setProperty("a5e.stat.CreatureName",MonsterName)]
 [h:setProperty("a5e.stat.CreatureType",json.get(MonsterData,"CreatureType"))]
-[h:setProperty("a5e.stat.Race",json.get(MonsterData,"CreatureSubtype"))]
 [h:setProperty("a5e.stat.Size",json.get(MonsterData,"Size"))]
 [h:setSize(json.get(MonsterData,"Size"))]
+
+[h:chosenCreatureTags = "[]"]
+[h:PCRaces = pm.GetRaces("Name","json")]
+[h:PCSubraces = pm.a5e.GetCoreData("sb.Subraces","Name","json")]
+[h:CreatureTags = pm.a5e.GetCreatureTags("","Name","json")]
+[h:allCreatureTags = json.unique(json.merge(PCRaces,PCSubraces,CreatureTags))]
+[h,foreach(tag,allCreatureTags),if(json.contains(MonsterData,"CreatureTag"+tag)): chosenCreatureTags = json.append(chosenCreatureTags,tag)]
+[h:setProperty("a5e.stat.CreatureTags",chosenCreatureTags)]
 
 [h:MonsterTraitsFeature = json.set("",
 	"Name",MonsterName+"MonsterTraits",

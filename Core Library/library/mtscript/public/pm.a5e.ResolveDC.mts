@@ -26,20 +26,23 @@
 
 [h,if(DCSuccessHalvesDamage!=0),CODE:{
     [h,switch(json.type(typesHalvedInclusive)):
-        case "UNKNOWN": typesHalvedFinal = if(typesHalvedInclusive == "All",pm.GetDamageTypes("Name","json"),json.difference(pm.GetDamageTypes("Name","json"),typesHalvedExclusive));
-        case "ARRAY": typesHalvedFinal = json.difference(json.intersection(typesHalvedInclusive,pm.GetDamageTypes("Name","json")),typesHalvedExclusive);
+        case "UNKNOWN": typesHalvedFinal = if(typesHalvedInclusive == "All",pm.GetDamageTypes("Name","json",1),json.difference(pm.GetDamageTypes("Name","json",1),typesHalvedExclusive));
+        case "ARRAY": typesHalvedFinal = json.difference(json.intersection(typesHalvedInclusive,pm.GetDamageTypes("Name","json",1)),typesHalvedExclusive);
         default: typesHalvedFinal = "[]"
     ]
 };{
     [h:typesHalvedFinal = "[]"]
 }]
-
 [h,if(thisTokenDamageDealt!=""),CODE:{
     [h:thisEffectDamageTypes = json.unique(json.path.read(thisTokenDamageDealt,"\$[*]['DamageType']"))]
     [h:typesHalvedFinal = json.intersection(typesHalvedFinal,thisEffectDamageTypes)]
 };{}]
 
-[h,if(DCResult == "Failure"): isDamageHalved = 0]
+[h:"<!-- Note: isDamageHalved values - 0 = No damage on success, 1 = Half on success, 2 = Full damage regardless, 3 = Only damaged on success. This line converts isDamageHalved into none/half/full, ignoring whether success or failure was needed. -->"]
+[h,if(DCResult == "Failure"):
+	isDamageHalved = if(isDamageHalved < 3, 0, 2);
+	isDamageHalved = if(isDamageHalved > 2, 0, isDamageHalved)
+]
 
 [h:ConditionsResistedInfo = json.get(DCData,"ConditionsResisted")]
 [h,if(ConditionsResistedInfo==""): ConditionsResistedInfo = "{}"]

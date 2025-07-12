@@ -1,4 +1,5 @@
 [h:EquipItemData = macro.args]
+[h:IsTooltip = 0]
 [h:ParentToken = json.get(EquipItemData,"ParentToken")]
 [h:CurrentInventory = getProperty("a5e.stat.Inventory")]
 [h:CurrentHeldItems = getProperty("a5e.stat.HeldItems")]

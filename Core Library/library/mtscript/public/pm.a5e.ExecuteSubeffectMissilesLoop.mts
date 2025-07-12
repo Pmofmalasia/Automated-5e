@@ -138,8 +138,8 @@
 		"Header","Saving Throw",
 		"FalseHeader","",
 		"FullContents",pm.GetDisplayName(json.get(thisSubeffectSaveData,"SaveType"),"sb.Attributes")+" Save",
-		"RulesContents","DC "+subeffect.SaveDC+" ",
-		"RollContents","",
+		"RulesContents","",
+		"RollContents","DC "+subeffect.SaveDC+" ",
 		"DisplayOrder","['Rules','Roll','Full']"
 	))]
 }]

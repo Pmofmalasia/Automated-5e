@@ -23,7 +23,6 @@ function createActiveEffectsRow(){
 	}
 }
 
-
 function activeEffectsAHL(){
 	//Note: This function still uses the old createAHLSelect because it occurs in the input before choosing resource is decided.
 	let ahlSelect = createAHLSelect("ActiveEffectsNumberAHLScaling");

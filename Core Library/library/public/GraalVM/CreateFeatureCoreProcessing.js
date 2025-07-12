@@ -80,7 +80,7 @@ function resourceProcessing(CoreFeatureData,FeatureData){
 		resourceNumber = Number(resourceNumber);
 	}
 
-	let ResourceMax = [];
+	let ResourceMax = {};
 	let SlotLevels = {};
 	let DieSizes = {};
 	let InitialResource;
@@ -252,69 +252,64 @@ function resourceProcessing(CoreFeatureData,FeatureData){
 			thisResourceMax.TimeUnits = CoreFeatureData["ResourceTimeUnits"+i];
 		}
 
-		if(resourceNumber > 1){
-			let thisResourceGainedLevel = CoreFeatureData["ResourceGainedLevel"+i];
-			if(thisResourceGainedLevel === FeatureData.Level){
-				ResourceMax.push(thisResourceMax);
+		let thisResourceGainedLevel = CoreFeatureData["ResourceGainedLevel"+i];
+		if(thisResourceGainedLevel === FeatureData.Level){
+			ResourceMax[thisResourceMax.Name] = thisResourceMax;
 
-				if(isIndividualRestoration){
-					let thisResourceRestoration = resourceRestorationMethodProcessing(i);
-					thisResourceRestoration.Name = thisResourceName;
+			if(isIndividualRestoration){
+				let thisResourceRestoration = resourceRestorationMethodProcessing(i);
+				thisResourceRestoration.Name = thisResourceName;
 
-					for(let instance of restoreWhenOptions){
-						if(CoreFeatureData["ResourceRestore"+i+instance] == 1){
-							if(individualRestorationData[instance] === undefined){
-								individualRestorationData[instance] = [thisResourceRestoration];
-							}
-							else{
-								individualRestorationData[instance].push(thisResourceRestoration);
-							}
+				for(let instance of restoreWhenOptions){
+					if(CoreFeatureData["ResourceRestore"+i+instance] == 1){
+						if(individualRestorationData[instance] === undefined){
+							individualRestorationData[instance] = [thisResourceRestoration];
+						}
+						else{
+							individualRestorationData[instance].push(thisResourceRestoration);
 						}
 					}
-				}
-			}
-			else{
-				let priorLevelResources = updateResourceData[thisResourceGainedLevel];
-				if(priorLevelResources === undefined){
-					priorLevelResources = {[thisResourceMax.Name]:thisResourceMax};
-				}
-				else{
-					priorLevelResources[thisResourceMax.Name] = thisResourceMax;
-				}
-				updateResourceData[thisResourceGainedLevel] = priorLevelResources;
-
-				if(isIndividualRestoration){
-					let thisResourceRestoration = resourceRestorationMethodProcessing(i);
-					thisResourceRestoration.Name = thisResourceName;
-
-					let priorLevelRestoration = updateRestorationData[thisResourceGainedLevel];
-
-					if(priorLevelRestoration === undefined){
-						priorLevelRestoration = {};
-						for(let instance of restoreWhenOptions){
-							if(CoreFeatureData["ResourceRestore"+i+instance] == 1){
-								priorLevelRestoration[instance] = [thisResourceRestoration];
-							}
-						}
-					}
-					else{
-						for(let instance of restoreWhenOptions){
-							if(CoreFeatureData["ResourceRestore"+i+instance] == 1){
-								if(priorLevelRestoration[instance] === undefined){
-									priorLevelRestoration[instance] = [thisResourceRestoration];
-								}
-								else{
-									priorLevelRestoration[instance].push(thisResourceRestoration);
-								}
-							}
-						}
-					}
-					updateRestorationData[thisResourceGainedLevel] = priorLevelRestoration;
 				}
 			}
 		}
 		else{
-			ResourceMax = {[thisResourceMax.Name]:thisResourceMax};
+			let priorLevelResources = updateResourceData[thisResourceGainedLevel];
+			if(priorLevelResources === undefined){
+				priorLevelResources = {[thisResourceMax.Name]:thisResourceMax};
+			}
+			else{
+				priorLevelResources[thisResourceMax.Name] = thisResourceMax;
+			}
+			updateResourceData[thisResourceGainedLevel] = priorLevelResources;
+
+			if(isIndividualRestoration){
+				let thisResourceRestoration = resourceRestorationMethodProcessing(i);
+				thisResourceRestoration.Name = thisResourceName;
+
+				let priorLevelRestoration = updateRestorationData[thisResourceGainedLevel];
+
+				if(priorLevelRestoration === undefined){
+					priorLevelRestoration = {};
+					for(let instance of restoreWhenOptions){
+						if(CoreFeatureData["ResourceRestore"+i+instance] == 1){
+							priorLevelRestoration[instance] = [thisResourceRestoration];
+						}
+					}
+				}
+				else{
+					for(let instance of restoreWhenOptions){
+						if(CoreFeatureData["ResourceRestore"+i+instance] == 1){
+							if(priorLevelRestoration[instance] === undefined){
+								priorLevelRestoration[instance] = [thisResourceRestoration];
+							}
+							else{
+								priorLevelRestoration[instance].push(thisResourceRestoration);
+							}
+						}
+					}
+				}
+				updateRestorationData[thisResourceGainedLevel] = priorLevelRestoration;
+			}
 		}
 
 		if(FeatureData.Type === "Item"){

@@ -1,5 +1,6 @@
 [h:OutputData = macro.args]
 [h:PlayerOutput = json.get(OutputData,"Player")]
+
 [h:GMOutput = json.get(OutputData,"GM")]
 [h:OutputTargets = json.get(OutputData,"OutputTargets")]
 [h:MaxColNum = json.get(OutputData,"MaxColNum")]
@@ -57,15 +58,16 @@
 
 	[h:pm.a5e.OutputVariables(finalChatSettings,0)]
 
-	[h,if(isGM(player)):
-		broadcastAsToken(strformat(GMOutput),player);
-		broadcastAsToken(strformat(PlayerOutput),player)
-	]
+	[h,if(isGM(player)),CODE:{
+		[h,if(GMOutput != ""): broadcastAsToken(strformat(GMOutput),player)]
+	};{
+		[h,if(PlayerOutput != ""): broadcastAsToken(strformat(PlayerOutput),player)]
+	}]
 }]
 
 [h:"<!-- TODO: Bugfix MT: Remove the below code and remove the above from if(0) if/when player.getConnectedPlayers() is fixed -->"]
 [h:excludedPlayersList = json.difference(allPlayers,finalPlayersList)]
-[h,foreach(player,excludedPlayersList),if(isGM(player)),CODE:{
+[h,foreach(player,excludedPlayersList),if(isGM(player) && GMOutput != ""),CODE:{
 	[h:playerName = js.a5e.RemoveSpecial(player)]
 	[h,if(json.contains(personalizedChatSettings,playerName)):
 		finalChatSettings = json.merge(DefaultChatSettings,json.get(personalizedChatSettings,playerName));

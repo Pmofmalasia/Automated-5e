@@ -795,7 +795,7 @@
 [h:lastEffectTest = json.length(allEffectData) == EffectsNumber]
 
 [h,if(NeedsNewSubeffect),CODE:{
-	[h:baseFeatureData = json.set("",
+	[h:baseFeatureData = json.set(baseFeatureData,
 		"WhichSubeffect",thisSubeffectNum+1,
 		"EffectType",EffectType,
 		"EffectsNumber",EffectsNumber,

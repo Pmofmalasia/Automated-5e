@@ -54,13 +54,7 @@
 
 [h:isSpellSave = if(json.get(otherSaveOptions,"SpellSave")=="",0,json.get(otherSaveOptions,"SpellSave"))]
 
-[h:"<!-- TODO: Re-add magic item changing DC here -->"]
-
 [h:pm.DCFinal = pm.DC]
-
-[h,if(isSpellSave),CODE:{
-	
-};{}]
 
 [h:saveDataFinal = json.set("",
 	"DC",pm.DCFinal,

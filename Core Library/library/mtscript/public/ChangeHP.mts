@@ -5,8 +5,17 @@
 [h:IsTooltip = 0]
 [h:a5e.UnifiedAbilities = a5e.GatherAbilities(ParentToken)]
 [h:pm.a5e.EffectData = "[]"]
+[h:effectsToMerge = "[]"]
 [h:abilityTable = "[]"]
 [h:pm.a5e.OverarchingContext = "Damage"]
+
+[h:pm.a5e.BaseEffectData = json.set("",
+	"Class","zzChangeHP",
+	"DisplayName","Change HP",
+	"Type","ChangeHP",
+	"ID",pm.a5e.GenerateEffectID(),
+	"ParentToken",ParentToken
+)]
 
 [h:hp.DamageDealt = json.get(hp.Data,"DamageDealt")]
 [h:hp.SourceID = json.get(hp.Data,"SourceID")]
@@ -19,7 +28,7 @@
 [h,if(json.isEmpty(hp.SourceEffect)): hp.SourceEffect = "{}"; hp.SourceEffect = json.get(hp.SourceEffect,0)]
 
 [h:"<!-- Not sure why the intersection with all damage types is required but there must have been a reason? -->"]
-[h:hp.TypesDealt = json.intersection(json.append(pm.GetDamageTypes("Name","json"),"None","Healing","TempHP"),json.unique(json.path.read(hp.DamageDealt,"\$[*]['DamageType']")))]
+[h:hp.TypesDealt = json.intersection(json.append(pm.GetDamageTypes("Name","json",1),"None"),json.unique(json.path.read(hp.DamageDealt,"\$[*]['DamageType']")))]
 [h:hp.DmgModData = pm.a5e.DamageModCalc(hp.Data)]
 
 [h:hp.FinalDamageDealt = json.set("","Healing",0)]
@@ -247,7 +256,7 @@
 	}]
 };{}]
 
-[h:"<!-- Currently, hp.DamageDealtString looks odd if there is a combination of healing and damage. May want to fix later. -->"]
+[h:"<!-- TODO: ChangeHP - Currently, hp.DamageDealtString looks odd if there is a combination of healing and damage. May want to fix later. -->"]
 [h:hp.ChangeValue = hp.Healing - TotalDamage]
 [h:abilityTable = json.append(abilityTable,json.set("",
 	"ShowIfCondensed",1,
@@ -261,8 +270,7 @@
 
 [h:abilityTable = json.merge(abilityTable,NoHPConditionTable)]
 
-[h:"<!-- I changed this to a code block for a specific purpose and forgot what it was. If this is still here, I never remembered. -->"]
-[h,if(hp.AlreadyDying),CODE:{
+[h,if(hp.AlreadyDying && TotalDamage > 0),CODE:{
 	[h:abilityTable = json.append(abilityTable,json.set("",
 	"ShowIfCondensed",1,
 	"Header","Death Saves",
@@ -331,7 +339,12 @@
 	};{}]
 };{}]
 
-[h:pm.PassiveFunction("AfterDamaged")]
+[h,if(TotalDamage > 0): pm.PassiveFunction("AfterDamaged")]
 [h,if(hp.SourceToken != ""): pm.PassiveFunction("AfterDamageDealt",json.set("","ParentToken",hp.SourceToken))]
 [h:"<!-- Things Still Needed: Shapechange break (later); Temp HP if there is a condition attached to the lesser value (new or old); return damage dealt by type -->"]
+[h,MACRO("Build Effect@Lib:pm.a5e.Core"): json.set("","CurrentEffects",pm.a5e.EffectData,"ToMerge",effectsToMerge,"BaseEffect",pm.a5e.BaseEffectData,"WhichEffect",json.length(pm.a5e.EffectData))]
+[h:pm.a5e.EffectData = macro.return]
+[h,if(!json.isEmpty(pm.a5e.EffectData)): data.setData("addon:","pm.a5e.core","gd.Effects",json.merge(data.getData("addon:","pm.a5e.core","gd.Effects"),pm.a5e.EffectData))]
+[h,MACRO("BuildEffectsFrame@Lib:pm.a5e.Core"): ""]
+
 [h:return(0,json.set("","Table",abilityTable,"Damage",hp.FinalDamageDealt))]

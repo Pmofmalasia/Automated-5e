@@ -1,4 +1,5 @@
 [h:ParentToken = arg(0)]
+[h:"<!-- TODO: Bugfix: Will need to send more info than just parenttoken so that things like IsTooltip can be sent -->"]
 [h:switchToken(ParentToken)]
 [h:a5e.UnifiedAbilities = a5e.GatherAbilities(ParentToken)]
 [h:pm.a5e.OverarchingContext = "Stats"]

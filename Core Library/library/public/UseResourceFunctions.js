@@ -163,19 +163,22 @@ function createUseResourceTypeRows(j,otherArgs){
 		});
 	}
 	else if(choice === "ThisFeature"){
+		//TODO: Resource: This does not allow for selecting resources gained at a later level within the path FeatureUpdates[level].ResourceData.Resources - needs to check all levels with feature updates to see if there's new resources gained; may be easier to just get the last level containing resources as all resources should be within that level; this may not be true for features which become infinite use?
 		let featureData = JSON.parse(atob(document.getElementById("FeatureData").value));
 		let resourceData = featureData.ResourceData.Resources;
-		if(resourceData.length > 1){
+		let resourceNames = Object.keys(resourceData);
+		if(resourceNames.length > 1){
 			let nameOptions = "";
-			for(let k = 0; k < resourceData.length; k++){
-				nameOptions += "<option value='"+resourceData[k].Name+"'>"+resourceData[k].DisplayName+"</option>";
+			for(let k = 0; k < resourceNames.length; k++){
+				let thisName = resourceNames[k];
+				nameOptions += "<option value='"+resourceData[thisName].Name+"'>"+resourceData[thisName].DisplayName+"</option>";
 			}
 
 			referenceElement = createTableRow(referenceElement,"rowUseFeatureResource"+i+j,"<th><label for='UseFeatureResource"+i+j+"'>Use Which Resource:</label></th><td><select id='UseFeatureResource"+i+j+"' name='UseFeatureResource"+i+j+"'>"+nameOptions+"</select></td>");
 		}
 		else{
-			referenceElement = createTableRow(referenceElement,"rowUseFeatureResource"+i+j,"<th><input type='hidden' id='UseFeatureResource"+i+j+"' name='UseFeatureResource"+i+j+"' value='"+resourceData[0].Name+"'></th><td></td>");
-
+			let thisName = resourceNames[0];
+			referenceElement = createTableRow(referenceElement,"rowUseFeatureResource"+i+j,"<th><input type='hidden' id='UseFeatureResource"+i+j+"' name='UseFeatureResource"+i+j+"' value='"+resourceData[thisName].Name+"'></th><td></td>");
 			referenceElement.setAttribute("hidden","");
 		}
 

@@ -14,8 +14,8 @@
 		"Header","Saving Throw",
 		"FalseHeader","",
 		"FullContents",pm.a5e.CreateDisplayList(saveDisplayArray,"or")+" Save",
-		"RulesContents","DC "+json.get(thisConditionEndInfo,"DC")+" ",
-		"RollContents","",
+		"RulesContents","",
+		"RollContents","DC "+json.get(thisConditionEndInfo,"DC")+" ",
 		"DisplayOrder","['Rules','Roll','Full']"
 	))]
 };{}]
@@ -43,8 +43,8 @@
 		"Header","Saving Throw",
 		"FalseHeader","",
 		"FullContents",pm.a5e.CreateDisplayList(checkDisplayArray,"or")+" Check",
-		"RulesContents","DC "+json.get(thisConditionEndInfo,"DC")+" ",
-		"RollContents","",
+		"RulesContents","",
+		"RollContents","DC "+json.get(thisConditionEndInfo,"DC")+" ",
 		"DisplayOrder","['Rules','Roll','Full']"
 	))]
 };{}]

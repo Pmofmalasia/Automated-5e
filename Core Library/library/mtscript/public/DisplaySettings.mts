@@ -84,7 +84,7 @@
 
 [h:DisplaySettingsHTML = DisplaySettingsHTML + "<tr id='rowDarkCritFailText'><th><label for='DarkCritFailText'>Dark Mode Crit Fail Color:</label></th><td><input type='color' id='DarkCritFailText' name='DarkCritFailText' value='"+json.get(currentChatColors,"DarkCritFailText")+"'></td></tr>"]
 
-[h:DisplaySettingsHTML = DisplaySettingsHTML + "<tr id='rowDarkLinkText'><th><label for='DarkLinkText'>Dark Mode Link Color:</label></th><td><input type='color' id='DarkLinkText' name='DarkLinkText' value='"+json.get(currentChatColors,"DarkLinkText")+"'></td></tr>"]
+[h:DisplaySettingsHTML = DisplaySettingsHTML + "<tr id='rowDarkLinkColor'><th><label for='DarkLinkColor'>Dark Mode Link Color:</label></th><td><input type='color' id='DarkLinkColor' name='DarkLinkColor' value='"+json.get(currentChatColors,"DarkLinkColor")+"'></td></tr>"]
 
 [h:DisplaySettingsHTML = DisplaySettingsHTML + "<tr id='rowColorHeader'><th style='text-align:center' colspan='2'>Light Mode Settings</th></tr>"]
 
@@ -108,7 +108,7 @@
 
 [h:DisplaySettingsHTML = DisplaySettingsHTML + "<tr id='rowLightCritFailText'><th><label for='LightCritFailText'>Light Mode Crit Fail Color:</label></th><td><input type='color' id='LightCritFailText' name='LightCritFailText' value='"+json.get(currentChatColors,"LightCritFailText")+"'></td></tr>"]
 
-[h:DisplaySettingsHTML = DisplaySettingsHTML + "<tr id='rowLightLinkText'><th><label for='LightLinkText'>Light Mode Link Color:</label></th><td><input type='color' id='LightLinkText' name='LightLinkText' value='"+json.get(currentChatColors,"LightLinkText")+"'></td></tr>"]
+[h:DisplaySettingsHTML = DisplaySettingsHTML + "<tr id='rowLightLinkColor'><th><label for='LightLinkColor'>Light Mode Link Color:</label></th><td><input type='color' id='LightLinkColor' name='LightLinkColor' value='"+json.get(currentChatColors,"LightLinkColor")+"'></td></tr>"]
 
 [h:DisplaySettingsHTML = DisplaySettingsHTML + "<tr id='rowSubmit'><th style='text-align:center' colspan='2'><input type='submit' class='theme-fix-submit' id='submitButton' value='Submit'></tr>"]
 

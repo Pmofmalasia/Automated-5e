@@ -56,7 +56,7 @@
 	[h:thisPlayerChatSettings = json.set(dataWithBorderColors,
 		"DisplaySize",json.get(SettingsData,"DisplaySize"),
 		"VerticalDisplay",json.contains(SettingsData,"isVertical"),
-		"DarkMode",json.contains(SettingsData,"DarkMode"),
+		"DarkMode",json.contains(SettingsData,"isDarkMode"),
 		"UseWidth",json.get(SettingsData,"UseWidth"),
 		"ChatColors",thisPlayerChatColors,
 		"BodyFont",json.get(SettingsData,"BodyFont"),

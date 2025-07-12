@@ -81,8 +81,7 @@ function needsScalingData(){
 						let featureData = JSON.parse(atob(document.getElementById("FeatureData").value));
 						let resourceData = featureData.ResourceData.Resources;
 						let resourceChoice = document.getElementById("UseFeatureResource"+i+j).value;
-						let resourceIndex = resourceData.findIndex(x => x.Name === resourceChoice);
-						let resourceDisplay = resourceData[resourceIndex].DisplayName;
+						let resourceDisplay = resourceData[resourceChoice].DisplayName;
 
 						let identifier = {
 							Name:featureData.Name,
@@ -102,7 +101,7 @@ function needsScalingData(){
 						else if(document.getElementById("UseFeatureResourceMinimum"+i+j).value !== document.getElementById("UseFeatureResourceMaximum"+i+j).value){
 							scalingData.isScaling = true;
 							scalingData.scalingMessage.push(resourceDisplay+" Spent");
-						}			
+						}	
 					}
 				}
 			}
@@ -318,7 +317,7 @@ async function createMitigationTable(){
 					}
 
 					let referenceRow = document.getElementById(rowPrefix+i);
-					referenceRow = createTableRow(referenceRow,"rowSaveMitigation"+i,"<th>Damage on Successful Save:</th><td><select id='saveMitigation"+i+"' name='saveMitigation"+i+"'><option value=2>None</option><option value=1>Half</option><option value=0>Full</option></select></td>");
+					referenceRow = createTableRow(referenceRow,"rowSaveMitigation"+i,"<th>Damage on Successful Save:</th><td><select id='saveMitigation"+i+"' name='saveMitigation"+i+"'><option value=2>None</option><option value=1>Half</option><option value=0>Full</option><option value=3>Only on Success</option></select></td>");
 				}
 			}
 			

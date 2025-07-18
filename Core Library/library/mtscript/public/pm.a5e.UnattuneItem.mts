@@ -8,7 +8,7 @@
 [h,if(currentSlot != whichSlot || currentSlot == -1): return(0,json.set("","Success",0))]
 
 [h:allAttunedItems = json.set(allAttunedItems,whichSlot,"")]
-[h:allAttunedItems = getProperty("a5e.stat.AttunedItems")]
+[h:setProperty("a5e.stat.AttunedItems",allAttunedItems)]
 
 [h:inventory = getProperty("a5e.stat.Inventory")]
 [h:attunedItemData = json.get(json.path.read(inventory,"\$[*][?(@.ItemID == '"+attunedItemID+"')]"),0)]

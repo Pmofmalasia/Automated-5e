@@ -28,6 +28,10 @@ function coreFeatureProcessing(CoreFeatureData){
 		FeatureData.ResourceData = resourceData;		
 	}
 
+	if(CoreFeatureData.isPassiveFeature == 1){
+		FeatureData.isPassiveFeature = 1
+	}
+
 	if(CoreFeatureData.HasActiveEffects == 1){
 		FeatureData.ActiveEffects = activeEffectsProcessing(CoreFeatureData);
 	}

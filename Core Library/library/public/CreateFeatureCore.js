@@ -98,6 +98,8 @@ function addFeatureChoicesRows(){
 
 function addFeaturePassiveRows(){
 	let referenceRow = document.getElementById("rowPassiveFeaturesTitle");
+
+	referenceRow = createTableRow(referenceRow,"rowIsPassiveFeature","<th><label for='isPassiveFeature'>Has Passive Effects:</th><td><input type='checkbox' id='isPassiveFeature' name='isPassiveFeature'></td>");
 }
 
 function addFeatureActiveRows(){

@@ -258,6 +258,8 @@ function createMultiRowButtonsInput(baseName,referenceRow,rowContents,buttonName
 	if(isSuppressAutoAdd === undefined || !isSuppressAutoAdd){
 		document.getElementById("Add"+baseName+"Button").dispatchEvent(new Event("click"));
 	}
+
+	return referenceRow;
 }
 
 function sortData(data,key){

@@ -332,6 +332,11 @@ function generateItemID(){
 	return roll(1,10000) + "a5e" + Date.now();
 }
 
+function jsonIntersection(array1,array2){
+	let result = array1.filter(value => array2.includes(value));
+	return result;
+}
+
 function removeSpecialCharacters(input){
 	return input.replace(/[^a-zA-Z0-9]/g, '');
 }

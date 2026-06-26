@@ -20,7 +20,7 @@
 	[h:cl.AllorOneFinal = if(cl.AllorOne,1,if(eval("cl."+json.get(TempAttribute,"Name")+"Prereq")>0,cl.AllorOneFinal+1,cl.AllorOneFinal))]
 	[h:cl.FinalPrereqs = if(eval("cl."+json.get(TempAttribute,"Name")+"Prereq")>0,json.set(cl.FinalPrereqs,json.get(TempAttribute,"Name"),eval("cl."+json.get(TempAttribute,"Name")+"Prereq")),cl.FinalPrereqs)]
 }]
-[h:cl.FinalPrereqs = json.set(cl.FinalPrereqs,"AllOrOne",cl.AllorOneFinal))]
+[h:cl.FinalPrereqs = json.set(cl.FinalPrereqs,"AllOrOne",cl.AllorOneFinal)]
 
 [h:cl.SourcebookLib = json.get(json.path.read(data.getData("addon:","pm.a5e.core","ms.Sources"),"[?(@.Name=='"+js.a5e.RemoveSpecial(cl.Source)+"')]['Library']"),0)]
 

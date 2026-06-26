@@ -106,7 +106,7 @@ function createPassiveConditionSelect(){
 	//function to initialize the valid selections for conditions based on instances chosen
 }
 
-function updatePassiveEffectSelects(){
+function updatePassiveEffectSelect(){
 	//function to update all passive effects when instance changes, check all current selections to see if still valid and if not change the selection
 }
 
@@ -324,9 +324,29 @@ function getPassiveData(){
 			displayName:"Type of Skill",
 			validInstances:["Proficiency","Passives","d20Test","Check"]
 		},
+		SaveType:{
+			displayName:"Type of Save",
+			validInstances:["Proficiency","d20Test","Save"]
+		},
 		FeatureInvolved:{
 			displayName:"Specific Feature was Used",
-			validInstances:["d20Test","Check","Save","Attack","WeaponAttack","SpellAttack","Spellcasting","ForcedSave","Features","Damage"]
+			validInstances:[]
+		},
+		IsMagical:{
+			displayName:"Effect Is/Is Not Magical",
+			validInstances:[]
+		},
+		EffectType:{
+			displayName:"Type of Effect",
+			validInstances:[]
+		},
+		EffectSource:{
+			displayName:"Origin of Effect",
+			validInstances:[]
+		},
+		OtherCondition:{
+			displayName:"Condition Not Listed",
+			validInstances:[]
 		}
 	};
 
@@ -385,7 +405,7 @@ async function loadUserData(){
 		let conditionsNum = Number(document.getElementById("PassiveConditionORNumber").value);
 		let i = conditionsNum - 1;
 		document.getElementById("PassiveConditionTitleNumberOR"+i).innerHTML = conditionsNum;
-		updatePassiveConditionInfo(i);
+		createPassiveConditionSelect(i);
 
 		document.getElementById("rowPassiveConditionHeaderOR0").setAttribute("hidden","");
 
